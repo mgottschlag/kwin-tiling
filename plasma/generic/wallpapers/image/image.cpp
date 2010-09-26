@@ -105,6 +105,7 @@ void Image::init(const KConfigGroup &config)
         actions.push_back(m_nextWallpaperAction);
         actions.push_back(m_openImageAction);
         setContextualActions(actions);
+        updateWallpaperActions();
     }
 
     m_animation = new QPropertyAnimation(this, "fadeValue");
@@ -196,9 +197,9 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_uiSlideshow.m_dirlist->setCurrentRow(0);
         updateDirs();
         m_uiSlideshow.m_addDir->setIcon(KIcon("list-add"));
-        connect(m_uiSlideshow.m_addDir, SIGNAL(clicked()), this, SLOT(slotAddDir()));
+        connect(m_uiSlideshow.m_addDir, SIGNAL(clicked()), this, SLOT(addDir()));
         m_uiSlideshow.m_removeDir->setIcon(KIcon("list-remove"));
-        connect(m_uiSlideshow.m_removeDir, SIGNAL(clicked()), this, SLOT(slotRemoveDir()));
+        connect(m_uiSlideshow.m_removeDir, SIGNAL(clicked()), this, SLOT(removeDir()));
 
         QTime time(0, 0, 0);
         time = time.addSecs(m_delay);
@@ -316,21 +317,28 @@ void Image::timeChanged(const QTime& time)
     }
 }
 
-void Image::slotAddDir()
+void Image::addDir()
 {
     KUrl empty;
-    KDirSelectDialog dialog(empty, true, m_configWidget);
-    if (dialog.exec()) {
-        QString urlDir = dialog.url().path();
+    KDirSelectDialog *dialog = new KDirSelectDialog(empty, true, m_configWidget);
+    connect(dialog, SIGNAL(finished()), this, SLOT(addDirFromSelectionDialog()));
+    dialog->show();
+}
+
+void Image::addDirFromSelectionDialog()
+{
+    KDirSelectDialog *dialog = qobject_cast<KDirSelectDialog *>(sender());
+    if (dialog) {
+        QString urlDir = dialog->url().path();
         if (!urlDir.isEmpty() && m_uiSlideshow.m_dirlist->findItems(urlDir, Qt::MatchExactly).isEmpty()) {
-            m_uiSlideshow.m_dirlist->addItem(dialog.url().path());
+            m_uiSlideshow.m_dirlist->addItem(urlDir);
             updateDirs();
             startSlideshow();
         }
     }
 }
 
-void Image::slotRemoveDir()
+void Image::removeDir()
 {
     int row = m_uiSlideshow.m_dirlist->currentRow();
     if (row != -1) {
@@ -417,6 +425,7 @@ void Image::setWallpaper(const QString &path)
         bool random = m_randomize;
         nextSlide();
         m_randomize = random;
+        updateWallpaperActions();
     } else {
         m_wallpaper = path;
         setSingleImage();
@@ -434,6 +443,7 @@ void Image::startSlideshow()
     m_slideshowBackgrounds.clear();
     m_slideshowBackgrounds = BackgroundListModel::findAllBackgrounds(this, 0, m_dirs);
 
+    updateWallpaperActions();
     // start slideshow
     if (m_slideshowBackgrounds.isEmpty()) {
         m_pixmap = QPixmap();
@@ -442,6 +452,17 @@ void Image::startSlideshow()
         m_currentSlide = -1;
         nextSlide();
         m_timer.start(m_delay * 1000);
+    }
+}
+
+void Image::updateWallpaperActions()
+{
+    if (m_nextWallpaperAction) {
+        m_nextWallpaperAction->setEnabled(!m_slideshowBackgrounds.isEmpty());
+    }
+
+    if (m_openImageAction) {
+        m_openImageAction->setEnabled(!m_slideshowBackgrounds.isEmpty());
     }
 }
 
@@ -621,6 +642,10 @@ void Image::nextSlide()
 
 void Image::openSlide()
 {
+    if (!m_wallpaperPackage) {
+        return;
+    }
+
     // open in image viewer
     KUrl filepath(m_wallpaperPackage->filePath("preferred"));
     kDebug() << "opening file " << filepath.path();
