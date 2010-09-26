@@ -23,17 +23,7 @@ find_package(Strigi REQUIRED)
 find_package(QImageBlitz REQUIRED)
 find_package(ZLIB REQUIRED)
 
-if(WIN32)
-  find_package(DBusMenuQt 1.7.0 REQUIRED)
-else(WIN32)
-  set(DBUSMENU_MIN_VERSION 0.6.0)
-  pkg_check_modules(DBusMenuQt REQUIRED dbusmenu-qt>=${DBUSMENU_MIN_VERSION})
-  if (NOT DBusMenuQt_FOUND)
-    macro_log_feature(DBusMenuQt_FOUND "dbusmenu-qt (>= ${DBUSMENU_MIN_VERSION})" "Menus-over-dbus implementation" "pkg_check_modules" TRUE "" "Required for the system tray Plasmoid to operate correctly.")
-  endif (NOT DBusMenuQt_FOUND)
-endif(WIN32)
-
-
+find_package(DBusMenuQt 0.6.0 REQUIRED)
 
 if(Q_WS_X11)
   if(NOT X11_XTest_FOUND)
