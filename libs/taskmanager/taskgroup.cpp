@@ -30,6 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // Qt
 #include <QtGui/QColor>
 #include <QtCore/QMimeData>
+#include <QtCore/QTimer>
 
 // KDE
 #include <KDE/KDebug>
@@ -45,10 +46,17 @@ namespace TaskManager
 class TaskGroup::Private
 {
 public:
-    Private()
+    Private(TaskGroup *group)
+        : q(group)
     {
     }
 
+    void itemDestroyed(AbstractGroupableItem *item);
+    void itemChanged(::TaskManager::TaskChanges changes);
+    void signalRemovals();
+
+    TaskGroup *q;
+    QList<AbstractGroupableItem *> signalRemovalsFor;
     ItemList members;
     QList<LauncherItem*> invisibleLaunchers;
     QString groupName;
@@ -61,7 +69,7 @@ public:
 
 TaskGroup::TaskGroup(GroupManager *parent,const QString &name, const QColor &color)
 :   AbstractGroupableItem(parent),
-    d(new Private)
+    d(new Private(this))
 {
     d->groupingStrategy = parent;
     d->groupName = name;
@@ -74,7 +82,7 @@ TaskGroup::TaskGroup(GroupManager *parent,const QString &name, const QColor &col
 
 TaskGroup::TaskGroup(GroupManager *parent)
 :   AbstractGroupableItem(parent),
-    d(new Private)
+    d(new Private(this))
 {
     d->groupingStrategy = parent;
 //    d->groupName = "default";
@@ -213,20 +221,31 @@ void TaskGroup::add(AbstractGroupableItem *item)
     emit itemAdded(item);
 }
 
-void TaskGroup::itemDestroyed(AbstractGroupableItem *item)
+void TaskGroup::Private::itemDestroyed(AbstractGroupableItem *item)
 {
-    d->members.removeAll(item);
-    emit itemRemoved(item);
+    members.removeAll(item);
+    signalRemovalsFor << item;
+    QTimer::singleShot(0, q, SLOT(signalRemovals()));
 }
 
-void TaskGroup::itemChanged(::TaskManager::TaskChanges changes)
+void TaskGroup::Private::signalRemovals()
+{
+    // signal removals for is full of dangling pointers. do not use them!
+    foreach (AbstractGroupableItem *item, signalRemovalsFor) {
+        emit q->itemRemoved(item);
+    }
+
+    signalRemovalsFor.clear();
+}
+
+void TaskGroup::Private::itemChanged(::TaskManager::TaskChanges changes)
 {
     if (changes & ::TaskManager::IconChanged) {
-        emit checkIcon(this);
+        emit q->checkIcon(q);
     }
 
     if (changes & StateChanged) {
-        emit changed(StateChanged);
+        emit q->changed(StateChanged);
     }
 }
 

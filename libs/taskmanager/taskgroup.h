@@ -146,11 +146,11 @@ Q_SIGNALS:
     void movedToDesktop(int newDesk);
     void checkIcon(TaskGroup *group);
 
-private Q_SLOTS:
-    void itemDestroyed(AbstractGroupableItem *item);
-    void itemChanged(::TaskManager::TaskChanges changes);
-
 private:
+    Q_PRIVATE_SLOT(d, void itemDestroyed(AbstractGroupableItem *item))
+    Q_PRIVATE_SLOT(d, void itemChanged(::TaskManager::TaskChanges changes))
+    Q_PRIVATE_SLOT(d, void signalRemovals())
+
     class Private;
     Private * const d;
 };
