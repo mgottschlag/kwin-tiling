@@ -525,6 +525,8 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractGroupableItem * groupableItem
             connect(item, SIGNAL(changed()), this, SLOT(relayoutItems()));
         }
     }
+
+    update();
 }
 
 void TaskGroupItem::itemRemoved(TaskManager::AbstractGroupableItem * groupableItem)
@@ -1186,7 +1188,7 @@ void TaskGroupItem::handleDroppedId(WId id, AbstractTaskItem *targetTask, QGraph
 
 void TaskGroupItem::layoutTaskItem(AbstractTaskItem* item, const QPointF &pos)
 {
-    if (!m_tasksLayout) {
+    if (!m_tasksLayout || !item->abstractItem()) {
         return;
     }
 
@@ -1367,6 +1369,10 @@ int TaskGroupItem::optimumCapacity()
 
 AbstractTaskItem* TaskGroupItem::abstractTaskItem(AbstractGroupableItem * item)
 {
+    if (!item) {
+        return 0;
+    }
+
     AbstractTaskItem *abstractTaskItem = m_groupMembers.value(item); 
     if (!abstractTaskItem) {
         foreach (AbstractTaskItem *taskItem, m_groupMembers) {
