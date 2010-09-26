@@ -74,7 +74,8 @@ class Pager : public Plasma::Applet
         virtual QList<QAction*> contextualActions();
 
     public slots:
-        void recalculateGeometry();
+        void recalculateGridSizes(int rows);
+        void updateSizes(bool allowResize);
         void recalculateWindowRects();
         void themeRefresh();
         void configChanged();
