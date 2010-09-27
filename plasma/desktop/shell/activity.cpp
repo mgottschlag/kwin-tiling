@@ -241,26 +241,13 @@ void Activity::close()
 {
     const QString name = "activities/" + m_id;
     KConfig external(name, KConfig::SimpleConfig, "appdata");
-    foreach (const QString &group, external.groupList()) {
-        KConfigGroup cg(&external, group);
-        cg.deleteGroup();
-    }
 
-    //TODO: multi-screen saving/restoring, where each screen can be
-    // independently restored: put each screen's containments into a
-    // different group, e.g. [Screens][0][Containments], [Screens][1][Containments], etc
-    KConfigGroup dest(&external, "Containments");
-    KConfigGroup dummy;
-    foreach (Plasma::Containment *c, m_containments) {
-        c->save(dummy);
-        c->config().reparent(&dest);
-        c->destroy(false);
-    }
+    //apparently this magic turns a kconfig into a kconfiggroup
+    KConfigGroup group = external.group(QString());
+    m_corona->exportLayout(group, m_containments.values());
 
-    external.sync();
     m_containments.clear();
     emit closed();
-    //FIXME only destroy it if nothing went wrong
     //TODO save a thumbnail to a file too
 
     KActivityController controller;
