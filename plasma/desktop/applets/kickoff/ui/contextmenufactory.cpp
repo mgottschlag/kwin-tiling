@@ -38,6 +38,7 @@
 #include <Solid/OpticalDisc>
 #include <KUrl>
 #include <KStandardDirs>
+#include <KWindowSystem>
 
 // Plasma
 #include <Plasma/Containment>
@@ -196,7 +197,8 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
         }
 
         if (urlFound && containment && containment->immutability() == Plasma::Mutable &&
-                containment->containmentType() == Plasma::Containment::PanelContainment) {
+            (containment->containmentType() == Plasma::Containment::PanelContainment ||
+             containment->containmentType() == Plasma::Containment::CustomPanelContainment)) {
             addToPanelAction->setText(i18n("Add to Panel"));
             actions << addToPanelAction;
         }
@@ -273,7 +275,8 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
             if (containment) {
                 Plasma::Corona *corona = containment->corona();
                 if (corona) {
-                    Plasma::Containment *desktop = corona->containmentForScreen(containment->screen());
+                    int vdesk = KWindowSystem::currentDesktop();
+                    Plasma::Containment *desktop = corona->containmentForScreen(containment->screen(), vdesk);
                     if (desktop) {
                         QVariantList args;
                         args << kurl.url() << index.data(Kickoff::IconNameRole);
