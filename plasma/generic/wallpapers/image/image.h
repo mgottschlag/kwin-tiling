@@ -54,8 +54,8 @@ class Image : public Plasma::Wallpaper
         void removeWallpaper(QString name);
         void timeChanged(const QTime& time);
         void positioningChanged(int index);
-        void slotAddDir();
-        void slotRemoveDir();
+        void addDir();
+        void removeDir();
         void getNewWallpaper();
         void colorChanged(const QColor& color);
         void pictureChanged(const QModelIndex &);
@@ -85,6 +85,8 @@ class Image : public Plasma::Wallpaper
         void suspendStartup(bool suspend); // for ksmserver
         void calculateGeometry();
         void setSingleImage();
+        void updateWallpaperActions();
+        void addDirFromSelectionDialog();
 
     private:
         static bool s_startupResumed;
