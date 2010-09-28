@@ -87,7 +87,8 @@ void DeviceNotifier::init()
     m_solidDeviceEngine = dataEngine("soliddevice");
     m_deviceNotificationsEngine = dataEngine("devicenotifications");
 
-    connect(m_dialog, SIGNAL(deviceSelected()), this, SLOT(showPopup()));
+    //don't close the dialog when the user is using it
+    connect(m_dialog, SIGNAL(activated()), this, SLOT(showPopup()));
 
     Plasma::ToolTipManager::self()->registerWidget(this);
 
@@ -499,7 +500,9 @@ void DeviceNotifier::setGlobalVisibility(bool visibility)
 void DeviceNotifier::showErrorMessage(const QString &message, const QString &details, const QString &udi)
 {
     m_dialog->showStatusBarMessage(message, details, udi);
-    showPopup(NOTIFICATION_TIMEOUT);
+    if (!isPopupShowing()) {
+        showPopup(NOTIFICATION_TIMEOUT);
+    }
     changeNotifierIcon("dialog-error", NOTIFICATION_TIMEOUT);
     update();
 }

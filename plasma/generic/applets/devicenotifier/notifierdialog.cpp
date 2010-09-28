@@ -649,6 +649,8 @@ void NotifierDialog::showStatusBarDetails(bool show)
         m_statusExpandButton->setIcon(QIcon(svg->pixmap("restore")));
     }
     delete svg;
+
+    emit activated();
 }
 
 void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorData, const QString & udi)
@@ -823,7 +825,7 @@ void NotifierDialog::deviceActivated(DeviceItem *item)
 
     m_itemBackground->setTargetItem(0);
 
-    emit deviceSelected();
+    emit activated();
 }
 
 void NotifierDialog::deviceCollapsed(DeviceItem *item)

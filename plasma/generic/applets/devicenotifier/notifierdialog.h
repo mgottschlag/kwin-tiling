@@ -183,9 +183,9 @@ namespace Notifier
 
       signals:
           /**
-          * Emitted when a devices has been selected
+          * Emitted when the user interacts with the dialog
           **/
-          void deviceSelected();
+          void activated();
 
           /**
           * Emitted when an action has been selected
@@ -311,7 +311,7 @@ namespace Notifier
 	  void dismissStatusBar();
 
 	  void triggerExpandStatusBar();
-	  
+
     private :
           /**
           * @internal build the dialog depending where it is
@@ -399,7 +399,7 @@ namespace Notifier
 	  Plasma::Label *m_statusText;
 
 	  Plasma::IconWidget *m_statusExpandButton;
-	  
+
 	  // Status detailed text
 	  Plasma::TextBrowser *m_statusDetailsText;
 
