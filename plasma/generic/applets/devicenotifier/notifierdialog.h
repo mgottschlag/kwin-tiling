@@ -175,11 +175,11 @@ namespace Notifier
           **/
           void setMenuActionsAt(const QPointF& scenePos);
 
-	  /**
-	   * Shows a message in the notifier status bar
-	   * @param message the message to show
-	   */
-	  void showStatusBarMessage(const QString & message, const QString& details, const QString& udi);
+          /**
+          * Shows a message in the notifier status bar
+          * @param message the message to show
+          */
+          void showStatusBarMessage(const QString & message, const QString& details, const QString& udi);
 
       signals:
           /**
@@ -267,23 +267,23 @@ namespace Notifier
           **/
           void storageSetupDone(Solid::ErrorType error, QVariant errorData, const QString & udi);
 
-	  /**
-	   * @internal slot called when a setup is requested
-	   * @param udi device identifier given by solid
-	   **/
-	  void setupRequested(const QString &udi);
+          /**
+          * @internal slot called when a setup is requested
+          * @param udi device identifier given by solid
+          **/
+          void setupRequested(const QString &udi);
 
-	  /**
-	   * @internal slot called when a teardown is requested
-	   * @param udi device identifier given by solid
-	   **/
-	  void teardownRequested(const QString &udi);
+          /**
+          * @internal slot called when a teardown is requested
+          * @param udi device identifier given by solid
+          **/
+          void teardownRequested(const QString &udi);
 
-	  /**
-	   * @internal slot called when an eject is requested
-	   * @param udi device (relative to the drive, not to the access) identifier given by solid
-	   **/
-	  void ejectRequested(const QString &udi);
+          /**
+          * @internal slot called when an eject is requested
+          * @param udi device (relative to the drive, not to the access) identifier given by solid
+          **/
+          void ejectRequested(const QString &udi);
 
           void itemBackgroundMoving(qreal step);
 
@@ -304,13 +304,13 @@ namespace Notifier
 
           void updateColors();
 
-	  /**
-	   * @internal dismiss the status bar
-	   **/
+          /**
+          * @internal dismiss the status bar
+          **/
 
-	  void dismissStatusBar();
+          void dismissStatusBar();
 
-	  void triggerExpandStatusBar();
+          void triggerExpandStatusBar();
 
     private :
           /**
@@ -366,15 +366,15 @@ namespace Notifier
           DeviceItem* hoveredItem();
           Plasma::IconWidget* hoveredAction();
 
-	  void showStatusBarDetails(bool show);
+          void showStatusBarDetails(bool show);
 
-	  void expireStatusBar(const QString& udi);
+          void expireStatusBar(const QString& udi);
 
     private:
           /// The graphics widget which displays the panel
           QGraphicsWidget *m_widget;
 
-	  QGraphicsLinearLayout *m_mainLayout;
+          QGraphicsLinearLayout *m_mainLayout;
 
           ///The layout handling the devices inside the scroll widget
           QGraphicsLinearLayout *m_deviceLayout;
@@ -392,19 +392,19 @@ namespace Notifier
           ///The ScrollWidget managing the view
           Plasma::ScrollWidget *m_devicesScrollWidget;
 
-	  // The graphics widget which displays status messages
-	  QGraphicsWidget *m_statusWidget;
+          // The graphics widget which displays status messages
+          QGraphicsWidget *m_statusWidget;
 
-	  // Status label
-	  Plasma::Label *m_statusText;
+          // Status label
+          Plasma::Label *m_statusText;
 
-	  Plasma::IconWidget *m_statusExpandButton;
+          Plasma::IconWidget *m_statusExpandButton;
 
-	  // Status detailed text
-	  Plasma::TextBrowser *m_statusDetailsText;
+          // Status detailed text
+          Plasma::TextBrowser *m_statusDetailsText;
 
-	  // Udi relative to the error message
-	  QString m_errorUdi;
+          // Udi relative to the error message
+          QString m_errorUdi;
 
           ///The context menu action that allows to show all the devices
           QAction *m_showAll;
