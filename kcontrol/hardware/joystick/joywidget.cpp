@@ -112,7 +112,7 @@ JoyWidget::JoyWidget(QWidget *parent)
   vboxLeft->addWidget(new QLabel(i18nc("Cue for deflection of the stick", "Position:")));
   vboxLeft->addWidget(xyPos = new PosWidget);
 
-  mainVbox->addWidget(trace = new QCheckBox(i18n("Show trace")));
+  vboxLeft->addWidget(trace = new QCheckBox(i18n("Show trace")));
   connect(trace, SIGNAL(toggled(bool)), this, SLOT(traceChanged(bool)));
 
   QVBoxLayout *vboxMid = new QVBoxLayout;
@@ -158,8 +158,8 @@ JoyWidget::JoyWidget(QWidget *parent)
   connect(calibrate, SIGNAL(clicked()), this, SLOT(calibrateDevice()));
   calibrate->setEnabled(false);
 
-  mainVbox->addWidget(calibrate);
-  mainVbox->addStretch();
+  vboxLeft->addStretch();
+  vboxLeft->addWidget(calibrate);
 
   // set up a timer for idle processing of joystick events
   idle = new QTimer(this);
