@@ -2,6 +2,7 @@
 Name=privatepaste.com
 Name[de]=privatepaste.com
 Name[en_GB]=privatepaste.com
+Name[es]=privatepaste.com
 Name[hr]=privatepaste.com
 Name[ia]=privatepastebin.com
 Name[ja]=privatepaste.com
@@ -17,6 +18,7 @@ Name[x-test]=xxprivatepaste.comxx
 Name[zh_TW]=privatepaste.com
 Comment=Paste text with the PrivatePaste.com service
 Comment[en_GB]=Paste text with the PrivatePaste.com service
+Comment[es]=Pegar texto mediante el servicio PrivatePaste.com
 Comment[hr]=Zalijepi tekst pomoću servisa PrivatePaste.com
 Comment[ia]=Collar texto con le servicio PrivatePaste.com
 Comment[ja]=PrivatePaste.com のサービスを用いてテキストを貼り付ける
