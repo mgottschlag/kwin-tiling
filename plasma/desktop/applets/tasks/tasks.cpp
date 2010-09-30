@@ -227,12 +227,23 @@ void Tasks::constraintsEvent(Plasma::Constraints constraints)
         }
     }
 
+    if (constraints & Plasma::LocationConstraint) {
+        QTimer::singleShot(500, this, SLOT(publishIconGeometry()));
+    }
+
     if (constraints & Plasma::SizeConstraint) {
         adjustGroupingStrategy();
     }
 
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
     emit constraintsChanged(constraints);
+}
+
+void Tasks::publishIconGeometry()
+{
+    foreach (AbstractTaskItem *item, m_rootGroupItem->members()) {
+        item->publishIconGeometry();
+    }
 }
 
 Plasma::FrameSvg* Tasks::itemBackground()

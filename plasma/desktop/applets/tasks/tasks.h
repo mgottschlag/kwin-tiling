@@ -114,6 +114,7 @@ signals:
 
 public slots:
         void configChanged();
+        void publishIconGeometry();
 
 protected slots:
         void configAccepted();
