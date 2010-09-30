@@ -392,9 +392,13 @@ void PanelController::setLocation(const Plasma::Location &loc)
         m_rightAlignTool->setText(i18n("Right"));
     }
 
-    m_ruler->setMinimumSize(m_ruler->sizeHint());
-    m_ruler->setMaximumSize(m_ruler->sizeHint());
+
     syncRuler();
+    QSize rulerSize = m_ruler->sizeHint();
+    m_ruler->hide();
+    m_ruler->setFixedSize(rulerSize);
+    m_ruler->show();
+    updateGeometry();
 
     resize(sizeHint());
 }
