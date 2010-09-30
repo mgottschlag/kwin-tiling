@@ -242,23 +242,24 @@ public:
         QRect screenRect = Kephal::ScreenUtils::screenGeometry(m_panel->screen());
 
         Plasma::FrameSvg::EnabledBorders enabledBorders = Plasma::FrameSvg::AllBorders;
+        qreal left, top, right, bottom;
 
-        if (geo.left() <= screenRect.left()) {
+        m_shadow->getMargins(left, top, right, bottom);
+
+        if (geo.left() + left/2 <= screenRect.left()) {
             enabledBorders ^= Plasma::FrameSvg::LeftBorder;
         }
-        if (geo.top() <= screenRect.top()) {
+        if (geo.top() + top/2 <= screenRect.top()) {
             enabledBorders ^= Plasma::FrameSvg::TopBorder;
         }
-        if (geo.bottom() >= screenRect.bottom()) {
+        if (geo.bottom() - bottom/2 >= screenRect.bottom()) {
             enabledBorders ^= Plasma::FrameSvg::BottomBorder;
         }
-        if (geo.right() >= screenRect.right()) {
+        if (geo.right() - right/2 >= screenRect.right()) {
             enabledBorders ^= Plasma::FrameSvg::RightBorder;
         }
 
         m_shadow->setEnabledBorders(enabledBorders);
-
-        qreal left, top, right, bottom;
 
         m_shadow->getMargins(left, top, right, bottom);
         setContentsMargins(left, top, right, bottom);
