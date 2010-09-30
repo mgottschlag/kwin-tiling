@@ -66,7 +66,7 @@ When compositing is not active or gets suspended the normal window list will be 
 When no effect is used an outline illustrating position and size of the selected window can be shown while switching. The list can be combined with the <guilabel>Highlight selected windows</guilabel> effect when compositing is active. This effect will highlight the currently selected window by fading out all other windows.
 </para>
 <para>
-If you want to configure the layout of one item you can use the dialog which opens by clicking <guibutton>Configure Layout</guibutton>. There are several predefined layouts which provide an informative or compact view, small or large icons and window title only. You can change the way the items are laid out: horizontal, vertical or in a tabular layout. At the bottom of the dialog there is a live preview for the current settings.
+If you want to configure the layout of one item you can use the dialog which opens by clicking <guibutton>Configure Layout</guibutton>. There are several predefined layouts which provide an informative or compact view, small or large icons and window title only. You can change the way the items are laid out: horizontal, vertical or in a tabular layout.
 </para>
 <para>
 There is an additional configuration group for an optional view of the selected item. It is possible to place this view next to the list with all items. This is useful if you use an icon only layout mode and want to see the name of the current selected window as well.
