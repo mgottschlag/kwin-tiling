@@ -130,6 +130,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     , m_pendingContentsCheck( false )
     , m_session_managed( new KlipperSessionManager( this ))
 {
+    setenv("KSNI_NO_DBUSMENU", "1", 1);
     QDBusConnection::sessionBus().registerObject("/klipper", this, QDBusConnection::ExportScriptableSlots);
 
     // We don't use the clipboardsynchronizer anymore, and it confuses Klipper
