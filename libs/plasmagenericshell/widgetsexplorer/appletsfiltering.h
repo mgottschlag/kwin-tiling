@@ -21,7 +21,6 @@
 #define APPLETSFILTERING_H
 
 #include <Plasma/PushButton>
-#include <Plasma/TreeView>
 
 #include "kcategorizeditemsviewmodels_p.h"
 #include "plasmaappletitemmodel_p.h"
@@ -32,25 +31,6 @@ namespace Plasma {
     class PushButton;
     class WidgetExplorer;
 }
-
-class FilteringTreeView : public Plasma::TreeView
-{
-    Q_OBJECT
-
-public:
-    explicit FilteringTreeView(QGraphicsWidget *parent = 0, Qt::WindowFlags wFlags = 0);
-    virtual ~FilteringTreeView();
-
-
-Q_SIGNALS:
-    void filterChanged(int index);
-
-private slots:
-    void filterChanged(const QModelIndex &index);
-
-private:
-    void init();
-};
 
 class CategoriesWidget : public Plasma::PushButton
 {
@@ -128,7 +108,6 @@ private:
 
     QStandardItemModel *m_model;
     QGraphicsLinearLayout *m_linearLayout;
-    FilteringTreeView *m_categoriesTreeView;
     CategoriesWidget *m_categories;
     Plasma::LineEdit *m_textSearch;
     Qt::Orientation m_orientation;

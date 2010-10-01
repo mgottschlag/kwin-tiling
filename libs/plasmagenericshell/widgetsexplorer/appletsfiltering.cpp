@@ -33,63 +33,12 @@
 #include <plasma/framesvg.h>
 #include <plasma/widgets/label.h>
 #include <plasma/widgets/lineedit.h>
-#include <plasma/widgets/treeview.h>
 #include <plasma/widgets/pushbutton.h>
 
 #include <kephal/kephal/screens.h>
 
 #include "widgetexplorer.h"
 #include "openwidgetassistant_p.h"
-//FilteringTreeView
-
-FilteringTreeView::FilteringTreeView(QGraphicsWidget *parent, Qt::WindowFlags wFlags)
-    : Plasma::TreeView(parent)
-{
-    setWindowFlags(wFlags);
-    init();
-    connect(nativeWidget(), SIGNAL(clicked(const QModelIndex &)), this, SLOT(filterChanged(const QModelIndex &)));
-}
-
-FilteringTreeView::~FilteringTreeView()
-{
-}
-
-void FilteringTreeView::init()
-{
-    QFont listFont;
-    QPalette plasmaPalette;
-    QColor textColor;
-    QColor color;
-
-    //init treeview
-    nativeWidget()->setAttribute(Qt::WA_NoSystemBackground);
-    nativeWidget()->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    nativeWidget()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    nativeWidget()->setRootIsDecorated(false);
-    nativeWidget()->setAttribute(Qt::WA_TranslucentBackground);
-
-    //set font and palette
-    listFont = nativeWidget()->font();
-    listFont.setPointSize(KGlobalSettings::smallestReadableFont().pointSize());
-    nativeWidget()->setFont(listFont);
-    plasmaPalette = QPalette();
-    textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-    //transparent base color
-    plasmaPalette.setColor(QPalette::Base,
-                           QColor(color.red(), color.green(), color.blue(), 0));
-    plasmaPalette.setColor(QPalette::Text, textColor);
-    setPalette(plasmaPalette);
-    nativeWidget()->setAutoFillBackground(true);
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-    nativeWidget()->header()->setVisible(false);
-}
-
-void FilteringTreeView::filterChanged(const QModelIndex & index)
-{
-    emit(filterChanged(index.row()));
-}
 
 //CategoriesWidget
 
@@ -177,7 +126,6 @@ void CategoriesWidget::setModel(QStandardItemModel *model)
 FilteringWidget::FilteringWidget(QGraphicsItem * parent, Qt::WindowFlags wFlags)
     : QGraphicsWidget(parent, wFlags),
       m_model(0),
-      m_categoriesTreeView(0),
       m_categories(0),
       m_widgetExplorer(0)
 {
@@ -191,7 +139,6 @@ FilteringWidget::FilteringWidget(Qt::Orientation orientation,
                                  Qt::WindowFlags wFlags)
     : QGraphicsWidget(parent, wFlags),
       m_model(0),
-      m_categoriesTreeView(0),
       m_categories(0),
       m_widgetExplorer(widgetExplorer)
 {
@@ -271,13 +218,6 @@ void FilteringWidget::updateActions(const QList<QAction *> actions)
 void FilteringWidget::setModel(QStandardItemModel *model)
 {
     m_model = model;
-    if (m_categoriesTreeView) {
-        m_categoriesTreeView->setModel(model);
-        int rowHeight = m_categoriesTreeView->nativeWidget()->sizeHintForRow(0);
-        if (rowHeight > 0) {
-            m_categoriesTreeView->setMaximumHeight(rowHeight * 6);
-        }
-    }
 
     if (m_categories) {
         m_categories->setModel(model);
@@ -286,60 +226,32 @@ void FilteringWidget::setModel(QStandardItemModel *model)
 
 void FilteringWidget::setListOrientation(Qt::Orientation orientation)
 {
-    if (m_orientation == orientation) {
-        if ((orientation == Qt::Vertical && m_categoriesTreeView) || 
-            (orientation == Qt::Horizontal && m_categories)) {
-            return;
-        }
-    }
+    if (m_orientation == orientation && m_categories)
+        return;
 
     m_orientation = orientation;
     m_linearLayout->setOrientation(orientation);
 
+    if (!m_categories) {
+        m_categories = new CategoriesWidget(this);
+        connect(m_categories, SIGNAL(filterChanged(int)), this, SIGNAL(filterChanged(int)));
+        m_categories->setModel(m_model);
+    }
+    m_linearLayout->addItem(m_categories);
+
     if (orientation == Qt::Horizontal) {
-        if (m_categoriesTreeView) {
-            m_categoriesTreeView->deleteLater();
-            m_categoriesTreeView = 0;
-        }
-
-        if (!m_categories) {
-            m_categories = new CategoriesWidget(this);
-            connect(m_categories, SIGNAL(filterChanged(int)), this, SIGNAL(filterChanged(int)));
-            m_categories->setModel(m_model);
-        }
-
         m_textSearch->setPreferredWidth(200);
         m_textSearch->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
         m_textSearch->setPreferredHeight(-1);
-        m_linearLayout->addItem(m_categories);
         m_linearLayout->addStretch();
-        m_linearLayout->addItem(m_newWidgetsButton);
-        m_categories->setVisible(true);
     } else {
-        if (m_categories) {
-            m_categories->deleteLater();
-            m_categories = 0;
-        }
-
-        if (!m_categoriesTreeView) {
-            m_categoriesTreeView = new FilteringTreeView(this);
-            connect(m_categoriesTreeView, SIGNAL(filterChanged(int)), this, SIGNAL(filterChanged(int)));
-            m_categoriesTreeView->setModel(m_model);
-            int rowHeight = m_categoriesTreeView->nativeWidget()->sizeHintForRow(0);
-            if (rowHeight > 0) {
-                m_categoriesTreeView->setMaximumHeight(rowHeight * 6);
-            }
-        }
-
         m_textSearch->setPreferredHeight(30);
         m_textSearch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         m_textSearch->setPreferredWidth(-1);
-        m_categoriesTreeView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-        m_linearLayout->addItem(m_categoriesTreeView);
-        m_linearLayout->addItem(m_newWidgetsButton);
-        m_categoriesTreeView->setVisible(true);
     }
 
+    m_linearLayout->addItem(m_newWidgetsButton);
+    m_categories->setVisible(true);
     m_linearLayout->invalidate();
 }
 
