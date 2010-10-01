@@ -754,6 +754,7 @@ void MenuLauncherApplet::showMenu(bool pressed)
     }
 
     Plasma::ToolTipManager::self()->hide(this);
+    setStatus(Plasma::NeedsAttentionStatus);
     d->menuview.data()->popup(popupPosition(d->menuview.data()->sizeHint()));
 }
 
