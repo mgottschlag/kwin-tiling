@@ -1487,14 +1487,8 @@ void PanelView::setStatus(Plasma::ItemStatus newStatus)
 void PanelView::checkUnhide(Plasma::ItemStatus newStatus)
 {
     //kDebug() << "================= got a new status: " << newStatus << Plasma::ActiveStatus;
-
     if (newStatus > Plasma::ActiveStatus) {
-        if (!m_delayedUnhideTimer->isActive()) {
-            m_delayedUnhideTimer->start();
-        }
-
-    } else {
-        m_delayedUnhideTimer->stop();
+        unhide();
     }
 }
 
