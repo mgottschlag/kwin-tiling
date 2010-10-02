@@ -74,6 +74,12 @@ Dtime::Dtime(QWidget * parent)
   timeServerList->setEnabled(false);
   timeServerList->setEditable(true);
   findNTPutility();
+  if (ntpUtility.isEmpty()) {
+      setDateTimeAuto->setEnabled(false);
+      setDateTimeAuto->setToolTip(i18n("No NTP utility has been found. "
+                                       "Install 'ntpdate' or 'rdate' command to enable automatic "
+                                       "updating of date and time."));
+  }
 
   QVBoxLayout *v2 = new QVBoxLayout( timeBox );
   v2->setMargin( 0 );
@@ -146,14 +152,13 @@ void Dtime::findNTPutility(){
     path += QLatin1String("/bin:/usr/bin");
   }
 
-  foreach(QString possible_ntputility, QStringList() << "ntpdate" << "rdate" ) {
+  foreach(const QString &possible_ntputility, QStringList() << "ntpdate" << "rdate" ) {
     if( !((ntpUtility = KStandardDirs::findExe(possible_ntputility, path)).isEmpty()) ) {
       kDebug() << "ntpUtility = " << ntpUtility;
       return;
     }
   }
 
-  ///privateLayoutWidget->hide();
   kDebug() << "ntpUtility not found!";
 }
 
