@@ -30,7 +30,7 @@ PlaceService::PlaceService(QObject* parent,
       m_model(model),
       m_index(index)
 {
-    setName("places");
+    setName("org.kde.places");
     if (m_index.isValid()) {
         Q_ASSERT(m_index.model() == model);
         setDestination(QString::number(m_index.row()));

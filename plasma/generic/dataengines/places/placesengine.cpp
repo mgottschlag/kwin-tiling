@@ -22,6 +22,7 @@
 
 #include <KDiskFreeSpaceInfo>
 
+#include "placeservice.h"
 
 PlacesEngine::PlacesEngine(QObject *parent, const QVariantList &args)
     : Plasma::DataEngine(parent, args)
@@ -69,6 +70,17 @@ void PlacesEngine::dataChanged(const QModelIndex& topLeft,
 void PlacesEngine::sendAllData()
 {
     sendData(0, m_placesModel.rowCount() - 1);
+}
+
+Plasma::Service *PlacesEngine::serviceForSource(const QString &source)
+{
+    const int row = source.toInt();
+    const QModelIndex index = m_placesModel.index(row, 0);
+    if (index.isValid()) {
+        return new PlaceService(this, &m_placesModel, index);
+    }
+
+    return DataEngine::serviceForSource(source);
 }
 
 void PlacesEngine::sendData(int start, int end)

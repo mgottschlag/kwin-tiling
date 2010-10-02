@@ -31,6 +31,8 @@ public:
     PlacesEngine(QObject* parent, const QVariantList& args);
     ~PlacesEngine();
 
+    Plasma::Service *serviceForSource(const QString &source);
+
 private Q_SLOTS:
     // KFilePlacesModel
     void modelReset();
