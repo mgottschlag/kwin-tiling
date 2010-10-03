@@ -53,8 +53,10 @@ private slots:
     void updateAcPlugState(bool newState);
     void deviceRemoved(const QString& udi);
     void deviceAdded(const QString& udi);
-    void profilesChanged(const QString &current, const QStringList &profiles);
+    void profileChanged(const QString &current);
     void batteryRemainingTimeChanged(int time);
+    void availableProfilesChanged();
+    void reloadPowerDevilData();
 
 private:
     QStringList basicSourceNames() const;
@@ -62,6 +64,7 @@ private:
     QStringList m_sources;
 
     QHash<QString, QString> m_batterySources;
+
 };
 
 K_EXPORT_PLASMA_DATAENGINE(powermanagement, PowermanagementEngine)
