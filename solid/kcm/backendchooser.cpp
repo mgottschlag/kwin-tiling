@@ -64,7 +64,10 @@ BackendChooser::BackendChooser(QWidget *parent, const QString &backendType)
 
     KServiceType::Ptr service_type = KServiceType::serviceType(backendType);
 
-    QString title = service_type->comment();
+    QString title;
+    if (service_type) {
+        title = service_type->comment();
+    }
 
     if (title.isEmpty())
     {
