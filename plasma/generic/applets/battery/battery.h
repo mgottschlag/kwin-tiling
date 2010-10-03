@@ -88,6 +88,7 @@ class Battery : public Plasma::PopupApplet
         void sourceRemoved(const QString &source);
         void brightnessChanged(const int brightness);
         void updateSlider(const float brightness);
+        void updateSlider();
         void openConfig();
         void setProfile(const QString &profile);
         void suspend();

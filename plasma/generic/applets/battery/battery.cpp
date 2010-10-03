@@ -50,7 +50,6 @@
 
 #include <kworkspace/kworkspace.h>
 
-#include <solid/control/powermanager.h>
 #include <solid/powermanagement.h>
 
 #include <Plasma/Animator>
@@ -68,6 +67,7 @@
 #include <Plasma/Theme>
 #include <Plasma/ToolTipContent>
 #include <Plasma/ToolTipManager>
+#include <qdbuspendingreply.h>
 
 
 typedef QHash<QString, QVariant> VariantDict;
@@ -397,24 +397,44 @@ void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void Battery::suspend()
 {
     hidePopup();
-    QDBusConnection dbus(QDBusConnection::sessionBus());
-    QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus);
-    iface.asyncCall("suspend", Solid::Control::PowerManager::ToRam);
+    QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
+                                                      "/org/kde/Solid/PowerManagement",
+                                                      "org.kde.Solid.PowerManagement",
+                                                      "suspendToRam");
+    QDBusPendingReply< QString > reply = QDBusConnection::sessionBus().asyncCall(msg);
 }
 
 void Battery::hibernate()
 {
     hidePopup();
-    QDBusConnection dbus(QDBusConnection::sessionBus());
-    QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus);
-    iface.asyncCall("suspend", Solid::Control::PowerManager::ToDisk);
+    QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
+                                                      "/org/kde/Solid/PowerManagement",
+                                                      "org.kde.Solid.PowerManagement",
+                                                      "suspendToDisk");
+    QDBusPendingReply< QString > reply = QDBusConnection::sessionBus().asyncCall(msg);
 }
 
 void Battery::brightnessChanged(const int brightness)
 {
     if (!m_ignoreBrightnessChange) {
-        Solid::Control::PowerManager::setBrightness(brightness);
+        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
+                                                        "/org/kde/Solid/PowerManagement",
+                                                        "org.kde.Solid.PowerManagement",
+                                                        "setBrightness");
+        msg.setArguments(QList<QVariant>() << QVariant::fromValue(brightness));
+        QDBusPendingReply< QString > reply = QDBusConnection::sessionBus().asyncCall(msg);
     }
+}
+
+void Battery::updateSlider()
+{
+    QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
+                                                        "/org/kde/Solid/PowerManagement",
+                                                        "org.kde.Solid.PowerManagement",
+                                                        "brightness");
+    QDBusPendingReply< int > reply = QDBusConnection::sessionBus().asyncCall(msg);
+    reply.waitForFinished();
+    updateSlider(reply.value());
 }
 
 void Battery::updateSlider(const float brightness)
@@ -536,7 +556,8 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         m_brightnessSlider = new Plasma::Slider(m_controls);
         m_brightnessSlider->setRange(0, 100);
-        updateSlider(Solid::Control::PowerManager::brightness());
+
+        updateSlider();
         m_brightnessSlider->nativeWidget()->setTickInterval(10);
         m_brightnessSlider->setOrientation(Qt::Horizontal);
         connect(m_brightnessSlider, SIGNAL(valueChanged(int)),
@@ -724,7 +745,7 @@ void Battery::updateStatus()
     }
 
     if (m_brightnessSlider) {
-        updateSlider(Solid::Control::PowerManager::brightness());
+        updateSlider();
     }
 }
 
