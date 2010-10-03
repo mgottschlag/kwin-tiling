@@ -732,7 +732,7 @@ void Battery::openConfig()
 {
     //kDebug() << "opening powermanagement configuration dialog";
     QStringList args;
-    args << "powerdevilconfig";
+    args << "powerdevilprofilesconfig";
     KToolInvocation::kdeinitExec("kcmshell4", args);
 }
 
