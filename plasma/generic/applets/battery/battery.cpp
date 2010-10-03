@@ -697,31 +697,34 @@ void Battery::updateStatus()
             ++batteryCount;
         }
 
-        m_acLabelLabel->setText(i18n("AC Adapter:")); // ouch ...
+        m_acLabelLabel->setText(i18n("AC Adapter: "));
         if (m_acAdapterPlugged) {
-            m_acInfoLabel->setText(i18n("Plugged in"));
+            m_acInfoLabel->setText(i18n("<b>Plugged in</b>"));
         } else {
-            m_acInfoLabel->setText(i18n("Not plugged in"));
+            m_acInfoLabel->setText(i18n("<b>Not plugged in</b>"));
         }
 
-        if (showRemainingTime && m_remainingMSecs > 0) {
+        if (batteryCount && showRemainingTime && m_remainingMSecs > 0) {
             m_remainingTimeLabel->show();
             m_remainingInfoLabel->show();
             // we don't have too much accuracy so only give hours and minutes
             int remainingMinutes = m_remainingMSecs - (m_remainingMSecs % 60000);
-            m_remainingInfoLabel->setText(KGlobal::locale()->prettyFormatDuration(remainingMinutes));
+            QString remText = QString("%1%2%3").arg("<b>", KGlobal::locale()->prettyFormatDuration(remainingMinutes), "</b>");
+            m_remainingInfoLabel->setText(remText);
         } else {
             m_remainingTimeLabel->hide();
             m_remainingInfoLabel->hide();
         }
     } else {
-        batteriesLabel = i18n("<b>Battery:</b> ");
-        batteriesInfo = i18nc("Battery is not plugged in", "Not present");
+        batteriesLabel = i18n("Battery:");
+        batteriesInfo = i18nc("Battery is not plugged in", "<b>Not present</b>");
     }
 
     if (!batteriesInfo.isEmpty()) {
         m_batteryInfoLabel->setText(batteriesInfo);
         m_batteryLabelLabel->setText(batteriesLabel);
+        kDebug() << batteriesInfo;
+        kDebug() << batteriesLabel;
     }
 
     if (!m_availableProfiles.empty() && m_profileCombo) {
