@@ -96,7 +96,7 @@ KDE_EXPORT int kdemain(int argc, char **argv)
 
     QByteArray appName = "plasma-desktop";
     if (associatedScreen > 0) {
-        appName.append("-screen-").append(associatedScreen);
+        appName.append("-screen-").append(QByteArray::number(associatedScreen));
     }
 
     KAboutData aboutData(appName, 0, ki18n("Plasma Desktop Shell"),
