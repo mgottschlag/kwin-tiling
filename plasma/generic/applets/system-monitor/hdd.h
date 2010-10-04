@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2007 Petri Damsten <damu@iki.fi>
+ *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -49,8 +50,8 @@ class Hdd : public SM::Applet
         QString hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data);
         QString guessHddTitle(const Plasma::DataEngine::Data &data);
         QString filePath(const Plasma::DataEngine::Data &data);
-        bool addMeter(const QString& source);
-        virtual void deleteMeters();
+        bool addVisualization(const QString& source);
+        virtual void deleteVisualizations();
         bool isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data);
         void applyTheme(Plasma::Meter *w);
 
@@ -62,9 +63,9 @@ class Hdd : public SM::Applet
         Ui::config ui;
         QStandardItemModel m_hddModel;
         QHash<const QString, MonitorIcon *> m_icons;
+        QHash<const QString, QGraphicsLinearLayout *> m_layouts;
         QHash<QString, QList<Plasma::Meter *> > m_diskMap;
         QStringList mounted();
-        QHash<QString, Plasma::Meter*> m_meters;
 };
 
 K_EXPORT_PLASMA_APPLET(sm_hdd, Hdd)

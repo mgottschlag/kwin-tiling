@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2007 Petri Damsten <damu@iki.fi>
+ *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -35,7 +36,7 @@ class HWInfo : public SM::Applet
         ~HWInfo();
 
         virtual void init();
-        virtual bool addMeter(const QString&);
+        virtual bool addVisualization(const QString&);
 
     public slots:
         void dataUpdated(const QString &name,
@@ -44,8 +45,11 @@ class HWInfo : public SM::Applet
     private slots:
         void updateHtml();
 
+    protected:
+        virtual void deleteVisualizations();
+
     private:
-        void connectToEngine();
+        void setSources();
 
         Plasma::WebView *m_info;
         Plasma::IconWidget *m_icon;

@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2008 Petri Damsten <damu@iki.fi>
+ *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -17,6 +18,7 @@
  */
 
 #include "cpu.h"
+#include <KDebug>
 #include <Plasma/Theme>
 #include <KConfigDialog>
 #include <QTimer>
@@ -31,7 +33,7 @@ SM::Cpu::Cpu(QObject *parent, const QVariantList &args)
     resize(234 + 20 + 23, 135 + 20 + 25);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_sourceTimer.setSingleShot(true);
-    connect(&m_sourceTimer, SIGNAL(timeout()), this, SLOT(sourcesAdded()));
+    connect(&m_sourceTimer, SIGNAL(timeout()), this, SLOT(sourcesChanged()));
 }
 
 SM::Cpu::~Cpu()
@@ -45,13 +47,14 @@ void SM::Cpu::init()
     setTitle(i18n("CPU"));
 
     /* At the time this method is running, not all source may be connected. */
-    connect(engine(), SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceAdded(const QString&)));
+    connect(engine(), SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceChanged(const QString&)));
+    connect(engine(), SIGNAL(sourceRemoved(const QString&)), this, SLOT(sourceChanged(const QString&)));
     foreach (const QString& source, engine()->sources()) {
-        sourceAdded(source);
+        sourceChanged(source);
     }
 }
 
-void SM::Cpu::sourceAdded(const QString& name)
+void SM::Cpu::sourceChanged(const QString& name)
 {
     if (m_rx.indexIn(name) != -1) {
         //kDebug() << m_rx.cap(1);
@@ -63,7 +66,7 @@ void SM::Cpu::sourceAdded(const QString& name)
     }
 }
 
-void SM::Cpu::sourcesAdded()
+void SM::Cpu::sourcesChanged()
 {
     configChanged();
 }
@@ -78,7 +81,7 @@ void SM::Cpu::configChanged()
     else
         default_cpus = m_cpus;
     setInterval(cg.readEntry("interval", 2.0) * 1000.0);
-    setItems(cg.readEntry("cpus", default_cpus));
+    setSources(cg.readEntry("cpus", default_cpus));
     connectToEngine();
 }
 
@@ -90,7 +93,7 @@ QString SM::Cpu::cpuTitle(const QString &name)
     return name;
 }
 
-bool SM::Cpu::addMeter(const QString& source)
+bool SM::Cpu::addVisualization(const QString& source)
 {
     QStringList l = source.split('/');
     if (l.count() < 3) {
@@ -101,14 +104,14 @@ bool SM::Cpu::addMeter(const QString& source)
     plotter->setMinMax(0.0, 100.0);
     plotter->setTitle(cpuTitle(cpu));
     plotter->setUnit("%");
-    appendPlotter(source, plotter);
+    appendVisualization(source, plotter);
     setPreferredItemHeight(80);
     return true;
 }
 
 void SM::Cpu::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
-    SM::Plotter *plotter = plotters()[source];
+    SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
     if (plotter) {
         double value = data["value"].toDouble();
         QString temp = KGlobal::locale()->formatNumber(value, 1);
@@ -134,7 +137,7 @@ void SM::Cpu::createConfigurationInterface(KConfigDialog *parent)
             item1->setEditable(false);
             item1->setCheckable(true);
             item1->setData(cpu);
-            if (items().contains(cpu)) {
+            if (sources().contains(cpu)) {
                 item1->setCheckState(Qt::Checked);
             }
             parentItem->appendRow(QList<QStandardItem *>() << item1);
@@ -155,16 +158,17 @@ void SM::Cpu::configAccepted()
     KConfigGroup cg = config();
     QStandardItem *parentItem = m_model.invisibleRootItem();
 
-    clearItems();
+    clear();
+
     for (int i = 0; i < parentItem->rowCount(); ++i) {
         QStandardItem *item = parentItem->child(i, 0);
         if (item) {
             if (item->checkState() == Qt::Checked) {
-                appendItem(item->data().toString());
+                appendSource(item->data().toString());
             }
         }
     }
-    cg.writeEntry("cpus", items());
+    cg.writeEntry("cpus", sources());
 
     double interval = ui.intervalSpinBox->value();
     cg.writeEntry("interval", interval);

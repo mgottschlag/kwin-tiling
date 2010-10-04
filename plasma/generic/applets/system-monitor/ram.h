@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2008 Petri Damsten <damu@iki.fi>
+ *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -36,7 +37,7 @@ class Ram : public Applet
         ~Ram();
 
         virtual void init();
-        virtual bool addMeter(const QString&);
+        virtual bool addVisualization(const QString&);
         virtual void createConfigurationInterface(KConfigDialog *parent);
 
     public slots:

@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2007 Petri Damsten <damu@iki.fi>
+ *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -53,13 +54,8 @@ void Hdd::init()
 void Hdd::configChanged()
 {
     KConfigGroup cg = config();
-
-    QStringList items = cg.readEntry("uuids", QStringList());
-    if (items.isEmpty()) {
-        items = mounted();
-    }
-
-    setItems(items);
+    QStringList sources = cg.readEntry("uuids", mounted());
+    setSources(sources);
     setInterval(cg.readEntry("interval", 2) * 60 * 1000);
     connectToEngine();
 }
@@ -100,7 +96,7 @@ void Hdd::createConfigurationInterface(KConfigDialog *parent)
         item1->setEditable(false);
         item1->setCheckable(true);
         item1->setData(uuid);
-        if (items().contains(uuid)) {
+        if (sources().contains(uuid)) {
             item1->setCheckState(Qt::Checked);
         }
         QStandardItem *item2 = new QStandardItem(hddTitle(uuid, data));
@@ -124,7 +120,8 @@ void Hdd::configAccepted()
     KConfigGroup cgGlobal = globalConfig();
     QStandardItem *parentItem = m_hddModel.invisibleRootItem();
 
-    clearItems();
+    clear();
+
     for (int i = 0; i < parentItem->rowCount(); ++i) {
         QStandardItem *item = parentItem->child(i, 0);
         if (item) {
@@ -133,11 +130,11 @@ void Hdd::configAccepted()
                 cgGlobal.writeEntry(item->data().toString(), child->text());
             }
             if (item->checkState() == Qt::Checked) {
-                appendItem(item->data().toString());
+                appendSource(item->data().toString());
             }
         }
     }
-    cg.writeEntry("uuids", items());
+    cg.writeEntry("uuids", sources());
 
     uint interval = ui.intervalSpinBox->value();
     cg.writeEntry("interval", interval);
@@ -190,7 +187,7 @@ QString Hdd::filePath(const Plasma::DataEngine::Data &data)
     return label;
 }
 
-bool Hdd::addMeter(const QString& source)
+bool Hdd::addVisualization(const QString& source)
 {
     Plasma::Meter *w;
     Plasma::DataEngine *engine = dataEngine("soliddevice");
@@ -228,8 +225,8 @@ bool Hdd::addMeter(const QString& source)
     w->setLabelAlignment(2, Qt::AlignVCenter | Qt::AlignCenter);
     w->setMaximum(data["Size"].toULongLong() / (1024 * 1024));
     applyTheme(w);
+    appendVisualization(source, w);
     layout->addItem(w);
-    m_meters[source] = w;
     mainLayout()->addItem(layout);
     dataUpdated(source, data);
     setPreferredItemHeight(layout->preferredSize().height());
@@ -264,16 +261,21 @@ void Hdd::applyTheme(Plasma::Meter *w)
 
 void Hdd::themeChanged()
 {
-    foreach (Plasma::Meter *w, m_meters) {
-        applyTheme(w);
+    foreach (const QString source, connectedSources()) {
+        applyTheme(qobject_cast<Plasma::Meter*>(visualization(source)));
     }
 }
 
-void Hdd::deleteMeters()
+void Hdd::deleteVisualizations()
 {
-    Applet::deleteMeters();
+    foreach(MonitorIcon * icon, m_icons) {
+        delete(icon);
+    }
+
+    m_icons.clear();
+
+    Applet::deleteVisualizations();
     m_diskMap.clear();
-    m_meters.clear();
 }
 
 bool Hdd::isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data)
@@ -290,9 +292,9 @@ bool Hdd::isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data)
         if ((data->value("Usage").toString() != i18n("File System") &&
              data->value("Usage").toString() != i18n("Raid")) ||
             data->value("File System Type").toString() == "swap") {
-            QStringList list = items();
+            QStringList list = sources();
             list.removeAll(uuid);
-            setItems(list);
+            setSources(list);
             return false;
         }
         return true;
@@ -312,7 +314,7 @@ void Hdd::dataUpdated(const QString& source,
             }
         }
     } else {
-        Plasma::Meter *w = m_meters.value(source);
+        Plasma::Meter *w = qobject_cast<Plasma::Meter *>(visualization(source));
         if (!w) {
             return;
         }

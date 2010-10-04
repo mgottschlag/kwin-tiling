@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2007 Petri Damsten <damu@iki.fi>
+ *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -27,17 +28,14 @@
 #define PREFERRED 200
 
 class QGraphicsLinearLayout;
+class QGraphicsWidget;
 
 namespace Plasma {
-    class Meter;
-    class SignalPlotter;
     class Frame;
     class IconWidget;
 }
 
 namespace SM {
-
-class Plotter;
 
 class SM_EXPORT Applet : public Plasma::Applet
 {
@@ -63,12 +61,15 @@ class SM_EXPORT Applet : public Plasma::Applet
         qreal preferredItemHeight() { return m_preferredItemHeight; };
         void setPreferredItemHeight(qreal preferredItemHeight)
                 { m_preferredItemHeight = preferredItemHeight; };
-        QStringList items() { return m_items; };
-        void appendItem(const QString& item) { m_items.append(item); };
-        void setItems(const QStringList& items) { m_items = items; };
-        void clearItems() { m_items.clear(); };
+        QStringList sources() { return m_sources; };
+        void appendSource(const QString& source) { m_sources.append(source); };
+        void setSources(const QStringList& sources) { m_sources = sources; };
+        void clearSources() { m_sources.clear(); };
+        void clear();
 
         KConfigGroup config();
+        void configureLayout();
+        void removeLayout();
         void connectToEngine();
         void connectSource(const QString& source);
         QStringList connectedSources();
@@ -77,8 +78,6 @@ class SM_EXPORT Applet : public Plasma::Applet
         QGraphicsLinearLayout* mainLayout();
         Plasma::DataEngine* engine();
         void setEngine(Plasma::DataEngine* engine);
-        QHash<QString, SM::Plotter*> plotters();
-        void appendPlotter(const QString& source, SM::Plotter* plotter);
         uint interval();
         void setInterval(uint interval);
         QString title();
@@ -86,9 +85,11 @@ class SM_EXPORT Applet : public Plasma::Applet
         QHash<QString, QString> tooltips() const;
         void setToolTip(const QString &source, const QString &tipContent);
         Mode mode();
-        virtual bool addMeter(const QString&);
+        QGraphicsWidget* visualization(const QString& source);
+        virtual bool addVisualization(const QString& source);
+        void appendVisualization(const QString& source, QGraphicsWidget *visualization);
+        virtual void deleteVisualizations();
         void displayNoAvailableSources();
-        virtual void deleteMeters();
         virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
     private:
@@ -97,10 +98,10 @@ class SM_EXPORT Applet : public Plasma::Applet
         QString m_title;
         bool m_titleSpacer;
         Plasma::Frame* m_header;
-        QStringList m_items;
+        QStringList m_sources;
         QStringList m_connectedSources;
         Plasma::DataEngine *m_engine;
-        QHash<QString, SM::Plotter*> m_plotters;
+        QHash<QString, QGraphicsWidget*> m_visualizations;
         QHash<QString, QString> m_toolTips;
         Qt::Orientation m_orientation;
         Plasma::IconWidget *m_noSourcesIcon;

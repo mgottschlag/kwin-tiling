@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2008 Petri Damsten <damu@iki.fi>
+ *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -56,7 +57,7 @@ void SM::Net::configChanged()
 {
     KConfigGroup cg = config();
     setInterval(cg.readEntry("interval", 2.0) * 1000);
-    setItems(cg.readEntry("interfaces", m_interfaces));
+    setSources(cg.readEntry("interfaces", m_interfaces));
     connectToEngine();
 }
 
@@ -83,7 +84,7 @@ void SM::Net::sourceRemoved(const QString& name)
     m_interfaces.removeAll(name);
 }
 
-bool SM::Net::addMeter(const QString& source)
+bool SM::Net::addVisualization(const QString& source)
 {
     QStringList l = source.split('/');
     if (l.count() < 3) {
@@ -95,7 +96,7 @@ bool SM::Net::addMeter(const QString& source)
     plotter->setUnit("KiB/s");
     plotter->setCustomPlots(QList<QColor>() << QColor("#0099ff") << QColor("#91ff00"));
     //plotter->setStackPlots(false);
-    appendPlotter(interface, plotter);
+    appendVisualization(interface, plotter);
     connectSource("network/interfaces/" + interface + "/receiver/data");
     setPreferredItemHeight(80);
     return true;
@@ -115,7 +116,7 @@ void SM::Net::dataUpdated(const QString& source,
     }
     m_data[interface][index] = qMax(0.0, data["value"].toDouble());
     if (!m_data[interface].contains(-1)) {
-        SM::Plotter *plotter = plotters()[interface];
+        SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(interface));
         if (plotter) {
             plotter->addSample(m_data[interface]);
             if (mode() == SM::Applet::Panel) {
@@ -144,7 +145,7 @@ void SM::Net::createConfigurationInterface(KConfigDialog *parent)
         item1->setEditable(false);
         item1->setCheckable(true);
         item1->setData(interface);
-        if (items().contains(interface)) {
+        if (sources().contains(interface)) {
             item1->setCheckState(Qt::Checked);
         }
         parentItem->appendRow(QList<QStandardItem *>() << item1);
@@ -164,16 +165,17 @@ void SM::Net::configAccepted()
     KConfigGroup cg = config();
     QStandardItem *parentItem = m_model.invisibleRootItem();
 
-    clearItems();
+    clear();
+
     for (int i = 0; i < parentItem->rowCount(); ++i) {
         QStandardItem *item = parentItem->child(i, 0);
         if (item) {
             if (item->checkState() == Qt::Checked) {
-                appendItem(item->data().toString());
+                appendSource(item->data().toString());
             }
         }
     }
-    cg.writeEntry("interfaces", items());
+    cg.writeEntry("interfaces", sources());
 
     double interval = ui.intervalSpinBox->value();
     cg.writeEntry("interval", interval);

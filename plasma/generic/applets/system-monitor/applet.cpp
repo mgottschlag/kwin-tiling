@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2007 Petri Damsten <damu@iki.fi>
+ *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -22,12 +23,10 @@
 #include <Plasma/Containment>
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
-#include <Plasma/SignalPlotter>
 #include <Plasma/ToolTipManager>
 #include <KIcon>
 #include <KDebug>
 #include <QGraphicsLinearLayout>
-#include "plotter.h"
 
 namespace SM {
 
@@ -53,7 +52,7 @@ Applet::Applet(QObject *parent, const QVariantList &args)
 
 Applet::~Applet()
 {
-    deleteMeters();
+    removeLayout();
 }
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)
@@ -109,14 +108,27 @@ QGraphicsLinearLayout* Applet::mainLayout()
    return m_mainLayout;
 }
 
-void Applet::connectToEngine()
+void Applet::removeLayout()
 {
-    deleteMeters();
+    if (!m_mainLayout) {
+        return;
+    }
+
+    deleteVisualizations();
+
+    delete(m_noSourcesIcon);
+    m_noSourcesIcon = 0;
+
+    delete(m_header);
+    m_header = 0;
+
     // We delete the layout since it seems to be only way to remove stretch set for some applets.
     setLayout(0);
     m_mainLayout = 0;
-    disconnectSources();
+}
 
+void Applet::configureLayout()
+{
     mainLayout()->setOrientation(m_orientation);
     if (m_mode != Panel && !m_header) {
         m_header = new Plasma::Frame(this);
@@ -124,15 +136,23 @@ void Applet::connectToEngine()
         m_header->setText(m_title);
         mainLayout()->addItem(m_header);
     }
+}
 
-    if (m_items.isEmpty()){
+void Applet::connectToEngine()
+{
+    removeLayout();
+    configureLayout();
+    disconnectSources();
+
+    if (m_sources.isEmpty()){
         displayNoAvailableSources();
+        constraintsEvent(Plasma::SizeConstraint);
         return;
     }
 
-    foreach (const QString &item, m_items) {
-        if (addMeter(item)) {
-            connectSource(item);
+    foreach (const QString &source, m_sources) {
+        if (addVisualization(source)) {
+            connectSource(source);
         }
     }
 
@@ -149,6 +169,12 @@ void Applet::checkGeometry()
     QSizeF pref;
     QSizeF max;
 
+    int nb_items = 0;
+
+    nb_items = m_visualizations.count();
+    if (nb_items == 0)
+        nb_items = 1;
+
     if (m_mode != Panel) {
         qreal height = 0;
         qreal width = MINIMUM;
@@ -157,10 +183,10 @@ void Applet::checkGeometry()
             height = m_header->minimumSize().height();
             width = m_header->minimumSize().width();
         }
-        min.setHeight(qMax(height + m_items.count() * MINIMUM,
+        min.setHeight(qMax(height + nb_items * MINIMUM,
                              mainLayout()->minimumSize().height()));
         min.setWidth(width + MINIMUM);
-        pref.setHeight(height + m_items.count() * m_preferredItemHeight);
+        pref.setHeight(height + nb_items * m_preferredItemHeight);
         pref.setWidth(PREFERRED);
         max = QSizeF();
         if (m_mode != Monitor) {
@@ -183,10 +209,10 @@ void Applet::checkGeometry()
         qreal s;
 
         if (m_orientation == Qt::Horizontal) {
-            x = m_items.count();
+            x = nb_items;
             s = size.height();
         } else {
-            y = m_items.count();
+            y = nb_items;
             s = size.width();
         }
         min = QSizeF(16 * x, 16 * y);
@@ -197,7 +223,7 @@ void Applet::checkGeometry()
     setMinimumSize(min);
     setPreferredSize(pref);
     setMaximumSize(max);
-    //kDebug() << m_min << m_pref << m_max << metaObject()->className();
+    //kDebug() << min << pref << max << metaObject()->className();
     emit geometryChecked();
 }
 
@@ -220,18 +246,22 @@ void Applet::disconnectSources()
    m_connectedSources.clear();
 }
 
-void Applet::deleteMeters()
+void Applet::deleteVisualizations()
 {
     if (!m_mainLayout) {
         return;
     }
-    foreach (SM::Plotter* item, m_plotters) {
-        item->deleteLater();
-    }
-    m_plotters.clear();
+    qDeleteAll(m_visualizations);
+
+    m_visualizations.clear();
     m_toolTips.clear();
-    delete m_header;
-    m_header = 0;
+}
+
+void Applet::clear()
+{
+    disconnectSources();
+    removeLayout();
+    clearSources();
 }
 
 void Applet::displayNoAvailableSources()
@@ -239,6 +269,7 @@ void Applet::displayNoAvailableSources()
     KIcon appletIcon(icon());
     m_noSourcesIcon = new Plasma::IconWidget(appletIcon, "", this);
     mainLayout()->addItem(m_noSourcesIcon);
+    m_preferredItemHeight = MINIMUM;
 }
 
 KConfigGroup Applet::config()
@@ -294,28 +325,35 @@ QVariant Applet::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void Applet::toolTipAboutToShow()
 {
-    if (mode() == SM::Applet::Panel && !m_toolTips.isEmpty()) {
-        QString html = "<table>";
-        foreach (const QString& s, m_toolTips.values()) {
-            if (!s.isEmpty()) {
-                html += s;
+    if (mode() == SM::Applet::Panel) {
+        if (!m_toolTips.isEmpty()) {
+            QString html = "<table>";
+            foreach (const QString& s, m_toolTips.values()) {
+                if (!s.isEmpty()) {
+                    html += s;
+                }
             }
+            html += "</table>";
+            Plasma::ToolTipContent data(title(), html);
+            Plasma::ToolTipManager::self()->setContent(this, data);
+        } else {
+            Plasma::ToolTipManager::self()->clearContent(this);
         }
-        html += "</table>";
-        Plasma::ToolTipContent data(title(), html);
-        Plasma::ToolTipManager::self()->setContent(this, data);
     }
 }
 
-void Applet::appendPlotter(const QString& source, SM::Plotter* plotter)
+void Applet::appendVisualization(const QString& source, QGraphicsWidget * visualization)
 {
-    m_plotters[source] = plotter;
-    mainLayout()->addItem(plotter);
+    if (m_visualizations.contains(source)) {
+        delete(m_visualizations[source]);
+    }
+    m_visualizations[source] = visualization;
+    mainLayout()->addItem(visualization);
 }
 
-QHash<QString, SM::Plotter*> Applet::plotters()
+QGraphicsWidget * Applet::visualization(const QString& source)
 {
-    return m_plotters;
+    return m_visualizations[source];
 }
 
 uint Applet::interval()
@@ -356,7 +394,7 @@ Plasma::DataEngine* Applet::engine()
     return m_engine;
 }
 
-bool Applet::addMeter(const QString&)
+bool Applet::addVisualization(const QString&)
 {
     return false;
 }

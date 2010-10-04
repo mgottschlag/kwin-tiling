@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2007 Petri Damsten <damu@iki.fi>
+ *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -56,7 +57,7 @@ class Temperature : public SM::Applet
         QRegExp m_rx;
 
         QString temperatureTitle(const QString& source);
-        bool addMeter(const QString& source);
+        bool addVisualization(const QString& source);
         bool isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data);
 };
 

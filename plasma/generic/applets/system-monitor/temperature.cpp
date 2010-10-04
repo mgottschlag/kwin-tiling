@@ -1,6 +1,7 @@
 /*
  *   Copyright (C) 2007 Petri Damsten <damu@iki.fi>
  *   Copyright (C) 2008 Marco Martin <notmart@gmail.com>
+ *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -64,7 +65,7 @@ void Temperature::configChanged()
 {
     KConfigGroup cg = config();
     setInterval(cg.readEntry("interval", 2.0) * 1000.0);
-    setItems(cg.readEntry("temps", m_sources.mid(0, 5)));
+    setSources(cg.readEntry("temps", m_sources.mid(0, 5)));
     connectToEngine();
 }
 
@@ -97,7 +98,7 @@ void Temperature::createConfigurationInterface(KConfigDialog *parent)
         QStandardItem *item1 = new QStandardItem(temp);
         item1->setEditable(false);
         item1->setCheckable(true);
-        if (items().contains(temp)) {
+        if (sources().contains(temp)) {
             item1->setCheckState(Qt::Checked);
         }
         QStandardItem *item2 = new QStandardItem(temperatureTitle(temp));
@@ -122,18 +123,19 @@ void Temperature::configAccepted()
     KConfigGroup cgGlobal = globalConfig();
     QStandardItem *parentItem = m_tempModel.invisibleRootItem();
 
-    clearItems();
+    clear();
+
     for (int i = 0; i < parentItem->rowCount(); ++i) {
         QStandardItem *item = parentItem->child(i, 0);
         if (item) {
             cgGlobal.writeEntry(item->text(),
                                 parentItem->child(i, 1)->text());
             if (item->checkState() == Qt::Checked) {
-                appendItem(item->text());
+                appendSource(item->text());
             }
         }
     }
-    cg.writeEntry("temps", items());
+    cg.writeEntry("temps", sources());
     uint interval = ui.intervalSpinBox->value();
     cg.writeEntry("interval", interval);
 
@@ -146,7 +148,7 @@ QString Temperature::temperatureTitle(const QString& source)
     return cg.readEntry(source, source.mid(source.lastIndexOf('/') + 1).replace('_',' '));
 }
 
-bool Temperature::addMeter(const QString& source)
+bool Temperature::addVisualization(const QString& source)
 {
     Plasma::DataEngine *engine = dataEngine("systemmonitor");
 
@@ -165,7 +167,7 @@ bool Temperature::addMeter(const QString& source)
         plotter->setMinMax(32, 230);
         plotter->setUnit(QString::fromUtf8("°F"));
     }
-    appendPlotter(source, plotter);
+    appendVisualization(source, plotter);
 
     Plasma::DataEngine::Data data = engine->query(source);
     dataUpdated(source, data);
@@ -176,10 +178,10 @@ bool Temperature::addMeter(const QString& source)
 void Temperature::dataUpdated(const QString& source,
                               const Plasma::DataEngine::Data &data)
 {
-    if (!items().contains(source)) {
+    if (!sources().contains(source)) {
         return;
     }
-    SM::Plotter *plotter = plotters().value(source);
+    SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
     QString temp;
     QString unit = data["units"].toString();
     double doubleValue = data["value"].toDouble();

@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2007 Petri Damsten <damu@iki.fi>
+ *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -52,44 +53,51 @@ void HWInfo::init()
 {
     KGlobal::locale()->insertCatalog("plasma_applet_system-monitor");
     setTitle(i18n("Hardware Info"));
-    appendItem("info");
+    setEngine(dataEngine("soliddevice"));
+    setSources();
     connectToEngine();
 }
 
-bool HWInfo::addMeter(const QString&)
+bool HWInfo::addVisualization(const QString& source)
 {
     if (mode() != SM::Applet::Panel) {
-        m_info = new Plasma::WebView(this);
-        m_info->setHtml(QString(START + i18n("Getting hardware information...") + END));
-        m_icon = 0;
-        mainLayout()->addItem(m_info);
-        //m_info->nativeWidget()->document()->setTextWidth(contentsRect().width());
-        //setPreferredItemHeight(m_info->nativeWidget()->document()->size().height());
-        setPreferredItemHeight(135);
+        if (!m_info) {
+            m_info = new Plasma::WebView(this);
+            m_info->setHtml(QString(START + i18n("Getting hardware information...") + END));
+            appendVisualization(source, m_info);
+            //m_info->nativeWidget()->document()->setTextWidth(contentsRect().width());
+            //setPreferredItemHeight(m_info->nativeWidget()->document()->size().height());
+            setPreferredItemHeight(135);
+        }
     } else {
-        m_icon = new Plasma::IconWidget(KIcon("hwinfo"), QString(), this);
-        m_info = 0;
-        mainLayout()->addItem(m_icon);
+        if (!m_icon) {
+            m_icon = new Plasma::IconWidget(KIcon(icon()), "", this);
+            appendVisualization(source, m_icon);
+        }
     }
-    return false;
+    return true;
 }
 
-void HWInfo::connectToEngine()
+void HWInfo::deleteVisualizations()
 {
-    Applet::connectToEngine();
-    setEngine(dataEngine("soliddevice"));
+    SM::Applet::deleteVisualizations();
+    m_icon = 0;
+    m_info = 0;
+}
 
+void HWInfo::setSources()
+{
     m_cpus = engine()->query("IS Processor")["IS Processor"].toStringList();
     foreach (const QString& id, m_cpus) {
-        engine()->connectSource(id, this);
+        appendSource(id);
     }
     m_networks = engine()->query("IS NetworkInterface")["IS NetworkInterface"].toStringList();
     foreach (const QString& id, m_networks) {
-        engine()->connectSource(id, this);
+        appendSource(id);
     }
     m_audios = engine()->query("IS AudioInterface")["IS AudioInterface"].toStringList();
     foreach (const QString& id, m_audios) {
-        engine()->connectSource(id, this);
+        appendSource(id);
     }
     // TODO: get this from soliddevice
     Plasma::DataEngine* engine = dataEngine("executable");

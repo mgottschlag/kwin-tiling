@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2008 Petri Damsten <damu@iki.fi>
+ *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -57,7 +58,7 @@ void SM::Ram::configChanged()
 {
     KConfigGroup cg = config();
     setInterval(cg.readEntry("interval", 2.0) * 1000.0);
-    setItems(cg.readEntry("memories", m_memories));
+    setSources(cg.readEntry("memories", m_memories));
     m_max.clear();
     connectToEngine();
 }
@@ -78,7 +79,7 @@ void SM::Ram::sourcesAdded()
     configChanged();
 }
 
-bool SM::Ram::addMeter(const QString& source)
+bool SM::Ram::addVisualization(const QString& source)
 {
     QStringList l = source.split('/');
     if (l.count() < 3) {
@@ -88,14 +89,14 @@ bool SM::Ram::addMeter(const QString& source)
     SM::Plotter *plotter = new SM::Plotter(this);
     plotter->setTitle(ram);
     plotter->setUnit("B");
-    appendPlotter(source, plotter);
+    appendVisualization(source, plotter);
     setPreferredItemHeight(80);
     return true;
 }
 
 void SM::Ram::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
-    SM::Plotter *plotter = plotters()[source];
+    SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
     if (plotter) {
         /* A factor to convert from default units to bytes.
          * If units is not "KB", assume it is bytes. */
@@ -142,7 +143,7 @@ void SM::Ram::createConfigurationInterface(KConfigDialog *parent)
             item1->setEditable(false);
             item1->setCheckable(true);
             item1->setData(ram);
-            if (items().contains(ram)) {
+            if (sources().contains(ram)) {
                 item1->setCheckState(Qt::Checked);
             }
             parentItem->appendRow(QList<QStandardItem *>() << item1);
@@ -163,16 +164,17 @@ void SM::Ram::configAccepted()
     KConfigGroup cg = config();
     QStandardItem *parentItem = m_model.invisibleRootItem();
 
-    clearItems();
+    clear();
+
     for (int i = 0; i < parentItem->rowCount(); ++i) {
         QStandardItem *item = parentItem->child(i, 0);
         if (item) {
             if (item->checkState() == Qt::Checked) {
-                appendItem(item->data().toString());
+                appendSource(item->data().toString());
             }
         }
     }
-    cg.writeEntry("memories", items());
+    cg.writeEntry("memories", sources());
 
     double interval = ui.intervalSpinBox->value();
     cg.writeEntry("interval", interval);
