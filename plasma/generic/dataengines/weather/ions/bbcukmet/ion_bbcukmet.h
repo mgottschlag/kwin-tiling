@@ -26,7 +26,6 @@
 #include <QDateTime>
 
 #include "../ion.h"
-#include "../weatherutils.h"
 #include "../dataengineconsumer.h"
 
 class KJob;
