@@ -1,0 +1,16 @@
+[Desktop Entry]
+Exec=kcmshell4 cursortheme
+Icon=edit-select
+Type=Service
+
+X-KDE-ServiceTypes=KCModule,KCModuleInit
+X-KDE-Library=kcm_cursortheme
+X-KDE-ParentApp=kcontrol
+X-KDE-System-Settings-Parent-Category=desktop-appearance
+X-DocPath=kcontrol/mouse/index.html
+
+Name=Cursor Theme
+
+Comment=Customize the mouse cursor appearance
+
+X-KDE-Keywords=Mouse,Cursor,Theme

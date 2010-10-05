@@ -180,11 +180,6 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
     connect(generalTab->cbScrollPolarity, SIGNAL(clicked()), this, SLOT(changed()));
     connect(generalTab->cbScrollPolarity, SIGNAL(clicked()), this, SLOT(slotScrollPolarityChanged()));
 
-    // Cursor theme tab
-    themetab = new ThemePage(this);
-    connect(themetab, SIGNAL(changed(bool)), SLOT(changed()));
-    tabwidget->addTab(themetab, i18n("&Cursor Theme"));
-
     // Advanced tab
     advancedTab = new QWidget(0);
     advancedTab->setObjectName("Advanced Tab");
@@ -509,8 +504,6 @@ void MouseConfig::load()
 
   mk_curve->setValue(group.readEntry("MKCurve", 0));
 
-  themetab->load();
-
   checkAccess();
 
   emit changed(false);
@@ -554,8 +547,6 @@ void MouseConfig::save()
   group.sync();
   group.writeEntry("MKCurve", mk_curve->value());
 
-  themetab->save();
-
   // restart kaccess
   KToolInvocation::startServiceByDesktopName("kaccess");
 
@@ -586,8 +577,6 @@ void MouseConfig::defaults()
   mk_max_speed->setValue(1000);
   mk_curve->setValue(0);
   
-  themetab->defaults();
-
   checkAccess();
 
   changed();

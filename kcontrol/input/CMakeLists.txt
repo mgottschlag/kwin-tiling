@@ -54,7 +54,7 @@ install(TARGETS kapplymousetheme ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### next target ###############
 
-set(kcm_input_PART_SRCS mouse.cpp main.cpp logitechmouse.cpp ${libnoinst_SRCS})
+set(kcm_input_PART_SRCS mouse.cpp main.cpp logitechmouse.cpp)
 
 
 kde4_add_ui_files(kcm_input_PART_SRCS kmousedlg.ui logitechmouse_base.ui )
@@ -76,9 +76,29 @@ endif (X11_Xfixes_FOUND)
 install(TARGETS kcm_input  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
+########### next target ###############
+
+set(kcm_cursortheme_PART_SRCS kcmcursortheme.cpp ${libnoinst_SRCS})
+
+kde4_add_plugin(kcm_cursortheme ${kcm_cursortheme_PART_SRCS})
+
+
+target_link_libraries(kcm_cursortheme ${KDE4_KIO_LIBS} ${X11_LIBRARIES})
+
+if (X11_Xcursor_FOUND)
+   target_link_libraries(kcm_cursortheme ${X11_Xcursor_LIB})
+endif (X11_Xcursor_FOUND)
+if (X11_Xfixes_FOUND)
+   target_link_libraries(kcm_cursortheme ${X11_Xfixes_LIB})
+endif (X11_Xfixes_FOUND)
+
+install(TARGETS kcm_cursortheme  DESTINATION ${PLUGIN_INSTALL_DIR} )
+
+
 ########### install files ###############
 
 install( FILES mouse.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
+install( FILES cursortheme.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES cursor_large_black.pcf.gz cursor_large_white.pcf.gz cursor_small_white.pcf.gz  DESTINATION  ${DATA_INSTALL_DIR}/kcminput )
 install( FILES mouse_cursor_theme.upd  DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
 
