@@ -1,6 +1,7 @@
 [Desktop Entry]
 Comment=Default desktop toolbox for the Plasma desktop shell
 Comment[en_GB]=Default desktop toolbox for the Plasma desktop shell
+Comment[et]=Plasma töölauakooriku vaikimisi töölaua tööriistakast
 Comment[ia]=Cassetta de utilitate predefinite pro le shell de scriptorio de Plasma
 Comment[ja]=Plasma デスクトップシェルの標準デスクトップツールボックス
 Comment[lt]=Numatytoji plasmos darbastalio apvalkalo darbastalio įrankinė
@@ -17,6 +18,7 @@ Icon=plasma
 Name=Desktop toolbox
 Name[en_GB]=Desktop toolbox
 Name[es]=Caja de herramientas del escritorio
+Name[et]=Töölaua tööriistakast
 Name[ia]=Cassetta de utilitate de scriptorio
 Name[ja]=デスクトップツールボックス
 Name[lt]=Darbastalio įrankinė
@@ -27,6 +29,7 @@ Name[pa]=ਡੈਸਕਟਾਪ ਟੂਲਬਾਕਸ
 Name[pt]=Barra de ecrãs
 Name[pt_BR]=Barra de ferramentas da área de trabalho
 Name[sv]=Skrivbordsverktygslåda
+Name[tr]=Masaüstü araç kutusu
 Name[uk]=Набір інструментів для стаціонарних комп’ютерів
 Name[x-test]=xxDesktop toolboxxx
 Name[zh_TW]=桌面工具盒

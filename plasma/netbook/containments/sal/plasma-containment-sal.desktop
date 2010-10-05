@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Search and Launch
 Name[en_GB]=Search and Launch
+Name[et]=Otsimine ja käivitamine
 Name[ia]=Cercar e Lancear
 Name[ja]=検索と起動
 Name[ko]=찾아서 실행하기
@@ -10,11 +11,13 @@ Name[pa]=ਖੋਜ ਅਤੇ ਚਲਾਓ
 Name[pt]=Pesquisa e Lançamento
 Name[pt_BR]=Pesquisar e executar
 Name[sv]=Sök och starta
+Name[tr]=Ara ve Çalıştır
 Name[uk]=Пошук і запуск
 Name[x-test]=xxSearch and Launchxx
 Name[zh_TW]=搜尋並啟動
 Comment=Full screen application launcher with search interface
 Comment[en_GB]=Full screen application launcher with search interface
+Comment[et]=Täisekraanis rakenduste käivitaja otsinguliidesega
 Comment[ia]=Lanceator de application a schermo plen con interfacie de cerca
 Comment[nds]=Heelschirm-Programmoproper mit Söök-Koppelsteed
 Comment[nl]=Programmastarter op volledig scherm met zoekinterface

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Share Services
 Name[en_GB]=Share Services
+Name[et]=Jagamisteenused
 Name[hr]=Servisi za dijeljenje
 Name[ia]=Servicios compartite
 Name[ja]=サービスの共有
@@ -10,12 +11,14 @@ Name[pa]=ਸਾਂਝੀਆਂ ਸਰਵਿਸਾਂ
 Name[pt]=Serviços de Partilha
 Name[pt_BR]=Serviços de compartilhamento
 Name[sv]=Delningstjänster
+Name[tr]=Paylaşım Servisleri
 Name[uk]=Служби оприлюднення
 Name[x-test]=xxShare Servicesxx
 Name[zh_TW]=分享服務
 Comment=Engine to share content using different services
 Comment[en_GB]=Engine to share content using different services
 Comment[es]=Motor para compartir contenidos a través de diferentes servicios
+Comment[et]=Eri teenuste kaudu sisu jagamise mootor
 Comment[hr]=Mehanizam za dijeljenje sadržaja koristeći razne servise
 Comment[ia]=Motor pro compartir contento usante differente servicios
 Comment[ja]=様々なサービスを用いたコンテンツ共有エンジン
