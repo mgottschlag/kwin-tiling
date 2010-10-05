@@ -7,7 +7,7 @@ X-KDE-ServiceTypes=KCModule,KCModuleInit
 X-KDE-Library=kcm_cursortheme
 X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=desktop-appearance
-X-DocPath=kcontrol/mouse/index.html
+X-DocPath=kcontrol/cursortheme/index.html
 
 Name=Cursor Theme
 

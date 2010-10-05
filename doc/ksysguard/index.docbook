@@ -91,12 +91,13 @@ and status bar, and the work space. Custom worksheets will also show the sensor
 browser.
 </para>
 <para>
-By default &ksysguard; shows two worksheets: "Process Table" and "Sensor Load".
-The Process Table lists the running processes and lets the user control them.
+By default &ksysguard; shows two worksheets: <guilabel>Process Table</guilabel> 
+and <guilabel>System Load</guilabel>. The <guilabel>Process Table</guilabel> 
+lists the running processes and lets the user control them.
 Multiple processes can be selected and controlled at once.
-The Sensor Load worksheet shows graphs of system utilization: (clockwise from
-Top-Left) CPU Load, the system Load Average over the past minute, Physical
-Memory (RAM) usage, and finally Swap Memory usage.
+The <guilabel>System Load</guilabel> worksheet shows graphs of system utilization: 
+<guilabel>CPU History</guilabel>, <guilabel>Memory and Swap History</guilabel>
+and the <guilabel>Network History</guilabel>.
 </para>
 
 <para>This default setup is sufficient enough for an inexperienced user to do
@@ -109,7 +110,7 @@ is highly flexible.</para>
 <sect1 id="the-sensor-browser">
 <title>The Sensor Browser</title>
 <para>The sensor browser exposes &ksysguard;'s advanced functionality. To
-use it, you must first go to the file menu and create a new worksheet.
+use it, you must first go to the <guimenu>File</guimenu> menu and create a new worksheet.
 It is shown whenever a custom worksheet is selected.</para>
 <para>The sensor browser displays the registered hosts and their sensors in a
 tree form. Click on the tree handles to open or close a branch. Each sensor
@@ -118,12 +119,12 @@ monitors a certain system value.</para>
 <sect2 id="connectingtootherhosts">
 <title>Connecting to other hosts</title>
 
-<para>To connect to a new host use <guimenuitem>Monitor remote machine...</guimenuitem>
+<para>To connect to a new host use <guimenuitem>Monitor Remote Machine...</guimenuitem>
 from the <guimenu>File</guimenu> menu. A dialog box will appear and allows you 
 to enter the name of the host you want to connect to. Below the name you can choose
 the connection method. The default is <application>ssh</application>, the secure
-shell. Alternatively the <application>rsh</application>, the remote shell, or
-the daemon mode can be used. Click <guibutton>OK</guibutton> to
+shell. Alternatively the <application>rsh</application>, the remote shell, 
+the daemon mode or a custom command can be used. Click <guibutton>OK</guibutton> to
 establish the connection. Shortly afterwards the new host will appear in the
 sensor browser and you can browse the list of sensors.</para>
 
@@ -140,7 +141,7 @@ two modes, must be installed on the new host.</para>
 argument. In this case, you have to select daemon mode at the connection
 dialog of <application>ksysguard</application>.
 A disadvantage of this connection type is that you won't be able to kill or
-renice a process with the <guilabel>Process Controller</guilabel> and
+renice a process in the <guilabel>Process Table</guilabel> and
 the data exchange over network won't be encrypted. As a result, daemon
 mode is not recommended.</para>
 </listitem>
@@ -193,6 +194,7 @@ the host connector you need to specify the complete command to start
 
 </sect2>
 
+<!-- This was removed with revision 517573, but how to disconnect then?
 <sect2 id="disconnecting-hosts">
 <title>Disconnecting hosts</title>
 
@@ -201,17 +203,18 @@ choose <guimenuitem>Disconnect Host</guimenuitem> from the
 <guimenu>File</guimenu> menu. If you still have sensors in use, the display
 frames will be grayed and the displays won't update any longer.</para>
 </sect2>
+-->
 </sect1>
 
 <sect1 id="the-workspace">
 <title>The Work Space</title>
 
 <para>The work space is organized as worksheets. Select
-<guimenuitem>New Worksheet...</guimenuitem> from the <guimenu>File</guimenu> menu to create a
+<guimenuitem>New Tab...</guimenuitem> from the <guimenu>File</guimenu> menu to create a
 new worksheet. A dialog will appear where you can set the name, the
 dimension and the update interval of the worksheet. To remove a worksheet 
 again, select 
-<guimenuitem>Close</guimenuitem> from the <guimenu>File</guimenu> menu. Any
+<guimenuitem>Close Tab</guimenuitem> from the <guimenu>File</guimenu> menu. Any
 modifications will be saved to the worksheet file. If a worksheet has
 never been saved, you will be asked for a file name. Worksheets consist of 
 cells
@@ -225,21 +228,25 @@ prefer to use. Certain types of displays can display more than one sensor. Add m
 sensors to a display by dragging them over from the sensor browser and dropping
 them over the already existing display.</para>
 
-<para>Worksheets can be configured by clicking <guimenuitem>Configure Worksheet
-</guimenuitem> at the <guimenu>Edit</guimenu> menu. In the appearing dialog
-you can set the dimension and the update interval. This update interval is
+<para>Worksheets can be configured by clicking <guimenuitem>Tab Properties 
+</guimenuitem> at the <guimenu>View</guimenu> menu. In the appearing dialog
+you can set the dimension and the update interval.</para>
+<!-- TimerSettings.cc not build in 4.4
+This update interval is
 used by all displays of the worksheet, which has the <guilabel>use update
 interval of worksheet</guilabel> set in its timer configuration dialog.</para>
-
+-->
+<!--not in 4.4
 <para>The entry <guimenuitem>Configure Style</guimenuitem> of the
 <guimenu>Settings</guimenu> menu gives you the possibility to configure the
 global style attributes and apply them to the current active worksheet.</para>
-
+-->
 <para>Displays can be configured by clicking with the right mouse button on
 them. A popup menu appear where you can select whether you want to change the
-properties of that display, remove it from the worksheet, change its update
-interval type and value or pause and restart its updating.</para>
+properties of that display or remove it from the worksheet.</para>
 
+<!-- Line graph, Digital display, Bar graph, Log to a file
+No Signal Plotter or Multimeter -->
 <sect2 id="signal-plotter">
 <title>Signal Plotter</title>
 
@@ -261,9 +268,9 @@ is exceeded, the display is colored in the alarm color.</para>
 </sect2>
 
 <sect2 id="process-controller">
-<title>Process Controller</title>
+<title>Process Table</title>
 
-<para>The Process Controller gives you a list of processes on your
+<para>The Process Table gives you a list of processes on your
 system. The list can be sorted by each column. Just press the left
 mouse button at the head of the column. </para>
 
@@ -282,7 +289,7 @@ that not all properties are available on every operating system.</para>
 <listitem><para>The Process <abbrev>ID</abbrev>.  A unique number for each
 process.</para></listitem>
 </varlistentry>
-
+<!-- changed in 4.4
 <varlistentry>
 <term><guilabel>PPID</guilabel></term>
 <listitem><para>The Process <abbrev>ID</abbrev> of the process parent.</para>
@@ -344,16 +351,37 @@ belongs to.</para>
 <listitem><para>The login name of the user that started the process.</para>
 </listitem>
 </varlistentry>
-
+-->
 <varlistentry>
 <term><guilabel>Command</guilabel></term>
 <listitem><para>The complete start command of the process.</para></listitem>
 </varlistentry>
 </variablelist>
 
-<para>Underneath the table you find four buttons which will be described now
+<para>At the top of the table you find three controls which will be described now
 from left to right.</para>
 
+<sect3 id="thekillbutton">
+<title>The <guibutton>Kill</guibutton> Button </title>
+
+<para>If you have selected one or more processes you can press the kill button
+to kill them. A so called <errorcode>SIGKILL</errorcode> is sent to the processes 
+which causes them to 
+terminate immediately. If these applications still have unsaved data this data
+will be lost. So use this button with care.</para>
+</sect3>
+
+<sect3 id="the-process-filter">
+<title>The Process Filter </title>
+
+<para>The Process Filter can be used to reduce the number of processes displayed
+in the table. You can filter out processes you are not interested in. Currently
+you can display all processes, system processes only, user processes only or
+your processes only.</para>
+
+</sect3>
+
+<!-- changed in 4.4-->
 <sect3 id="the-tree-view">
 <title>The <guibutton>Tree</guibutton> View</title>
 
@@ -369,34 +397,6 @@ collapse. Another click on that box will unfold the subtree again.</para>
 
 </sect3>
 
-<sect3 id="the-process-filter">
-<title>The Process Filter </title>
-
-<para>The Process Filter can be used to reduce the number of processes displayed
-in the table. You can filter out processes you are not interested in. Currently
-you can display all processes, system processes only, user processes only or
-your processes only.</para>
-
-</sect3>
-
-<sect3 id="therefreshbutton">
-<title>The <guibutton>Refresh</guibutton> Button </title>
-
-<para>This button can be used to force an immediate update of the process
-list.</para>
-
-</sect3>
-
-<sect3 id="thekillbutton">
-<title>The <guibutton>Kill</guibutton> Button </title>
-
-<para>If you have selected one or more processes you can press the kill button
-to kill them. A so called <errorcode>SIGKILL</errorcode> is sent to the processes 
-which causes them to 
-terminate immediately. If these applications still have unsaved data this data
-will be lost. So use this button with care.</para>
-
-</sect3>
 </sect2>
 
 <sect2 id="bargraph">

@@ -14,8 +14,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-11-22</date>
-<releaseinfo>&kde; 4.4</releaseinfo>
+<date>2010-10-05</date>
+<releaseinfo>&kde; 4.6</releaseinfo>
 
 <abstract>
 <para>This is the documentation for the &kde; &systemsettings; module that configures mice and other pointing devices.
@@ -38,7 +38,6 @@ of hardware that performs a similar function.</para>
 
 <para>This module is divided into several tabs:
 <link linkend="mouse-general">General</link>,
-<link linkend="cursor-theme">Cursor Theme</link>,
 <link linkend="mouse-advanced">Advanced</link> and
 <link linkend="mouse-navigation">Mouse Navigation</link>.
 There may also be one or more additional tabs if you have a Logitech mouse
@@ -118,22 +117,6 @@ action="simul">&Ctrl;<mousebutton>Right</mousebutton></keycombo> click. If you r
 </varlistentry>
 
 </variablelist>
-</sect2>
-
-<sect2 id="cursor-theme">
-<title><guilabel>Cursor Theme</guilabel></title>
-
-<para>
-This tab allows you to select from a number of cursor themes. A preview of the cursor display is shown above the list box.
-</para>
-
-<note><para>The features provided by this tab may not be available on some systems. Your system may need to be updated to support cursor themes.
-</para></note>
-
-<para>
-If you have additional cursor themes available, you can install and remove them using the buttons below the list box. Note that you cannot remove the default themes.
-</para>
-
 </sect2>
 
 <sect2 id="mouse-advanced">
@@ -221,7 +204,7 @@ pixels) specified in <guilabel>Drag start distance</guilabel></para>
 <varlistentry>
 <term><guilabel>Mouse wheel scrolls by</guilabel></term>
 <listitem>
-<para>If you have a wheel mouse, use the slider to determine how many
+<para>If you have a wheel mouse, use the spin box to determine how many
 lines of text one <quote>step</quote> of the mouse wheel will
 scroll.</para>
 </listitem>
@@ -274,7 +257,7 @@ This is the time in milliseconds between repeated motion events for mouse key ac
 <term><guilabel>Acceleration time</guilabel></term>
 <listitem>
 <para>
-This is the number of key events before the pointer reaches a maximum speed for mouse key acceleration.
+This is the time in milliseconds before the pointer reaches a maximum speed for mouse key acceleration.
 </para>
 </listitem>
 </varlistentry>
@@ -283,7 +266,7 @@ This is the number of key events before the pointer reaches a maximum speed for 
 <term><guilabel>Maximum speed</guilabel></term>
 <listitem>
 <para>
-This is the maximum speed in pixels per key event the pointer can reach for mouse key acceleration.
+This is the maximum speed in pixels per second the pointer can reach for mouse key acceleration.
 </para>
 </listitem>
 </varlistentry>

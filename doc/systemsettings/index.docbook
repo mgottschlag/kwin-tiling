@@ -24,8 +24,8 @@
 </copyright>
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2010-06-23</date>
-<releaseinfo>1.0 (&kde; 4.5)</releaseinfo>
+<date>2010-10-05</date>
+<releaseinfo>1.0 (&kde; 4.6)</releaseinfo>
 
 <abstract>
 <para>
@@ -150,7 +150,7 @@ appears, explaining the purpose of the module.
 <listitem>
 <para><itemizedlist>
 <listitem><para>
-Account Details (Password &amp; User Account, Paths, KDE Wallet, Social Desktop)
+Account Details (Password &amp; User Account, Paths, KDE Wallet, Social Desktop, Web Shortcuts)
 </para></listitem>
 <listitem><para>
 Application Appearance (Style, Colors, Icons, Fonts, Emoticons)
@@ -183,7 +183,7 @@ Shortcuts and Gestures (Custom Shortcuts, Standard Keyboard Shortcuts, Global Ke
 Desktop Effects
 </para></listitem>
 <listitem><para>
-Workspace Appearance (Window Decorations, Desktop Theme, Splash Screen)
+Workspace Appearance (Window Decorations, Cursor Theme, Desktop Theme, Splash Screen)
 </para></listitem>
 <listitem><para>
 Accessibility (Accessibility, Text-to-Speech)
@@ -195,10 +195,10 @@ Default Applications
 Desktop Search
 </para></listitem>
 <listitem><para>
-Window Behavior (Task Switcher, Virtual Desktops, Screen Edges, Window Behavior, Window Rules)
+Window Behavior (Task Switcher, Window Behavior, Window Rules)
 </para></listitem>
 <listitem><para>
-Workspace
+Workspace Behavior (Virtual Desktops, Screen Edges, Workspace)
 </para></listitem>
 </itemizedlist>
 </para>
@@ -210,7 +210,7 @@ Workspace
 <listitem>
 <para><itemizedlist>
 <listitem><para>
-Network Settings (Proxy, Connection Preferences, Service Discovery, Network Settings)
+Network Settings (Proxy, Connection Preferences, Service Discovery)
 </para></listitem>
 <listitem><para>
 Sharing (Windows Shares, Samba)
@@ -224,6 +224,9 @@ Sharing (Windows Shares, Samba)
 <term>Hardware</term>
 <listitem>
 <para><itemizedlist>
+<listitem><para>
+Printer Configuration
+</para></listitem>
 <listitem><para>
 Device Actions
 </para></listitem>
@@ -257,9 +260,6 @@ Multimedia (Audio CDs, CDDB Retrieval, Phonon)
 <term>System Administration</term>
 <listitem>
 <para><itemizedlist>
-<listitem><para>
-Printer Configuration
-</para></listitem>
 <listitem><para>
 Date &amp; Time
 </para></listitem>

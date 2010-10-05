@@ -281,7 +281,7 @@ you've entered more than two characters. You can open the settings dialog to
 learn about &krunner;’s functionality, provided by plugins. You can
 navigate through the matches using the tab and arrow keys.
 </para>
-
+<!-- whitout tab no arrow keys-->
 <para>
 If you want to know what is going on on your system, there is the <guibutton>Show
 System Activity</guibutton> button, giving you quick access to a list of windows

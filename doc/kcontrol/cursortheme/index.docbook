@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+<title>Cursor Theme</title>
+<authorgroup>
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+<author>&Brad.Hards; &Brad.Hards.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2010-10-05</date>
+<releaseinfo>&kde; 4.6</releaseinfo>
+
+<abstract>
+<para>This is the documentation for the &kde; &systemsettings; module to 
+customize the mouse cursor appearance.
+</para>
+</abstract>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>Systemsettings</keyword>
+<keyword>mouse</keyword>
+<keyword>cursor</keyword>
+</keywordset>
+</articleinfo>
+
+<para>
+This module allows you to select from a number of installed cursor themes. 
+A preview of the cursor display is shown above the list box.
+</para>
+
+<note><para>The features provided by this module may not be available on some systems. 
+Your system may need to be updated to support cursor themes.
+</para></note>
+
+<para>
+If you have additional cursor themes available, you can install and remove 
+them using the buttons below the list box. Note that you cannot remove the default themes.
+</para>
+
+</article>
