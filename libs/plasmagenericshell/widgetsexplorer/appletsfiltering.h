@@ -29,6 +29,7 @@ class KMenu;
 namespace Plasma {
     class LineEdit;
     class PushButton;
+    class ToolButton;
     class WidgetExplorer;
 }
 
@@ -81,6 +82,7 @@ public:
 
 Q_SIGNALS:
     void filterChanged(int index);
+    void closeClicked();
 
 protected Q_SLOTS:
     void setMenuPos();
@@ -107,7 +109,6 @@ private:
     void init();
 
     QStandardItemModel *m_model;
-    QGraphicsLinearLayout *m_linearLayout;
     CategoriesWidget *m_categories;
     Plasma::LineEdit *m_textSearch;
     Qt::Orientation m_orientation;
@@ -115,6 +116,7 @@ private:
     KMenu *m_newWidgetsMenu;
     Plasma::WidgetExplorer *m_widgetExplorer;
     QList<QWeakPointer<Plasma::PushButton> > m_actionButtons;
+    Plasma::ToolButton *m_closeButton;
 };
 
 #endif // APPLETSFILTERING_H

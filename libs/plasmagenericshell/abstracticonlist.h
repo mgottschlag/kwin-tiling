@@ -28,6 +28,7 @@
 #include <QWeakPointer>
 
 #include <Plasma/Plasma>
+#include <Plasma/ScrollWidget>
 #include <Plasma/Svg>
 #include <plasma/widgets/toolbutton.h>
 
@@ -40,7 +41,7 @@ namespace Plasma
     class ItemBackground;
     class ToolButton;
 
-class PLASMAGENERICSHELL_EXPORT AbstractIconList : public QGraphicsWidget
+class PLASMAGENERICSHELL_EXPORT AbstractIconList : public Plasma::ScrollWidget
 {
 
     Q_OBJECT
@@ -81,22 +82,17 @@ protected:
      */
     virtual void setSearch(const QString &searchString) = 0;
 
-    /**
-     * scroll to a specific item
-     */
-    virtual void scrollTo(int index);
-
 private:
     void init();
 
     //see how many icons is visible at once, approximately
-    int maximumAproxVisibleIconsOnList();
+    //int maximumAproxVisibleIconsOnList();
 
     //removes all the icons from the widget
     void eraseList();
 
     //returns the what's the visible rect of the list widget
-    QRectF visibleListRect();
+    //QRectF visibleListRect();
     //returns window's start position
     qreal visibleStartPosition();
     //returns window's end position
@@ -108,28 +104,18 @@ private:
     //returns item position
     qreal itemPosition(int i);
 
-    void wheelEvent(QGraphicsSceneWheelEvent *event);
+    void adjustFromOrientation();
 
 public Q_SLOTS:
     void searchTermChanged(const QString &text);
     void updateList();
 
 protected:
-    bool eventFilter(QObject *obj, QEvent *event);
-
     //Hash containing all widgets that represents the applets
     //FIXME the subclasses use this more than me so maybe they should store it?
     QHash<QString, AbstractIcon *> m_allAppletsHash;
 
-protected Q_SLOTS:
-    //checks if arrows should be enabled or not
-    void manageArrows();
-
 private Q_SLOTS:
-    void scrollDownRight();
-    void scrollUpLeft();
-    void scrollStepFinished();
-
     //moves list to position 0,0
     void resetScroll();
 
@@ -144,32 +130,18 @@ private:
 
     QGraphicsLinearLayout *m_appletListLinearLayout;
     QGraphicsWidget *m_appletListWidget;
-    QGraphicsWidget *m_appletListWindowWidget;
-    QGraphicsLinearLayout *m_arrowsLayout;
-
-    Plasma::ToolButton *m_downRightArrow;
-    Plasma::ToolButton *m_upLeftArrow;
-    Plasma::Svg *m_arrowsSvg;
 
     Qt::Orientation m_orientation;
     Plasma::Location m_location;
 
     Plasma::ItemBackground *m_hoverIndicator;
 
-    //index of current first item
-    //nothing to do with mvc indices.
-    int m_firstItemIndex;
-
     AbstractIcon *m_selectedItem;
 
     QTimer *m_searchDelayTimer;
     QString m_searchString;
 
-    int m_scrollStep;
     int m_iconSize;
-    bool m_scrollingDueToWheel;
-
-    Plasma::Animation *m_slide;
 };
 } // namespace Plasma
 

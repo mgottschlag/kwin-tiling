@@ -34,6 +34,7 @@
 #include <plasma/widgets/label.h>
 #include <plasma/widgets/lineedit.h>
 #include <plasma/widgets/pushbutton.h>
+#include <plasma/widgets/toolbutton.h>
 
 #include <kephal/kephal/screens.h>
 
@@ -168,18 +169,22 @@ void FilteringWidget::init()
     m_newWidgetsButton->nativeWidget()->setMenu(m_newWidgetsMenu);
     m_newWidgetsButton->setMinimumWidth(m_newWidgetsButton->effectiveSizeHint(Qt::PreferredSize).width());
 
+    //close button
+    m_closeButton = new Plasma::ToolButton(this);
+    m_closeButton->setIcon(KIcon("dialog-close"));
+    // Make sure the height of the button is the same as the height of the filtering widget when orientation is Horizontal
+    m_closeButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
+    connect(m_closeButton, SIGNAL(clicked()), SIGNAL(closeClicked()));
+
     //layout
-    m_linearLayout = new QGraphicsLinearLayout();
-    m_linearLayout->setContentsMargins(0, 0, 0, 0);
-    m_linearLayout->addItem(m_textSearch);
-    setLayout(m_linearLayout);
+    setListOrientation(m_orientation);
 }
 
 void FilteringWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     Q_UNUSED(event)
 
-    QSizeF contentsSize = m_linearLayout->contentsRect().size();
+    QSizeF contentsSize = layout()->contentsRect().size();
 //    m_linearLayout->invalidate();
 //    m_linearLayout->activate();
 
@@ -209,8 +214,14 @@ void FilteringWidget::updateActions(const QList<QAction *> actions)
     foreach (QAction *action, actions) {
         Plasma::PushButton *button = new Plasma::PushButton(this);
         button->setAction(action);
-        int index = qMax(0, m_linearLayout->count());
-        m_linearLayout->insertItem(index, button);
+        int index = qMax(0, layout()->count());
+        if (m_orientation == Qt::Horizontal) {
+            QGraphicsLinearLayout *l = dynamic_cast<QGraphicsLinearLayout*>(layout());
+            l->insertItem(index, button);
+        } else {
+            QGraphicsGridLayout *l = dynamic_cast<QGraphicsGridLayout*>(layout());
+            l->addItem(button, l->rowCount(), 0, 1, 2);
+        }
         m_actionButtons.append(button);
     }
 }
@@ -230,29 +241,41 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
         return;
 
     m_orientation = orientation;
-    m_linearLayout->setOrientation(orientation);
 
     if (!m_categories) {
         m_categories = new CategoriesWidget(this);
         connect(m_categories, SIGNAL(filterChanged(int)), this, SIGNAL(filterChanged(int)));
         m_categories->setModel(m_model);
     }
-    m_linearLayout->addItem(m_categories);
+
 
     if (orientation == Qt::Horizontal) {
         m_textSearch->setPreferredWidth(200);
         m_textSearch->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
         m_textSearch->setPreferredHeight(-1);
-        m_linearLayout->addStretch();
+
+        QGraphicsLinearLayout *newLayout = new QGraphicsLinearLayout(this);
+        newLayout->addItem(m_textSearch);
+        newLayout->addItem(m_categories);
+        newLayout->addStretch();
+        newLayout->addItem(m_newWidgetsButton);
+        newLayout->addItem(m_closeButton);
+        setLayout(newLayout);
     } else {
         m_textSearch->setPreferredHeight(30);
         m_textSearch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         m_textSearch->setPreferredWidth(-1);
+
+        QGraphicsGridLayout *newLayout = new QGraphicsGridLayout(this);
+        newLayout->addItem(m_textSearch, 0, 0);
+        newLayout->addItem(m_closeButton, 0, 1);
+        newLayout->addItem(m_categories, 1, 0, 1, 2);
+        newLayout->addItem(m_newWidgetsButton, 2, 0, 1, 2);
+        setLayout(newLayout);
     }
 
-    m_linearLayout->addItem(m_newWidgetsButton);
     m_categories->setVisible(true);
-    m_linearLayout->invalidate();
+    layout()->setContentsMargins(0, 0, 0, 0);
 }
 
 void FilteringWidget::setMenuPos()

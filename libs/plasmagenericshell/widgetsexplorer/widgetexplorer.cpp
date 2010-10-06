@@ -87,7 +87,6 @@ public:
     Qt::Orientation orientation;
     Plasma::Location location;
     WidgetExplorer *q;
-    Plasma::ToolButton *close;
     QString application;
     Plasma::Containment *containment;
 
@@ -107,7 +106,6 @@ public:
      * Widget that contains the search and categories filters
      */
     FilteringWidget *filteringWidget;
-    QGraphicsLinearLayout *filteringLayout;
     QGraphicsLinearLayout *mainLayout;
     int iconSize;
 };
@@ -153,37 +151,23 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
     orientation = ((location == Plasma::LeftEdge || location == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
     mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
     mainLayout->setSpacing(0);
-    filteringLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     filteringWidget = new FilteringWidget(orientation, q);
     appletsListWidget = new AppletsListWidget(location);
-    close = new Plasma::ToolButton;
-    close->setIcon(KIcon("dialog-close"));
 
     //connect
     QObject::connect(appletsListWidget, SIGNAL(appletDoubleClicked(PlasmaAppletItem*)), q, SLOT(addApplet(PlasmaAppletItem*)));
     QObject::connect(filteringWidget->textSearch(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
     QObject::connect(filteringWidget, SIGNAL(filterChanged(int)), appletsListWidget, SLOT(filterChanged(int)));
-    QObject::connect(close, SIGNAL(clicked()), q, SIGNAL(closeClicked()));
+    QObject::connect(filteringWidget, SIGNAL(closeClicked()), q, SIGNAL(closeClicked()));
 
-    //adding to layout
-    if (orientation == Qt::Horizontal) {
-        filteringLayout->addItem(filteringWidget);
-        mainLayout->addItem(filteringLayout);
-    } else {
-        mainLayout->addItem(filteringWidget);
-    }
-
+    mainLayout->addItem(filteringWidget);
     mainLayout->addItem(appletsListWidget);
     appletsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mainLayout->setAlignment(appletsListWidget, Qt::AlignTop | Qt::AlignHCenter);
 
-    if (orientation == Qt::Horizontal) {
-        filteringLayout->addItem(close);
-        filteringLayout->setAlignment(close, Qt::AlignVCenter | Qt::AlignHCenter);
-    } else {
+    if (orientation == Qt::Vertical) {
         mainLayout->setAlignment(filteringWidget, Qt::AlignTop | Qt::AlignHCenter);
         mainLayout->setStretchFactor(appletsListWidget, 10);
-        mainLayout->addItem(close);
     }
 
     //filters & models
@@ -203,17 +187,7 @@ void WidgetExplorerPrivate::setLocation(const Plasma::Location loc)
     orientation = ((location == Plasma::LeftEdge || location == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
     filteringWidget->setListOrientation(orientation);
     appletsListWidget->setLocation(loc);
-    if (orientation == Qt::Horizontal) {
-        mainLayout->removeItem(filteringWidget);
-        mainLayout->removeItem(close);
-        filteringLayout->addItem(filteringWidget);
-        filteringLayout->addItem(close);
-        filteringLayout->setAlignment(close, Qt::AlignVCenter | Qt::AlignHCenter);
-    } else {
-        filteringLayout->removeItem(filteringWidget);
-        filteringLayout->removeItem(close);
-        mainLayout->insertItem(0, filteringWidget);
-        mainLayout->addItem(close);
+    if (orientation == Qt::Vertical) {
         mainLayout->setAlignment(filteringWidget, Qt::AlignTop | Qt::AlignHCenter);
         mainLayout->setStretchFactor(appletsListWidget, 10);
     }

@@ -77,7 +77,6 @@ protected: //FIXME wuh?
     //virtuals from AbstractIconList
     void updateVisibleIcons();
     void setSearch(const QString &searchString);
-    void scrollTo(int index);
 
 Q_SIGNALS:
     void appletDoubleClicked(PlasmaAppletItem *appletItem);

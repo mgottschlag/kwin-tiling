@@ -390,11 +390,3 @@ void AppletsListWidget::setSearch(const QString &searchString)
 {
     m_modelFilterItems->setSearch(searchString);
 }
-
-void AppletsListWidget::scrollTo(int index)
-{
-    m_toolTip->setVisible(false);
-    AbstractIconList::scrollTo(index);
-}
-
-
