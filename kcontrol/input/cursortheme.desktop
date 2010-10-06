@@ -10,7 +10,9 @@ X-KDE-System-Settings-Parent-Category=desktop-appearance
 X-DocPath=kcontrol/cursortheme/index.html
 
 Name=Cursor Theme
+Name[x-test]=xxCursor Themexx
 
 Comment=Customize the mouse cursor appearance
+Comment[x-test]=xxCustomize the mouse cursor appearancexx
 
 X-KDE-Keywords=Mouse,Cursor,Theme
