@@ -1,4 +1,5 @@
 /***************************************************************************
+ *   Copyright (C) 2008 by Lukas Appelhans <l.appelhans@gmx.de>            *
  *   Copyright (C) 2010 by Ingomar Wesp <ingomar@wesp.name>                *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -16,44 +17,49 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  ***************************************************************************/
-#ifndef QUICKLAUNCH_POPUP_H
-#define QUICKLAUNCH_POPUP_H
-
-// Qt
-#include <Qt>
+#ifndef QUICKLAUNCH_LAUNCHER_H
+#define QUICKLAUNCH_LAUNCHER_H
 
 // KDE
-#include <Plasma/Dialog>
+#include <KUrl>
 
-using Plasma::Dialog;
+// Plasma
+#include <Plasma/IconWidget>
+
+// Own
+#include "launcherdata.h"
+
+class QGraphicsItem;
 
 namespace Quicklaunch {
 
-class LauncherList;
-class Quicklaunch;
-
-class Popup : public Dialog {
-
+class Launcher : public Plasma::IconWidget
+{
     Q_OBJECT
 
 public:
-    Popup(Quicklaunch *applet);
-    ~Popup();
+    Launcher(const LauncherData &data, QGraphicsItem *parent = 0);
 
-    LauncherList *launcherList();
-    void show();
-    bool eventFilter(QObject *watched, QEvent *event);
+    void setNameVisible(bool enable);
+    bool isNameVisible() const;
 
-private Q_SLOTS:
-    void onAppletGeometryChanged();
-    void onLauncherClicked();
+    void setLauncherData(const LauncherData &data);
+
+    LauncherData launcherData() const;
+    KUrl url() const;
+
+
+public Q_SLOTS:
+    void execute();
+    void toolTipAboutToShow();
+    void toolTipHidden();
 
 private:
-    void syncSizeAndPosition();
+    void updateToolTipContent();
 
-    Quicklaunch *m_applet;
-    LauncherList *m_launcherList;
+    LauncherData m_data;
+    bool m_nameVisible;
 };
 }
 
-#endif /* QUICKLAUNCH_POPUP_H */
+#endif /* QUICKLAUNCH_LAUNCHER_H */

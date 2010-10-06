@@ -21,8 +21,11 @@
 
 // Qt
 #include <Qt>
+#include <QtCore/QEvent>
 #include <QtCore/QMargins>
 #include <QtCore/QSize>
+#include <QtGui/QGraphicsLayout>
+#include <QtGui/QLayout>
 
 // KDE
 #include <KIconLoader>
@@ -33,8 +36,7 @@
 #include <Plasma/Dialog>
 
 // Own
-#include "iconarea.h"
-#include "icongridlayout.h"
+#include "launcherlist.h"
 #include "quicklaunch.h"
 
 using Plasma::Applet;
@@ -47,31 +49,35 @@ Popup::Popup(Quicklaunch *applet)
 :
     Dialog(0, Qt::X11BypassWindowManagerHint),
     m_applet(applet),
-    m_iconArea(new IconArea())
+    m_launcherList(new LauncherList(LauncherList::IconList))
 {
-    m_applet->containment()->corona()->addItem(m_iconArea);
-    m_applet->containment()->corona()->addOffscreenWidget(m_iconArea);
-
-    m_iconArea->setIconNamesVisible(false);
-
-    m_iconArea->layout()->setCellSizeHint(KIconLoader::SizeMedium);
-
-    setGraphicsWidget(m_iconArea);
+    m_applet->containment()->corona()->addItem(m_launcherList);
+    m_launcherList->installEventFilter(this);
+    setGraphicsWidget(m_launcherList);
 
     connect(m_applet, SIGNAL(geometryChanged()), SLOT(onAppletGeometryChanged()));
-    connect(m_iconArea, SIGNAL(iconClicked()), SLOT(onIconClicked()));
-    connect(m_iconArea, SIGNAL(displayedItemCountChanged()), SLOT(onDisplayedItemCountChanged()));
+    connect(m_launcherList, SIGNAL(launcherClicked()), SLOT(onLauncherClicked()));
 }
 
 Popup::~Popup()
 {
     Dialog::close();
-    delete m_iconArea;
+    delete m_launcherList;
 }
 
-IconArea * Popup::iconArea()
+bool Popup::eventFilter(QObject *watched, QEvent *event)
 {
-    return m_iconArea;
+    Q_UNUSED(watched); // watched == m_launcherList
+
+    if (event->type() == QEvent::LayoutRequest) {
+        syncSizeAndPosition();
+    }
+    return false;
+}
+
+LauncherList * Popup::launcherList()
+{
+    return m_launcherList;
 }
 
 void Popup::show()
@@ -82,41 +88,27 @@ void Popup::show()
 
 void Popup::onAppletGeometryChanged()
 {
-    syncSizeAndPosition();
+    move(m_applet->popupPosition(size()));
 }
 
-void Popup::onDisplayedItemCountChanged()
-{
-    syncSizeAndPosition();
-}
-
-void Popup::onIconClicked()
+void Popup::onLauncherClicked()
 {
     hide();
 }
 
 void Popup::syncSizeAndPosition()
 {
-    if (!isVisible()) {
-        return;
-    }
-
-    int displayedItemCount = m_iconArea->layout()->count();
-
-    const int iconAreaWidth = displayedItemCount *
-        (KIconLoader::SizeMedium + m_iconArea->layout()->cellSpacing()) -
-        m_iconArea->layout()->cellSpacing();
-
-    const int iconAreaHeight = KIconLoader::SizeMedium;
-
-    QMargins margins = contentsMargins();
+    kDebug() << "Sync size and position";
+    const QMargins margins = contentsMargins();
 
     QSize newSize(
-        iconAreaWidth + margins.left() + margins.right(),
-        iconAreaHeight + margins.top() + margins.bottom());
+        m_launcherList->preferredWidth() + margins.left() + margins.right(),
+        m_launcherList->preferredHeight() + margins.top() + margins.bottom());
 
-    move(m_applet->popupPosition(newSize, Qt::AlignRight));
-    resize(newSize);
+    m_launcherList->resize(m_launcherList->preferredWidth(), m_launcherList->preferredHeight());
+
+    syncToGraphicsWidget();
+    move(m_applet->popupPosition(size(), Qt::AlignRight));
 }
 }
 

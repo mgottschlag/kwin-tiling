@@ -11,12 +11,12 @@ if(NOT KDE4_FOUND)
 endif(NOT KDE4_FOUND)
 
 set(plasma_applet_quicklaunch_SRCS
-  iconarea.cpp
   icongridlayout.cpp
-  itemdata.cpp
+  launcher.cpp
+  launcherdata.cpp
+  launcherlist.cpp
   popup.cpp
   quicklaunch.cpp
-  quicklaunchicon.cpp
 )
 
 kde4_add_ui_files(plasma_applet_quicklaunch_SRCS quicklaunchConfig.ui)

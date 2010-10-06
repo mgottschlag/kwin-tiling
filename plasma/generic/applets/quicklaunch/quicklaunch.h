@@ -50,7 +50,7 @@ using Plasma::Constraints;
 
 namespace Quicklaunch {
 
-class IconArea;
+class LauncherList;
 class Popup;
 
 class Quicklaunch : public Plasma::Applet
@@ -71,8 +71,9 @@ protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
 private Q_SLOTS:
+    void configChanged();
     void onConfigAccepted();
-    void onIconsChanged();
+    void onLaunchersChanged();
     void onPopupTriggerClicked();
     void onAddIconAction();
     void onRemoveIconAction();
@@ -80,7 +81,7 @@ private Q_SLOTS:
 private:
     void showContextMenu(
         const QPoint& screenPos,
-        IconArea *component,
+        LauncherList *component,
         int iconIndex);
 
     void initActions();
@@ -88,12 +89,9 @@ private:
     void updatePopupTrigger();
     void deletePopup();
 
-    void readConfig();
-    void migrateConfig(KConfigGroup &config);
-
     Ui::quicklaunchConfig uiConfig;
 
-    IconArea *m_iconArea;
+    LauncherList *m_launcherList;
 
     QGraphicsLinearLayout *m_layout;
     Plasma::IconWidget *m_popupTrigger;
@@ -102,8 +100,8 @@ private:
     QAction* m_addIconAction;
     QAction* m_removeIconAction;
 
-    IconArea *m_currentIconArea;
-    int m_currentIconIndex;
+    LauncherList *m_currentLauncherList;
+    int m_currentLauncherIndex;
 };
 }
 

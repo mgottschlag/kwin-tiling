@@ -28,27 +28,27 @@
     </spacer>
    </item>
    <item row="5" column="0">
-    <widget class="QLabel" name="iconNamesVisibleLabel">
+    <widget class="QLabel" name="launcherNamesVisibleLabel">
      <property name="text">
-      <string>Show icon names:</string>
+      <string>Show launcher names:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
      <property name="buddy">
-      <cstring>iconNamesVisibleCheckBox</cstring>
+      <cstring>launcherNamesVisibleCheckBox</cstring>
      </property>
     </widget>
    </item>
    <item row="5" column="1">
-    <widget class="QCheckBox" name="iconNamesVisibleCheckBox">
+    <widget class="QCheckBox" name="launcherNamesVisibleCheckBox">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
    <item row="6" column="0">
-    <widget class="QLabel" name="dialogEnabledLabel">
+    <widget class="QLabel" name="popupEnabledLabel">
      <property name="text">
       <string>Enable popup:</string>
      </property>
@@ -56,12 +56,12 @@
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
      <property name="buddy">
-      <cstring>dialogEnabledCheckBox</cstring>
+      <cstring>popupEnabledCheckBox</cstring>
      </property>
     </widget>
    </item>
    <item row="6" column="1">
-    <widget class="QCheckBox" name="dialogEnabledCheckBox">
+    <widget class="QCheckBox" name="popupEnabledCheckBox">
      <property name="text">
       <string/>
      </property>
@@ -141,8 +141,8 @@
  <tabstops>
   <tabstop>maxRowsOrColumnsSpinBox</tabstop>
   <tabstop>forceMaxRowsOrColumnsCheckBox</tabstop>
-  <tabstop>iconNamesVisibleCheckBox</tabstop>
-  <tabstop>dialogEnabledCheckBox</tabstop>
+  <tabstop>launcherNamesVisibleCheckBox</tabstop>
+  <tabstop>popupEnabledCheckBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

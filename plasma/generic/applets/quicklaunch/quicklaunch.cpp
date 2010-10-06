@@ -50,9 +50,9 @@
 #include <Plasma/ToolTipManager>
 
 // Own
-#include "iconarea.h"
 #include "icongridlayout.h"
-#include "itemdata.h"
+#include "launcherdata.h"
+#include "launcherlist.h"
 #include "popup.h"
 
 using Plasma::Applet;
@@ -70,14 +70,14 @@ K_EXPORT_PLASMA_APPLET(quicklaunch, Quicklaunch)
 
 Quicklaunch::Quicklaunch(QObject *parent, const QVariantList &args)
   : Applet(parent, args),
-    m_iconArea(0),
+    m_launcherList(0),
     m_layout(0),
     m_popupTrigger(0),
     m_popup(0),
     m_addIconAction(0),
     m_removeIconAction(0),
-    m_currentIconArea(0),
-    m_currentIconIndex(-1)
+    m_currentLauncherList(0),
+    m_currentLauncherIndex(-1)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
@@ -99,17 +99,15 @@ void Quicklaunch::init()
     m_layout->setSpacing(4);
 
     // Initialize icon area
-    m_iconArea = new IconArea();
-    m_iconArea->installEventFilter(this);
+    m_launcherList = new LauncherList(LauncherList::IconGrid);
+    m_launcherList->installEventFilter(this);
 
-    m_layout->addItem(m_iconArea);
-    m_layout->setStretchFactor(m_iconArea, 1);
+    m_layout->addItem(m_launcherList);
+    m_layout->setStretchFactor(m_launcherList, 1);
 
-    // Read config
-    readConfig();
+    configChanged();
 
-    connect(m_iconArea, SIGNAL(iconsChanged()), SLOT(onIconsChanged()));
-
+    connect(m_launcherList, SIGNAL(launchersChanged()), SLOT(onLaunchersChanged()));
     setLayout(m_layout);
 }
 
@@ -137,15 +135,15 @@ void Quicklaunch::createConfigurationInterface(KConfigDialog *parent)
     }
 
     uiConfig.forceMaxRowsOrColumnsCheckBox->setChecked(
-        m_iconArea->layout()->maxRowsOrColumnsForced());
+        m_launcherList->gridLayout()->maxRowsOrColumnsForced());
 
     uiConfig.maxRowsOrColumnsSpinBox->setValue(
-        m_iconArea->layout()->maxRowsOrColumns());
+        m_launcherList->gridLayout()->maxRowsOrColumns());
 
-    uiConfig.iconNamesVisibleCheckBox->setChecked(
-        m_iconArea->iconNamesVisible());
+    uiConfig.launcherNamesVisibleCheckBox->setChecked(
+        m_launcherList->launcherNamesVisible());
 
-    uiConfig.dialogEnabledCheckBox->setChecked(m_popup != 0);
+    uiConfig.popupEnabledCheckBox->setChecked(m_popup != 0);
 
     parent->addPage(widget, i18n("General"), icon());
 }
@@ -156,30 +154,30 @@ bool Quicklaunch::eventFilter(QObject *watched, QEvent *event)
 
     if (eventType == QEvent::GraphicsSceneContextMenu) {
 
-        IconArea *source = qobject_cast<IconArea*>(watched);
+        LauncherList *source = qobject_cast<LauncherList*>(watched);
 
         if (source) {
             QGraphicsSceneContextMenuEvent *contextMenuEvent =
                 static_cast<QGraphicsSceneContextMenuEvent*>(event);
 
-            int iconIndex =
-                source->iconIndexAtPosition(
+            int launcherIndex =
+                source->launcherIndexAtPosition(
                     source->mapFromScene(contextMenuEvent->scenePos()));
 
-            showContextMenu(contextMenuEvent->screenPos(), source, iconIndex);
+            showContextMenu(contextMenuEvent->screenPos(), source, launcherIndex);
             return true;
         }
     }
     else if ((eventType == QEvent::Hide || eventType == QEvent::Show) &&
              m_popup != 0 &&
-             qobject_cast<Popup*>(watched) == m_popup) {
+             watched == m_popup) {
 
             updatePopupTrigger();
     }
     else if (eventType == QEvent::GraphicsSceneDragEnter &&
              m_popupTrigger != 0 &&
              m_popup->isHidden() &&
-             qobject_cast<IconWidget*>(watched) == m_popupTrigger) {
+             watched == m_popupTrigger) {
 
         m_popup->show();
         event->setAccepted(false);
@@ -194,7 +192,7 @@ void Quicklaunch::constraintsEvent(Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         FormFactor newFormFactor = formFactor();
 
-        m_iconArea->layout()->setMode(
+        m_launcherList->gridLayout()->setMode(
             newFormFactor == Plasma::Horizontal
                 ? IconGridLayout::PreferRows
                 : IconGridLayout::PreferColumns);
@@ -202,8 +200,8 @@ void Quicklaunch::constraintsEvent(Constraints constraints)
         // Ignore maxRowsOrColumns / maxRowsOrColumnsForced when in planar
         // form factor.
         if (newFormFactor == Plasma::Planar) {
-            m_iconArea->layout()->setMaxRowsOrColumns(0);
-            m_iconArea->layout()->setMaxRowsOrColumnsForced(false);
+            m_launcherList->gridLayout()->setMaxRowsOrColumns(0);
+            m_launcherList->gridLayout()->setMaxRowsOrColumnsForced(false);
         }
 
         m_layout->setOrientation(
@@ -221,9 +219,9 @@ void Quicklaunch::constraintsEvent(Constraints constraints)
 
         bool lock = immutability() != Plasma::Mutable;
 
-        m_iconArea->setLocked(lock);
+        m_launcherList->setLocked(lock);
         if (m_popup) {
-            m_popup->iconArea()->setLocked(lock);
+            m_popup->launcherList()->setLocked(lock);
         }
     }
 }
@@ -233,56 +231,230 @@ void Quicklaunch::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     showContextMenu(event->screenPos(), 0, -1);
 }
 
+void Quicklaunch::configChanged()
+{
+    KConfigGroup config = this->config();
+
+    // Migrate old configuration keys
+    if (config.hasKey("dialogIconSize") ||
+        config.hasKey("iconSize") ||
+        config.hasKey("iconUrls") ||
+        config.hasKey("showIconNames") ||
+        config.hasKey("visibleIcons")) {
+
+        // Migrate from Quicklaunch 0.1 config format
+        QStringList iconUrls = config.readEntry("iconUrls", QStringList());
+
+        int visibleIcons =
+            qBound(-1, config.readEntry("visibleIcons", -1), iconUrls.size());
+
+        bool showIconNames = config.readEntry("showIconNames", false);
+
+        config.deleteEntry("dialogIconSize");
+        config.deleteEntry("iconSize");
+        config.deleteEntry("iconUrls");
+        config.deleteEntry("showIconNames");
+        config.deleteEntry("visibleIcons");
+
+        QStringList launchers;
+        QStringList launchersOnPopup;
+
+        for (int i = 0; i < iconUrls.size(); i++) {
+
+            if (visibleIcons == -1 || i < visibleIcons) {
+                launchers.append(iconUrls.at(i));
+            } else {
+                launchersOnPopup.append(iconUrls.at(i));
+            }
+        }
+
+        config.writeEntry("launchers", launchers);
+        config.writeEntry("launchersOnPopup", launchersOnPopup);
+        config.writeEntry("launcherNamesVisible", showIconNames);
+    }
+
+    if (config.hasKey("icons") ||
+        config.hasKey("dialogIcons") ||
+        config.hasKey("dialogEnabled") ||
+        config.hasKey("iconNamesVisible")) {
+
+        // Migrate from quicklaunch 0.2 config format
+        if (config.hasKey("icons")) {
+            if (!config.hasKey("launchers")) {
+                config.writeEntry(
+                    "launchers",
+                    config.readEntry("icons", QStringList()));
+            }
+            config.deleteEntry("icons");
+        }
+
+        if (config.hasKey("dialogIcons")) {
+            if (!config.hasKey("launchersOnPopup")) {
+                config.writeEntry(
+                    "launchersOnPopup",
+                    config.readEntry("dialogIcons", QStringList()));
+            }
+            config.deleteEntry("dialogIcons");
+        }
+
+        if (config.hasKey("dialogEnabled")) {
+            if (!config.hasKey("popupEnabled")) {
+                config.writeEntry(
+                    "popupEnabled",
+                    config.readEntry("dialogEnabled", false));
+            }
+            config.deleteEntry("dialogEnabled");
+        }
+
+        if (config.hasKey("iconNamesVisible")) {
+            if (!config.hasKey("launcherNamesVisible")) {
+                config.writeEntry(
+                    "launcherNamesVisible",
+                    config.readEntry("iconNamesVisible", false));
+            }
+            config.deleteEntry("iconNamesVisible");
+        }
+    }
+
+    // Read new configuration
+    const bool maxRowsOrColumnsForced = config.readEntry("maxRowsOrColumnsForced", false);
+    const int maxRowsOrColumns = config.readEntry("maxRowsOrColumns", 0);
+    const bool launcherNamesVisible = config.readEntry("launcherNamesVisible", false);
+    const bool popupEnabled = config.readEntry("popupEnabled", false);
+
+    QList<LauncherData> newLaunchers;
+    QList<LauncherData> newLaunchersOnPopup;
+
+    { // Read item lists
+        QStringList newLauncherUrls =
+            config.readEntry("launchers", QStringList());
+        QStringList newLaunchersOnPopupUrls =
+            config.readEntry("launchersOnPopup", QStringList());
+
+        if (newLauncherUrls.isEmpty() && newLaunchersOnPopupUrls.isEmpty()) {
+            QStringList defaultApps;
+            defaultApps << "konqbrowser" << "dolphin" << "kopete";
+
+            Q_FOREACH (const QString &defaultApp, defaultApps) {
+                KService::Ptr service = KService::serviceByStorageId(defaultApp);
+                if (service && service->isValid()) {
+                    QString path = service->entryPath();
+
+                    if (!path.isEmpty() && QDir::isAbsolutePath(path)) {
+                        newLauncherUrls.append(path);
+                    }
+                }
+            }
+        }
+
+        Q_FOREACH(QString launcherUrl, newLauncherUrls) {
+            newLaunchers.append(LauncherData(launcherUrl));
+        }
+
+        Q_FOREACH(QString launcherUrl, newLaunchersOnPopupUrls) {
+            newLaunchersOnPopup.append(LauncherData(launcherUrl));
+        }
+    }
+
+    // Apply new configuration
+    m_launcherList->gridLayout()->setMaxRowsOrColumnsForced(maxRowsOrColumnsForced);
+    m_launcherList->gridLayout()->setMaxRowsOrColumns(maxRowsOrColumns);
+    m_launcherList->setLauncherNamesVisible(launcherNamesVisible);
+
+    // Make sure the popup is in a proper state for the new configuration
+    if (m_popup == 0 && (popupEnabled || !newLaunchersOnPopup.empty())) {
+        initPopup();
+    }
+    else if (m_popup != 0 && (!popupEnabled && newLaunchersOnPopup.empty())) {
+        deletePopup();
+    }
+
+    { // Check if any of the launchers in the main area have changed
+        bool launchersChanged = false;
+
+        if (newLaunchers.length() != m_launcherList->launcherCount()) {
+            launchersChanged = true;
+        } else {
+            for (int i = 0; i < newLaunchers.length(); i++) {
+                if (newLaunchers.at(i) != m_launcherList->launcherAt(i)) {
+                    launchersChanged = true;
+                }
+            }
+        }
+
+        if (launchersChanged) {
+            // Re-populate primary launchers
+            m_launcherList->clear();
+            m_launcherList->insert(-1, newLaunchers);
+        }
+    }
+
+    { // Check if any of the launchers in the popup have changed
+        bool popupLaunchersChanged = false;
+
+        int currentPopupLauncherCount =
+            m_popup == 0 ? 0 : m_popup->launcherList()->launcherCount();
+
+        if (newLaunchersOnPopup.length() != currentPopupLauncherCount) {
+            popupLaunchersChanged = true;
+        }
+        else if (m_popup != 0) {
+            for (int i = 0; i < newLaunchersOnPopup.length(); i++) {
+                if (newLaunchersOnPopup.at(i) != m_popup->launcherList()->launcherAt(i)) {
+                    popupLaunchersChanged = true;
+                }
+            }
+        }
+
+        if (popupLaunchersChanged && !newLaunchersOnPopup.empty()) {
+            // Re-populate popup launchers
+            m_popup->launcherList()->clear();
+            m_popup->launcherList()->insert(-1, newLaunchersOnPopup);
+        }
+    }
+}
+
 void Quicklaunch::onConfigAccepted()
 {
     const bool maxRowsOrColumnsForced = uiConfig.forceMaxRowsOrColumnsCheckBox->isChecked();
     const int maxRowsOrColumns = uiConfig.maxRowsOrColumnsSpinBox->value();
-    const bool iconNamesVisible = uiConfig.iconNamesVisibleCheckBox->isChecked();
-    const bool dialogEnabled = uiConfig.dialogEnabledCheckBox->isChecked();
+    const bool launcherNamesVisible = uiConfig.launcherNamesVisibleCheckBox->isChecked();
+    const bool popupEnabled = uiConfig.popupEnabledCheckBox->isChecked();
 
     KConfigGroup config = this->config();
     bool changed = false;
 
-    if (maxRowsOrColumnsForced != m_iconArea->layout()->maxRowsOrColumnsForced()) {
-        m_iconArea->layout()->setMaxRowsOrColumnsForced(maxRowsOrColumnsForced);
+    if (maxRowsOrColumnsForced !=
+          m_launcherList->gridLayout()->maxRowsOrColumnsForced()) {
+
+        m_launcherList->gridLayout()->setMaxRowsOrColumnsForced(maxRowsOrColumnsForced);
         config.writeEntry("maxRowsOrColumnsForced", maxRowsOrColumnsForced);
         changed = true;
     }
 
-    if (maxRowsOrColumns != m_iconArea->layout()->maxRowsOrColumns()) {
-        m_iconArea->layout()->setMaxRowsOrColumns(maxRowsOrColumns);
+    if (maxRowsOrColumns != m_launcherList->gridLayout()->maxRowsOrColumns()) {
+        m_launcherList->gridLayout()->setMaxRowsOrColumns(maxRowsOrColumns);
         config.writeEntry("maxRowsOrColumns", maxRowsOrColumns);
         changed = true;
     }
 
-    if (iconNamesVisible != m_iconArea->iconNamesVisible()) {
-
-        m_iconArea->setIconNamesVisible(iconNamesVisible);
-
-        if (m_popup != 0) {
-            m_popup->iconArea()->setIconNamesVisible(iconNamesVisible);
-            // syncDialogSize();
-        }
-
-        config.writeEntry("iconNamesVisible", iconNamesVisible);
+    if (launcherNamesVisible != m_launcherList->launcherNamesVisible()) {
+        // m_launcherList->setLauncherNamesVisible(launcherNamesVisible);
+        config.writeEntry("launcherNamesVisible", launcherNamesVisible);
         changed = true;
     }
 
-    if (dialogEnabled != (m_popup != 0)) {
+    if (popupEnabled != (m_popup != 0)) {
 
-        if (!m_popup) {
+        if (m_popup == 0) {
             initPopup();
         } else {
-            // Move all icons from the popup into the our own icon area.
-            while(m_popup->iconArea()->iconCount() > 0) {
-                m_iconArea->insert(-1, m_popup->iconArea()->iconAt(0));
-                m_popup->iconArea()->removeAt(0);
+            while (m_popup->launcherList()->launcherCount() > 0) {
+                m_launcherList->insert(-1, m_popup->launcherList()->launcherAt(0));
             }
-
-            deletePopup();
         }
 
-        config.writeEntry("dialogEnabled", dialogEnabled);
+        config.writeEntry("popupEnabled", popupEnabled);
         changed = true;
     }
 
@@ -291,27 +463,27 @@ void Quicklaunch::onConfigAccepted()
     }
 }
 
-void Quicklaunch::onIconsChanged()
+void Quicklaunch::onLaunchersChanged()
 {
-    // Save new icon list
-    QStringList icons;
-    QStringList dialogIcons;
+    // Save new launcher lists
+    QStringList launchers;
+    QStringList launchersOnPopup;
 
-    for (int i = 0; i < m_iconArea->iconCount(); i++) {
-        icons.append(m_iconArea->iconAt(i).url().prettyUrl());
+    for (int i = 0; i < m_launcherList->launcherCount(); i++) {
+        launchers.append(m_launcherList->launcherAt(i).url().prettyUrl());
     }
 
     if (m_popup) {
-        for (int i = 0; i < m_popup->iconArea()->iconCount(); i++) {
+        for (int i = 0; i < m_popup->launcherList()->launcherCount(); i++) {
             // XXX: Is prettyUrl() really needed?
-            dialogIcons.append(m_popup->iconArea()->iconAt(i).url().prettyUrl());
+            launchersOnPopup.append(m_popup->launcherList()->launcherAt(i).url().prettyUrl());
         }
     }
 
     KConfigGroup config = this->config();
 
-    config.writeEntry("icons", icons);
-    config.writeEntry("dialogIcons", dialogIcons);
+    config.writeEntry("launchers", launchers);
+    config.writeEntry("launchersOnPopup", launchersOnPopup);
     Q_EMIT configNeedsSaving();
 }
 
@@ -328,10 +500,10 @@ void Quicklaunch::onPopupTriggerClicked()
 
 void Quicklaunch::onRemoveIconAction()
 {
-    Q_ASSERT(m_currentIconArea);
-    Q_ASSERT(m_currentIconIndex != -1);
+    Q_ASSERT(m_currentLauncherList);
+    Q_ASSERT(m_currentLauncherIndex != -1);
 
-    m_currentIconArea->removeAt(m_currentIconIndex);
+    m_currentLauncherList->removeAt(m_currentLauncherIndex);
 }
 
 void Quicklaunch::onAddIconAction()
@@ -361,12 +533,12 @@ void Quicklaunch::onAddIconAction()
             programPath = propertiesDialog.kurl().path();
         }
 
-        if (m_currentIconArea) {
-            m_currentIconArea->insert(
-                m_currentIconIndex, KUrl::fromPath(programPath));
+        if (m_currentLauncherList) {
+            m_currentLauncherList->insert(
+                m_currentLauncherIndex, KUrl::fromPath(programPath));
         }
         else {
-            m_iconArea->insert(
+            m_launcherList->insert(
                 -1, KUrl::fromPath(programPath));
         }
     }
@@ -374,15 +546,15 @@ void Quicklaunch::onAddIconAction()
 
 void Quicklaunch::showContextMenu(
     const QPoint& screenPos,
-    IconArea *component,
+    LauncherList *component,
     int iconIndex)
 {
     if (m_addIconAction == 0) {
         initActions();
     }
 
-    m_currentIconArea = component;
-    m_currentIconIndex = iconIndex;
+    m_currentLauncherList = component;
+    m_currentLauncherIndex = iconIndex;
 
     KMenu m;
     m.addAction(action("configure"));
@@ -395,8 +567,8 @@ void Quicklaunch::showContextMenu(
     m.addAction(action("remove"));
     m.exec(screenPos);
 
-    m_currentIconArea = 0;
-    m_currentIconIndex = -1;
+    m_currentLauncherList = 0;
+    m_currentLauncherIndex = -1;
 }
 
 void Quicklaunch::initActions()
@@ -418,8 +590,8 @@ void Quicklaunch::initPopup()
     m_popup = new Popup(this);
 
     m_popup->installEventFilter(this);
-    m_popup->iconArea()->installEventFilter(this);
-    connect(m_popup->iconArea(), SIGNAL(iconsChanged()), SLOT(onIconsChanged()));
+    m_popup->launcherList()->installEventFilter(this);
+    connect(m_popup->launcherList(), SIGNAL(launchersChanged()), SLOT(onLaunchersChanged()));
 
     // Initialize popup trigger
     m_popupTrigger = new IconWidget(this);
@@ -481,102 +653,6 @@ void Quicklaunch::deletePopup()
 
     m_popup = 0;
     m_popupTrigger = 0;
-}
-
-void Quicklaunch::readConfig()
-{
-    KConfigGroup config = this->config();
-
-    migrateConfig(config);
-
-    const bool maxRowsOrColumnsForced = config.readEntry("maxRowsOrColumnsForced", false);
-    const int maxRowsOrColumns = config.readEntry("maxRowsOrColumns", 0);
-    const bool iconNamesVisible = config.readEntry("iconNamesVisible", false);
-    const bool dialogEnabled = config.readEntry("dialogEnabled", false);
-
-    QList<ItemData> primaryItems;
-    QList<ItemData> dialogItems;
-
-    { // Read item lists
-        QStringList icons = config.readEntry("icons", QStringList());
-        QStringList dialogIcons = config.readEntry("dialogIcons", QStringList());
-
-        if (icons.isEmpty() && dialogIcons.isEmpty()) {
-            QStringList defaultApps;
-            defaultApps << "konqbrowser" << "dolphin" << "kopete";
-
-            Q_FOREACH (const QString &defaultApp, defaultApps) {
-                KService::Ptr service = KService::serviceByStorageId(defaultApp);
-                if (service && service->isValid()) {
-                    QString path = service->entryPath();
-
-                    if (!path.isEmpty() && QDir::isAbsolutePath(path)) {
-                        icons.append(path);
-                    }
-                }
-            }
-        }
-
-        Q_FOREACH(QString icon, icons) {
-            primaryItems.append(ItemData(icon));
-        }
-
-
-        Q_FOREACH(QString icon, dialogIcons) {
-            dialogItems.append(ItemData(icon));
-        }
-    }
-
-    m_iconArea->layout()->setMaxRowsOrColumnsForced(maxRowsOrColumnsForced);
-    m_iconArea->layout()->setMaxRowsOrColumns(maxRowsOrColumns);
-    m_iconArea->setIconNamesVisible(iconNamesVisible);
-
-    m_iconArea->insert(-1, primaryItems);
-
-    if (!dialogItems.isEmpty() || dialogEnabled) {
-        initPopup();
-        m_popup->iconArea()->insert(-1, dialogItems);
-    }
-}
-
-void Quicklaunch::migrateConfig(KConfigGroup &config)
-{
-    if (config.hasKey("dialogIconSize") ||
-        config.hasKey("iconSize") ||
-        config.hasKey("iconUrls") ||
-        config.hasKey("showIconNames") ||
-        config.hasKey("visibleIcons")) {
-
-        // Migrate from Quicklaunch 0.1 config format to 0.2 config format
-        QStringList iconUrls = config.readEntry("iconUrls", QStringList());
-
-        int visibleIcons =
-            qBound(-1, config.readEntry("visibleIcons", -1), iconUrls.size());
-
-        bool showIconNames = config.readEntry("showIconNames", false);
-
-        config.deleteEntry("dialogIconSize");
-        config.deleteEntry("iconSize");
-        config.deleteEntry("iconUrls");
-        config.deleteEntry("showIconNames");
-        config.deleteEntry("visibleIcons");
-
-        QStringList icons;
-        QStringList dialogIcons;
-
-        for (int i = 0; i < iconUrls.size(); i++) {
-
-            if (visibleIcons == -1 || i < visibleIcons) {
-                icons.append(iconUrls.at(i));
-            } else {
-                dialogIcons.append(iconUrls.at(i));
-            }
-        }
-
-        config.writeEntry("icons", icons);
-        config.writeEntry("dialogIcons", dialogIcons);
-        config.writeEntry("iconNamesVisible", showIconNames);
-    }
 }
 }
 
