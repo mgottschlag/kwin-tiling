@@ -5,8 +5,8 @@ target_link_libraries (weather_ion ${KDE4_KIO_LIBS} ${KDE4_PLASMA_LIBS})
 target_link_libraries (weather_ion LINK_INTERFACE_LIBRARIES ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${KDE4_PLASMA_LIBS})
 
 set_target_properties(weather_ion PROPERTIES
-   VERSION ${GENERIC_LIB_VERSION}
-   SOVERSION ${GENERIC_LIB_SOVERSION}
+   VERSION 6.0.0
+   SOVERSION 6
 )
 
 install (TARGETS weather_ion EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS})
