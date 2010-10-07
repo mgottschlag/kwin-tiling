@@ -49,9 +49,6 @@ public:
     Mode mode() const;
     void setMode(Mode mode);
 
-    int cellSizeHint() const;
-    void setCellSizeHint(int cellSizeHint);
-
     int cellSpacing() const;
     void setCellSpacing(int cellSpacing);
     int maxRowsOrColumns() const;
@@ -90,24 +87,19 @@ public:
 
     static const int DEFAULT_CELL_SPACING;
 
-    static const int MIN_CELL_SIZE_HINT;
-    static const int DEFAULT_CELL_SIZE_HINT;
-    static const int MAX_CELL_SIZE_HINT;
-
 private:
     void updateGridParameters();
 
     QList<QGraphicsLayoutItem*> m_items;
     Mode m_mode;
     int m_cellSpacing;
-    int m_cellSizeHint;
     int m_maxRowsOrColumns;
     bool m_maxRowsOrColumnsForced;
 
     int m_rowCount;
     int m_columnCount;
-    int m_cellWidth;
-    int m_cellHeight;
+    int m_columnWidth;
+    int m_rowHeight;
     QSizeF m_preferredSizeHint;
 };
 }

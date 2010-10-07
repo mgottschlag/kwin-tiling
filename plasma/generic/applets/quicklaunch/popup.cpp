@@ -98,7 +98,6 @@ void Popup::onLauncherClicked()
 
 void Popup::syncSizeAndPosition()
 {
-    kDebug() << "Sync size and position";
     const QMargins margins = contentsMargins();
 
     QSize newSize(

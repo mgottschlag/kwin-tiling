@@ -34,24 +34,19 @@
 
 namespace Quicklaunch {
 
-const int IconGridLayout::DEFAULT_CELL_SPACING = 2;
-
-const int IconGridLayout::MIN_CELL_SIZE_HINT = KIconLoader::SizeSmall;
-const int IconGridLayout::DEFAULT_CELL_SIZE_HINT = KIconLoader::SizeSmall;
-const int IconGridLayout::MAX_CELL_SIZE_HINT = KIconLoader::SizeEnormous;
+const int IconGridLayout::DEFAULT_CELL_SPACING = 4;
 
 IconGridLayout::IconGridLayout(QGraphicsLayoutItem *parent)
     : QGraphicsLayout(parent),
       m_items(),
       m_mode(PreferRows),
       m_cellSpacing(DEFAULT_CELL_SPACING),
-      m_cellSizeHint(DEFAULT_CELL_SIZE_HINT),
       m_maxRowsOrColumns(0),
       m_maxRowsOrColumnsForced(false),
       m_rowCount(0),
       m_columnCount(0),
-      m_cellWidth(0),
-      m_cellHeight(0)
+      m_columnWidth(0),
+      m_rowHeight(0)
 {
     setContentsMargins(0, 0, 0, 0);
 
@@ -85,25 +80,6 @@ void IconGridLayout::setMode(Mode mode)
     }
 
     m_mode = mode;
-    updateGridParameters();
-    invalidate();
-}
-
-int IconGridLayout::cellSizeHint() const
-{
-    return m_cellSizeHint;
-}
-
-void IconGridLayout::setCellSizeHint(int cellSizeHint)
-{
-    cellSizeHint =
-        qBound(MIN_CELL_SIZE_HINT, cellSizeHint, MAX_CELL_SIZE_HINT);
-
-    if (cellSizeHint == m_cellSizeHint) {
-        return;
-    }
-
-    m_cellSizeHint = cellSizeHint;
     updateGridParameters();
     invalidate();
 }
@@ -245,9 +221,9 @@ void IconGridLayout::setGeometry(const QRectF &rect)
 
         m_items[i]->setGeometry(
             QRectF(
-                offsetLeft + column * (m_cellWidth + m_cellSpacing),
-                offsetTop + row * (m_cellHeight + m_cellSpacing),
-                m_cellWidth, m_cellHeight));
+                offsetLeft + column * (m_columnWidth + m_cellSpacing),
+                offsetTop + row * (m_rowHeight + m_cellSpacing),
+                m_columnWidth, m_rowHeight));
     }
 }
 
@@ -271,8 +247,8 @@ void IconGridLayout::updateGridParameters()
     if (itemCount == 0) {
         m_rowCount = 0;
         m_columnCount = 0;
-        m_cellWidth = 0;
-        m_cellHeight = 0;
+        m_columnWidth = 0;
+        m_rowHeight = 0;
         return;
     }
 
@@ -283,15 +259,10 @@ void IconGridLayout::updateGridParameters()
     // children's constraints.
     int minCellWidth = 0;
     int minCellHeight = 0;
-    int preferredCellWidth = 0;
-    int preferredCellHeight = 0;
 
     Q_FOREACH(QGraphicsLayoutItem *item, m_items) {
         minCellWidth = qMax(minCellWidth, (int)item->minimumWidth());
         minCellHeight = qMax(minCellHeight, (int)item->minimumHeight());
-
-        preferredCellWidth = qMax(preferredCellWidth, (int)item->preferredWidth());
-        preferredCellHeight = qMax(preferredCellHeight, (int)item->preferredHeight());
     }
 
     if (m_mode == PreferRows) {
@@ -300,8 +271,7 @@ void IconGridLayout::updateGridParameters()
             m_rowCount = qMin(itemCount, m_maxRowsOrColumns);
         }
         else {
-            int desiredRowHeight = qMax(minCellHeight, m_cellSizeHint);
-            m_rowCount = height / (desiredRowHeight + m_cellSpacing);
+            m_rowCount = height / (minCellHeight + m_cellSpacing);
             m_rowCount = qBound(1, m_rowCount, itemCount);
 
             if (m_maxRowsOrColumns > 0) {
@@ -315,8 +285,7 @@ void IconGridLayout::updateGridParameters()
             m_columnCount = qMin(itemCount, m_maxRowsOrColumns);
         }
         else {
-            int desiredColumnWidth = qMax(minCellWidth, m_cellSizeHint);
-            m_columnCount = width / (desiredColumnWidth + m_cellSpacing);
+            m_columnCount = width / (minCellWidth + m_cellSpacing);
             m_columnCount = qBound(1, m_columnCount, itemCount);
 
             if (m_maxRowsOrColumns > 0) {
@@ -336,8 +305,8 @@ void IconGridLayout::updateGridParameters()
 
     const int availableCellSize = qMin(availableCellWidth, availableCellHeight);
 
-    m_cellWidth = qMax(minCellWidth, availableCellSize);
-    m_cellHeight = qMax(minCellHeight, availableCellSize);
+    m_columnWidth = qMax(minCellWidth, availableCellSize);
+    m_rowHeight = qMax(minCellHeight, availableCellSize);
 
     // Giving the availableCellHeight as preferred cell width
     // (and the other way round) is a bit of a hack that  makes the panel allocate just

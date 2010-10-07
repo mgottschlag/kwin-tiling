@@ -439,7 +439,7 @@ void Quicklaunch::onConfigAccepted()
     }
 
     if (launcherNamesVisible != m_launcherList->launcherNamesVisible()) {
-        // m_launcherList->setLauncherNamesVisible(launcherNamesVisible);
+        m_launcherList->setLauncherNamesVisible(launcherNamesVisible);
         config.writeEntry("launcherNamesVisible", launcherNamesVisible);
         changed = true;
     }
