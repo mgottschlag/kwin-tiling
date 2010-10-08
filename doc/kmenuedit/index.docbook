@@ -142,7 +142,7 @@ Press return, and you should see something like the picture below in the main wi
 </simplelist></para>
 <informalexample><para>For example: if you want to firefox to start your web browsing at www.kde.org - instead of <command>firefox</command> you would type <command>firefox %u www.kde.org</command>.</para></informalexample></note>
 <para>Most applications accept additional options &eg; the name of a defined profile like &konqueror; or &konsole;.
-To see all options for an application launch <userinput><command>kcmshell4</command> <option>--help</option></userinput> in &konsole;.</para> 
+To see all options for an application launch <userinput><command><replaceable>applicationname</replaceable></command> <option>--help</option></userinput> in &konsole;.</para> 
 <para>We would like to have a more creative icon, so we will click the generic icon sitting beside <guilabel>Name:</guilabel>. It will bring the <guilabel>Select Icon</guilabel> dialog which will let us choose the new icon, as shown below.
 <screenshot>
 <screeninfo><guilabel>Select Icon</guilabel> dialog</screeninfo>
