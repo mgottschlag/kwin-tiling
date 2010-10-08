@@ -10,9 +10,21 @@ X-KDE-System-Settings-Parent-Category=desktop-appearance
 X-DocPath=kcontrol/cursortheme/index.html
 
 Name=Cursor Theme
+Name[ia]=Thema de cursor
+Name[pt]=Tema de Cursores
+Name[pt_BR]=Tema de cursores
+Name[sv]=Muspekartema
+Name[uk]=Тема вказівника
 Name[x-test]=xxCursor Themexx
+Name[zh_TW]=游標主題
 
 Comment=Customize the mouse cursor appearance
+Comment[ia]=Personalisar le apparentia de cursor de mus
+Comment[pt]=Personalizar a aparência do cursor do rato
+Comment[pt_BR]=Personaliza a aparência do cursor do mouse
+Comment[sv]=Anpassa muspekarens utseende
+Comment[uk]=Налаштування вигляду вказівника миші на екрані
 Comment[x-test]=xxCustomize the mouse cursor appearancexx
+Comment[zh_TW]=自訂滑鼠游標外觀
 
 X-KDE-Keywords=Mouse,Cursor,Theme
