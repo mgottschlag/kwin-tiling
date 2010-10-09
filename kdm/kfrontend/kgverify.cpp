@@ -987,6 +987,7 @@ KGVerify::init(const QStringList &plugins)
             continue;
         }
         debug("GreeterPlugin %s (%s) loaded\n", qPrintable(pg), plugin.info->name);
+        plugin.action = 0;
         greetPlugins.append(plugin);
       next:
         pluginList.append(i);
