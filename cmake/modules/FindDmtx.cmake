@@ -12,7 +12,7 @@
 
 if (DMTX_INCLUDE_DIR AND DMTX_LIBRARIES)
   # in cache already
-  set(DTMX_FOUND TRUE)
+  set(DMTX_FOUND TRUE)
 else (DMTX_INCLUDE_DIR AND DMTX_LIBRARIES)
 
   find_path(DMTX_INCLUDE_DIR dmtx.h)
