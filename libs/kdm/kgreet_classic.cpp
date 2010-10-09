@@ -309,6 +309,7 @@ void // virtual
 KClassicGreeter::next()
 {
     // assert(running);
+    int pHas = has;
     if (loginEdit && loginEdit->hasFocus()) {
         passwdEdit->setFocus(); // will cancel running login if necessary
         has = 0;
@@ -328,7 +329,7 @@ KClassicGreeter::next()
     }
     if (exp < 0)
         handler->gplugStart();
-    else if (has >= exp)
+    else if (has >= exp && has > pHas)
         returnData();
 }
 

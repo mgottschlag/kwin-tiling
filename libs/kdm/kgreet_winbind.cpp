@@ -390,6 +390,7 @@ void // virtual
 KWinbindGreeter::next()
 {
     // assert(running);
+    int pHas = has;
     if (domainCombo && domainCombo->hasFocus()) {
         loginEdit->setFocus();
     } else if (loginEdit && loginEdit->hasFocus()) {
@@ -411,7 +412,7 @@ KWinbindGreeter::next()
     }
     if (exp < 0)
         handler->gplugStart();
-    else if (has >= exp)
+    else if (has >= exp && has > pHas)
         returnData();
 }
 
