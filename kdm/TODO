@@ -1,3 +1,5 @@
+- frontend doesn't handle async aborts correctly
+
 - too many too big repaints in themer
 
 - fix strings & add KUIT
