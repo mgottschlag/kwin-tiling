@@ -331,6 +331,8 @@ main(int argc ATTR_UNUSED, char **argv)
     setenv("KDE_FULL_SESSION", "true", 1);
     setenv("KDE_SESSION_VERSION", "4", 1);
     setenv("DESKTOP_SESSION", "kde", 1); // for qt 4.6 only
+    // fool d-bus, so we get no kbuildsycoca, etc.
+    setenv("DBUS_SESSION_BUS_ADDRESS", "fake", 1);
 
     static char *fakeArgv[] = { (char *)"kdmgreet", 0 };
     static int fakeArgc = as(fakeArgv) - 1;
