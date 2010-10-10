@@ -58,7 +58,8 @@ Player::Ptr MprisFactory::create(const QVariantList& args)
 
 bool MprisFactory::matches(const QString& serviceName)
 {
-    return serviceName.startsWith(QLatin1String("org.mpris"));
+    return serviceName.startsWith(QLatin1String("org.mpris")) &&
+           !serviceName.startsWith(QLatin1String("org.mpris.MediaPlayer2"));
 }
 
 
