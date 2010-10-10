@@ -590,6 +590,8 @@ static bool init(const QString &,
     if (!staticDomains.size())
         staticDomains << "<local>";
     defaultDomain = getConf(ctx, "winbind.DefaultDomain", QVariant(staticDomains.first())).toString();
+    if (!defaultDomain.isEmpty() && !staticDomains.contains(defaultDomain))
+        staticDomains.prepend(defaultDomain);
     QString sepstr = getConf(ctx, "winbind.Separator", QVariant(QString())).toString();
     if (sepstr.isNull()) {
         FILE *sepfile = popen("wbinfo --separator 2>/dev/null", "r");
