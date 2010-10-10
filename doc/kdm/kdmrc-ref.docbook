@@ -345,6 +345,17 @@ can be either a name or a numerical ID.
 </varlistentry>
 
 <varlistentry>
+<term id="option-greeteruid"><option>GreeterUID</option></term>
+<listitem>
+<para>
+The user the greeter should run as. Empty results in <systemitem class="username">root</systemitem>.
+Consider the impact on <option>LogSource</option> when setting it.
+</para>
+<para>Empty by default.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
 <term id="option-datadir"><option>DataDir</option></term>
 <listitem>
 <para>
@@ -653,7 +664,7 @@ Starting up includes executing it and waiting for it to come up.
 <para>
 How many seconds &kdm; should wait for a local &X-Server; to come up.
 </para>
-<para>The default is <quote>15</quote>.</para>
+<para>The default is <quote>30</quote>.</para>
 </listitem>
 </varlistentry>
 
@@ -662,6 +673,9 @@ How many seconds &kdm; should wait for a local &X-Server; to come up.
 <listitem>
 <para>
 The command line to start the &X-Server;, without display number and VT spec.
+Note that with some &X-Server;s (in particular, OpenSolaris') it is necessary
+to put most additional arguments into <option>ServerArgsLocal</option> and
+<option>ServerArgsRemote</option> even if they are the same for both.
 This string is subject to word splitting.
 </para><para>
 The default is something reasonable for the system on which &kdm; was built,
@@ -724,6 +738,16 @@ When &kdm; switches to console mode, it starts monitoring this
 </varlistentry>
 
 <varlistentry>
+<term id="option-serveruid"><option>ServerUID</option></term>
+<listitem>
+<para>
+The user the &X-Server; should run as. Empty results in <systemitem class="username">root</systemitem>.
+</para>
+<para>Empty by default.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
 <term id="option-pinginterval"><option>PingInterval</option></term>
 <listitem>
 <para>
@@ -762,26 +786,6 @@ of resetting it. Use this if the &X-Server; leaks memory or crashes the system
 on reset attempts.
 </para>
 <para>The default is <quote>false</quote>.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term id="option-resetsignal"><option>ResetSignal</option></term>
-<listitem>
-<para>
-The signal number to use to reset the local &X-Server;.
-</para>
-<para>The default is <quote>1 (SIGHUP)</quote>.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term id="option-termsignal"><option>TermSignal</option></term>
-<listitem>
-<para>
-The signal number to use to terminate the local &X-Server;.
-</para>
-<para>The default is <quote>15 (SIGTERM)</quote>.</para>
 </listitem>
 </varlistentry>
 
@@ -878,7 +882,7 @@ It specifies a program which is run (as
 greeter window. This may be used to change the appearance of the screen
 around the greeter window or to put up other windows (e.g., you may want
 to run <command>xconsole</command> here).
-The conventional name for a file used here is <command>Xsetup</command>.
+Usually, a script named <command>Xsetup</command> is used here.
 See <xref linkend="kdmrc-xsetup"/>.
 </para>
 <para>Empty by default.</para>
@@ -893,7 +897,7 @@ This string is subject to word splitting.
 It specifies a program which is run (as
 <systemitem class="username">root</systemitem>) after the user
 authentication process succeeds.
-The conventional name for a file used here is <command>Xstartup</command>.
+Usually, a script named <command>Xstartup</command> is used here.
 See <xref linkend="kdmrc-xstartup"/>.
 </para>
 <para>Empty by default.</para>
@@ -908,7 +912,7 @@ This string is subject to word splitting.
 It specifies a program which is run (as
 <systemitem class="username">root</systemitem>) after the session
 terminates.
-The conventional name for a file used here is <command>Xreset</command>.
+Usually, a script named <command>Xreset</command> is used here.
 See <xref linkend="kdmrc-xreset"/>.
 </para>
 <para>Empty by default.</para>
@@ -922,7 +926,7 @@ See <xref linkend="kdmrc-xreset"/>.
 This string is subject to word splitting.
 It specifies the session program to be executed (as the user owning
 the session).
-The conventional name for a file used here is <command>Xsession</command>.
+Usually, a script named <command>Xsession</command> is used here.
 See <xref linkend="kdmrc-xsession"/>.
 </para>
 <para>The default is <quote>${<envar>x_bindir</envar>}/xterm -ls -T</quote>.</para>
@@ -1228,6 +1232,7 @@ KDE sessions.
 <listitem>
 <para>
 A list of directories containing session type definitions.
+Ordered by falling priority.
 </para>
 <para>The default is <quote>${<envar>kde_datadir</envar>}/kdm/sessions</quote>.</para>
 </listitem>
@@ -1314,7 +1319,7 @@ of the &kdm; frontend (greeter).
 <listitem>
 <para>
 Specify the widget style for the greeter. Empty means to use the
-built-in default which currently is <literal>Plastik</literal>.
+built-in default which currently is <literal>Oxygen-air</literal>.
 </para>
 <para>Empty by default.</para>
 </listitem>
@@ -1324,9 +1329,8 @@ built-in default which currently is <literal>Plastik</literal>.
 <term id="option-colorscheme"><option>ColorScheme</option></term>
 <listitem>
 <para>
-Specify the widget color scheme for the greeter. Empty means to use
-the built-in default which currently is yellowish grey with some light
-blue and yellow elements.
+Specify the widget color scheme for the greeter. Empty means to use the
+built-in default which currently is <literal>Oxygen-air</literal>.
 </para>
 <para>Empty by default.</para>
 </listitem>
@@ -1505,9 +1509,10 @@ What to do with the Num Lock modifier for the time the greeter is running:
 <term id="option-language"><option>Language</option></term>
 <listitem>
 <para>
-Language and locale to use in the greeter, encoded like $<envar>LC_LANG</envar>.
+Language and locale to use in the greeter, encoded like $<envar>LANGUAGE</envar>.
+If empty, the settings from the environment are used.
 </para>
-<para>The default is <quote>en_US</quote>.</para>
+<para>Empty by default.</para>
 </listitem>
 </varlistentry>
 
@@ -1540,8 +1545,8 @@ This option controls which users will be shown in the user view
 (<option>UserCompletion</option>).
 If it is <literal>Selected</literal>, <option>SelectedUsers</option> contains
 the final list of users.
-If it is <literal>NotHidden</literal>, the initial user list are all users
-found on the system. Users contained in <option>HiddenUsers</option> are
+If it is <literal>NotHidden</literal>, the initial user list contains all
+users found on the system. Users contained in <option>HiddenUsers</option> are
 removed from the list, just like all users with a UID greater than specified
 in <option>MaxShowUID</option> and users with a non-zero UID less than
 specified in <option>MinShowUID</option>.
@@ -1637,6 +1642,8 @@ must match &kdm;'s expectations: <literal>.face.icon</literal> should be a
 Currently the big image is used only as a fallback and is scaled down,
 but in the future it might be displayed full-size in the logo area or a
 tooltip.
+To be accessible to &kdm;, the images must be world readable and their
+parent directories must be world executable.
 </para>
 <para>The default is <quote>AdminOnly</quote>.</para>
 </listitem>
@@ -1744,13 +1751,45 @@ herein; guess their meanings or use the control center.
 </varlistentry>
 
 <varlistentry>
+<term id="option-grabinput"><option>GrabInput</option></term>
+<listitem>
+<para>
+To improve security, the greeter may grab mouse and keyboard input so
+no other X clients can eavesdrop it. However, the X authorization
+mechanism will usually prevent malicious X clients from connecting
+in the first place. Consequently, enabling grabs for local displays
+is pointless and only marginally improves security for remote displays.
+</para>
+<note><para>The mouse grab will make on-screen keyboards unusable.
+</para></note>
+<para>
+</para>
+<variablelist>
+<varlistentry>
+<term><parameter>Never</parameter></term>
+<listitem><para>never grab</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><parameter>IfNoAuth</parameter></term>
+<listitem><para>grab if the display requires no X authorization</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><parameter>Always</parameter></term>
+<listitem><para>always grab</para></listitem>
+</varlistentry>
+</variablelist>
+<para>The default is <quote>IfNoAuth</quote>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
 <term id="option-grabserver"><option>GrabServer</option></term>
 <listitem>
 <para>
-To improve security, the greeter grabs the &X-Server; and then the keyboard
+To improve security, the greeter grabs the &X-Server; and then the input
 when it starts up. This option specifies if the &X-Server; grab should be held
 for the duration of the name/password reading. When disabled, the &X-Server;
-is ungrabbed after the keyboard grab succeeds; otherwise, the &X-Server; is
+is ungrabbed after the input grabs succeed; otherwise, the &X-Server; is
 grabbed until just before the session begins.
 </para>
 <note><para>Enabling this option disables <option>UseBackground</option> and
@@ -1973,6 +2012,16 @@ file.
 </listitem>
 </varlistentry>
 
+<varlistentry>
+<term id="option-allowthemedebug"><option>AllowThemeDebug</option></term>
+<listitem>
+<para>
+Enable the Alt-Ctrl-D shortcut to toggle greeter theme debugging.
+</para>
+<para>The default is <quote>false</quote>.</para>
+</listitem>
+</varlistentry>
+
 </variablelist>
 </sect2>
 
@@ -2160,7 +2209,8 @@ The <filename>Xsetup</filename> program is run after the &X-Server; is
 started or reset, but before the greeter is offered.
 This is the place to change the root background (if
 <option>UseBackground</option> is disabled) or bring up other windows that
-should appear on the screen along with the greeter.
+should appear on the screen along with the greeter. Resources for this
+program can be put into the file named by <option>Resources</option>.
 </para>
 
 <para>
@@ -2189,13 +2239,10 @@ the following environment variables are passed:</para>
  </varlistentry>
 </variablelist>
 
-<para> Note that since &kdm; grabs the keyboard, any other windows will not be
-able to receive keyboard input. They will be able to interact with the mouse,
-however; beware of potential security holes here. If <option>GrabServer</option>
-is set, <filename>Xsetup</filename> will not be able to connect to the display
-at all. Resources for this program can be put into the file named by
-<option>Resources</option>.
-</para>
+<note><para><option>GrabInput</option> can make &kdm; grab the
+keyboard and mouse, making any other windows unable to receive input.
+If <option>GrabServer</option> is set, <filename>Xsetup</filename>
+will not be able to connect to the display at all.</para></note>
 
 </sect2>
 
