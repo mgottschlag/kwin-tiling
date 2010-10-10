@@ -47,6 +47,7 @@ Name[x-test]=xxDesktop Dashboardxx
 Name[zh_CN]=桌面部件板
 Name[zh_TW]=桌面資訊看板
 Comment=Widget Dashboard
+Comment[de]=Miniprogramm-Dashboard
 Comment[en_GB]=Widget Dashboard
 Comment[et]=Vidinavaade
 Comment[ia]=Pannello de instrumentos de Widget

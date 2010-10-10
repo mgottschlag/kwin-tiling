@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Simplest Image Hosting
+Name[de]=Simplest Image Hosting
 Name[en_GB]=Simplest Image Hosting
 Name[es]=Simplest Image Hosting
 Name[et]=Simplest Image Hosting
@@ -17,6 +18,7 @@ Name[uk]=Simplest Image Hosting
 Name[x-test]=xxSimplest Image Hostingxx
 Name[zh_TW]=Simplest Image Hosting
 Comment=Enables the share of images using the Simplest Image Hosting service
+Comment[de]=Ermöglicht die Veröffentlichung von Bildern auf simplest-image-hosting.net
 Comment[en_GB]=Enables the share of images using the Simplest Image Hosting service
 Comment[es]=Permite compartir imágenes a través del servicio de Simplest Image Hosting
 Comment[et]=Piltide jagamine Simplest Image Hosting teenuse kaudu

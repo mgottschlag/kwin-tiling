@@ -21,6 +21,7 @@ Name[uk]=pastebin.com
 Name[x-test]=xxpastebin.comxx
 Name[zh_TW]=pastebin.com
 Comment=Enables the share of text using pastebin.com service
+Comment[de]=Ermöglicht die Veröffentlichung von Text auf pastebin.com
 Comment[en_GB]=Enables the share of text using pastebin.com service
 Comment[es]=Permite compartir texto a través del servicio de pastebin.com
 Comment[et]=Teksti jagamine pastebin.com teenuse kaudu

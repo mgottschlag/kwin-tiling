@@ -21,6 +21,7 @@ Name[uk]=imageshack.us
 Name[x-test]=xximageshack.usxx
 Name[zh_TW]=imageshack.us
 Comment=Enables the share of images using the imageshack.us service
+Comment[de]=Ermöglicht die Veröffentlichung von Bildern auf imageshack.us
 Comment[en_GB]=Enables the share of images using the imageshack.us service
 Comment[es]=Permite compartir imágenes a través del servicio de imageshack.us
 Comment[et]=Piltide jagamine imageshack.us teenuse kaudu
