@@ -1223,24 +1223,33 @@ some way.</para>
 <chapter id="different-window-managers-with-kdm">
 <title>Supporting multiple window managers</title>
 
-<para>&kdm; detects most available window manager and desktop environments when
+<para>&kdm; detects most available window managers and desktop environments when
 it is run.  Installing a new one should make it automatically available in
 the &kdm; main dialog's <guimenuitem>Session Type</guimenuitem> submenu.</para>
 
 <para>If you have a very new window manager, or something that &kdm; does
-not support, the first thing you should check is that the application to be
-run is in the <envar>PATH</envar> and has not been renamed during the
-install into something unexpected.</para>
+not support, the first thing you should check is that the executable to be
+run is in the <envar>PATH</envar> and has not been renamed by the distributor
+into something unexpected.</para>
 
-<para>If the case is that the application is too new and not yet supported
-by &kdm;, you can quite simply add a new session.</para>
+<para>If the case is that the session type is not supported by &kdm; yet
+(maybe because it is too new), you can quite easily add it.</para>
 
-<para>The sessions are defined in <firstterm>.desktop</firstterm> files in
-<filename
-class="directory">$<envar>KDEDIR</envar>/share/apps/kdm/sessions</filename>.
+<para>The session types are defined by <firstterm>.desktop</firstterm> files
+located in the directories listed in <link
+linkend="option-sessionsdirs"><option>SessionsDirs</option></link>. The
+last named directory contains the system-provided default session types
+and is <filename
+class="directory">$<envar>KDEDIR</envar>/share/apps/kdm/sessions</filename>
+in an installation from source. Software upgrades will typically overwrite
+anything in here, so it is unwise to use it for configuration purposes.
+Instead, a separate configuration directory should be listed first. It is
+set to <filename
+class="directory">$<envar>KDEDIR</envar>/share/config/kdm/sessions</filename>
+in an installation from source, but distributors often change it to something
+like <filename class="directory">/etc/kde4/kdm/sessions</filename>.
 You can simply add an appropriately named <literal
-role="extension">.desktop</literal> file in this directory. The fields
-are:</para>
+role="extension">.desktop</literal> files here. The fields are:</para>
 
 <programlisting>[Desktop Entry]
 Encoding=UTF-8 <lineannotation>This is fixed to <option>UTF-8</option> and
@@ -1269,7 +1278,8 @@ system administrator.
 <term>custom</term>
 <listitem>
 <para>
-The Custom session will run the user's ~/.xsession if it exists.
+The Custom session will run the user's ~/.xsession if it exists, falling
+back to the default session otherwise.
 </para>
 </listitem>
 </varlistentry>
@@ -1289,8 +1299,7 @@ to the config dir and edit it at will. Removing the shipped session types
 can be accomplished by <quote>shadowing</quote> them with .desktop files
 containing Hidden=true.  For the magic session types no .desktop files exist
 by default, but &kdm; pretends they would, so you can override them like any
-other type.  I guess you already know how to add a new session type by
-now. ;-)</para>
+other type.</para>
 
 </chapter>
 
