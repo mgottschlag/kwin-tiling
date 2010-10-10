@@ -103,7 +103,7 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     : Plasma::Frame(parent),
       d(new NotificationWidgetPrivate(this))
 {
-    setMinimumWidth(300);
+    setMinimumWidth(350);
     setPreferredWidth(400);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
@@ -309,11 +309,11 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
 
     //Step 2: elide too long words, like urls or whatever it can be here
     /*the meaning of this ugly regular expression is: all long words not quoted
-      (like tag parameters) are cu at the first 28 characters. it would be better
+      (like tag parameters) are cut at the first 20 characters. it would be better
       to do it with font metrics but wouldn't be possible to do it with a single
       regular expression. It would have to be tokenizen by hand, with some html
       parsing too (like, are we in a tag?)*/
-    processed = processed.replace(QRegExp("([^\"])(\\w{28})(\\w{10,})([^\"])"), "\\1\\2...\\4");
+    processed = processed.replace(QRegExp("([^\"])(\\w{20})([^ ]+)([^\"])"), "\\1\\2...");
 
     /*if there is a < that is not closed as a tag, replace it with an entity*/
     processed = processed.replace(QRegExp("<([^>]*($|<))"), "&lt;\\1");
