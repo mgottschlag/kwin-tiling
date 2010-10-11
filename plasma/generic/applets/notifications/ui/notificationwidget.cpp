@@ -57,6 +57,7 @@ public:
           autoDelete(false),
           collapsed(false),
           backgroundVisible(true),
+          icon(0),
           actionsWidget(0),
           signalMapper(new QSignalMapper(q))
     {
@@ -282,8 +283,17 @@ void NotificationWidget::paint(QPainter *painter,
     }
 }
 
+void NotificationWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    Frame::resizeEvent(event);
+    if (d->icon && !d->collapsed) {
+        d->icon->setGeometry(d->bigIconRect());
+    }
+}
+
 QRectF NotificationWidgetPrivate::bigIconRect() const
 {
+
     QRectF rect = q->mapFromScene(iconPlaceSmall->mapToScene(iconPlaceSmall->boundingRect())).boundingRect();
 
     return rect.united(q->mapFromScene(iconPlaceBig->mapToScene(iconPlaceBig->boundingRect())).boundingRect());

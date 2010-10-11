@@ -56,6 +56,7 @@ protected:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget);
+    void resizeEvent(QGraphicsSceneResizeEvent *event);
 
 Q_SIGNALS:
     void actionTriggered(Notification *);
