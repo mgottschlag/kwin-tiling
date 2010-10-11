@@ -48,19 +48,14 @@ NotificationScroller::NotificationScroller(QGraphicsItem *parent)
     m_notificationBar->addTab(KIcon("dialog-information"), i18nc("Show all  notifications", "All"));
     connect(m_notificationBar, SIGNAL(currentChanged(int)), this, SLOT(tabSwitched(int)));
 
-    m_scroll = new Plasma::ScrollWidget(this);
-    m_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     m_tabsLayout->addStretch();
     m_tabsLayout->addItem(m_notificationBar);
     m_tabsLayout->addStretch();
 
-    m_layout->addItem(m_scroll);
+    m_mainWidgetLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    m_layout->addItem(m_mainWidgetLayout);
     m_layout->addItem(m_tabsLayout);
-
-    m_mainWidget = new QGraphicsWidget(m_scroll);
-    m_mainWidgetLayout = new QGraphicsLinearLayout(Qt::Vertical, m_mainWidget);
-    m_scroll->setWidget(m_mainWidget);
 }
 
 NotificationScroller::~NotificationScroller()
@@ -73,7 +68,7 @@ void NotificationScroller::addNotification(Notification *notification)
 {
     connect(notification, SIGNAL(notificationDestroyed(Notification *)), this, SLOT(removeNotification(Notification *)));
 
-    NotificationWidget *notificationWidget = new NotificationWidget(notification, m_mainWidget);
+    NotificationWidget *notificationWidget = new NotificationWidget(notification, this);
     connect(notificationWidget, SIGNAL(destroyed()), this, SLOT(adjustSize()));
 
     m_notificationWidgets[notification] = notificationWidget;
@@ -190,9 +185,6 @@ void NotificationScroller::setLocation(const Plasma::Location location)
 void NotificationScroller::adjustSize()
 {
     m_mainWidgetLayout->invalidate();
-    static_cast<QGraphicsLayoutItem *>(m_mainWidget)->updateGeometry();
-    m_mainWidget->resize(m_mainWidget->effectiveSizeHint(Qt::PreferredSize));
-    static_cast<QGraphicsLayoutItem *>(m_scroll)->updateGeometry();
     updateGeometry();
 
     Plasma::ExtenderItem *ei = qobject_cast<Plasma::ExtenderItem *>(parentWidget());

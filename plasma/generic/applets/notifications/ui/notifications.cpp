@@ -76,7 +76,6 @@
 #include "jobtotalswidget.h"
 #include "notificationscroller.h"
 #include "notificationstack.h"
-#include "notificationsextender.h"
 #include "stackdialog.h"
 
 
@@ -93,7 +92,6 @@ Notifications::Notifications(QObject *parent, const QVariantList &arguments)
       m_standaloneJobSummaryDialog(0),
       m_busyWidget(0)
 {
-    NotificationsExtender *ext = new NotificationsExtender(this);
     m_manager = new Manager(this);
 
     setPopupIcon(QIcon());
@@ -208,7 +206,9 @@ void Notifications::syncNotificationBarNeeded()
             Plasma::ExtenderGroup *jobGroup = extender()->group("jobGroup");
             if (jobGroup) {
                 QAction *action = jobGroup->action("show notifications");
-                action->setVisible(true);
+                if (action) {
+                    action->setVisible(true);
+                }
             }
         }
     } else if (extender()->item("notifications")) {
