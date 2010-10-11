@@ -1,5 +1,6 @@
 [Desktop Entry]
 Comment=Default toolbox for the netbook shell
+Comment[de]=Standard-Werkzeugkasten für die Plasma-Netbook-Oberfläche
 Comment[en_GB]=Default toolbox for the netbook shell
 Comment[et]=Väikesülearvutikooriku vaikimisi tööriistakast
 Comment[ia]=Cassetta de utilitate predefinite pro le shell del netbook
@@ -16,6 +17,7 @@ Comment[x-test]=xxDefault toolbox for the netbook shellxx
 Comment[zh_TW]=netbook shell 的預設工具盒
 Icon=plasma
 Name=Net toolbox
+Name[de]=Werkzeugkasten für Netbooks
 Name[en_GB]=Net toolbox
 Name[et]=Väikesülearvuti tööriistakast
 Name[ia]=Cassetta de utilitate de rete

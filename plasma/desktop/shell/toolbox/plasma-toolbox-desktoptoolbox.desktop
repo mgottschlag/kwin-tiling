@@ -1,5 +1,6 @@
 [Desktop Entry]
 Comment=Default desktop toolbox for the Plasma desktop shell
+Comment[de]=Standard-Werkzeugkasten für die Plasma-Arbeitsflächen-Umgebung
 Comment[en_GB]=Default desktop toolbox for the Plasma desktop shell
 Comment[et]=Plasma töölauakooriku vaikimisi töölaua tööriistakast
 Comment[ia]=Cassetta de utilitate predefinite pro le shell de scriptorio de Plasma
@@ -16,6 +17,7 @@ Comment[x-test]=xxDefault desktop toolbox for the Plasma desktop shellxx
 Comment[zh_TW]=預設的 Plasma 桌面 shell 的桌面工具盒
 Icon=plasma
 Name=Desktop toolbox
+Name[de]=Werkzeugkasten für die Arbeitsfläche
 Name[en_GB]=Desktop toolbox
 Name[es]=Caja de herramientas del escritorio
 Name[et]=Töölaua tööriistakast
