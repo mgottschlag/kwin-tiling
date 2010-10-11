@@ -313,7 +313,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
       to do it with font metrics but wouldn't be possible to do it with a single
       regular expression. It would have to be tokenizen by hand, with some html
       parsing too (like, are we in a tag?)*/
-    processed = processed.replace(QRegExp("([^\"])(\\w{20})([^ ]+)([^\"])"), "\\1\\2...");
+    processed = processed.replace(QRegExp("([^\"])([^ ]{20})([^ ]+)([^\"])"), "\\1\\2...");
 
     /*if there is a < that is not closed as a tag, replace it with an entity*/
     processed = processed.replace(QRegExp("<([^>]*($|<))"), "&lt;\\1");
