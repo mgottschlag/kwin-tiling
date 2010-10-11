@@ -37,6 +37,7 @@ namespace Plasma
     class PushButton;
     class Label;
     class Meter;
+    class IconWidget;
 } // namespace Plasma
 
 class Job;
@@ -82,7 +83,7 @@ class JobWidget : public QGraphicsWidget
         Plasma::Label *m_dirCountLabel;
         Plasma::Label *m_fileCountLabel;
         Plasma::Label *m_eta;
-        Plasma::PushButton *m_details;
+        Plasma::IconWidget *m_details;
 
         QGraphicsGridLayout *m_layout;
 

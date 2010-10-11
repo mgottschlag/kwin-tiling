@@ -26,6 +26,8 @@
 #include <QGraphicsGridLayout>
 #include <QLabel>
 
+#include <KIconLoader>
+
 #include <Plasma/DataEngine>
 #include <Plasma/Extender>
 #include <Plasma/ExtenderItem>
@@ -34,6 +36,7 @@
 #include <Plasma/PopupApplet>
 #include <Plasma/PushButton>
 #include <Plasma/Service>
+#include <Plasma/IconWidget>
 #include <Plasma/Theme>
 #include <Plasma/ToolTipManager>
 
@@ -63,7 +66,10 @@ JobWidget::JobWidget(Job *job, Plasma::ExtenderItem *parent)
     m_dirCountLabel = new Plasma::Label(this);
     m_fileCountLabel = new Plasma::Label(this);
     m_eta = new Plasma::Label(this);
-    m_details = new Plasma::PushButton(this);
+    m_details = new Plasma::IconWidget(this);
+    m_details->setSvg("widgets/action-overlays", "add-normal");
+    m_details->setMaximumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
+    m_details->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
 
     m_totalBytesLabel->setVisible(false);
     m_dirCountLabel->setVisible(false);
@@ -90,14 +96,15 @@ JobWidget::JobWidget(Job *job, Plasma::ExtenderItem *parent)
     m_layout->addItem(m_fromLabel, 0, 1);
     m_layout->addItem(m_toNameLabel, 1, 0);
     m_layout->addItem(m_toLabel, 1, 1);
-    m_layout->addItem(m_details, 2, 0);
     m_layout->addItem(m_eta, 2, 1);
-    m_layout->addItem(m_meter, 3, 1);
+    m_layout->addItem(m_details, 3, 0, Qt::AlignVCenter|Qt::AlignRight);
+    m_layout->addItem(m_meter, 3, 1, Qt::AlignCenter);
 
     setMinimumWidth(350);
 
     if (m_job.data()) {
-        m_details->setText(i18n("More"));
+        m_details->setToolTip(i18n("More"));
+        m_details->setSvg("widgets/action-overlays", "add-normal");
 
         connect(m_job.data(), SIGNAL(stateChanged(Job*)), this, SLOT(updateJobState()));
         connect(m_job.data(), SIGNAL(destroyed(Job*)), this, SLOT(destroyExtenderItem()));
@@ -385,7 +392,8 @@ void JobWidget::updateLabels()
 void JobWidget::detailsClicked()
 {
     if (!m_totalBytesLabel->isVisible()) {
-        m_details->setText(i18n("Less"));
+        m_details->setToolTip(i18n("Less"));
+        m_details->setSvg("widgets/action-overlays", "remove-normal");
         m_totalBytesLabel->setVisible(true);
         m_dirCountLabel->setVisible(true);
         m_fileCountLabel->setVisible(true);
@@ -394,7 +402,8 @@ void JobWidget::detailsClicked()
         m_layout->addItem(m_dirCountLabel, 6, 1);
         m_extenderItem->setCollapsed(m_extenderItem->isCollapsed());
     } else {
-        m_details->setText(i18n("More"));
+        m_details->setToolTip(i18n("More"));
+        m_details->setSvg("widgets/action-overlays", "add-normal");
         m_totalBytesLabel->setVisible(false);
         m_dirCountLabel->setVisible(false);
         m_fileCountLabel->setVisible(false);
