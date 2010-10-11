@@ -286,7 +286,7 @@ void NotificationWidget::paint(QPainter *painter,
 void NotificationWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     Frame::resizeEvent(event);
-    if (d->icon && !d->collapsed) {
+    if (d->icon && !d->collapsed && d->animationGroup->state() != QAbstractAnimation::Running) {
         d->icon->setGeometry(d->bigIconRect());
     }
 }
