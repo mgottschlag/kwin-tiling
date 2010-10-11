@@ -180,11 +180,6 @@ void Notifications::syncNotificationBarNeeded()
         if (!extender()->item("notifications")) {
             Plasma::ExtenderItem *extenderItem = new Plasma::ExtenderItem(extender());
             extenderItem->setTransient(true);
-            QAction *switchAction = new QAction(extenderItem);
-            connect(switchAction, SIGNAL(triggered()), extender(), SLOT(showJobs()));
-            switchAction->setText(i18n("Show jobs"));
-            switchAction->setVisible(!m_manager->jobs().isEmpty());
-            extenderItem->addAction("show jobs", switchAction);
             extenderItem->config().writeEntry("type", "notification");
             extenderItem->setName("notifications");
             extenderItem->setTitle(i18n("Notifications"));
@@ -204,21 +199,11 @@ void Notifications::syncNotificationBarNeeded()
             }
 
             Plasma::ExtenderGroup *jobGroup = extender()->group("jobGroup");
-            if (jobGroup) {
-                QAction *action = jobGroup->action("show notifications");
-                if (action) {
-                    action->setVisible(true);
-                }
-            }
         }
     } else if (extender()->item("notifications")) {
         //don't let him in the config file
         extender()->item("notifications")->destroy();
         Plasma::ExtenderGroup *jobGroup = extender()->group("jobGroup");
-        if (jobGroup) {
-            QAction *action = jobGroup->action("show notifications");
-            action->setVisible(false);
-        }
     }
 }
 
@@ -330,10 +315,6 @@ void Notifications::addJob(Job *job)
     extenderItem->setGroup(extender()->group("jobGroup"));
 
     Plasma::ExtenderItem *notificationsItem = extender()->item("notifications");
-    if (notificationsItem && !m_manager->jobs().isEmpty()) {
-        QAction *action = notificationsItem->action("show jobs");
-        action->setVisible(true);
-    }
 
     if (isPopupShowing()) {
         return;
@@ -432,13 +413,6 @@ void Notifications::finishJob(Job *job)
         m_standaloneJobSummaryDialog->hide();
     }
 
-
-    Plasma::ExtenderItem *extenderItem = extender()->item("notifications");
-    if (extenderItem && m_manager->jobs().isEmpty()) {
-        QAction *action = extenderItem->action("show jobs");
-        action->setVisible(false);
-    }
-
     //create a fake notification
     CompletedJobNotification *notification = new CompletedJobNotification(this);
     notification->setJob(job);
@@ -455,11 +429,6 @@ void Notifications::createJobGroups()
 {
     if (!extender()->hasItem("jobGroup")) {
         Plasma::ExtenderGroup *extenderGroup = new Plasma::ExtenderGroup(extender());
-        QAction *switchAction = new QAction(extenderGroup);
-        switchAction->setVisible(m_manager->notifications().count() > 0);
-        connect(switchAction, SIGNAL(triggered()), extender(), SLOT(showNotifications()));
-        switchAction->setText(i18n("Show notifications"));
-        extenderGroup->addAction("show notifications", switchAction);
         extenderGroup->setName("jobGroup");
         initExtenderItem(extenderGroup);
         extenderGroup->setAutoHide(true);
