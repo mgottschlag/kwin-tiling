@@ -117,7 +117,7 @@ void NotificationScroller::addNotification(Notification *notification)
     if (items().count() == 1) {
         //ensure the notifications group is the last item
         Plasma::ExtenderGroup *jobGroup = extender()->group("jobGroup");
-        if (jobGroup) {
+        if (jobGroup && jobGroup->isVisible()) {
             if (extender()->appearance() == Plasma::Extender::TopDownStacked) {
                 setExtender(extender(), QPointF(0,0));
             } else {
