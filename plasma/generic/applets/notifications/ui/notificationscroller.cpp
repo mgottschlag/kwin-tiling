@@ -114,6 +114,18 @@ void NotificationScroller::addNotification(Notification *notification)
         m_notificationBar->addTab(notification->applicationIcon(), notification->applicationName());
     }
 
+    if (items().count() == 1) {
+        //ensure the notifications group is the last item
+        Plasma::ExtenderGroup *jobGroup = extender()->group("jobGroup");
+        if (jobGroup) {
+            if (extender()->appearance() == Plasma::Extender::TopDownStacked) {
+                setExtender(extender(), QPointF(0,0));
+            } else {
+                setExtender(extender(), jobGroup->geometry().bottomLeft());
+            }
+        }
+    }
+
     notificationWidget->layout()->activate();
 }
 
