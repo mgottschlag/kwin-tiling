@@ -62,7 +62,6 @@ public Q_SLOTS:
 
 protected Q_SLOTS:
     void tabSwitched(int index);
-    void adjustSize();
     void extenderItemDestroyed(QObject *object);
 
 Q_SIGNALS:

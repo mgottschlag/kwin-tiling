@@ -180,13 +180,10 @@ void Notifications::syncNotificationBarNeeded()
         if (!extender()->item("notifications")) {
 
             m_notificationScroller = new NotificationScroller(extender());
-
-            Plasma::ExtenderGroup *jobGroup = extender()->group("jobGroup");
         }
     } else if (extender()->item("notifications")) {
         //don't let him in the config file
         extender()->item("notifications")->destroy();
-        Plasma::ExtenderGroup *jobGroup = extender()->group("jobGroup");
     }
 }
 
@@ -194,11 +191,6 @@ void Notifications::syncNotificationBarNeeded()
 Manager *Notifications::manager() const
 {
     return m_manager;
-}
-
-void Notifications::constraintsEvent(Plasma::Constraints constraints)
-{
-    //
 }
 
 void Notifications::createConfigurationInterface(KConfigDialog *parent)
@@ -294,8 +286,6 @@ void Notifications::addJob(Job *job)
     extenderItem->setWidget(new JobWidget(job, extenderItem));
 
     extenderItem->setGroup(extender()->group("jobGroup"));
-
-    Plasma::ExtenderItem *notificationsItem = extender()->item("notifications");
 
     if (isPopupShowing()) {
         return;

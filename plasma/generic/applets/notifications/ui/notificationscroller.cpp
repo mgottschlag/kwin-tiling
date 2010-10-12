@@ -113,7 +113,6 @@ void NotificationScroller::addNotification(Notification *notification)
     }
 
     notificationWidget->layout()->activate();
-    adjustSize();
 }
 
 void NotificationScroller::extenderItemDestroyed(QObject *object)
@@ -125,8 +124,6 @@ void NotificationScroller::extenderItemDestroyed(QObject *object)
         n->deleteLater();
         m_notificationForExtenderItems.remove(static_cast<Plasma::ExtenderItem *>(object));
     }
-
-    adjustSize();
 }
 
 void NotificationScroller::removeNotification(Notification *notification)
@@ -176,8 +173,6 @@ void NotificationScroller::filterNotificationsByOwner(const QString &owner)
     }
 
     m_currentFilter = owner;
-
-    adjustSize();
 }
 
 void NotificationScroller::tabSwitched(int index)
@@ -186,21 +181,6 @@ void NotificationScroller::tabSwitched(int index)
         filterNotificationsByOwner(m_notificationBar->tabText(index));
     } else {
         filterNotificationsByOwner(QString());
-    }
-}
-
-
-void NotificationScroller::adjustSize()
-{
-    updateGeometry();
-
-    Plasma::ExtenderItem *ei = qobject_cast<Plasma::ExtenderItem *>(parentWidget());
-    if (ei && ei->extender()) {
-        static_cast<QGraphicsLayoutItem *>(ei)->updateGeometry();
-        static_cast<QGraphicsLayoutItem *>(ei->extender())->updateGeometry();
-
-        QSizeF hint = ei->extender()->effectiveSizeHint(Qt::PreferredSize);
-        ei->extender()->resize(hint);
     }
 }
 

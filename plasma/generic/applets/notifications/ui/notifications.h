@@ -58,8 +58,6 @@ public:
     void init();
     Manager *manager() const;
 
-    void constraintsEvent(Plasma::Constraints constraints);
-
 protected:
     void createConfigurationInterface(KConfigDialog *parent);
     void initExtenderItem(Plasma::ExtenderItem *extenderItem);
