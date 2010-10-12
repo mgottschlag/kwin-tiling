@@ -65,7 +65,6 @@ private:
     NotificationWidgetPrivate* const d;
 
     Q_PRIVATE_SLOT(d, void updateNotification())
-    Q_PRIVATE_SLOT(d, void destroy())
     Q_PRIVATE_SLOT(d, void buttonClicked())
     Q_PRIVATE_SLOT(d, void hideFinished())
 };

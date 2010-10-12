@@ -66,7 +66,6 @@ public:
     void completeDetach();
     void updateActions();
     void updateNotification();
-    void destroy();
     void buttonClicked();
     void hideFinished();
     QRectF bigIconRect() const;
@@ -167,7 +166,7 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     connect(notification, SIGNAL(changed()),
             this, SLOT(updateNotification()));
     connect(notification, SIGNAL(destroyed()),
-            this, SLOT(destroy()));
+            this, SLOT(deleteLater()));
 
     d->hideAnimation = new QPropertyAnimation(this, "bodyHeight", this);
     d->hideAnimation->setDuration(250);
@@ -425,14 +424,6 @@ void NotificationWidgetPrivate::updateNotification()
 
     //FIXME: this sounds wrong
     q->setPreferredHeight(mainLayout->effectiveSizeHint(Qt::MinimumSize).height());
-}
-
-void NotificationWidgetPrivate::destroy()
-{
-    Plasma::Animation *zoomAnim = Plasma::Animator::create(Plasma::Animator::ZoomAnimation);
-    QObject::connect(zoomAnim, SIGNAL(finished()), q, SLOT(deleteLater()));
-    zoomAnim->setTargetWidget(q);
-    zoomAnim->start();
 }
 
 void NotificationWidgetPrivate::hideFinished()
