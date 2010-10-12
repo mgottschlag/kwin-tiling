@@ -74,7 +74,7 @@
 #include "busywidget.h"
 #include "jobwidget.h"
 #include "jobtotalswidget.h"
-#include "notificationscroller.h"
+#include "notificationgroup.h"
 #include "notificationstack.h"
 #include "stackdialog.h"
 
@@ -178,8 +178,7 @@ void Notifications::syncNotificationBarNeeded()
 
     if (m_manager->notifications().count() > 0) {
         if (!extender()->item("notifications")) {
-
-            m_notificationScroller = new NotificationScroller(extender());
+            m_notificationGroup = new NotificationGroup(extender());
         }
     } else if (extender()->item("notifications")) {
         //don't let him in the config file
@@ -233,7 +232,7 @@ void Notifications::addNotification(Notification *notification)
     syncNotificationBarNeeded();
 
     //At this point we are sure the pointer is valid
-    m_notificationScroller.data()->addNotification(notification);
+    m_notificationGroup.data()->addNotification(notification);
 
 
     if (isPopupShowing()) {

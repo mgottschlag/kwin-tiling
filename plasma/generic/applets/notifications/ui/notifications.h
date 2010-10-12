@@ -43,7 +43,7 @@ class Job;
 class JobTotalsWidget;
 class Manager;
 class Notification;
-class NotificationScroller;
+class NotificationGroup;
 class NotificationStack;
 class BusyWidget;
 
@@ -85,7 +85,7 @@ private:
     JobTotalsWidget *m_jobSummaryWidget;
     bool m_autoHidePopup;
 
-    QWeakPointer<NotificationScroller> m_notificationScroller;
+    QWeakPointer<NotificationGroup> m_notificationGroup;
     NotificationStack *m_notificationStack;
     StackDialog *m_notificationStackDialog;
     JobTotalsWidget *m_standaloneJobSummaryWidget;

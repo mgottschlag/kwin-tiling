@@ -1,5 +1,5 @@
 /***************************************************************************
- *   notificationscroller.cpp                                                *
+ *   notificationgroup.cpp                                                *
  *   Copyright (C) 2010 Marco Martin <notmart@gmail.com>                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,7 +18,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include "notificationscroller.h"
+#include "notificationgroup.h"
 #include "../core/notification.h"
 #include "notificationwidget.h"
 
@@ -33,7 +33,7 @@
 #include <Plasma/ExtenderItem>
 
 
-NotificationScroller::NotificationScroller(Extender *parent, uint groupId)
+NotificationGroup::NotificationGroup(Extender *parent, uint groupId)
    : Plasma::ExtenderGroup(parent, groupId)
 {
     setTransient(true);
@@ -63,13 +63,13 @@ NotificationScroller::NotificationScroller(Extender *parent, uint groupId)
     setWidget(widget);
 }
 
-NotificationScroller::~NotificationScroller()
+NotificationGroup::~NotificationGroup()
 {
     qDeleteAll(m_notifications);
 }
 
 
-void NotificationScroller::addNotification(Notification *notification)
+void NotificationGroup::addNotification(Notification *notification)
 {
     connect(notification, SIGNAL(notificationDestroyed(Notification *)), this, SLOT(removeNotification(Notification *)));
 
@@ -129,7 +129,7 @@ void NotificationScroller::addNotification(Notification *notification)
     notificationWidget->layout()->activate();
 }
 
-void NotificationScroller::extenderItemDestroyed(QObject *object)
+void NotificationGroup::extenderItemDestroyed(QObject *object)
 {
     Notification *n = m_notificationForExtenderItems.value(static_cast<Plasma::ExtenderItem *>(object));
 
@@ -140,7 +140,7 @@ void NotificationScroller::extenderItemDestroyed(QObject *object)
     }
 }
 
-void NotificationScroller::removeNotification(Notification *notification)
+void NotificationGroup::removeNotification(Notification *notification)
 {
     m_extenderItemsForNotification.remove(notification);
     m_notifications.removeAll(notification);
@@ -168,7 +168,7 @@ void NotificationScroller::removeNotification(Notification *notification)
 }
 
 
-void NotificationScroller::filterNotificationsByOwner(const QString &owner)
+void NotificationGroup::filterNotificationsByOwner(const QString &owner)
 {
     foreach (Notification *notification, m_notifications) {
         Plasma::ExtenderItem *item = m_extenderItemsForNotification.value(notification);
@@ -189,7 +189,7 @@ void NotificationScroller::filterNotificationsByOwner(const QString &owner)
     m_currentFilter = owner;
 }
 
-void NotificationScroller::tabSwitched(int index)
+void NotificationGroup::tabSwitched(int index)
 {
     if (index > 0) {
         filterNotificationsByOwner(m_notificationBar->tabText(index));
@@ -199,5 +199,5 @@ void NotificationScroller::tabSwitched(int index)
 }
 
 
-#include "notificationscroller.moc"
+#include "notificationgroup.moc"
 

@@ -22,7 +22,7 @@ set(notifications_SRCS
     ui/notificationwidget.cpp
     ui/jobtotalswidget.cpp
     ui/jobwidget.cpp
-    ui/notificationscroller.cpp
+    ui/notificationgroup.cpp
     ui/notificationstack.cpp
     ui/stackdialog.cpp
     )

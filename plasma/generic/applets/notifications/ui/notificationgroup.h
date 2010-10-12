@@ -1,5 +1,5 @@
 /***************************************************************************
- *   notificationscroller.h                                                *
+ *   notificationgroup.h                                                *
  *   Copyright (C) 2010 Marco Martin <notmart@gmail.com>                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,8 +18,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef NOTIFICATIONSCROLLER_H
-#define NOTIFICATIONSCROLLER_H
+#ifndef NOTIFICATIONGROUP_H
+#define NOTIFICATIONGROUP_H
 
 
 #include <Plasma/Extender>
@@ -44,13 +44,13 @@ class Notification;
 //FIXME: for some reasons using Plasma::Extender directly doesn't build
 typedef Plasma::Extender Extender;
 
-class NotificationScroller : public Plasma::ExtenderGroup
+class NotificationGroup : public Plasma::ExtenderGroup
 {
     Q_OBJECT
 
 public:
-    NotificationScroller(Extender *parent, uint groupId = 0);
-    ~NotificationScroller();
+    NotificationGroup(Extender *parent, uint groupId = 0);
+    ~NotificationGroup();
 
     void addNotification(Notification *notification);
 
