@@ -62,7 +62,6 @@ void NotificationStack::addNotification(Notification *notification)
     NotificationWidget *notificationWidget = new NotificationWidget(notification, this);
     notificationWidget->installEventFilter(this);
     notificationWidget->setAcceptsHoverEvents(this);
-    notificationWidget->setBackgroundVisible(false);
     connect(notificationWidget, SIGNAL(actionTriggered(Notification *)), this, SLOT(removeNotification(Notification *)));
 
     m_notificationWidgets[notification] = notificationWidget;

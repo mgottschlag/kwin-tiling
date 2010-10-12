@@ -31,16 +31,19 @@
 
 #include <Plasma/TabBar>
 #include <Plasma/ExtenderItem>
-#include <Plasma/Extender>
-#include <Plasma/ScrollWidget>
 
 
-NotificationScroller::NotificationScroller(QGraphicsItem *parent)
-   : QGraphicsWidget(parent),
-     m_location(Plasma::BottomEdge)
+NotificationScroller::NotificationScroller(Extender *parent, uint groupId)
+   : Plasma::ExtenderGroup(parent, groupId)
 {
-    m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
-    m_tabsLayout = new QGraphicsLinearLayout(Qt::Horizontal);
+    setTransient(true);
+    setAutoCollapse(true);
+    config().writeEntry("type", "notification");
+    setName("notifications");
+    setTitle(i18n("Notifications"));
+    setIcon("dialog-information");
+    showCloseButton();
+
 
     m_notificationBar = new Plasma::TabBar(this);
     m_notificationBar->nativeWidget()->setMaximumWidth(400);
@@ -49,13 +52,13 @@ NotificationScroller::NotificationScroller(QGraphicsItem *parent)
     connect(m_notificationBar, SIGNAL(currentChanged(int)), this, SLOT(tabSwitched(int)));
 
 
+    QGraphicsWidget *widget = new QGraphicsWidget(this);
+    m_tabsLayout = new QGraphicsLinearLayout(Qt::Horizontal, widget);
     m_tabsLayout->addStretch();
     m_tabsLayout->addItem(m_notificationBar);
     m_tabsLayout->addStretch();
 
-    m_mainWidgetLayout = new QGraphicsLinearLayout(Qt::Vertical);
-    m_layout->addItem(m_mainWidgetLayout);
-    m_layout->addItem(m_tabsLayout);
+    setWidget(widget);
 }
 
 NotificationScroller::~NotificationScroller()
@@ -69,9 +72,25 @@ void NotificationScroller::addNotification(Notification *notification)
     connect(notification, SIGNAL(notificationDestroyed(Notification *)), this, SLOT(removeNotification(Notification *)));
 
     NotificationWidget *notificationWidget = new NotificationWidget(notification, this);
-    connect(notificationWidget, SIGNAL(destroyed()), this, SLOT(adjustSize()));
+    notificationWidget->setTitleBarVisible(false);
+    Plasma::ExtenderItem *extenderItem = new ExtenderItem(extender());
+    extenderItem->setGroup(this);
+    extenderItem->setTransient(true);
+    extenderItem->config().writeEntry("type", "notification");
+    extenderItem->setWidget(notificationWidget);
+    extenderItem->setIcon(QIcon());
+    extenderItem->showCloseButton();
+    connect(extenderItem, SIGNAL(destroyed(QObject *)), this, SLOT(extenderItemDestroyed(QObject *)));
+    connect(notificationWidget, SIGNAL(destroyed()), extenderItem, SLOT(deleteLater()));
 
-    m_notificationWidgets[notification] = notificationWidget;
+    if (!notification->summary().isEmpty()) {
+        extenderItem->setTitle(notification->summary());
+    } else {
+        extenderItem->setTitle(i18n("Notification from %1", notification->applicationName()));
+    }
+
+    m_extenderItemsForNotification[notification] = extenderItem;
+    m_notificationForExtenderItems[extenderItem] = notification;
     m_notifications.append(notification);
     m_notificationsForApp[notification->applicationName()].insert(notification);
 
@@ -79,9 +98,6 @@ void NotificationScroller::addNotification(Notification *notification)
         notificationWidget->setMaximumHeight(0);
         notificationWidget->setVisible(false);
     }
-
-    m_mainWidgetLayout->insertItem(0, notificationWidget);
-
 
     //adjust tabbar
     bool found = false;
@@ -100,10 +116,22 @@ void NotificationScroller::addNotification(Notification *notification)
     adjustSize();
 }
 
+void NotificationScroller::extenderItemDestroyed(QObject *object)
+{
+    Notification *n = m_notificationForExtenderItems.value(static_cast<Plasma::ExtenderItem *>(object));
+
+    if (n) {
+        removeNotification(n);
+        n->deleteLater();
+        m_notificationForExtenderItems.remove(static_cast<Plasma::ExtenderItem *>(object));
+    }
+
+    adjustSize();
+}
+
 void NotificationScroller::removeNotification(Notification *notification)
 {
-    m_mainWidgetLayout->removeItem(m_notificationWidgets.value(notification));
-    m_notificationWidgets.remove(notification);
+    m_extenderItemsForNotification.remove(notification);
     m_notifications.removeAll(notification);
     if (m_notificationsForApp.contains(notification->applicationName())) {
         m_notificationsForApp[notification->applicationName()].remove(notification);
@@ -132,16 +160,18 @@ void NotificationScroller::removeNotification(Notification *notification)
 void NotificationScroller::filterNotificationsByOwner(const QString &owner)
 {
     foreach (Notification *notification, m_notifications) {
+        Plasma::ExtenderItem *item = m_extenderItemsForNotification.value(notification);
+
+        if (!item || item->group() != this) {
+            continue;
+        }
+
         if (owner.isNull() || notification->applicationName() == owner) {
-            if (m_notificationWidgets.contains(notification)) {
-                m_notificationWidgets.value(notification)->setMaximumHeight(QWIDGETSIZE_MAX);
-                m_notificationWidgets.value(notification)->setVisible(true);
-            }
+            item->setMaximumHeight(QWIDGETSIZE_MAX);
+            item->setVisible(true);
         } else {
-            if (m_notificationWidgets.contains(notification)) {
-                m_notificationWidgets.value(notification)->setMaximumHeight(0);
-                m_notificationWidgets.value(notification)->setVisible(false);
-            }
+            item->setMaximumHeight(0);
+            item->setVisible(false);
         }
     }
 
@@ -159,32 +189,9 @@ void NotificationScroller::tabSwitched(int index)
     }
 }
 
-Plasma::Location NotificationScroller::location() const
-{
-    return m_location;
-}
-
-void NotificationScroller::setLocation(const Plasma::Location location)
-{
-    if (!m_layout || (location == m_location)) {
-        return;
-    }
-
-    m_location = location;
-
-    if (m_location == Plasma::TopEdge) {
-        m_layout->removeItem(m_tabsLayout);
-        m_layout->insertItem(0, m_tabsLayout);
-    } else {
-        m_layout->removeItem(m_tabsLayout);
-        m_layout->addItem(m_tabsLayout);
-    }
-
-}
 
 void NotificationScroller::adjustSize()
 {
-    m_mainWidgetLayout->invalidate();
     updateGeometry();
 
     Plasma::ExtenderItem *ei = qobject_cast<Plasma::ExtenderItem *>(parentWidget());
@@ -196,4 +203,7 @@ void NotificationScroller::adjustSize()
         ei->extender()->resize(hint);
     }
 }
+
+
+#include "notificationscroller.moc"
 

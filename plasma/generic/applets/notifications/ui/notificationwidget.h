@@ -34,7 +34,7 @@ class NotificationWidgetPrivate;
 /**
  *  A graphics item, representing notification message.
  */
-class NotificationWidget : public Plasma::Frame
+class NotificationWidget : public QGraphicsWidget
 {
     Q_OBJECT
     Q_PROPERTY(qreal bodyHeight READ bodyHeight WRITE setBodyHeight)
@@ -46,16 +46,15 @@ public:
     void setCollapsed(bool collapse, bool animate = true);
     bool isCollapsed() const;
 
-    void setBackgroundVisible(bool visible);
-    bool isBackgroundVisible() const;
+    void setTitleBarVisible(bool visible);
+    bool isTitleBarVisible() const;
 
     qreal bodyHeight() const;
     void setBodyHeight(const qreal height);
 
+    Notification *notification() const;
+
 protected:
-    void paint(QPainter *painter,
-               const QStyleOptionGraphicsItem *option,
-               QWidget *widget);
     void resizeEvent(QGraphicsSceneResizeEvent *event);
 
 Q_SIGNALS:

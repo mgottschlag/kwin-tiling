@@ -56,7 +56,6 @@ public:
           destroyOnClose(true),
           autoDelete(false),
           collapsed(false),
-          backgroundVisible(true),
           icon(0),
           actionsWidget(0),
           signalMapper(new QSignalMapper(q))
@@ -78,11 +77,11 @@ public:
     bool destroyOnClose;
     bool autoDelete;
     bool collapsed;
-    bool backgroundVisible;
 
     QString message;
     Plasma::Label *messageLabel;
     Plasma::Label *title;
+    Plasma::IconWidget *closeButton;
     Plasma::IconWidget *icon;
     QGraphicsLinearLayout *titleLayout;
     QGraphicsLinearLayout *mainLayout;
@@ -101,9 +100,10 @@ public:
 };
 
 NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidget *parent)
-    : Plasma::Frame(parent),
+    : QGraphicsWidget(parent),
       d(new NotificationWidgetPrivate(this))
 {
+    setFlag(QGraphicsItem::ItemHasNoContents, true);
     setMinimumWidth(350);
     setPreferredWidth(400);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -120,17 +120,17 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     d->title->setWordWrap(false);
     d->title->setAlignment(Qt::AlignCenter);
 
-    Plasma::IconWidget *closeButton = new Plasma::IconWidget(this);
-    closeButton->setSvg("widgets/configuration-icons", "close");
-    closeButton->setMaximumSize(closeButton->sizeFromIconSize(KIconLoader::SizeSmall));
-    closeButton->setMinimumSize(closeButton->maximumSize());
-    connect(closeButton, SIGNAL(clicked()), notification, SLOT(deleteLater()));
+    d->closeButton = new Plasma::IconWidget(this);
+    d->closeButton->setSvg("widgets/configuration-icons", "close");
+    d->closeButton->setMaximumSize(d->closeButton->sizeFromIconSize(KIconLoader::SizeSmall));
+    d->closeButton->setMinimumSize(d->closeButton->maximumSize());
+    connect(d->closeButton, SIGNAL(clicked()), notification, SLOT(deleteLater()));
 
     d->titleLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     d->titleLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     d->titleLayout->addItem(d->iconPlaceSmall);
     d->titleLayout->addItem(d->title);
-    d->titleLayout->addItem(closeButton);
+    d->titleLayout->addItem(d->closeButton);
 
 
 
@@ -197,6 +197,8 @@ void NotificationWidget::setCollapsed(bool collapse, bool animate)
         return;
     }
 
+    setTitleBarVisible(true);
+
     //use this weird way to make easy to animate
     if (animate) {
         setMinimumHeight(-1);
@@ -244,6 +246,11 @@ void NotificationWidget::setCollapsed(bool collapse, bool animate)
     d->collapsed = collapse;
 }
 
+Notification *NotificationWidget::notification() const
+{
+    return d->notification.data();
+}
+
 qreal NotificationWidget::bodyHeight() const
 {
     return d->body->maximumHeight();
@@ -263,29 +270,29 @@ bool NotificationWidget::isCollapsed() const
     return d->collapsed;
 }
 
-void NotificationWidget::setBackgroundVisible(bool visible)
+void NotificationWidget::setTitleBarVisible(bool visible)
 {
-    d->backgroundVisible = visible;
-    update();
-}
-
-bool NotificationWidget::isBackgroundVisible() const
-{
-    return d->backgroundVisible;
-}
-
-void NotificationWidget::paint(QPainter *painter,
-                               const QStyleOptionGraphicsItem *option,
-                               QWidget *widget)
-{
-    if (d->backgroundVisible) {
-        Plasma::Frame::paint(painter, option, widget);
+    if (visible) {
+        d->iconPlaceSmall->show();
+        d->title->show();
+        d->closeButton->show();
+        d->titleLayout->setMaximumHeight(QWIDGETSIZE_MAX);
+    } else {
+        d->iconPlaceSmall->hide();
+        d->title->hide();
+        d->closeButton->hide();
+        d->titleLayout->setMaximumHeight(0);
     }
+}
+
+bool NotificationWidget::isTitleBarVisible() const
+{
+    return d->title->isVisible();
 }
 
 void NotificationWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    Frame::resizeEvent(event);
+    QGraphicsWidget::resizeEvent(event);
     if (d->icon && !d->collapsed && d->animationGroup->state() != QAbstractAnimation::Running) {
         d->icon->setGeometry(d->bigIconRect());
     }

@@ -178,25 +178,8 @@ void Notifications::syncNotificationBarNeeded()
 
     if (m_manager->notifications().count() > 0) {
         if (!extender()->item("notifications")) {
-            Plasma::ExtenderItem *extenderItem = new Plasma::ExtenderItem(extender());
-            extenderItem->setTransient(true);
-            extenderItem->config().writeEntry("type", "notification");
-            extenderItem->setName("notifications");
-            extenderItem->setTitle(i18n("Notifications"));
-            extenderItem->setIcon("dialog-information");
-            extenderItem->showCloseButton();
 
-            m_notificationScroller = new NotificationScroller(extenderItem);
-            m_notificationScroller.data()->setLocation(location());
-            connect(m_notificationScroller.data(), SIGNAL(scrollerEmpty()), extenderItem, SLOT(destroy()));
-
-            extenderItem->setWidget(m_notificationScroller.data());
-            //this forces the item to be at bottom for bottom panel or at top for top panels
-            if (location() == Plasma::TopEdge) {
-                extenderItem->setExtender(extender(), QPointF(0, 0));
-            } else {
-                extenderItem->setExtender(extender(), QPoint(0, extender()->size().height()));
-            }
+            m_notificationScroller = new NotificationScroller(extender());
 
             Plasma::ExtenderGroup *jobGroup = extender()->group("jobGroup");
         }
@@ -215,9 +198,7 @@ Manager *Notifications::manager() const
 
 void Notifications::constraintsEvent(Plasma::Constraints constraints)
 {
-    if (constraints & Plasma::LocationConstraint && m_notificationScroller) {
-        m_notificationScroller.data()->setLocation(location());
-    }
+    //
 }
 
 void Notifications::createConfigurationInterface(KConfigDialog *parent)

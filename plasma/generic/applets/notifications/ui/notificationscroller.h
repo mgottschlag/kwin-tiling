@@ -21,15 +21,18 @@
 #ifndef NOTIFICATIONSCROLLER_H
 #define NOTIFICATIONSCROLLER_H
 
-#include <QGraphicsWidget>
 
-#include <plasma/plasma.h>
+#include <Plasma/Extender>
+#include <Plasma/ExtenderGroup>
+
+
+#include <Plasma/Plasma>
 
 class QGraphicsLinearLayout;
 
 namespace Plasma
 {
-    class ScrollWidget;
+    class ExtenderItem;
     class TabBar;
 }
 
@@ -38,20 +41,21 @@ class NotificationWidget;
 
 class Notification;
 
-class NotificationScroller : public QGraphicsWidget
+//FIXME: for some reasons using Plasma::Extender directly doesn't build
+typedef Plasma::Extender Extender;
+
+class NotificationScroller : public Plasma::ExtenderGroup
 {
     Q_OBJECT
 
 public:
-    NotificationScroller(QGraphicsItem *parent = 0);
+    NotificationScroller(Extender *parent, uint groupId = 0);
     ~NotificationScroller();
 
     void addNotification(Notification *notification);
 
     void filterNotificationsByOwner(const QString &owner);
 
-    Plasma::Location location() const;
-    void setLocation(const Plasma::Location location);
 
 public Q_SLOTS:
     void removeNotification(Notification *notification);
@@ -59,24 +63,21 @@ public Q_SLOTS:
 protected Q_SLOTS:
     void tabSwitched(int index);
     void adjustSize();
+    void extenderItemDestroyed(QObject *object);
 
 Q_SIGNALS:
     void scrollerEmpty();
 
 private:
-    QGraphicsWidget *m_mainWidget;
-    QGraphicsLinearLayout *m_mainWidgetLayout;
-    Plasma::ScrollWidget *m_scroll;
     Plasma::TabBar *m_notificationBar;
 
     //housekeeping data structures
     QList<Notification *>m_notifications;
     QHash<QString, QSet<Notification *> >m_notificationsForApp;
-    QHash<Notification *, NotificationWidget *>m_notificationWidgets;
+    QHash<Notification *, Plasma::ExtenderItem *>m_extenderItemsForNotification;
+    QHash<Plasma::ExtenderItem *, Notification *>m_notificationForExtenderItems;
     QString m_currentFilter;
-    Plasma::Location m_location;
     QGraphicsLinearLayout *m_tabsLayout;
-    QGraphicsLinearLayout *m_layout;
 };
 
 
