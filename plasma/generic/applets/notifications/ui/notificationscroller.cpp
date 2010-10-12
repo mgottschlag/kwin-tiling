@@ -54,6 +54,8 @@ NotificationScroller::NotificationScroller(Extender *parent, uint groupId)
 
     QGraphicsWidget *widget = new QGraphicsWidget(this);
     m_tabsLayout = new QGraphicsLinearLayout(Qt::Horizontal, widget);
+    widget->setContentsMargins(0, 4, 0, 0);
+    m_tabsLayout->setContentsMargins(0, 0, 0, 0);
     m_tabsLayout->addStretch();
     m_tabsLayout->addItem(m_notificationBar);
     m_tabsLayout->addStretch();
