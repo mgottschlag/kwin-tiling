@@ -95,6 +95,7 @@ void NotificationGroup::addNotification(Notification *notification)
     m_notificationForExtenderItems[extenderItem] = notification;
     m_notifications.append(notification);
     m_notificationsForApp[notification->applicationName()].insert(notification);
+    m_appForNotification[notification] = notification->applicationName();
 
     if (!m_currentFilter.isNull() && m_currentFilter != notification->applicationName()) {
         notificationWidget->setMaximumHeight(0);
@@ -144,10 +145,18 @@ void NotificationGroup::removeNotification(Notification *notification)
 {
     m_extenderItemsForNotification.remove(notification);
     m_notifications.removeAll(notification);
-    if (m_notificationsForApp.contains(notification->applicationName())) {
-        m_notificationsForApp[notification->applicationName()].remove(notification);
-        if (m_notificationsForApp[notification->applicationName()].isEmpty()) {
-            m_notificationsForApp.remove(notification->applicationName());
+    QString applicationName = m_appForNotification.value(notification);
+
+    if (applicationName.isEmpty()) {
+        return;
+    }
+
+    m_appForNotification.remove(notification);
+
+    if (m_notificationsForApp.contains(applicationName)) {
+        m_notificationsForApp[applicationName].remove(notification);
+        if (m_notificationsForApp[applicationName].isEmpty()) {
+            m_notificationsForApp.remove(applicationName);
         }
     }
 

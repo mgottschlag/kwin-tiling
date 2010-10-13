@@ -72,9 +72,16 @@ private:
 
     //housekeeping data structures
     QList<Notification *>m_notifications;
-    QHash<QString, QSet<Notification *> >m_notificationsForApp;
+
+    //Those two are kept on both ways since we are not sure the thing
+    //contained in the hash is still valid so we couldn't obtain the
+    //info to remove the proper key, unless both ways are stored
+    QHash<QString, QSet<Notification *> > m_notificationsForApp;
+    QHash<Notification *, QString> m_appForNotification;
+
     QHash<Notification *, Plasma::ExtenderItem *>m_extenderItemsForNotification;
     QHash<Plasma::ExtenderItem *, Notification *>m_notificationForExtenderItems;
+
     QString m_currentFilter;
     QGraphicsLinearLayout *m_tabsLayout;
 };
