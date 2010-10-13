@@ -168,7 +168,7 @@ void DBusNotificationProtocol::hideNotification(const QString &source)
 void DBusNotificationProtocol::removeNotification(const QString &source)
 {
     if (m_notifications.contains(source)) {
-        m_notifications.take(source)->deleteLater();
+        m_notifications.take(source)->destroy();
     }
 }
 

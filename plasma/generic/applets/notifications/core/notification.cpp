@@ -60,7 +60,7 @@ Notification::Notification(QObject *parent)
 {
     d->deleteTimer = new QTimer(this);
     d->deleteTimer->setSingleShot(true);
-    connect(d->deleteTimer, SIGNAL(timeout()), this, SLOT(deleteLater()));
+    connect(d->deleteTimer, SIGNAL(timeout()), this, SLOT(destroy()));
 }
 
 
@@ -70,6 +70,11 @@ Notification::~Notification()
     delete d;
 }
 
+void Notification::destroy()
+{
+    emit notificationDestroyed(this);
+    deleteLater();
+}
 
 QString Notification::applicationName() const
 {

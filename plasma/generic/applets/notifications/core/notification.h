@@ -62,6 +62,7 @@ public slots:
     virtual void linkActivated(const QString &link);
     void startDeletionCountdown();
     void hide();
+    void destroy();
 
 signals:
     void changed(Notification *notification = 0);
