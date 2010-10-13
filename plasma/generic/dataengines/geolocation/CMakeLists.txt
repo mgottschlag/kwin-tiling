@@ -46,7 +46,7 @@ install(TARGETS plasma-geolocation-ip DESTINATION ${PLUGIN_INSTALL_DIR})
 # -------------------------------------------------------------------------------------------------
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
-find_package(libgps)
+macro_optional_find_package(libgps)
 macro_log_feature(LIBGPS_FOUND "libgps" "GPS support for geolocation" "http://gpsd.berlios.de/" FALSE "" "")
 if(LIBGPS_FOUND)
     include_directories(${LIBGPS_INCLUDES} ${LIBGPS_INCLUDE_DIR})
