@@ -328,13 +328,15 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
         //kDebug() << "Remaining msecs on battery:" << m_remainingMSecs;
     }
 
-    if (m_numOfBattery == 0) {
-        setStatus(Plasma::PassiveStatus);
-    } else if (m_batteriesData.count() > 0 && data.contains("Percent") && data["Percent"].toInt() < 10) {
-        setStatus(Plasma::NeedsAttentionStatus);
-    } else {
-        setStatus(Plasma::ActiveStatus);
+    Plasma::ItemStatus status = Plasma::PassiveStatus;
+    foreach (const Plasma::DataEngine::Data &data, m_batteriesData) {
+        if (status == Plasma::NeedsAttentionStatus || (data.value("Percent", 0).toInt() < 10)) {
+            status = Plasma::NeedsAttentionStatus;
+        } else {
+            status = Plasma::ActiveStatus;
+        }
     }
+    setStatus(status);
 
     updateStatus();
     update();
