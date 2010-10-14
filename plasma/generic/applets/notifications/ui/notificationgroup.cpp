@@ -135,9 +135,9 @@ void NotificationGroup::extenderItemDestroyed(Plasma::ExtenderItem *object)
     Notification *n = m_notificationForExtenderItems.value(object);
 
     if (n) {
+        m_notificationForExtenderItems.remove(object);
         removeNotification(n);
         n->deleteLater();
-        m_notificationForExtenderItems.remove(object);
     }
 }
 
