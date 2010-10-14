@@ -62,7 +62,7 @@ public Q_SLOTS:
 
 protected Q_SLOTS:
     void tabSwitched(int index);
-    void extenderItemDestroyed(QObject *object);
+    void extenderItemDestroyed(Plasma::ExtenderItem *object);
 
 Q_SIGNALS:
     void scrollerEmpty();

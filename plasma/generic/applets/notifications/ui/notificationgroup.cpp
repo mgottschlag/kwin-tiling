@@ -82,7 +82,7 @@ void NotificationGroup::addNotification(Notification *notification)
     extenderItem->setWidget(notificationWidget);
     extenderItem->setIcon(QIcon());
     extenderItem->showCloseButton();
-    connect(extenderItem, SIGNAL(destroyed(QObject *)), this, SLOT(extenderItemDestroyed(QObject *)));
+    connect(extenderItem, SIGNAL(destroyed(Plasma::ExtenderItem*)), this, SLOT(extenderItemDestroyed(Plasma::ExtenderItem*)));
     connect(notificationWidget, SIGNAL(destroyed()), extenderItem, SLOT(deleteLater()));
 
     if (!notification->summary().isEmpty()) {
@@ -130,14 +130,14 @@ void NotificationGroup::addNotification(Notification *notification)
     notificationWidget->layout()->activate();
 }
 
-void NotificationGroup::extenderItemDestroyed(QObject *object)
+void NotificationGroup::extenderItemDestroyed(Plasma::ExtenderItem *object)
 {
-    Notification *n = m_notificationForExtenderItems.value(static_cast<Plasma::ExtenderItem *>(object));
+    Notification *n = m_notificationForExtenderItems.value(object);
 
     if (n) {
         removeNotification(n);
         n->deleteLater();
-        m_notificationForExtenderItems.remove(static_cast<Plasma::ExtenderItem *>(object));
+        m_notificationForExtenderItems.remove(object);
     }
 }
 
