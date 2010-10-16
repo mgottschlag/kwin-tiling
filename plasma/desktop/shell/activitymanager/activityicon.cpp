@@ -116,7 +116,9 @@ void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     //check whether one of our corner icons was clicked
     //FIXME this is duplicate code, should get cleaned up later
-    const QRectF rect = contentsRect();
+    QRectF rect = contentsRect();
+    rect.adjust(0, rect.height() - iconSize(), 0, 0);
+
     QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
     qreal iconX = rect.x() + qMax<double>(0.0, (rect.width() / 2) - (iconSize() / 2));
 
