@@ -76,7 +76,7 @@ void NotificationGroup::addNotification(Notification *notification)
     NotificationWidget *notificationWidget = new NotificationWidget(notification, this);
     notificationWidget->setTitleBarVisible(false);
     Plasma::ExtenderItem *extenderItem = new ExtenderItem(extender());
-    extenderItem->setGroup(this);
+    extenderItem->setGroup(this, QPointF(0,0));
     extenderItem->setTransient(true);
     extenderItem->config().writeEntry("type", "notification");
     extenderItem->setWidget(notificationWidget);
@@ -143,6 +143,10 @@ void NotificationGroup::extenderItemDestroyed(Plasma::ExtenderItem *object)
 
 void NotificationGroup::removeNotification(Notification *notification)
 {
+    Plasma::ExtenderItem *item = m_extenderItemsForNotification.value(notification);
+    if (item) {
+        m_notificationForExtenderItems.remove(item);
+    }
     m_extenderItemsForNotification.remove(notification);
     m_notifications.removeAll(notification);
     QString applicationName = m_appForNotification.value(notification);
