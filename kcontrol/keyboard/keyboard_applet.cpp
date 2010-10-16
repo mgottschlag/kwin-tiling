@@ -19,6 +19,7 @@
 #include "keyboard_applet.h"
 
 #include <kglobalsettings.h>
+#include <plasma/theme.h>
 #include <plasma/tooltipmanager.h>
 #include <ktoolinvocation.h>
 
@@ -139,6 +140,7 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 {
 	p->setRenderHint(QPainter::SmoothPixmapTransform);
 	p->setRenderHint(QPainter::Antialiasing);
+	//p->setBrush(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
 
 	LayoutUnit layoutUnit = X11Helper::getCurrentLayout();
 	if( layoutUnit.isEmpty() )
@@ -154,8 +156,8 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 		kDebug() << "applet: LayoutChanged" << layoutUnit.toString() << shortText;
 
 		p->save();
-//		p->setPen(Qt::black);
-		QFont font = p->font();
+		p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+		QFont font = Plasma::Theme::defaultTheme()->font(Plasma::Theme::DesktopFont);
 		int height = contentsRect.height();
 		int fontSize = shortText.length() == 2
 				? height * 7 / 10
