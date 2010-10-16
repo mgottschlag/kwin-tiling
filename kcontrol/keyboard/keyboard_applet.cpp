@@ -59,6 +59,7 @@ KeyboardApplet::KeyboardApplet(QObject *parent, const QVariantList &args):
 	setAspectRatioMode(Plasma::KeepAspectRatio);
 	//setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
 	setBackgroundHints(DefaultBackground);
+	connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
 
 	rules = Rules::readRules();
 
