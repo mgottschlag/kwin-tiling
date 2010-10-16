@@ -1,5 +1,6 @@
 /* This file is part of the KDE project
    Copyright (C) 2001 Lubos Lunak <l.lunak@kde.org>
+   Copyright (C) 2010 Martin Gräßlin <kde@martin-graesslin.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -24,6 +25,7 @@
 #include "klaunchsettings.h"
 
 #include <kiconloader.h>
+#include <kmanagerselection.h>
 #include <QCursor>
 #include <kapplication.h>
 #include <QImage>
@@ -53,7 +55,8 @@ StartupId::StartupId( QWidget* parent, const char* name )
         startup_info( KStartupInfo::CleanOnCantDetect ),
         startup_window( None ),
         blinking( true ),
-        bouncing( false )
+        bouncing( false ),
+        selection_watcher( new KSelectionWatcher( "_KDE_STARTUP_FEEDBACK", -1, this ))
     {
         setObjectName( QLatin1String( name ) );
     hide(); // is QWidget only because of x11Event()
@@ -76,6 +79,9 @@ StartupId::StartupId( QWidget* parent, const char* name )
     connect( &startup_info,
         SIGNAL( gotRemoveStartup( const KStartupInfoId&, const KStartupInfoData& )),
         SLOT( gotRemoveStartup( const KStartupInfoId& )));
+    connect( selection_watcher, SIGNAL(newOwner(Window)), SLOT(newOwner()));
+    connect( selection_watcher, SIGNAL(lostOwner()), SLOT(lostOwner()));
+    active_selection = ( selection_watcher->owner() != None );
     }
 
 StartupId::~StartupId()
@@ -92,6 +98,8 @@ void StartupId::configure()
 
 void StartupId::gotNewStartup( const KStartupInfoId& id_P, const KStartupInfoData& data_P )
     {
+    if( active_selection )
+        return;
     QString icon = data_P.findIcon();
     current_startup = id_P;
     startups[ id_P ] = icon;
@@ -100,6 +108,8 @@ void StartupId::gotNewStartup( const KStartupInfoId& id_P, const KStartupInfoDat
 
 void StartupId::gotStartupChange( const KStartupInfoId& id_P, const KStartupInfoData& data_P )
     {
+    if( active_selection )
+        return;
     if( current_startup == id_P )
         {
         QString icon = data_P.findIcon();
@@ -113,6 +123,8 @@ void StartupId::gotStartupChange( const KStartupInfoId& id_P, const KStartupInfo
 
 void StartupId::gotRemoveStartup( const KStartupInfoId& id_P )
     {
+    if( active_selection )
+        return;
     startups.remove( id_P );
     if( startups.count() == 0 )
         {
@@ -338,6 +350,16 @@ void StartupId::update_startupid()
     XRaiseWindow( QX11Info::display(), startup_window );
     update_timer.start( bouncing ? 30 : 100 );
     QApplication::flush();
+    }
+
+void StartupId::newOwner()
+    {
+    active_selection = true;
+    }
+
+void StartupId::lostOwner()
+    {
+    active_selection = false;
     }
 
 #include "startupid.moc"

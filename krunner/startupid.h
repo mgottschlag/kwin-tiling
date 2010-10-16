@@ -29,6 +29,7 @@
 #include <QMap>
 #include <kstartupinfo.h>
 
+class KSelectionWatcher;
 
 class StartupId
     : public QWidget
@@ -48,6 +49,8 @@ class StartupId
         void gotStartupChange( const KStartupInfoId& id, const KStartupInfoData& data );
         void gotRemoveStartup( const KStartupInfoId& id );
         void finishKDEStartup();
+        void newOwner();
+        void lostOwner();
     protected:
         KStartupInfo startup_info;
         WId startup_window;
@@ -60,6 +63,8 @@ class StartupId
         unsigned int frame;
         enum { NUM_BLINKING_PIXMAPS = 5 };
         QPixmap pixmaps[ NUM_BLINKING_PIXMAPS ];
+        KSelectionWatcher* selection_watcher;
+        bool active_selection;
     };
 
 #endif
