@@ -21,6 +21,7 @@
 #define KIDENTICONGENERATOR_H
 
 #include <QPixmap>
+#include <QIcon>
 
 #include <Plasma/Svg>
 
@@ -28,15 +29,19 @@ class KIdenticonGenerator {
 public:
     static KIdenticonGenerator * self();
 
-    QPixmap generate(int size, QString id);
-    QPixmap generate(int size, quint32 hash);
+    QPixmap generatePixmap(int size, QString id, QIcon::Mode mode = QIcon::Normal);
+    QPixmap generatePixmap(int size, quint32 hash, QIcon::Mode mode = QIcon::Normal);
+    QPixmap generatePixmap(int size, const QIcon & icon, QIcon::Mode mode = QIcon::Normal);
+
+    QIcon generate(int size, const QString & data);
+    QIcon generate(int size, quint32 hash);
+    QIcon generate(int size, const QIcon & icon);
 
 private:
     KIdenticonGenerator();
 
-    static KIdenticonGenerator * m_instance;
-    Plasma::Svg m_shapes;
-
+    class Private;
+    Private * const d;
 };
 
 #endif // KIDENTICONGENERATOR_H

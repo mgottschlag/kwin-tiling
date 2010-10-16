@@ -90,7 +90,7 @@ QPixmap Activity::pixmap(const QSize &size)
     if (m_info->isValid() && !m_info->icon().isEmpty()) {
         return KIcon(m_info->icon()).pixmap(size);
     } else {
-        return KIdenticonGenerator::self()->generate(size.width(), m_id);
+        return KIdenticonGenerator::self()->generatePixmap(size.width(), m_id);
     }
 }
 

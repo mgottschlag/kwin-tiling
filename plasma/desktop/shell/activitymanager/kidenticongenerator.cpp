@@ -24,52 +24,29 @@
 #include <QDebug>
 #include <QCryptographicHash>
 
+#include <KIconEffect>
+
 #include <Plasma/Svg>
 #include <Plasma/Theme>
 
 #define VALUE_LIMIT_UP 192
 #define VALUE_LIMIT_DOWN 64
 
-KIdenticonGenerator * KIdenticonGenerator::m_instance = NULL;
+class KIdenticonGenerator::Private {
+public:
+    QPixmap generatePattern(int size, quint32 hash, QIcon::Mode mode);
 
-KIdenticonGenerator * KIdenticonGenerator::self()
-{
-    if (!m_instance) {
-        m_instance = new KIdenticonGenerator();
-    }
+    QString elementName(const QString & element, QIcon::Mode mode);
+    QColor colorForHash(quint32 hash) const;
+    quint32 hash(const QString & data);
 
-    return m_instance;
-}
+    static KIdenticonGenerator * instance;
 
-KIdenticonGenerator::KIdenticonGenerator()
-{
-    // loading SVG
-    m_shapes.setImagePath("widgets/identiconshapes");
-    m_shapes.setContainsMultipleImages(true);
-}
+    Plasma::Svg shapes;
+    Plasma::Svg theme;
+};
 
-QPixmap KIdenticonGenerator::generate(int size, QString id)
-{
-    // qHash function doesn't give random enough results
-    // and gives similar hashes for similar strings.
-
-    QByteArray bytes = QCryptographicHash::hash(id.toUtf8(), QCryptographicHash::Md5);
-
-    // Generating hash
-    quint32 hash = 0;
-
-    char * hashBytes = (char *) & hash;
-    for (int i = 0; i < bytes.size(); i++) {
-        // Using XOR for mixing the bytes because
-        // it is fast and cryptographically safe
-        // (more than enough for our use-case)
-        hashBytes[i % 4] ^= bytes.at(i);
-    }
-
-    return generate(size, hash);
-}
-
-QPixmap KIdenticonGenerator::generate(int size, quint32 hash)
+QPixmap KIdenticonGenerator::Private::generatePattern(int size, quint32 hash, QIcon::Mode mode)
 {
     // We are dividing the pixmap into 9 blocks - 3 x 3
     int blockSize = size / 3;
@@ -93,11 +70,11 @@ QPixmap KIdenticonGenerator::generate(int size, quint32 hash)
     for (int i = 0; i < 4; i++) {
         // Painting the corner item
         rect.moveTopLeft(QPoint(0, 0));
-        m_shapes.paint(& painterAlpha, rect, "shape" + QString::number(block[0] + 1));
+        shapes.paint(& painterAlpha, rect, "shape" + QString::number(block[0] + 1));
 
         // Painting side item
         rect.moveTopLeft(QPoint(blockSize, 0));
-        m_shapes.paint(& painterAlpha, rect, "shape" + QString::number(block[1] + 1));
+        shapes.paint(& painterAlpha, rect, "shape" + QString::number(block[1] + 1));
 
         // Rotating the canvas to paint other edges
         painterAlpha.translate(size, 0);
@@ -106,13 +83,37 @@ QPixmap KIdenticonGenerator::generate(int size, quint32 hash)
 
     // Painting center item
     rect.moveTopLeft(QPoint(blockSize, blockSize));
-    m_shapes.paint(& painterAlpha, rect, "shape" + QString::number(block[2] + 1));
+    shapes.paint(& painterAlpha, rect, "shape" + QString::number(block[2] + 1));
 
     painterAlpha.end();
 
     // Painting final pixmap
     QPixmap pixmapResult(size, size);
 
+
+    pixmapResult.fill(Qt::transparent);
+
+    // QRadialGradient gradient(50, 50, 100);
+    // gradient.setColorAt(0, color.lighter());
+    // gradient.setColorAt(1, color.darker());
+
+    QPainter resultPainter(& pixmapResult);
+    // resultPainter.fillRect(0, 0, size, size, gradient);
+    theme.paint(& resultPainter, QRect(0, 0, size, size), elementName("content", mode));
+
+    resultPainter.end();
+
+    pixmapResult.setAlphaChannel(pixmapAlpha);
+
+    // QImage itmp = pixmapResult.toImage();
+    // KIconEffect::colorize(itmp, colorForHash(hash), 1.0);
+    // pixmapResult = pixmapResult.fromImage(itmp);
+
+    return pixmapResult;
+}
+
+QColor KIdenticonGenerator::Private::colorForHash(quint32 hash) const
+{
     // Color is chosen according to hash
     QColor color;
 
@@ -132,20 +133,163 @@ QPixmap KIdenticonGenerator::generate(int size, quint32 hash)
         value
     );
 
-    pixmapResult.fill(color);
+    return color;
 
-    QRadialGradient gradient(50, 50, 100);
-    gradient.setColorAt(0, color.lighter());
-    gradient.setColorAt(1, color.darker());
+}
 
-    QPainter resultPainter(& pixmapResult);
-    resultPainter.fillRect(0, 0, size, size, gradient);
+QString KIdenticonGenerator::Private::elementName(const QString & element, QIcon::Mode mode)
+{
+    QString prefix;
 
-    resultPainter.end();
+    switch (mode) {
+        case QIcon::Normal:
+            prefix = "normal-";
+            break;
 
-    pixmapResult.setAlphaChannel(pixmapAlpha);
+        case QIcon::Disabled:
+            prefix = "disabled-";
+            break;
 
-    return pixmapResult;
+        case QIcon::Selected:
+            prefix = "selected-";
+            break;
 
+        case QIcon::Active:
+            prefix = "active-";
+            break;
+
+        default:
+            break;
+
+    }
+
+    if (theme.hasElement(prefix + element)) {
+        return prefix + element;
+    } else {
+        return element;
+    }
+}
+
+quint32 KIdenticonGenerator::Private::hash(const QString & data)
+{
+    // qHash function doesn't give random enough results
+    // and gives similar hashes for similar strings.
+
+    QByteArray bytes = QCryptographicHash::hash(data.toUtf8(), QCryptographicHash::Md5);
+
+    // Generating hash
+    quint32 hash = 0;
+
+    char * hashBytes = (char *) & hash;
+    for (int i = 0; i < bytes.size(); i++) {
+        // Using XOR for mixing the bytes because
+        // it is fast and cryptographically safe
+        // (more than enough for our use-case)
+        hashBytes[i % 4] ^= bytes.at(i);
+    }
+
+    return hash;
+}
+
+KIdenticonGenerator * KIdenticonGenerator::Private::instance = NULL;
+
+KIdenticonGenerator * KIdenticonGenerator::self()
+{
+    if (!Private::instance) {
+        Private::instance = new KIdenticonGenerator();
+    }
+
+    return Private::instance;
+}
+
+KIdenticonGenerator::KIdenticonGenerator()
+    : d(new Private())
+{
+    // loading SVGs
+    d->shapes.setImagePath("widgets/identiconshapes");
+    d->shapes.setContainsMultipleImages(true);
+
+    d->theme.setImagePath("widgets/identicontheme");
+    d->theme.setContainsMultipleImages(true);
+}
+
+#define generateIconModes( PARAM ) \
+    for (int omode = QIcon::Normal; omode <= QIcon::Selected; omode++) {   \
+        QIcon::Mode mode = (QIcon::Mode)omode;                             \
+        result.addPixmap(generatePixmap(size, PARAM, mode), mode);         \
+    }
+
+QIcon KIdenticonGenerator::generate(int size, quint32 hash)
+{
+    QIcon result;
+    generateIconModes(hash);
+    return result;
+}
+
+QIcon KIdenticonGenerator::generate(int size, const QString & data)
+{
+    QIcon result;
+    generateIconModes(data);
+    return result;
+}
+
+QIcon KIdenticonGenerator::generate(int size, const QIcon & icon)
+{
+    QIcon result;
+    generateIconModes(icon);
+    return result;
+}
+
+QPixmap KIdenticonGenerator::generatePixmap(int size, QString id, QIcon::Mode mode)
+{
+    return generatePixmap(size, d->hash(id), mode);
+}
+
+QPixmap KIdenticonGenerator::generatePixmap(int size, quint32 hash, QIcon::Mode mode)
+{
+    QPixmap pixmap(size, size);
+    pixmap.fill(Qt::transparent);
+
+    // Painting background and the pattern
+    {
+    QPainter painter(& pixmap);
+    d->theme.paint(& painter, QRect(0, 0, size, size), d->elementName("background", mode));
+    painter.drawPixmap(0, 0, d->generatePattern(size, hash, mode));
+    painter.end();
+    }
+
+    // coloring the painted image
+    QImage itmp = pixmap.toImage();
+    KIconEffect::colorize(itmp, d->colorForHash(hash), 1.0);
+    if (mode == QIcon::Disabled) {
+        KIconEffect::toGray(itmp, 0.7);
+    }
+    pixmap = pixmap.fromImage(itmp);
+
+    // Drawing the overlay
+    {
+    QPainter painter(& pixmap);
+    d->theme.paint(& painter, QRect(0, 0, size, size), d->elementName("overlay", mode));
+    }
+
+    return pixmap;
+}
+
+QPixmap KIdenticonGenerator::generatePixmap(int size, const QIcon & icon, QIcon::Mode mode)
+{
+    QPixmap pixmap(size, size);
+    pixmap.fill(Qt::transparent);
+
+    QRect paintRect(0, 0, size, size);
+
+    // Painting background and the pattern
+    QPainter painter(& pixmap);
+    d->theme.paint(& painter, QRect(0, 0, size, size), d->elementName("background", mode));
+
+    icon.paint(& painter, paintRect, Qt::AlignCenter, mode);
+
+    painter.end();
+
+    return pixmap;
 }
 
