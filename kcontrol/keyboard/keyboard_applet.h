@@ -51,6 +51,7 @@ public:
 	KeyboardApplet(QObject *parent, const QVariantList &args);
 	virtual ~KeyboardApplet();
 
+	void constraintsEvent(Plasma::Constraints constraints);
 	void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
 
 protected:
