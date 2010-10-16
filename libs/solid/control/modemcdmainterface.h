@@ -41,7 +41,7 @@ namespace Control
 
         virtual ~ModemCdmaInterface();
 
-        enum BandClass { Unknown = 0x0, B800 = 0x01, B1900 = 0x2, };
+        enum BandClass { Unknown = 0x0, B800 = 0x01, B1900 = 0x2 };
 
         class ServingSystemType
         {
@@ -51,7 +51,7 @@ namespace Control
             uint systemId;
         };
 
-        enum RegistrationState { UnknownState = 0x0, Registered = 0x1, Home = 0x2, Roaming = 0x3, };
+        enum RegistrationState { UnknownState = 0x0, Registered = 0x1, Home = 0x2, Roaming = 0x3 };
 
         class RegistrationStateResult
         {

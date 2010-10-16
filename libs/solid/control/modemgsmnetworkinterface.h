@@ -64,7 +64,7 @@ namespace Control
             StatusSearching, /* Not registered, searching for new operator to register with. */
             StatusDenied, /* Registration denied. */
             StatusUnknown, /* Unknown registration status. */
-            StatusRoaming, /* Registered on a roaming network. */
+            StatusRoaming /* Registered on a roaming network. */
         };
 
         class RegistrationInfoType

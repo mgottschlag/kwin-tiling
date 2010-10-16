@@ -43,14 +43,14 @@ namespace Control
         enum Type {
             UnknownType = 0, /* MM specification does not include this type though. */
             GsmType = 1,
-            CdmaType = 2,
+            CdmaType = 2
         };
 
         enum Method {
             Ppp = 0, /* Use PPP to get the address. */
             Static = 1, /* Static configuration, the modem will provide IP information. */
             Dhcp = 2, /*Use DHCP */
-            UnknownMethod = 0xff,
+            UnknownMethod = 0xff
         };
 
         /* Describes the device's current access mode preference;
@@ -61,7 +61,7 @@ namespace Control
              Prefer2g, /* Prefer 2G (GPRS or EDGE) */
              Prefer3g, /* Prefer 3G (UMTS or HSxPA) */
              UseOnly2g, /* Use only 2G (GPRS or EDGE) */
-             UseOnly3g, /* Use only 3G (UMTS or HSxPA) */
+             UseOnly3g /* Use only 3G (UMTS or HSxPA) */
         };
 
         /* Describes various access technologies that a device uses when connected to a mobile network. */
@@ -74,7 +74,7 @@ namespace Control
             Umts, /* UMTS (ETSI 27.007: "UTRAN") */
             Hsdpa, /* HSDPA (ETSI 27.007: "UTRAN w/HSDPA") */
             Hsupa, /* HSUPA (ETSI 27.007: "UTRAN w/HSUPA") */
-            Hspa, /* HSPA (ETSI 27.007: "UTRAN w/HSDPA and HSUPA") */
+            Hspa /* HSPA (ETSI 27.007: "UTRAN w/HSDPA and HSUPA") */
         };
 
         /* A bitfield describing the specifc access modes and technologies supported by a device
@@ -93,7 +93,7 @@ namespace Control
             HsupaMode = 0x200, /* HSUPA (3G) */
             HspaMode = 0x400, /* HSPA (3G) */
             GsmMode = 0x800, /* GSM */
-            GsmCompactMode = 0x1000, /* GSM Compact */
+            GsmCompactMode = 0x1000 /* GSM Compact */
         };
 
         /* A bitfield describing the specific radio bands supported by the device
@@ -112,7 +112,7 @@ namespace Control
             U850 = 0x200, /* WCDMA 3GPP UMTS 850 MHz (Class V) */
             U900 = 0x400, /* WCDMA 3GPP UMTS 900 MHz (Class VIII) */
             U17IX = 0x800, /* WCDMA 3GPP UMTS 1700 MHz (Class IX) */
-            U19IX = 0x1000, /* WCDMA 3GPP UMTS 1900 MHz (Class II) */
+            U19IX = 0x1000 /* WCDMA 3GPP UMTS 1900 MHz (Class II) */
         };
 
         enum GsmInterfaceType {
@@ -122,7 +122,7 @@ namespace Control
             GsmNetwork,
             GsmSms,
             GsmHso,
-            GsmUssd,
+            GsmUssd
         };
 
         class Ip4ConfigType
