@@ -49,6 +49,7 @@ class ActivityIcon : public Plasma::AbstractIcon
     private Q_SLOTS:
         void repaint();
         void showRemovalConfirmation();
+        void showConfiguration();
         void makeInlineWidgetVisible();
         void cancelRemoval();
         void startInlineAnim();
@@ -58,6 +59,7 @@ class ActivityIcon : public Plasma::AbstractIcon
         KIcon m_removeIcon;
         KIcon m_stopIcon;
         KIcon m_playIcon;
+        KIcon m_configureIcon;
         bool m_removable : 1;
         Activity *m_activity;
         QWeakPointer<QGraphicsWidget> m_inlineWidget;

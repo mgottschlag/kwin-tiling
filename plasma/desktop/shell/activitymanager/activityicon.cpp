@@ -25,6 +25,7 @@
 
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsGridLayout>
 #include <QPainter>
 #include <QCursor>
 
@@ -33,12 +34,15 @@
 
 #include <Plasma/Label>
 #include <Plasma/PushButton>
+#include <Plasma/LineEdit>
+#include <Plasma/IconWidget>
 
 ActivityIcon::ActivityIcon(const QString &id)
     :AbstractIcon(0),
     m_removeIcon("edit-delete"),
     m_stopIcon("media-playback-stop"),
     m_playIcon("media-playback-start"),
+    m_configureIcon("configure"),
     m_removable(true),
     m_inlineWidgetAnim(0)
 {
@@ -105,7 +109,12 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
             qreal removeY = rect.y();
             painter->drawPixmap(removeX, removeY, m_removeIcon.pixmap(cornerIconSize));
         }
+
     }
+
+    qreal configX = iconX + iconSize() - cornerIconSize.width();
+    qreal configY = rect.bottom() - cornerIconSize.height();
+    painter->drawPixmap(configX, configY, m_configureIcon.pixmap(cornerIconSize));
 }
 
 void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -131,6 +140,14 @@ void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         } else {
             showRemovalConfirmation();
         }
+        return;
+    }
+
+    qreal configX = iconX + iconSize() - cornerIconSize.width();
+    qreal configY = rect.bottom() - cornerIconSize.height();
+    QRectF configRect(QPointF(configX, configY), cornerIconSize);
+    if (configRect.contains(event->pos())) {
+        showConfiguration();
         return;
     }
 
@@ -206,6 +223,50 @@ void ActivityIcon::showRemovalConfirmation()
     p->setText(i18n("Cancel Removal"));
     layout->addItem(p);
     connect(p, SIGNAL(clicked()), this, SLOT(cancelRemoval()));
+
+    w->setMaximumSize(QSize(0, size().height()));
+    w->adjustSize();
+    w->setPos(contentsRect().topRight() + QPoint(4, 0));
+
+    m_inlineWidget = w;
+    QTimer::singleShot(0, this, SLOT(startInlineAnim()));
+}
+
+void ActivityIcon::showConfiguration()
+{
+    QGraphicsWidget *w = new QGraphicsWidget(this);
+    QGraphicsGridLayout *layout = new QGraphicsGridLayout(w);
+
+    layout->setContentsMargins(0, 0, 0, 0);
+    w->setLayout(layout);
+
+    Plasma::IconWidget * icon = new Plasma::IconWidget(w);
+    icon->setIcon(KIcon("plasma"));
+    icon->setMinimumIconSize(QSizeF(32, 32));
+    icon->setPreferredIconSize(QSizeF(32, 32));
+    // l->setText("###");
+
+    Plasma::Label *labelName = new Plasma::Label(w);
+    labelName->setText(i18n("Activity name"));
+
+    Plasma::LineEdit *editName = new Plasma::LineEdit(w);
+
+    Plasma::PushButton * buttonSave = new Plasma::PushButton(w);
+    buttonSave->setText(i18n("Save"));
+    // connect(p, SIGNAL(clicked()), m_activity, SLOT(destroy()));
+
+    Plasma::PushButton * buttonCancel = new Plasma::PushButton(w);
+    buttonCancel->setText(i18n("Cancel"));
+    // connect(p, SIGNAL(clicked()), m_activity, SLOT(destroy()));
+
+    // layout
+    layout->addItem(icon, 0, 0, 2, 1);
+
+    layout->addItem(labelName, 0, 1);
+    layout->addItem(editName,  1, 1);
+
+    layout->addItem(buttonSave,   0, 2);
+    layout->addItem(buttonCancel, 1, 2);
 
     w->setMaximumSize(QSize(0, size().height()));
     w->adjustSize();
