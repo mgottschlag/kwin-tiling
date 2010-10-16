@@ -74,10 +74,13 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         return;
     }
 
-    qreal l, t, r, b;
-    getContentsMargins(&l, &t, &r, &b);
+    //qreal l, t, r, b;
+    //getContentsMargins(&l, &t, &r, &b);
     //kDebug() << preferredSize() << geometry() << contentsRect() << l << t << r << b;
-    const QRectF rect = contentsRect();
+    QRectF rect = contentsRect();
+
+    rect.adjust(0, rect.height() - iconSize(), 0, 0);
+
     QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
     qreal iconX = rect.x() + qMax<double>(0.0, (rect.width() - iconSize()) / 2.0); //icon's centered
 
