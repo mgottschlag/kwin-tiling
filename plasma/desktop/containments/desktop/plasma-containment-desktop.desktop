@@ -92,7 +92,7 @@ NoDisplay=false
 
 X-KDE-Library=plasma_containment_desktop
 X-KDE-PluginInfo-Author=The Plasma Team
-X-KDE-PluginInfo-Email=panel-devel@kde.org
+X-KDE-PluginInfo-Email=plasma-devel@kde.org
 X-KDE-PluginInfo-Name=desktop
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
