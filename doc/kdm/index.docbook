@@ -1440,6 +1440,7 @@ is attempted, but a scheduled "login" command will be executed.</para>
 
 <variablelist>
 <title>Commands for all sockets</title>
+
 <varlistentry>
 <term><command>caps</command></term>
 <listitem>
@@ -1494,6 +1495,10 @@ authenticated users.</para>
 <listitem>
 <para>Reserve displays are configured, and <returnvalue>number</returnvalue>
 are available at this time</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
 </listitem>
 </varlistentry>
 
@@ -1645,10 +1650,9 @@ socket.</para></listitem>
 <para>New fields might be added later</para>
 </listitem>
 </varlistentry>
+
 </variablelist>
-</listitem>
-</varlistentry>
-</variablelist>
+
 <para>There are two ways of using the sockets:</para>
 <itemizedlist>
 <listitem>
