@@ -123,6 +123,11 @@ QString WicdNetworkInterface::udi() const
     return QString::fromLatin1("SomeMadeupWicdUdi");
 }
 
+QString WicdNetworkInterface::udi() const
+{
+    return d->name;
+}
+
 int WicdNetworkInterface::designSpeed() const
 {
     return 0;
