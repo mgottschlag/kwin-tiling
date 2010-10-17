@@ -186,39 +186,10 @@ void ActivityIcon::showConfiguration()
 {
     hideInlineWidget(true);
 
-    QGraphicsWidget *w = new QGraphicsWidget(this);
-    QGraphicsGridLayout *layout = new QGraphicsGridLayout(w);
+    QGraphicsWidget * w = new ActivityConfiguration(this);
 
-    layout->setContentsMargins(0, 0, 0, 0);
-    w->setLayout(layout);
-
-    Plasma::IconWidget * icon = new Plasma::IconWidget(w);
-    icon->setIcon(KIcon("plasma"));
-    icon->setMinimumIconSize(QSizeF(32, 32));
-    icon->setPreferredIconSize(QSizeF(32, 32));
-    // l->setText("###");
-
-    Plasma::Label *labelName = new Plasma::Label(w);
-    labelName->setText(i18n("Activity name"));
-
-    Plasma::LineEdit *editName = new Plasma::LineEdit(w);
-
-    Plasma::PushButton * buttonSave = new Plasma::PushButton(w);
-    buttonSave->setText(i18n("Save"));
-    // connect(p, SIGNAL(clicked()), m_activity, SLOT(destroy()));
-
-    Plasma::PushButton * buttonCancel = new Plasma::PushButton(w);
-    buttonCancel->setText(i18n("Cancel"));
-    // connect(p, SIGNAL(clicked()), m_activity, SLOT(destroy()));
-
-    // layout
-    layout->addItem(icon, 0, 0, 2, 1);
-
-    layout->addItem(labelName, 0, 1);
-    layout->addItem(editName,  1, 1);
-
-    layout->addItem(buttonSave,   0, 2);
-    layout->addItem(buttonCancel, 1, 2);
+    connect(w, SIGNAL(closed()), this, SLOT(hideInlineWidget()));
+    connect(w, SIGNAL(applyChanges()), this, SLOT(applyChanges()));
 
     w->setMaximumSize(QSize(0, size().height()));
     w->adjustSize();

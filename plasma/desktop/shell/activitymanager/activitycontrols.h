@@ -21,6 +21,7 @@
 #include <QGraphicsLinearLayout>
 #include <Plasma/Label>
 #include <Plasma/PushButton>
+#include <Plasma/LineEdit>
 
 #include "activityicon.h"
 
@@ -47,13 +48,26 @@ private:
 
     Plasma::Label         * m_labelRemoveActivity;
     Plasma::PushButton    * m_buttonConfirmRemoval;
-
     Plasma::PushButton    * m_buttonCancel;
 };
 
 class ActivityConfiguration: public ActivityControls {
     Q_OBJECT
 public:
-    ActivityConfiguration();
+    ActivityConfiguration(ActivityIcon * parent);
+    ~ActivityConfiguration();
 
+Q_SIGNALS:
+    void applyChanges();
+
+private:
+    QGraphicsLinearLayout * m_layoutButtons;
+    QGraphicsLinearLayout * m_layoutMain;
+
+    Plasma::Label         * m_labelConfiguration;
+    Plasma::PushButton    * m_buttonConfirmChanges;
+    Plasma::PushButton    * m_buttonCancel;
+
+    Plasma::LineEdit      * m_activityName;
+    Plasma::PushButton    * m_activityIcon;
 };

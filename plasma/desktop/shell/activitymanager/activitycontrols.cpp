@@ -29,7 +29,6 @@ ActivityControls::ActivityControls(ActivityIcon * parent)
 ActivityRemovalConfirmation::ActivityRemovalConfirmation(ActivityIcon * parent)
     : ActivityControls(parent)
 {
-
     m_layout = new QGraphicsLinearLayout(this);
     m_layout->setOrientation(Qt::Vertical);
     m_layout->setContentsMargins(0, 0, 0, 0);
@@ -51,3 +50,53 @@ ActivityRemovalConfirmation::ActivityRemovalConfirmation(ActivityIcon * parent)
     connect(m_buttonCancel, SIGNAL(clicked()), this, SIGNAL(closed()));
 }
 
+// ActivityConfiguration
+
+ActivityConfiguration::ActivityConfiguration(ActivityIcon * parent)
+    : ActivityControls(parent)
+{
+    m_layoutButtons = new QGraphicsLinearLayout(this);
+    m_layoutButtons->setOrientation(Qt::Vertical);
+    m_layoutButtons->setContentsMargins(0, 0, 0, 0);
+    setLayout(m_layoutButtons);
+
+    m_labelConfiguration = new Plasma::Label(this);
+    m_labelConfiguration->setText(i18n("Accept changes?"));
+    m_labelConfiguration->setAlignment(Qt::AlignCenter);
+    m_layoutButtons->addItem(m_labelConfiguration);
+
+    m_buttonConfirmChanges = new Plasma::PushButton(this);
+    m_buttonConfirmChanges->setText(i18n("Apply Changes"));
+    m_layoutButtons->addItem(m_buttonConfirmChanges);
+    connect(m_buttonConfirmChanges, SIGNAL(clicked()), this, SIGNAL(applyChanges()));
+
+    m_buttonCancel = new Plasma::PushButton(this);
+    m_buttonCancel->setText(i18n("Cancel Changes"));
+    m_layoutButtons->addItem(m_buttonCancel);
+    connect(m_buttonCancel, SIGNAL(clicked()), this, SIGNAL(closed()));
+
+    m_layoutMain = new QGraphicsLinearLayout(parent);
+    m_layoutMain->setOrientation(Qt::Vertical);
+    m_layoutMain->setContentsMargins(0, 0, 0, 0);
+
+    m_activityName = new Plasma::LineEdit(parent);
+    m_layoutMain->addItem(m_activityName);
+
+    m_activityIcon = new Plasma::PushButton(parent);
+    m_activityIcon->setIcon(KIcon("plasma"));
+    m_layoutMain->addItem(m_activityIcon);
+
+    m_activityName->setZValue(2);
+    m_activityIcon->setZValue(2);
+
+    m_layoutMain->setGeometry(QRectF(0, 0, this->geometry().left(), parent->geometry().height()));
+}
+
+ActivityConfiguration::~ActivityConfiguration()
+{
+    m_activityName->hide();
+    m_activityIcon->hide();
+
+    m_activityName->deleteLater();
+    m_activityIcon->deleteLater();
+}
