@@ -1,5 +1,6 @@
 /*
  *   Copyright 2010 Chani Armitage <chani@kde.org>
+ *   Copyright 2010 Ivan Cukic <ivan.cukic(at)kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library/Lesser General Public License
@@ -26,6 +27,7 @@
 
 class QAbstractAnimation;
 class Activity;
+class ActivityActionWidget;
 
 class ActivityIcon : public Plasma::AbstractIcon
 {
@@ -35,35 +37,41 @@ class ActivityIcon : public Plasma::AbstractIcon
         explicit ActivityIcon(const QString &id);
         virtual ~ActivityIcon();
 
-        void setRemovable(bool removable);
+        void setClosable(bool closable);
         Activity* activity();
         void activityRemoved();
 
         QPixmap pixmap(const QSize &size);
         QMimeData* mimeData();
-        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
-    protected:
-        void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+        void setGeometry(const QRectF & rect);
 
     private Q_SLOTS:
-        void repaint();
+        void stopActivity();
+        void startActivity();
         void showRemovalConfirmation();
         void showConfiguration();
         void makeInlineWidgetVisible();
-        void cancelRemoval();
+        void hideInlineWidget();
         void startInlineAnim();
+        void updateLayout();
+        void updateButtons();
 
     private:
         QString m_id;
-        KIcon m_removeIcon;
-        KIcon m_stopIcon;
-        KIcon m_playIcon;
-        KIcon m_configureIcon;
-        bool m_removable : 1;
+
+        ActivityActionWidget * m_buttonStop;
+        ActivityActionWidget * m_buttonRemove;
+        ActivityActionWidget * m_buttonStart;
+        ActivityActionWidget * m_buttonConfigure;
+
+        bool m_closable : 1;
+
         Activity *m_activity;
         QWeakPointer<QGraphicsWidget> m_inlineWidget;
         QAbstractAnimation *m_inlineWidgetAnim;
+
+        friend class ActivityActionWidget;
 };
 
 #endif //APPLETICON_H

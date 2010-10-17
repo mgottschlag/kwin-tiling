@@ -36,13 +36,14 @@ ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
     foreach (const QString &activity, activities) {
         createActivityIcon(activity);
     }
-    //ensure the last open one can't be closed
-    activityClosed();
+
+    updateClosable();
+
     /*
     if (m_allAppletsHash.count() == 1) {
         ActivityIcon *icon = qobject_cast<ActivityIcon*>(m_allAppletsHash.values().first());
         if (icon) {
-            icon->setRemovable(false);
+            icon->setClosable(false);
         }
     }*/
     //TODO:
@@ -91,7 +92,7 @@ void ActivityList::activityAdded(const QString &id)
     if (m_allAppletsHash.count() == 1) {
         ActivityIcon *icon = qobject_cast<ActivityIcon*>(m_allAppletsHash.values().first());
         if (icon) {
-            icon->setRemovable(true);
+            icon->setClosable(true);
         }
     }
     */
@@ -110,7 +111,7 @@ void ActivityList::activityRemoved(const QString &id)
     if (m_allAppletsHash.count() == 1) {
         ActivityIcon *icon = qobject_cast<ActivityIcon*>(m_allAppletsHash.values().first());
         if (icon) {
-            icon->setRemovable(false);
+            icon->setClosable(false);
         }
     }
 */
@@ -119,32 +120,48 @@ void ActivityList::activityRemoved(const QString &id)
 
 void ActivityList::activityClosed()
 {
-    ActivityIcon *running = 0;
+    updateClosable();
+}
+
+void ActivityList::updateClosable()
+{
+    ActivityIcon * running = 0;
+    bool twoRunning = false;
+
     foreach (Plasma::AbstractIcon *i, m_allAppletsHash) {
         ActivityIcon *icon = qobject_cast<ActivityIcon*>(i);
+
         if (icon && icon->activity()->isRunning()) {
             if (running) {
                 //found two, no worries
-                return;
+                twoRunning = true;
+                break;
             } else {
                 running = icon;
             }
         }
     }
 
-    if (running) {
-        running->setRemovable(false);
+    if (twoRunning) {
+        foreach (Plasma::AbstractIcon *i, m_allAppletsHash) {
+            qobject_cast < ActivityIcon * > (i)->setClosable(true);
+        }
+
+    } else if (running) {
+        running->setClosable(false);
     }
 }
 
 void ActivityList::activityOpened()
 {
-    foreach (Plasma::AbstractIcon *i, m_allAppletsHash) {
-        ActivityIcon *icon = qobject_cast<ActivityIcon*>(i);
-        if (icon && icon->activity()->isRunning()) {
-            icon->setRemovable(true);
-        }
-    }
+    updateClosable();
+
+//    foreach (Plasma::AbstractIcon *i, m_allAppletsHash) {
+//        ActivityIcon *icon = qobject_cast<ActivityIcon*>(i);
+//        if (icon && icon->activity()->isRunning()) {
+//            icon->setClosable(true);
+//        }
+//    }
 }
 
 

@@ -1,5 +1,6 @@
 /*
  *   Copyright 2010 Chani Armitage <chani@kde.org>
+ *   Copyright 2010 Ivan Cukic <ivan.cukic(at)kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library/Lesser General Public License
@@ -37,22 +38,68 @@
 #include <Plasma/LineEdit>
 #include <Plasma/IconWidget>
 
+#define REMOVE_ICON KIcon("edit-delete")
+#define STOP_ICON KIcon("media-playback-stop")
+#define START_ICON KIcon("media-playback-start")
+#define CONFIGURE_ICON KIcon("configure")
+
+class ActivityActionWidget: public QGraphicsWidget {
+public:
+    ActivityActionWidget(ActivityIcon * parent, const QString & slot,
+            const KIcon & icon, const QString & tooltip, const QSize & size = QSize(16, 16))
+        : QGraphicsWidget(parent), m_parent(parent), m_slot(slot), m_iconSize(size), m_icon(icon)
+    {
+        setToolTip(tooltip);
+        setMinimumSize(m_iconSize);
+        setPreferredSize(m_iconSize);
+        setMaximumSize(m_iconSize);
+
+        setGeometry(0, 0, m_iconSize.width(), m_iconSize.height());
+        setZValue(1);
+    }
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+    {
+        QGraphicsWidget::paint(painter, option, widget);
+        painter->drawPixmap(0, 0, m_icon.pixmap(m_iconSize));
+    }
+
+    void mousePressEvent(QGraphicsSceneMouseEvent * event)
+    {
+        QGraphicsWidget::mouseReleaseEvent(event);
+
+        if (event->button() != Qt::LeftButton)
+            return;
+
+        QMetaObject::invokeMethod(m_parent, m_slot.toAscii());
+
+        event->accept();
+    }
+
+    ActivityIcon * m_parent;
+    QString m_slot;
+    QSize m_iconSize;
+    KIcon m_icon;
+
+};
+
 ActivityIcon::ActivityIcon(const QString &id)
     :AbstractIcon(0),
-    m_removeIcon("edit-delete"),
-    m_stopIcon("media-playback-stop"),
-    m_playIcon("media-playback-start"),
-    m_configureIcon("configure"),
-    m_removable(true),
-    m_inlineWidgetAnim(0)
+    m_inlineWidgetAnim(0),
+    m_buttonRemove(0),
+    m_buttonStart(0),
+    m_buttonConfigure(0),
+    m_buttonStop(0)
 {
     DesktopCorona *c = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
     m_activity = c->activity(id);
     connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)), m_activity, SLOT(activate()));
-    connect(m_activity, SIGNAL(opened()), this, SLOT(repaint()));
-    connect(m_activity, SIGNAL(closed()), this, SLOT(repaint()));
+    connect(m_activity, SIGNAL(opened()), this, SLOT(updateButtons()));
+    connect(m_activity, SIGNAL(closed()), this, SLOT(updateButtons()));
     connect(m_activity, SIGNAL(nameChanged(QString)), this, SLOT(setName(QString)));
     setName(m_activity->name());
+
+    updateButtons();
 }
 
 ActivityIcon::~ActivityIcon()
@@ -68,90 +115,6 @@ QMimeData* ActivityIcon::mimeData()
 {
     //TODO: how shall we use d&d?
     return 0;
-}
-
-void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-    AbstractIcon::paint(painter, option, widget);
-
-    if (!m_activity) {
-        return;
-    }
-
-    //qreal l, t, r, b;
-    //getContentsMargins(&l, &t, &r, &b);
-    //kDebug() << preferredSize() << geometry() << contentsRect() << l << t << r << b;
-    QRectF rect = contentsRect();
-
-    rect.adjust(0, rect.height() - iconSize(), 0, 0);
-
-    QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
-    qreal iconX = rect.x() + qMax<double>(0.0, (rect.width() - iconSize()) / 2.0); //icon's centered
-
-    if (m_activity->isRunning()) {
-        if (m_removable) {
-            //draw stop icon
-            qreal stopX = iconX + iconSize() - cornerIconSize.width();
-            qreal stopY = rect.y();
-            painter->drawPixmap(stopX, stopY, m_stopIcon.pixmap(cornerIconSize));
-        }
-    } else {
-        //draw play icon, centered
-        qreal playIconSize = KIconLoader::SizeMedium;
-        qreal offset = (iconSize() - playIconSize) / 2.0;
-        qreal playX = iconX + offset;
-        qreal playY = rect.y() + offset;
-        painter->drawPixmap(playX, playY, m_playIcon.pixmap(playIconSize));
-
-        if (m_removable) {
-            //the Remove corner-button
-            qreal removeX = iconX + iconSize() - cornerIconSize.width();
-            qreal removeY = rect.y();
-            painter->drawPixmap(removeX, removeY, m_removeIcon.pixmap(cornerIconSize));
-        }
-
-    }
-
-    qreal configX = iconX + iconSize() - cornerIconSize.width();
-    qreal configY = rect.bottom() - cornerIconSize.height();
-    painter->drawPixmap(configX, configY, m_configureIcon.pixmap(cornerIconSize));
-}
-
-void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (!m_activity) {
-        return;
-    }
-
-    //check whether one of our corner icons was clicked
-    //FIXME this is duplicate code, should get cleaned up later
-    QRectF rect = contentsRect();
-    rect.adjust(0, rect.height() - iconSize(), 0, 0);
-
-    QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
-    qreal iconX = rect.x() + qMax<double>(0.0, (rect.width() / 2) - (iconSize() / 2));
-
-    qreal removeX = iconX + iconSize() - cornerIconSize.width();
-    qreal removeY = rect.y();
-    QRectF removeRect(QPointF(removeX, removeY), cornerIconSize);
-    if (m_removable && removeRect.contains(event->pos())) {
-        if (m_activity->isRunning()) {
-            m_activity->close();
-        } else {
-            showRemovalConfirmation();
-        }
-        return;
-    }
-
-    qreal configX = iconX + iconSize() - cornerIconSize.width();
-    qreal configY = rect.bottom() - cornerIconSize.height();
-    QRectF configRect(QPointF(configX, configY), cornerIconSize);
-    if (configRect.contains(event->pos())) {
-        showConfiguration();
-        return;
-    }
-
-    AbstractIcon::mouseReleaseEvent(event);
 }
 
 class MakeRoomAnimation : public QAbstractAnimation
@@ -222,7 +185,7 @@ void ActivityIcon::showRemovalConfirmation()
     p = new Plasma::PushButton(w);
     p->setText(i18n("Cancel Removal"));
     layout->addItem(p);
-    connect(p, SIGNAL(clicked()), this, SLOT(cancelRemoval()));
+    connect(p, SIGNAL(clicked()), this, SLOT(hideInlineWidget()));
 
     w->setMaximumSize(QSize(0, size().height()));
     w->adjustSize();
@@ -293,7 +256,7 @@ void ActivityIcon::startInlineAnim()
     m_inlineWidgetAnim->start();
 }
 
-void ActivityIcon::cancelRemoval()
+void ActivityIcon::hideInlineWidget()
 {
     if (m_inlineWidget) {
         m_inlineWidget.data()->deleteLater();
@@ -316,19 +279,14 @@ void ActivityIcon::makeInlineWidgetVisible()
     }
 }
 
-void ActivityIcon::repaint()
+void ActivityIcon::setClosable(bool closable)
 {
-    update();
-}
-
-void ActivityIcon::setRemovable(bool removable)
-{
-    if (removable == m_removable) {
+    if (closable == m_closable) {
         return;
     }
 
-    m_removable = removable;
-    update();
+    m_closable = closable;
+    updateButtons();
 }
 
 Activity* ActivityIcon::activity()
@@ -340,6 +298,111 @@ void ActivityIcon::activityRemoved()
 {
     m_activity = 0;
     deleteLater();
+}
+
+void ActivityIcon::setGeometry(const QRectF & geometry)
+{
+    Plasma::AbstractIcon::setGeometry(geometry);
+    updateLayout();
+}
+
+void ActivityIcon::updateLayout()
+{
+    QRectF rect = contentsRect();
+
+    rect.adjust(
+            (rect.width() - iconSize()) / 2,
+            rect.height() - iconSize(),
+            - (rect.width() - iconSize()) / 2,
+            0
+        );
+
+    if (m_buttonStop) {
+        m_buttonStop->setGeometry(QRectF(
+            rect.topRight() - QPointF(m_buttonStop->m_iconSize.width(), 0),
+            m_buttonStop->m_iconSize
+        ));
+    }
+
+    if (m_buttonRemove) {
+        m_buttonRemove->setGeometry(QRectF(
+            rect.topRight() - QPointF(m_buttonRemove->m_iconSize.width(), 0),
+            m_buttonRemove->m_iconSize
+        ));
+    }
+
+    if (m_buttonConfigure) {
+        m_buttonConfigure->setGeometry(QRectF(
+            rect.bottomRight() - QPointF(m_buttonConfigure->m_iconSize.width(), m_buttonConfigure->m_iconSize.height()),
+            m_buttonConfigure->m_iconSize
+        ));
+    }
+
+    if (m_buttonStart) {
+        m_buttonStart->setGeometry(QRectF(
+            rect.center() - QPointF(m_buttonStart->m_iconSize.width() / 2, m_buttonStart->m_iconSize.height() / 2),
+            m_buttonStart->m_iconSize
+        ));
+    }
+}
+
+void ActivityIcon::updateButtons()
+{
+    if (!m_activity) {
+        return;
+    }
+
+    if (!m_buttonConfigure) {
+        m_buttonConfigure = new ActivityActionWidget(this, "showConfiguration", CONFIGURE_ICON, i18n("Configure activity"));
+    }
+
+#define DESTROY_ACTIVITY_ACTION_WIDIGET(A) \
+    if (A) {                               \
+        A->hide();                         \
+        A->deleteLater();                  \
+        A = 0;                             \
+    }
+
+    if (m_activity->isRunning()) {
+        DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStart);
+        DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonRemove);
+
+        if (m_closable) {
+            if (!m_buttonStop) {
+                m_buttonStop = new ActivityActionWidget(this, "stopActivity", STOP_ICON, i18n("Stop activity"));
+            }
+        } else {
+            DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStop);
+        }
+
+    } else {
+        DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStop);
+
+        if (!m_buttonRemove) {
+            m_buttonRemove = new ActivityActionWidget(this, "showRemovalConfirmation", REMOVE_ICON, i18n("Stop activity"));
+        }
+
+        if (!m_buttonStart) {
+            m_buttonStart = new ActivityActionWidget(this, "startActivity", START_ICON, i18n("Stop activity"), QSize(32, 32));
+        }
+
+    }
+
+#undef DESTROY_ACTIVITY_ACTION_WIDIGET
+
+    updateLayout();
+}
+
+void ActivityIcon::stopActivity()
+{
+    if (m_activity) {
+        m_activity->close();
+    }
+}
+
+void ActivityIcon::startActivity()
+{
+    emit clicked(this);
 }
 
 #include "activityicon.moc"

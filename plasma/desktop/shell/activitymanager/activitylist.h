@@ -49,6 +49,8 @@ private Q_SLOTS:
     void activityOpened();
     void activityClosed();
 
+    void updateClosable();
+
 private:
     void createActivityIcon(const QString &id);
 
