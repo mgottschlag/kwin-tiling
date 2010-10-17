@@ -21,6 +21,7 @@
 #include "activityicon.h"
 
 #include "activity.h"
+#include "activitycontrols.h"
 #include "desktopcorona.h"
 #include "plasmaapp.h"
 
@@ -86,10 +87,10 @@ public:
 ActivityIcon::ActivityIcon(const QString &id)
     :AbstractIcon(0),
     m_inlineWidgetAnim(0),
+    m_buttonStop(0),
     m_buttonRemove(0),
     m_buttonStart(0),
-    m_buttonConfigure(0),
-    m_buttonStop(0)
+    m_buttonConfigure(0)
 {
     DesktopCorona *c = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
     m_activity = c->activity(id);
@@ -166,26 +167,12 @@ private:
 
 void ActivityIcon::showRemovalConfirmation()
 {
-    QGraphicsWidget *w = new QGraphicsWidget(this);
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(w);
-    layout->setOrientation(Qt::Vertical);
-    layout->setContentsMargins(0, 0, 0, 0);
-    w->setLayout(layout);
+    hideInlineWidget(true);
 
-    Plasma::Label *l = new Plasma::Label(w);
-    l->setText(i18n("Remove activity?"));
-    l->setAlignment(Qt::AlignCenter);
-    layout->addItem(l);
+    QGraphicsWidget * w = new ActivityRemovalConfirmation(this);
 
-    Plasma::PushButton *p = new Plasma::PushButton(w);
-    p->setText(i18n("Confirm Removal"));
-    layout->addItem(p);
-    connect(p, SIGNAL(clicked()), m_activity, SLOT(destroy()));
-
-    p = new Plasma::PushButton(w);
-    p->setText(i18n("Cancel Removal"));
-    layout->addItem(p);
-    connect(p, SIGNAL(clicked()), this, SLOT(hideInlineWidget()));
+    connect(w, SIGNAL(closed()), this, SLOT(hideInlineWidget()));
+    connect(w, SIGNAL(removalConfirmed()), m_activity, SLOT(destroy()));
 
     w->setMaximumSize(QSize(0, size().height()));
     w->adjustSize();
@@ -197,6 +184,8 @@ void ActivityIcon::showRemovalConfirmation()
 
 void ActivityIcon::showConfiguration()
 {
+    hideInlineWidget(true);
+
     QGraphicsWidget *w = new QGraphicsWidget(this);
     QGraphicsGridLayout *layout = new QGraphicsGridLayout(w);
 
@@ -256,14 +245,14 @@ void ActivityIcon::startInlineAnim()
     m_inlineWidgetAnim->start();
 }
 
-void ActivityIcon::hideInlineWidget()
+void ActivityIcon::hideInlineWidget(bool aboutToShowAnother)
 {
     if (m_inlineWidget) {
         m_inlineWidget.data()->deleteLater();
         m_inlineWidget.data()->hide();
     }
 
-    if (m_inlineWidgetAnim) {
+    if (m_inlineWidgetAnim && !aboutToShowAnother) {
         m_inlineWidgetAnim->setDirection(QAbstractAnimation::Backward);
         if (m_inlineWidgetAnim->state() != QAbstractAnimation::Running) {
             m_inlineWidgetAnim->start(QAbstractAnimation::DeleteWhenStopped);

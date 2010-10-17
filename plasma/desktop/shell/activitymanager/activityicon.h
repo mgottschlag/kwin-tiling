@@ -52,7 +52,7 @@ class ActivityIcon : public Plasma::AbstractIcon
         void showRemovalConfirmation();
         void showConfiguration();
         void makeInlineWidgetVisible();
-        void hideInlineWidget();
+        void hideInlineWidget(bool aboutToShowAnother = false);
         void startInlineAnim();
         void updateLayout();
         void updateButtons();
