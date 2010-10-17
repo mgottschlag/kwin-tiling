@@ -1507,23 +1507,26 @@ are available at this time</para>
 <parameter>alllocal</parameter>]</term>
 <listitem>
 <para>Return a list of running sessions.  By default all active sessions are
-listed.  if <parameter>all</parameter> is specified, passive sessions are
-listed as well.  If <parameter>alllocal</parameter> is specified, passive
+listed (this is useful for a shutdown warning).  If <parameter>all</parameter>
+is specified, passive sessions are listed as well.
+If <parameter>alllocal</parameter> is specified, passive
 sessions are listed as well, but all incoming remote sessions are
-skipped.</para>
+skipped (this is useful for a fast user switching agent).</para>
 <para>Each session entry is a comma separated tuple of:</para>
 <itemizedlist>
 <listitem><para>Display or TTY name</para></listitem>
-<listitem><para>VT name for local sessions</para></listitem>
+<listitem><para>VT name for local sessions, remote host name prefixed by
+<literal>@</literal> for remote TTY sessions, otherwise empty</para></listitem>
 <listitem><para>Logged in user's name, empty for passive sessions and
 outgoing remote sessions (local chooser mode)</para></listitem>
-<listitem><para>Session type or <quote>&lt;remote&gt;</quote> for outgoing
-remote sessions, empty for passive sessions.</para></listitem>
+<listitem><para>Session type for active local sessions, remote hostname for
+outgoing remote sessions, empty for passive sessions.</para></listitem>
 <listitem><para>A Flag field:</para>
 <itemizedlist><listitem><para><literal>*</literal> for the display belonging
 to the requesting socket.</para></listitem>
 <listitem><para><literal>!</literal> for sessions that cannot be killed by the
-reqeusting socket.</para></listitem>
+requesting socket.</para></listitem>
+<listitem><para><literal>t</literal> for TTY sessions.</para></listitem>
 </itemizedlist>
 </listitem>
 </itemizedlist>
