@@ -28,9 +28,9 @@
 #include <QtCore/QByteArray>
 
 struct KDE_EXPORT SessEnt {
-	QString display, from, user, session;
-	int vt;
-	bool self:1, tty:1;
+    QString display, from, user, session;
+    int vt;
+    bool self:1, tty:1;
 };
 
 typedef QList<SessEnt> SessList;
@@ -40,53 +40,53 @@ class KDE_EXPORT KDisplayManager {
 #ifdef Q_WS_X11
 
 public:
-	KDisplayManager();
-	~KDisplayManager();
+    KDisplayManager();
+    ~KDisplayManager();
 
-	bool canShutdown();
-	void shutdown( KWorkSpace::ShutdownType shutdownType,
-	               KWorkSpace::ShutdownMode shutdownMode,
-	               const QString &bootOption = QString() );
+    bool canShutdown();
+    void shutdown(KWorkSpace::ShutdownType shutdownType,
+                  KWorkSpace::ShutdownMode shutdownMode,
+                  const QString &bootOption = QString());
 
-	void setLock( bool on );
+    void setLock(bool on);
 
-	bool isSwitchable();
-	int numReserve();
-	void startReserve();
-	bool localSessions( SessList &list );
-	bool switchVT( int vt );
-	void lockSwitchVT( int vt );
+    bool isSwitchable();
+    int numReserve();
+    void startReserve();
+    bool localSessions(SessList &list);
+    bool switchVT(int vt);
+    void lockSwitchVT(int vt);
 
-	bool bootOptions( QStringList &opts, int &dflt, int &curr );
+    bool bootOptions(QStringList &opts, int &dflt, int &curr);
 
-	static QString sess2Str( const SessEnt &se );
-	static void sess2Str2( const SessEnt &se, QString &user, QString &loc );
+    static QString sess2Str(const SessEnt &se);
+    static void sess2Str2(const SessEnt &se, QString &user, QString &loc);
 
 private:
-	bool exec( const char *cmd, QByteArray &ret );
-	bool exec( const char *cmd );
+    bool exec(const char *cmd, QByteArray &ret);
+    bool exec(const char *cmd);
 
-	void GDMAuthenticate();
+    void GDMAuthenticate();
 
 #else // Q_WS_X11
 
 public:
-	KDisplayManager() {}
+    KDisplayManager() {}
 
-	bool canShutdown() { return false; }
-	void shutdown( KWorkSpace::ShutdownType shutdownType,
-	               KWorkSpace::ShutdownMode shutdownMode,
-	               const QString &bootOption = QString() ) {}
+    bool canShutdown() { return false; }
+    void shutdown(KWorkSpace::ShutdownType shutdownType,
+                  KWorkSpace::ShutdownMode shutdownMode,
+                  const QString &bootOption = QString()) {}
 
-	void setLock( bool ) {}
+    void setLock(bool) {}
 
-	bool isSwitchable() { return false; }
-	int numReserve() { return -1; }
-	void startReserve() {}
-	bool localSessions( SessList &list ) { return false; }
-	void switchVT( int vt ) {}
+    bool isSwitchable() { return false; }
+    int numReserve() { return -1; }
+    void startReserve() {}
+    bool localSessions(SessList &list) { return false; }
+    void switchVT(int vt) {}
 
-	bool bootOptions( QStringList &opts, int &dflt, int &curr );
+    bool bootOptions(QStringList &opts, int &dflt, int &curr);
 
 #endif // Q_WS_X11
 
