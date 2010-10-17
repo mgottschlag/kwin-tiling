@@ -34,6 +34,7 @@
 #include <QGraphicsAnchorLayout>
 #include <QGraphicsView>
 #include <QListView>
+#include <QVBoxLayout>
 
 #include <KAction>
 #include <KDebug>
@@ -43,6 +44,7 @@
 #include <KConfigDialog>
 #include <KRun>
 #include <KLineEdit>
+#include <KKeySequenceWidget>
 
 #include <Plasma/AbstractToolBox>
 #include <Plasma/Theme>
@@ -674,6 +676,9 @@ void SearchLaunch::focusInEvent(QFocusEvent *event)
     if (m_searchField) {
         m_searchField->setFocus();
     }
+    if (screen() < 0) {
+        setScreen(0);
+    }
     Containment::focusInEvent(event);
 }
 
@@ -701,8 +706,33 @@ void SearchLaunch::createConfigurationInterface(KConfigDialog *parent)
     enabledEntries->setModelColumn(0);
     parent->addPage(enabledEntries, i18nc("Title of the page that lets the user choose what entries will be allowed in the main menu", "Main menu"), "view-list-icons");
 
+    QWidget *page = new QWidget;
+    QVBoxLayout *layout = new QVBoxLayout(page);
+
+    if (!m_shortcutEditor) {
+        m_shortcutEditor = new KKeySequenceWidget(page);
+        connect(parent, SIGNAL(applyClicked()), this, SLOT(configDialogFinished()));
+        connect(parent, SIGNAL(okClicked()), this, SLOT(configDialogFinished()));
+    }
+
+    m_shortcutEditor.data()->setKeySequence(globalShortcut().primary());
+    layout->addWidget(m_shortcutEditor.data());
+    layout->addStretch();
+    parent->addPage(page, i18n("Keyboard Shortcut"), "preferences-desktop-keyboard");
+
     connect(parent, SIGNAL(applyClicked()), m_serviceModel, SLOT(saveConfig()));
     connect(parent, SIGNAL(okClicked()), m_serviceModel, SLOT(saveConfig()));
+}
+
+void SearchLaunch::configDialogFinished()
+{
+    if (m_shortcutEditor) {
+        QKeySequence sequence = m_shortcutEditor.data()->keySequence();
+        if (sequence != globalShortcut().primary()) {
+            setGlobalShortcut(KShortcut(sequence));
+            emit configNeedsSaving();
+        }
+    }
 }
 
 void SearchLaunch::saveFavourites()

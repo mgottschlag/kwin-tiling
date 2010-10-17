@@ -37,6 +37,7 @@ class LinearAppletOverlay;
 class IconActionCollection;
 class KRunnerModel;
 class KServiceModel;
+class KKeySequenceWidget;
 
 namespace Plasma
 {
@@ -81,6 +82,7 @@ private Q_SLOTS:
     void resultsViewRequestedDrag(QModelIndex index);
     void availableScreenRegionChanged();
     void launchPackageManager();
+    void configDialogFinished();
 
     void delayedQuery();
     void query();
@@ -128,6 +130,7 @@ private:
     LinearAppletOverlay *m_appletOverlay;
 
     IconActionCollection *m_iconActionCollection;
+    QWeakPointer<KKeySequenceWidget> m_shortcutEditor;
 
     bool m_stripUninitialized;
 };
