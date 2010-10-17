@@ -314,28 +314,48 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
         title->setText(i18n("Notification from %1", applicationName));
     }
 
+
     //Don't show more than 8 lines
     //in the end it could be more than 8 lines depending on how much \n characters will be there
     QString processed = message.trimmed();
-    QFontMetricsF fm(messageLabel->font());
-    int totalWidth = qMax((qreal)200, messageLabel->boundingRect().width()) * 8;
-    if (fm.width(processed) > totalWidth) {
-        processed = fm.elidedText(processed, Qt::ElideRight, totalWidth);
-    }
-
-    //Step 2: elide too long words, like urls or whatever it can be here
-    /*the meaning of this ugly regular expression is: all long words not quoted
-      (like tag parameters) are cut at the first 20 characters. it would be better
-      to do it with font metrics but wouldn't be possible to do it with a single
-      regular expression. It would have to be tokenizen by hand, with some html
-      parsing too (like, are we in a tag?)*/
-    processed = processed.replace(QRegExp("([^\"])([^ ]{20})([^ ]+)([^\"])"), "\\1\\2...");
 
     /*if there is a < that is not closed as a tag, replace it with an entity*/
     processed = processed.replace(QRegExp("<([^>]*($|<))"), "&lt;\\1");
 
-    processed.replace('\n', "<br>");
-    messageLabel->setText(processed);
+    QFontMetricsF fm(messageLabel->font());
+    int totalWidth = qMax((qreal)200, messageLabel->boundingRect().width()) * 8;
+    if (fm.width(processed) > totalWidth) {
+        processed = processed.replace(QRegExp("<.*>(.*)<\\/.*>"), "\\1");
+        processed = fm.elidedText(processed, Qt::ElideRight, totalWidth);
+    }
+
+    QString parsed;
+    QString::const_iterator i = message.begin();
+    bool inTag = false;
+    int wordLength = 0;
+
+    while (i != message.end()) {
+        QChar c = *i;
+        if (c == '<') {
+            wordLength = 0;
+            inTag = true;
+        } else if (c == '>') {
+            inTag = false;
+        } else if (c == ' ') {
+            wordLength = 0;
+        } else if (!inTag) {
+            ++wordLength;
+        }
+        parsed.append(c);
+        if (wordLength > 25) {
+            parsed.append(' ');
+        }
+        ++i;
+    }
+
+
+    parsed.replace('\n', "<br>");
+    messageLabel->setText(parsed);
 
     if (!collapsed) {
         icon->setGeometry(bigIconRect());
