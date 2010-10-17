@@ -103,8 +103,8 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
       d(new NotificationWidgetPrivate(this))
 {
     setFlag(QGraphicsItem::ItemHasNoContents, true);
-    setMinimumWidth(350);
-    setPreferredWidth(400);
+    setMinimumWidth(380);
+    setPreferredWidth(450);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
 
@@ -330,28 +330,35 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
     }
 
     QString parsed;
+
     QString::const_iterator i = message.begin();
     bool inTag = false;
-    int wordLength = 0;
+    QString word;
 
     while (i != message.end()) {
         QChar c = *i;
+        word.append(c);
+
         if (c == '<') {
-            wordLength = 0;
             inTag = true;
+            parsed.append(fm.elidedText(word, Qt::ElideMiddle, 250));
+            word = QString();
         } else if (c == '>') {
             inTag = false;
+            parsed.append(word);
+            word = QString();
         } else if (c == ' ') {
-            wordLength = 0;
-        } else if (!inTag) {
-            ++wordLength;
+            if (inTag) {
+                parsed.append(word);
+            } else {
+                parsed.append(fm.elidedText(word, Qt::ElideMiddle, 250));
+            }
+            word = QString();
         }
-        parsed.append(c);
-        if (wordLength > 25) {
-            parsed.append(' ');
-        }
+
         ++i;
     }
+    parsed.append(fm.elidedText(word, Qt::ElideMiddle, 250));
 
 
     parsed.replace('\n', "<br>");

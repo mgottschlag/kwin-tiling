@@ -61,7 +61,7 @@ void CompletedJobNotification::setJob(Job *job)
 
     if (job->destination().isValid()) {
         QHash<QString, QString> actions;
-        actions.insert("open", i18n("Open destination"));
+        actions.insert("open", i18n("Open"));
         setActions(actions);
         setActionOrder(QStringList()<<"open");
         m_destinationPrettyUrl = job->destination().prettyUrl();
