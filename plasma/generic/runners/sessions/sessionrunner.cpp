@@ -196,7 +196,7 @@ void SessionRunner::match(Plasma::RunnerContext &context)
                 match.setRelevance(relevance);
                 match.setIcon(KIcon("user-identity"));
                 match.setText(name);
-                match.setData(session.session);
+                match.setData(QString::number(session.vt));
                 matches << match;
             }
         }
@@ -235,18 +235,7 @@ void SessionRunner::run(const Plasma::RunnerContext &context, const Plasma::Quer
     }
 
     if (!match.data().toString().isEmpty()) {
-        QString sessionName = match.text();
-
-        SessList sessions;
-        if (dm.localSessions(sessions)) {
-            foreach (const SessEnt &session, sessions) {
-                if (sessionName == KDisplayManager::sess2Str(session)) {
-                    dm.lockSwitchVT(session.vt);
-                    break;
-                }
-            }
-        }
-
+        dm.lockSwitchVT(match.data().toString().toInt());
         return;
     }
 
