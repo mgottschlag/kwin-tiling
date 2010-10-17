@@ -347,10 +347,7 @@ KDisplayManager::localSessions(SessList &list)
             QStringList ts = (*it).split(QChar(','));
             SessEnt se;
             se.display = ts[0];
-            if (ts[1][0] == '@')
-                se.from = ts[1].mid(1), se.vt = 0;
-            else
-                se.vt = ts[1].mid(2).toInt();
+            se.vt = ts[1].mid(2).toInt();
             se.user = ts[2];
             se.session = ts[3];
             se.self = (ts[4].indexOf('*') >= 0);
