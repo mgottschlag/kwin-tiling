@@ -53,6 +53,7 @@ class ActivityIcon : public Plasma::AbstractIcon
         void showConfiguration();
         void makeInlineWidgetVisible();
         void hideInlineWidget(bool aboutToShowAnother = false);
+        void showInlineWidget(QGraphicsWidget * widget);
         void startInlineAnim();
         void updateLayout();
         void updateButtons();

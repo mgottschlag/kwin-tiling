@@ -60,14 +60,19 @@ public:
 Q_SIGNALS:
     void applyChanges();
 
+protected:
+    void hideEvent(QHideEvent * event);
+
 private:
     QGraphicsLinearLayout * m_layoutButtons;
-    QGraphicsLinearLayout * m_layoutMain;
 
     Plasma::Label         * m_labelConfiguration;
     Plasma::PushButton    * m_buttonConfirmChanges;
     Plasma::PushButton    * m_buttonCancel;
 
+    QGraphicsLinearLayout * m_layoutMain;
+
+    QGraphicsWidget       * m_main;
     Plasma::LineEdit      * m_activityName;
     Plasma::PushButton    * m_activityIcon;
 };

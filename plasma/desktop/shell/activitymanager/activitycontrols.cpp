@@ -75,28 +75,31 @@ ActivityConfiguration::ActivityConfiguration(ActivityIcon * parent)
     m_layoutButtons->addItem(m_buttonCancel);
     connect(m_buttonCancel, SIGNAL(clicked()), this, SIGNAL(closed()));
 
-    m_layoutMain = new QGraphicsLinearLayout(parent);
+    m_main = new QGraphicsWidget(parent);
+
+    m_layoutMain = new QGraphicsLinearLayout(m_main);
     m_layoutMain->setOrientation(Qt::Vertical);
     m_layoutMain->setContentsMargins(0, 0, 0, 0);
 
-    m_activityName = new Plasma::LineEdit(parent);
+    m_activityName = new Plasma::LineEdit(this);
     m_layoutMain->addItem(m_activityName);
 
-    m_activityIcon = new Plasma::PushButton(parent);
+    m_activityIcon = new Plasma::PushButton(this);
     m_activityIcon->setIcon(KIcon("plasma"));
     m_layoutMain->addItem(m_activityIcon);
 
-    m_activityName->setZValue(2);
-    m_activityIcon->setZValue(2);
+    m_main->setGeometry(parent->contentsRect());
+}
 
-    m_layoutMain->setGeometry(QRectF(0, 0, this->geometry().left(), parent->geometry().height()));
+void ActivityConfiguration::hideEvent(QHideEvent * event)
+{
+    ActivityControls::hideEvent(event);
+
+    m_main->hide();
 }
 
 ActivityConfiguration::~ActivityConfiguration()
 {
-    m_activityName->hide();
-    m_activityIcon->hide();
-
-    m_activityName->deleteLater();
-    m_activityIcon->deleteLater();
+    // delete m_layoutMain;
+    m_main->deleteLater();
 }

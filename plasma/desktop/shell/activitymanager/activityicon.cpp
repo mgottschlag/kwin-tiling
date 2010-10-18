@@ -165,38 +165,37 @@ private:
     qreal m_addWidth;
 };
 
-void ActivityIcon::showRemovalConfirmation()
+void ActivityIcon::showInlineWidget(QGraphicsWidget * w)
 {
     hideInlineWidget(true);
 
-    QGraphicsWidget * w = new ActivityRemovalConfirmation(this);
-
     connect(w, SIGNAL(closed()), this, SLOT(hideInlineWidget()));
-    connect(w, SIGNAL(removalConfirmed()), m_activity, SLOT(destroy()));
 
     w->setMaximumSize(QSize(0, size().height()));
     w->adjustSize();
     w->setPos(contentsRect().topRight() + QPoint(4, 0));
+    w->setZValue(2);
 
     m_inlineWidget = w;
     QTimer::singleShot(0, this, SLOT(startInlineAnim()));
 }
 
+void ActivityIcon::showRemovalConfirmation()
+{
+    QGraphicsWidget * w = new ActivityRemovalConfirmation(this);
+
+    connect(w, SIGNAL(removalConfirmed()), m_activity, SLOT(destroy()));
+
+    showInlineWidget(w);
+}
+
 void ActivityIcon::showConfiguration()
 {
-    hideInlineWidget(true);
-
     QGraphicsWidget * w = new ActivityConfiguration(this);
 
-    connect(w, SIGNAL(closed()), this, SLOT(hideInlineWidget()));
     connect(w, SIGNAL(applyChanges()), this, SLOT(applyChanges()));
 
-    w->setMaximumSize(QSize(0, size().height()));
-    w->adjustSize();
-    w->setPos(contentsRect().topRight() + QPoint(4, 0));
-
-    m_inlineWidget = w;
-    QTimer::singleShot(0, this, SLOT(startInlineAnim()));
+    showInlineWidget(w);
 }
 
 void ActivityIcon::startInlineAnim()
@@ -275,7 +274,7 @@ void ActivityIcon::updateLayout()
             rect.height() - iconSize(),
             - (rect.width() - iconSize()) / 2,
             0
-        );
+            );
 
     if (m_buttonStop) {
         m_buttonStop->setGeometry(QRectF(
