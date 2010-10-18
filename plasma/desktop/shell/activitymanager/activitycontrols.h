@@ -24,6 +24,7 @@
 #include <Plasma/LineEdit>
 
 #include "activityicon.h"
+#include "activity.h"
 
 class ActivityControls : public QGraphicsWidget {
     Q_OBJECT
@@ -54,14 +55,16 @@ private:
 class ActivityConfiguration: public ActivityControls {
     Q_OBJECT
 public:
-    ActivityConfiguration(ActivityIcon * parent);
+    ActivityConfiguration(ActivityIcon * parent, Activity * activity);
     ~ActivityConfiguration();
 
-Q_SIGNALS:
+private Q_SLOTS:
     void applyChanges();
+    void chooseIcon();
 
 protected:
     void hideEvent(QHideEvent * event);
+    void showEvent(QShowEvent * event);
 
 private:
     QGraphicsLinearLayout * m_layoutButtons;
@@ -75,4 +78,7 @@ private:
     QGraphicsWidget       * m_main;
     Plasma::LineEdit      * m_activityName;
     Plasma::PushButton    * m_activityIcon;
+
+    Activity              * m_activity;
+    QString                 m_iconName;
 };

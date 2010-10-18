@@ -18,6 +18,11 @@
  */
 
 #include "activitycontrols.h"
+#include <QGraphicsScene>
+#include <KPushButton>
+#include <KIconDialog>
+#include <KWindowSystem>
+#include <QApplication>
 
 ActivityControls::ActivityControls(ActivityIcon * parent)
     : QGraphicsWidget(parent)
@@ -52,8 +57,8 @@ ActivityRemovalConfirmation::ActivityRemovalConfirmation(ActivityIcon * parent)
 
 // ActivityConfiguration
 
-ActivityConfiguration::ActivityConfiguration(ActivityIcon * parent)
-    : ActivityControls(parent)
+ActivityConfiguration::ActivityConfiguration(ActivityIcon * parent, Activity * activity)
+    : ActivityControls(parent), m_activity(activity)
 {
     m_layoutButtons = new QGraphicsLinearLayout(this);
     m_layoutButtons->setOrientation(Qt::Vertical);
@@ -68,7 +73,8 @@ ActivityConfiguration::ActivityConfiguration(ActivityIcon * parent)
     m_buttonConfirmChanges = new Plasma::PushButton(this);
     m_buttonConfirmChanges->setText(i18n("Apply Changes"));
     m_layoutButtons->addItem(m_buttonConfirmChanges);
-    connect(m_buttonConfirmChanges, SIGNAL(clicked()), this, SIGNAL(applyChanges()));
+    connect(m_buttonConfirmChanges, SIGNAL(clicked()), this, SLOT(applyChanges()));
+    connect(m_buttonConfirmChanges, SIGNAL(clicked()), this, SIGNAL(closed()));
 
     m_buttonCancel = new Plasma::PushButton(this);
     m_buttonCancel->setText(i18n("Cancel Changes"));
@@ -87,8 +93,14 @@ ActivityConfiguration::ActivityConfiguration(ActivityIcon * parent)
     m_activityIcon = new Plasma::PushButton(this);
     m_activityIcon->setIcon(KIcon("plasma"));
     m_layoutMain->addItem(m_activityIcon);
+    connect(m_activityIcon, SIGNAL(clicked()), this, SLOT(chooseIcon()));
 
     m_main->setGeometry(parent->contentsRect());
+
+    m_activityName->setText(m_activity->name());
+
+    m_activityIcon->setIcon(
+            QIcon(parent->pixmap(QSize(32, 32))));
 }
 
 void ActivityConfiguration::hideEvent(QHideEvent * event)
@@ -98,8 +110,46 @@ void ActivityConfiguration::hideEvent(QHideEvent * event)
     m_main->hide();
 }
 
+void ActivityConfiguration::showEvent(QShowEvent * event)
+{
+    ActivityControls::showEvent(event);
+
+    m_main->setZValue(zValue());
+    m_main->show();
+}
+
 ActivityConfiguration::~ActivityConfiguration()
 {
     // delete m_layoutMain;
     m_main->deleteLater();
 }
+
+void ActivityConfiguration::applyChanges()
+{
+    m_activity->setName(m_activityName->text());
+
+    if (!m_iconName.isEmpty()) {
+        m_activity->setIcon(m_iconName);
+    }
+}
+
+void ActivityConfiguration::chooseIcon()
+{
+    QString iconName = KIconDialog::getIcon();
+
+    if (!iconName.isEmpty()) {
+        m_activityIcon->setIcon(KIcon(iconName));
+        m_iconName = iconName;
+    }
+
+    // somehow, after closing KIconDialog, plasma loses focus
+    // and the panel controller is closed, soforcing focus to
+    // any of the top level windows that are shown
+    foreach (QWidget * widget, QApplication::topLevelWidgets()) {
+        if (widget->isVisible()) {
+            KWindowSystem::forceActiveWindow(widget->winId(), 0);
+            break;
+        }
+    }
+}
+

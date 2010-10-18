@@ -85,12 +85,16 @@ public:
 
 signals:
     void nameChanged(const QString &name);
+    void iconChanged(const QString &icon);
+
     void opened();
     void closed();
+
 //TODO signals for other changes
 
 public slots:
     void setName(const QString &name);
+    void setIcon(const QString &icon);
     /**
      * delete the activity forever
      */

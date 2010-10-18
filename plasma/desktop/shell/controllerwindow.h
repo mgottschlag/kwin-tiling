@@ -70,6 +70,7 @@ public:
 public Q_SLOTS:
     void showWidgetExplorer();
     void showActivityManager();
+    void closeIfNotFocussed();
 
 protected:
     void setGraphicsWidget(QGraphicsWidget *widget);

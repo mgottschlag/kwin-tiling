@@ -207,6 +207,12 @@ void Activity::setName(const QString &name)
     }
 }
 
+void Activity::setIcon(const QString &icon)
+{
+    KActivityController().setActivityIcon(m_id, icon);
+    emit iconChanged(icon);
+}
+
 void Activity::updateActivityName(Plasma::Context *context)
 {
     if (context->currentActivityId() != m_id) {

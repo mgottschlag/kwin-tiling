@@ -191,11 +191,7 @@ void ActivityIcon::showRemovalConfirmation()
 
 void ActivityIcon::showConfiguration()
 {
-    QGraphicsWidget * w = new ActivityConfiguration(this);
-
-    connect(w, SIGNAL(applyChanges()), this, SLOT(applyChanges()));
-
-    showInlineWidget(w);
+    showInlineWidget(new ActivityConfiguration(this, m_activity));
 }
 
 void ActivityIcon::startInlineAnim()

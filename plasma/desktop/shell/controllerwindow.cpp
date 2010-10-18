@@ -477,12 +477,13 @@ void ControllerWindow::onActiveWindowChanged(WId id)
 {
     Q_UNUSED(id)
 
-    // if the active window isn't a Plasma::View and the widgets explorer is visible,
-    // or the activityManager is visible, and we are no longer the active window but still
-    // visible on-screen, then close up shop
-    if ((m_activityManager ||
-         (m_widgetExplorer && !qobject_cast<Plasma::View *>(QApplication::activeWindow()))) &&
-        isControllerViewVisible() && !isActiveWindow()) {
+    // Small delay when closing due to lost focus
+    QTimer::singleShot(300, this, SLOT(closeIfNotFocussed()));
+}
+
+void ControllerWindow::closeIfNotFocussed()
+{
+    if (!QApplication::activeWindow()) {
         close();
     }
 }
