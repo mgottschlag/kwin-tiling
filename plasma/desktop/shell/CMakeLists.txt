@@ -4,6 +4,7 @@ add_subdirectory(configupdates)
 add_subdirectory(toolbox)
 
 set(activitymanager_SRCS
+    activitymanager/activitycontrols.cpp
     activitymanager/activitymanager.cpp
     activitymanager/activityicon.cpp
     activitymanager/activitylist.cpp
