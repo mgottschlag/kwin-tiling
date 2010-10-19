@@ -25,7 +25,7 @@ install(TARGETS kfontinst_bin ${INSTALL_TARGETS_DEFAULT_ARGS} )
 install(TARGETS kfontprint_bin DESTINATION ${LIBEXEC_INSTALL_DIR} )
 install(TARGETS kfontview_bin ${INSTALL_TARGETS_DEFAULT_ARGS} )
 install(FILES kfontviewui.rc DESTINATION ${DATA_INSTALL_DIR}/kfontview )
-install(FILES kfontview.desktop DESTINATION ${XDG_APPS_INSTALL_DIR} )
+install(PROGRAMS kfontview.desktop DESTINATION ${XDG_APPS_INSTALL_DIR} )
 install(FILES installfont.desktop DESTINATION
 ${SERVICES_INSTALL_DIR}/ServiceMenus )
 

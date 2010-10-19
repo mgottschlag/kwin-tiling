@@ -47,8 +47,8 @@ endif (DMTX_FOUND)
 install(TARGETS kdeinit_klipper ${INSTALL_TARGETS_DEFAULT_ARGS})
 install(TARGETS klipper         ${INSTALL_TARGETS_DEFAULT_ARGS})
 
-install(FILES klipper.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})
-install(FILES klipper.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
+install(PROGRAMS klipper.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})
+install(PROGRAMS klipper.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
 
 if(NOT WIN32)
   install( FILES klipper-kconfigxt.upd DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )

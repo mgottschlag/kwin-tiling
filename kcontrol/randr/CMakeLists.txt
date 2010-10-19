@@ -66,5 +66,5 @@ install(PROGRAMS krandrstartup DESTINATION ${BIN_INSTALL_DIR})
 
 ########### install files ###############
 
-install( FILES krandrtray.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
+install( PROGRAMS krandrtray.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
 install( FILES randr.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
