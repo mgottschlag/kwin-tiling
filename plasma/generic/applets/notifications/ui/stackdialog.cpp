@@ -69,6 +69,12 @@ void StackDialog::setNotificationStack(NotificationStack *stack)
 
     connect(m_notificationStack, SIGNAL(updateRequested()), this, SLOT(update()));
     connect(m_notificationStack, SIGNAL(hideRequested()), this, SLOT(hide()));
+    connect(m_notificationStack, SIGNAL(moveRequested(const QPoint &)), this, SLOT(moveRequested(const QPoint &)));
+}
+
+void StackDialog::moveRequested(const QPoint &point)
+{
+    move(pos()+point);
 }
 
 NotificationStack *StackDialog::notificartionStack() const

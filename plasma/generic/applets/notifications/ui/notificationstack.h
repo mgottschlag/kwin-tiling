@@ -50,6 +50,7 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
 
 public Q_SLOTS:
@@ -65,6 +66,7 @@ Q_SIGNALS:
     void updateRequested();
     void hideRequested();
     void showRequested();
+    void moveRequested(const QPoint &delta);
 
 private:
     QList<Notification *> m_notifications;

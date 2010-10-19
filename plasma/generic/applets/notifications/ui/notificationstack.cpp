@@ -26,6 +26,7 @@
 #include <QTimer>
 
 #include <KDebug>
+#include <KGlobalSettings>
 
 #include <Plasma/FrameSvg>
 #include <Plasma/Dialog>
@@ -178,8 +179,16 @@ void NotificationStack::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
 
-    if (!m_canDismissTimer->isActive()) {
+    if (!m_canDismissTimer->isActive() &&
+        QPointF(event->buttonDownScenePos(event->button()) - event->scenePos()).manhattanLength() < KGlobalSettings::dndEventDelay()) {
         emit hideRequested();
+    }
+}
+
+void NotificationStack::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (QPointF(event->buttonDownScenePos(event->button()) - event->scenePos()).manhattanLength() > KGlobalSettings::dndEventDelay()) {
+        emit moveRequested(QPointF(event->lastScenePos() - event->scenePos()).toPoint());
     }
 }
 
