@@ -251,8 +251,20 @@ KScreenSaver::~KScreenSaver()
         delete mPreviewProc;
     }
 
+    if (mSetupProc)
+    {
+        if (mSetupProc->state() == QProcess::Running)
+        {
+            //Avoid triggering slotPreviewExited on close
+            mSetupProc->disconnect(this);
+
+            mSetupProc->kill( );
+            mSetupProc->waitForFinished( );
+        }
+        delete mSetupProc;
+    }
+
     delete mTestProc;
-    delete mSetupProc;
     delete mTestWin;
 
     qDeleteAll(mSaverList);
