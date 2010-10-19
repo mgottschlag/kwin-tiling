@@ -38,6 +38,7 @@ namespace Plasma
     class Label;
     class Meter;
     class IconWidget;
+    class SignalPlotter;
 } // namespace Plasma
 
 class Job;
@@ -84,6 +85,7 @@ class JobWidget : public QGraphicsWidget
         Plasma::Label *m_fileCountLabel;
         Plasma::Label *m_eta;
         Plasma::IconWidget *m_details;
+        Plasma::SignalPlotter *m_plotter;
 
         QGraphicsGridLayout *m_layout;
 

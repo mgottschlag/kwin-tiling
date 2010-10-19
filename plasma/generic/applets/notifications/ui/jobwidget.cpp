@@ -36,6 +36,7 @@
 #include <Plasma/PopupApplet>
 #include <Plasma/PushButton>
 #include <Plasma/Service>
+#include <Plasma/SignalPlotter>
 #include <Plasma/IconWidget>
 #include <Plasma/Theme>
 #include <Plasma/ToolTipManager>
@@ -58,6 +59,12 @@ JobWidget::JobWidget(Job *job, Plasma::ExtenderItem *parent)
     m_meter->setMaximum(100);
     m_meter->setValue(0);
 
+    m_plotter = new Plasma::SignalPlotter(this);
+    m_plotter->setUseAutoRange(true);
+    m_plotter->setShowVerticalLines(false);
+    m_plotter->setUnit("KiB/s");
+    m_plotter->addPlot(Plasma::Theme::defaultTheme()->color(Plasma::Theme::HighlightColor));
+
     m_fromNameLabel = new Plasma::Label(this);
     m_fromLabel = new Plasma::Label(this);
     m_toNameLabel = new Plasma::Label(this);
@@ -74,6 +81,7 @@ JobWidget::JobWidget(Job *job, Plasma::ExtenderItem *parent)
     m_totalBytesLabel->setVisible(false);
     m_dirCountLabel->setVisible(false);
     m_fileCountLabel->setVisible(false);
+    m_plotter->setVisible(false);
 
     m_fromNameLabel->setAlignment(Qt::AlignRight);
     m_fromLabel->setAlignment(Qt::AlignLeft);
@@ -272,6 +280,10 @@ void JobWidget::updateJob()
         m_fileCountLabel->setMaximumHeight(0);
     }
 
+    QList<double> sample;
+    sample << m_job.data()->numericSpeed()/1000;
+    m_plotter->addSample(sample);
+
     qlonglong total = totals["bytes"];
     if (total > 0) {
         QString processedString = KGlobal::locale()->formatByteSize(processed["bytes"]);
@@ -397,9 +409,11 @@ void JobWidget::detailsClicked()
         m_totalBytesLabel->setVisible(true);
         m_dirCountLabel->setVisible(true);
         m_fileCountLabel->setVisible(true);
+        m_plotter->setVisible(true);
         m_layout->addItem(m_totalBytesLabel, 4, 1);
         m_layout->addItem(m_fileCountLabel, 5, 1);
         m_layout->addItem(m_dirCountLabel, 6, 1);
+        m_layout->addItem(m_plotter, 7, 1);
         m_extenderItem->setCollapsed(m_extenderItem->isCollapsed());
     } else {
         m_details->setToolTip(i18n("More"));
@@ -407,7 +421,8 @@ void JobWidget::detailsClicked()
         m_totalBytesLabel->setVisible(false);
         m_dirCountLabel->setVisible(false);
         m_fileCountLabel->setVisible(false);
-        for (int i = 0; i < 3; i++) {
+        m_plotter->setVisible(false);
+        for (int i = 0; i < 4; i++) {
             m_layout->removeAt(m_layout->count() - 1);
         }
         m_layout->updateGeometry();

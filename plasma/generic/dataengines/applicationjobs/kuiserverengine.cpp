@@ -97,6 +97,7 @@ void JobView::finished()
         m_state = Stopped;
         setData("state", "stopped");
         setData("speed", QVariant());
+        setData("numericSpeed", QVariant());
         scheduleUpdate();
     }
 }
@@ -113,12 +114,14 @@ void JobView::setSuspended(bool suspended)
             m_state = Suspended;
             setData("state", "suspended");
             setData("speed", QVariant());
+            setData("numericSpeed", QVariant());
             scheduleUpdate();
         }
     } else if (m_state != Running) {
         m_state = Running;
         setData("state", "running");
         setData("speed", speedString());
+        setData("numericSpeed", m_speed);
         scheduleUpdate();
     }
 }
@@ -214,6 +217,7 @@ void JobView::setSpeed(qlonglong bytesPerSecond)
     if (m_speed != bytesPerSecond) {
         m_speed = bytesPerSecond;
         setData("speed", speedString());
+        setData("numericSpeed", m_speed);
 
         if (m_bytesUnitId > -1) {
             updateEta();

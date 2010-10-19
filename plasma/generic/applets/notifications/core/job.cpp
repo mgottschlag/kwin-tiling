@@ -34,6 +34,7 @@ class Job::Private
 {
 public:
     Private() :
+        numericSpeed(0),
         finalElapsed(0),
         state(Running),
         percentage(0),
@@ -51,6 +52,7 @@ public:
     QString error;
     QString speed;
     QString destination;
+    qlonglong numericSpeed;
 
 
     QMap<QString, qlonglong> totalAmounts;
@@ -152,6 +154,19 @@ void Job::setSpeed(const QString &speed)
 {
     if (d->speed != speed) {
         d->speed = speed;
+        scheduleChangedSignal();
+    }
+}
+
+qlonglong Job::numericSpeed() const
+{
+    return d->numericSpeed;
+}
+
+void Job::setNumericSpeed(const qlonglong speed)
+{
+    if (d->numericSpeed != speed) {
+        d->numericSpeed = speed;
         scheduleChangedSignal();
     }
 }

@@ -66,9 +66,14 @@ public:
     QString error() const;
 
     /**
-     * @return the speed at which the jobs is progressing.
+     * @return the (human readable) speed at which the jobs is progressing.
      */
     QString speed() const;
+
+    /**
+     * @return the (in bytes per second) speed at which the jobs is progressing.
+     */
+    qlonglong numericSpeed() const;
 
     /**
      * @return a nice description of the job that has been completed.
@@ -158,6 +163,7 @@ protected:
     void setMessage(const QString &message);
     void setError(const QString &error);
     void setSpeed(const QString &speed);
+    void setNumericSpeed(const qlonglong speed);
     void setTotalAmounts(QMap<QString, qlonglong> amount);
     void setProcessedAmounts(QMap<QString, qlonglong> amount);
     void setState(State state);
