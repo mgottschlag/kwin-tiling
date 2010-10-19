@@ -255,7 +255,7 @@ KScreenSaver::~KScreenSaver()
     {
         if (mSetupProc->state() == QProcess::Running)
         {
-            //Avoid triggering slotPreviewExited on close
+            //Avoid triggering slotSetupDone on close
             mSetupProc->disconnect(this);
 
             mSetupProc->kill( );
