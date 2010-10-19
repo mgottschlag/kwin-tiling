@@ -74,7 +74,7 @@ void StackDialog::setNotificationStack(NotificationStack *stack)
 
 void StackDialog::moveRequested(const QPoint &point)
 {
-    move(pos()+point);
+    move(pos()-point);
 }
 
 NotificationStack *StackDialog::notificartionStack() const
