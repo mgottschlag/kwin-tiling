@@ -149,9 +149,12 @@ private:
     void handlePendingInteractions();
     void completeShutdownOrCheckpoint();
     void startKilling();
+    void startKillingSubSession();
     void performStandardKilling();
     void completeKilling();
+    void completeKillingSubSession();
     void killWM();
+    void signalSubSessionClosed();
     void completeKillingWM();
     void cancelShutdown( KSMClient* c );
     void killingCompleted();
@@ -201,6 +204,14 @@ private:
     void saveCurrentSessionAs( const QString & );
     QStringList sessionList();
     void wmChanged();
+    void saveSubSession( const QString &name, QStringList saveAndClose,
+                       QStringList saveOnly = QStringList() );
+    void restoreSubSession( const QString &name );
+
+ Q_SIGNALS:
+    void subSessionClosed();
+    void subSessionCloseCanceled();
+    void subSessionOpened();
 
  private:
     QList<KSMListener*> listener;
@@ -210,7 +221,8 @@ private:
         {
         Idle,
         LaunchingWM, AutoStart0, KcmInitPhase1, AutoStart1, Restoring, FinishingStartup, // startup
-        Shutdown, Checkpoint, Killing, KillingWM, WaitingForKNotify // shutdown
+        Shutdown, Checkpoint, Killing, KillingWM, WaitingForKNotify, // shutdown
+        ClosingSubSession, KillingSubSession, RestoringSubSession
         };
     State state;
     bool dialogActive;
@@ -258,6 +270,10 @@ private:
     QDBusInterface* kcminitSignals;
 
     int inhibitCookie;
+
+    //subSession stuff
+    QList<KSMClient*> clientsToKill;
+    QList<KSMClient*> clientsToSave;
 };
 
 #endif

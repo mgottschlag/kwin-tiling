@@ -799,15 +799,19 @@ void KSMServer::deleteClient( KSMClient* client )
     if ( !clients.contains( client ) ) // paranoia
         return;
     clients.removeAll( client );
+    clientsToKill.removeAll( client );
+    clientsToSave.removeAll( client );
     if ( client == clientInteracting ) {
         clientInteracting = 0;
         handlePendingInteractions();
     }
     delete client;
-    if ( state == Shutdown || state == Checkpoint )
+    if ( state == Shutdown || state == Checkpoint || state == ClosingSubSession )
         completeShutdownOrCheckpoint();
     if ( state == Killing )
         completeKilling();
+    else if ( state == KillingSubSession )
+        completeKillingSubSession();
     if ( state == KillingWM )
         completeKillingWM();
 }
@@ -889,13 +893,15 @@ void KSMServer::storeSession()
 	KConfigGroup cg( config, sessionGroup);
     count =  0;
 
-    // put the wm first
-    foreach ( KSMClient *c, clients )
-        if ( c->program() == wm ) {
-            clients.removeAll( c );
-            clients.prepend( c );
-            break;
-        }
+    if (state != ClosingSubSession) {
+        // put the wm first
+        foreach ( KSMClient *c, clients )
+            if ( c->program() == wm ) {
+                clients.removeAll( c );
+                clients.prepend( c );
+                break;
+            }
+    }
 
     foreach ( KSMClient *c, clients ) {
         int restartHint = c->restartStyleHint();
@@ -905,6 +911,8 @@ void KSMServer::storeSession()
         QStringList restartCommand = c->restartCommand();
         if (program.isEmpty() && restartCommand.isEmpty())
            continue;
+        if (state == ClosingSubSession && ! clientsToSave.contains(c))
+            continue;
         if (excludeApps.contains( program.toLower()))
             continue;
 

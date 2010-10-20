@@ -369,19 +369,26 @@ void KSMServer::handlePendingInteractions()
 
 void KSMServer::cancelShutdown( KSMClient* c )
 {
-    Solid::PowerManagement::stopSuppressingSleep(inhibitCookie);
-    kDebug( 1218 ) << "Client " << c->program() << " (" << c->clientId() << ") canceled shutdown.";
-    KSMShutdownFeedback::logoutCanceled(); // make the screen become normal again
-    KNotification::event( "cancellogout" , i18n( "Logout canceled by '%1'", c->program()),
-        QPixmap() , 0l , KNotification::DefaultEvent  );
     clientInteracting = 0;
-    foreach( KSMClient* c, clients ) {
-        SmsShutdownCancelled( c->connection() );
-        if( c->saveYourselfDone ) {
-            // Discard also saved state.
-            QStringList discard = c->discardCommand();
-            if( !discard.isEmpty())
-                executeCommand( discard );
+    kDebug() << state;
+    if ( state == ClosingSubSession ) {
+        clientsToKill.clear();
+        clientsToSave.clear();
+        emit subSessionCloseCanceled();
+    } else {
+        Solid::PowerManagement::stopSuppressingSleep(inhibitCookie);
+        kDebug( 1218 ) << "Client " << c->program() << " (" << c->clientId() << ") canceled shutdown.";
+        KSMShutdownFeedback::logoutCanceled(); // make the screen become normal again
+        KNotification::event( "cancellogout" , i18n( "Logout canceled by '%1'", c->program()),
+                              QPixmap() , 0l , KNotification::DefaultEvent  );
+        foreach( KSMClient* c, clients ) {
+            SmsShutdownCancelled( c->connection() );
+            if( c->saveYourselfDone ) {
+                // Discard also saved state.
+                QStringList discard = c->discardCommand();
+                if( !discard.isEmpty())
+                    executeCommand( discard );
+            }
         }
     }
     state = Idle;
@@ -404,7 +411,7 @@ shutdown.
 */
 void KSMServer::protectionTimeout()
 {
-    if ( ( state != Shutdown && state != Checkpoint ) || clientInteracting )
+    if ( ( state != Shutdown && state != Checkpoint && state != ClosingSubSession ) || clientInteracting )
         return;
 
     foreach( KSMClient* c, clients ) {
@@ -419,17 +426,23 @@ void KSMServer::protectionTimeout()
 
 void KSMServer::completeShutdownOrCheckpoint()
 {
-    if ( state != Shutdown && state != Checkpoint )
+    if ( state != Shutdown && state != Checkpoint && state != ClosingSubSession )
         return;
 
-    foreach( KSMClient* c, clients ) {
+    QList<KSMClient*> pendingClients;
+    if (state == ClosingSubSession)
+        pendingClients = clientsToSave;
+    else
+        pendingClients = clients;
+
+    foreach( KSMClient* c, pendingClients ) {
         if ( !c->saveYourselfDone && !c->waitForPhase2 )
             return; // not done yet
     }
 
     // do phase 2
     bool waitForPhase2 = false;
-    foreach( KSMClient* c, clients ) {
+    foreach( KSMClient* c, pendingClients ) {
         if ( !c->saveYourselfDone && c->waitForPhase2 ) {
             c->waitForPhase2 = false;
             SmsSaveYourselfPhase2( c->connection() );
@@ -456,7 +469,10 @@ void KSMServer::completeShutdownOrCheckpoint()
             SmsSaveComplete( c->connection());
         }
         state = Idle;
+    } else { //ClosingSubSession
+        startKillingSubSession();
     }
+
 }
 
 void KSMServer::startKilling()
@@ -579,4 +595,84 @@ void KSMServer::createLogoutEffectWidget()
 //#endif
     logoutEffectWidget->setGeometry( -100, -100, 1, 1 );
     logoutEffectWidget->show();
+}
+
+void KSMServer::saveSubSession(const QString &name, QStringList saveAndClose, QStringList saveOnly)
+{
+    if( state != Idle ) { // performing startup
+        kDebug() << "not idle!" << state;
+        return;
+    }
+    kDebug() << name << saveAndClose << saveOnly;
+    state = ClosingSubSession;
+    saveType = SmSaveBoth; //both or local? what oes it mean?
+    saveSession = true;
+    sessionGroup = "SubSession: " + name;
+
+#ifndef NO_LEGACY_SESSION_MANAGEMENT
+    //performLegacySessionSave(); FIXME
+#endif
+
+    startProtection();
+    foreach( KSMClient* c, clients ) {
+        if (saveAndClose.contains(c->clientId())) {
+            c->resetState();
+            SmsSaveYourself( c->connection(), saveType,
+                             true, SmInteractStyleAny, false );
+            clientsToSave << c;
+            clientsToKill << c;
+        } else if (saveOnly.contains(c->clientId())) {
+            c->resetState();
+            SmsSaveYourself( c->connection(), saveType,
+                             true, SmInteractStyleAny, false );
+            clientsToSave << c;
+        }
+    }
+    completeShutdownOrCheckpoint();
+}
+
+void KSMServer::startKillingSubSession()
+{
+    kDebug( 1218 ) << "Starting killing clients";
+    // kill all clients
+    state = KillingSubSession;
+    foreach( KSMClient* c, clientsToKill ) {
+        kDebug( 1218 ) << "completeShutdown: client " << c->program() << "(" << c->clientId() << ")";
+        SmsDie( c->connection() );
+    }
+
+    kDebug( 1218 ) << " We killed some clients. We have now clients.count()=" <<
+    clients.count() << endl;
+    completeKillingSubSession();
+    QTimer::singleShot( 10000, this, SLOT( signalSubSessionClosed() ) );
+}
+
+void KSMServer::completeKillingSubSession()
+{
+    kDebug( 1218 ) << "KSMServer::completeKillingSubSession clients.count()=" <<
+        clients.count() << endl;
+    if( state == KillingSubSession ) {
+        bool wait = false;
+        foreach( KSMClient* c, clientsToKill ) {
+            if( isWM( c ))
+                continue;
+            wait = true; // still waiting for clients to go away
+        }
+        if( wait )
+            return;
+        signalSubSessionClosed();
+    }
+}
+
+void KSMServer::signalSubSessionClosed()
+{
+    if( state != KillingSubSession )
+        return;
+    clientsToKill.clear();
+    clientsToSave.clear();
+    //TODO tell the subSession manager the close request was carried out
+    //so that plasma can close its stuff
+    state = Idle;
+    kDebug() << state;
+    emit subSessionClosed();
 }

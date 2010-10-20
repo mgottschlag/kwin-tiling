@@ -309,7 +309,7 @@ void KSMServer::clientRegistered( const char* previousId )
 
 void KSMServer::tryRestoreNext()
 {
-    if( state != Restoring )
+    if( state != Restoring && state != RestoringSubSession )
         return;
     restoreTimer.stop();
     startupSuspendTimeoutTimer.stop();
@@ -318,6 +318,17 @@ void KSMServer::tryRestoreNext()
     while ( lastAppStarted < appsToStart ) {
         lastAppStarted++;
         QString n = QString::number(lastAppStarted);
+        QString clientId = config.readEntry( QString("clientId")+n, QString() );
+        bool alreadyStarted = false;
+        foreach ( KSMClient *c, clients ) {
+            if ( c->clientId() == clientId ) {
+                alreadyStarted = true;
+                break;
+            }
+        }
+        if ( alreadyStarted )
+            continue;
+
         QStringList restartCommand = config.readEntry( QString("restartCommand")+n, QStringList() );
         if ( restartCommand.isEmpty() ||
              (config.readEntry( QString("restartStyleHint")+n, 0 ) == SmRestartNever)) {
@@ -330,7 +341,7 @@ void KSMServer::tryRestoreNext()
         startApplication( restartCommand,
                           config.readEntry( QString("clientMachine")+n, QString() ),
                           config.readEntry( QString("userId")+n, QString() ));
-        lastIdStarted = config.readEntry( QString("clientId")+n, QString() );
+        lastIdStarted = clientId;
         if ( !lastIdStarted.isEmpty() ) {
             restoreTimer.setSingleShot( true );
             restoreTimer.start( 2000 );
@@ -338,10 +349,16 @@ void KSMServer::tryRestoreNext()
         }
     }
 
+    //all done
     appsToStart = 0;
     lastIdStarted.clear();
 
-    autoStart2();
+    if (state == Restoring)
+        autoStart2();
+    else { //subsession
+        state = Idle;
+        emit subSessionOpened();
+    }
 }
 
 void KSMServer::autoStart2()
@@ -515,4 +532,18 @@ void KSMServer::upAndRunning( const QString& msg )
     assert( strlen( msg.toLatin1()) < 20 );
     strcpy( e.xclient.data.b, msg.toLatin1());
     XSendEvent( QX11Info::display(), QX11Info::appRootWindow(), False, SubstructureNotifyMask, &e );
+}
+
+void KSMServer::restoreSubSession( const QString& name )
+{
+    sessionGroup = "SubSession: " + name;
+
+    KConfigGroup configSessionGroup( KGlobal::config(), sessionGroup);
+    int count =  configSessionGroup.readEntry( "count", 0 );
+    appsToStart = count;
+    lastAppStarted = 0;
+    lastIdStarted.clear();
+
+    state = RestoringSubSession;
+    tryRestoreNext();
 }

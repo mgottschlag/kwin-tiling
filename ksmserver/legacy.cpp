@@ -77,6 +77,8 @@ static int winsErrorHandler(Display *, XErrorEvent *ev)
 void KSMServer::performLegacySessionSave()
 {
     kDebug( 1218 ) << "Saving legacy session apps";
+    if (state == ClosingSubSession)
+        return; //FIXME implement later
     // Setup error handler
     legacyWindows.clear();
     windowMapPtr = &legacyWindows;
@@ -207,6 +209,8 @@ Stores legacy session management data
 */
 void KSMServer::storeLegacySession( KConfig* config )
 {
+    if (state == ClosingSubSession)
+        return; //FIXME implement later
     // Write LegacySession data
     config->deleteGroup( "Legacy" + sessionGroup );
     KConfigGroup group( config, "Legacy" + sessionGroup );
