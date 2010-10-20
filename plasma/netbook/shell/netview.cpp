@@ -33,6 +33,7 @@
 #include <Plasma/PopupApplet>
 #include <Plasma/Corona>
 #include <Plasma/Containment>
+#include <Plasma/WindowEffects>
 
 NetView::NetView(Plasma::Containment *containment, int uid, QWidget *parent)
     : Plasma::View(containment, uid, parent),
@@ -114,6 +115,9 @@ void NetView::setContainment(Plasma::Containment *c)
 
     if (containment() && id() == mainViewId()) {
         setTrackContainmentChanges(false);
+        Plasma::WindowEffects::enableBlurBehind(effectiveWinId(), false);
+    } else if (containment() && id() == controlBarId()) {
+        Plasma::WindowEffects::enableBlurBehind(effectiveWinId(), true);
     }
 
     Plasma::View::setContainment(c);
