@@ -97,6 +97,7 @@ bool RssEngine::updateSourceEvent(const QString &name)
     const QStringList sources = name.split(' ', QString::SkipEmptyParts);
 
     foreach (const QString& source, sources) {
+        setStorageEnabled(source, true);
         // Let's first see if we've got a recent cached version of
         // the feed. This avoids 'large' amounts of unnecessary network
         // traffic.
