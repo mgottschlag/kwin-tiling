@@ -681,7 +681,7 @@ QString CJobRunner::errorString(int value) const
         case KIO::ERR_COULD_NOT_AUTHENTICATE:
             return i18n("Authentication failed.<br><i>%1</i>", urlStr);
         default:
-            return i18n("Unexpected error whilst processing: <i>%1</i>", urlStr);
+            return i18n("Unexpected error while processing: <i>%1</i>", urlStr);
     }
 }
 
