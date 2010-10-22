@@ -46,7 +46,7 @@ IconGridLayout::IconGridLayout(QGraphicsLayoutItem *parent)
       m_rowCount(0),
       m_rowHeight(0),
       m_columnCount(0),
-      m_columnWidth(0),
+      m_columnWidth(0)
 {
     setContentsMargins(0, 0, 0, 0);
 
