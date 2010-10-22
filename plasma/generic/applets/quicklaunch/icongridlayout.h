@@ -97,9 +97,9 @@ private:
     bool m_maxSectionCountForced;
 
     int m_rowCount;
+    int m_rowHeight;
     int m_columnCount;
     int m_columnWidth;
-    int m_rowHeight;
     QSizeF m_preferredSizeHint;
 };
 }

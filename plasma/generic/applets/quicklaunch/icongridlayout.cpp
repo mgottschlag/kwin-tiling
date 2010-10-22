@@ -27,7 +27,6 @@
 #include <QtGui/QSizePolicy>
 
 // KDE
-#include <KDebug>
 #include <KIconLoader>
 
 // stdlib
@@ -45,9 +44,9 @@ IconGridLayout::IconGridLayout(QGraphicsLayoutItem *parent)
       m_maxSectionCount(0),
       m_maxSectionCountForced(false),
       m_rowCount(0),
+      m_rowHeight(0),
       m_columnCount(0),
       m_columnWidth(0),
-      m_rowHeight(0)
 {
     setContentsMargins(0, 0, 0, 0);
 
@@ -203,7 +202,7 @@ void IconGridLayout::setGeometry(const QRectF &rect)
 
     updateGridParameters();
 
-    /* qreal offsetLeft =
+    qreal offsetLeft =
         qMax<qreal>(
             contentsRect().left(),
             (contentsRect().width() - preferredWidth()) / 2);
@@ -212,9 +211,6 @@ void IconGridLayout::setGeometry(const QRectF &rect)
         qMax<qreal>(
             contentsRect().top(),
             (contentsRect().height() - preferredHeight()) / 2);
-
-    kDebug() << "Get rect:" << rect;
-    kDebug() << "Offsets: " << offsetLeft << "," << offsetTop; */
 
     int itemCount = m_items.size();
 
@@ -225,8 +221,8 @@ void IconGridLayout::setGeometry(const QRectF &rect)
 
         m_items[i]->setGeometry(
             QRectF(
-                /* offsetLeft + */ column * (m_columnWidth + m_cellSpacing),
-                /* offsetTop + */ row * (m_rowHeight + m_cellSpacing),
+                offsetLeft + column * (m_columnWidth + m_cellSpacing),
+                offsetTop + row * (m_rowHeight + m_cellSpacing),
                 m_columnWidth, m_rowHeight));
     }
 }
@@ -261,21 +257,12 @@ void IconGridLayout::updateGridParameters()
 
     // Determine the minimum and preferred cell size according to the
     // children's size hints.
-    int minColumnWidth = 0;
-    int minRowHeight = 0;
-
-    int maxUnconstrainedPreferredColumnWidth = 0;
-    int maxUnconstrainedPreferredRowHeight = 0;
+    int minCellWidth = 0;
+    int minCellHeight = 0;
 
     Q_FOREACH(QGraphicsLayoutItem *item, m_items) {
-        minColumnWidth = qMax(minColumnWidth, (int)item->minimumWidth());
-        minRowHeight = qMax(minRowHeight, (int)item->minimumHeight());
-
-        maxUnconstrainedPreferredColumnWidth =
-            qMax(maxUnconstrainedPreferredColumnWidth, (int)item->preferredWidth());
-
-        maxUnconstrainedPreferredRowHeight =
-            qMax(maxUnconstrainedPreferredRowHeight, (int)item->preferredHeight());
+        minCellWidth = qMax(minCellWidth, (int)item->minimumWidth());
+        minCellHeight = qMax(minCellHeight, (int)item->minimumHeight());
     }
 
     if (m_mode == PreferRows) {
@@ -284,7 +271,7 @@ void IconGridLayout::updateGridParameters()
             m_rowCount = qMin(itemCount, m_maxSectionCount);
         }
         else {
-            m_rowCount = height / (minRowHeight + m_cellSpacing);
+            m_rowCount = height / (minCellHeight + m_cellSpacing);
             m_rowCount = qBound(1, m_rowCount, itemCount);
 
             if (m_maxSectionCount > 0) {
@@ -298,7 +285,7 @@ void IconGridLayout::updateGridParameters()
             m_columnCount = qMin(itemCount, m_maxSectionCount);
         }
         else {
-            m_columnCount = width / (minColumnWidth + m_cellSpacing);
+            m_columnCount = width / (minCellWidth + m_cellSpacing);
             m_columnCount = qBound(1, m_columnCount, itemCount);
 
             if (m_maxSectionCount > 0) {
@@ -310,48 +297,31 @@ void IconGridLayout::updateGridParameters()
 
     Q_ASSERT(m_rowCount > 0 && m_columnCount > 0);
 
-    m_columnWidth =
+    const int availableCellWidth =
         (width - (m_columnCount - 1) * m_cellSpacing) / m_columnCount;
 
-    m_rowHeight =
+    const int availableCellHeight =
         (height - (m_rowCount - 1) * m_cellSpacing) / m_rowCount;
 
-    kDebug() << "Reported height: " << height;
-    kDebug() << "Row height: " << m_rowHeight;
+    const int availableCellSize = qMin(availableCellWidth, availableCellHeight);
 
+    m_columnWidth = qMax(minCellWidth, availableCellSize);
+    m_rowHeight = qMax(minCellHeight, availableCellSize);
 
-    int preferredWidth;
-    int preferredHeight;
+    // Giving the availableCellHeight as preferred cell width
+    // (and the other way round) is a bit of a hack that  makes the panel allocate just
+    // the right size and allows us to request more width when
+    // the height changes.
+    int preferredWidth =
+        m_columnCount * (qMax(minCellWidth, availableCellHeight) + m_cellSpacing) - m_cellSpacing;
 
-    if (m_mode == PreferRows) {
-        preferredWidth = 0;
-
-        for (int i = 0; i < m_columnCount; i++) {
-            preferredWidth += m_items.at(i)->effectiveSizeHint(Qt::PreferredSize, QSizeF(-1, m_rowHeight)).width();
-            kDebug() << "Item said, it would like to have a width of " << m_items.at(i)->effectiveSizeHint(Qt::PreferredSize, QSizeF(-1, m_rowHeight)).width() << " for the given height of " << m_rowHeight;
-        }
-
-        preferredWidth += (m_columnCount - 1) * m_cellSpacing;
-        preferredHeight =
-            m_rowCount * (maxUnconstrainedPreferredRowHeight + m_cellSpacing) - m_cellSpacing;
-    } else { // m_mode == PreferColumns
-
-        preferredHeight = 0;
-
-        Q_FOREACH(QGraphicsLayoutItem *item, m_items) {
-            preferredHeight += item->effectiveSizeHint(Qt::PreferredSize, QSizeF(m_columnWidth, -1)).height();
-        }
-
-        preferredHeight += (m_rowCount - 1) * m_cellSpacing;
-        preferredWidth =
-            m_columnCount * (maxUnconstrainedPreferredColumnWidth + m_cellSpacing) - m_cellSpacing;
-    }
+    int preferredHeight =
+        m_rowCount * (qMax(minCellHeight, availableCellWidth) + m_cellSpacing) - m_cellSpacing;
 
     if (preferredWidth != int(m_preferredSizeHint.width()) ||
         preferredHeight != int(m_preferredSizeHint.height())) {
 
         m_preferredSizeHint = QSizeF(preferredWidth, preferredHeight);
-        kDebug() << "Reporting preferred size: " << m_preferredSizeHint;
         updateGeometry();
     }
 }
