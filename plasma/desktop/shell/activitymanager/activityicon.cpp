@@ -30,6 +30,7 @@
 #include <QGraphicsGridLayout>
 #include <QPainter>
 #include <QCursor>
+#include <QSizePolicy>
 
 #include <KIconLoader>
 #include <KIcon>
@@ -100,6 +101,8 @@ ActivityIcon::ActivityIcon(const QString &id)
     connect(m_activity, SIGNAL(nameChanged(QString)), this, SLOT(setName(QString)));
     setName(m_activity->name());
 
+    setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+
     updateButtons();
 }
 
@@ -126,9 +129,8 @@ public:
           m_icon(icon),
           m_addWidth(addedWidth)
     {
-        qreal l, t, b;
-        m_icon->getContentsMargins(&l, &t, &m_startRMargin, &b);
-        m_startWidth = icon->contentsRect().width();
+        m_startSize = icon->geometry().size();
+        m_icon->getContentsMargins(0, 0, &m_startRightMargin, 0);
     }
 
     int duration() const
@@ -138,31 +140,23 @@ public:
 
     void updateCurrentTime(int currentTime)
     {
-        qreal delta = m_addWidth * (currentTime / 100.0);
-        qreal l, t, r, b;
-        m_icon->getContentsMargins(&l, &t, &r, &b);
-        if (currentTime == 0 && direction() == Backward) {
-            m_icon->setContentsMargins(l, t, m_startRMargin, b);
-            m_icon->setMinimumSize(0, 0);
-            m_icon->setPreferredSize(l + m_startRMargin + m_startWidth, m_icon->size().height());
-            m_icon->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-        } else {
-            QSize s(m_startWidth + l + m_startRMargin + delta, m_icon->size().height());
-            m_icon->setContentsMargins(l, t, m_startRMargin + delta, b);
-            m_icon->setMaximumSize(s);
-            m_icon->setMinimumSize(s);
-            m_icon->setPreferredSize(s);
-        }
+        const qreal delta = currentTime / (float) duration();
 
-        m_icon->getContentsMargins(&l, &t, &r, &b);
-        //kDebug() << currentTime << m_startWidth << m_addWidth << delta << m_icon->size() << l << t << r << b;
+        m_icon->setPreferredSize(m_startSize + QSizeF(m_addWidth * delta, 0));
+
+        qreal left, top, right, bottom;
+        m_icon->getContentsMargins(&left, &top, &right, &bottom);
+
+        right = m_startRightMargin + m_addWidth * delta;
+
+        m_icon->setContentsMargins(left, top, right, bottom);
     }
 
 private:
-    ActivityIcon *m_icon;
-    qreal m_startWidth;
-    qreal m_startRMargin;
+    ActivityIcon * m_icon;
+    QSizeF m_startSize;
     qreal m_addWidth;
+    qreal m_startRightMargin;
 };
 
 void ActivityIcon::showInlineWidget(QGraphicsWidget * w)
