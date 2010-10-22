@@ -27,6 +27,7 @@
 #include <QtGui/QSizePolicy>
 
 // KDE
+#include <KDebug>
 #include <KIconLoader>
 
 // stdlib
@@ -41,8 +42,8 @@ IconGridLayout::IconGridLayout(QGraphicsLayoutItem *parent)
       m_items(),
       m_mode(PreferRows),
       m_cellSpacing(DEFAULT_CELL_SPACING),
-      m_maxRowsOrColumns(0),
-      m_maxRowsOrColumnsForced(false),
+      m_maxSectionCount(0),
+      m_maxSectionCountForced(false),
       m_rowCount(0),
       m_columnCount(0),
       m_columnWidth(0),
@@ -102,34 +103,34 @@ void IconGridLayout::setCellSpacing(int cellSpacing)
     invalidate();
 }
 
-int IconGridLayout::maxRowsOrColumns() const
+int IconGridLayout::maxSectionCount() const
 {
-    return m_maxRowsOrColumns;
+    return m_maxSectionCount;
 }
 
-void IconGridLayout::setMaxRowsOrColumns(int maxRowsOrColumns)
+void IconGridLayout::setMaxSectionCount(int maxSectionCount)
 {
-    if (m_maxRowsOrColumns == maxRowsOrColumns) {
+    if (m_maxSectionCount == maxSectionCount) {
         return;
     }
 
-    m_maxRowsOrColumns = maxRowsOrColumns;
+    m_maxSectionCount = maxSectionCount;
     updateGridParameters();
     invalidate();
 }
 
-bool IconGridLayout::maxRowsOrColumnsForced() const
+bool IconGridLayout::maxSectionCountForced() const
 {
-    return m_maxRowsOrColumnsForced;
+    return m_maxSectionCountForced;
 }
 
-void IconGridLayout::setMaxRowsOrColumnsForced(bool enable)
+void IconGridLayout::setMaxSectionCountForced(bool enable)
 {
-    if (m_maxRowsOrColumnsForced == enable) {
+    if (m_maxSectionCountForced == enable) {
         return;
     }
 
-    m_maxRowsOrColumnsForced = enable;
+    m_maxSectionCountForced = enable;
     updateGridParameters();
     invalidate();
 }
@@ -202,7 +203,7 @@ void IconGridLayout::setGeometry(const QRectF &rect)
 
     updateGridParameters();
 
-    qreal offsetLeft =
+    /* qreal offsetLeft =
         qMax<qreal>(
             contentsRect().left(),
             (contentsRect().width() - preferredWidth()) / 2);
@@ -211,6 +212,9 @@ void IconGridLayout::setGeometry(const QRectF &rect)
         qMax<qreal>(
             contentsRect().top(),
             (contentsRect().height() - preferredHeight()) / 2);
+
+    kDebug() << "Get rect:" << rect;
+    kDebug() << "Offsets: " << offsetLeft << "," << offsetTop; */
 
     int itemCount = m_items.size();
 
@@ -221,8 +225,8 @@ void IconGridLayout::setGeometry(const QRectF &rect)
 
         m_items[i]->setGeometry(
             QRectF(
-                offsetLeft + column * (m_columnWidth + m_cellSpacing),
-                offsetTop + row * (m_rowHeight + m_cellSpacing),
+                /* offsetLeft + */ column * (m_columnWidth + m_cellSpacing),
+                /* offsetTop + */ row * (m_rowHeight + m_cellSpacing),
                 m_columnWidth, m_rowHeight));
     }
 }
@@ -256,40 +260,49 @@ void IconGridLayout::updateGridParameters()
     const int height = int(contentsRect().height());
 
     // Determine the minimum and preferred cell size according to the
-    // children's constraints.
-    int minCellWidth = 0;
-    int minCellHeight = 0;
+    // children's size hints.
+    int minColumnWidth = 0;
+    int minRowHeight = 0;
+
+    int maxUnconstrainedPreferredColumnWidth = 0;
+    int maxUnconstrainedPreferredRowHeight = 0;
 
     Q_FOREACH(QGraphicsLayoutItem *item, m_items) {
-        minCellWidth = qMax(minCellWidth, (int)item->minimumWidth());
-        minCellHeight = qMax(minCellHeight, (int)item->minimumHeight());
+        minColumnWidth = qMax(minColumnWidth, (int)item->minimumWidth());
+        minRowHeight = qMax(minRowHeight, (int)item->minimumHeight());
+
+        maxUnconstrainedPreferredColumnWidth =
+            qMax(maxUnconstrainedPreferredColumnWidth, (int)item->preferredWidth());
+
+        maxUnconstrainedPreferredRowHeight =
+            qMax(maxUnconstrainedPreferredRowHeight, (int)item->preferredHeight());
     }
 
     if (m_mode == PreferRows) {
 
-        if (m_maxRowsOrColumns > 0 && m_maxRowsOrColumnsForced) {
-            m_rowCount = qMin(itemCount, m_maxRowsOrColumns);
+        if (m_maxSectionCount > 0 && m_maxSectionCountForced) {
+            m_rowCount = qMin(itemCount, m_maxSectionCount);
         }
         else {
-            m_rowCount = height / (minCellHeight + m_cellSpacing);
+            m_rowCount = height / (minRowHeight + m_cellSpacing);
             m_rowCount = qBound(1, m_rowCount, itemCount);
 
-            if (m_maxRowsOrColumns > 0) {
-                m_rowCount = qMin(m_rowCount, m_maxRowsOrColumns);
+            if (m_maxSectionCount > 0) {
+                m_rowCount = qMin(m_rowCount, m_maxSectionCount);
             }
         }
         m_columnCount = ceil(double(itemCount) / m_rowCount);
     } else { // m_mode == PreferColumns
 
-        if (m_maxRowsOrColumns > 0 && m_maxRowsOrColumnsForced) {
-            m_columnCount = qMin(itemCount, m_maxRowsOrColumns);
+        if (m_maxSectionCount > 0 && m_maxSectionCountForced) {
+            m_columnCount = qMin(itemCount, m_maxSectionCount);
         }
         else {
-            m_columnCount = width / (minCellWidth + m_cellSpacing);
+            m_columnCount = width / (minColumnWidth + m_cellSpacing);
             m_columnCount = qBound(1, m_columnCount, itemCount);
 
-            if (m_maxRowsOrColumns > 0) {
-                m_columnCount = qMin(m_columnCount, m_maxRowsOrColumns);
+            if (m_maxSectionCount > 0) {
+                m_columnCount = qMin(m_columnCount, m_maxSectionCount);
             }
         }
         m_rowCount = ceil(double(itemCount) / m_columnCount);
@@ -297,31 +310,48 @@ void IconGridLayout::updateGridParameters()
 
     Q_ASSERT(m_rowCount > 0 && m_columnCount > 0);
 
-    const int availableCellWidth =
+    m_columnWidth =
         (width - (m_columnCount - 1) * m_cellSpacing) / m_columnCount;
 
-    const int availableCellHeight =
+    m_rowHeight =
         (height - (m_rowCount - 1) * m_cellSpacing) / m_rowCount;
 
-    const int availableCellSize = qMin(availableCellWidth, availableCellHeight);
+    kDebug() << "Reported height: " << height;
+    kDebug() << "Row height: " << m_rowHeight;
 
-    m_columnWidth = qMax(minCellWidth, availableCellSize);
-    m_rowHeight = qMax(minCellHeight, availableCellSize);
 
-    // Giving the availableCellHeight as preferred cell width
-    // (and the other way round) is a bit of a hack that  makes the panel allocate just
-    // the right size and allows us to request more width when
-    // the height changes.
-    int preferredWidth =
-        m_columnCount * (qMax(minCellWidth, availableCellHeight) + m_cellSpacing) - m_cellSpacing;
+    int preferredWidth;
+    int preferredHeight;
 
-    int preferredHeight =
-        m_rowCount * (qMax(minCellHeight, availableCellWidth) + m_cellSpacing) - m_cellSpacing;
+    if (m_mode == PreferRows) {
+        preferredWidth = 0;
+
+        for (int i = 0; i < m_columnCount; i++) {
+            preferredWidth += m_items.at(i)->effectiveSizeHint(Qt::PreferredSize, QSizeF(-1, m_rowHeight)).width();
+            kDebug() << "Item said, it would like to have a width of " << m_items.at(i)->effectiveSizeHint(Qt::PreferredSize, QSizeF(-1, m_rowHeight)).width() << " for the given height of " << m_rowHeight;
+        }
+
+        preferredWidth += (m_columnCount - 1) * m_cellSpacing;
+        preferredHeight =
+            m_rowCount * (maxUnconstrainedPreferredRowHeight + m_cellSpacing) - m_cellSpacing;
+    } else { // m_mode == PreferColumns
+
+        preferredHeight = 0;
+
+        Q_FOREACH(QGraphicsLayoutItem *item, m_items) {
+            preferredHeight += item->effectiveSizeHint(Qt::PreferredSize, QSizeF(m_columnWidth, -1)).height();
+        }
+
+        preferredHeight += (m_rowCount - 1) * m_cellSpacing;
+        preferredWidth =
+            m_columnCount * (maxUnconstrainedPreferredColumnWidth + m_cellSpacing) - m_cellSpacing;
+    }
 
     if (preferredWidth != int(m_preferredSizeHint.width()) ||
         preferredHeight != int(m_preferredSizeHint.height())) {
 
         m_preferredSizeHint = QSizeF(preferredWidth, preferredHeight);
+        kDebug() << "Reporting preferred size: " << m_preferredSizeHint;
         updateGeometry();
     }
 }

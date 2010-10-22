@@ -51,25 +51,25 @@ public:
 
     int cellSpacing() const;
     void setCellSpacing(int cellSpacing);
-    int maxRowsOrColumns() const;
+    int maxSectionCount() const;
 
     /**
-     * Depending on the mode, @c setMaxRowsOrColumns limits either the
+     * Depending on the mode, @c setMaxSectionCount limits either the
      * number of rows or the number of columns that are displayed. In
-     * @c PreferColumns mode, @a maxRowsOrColumns applies to the
+     * @c PreferColumns mode, @a maxSectionCount limites the maximum
      * number of columns while in @c PreferRows mode, it applies to
-     * the number of rows.
+     * the maximum number of rows.
      *
-     * Setting @a maxRowsOrColumns to @c 0 disables the limitation.
+     * Setting @a maxSectionCount to @c 0 disables the limitation.
      *
-     * @param maxRowsOrColumns the maximum number of rows or columns
+     * @param maxSectionCount the maximum number of rows or columns
      *    (depending on the mode) that should be displayed.
      */
-    void setMaxRowsOrColumns(int maxRowsOrColumns);
+    void setMaxSectionCount(int maxSectionCount);
 
-    bool maxRowsOrColumnsForced() const;
+    bool maxSectionCountForced() const;
 
-    void setMaxRowsOrColumnsForced(bool enable);
+    void setMaxSectionCountForced(bool enable);
 
     void addItem(QGraphicsLayoutItem *item);
     void insertItem(int index, QGraphicsLayoutItem *item);
@@ -93,8 +93,8 @@ private:
     QList<QGraphicsLayoutItem*> m_items;
     Mode m_mode;
     int m_cellSpacing;
-    int m_maxRowsOrColumns;
-    bool m_maxRowsOrColumnsForced;
+    int m_maxSectionCount;
+    bool m_maxSectionCountForced;
 
     int m_rowCount;
     int m_columnCount;

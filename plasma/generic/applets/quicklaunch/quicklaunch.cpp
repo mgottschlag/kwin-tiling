@@ -31,9 +31,11 @@
 #include <QtGui/QGraphicsWidget>
 
 // KDE
+#include <KConfig>
 #include <KConfigDialog>
 #include <KDesktopFile>
 #include <KDialog>
+#include <KGlobalSettings>
 #include <KMenu>
 #include <KMessageBox>
 #include <KMimeType>
@@ -44,6 +46,8 @@
 
 // Plasma
 #include <Plasma/Applet>
+#include <Plasma/Containment>
+#include <Plasma/Corona>
 #include <Plasma/IconWidget>
 #include <Plasma/Svg>
 #include <Plasma/ToolTipContent>
@@ -74,8 +78,8 @@ Quicklaunch::Quicklaunch(QObject *parent, const QVariantList &args)
     m_layout(0),
     m_popupTrigger(0),
     m_popup(0),
-    m_addIconAction(0),
-    m_removeIconAction(0),
+    m_addLauncherAction(0),
+    m_removeLauncherAction(0),
     m_currentLauncherList(0),
     m_currentLauncherIndex(-1)
 {
@@ -100,14 +104,22 @@ void Quicklaunch::init()
 
     // Initialize icon area
     m_launcherList = new LauncherList(LauncherList::IconGrid);
+    m_launcherList->gridLayout()->setMaxSectionCountForced(true);
     m_launcherList->installEventFilter(this);
 
     m_layout->addItem(m_launcherList);
     m_layout->setStretchFactor(m_launcherList, 1);
 
     configChanged();
+    iconSizeChanged();
 
-    connect(m_launcherList, SIGNAL(launchersChanged()), SLOT(onLaunchersChanged()));
+    connect(
+        m_launcherList, SIGNAL(launchersChanged()), SLOT(onLaunchersChanged()));
+
+    connect(
+        KGlobalSettings::self(),
+        SIGNAL(iconChanged(int)), SLOT(iconSizeChanged()));
+
     setLayout(m_layout);
 }
 
@@ -115,30 +127,37 @@ void Quicklaunch::createConfigurationInterface(KConfigDialog *parent)
 {
     QWidget *widget = new QWidget(parent);
     uiConfig.setupUi(widget);
-    connect(parent, SIGNAL(accepted()), SLOT(onConfigAccepted()));
+    connect(parent, SIGNAL(applyClicked()), SLOT(onConfigAccepted()));
+    connect(parent, SIGNAL(okClicked()), SLOT(onConfigAccepted()));
 
     FormFactor appletFormFactor = formFactor();
 
     if (appletFormFactor == Plasma::Horizontal) {
-        uiConfig.forceMaxRowsOrColumnsLabel->setText(i18n("Force row settings:"));
-        uiConfig.maxRowsOrColumnsLabel->setText(i18n("Max row count:"));
+        uiConfig.autoSectionCountEnabledLabel->setText(i18n(
+            "Determine number of rows automatically:"));
+        uiConfig.sectionCountLabel->setText(i18n(
+            "Number of rows:"));
     } else if (appletFormFactor == Plasma::Planar) {
-        // Hide maxRowsOrColumns / maxRowsOrColumnsForced when in planar
+        // Hide wrapLimit / maxSectionCountForced when in planar
         // form factor.
-        uiConfig.forceMaxRowsOrColumnsLabel->hide();
-        uiConfig.forceMaxRowsOrColumnsCheckBox->hide();
-        uiConfig.maxRowsOrColumnsLabel->hide();
-        uiConfig.maxRowsOrColumnsSpinBox->hide();
+        uiConfig.autoSectionCountEnabledLabel->hide();
+        uiConfig.autoSectionCountEnabledCheckBox->hide();
+        uiConfig.sectionCountLabel->hide();
+        uiConfig.sectionCountSpinBox->hide();
     } else {
-        uiConfig.forceMaxRowsOrColumnsLabel->setText(i18n("Force column settings:"));
-        uiConfig.maxRowsOrColumnsLabel->setText(i18n("Max column count:"));
+        uiConfig.autoSectionCountEnabledLabel->setText(i18n(
+            "Determine number of columns automatically:"));
+        uiConfig.sectionCountLabel->setText(i18n(
+            "Number of columns:"));
     }
 
-    uiConfig.forceMaxRowsOrColumnsCheckBox->setChecked(
-        m_launcherList->gridLayout()->maxRowsOrColumnsForced());
+    uiConfig.autoSectionCountEnabledCheckBox->setChecked(
+        m_launcherList->gridLayout()->maxSectionCount() == 0);
 
-    uiConfig.maxRowsOrColumnsSpinBox->setValue(
-        m_launcherList->gridLayout()->maxRowsOrColumns());
+    uiConfig.sectionCountSpinBox->setValue(
+        m_launcherList->gridLayout()->maxSectionCount() > 0
+            ? m_launcherList->gridLayout()->maxSectionCount()
+            : 1);
 
     uiConfig.launcherNamesVisibleCheckBox->setChecked(
         m_launcherList->launcherNamesVisible());
@@ -197,12 +216,15 @@ void Quicklaunch::constraintsEvent(Constraints constraints)
                 ? IconGridLayout::PreferRows
                 : IconGridLayout::PreferColumns);
 
-        // Ignore maxRowsOrColumns / maxRowsOrColumnsForced when in planar
-        // form factor.
         if (newFormFactor == Plasma::Planar) {
-            m_launcherList->gridLayout()->setMaxRowsOrColumns(0);
-            m_launcherList->gridLayout()->setMaxRowsOrColumnsForced(false);
+            // Ignore wrapLimit / maxSectionCountForced when in planar
+            // form factor.
+            m_launcherList->gridLayout()->setMaxSectionCount(0);
+            m_launcherList->gridLayout()->setMaxSectionCountForced(false);
         }
+
+        // Apply icon size
+        iconSizeChanged();
 
         m_layout->setOrientation(
             newFormFactor == Plasma::Vertical ? Qt::Vertical : Qt::Horizontal);
@@ -233,6 +255,8 @@ void Quicklaunch::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
 void Quicklaunch::configChanged()
 {
+    kDebug() << "configChanged";
+
     KConfigGroup config = this->config();
 
     // Migrate old configuration keys
@@ -276,7 +300,9 @@ void Quicklaunch::configChanged()
     if (config.hasKey("icons") ||
         config.hasKey("dialogIcons") ||
         config.hasKey("dialogEnabled") ||
-        config.hasKey("iconNamesVisible")) {
+        config.hasKey("iconNamesVisible") ||
+        config.hasKey("maxRowsOrColumns") ||
+        config.hasKey("maxRowsOrColumnsForced")) {
 
         // Migrate from quicklaunch 0.2 config format
         if (config.hasKey("icons")) {
@@ -314,11 +340,25 @@ void Quicklaunch::configChanged()
             }
             config.deleteEntry("iconNamesVisible");
         }
+
+        if (config.hasKey("maxRowsOrColumns")) {
+            if (config.hasKey("maxRowsOrColumnsForced")) {
+                const bool maxRowsOrColumnsForced =
+                    config.readEntry("maxRowsOrColumnsForced", false);
+
+                if (maxRowsOrColumnsForced) {
+                    config.writeEntry(
+                        "sectionCount",
+                        config.readEntry("maxRowsOrColumns", 0));
+                }
+                config.deleteEntry("maxRowsOrColumnsForced");
+            }
+            config.deleteEntry("maxRowsOrColumns");
+        }
     }
 
     // Read new configuration
-    const bool maxRowsOrColumnsForced = config.readEntry("maxRowsOrColumnsForced", false);
-    const int maxRowsOrColumns = config.readEntry("maxRowsOrColumns", 0);
+    const int sectionCount = config.readEntry("sectionCount", 0);
     const bool launcherNamesVisible = config.readEntry("launcherNamesVisible", false);
     const bool popupEnabled = config.readEntry("popupEnabled", false);
 
@@ -357,8 +397,7 @@ void Quicklaunch::configChanged()
     }
 
     // Apply new configuration
-    m_launcherList->gridLayout()->setMaxRowsOrColumnsForced(maxRowsOrColumnsForced);
-    m_launcherList->gridLayout()->setMaxRowsOrColumns(maxRowsOrColumns);
+    m_launcherList->gridLayout()->setMaxSectionCount(sectionCount);
     m_launcherList->setLauncherNamesVisible(launcherNamesVisible);
 
     // Make sure the popup is in a proper state for the new configuration
@@ -414,43 +453,54 @@ void Quicklaunch::configChanged()
     }
 }
 
+void Quicklaunch::iconSizeChanged()
+{
+    FormFactor ff = formFactor();
+
+    if (ff == Plasma::Planar || ff == Plasma::MediaCenter) {
+        m_launcherList->setPreferredIconSize(IconSize(KIconLoader::Desktop));
+    } else {
+        m_launcherList->setPreferredIconSize(IconSize(KIconLoader::Panel));
+    }
+}
+
 void Quicklaunch::onConfigAccepted()
 {
-    const bool maxRowsOrColumnsForced = uiConfig.forceMaxRowsOrColumnsCheckBox->isChecked();
-    const int maxRowsOrColumns = uiConfig.maxRowsOrColumnsSpinBox->value();
+    kDebug() << "onConfigAccepted";
+
+    const int sectionCount =
+        uiConfig.autoSectionCountEnabledCheckBox->isChecked()
+            ? 0
+            : uiConfig.sectionCountSpinBox->value();
     const bool launcherNamesVisible = uiConfig.launcherNamesVisibleCheckBox->isChecked();
     const bool popupEnabled = uiConfig.popupEnabledCheckBox->isChecked();
 
     KConfigGroup config = this->config();
     bool changed = false;
 
-    if (maxRowsOrColumnsForced !=
-          m_launcherList->gridLayout()->maxRowsOrColumnsForced()) {
-
-        m_launcherList->gridLayout()->setMaxRowsOrColumnsForced(maxRowsOrColumnsForced);
-        config.writeEntry("maxRowsOrColumnsForced", maxRowsOrColumnsForced);
-        changed = true;
-    }
-
-    if (maxRowsOrColumns != m_launcherList->gridLayout()->maxRowsOrColumns()) {
-        m_launcherList->gridLayout()->setMaxRowsOrColumns(maxRowsOrColumns);
-        config.writeEntry("maxRowsOrColumns", maxRowsOrColumns);
+    if (sectionCount != m_launcherList->gridLayout()->maxSectionCount()) {
+        config.writeEntry("sectionCount", sectionCount);
         changed = true;
     }
 
     if (launcherNamesVisible != m_launcherList->launcherNamesVisible()) {
-        m_launcherList->setLauncherNamesVisible(launcherNamesVisible);
         config.writeEntry("launcherNamesVisible", launcherNamesVisible);
         changed = true;
     }
 
     if (popupEnabled != (m_popup != 0)) {
 
-        if (m_popup == 0) {
-            initPopup();
-        } else {
-            while (m_popup->launcherList()->launcherCount() > 0) {
-                m_launcherList->insert(-1, m_popup->launcherList()->launcherAt(0));
+        // Move all the launchers that are currently in the popup to
+        // the main launcher list.
+        if (m_popup) {
+            LauncherList *popupLauncherList = m_popup->launcherList();
+
+            while (popupLauncherList->launcherCount() > 0) {
+                m_launcherList->insert(
+                    m_launcherList->launcherCount(),
+                    popupLauncherList->launcherAt(0));
+
+                popupLauncherList->removeAt(0);
             }
         }
 
@@ -498,15 +548,7 @@ void Quicklaunch::onPopupTriggerClicked()
     }
 }
 
-void Quicklaunch::onRemoveIconAction()
-{
-    Q_ASSERT(m_currentLauncherList);
-    Q_ASSERT(m_currentLauncherIndex != -1);
-
-    m_currentLauncherList->removeAt(m_currentLauncherIndex);
-}
-
-void Quicklaunch::onAddIconAction()
+void Quicklaunch::onAddLauncherAction()
 {
     KOpenWithDialog appChooseDialog(0);
     appChooseDialog.hideRunInTerminal();
@@ -514,6 +556,8 @@ void Quicklaunch::onAddIconAction()
 
     if (appChooseDialog.exec() == QDialog::Accepted) {
         QString programPath = appChooseDialog.service()->entryPath();
+
+        kDebug() << "Returned program path:" << programPath;
 
         if (appChooseDialog.service()->icon() == 0) {
             // If the program chosen doesn't have an icon, then we give
@@ -524,7 +568,7 @@ void Quicklaunch::onAddIconAction()
             kcg.writeEntry("Icon","system-run");
             kc.sync();
 
-            KPropertiesDialog propertiesDialog(KUrl(programPath), NULL);
+            KPropertiesDialog propertiesDialog(KUrl(programPath), 0);
             if (propertiesDialog.exec() != QDialog::Accepted) {
                 return;
             }
@@ -544,12 +588,40 @@ void Quicklaunch::onAddIconAction()
     }
 }
 
+void Quicklaunch::onEditLauncherAction()
+{
+    Q_ASSERT(m_currentLauncherList && m_currentLauncherIndex != -1);
+
+    KUrl url(m_currentLauncherList->launcherAt(m_currentLauncherIndex).url());
+
+    // TODO: Maybe, tf the launcher does not point to a desktop file, create one,
+    // so that user can change icon, text and description.
+    /* if (!url.isLocalFile() || !KDesktopFile::isDesktopFile(url)) {
+
+    } */
+
+    KPropertiesDialog propertiesDialog(url);
+
+    if (propertiesDialog.exec() == QDialog::Accepted) {
+        LauncherData newLauncherData(propertiesDialog.kurl());
+        // TODO: This calls for a setLauncherDataAt method...
+        m_currentLauncherList->insert(m_currentLauncherIndex, newLauncherData);
+        m_currentLauncherList->removeAt(m_currentLauncherIndex+1);
+    }
+}
+
+void Quicklaunch::onRemoveLauncherAction()
+{
+    Q_ASSERT(m_currentLauncherList && m_currentLauncherIndex != -1);
+    m_currentLauncherList->removeAt(m_currentLauncherIndex);
+}
+
 void Quicklaunch::showContextMenu(
     const QPoint& screenPos,
     LauncherList *component,
     int iconIndex)
 {
-    if (m_addIconAction == 0) {
+    if (m_addLauncherAction == 0) {
         initActions();
     }
 
@@ -557,14 +629,20 @@ void Quicklaunch::showContextMenu(
     m_currentLauncherIndex = iconIndex;
 
     KMenu m;
-    m.addAction(action("configure"));
-    m.addSeparator();
-    m.addAction(m_addIconAction);
+    m.addAction(m_addLauncherAction);
     if (component != 0 && iconIndex != -1) {
-        m.addAction(m_removeIconAction);
+        m.addAction(m_editLauncherAction);
+        m.addAction(m_removeLauncherAction);
     }
+
     m.addSeparator();
+    m.addAction(action("configure"));
+
+    if (containment() && containment()->corona()) {
+        m.addAction(containment()->corona()->action("lock widgets"));
+    }
     m.addAction(action("remove"));
+
     m.exec(screenPos);
 
     m_currentLauncherList = 0;
@@ -573,13 +651,16 @@ void Quicklaunch::showContextMenu(
 
 void Quicklaunch::initActions()
 {
-    Q_ASSERT(!m_addIconAction);
+    Q_ASSERT(!m_addLauncherAction);
 
-    m_addIconAction = new QAction(KIcon("list-add"), i18n("Add Launcher..."), this);
-    connect(m_addIconAction, SIGNAL(triggered(bool)), SLOT(onAddIconAction()));
+    m_addLauncherAction = new QAction(KIcon("list-add"), i18n("Add Launcher..."), this);
+    connect(m_addLauncherAction, SIGNAL(triggered(bool)), SLOT(onAddLauncherAction()));
 
-    m_removeIconAction = new QAction(KIcon("list-remove"), i18n("Remove Launcher"), this);
-    connect(m_removeIconAction, SIGNAL(triggered(bool)), SLOT(onRemoveIconAction()));
+    m_editLauncherAction = new QAction(KIcon("document-edit"), i18n("Edit Launcher..."), this);
+    connect(m_editLauncherAction, SIGNAL(triggered(bool)), SLOT(onEditLauncherAction()));
+
+    m_removeLauncherAction = new QAction(KIcon("list-remove"), i18n("Remove Launcher"), this);
+    connect(m_removeLauncherAction, SIGNAL(triggered(bool)), SLOT(onRemoveLauncherAction()));
 }
 
 void Quicklaunch::initPopup()

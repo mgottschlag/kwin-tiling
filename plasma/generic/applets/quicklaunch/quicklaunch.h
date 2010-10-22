@@ -27,6 +27,7 @@
 #include <QtCore/QPoint>
 #include <QtCore/QPointF>
 #include <QtCore/QSize>
+#include <QtCore/QSizeF>
 
 // Plasma
 #include <Plasma/Applet>
@@ -72,11 +73,13 @@ protected:
 
 private Q_SLOTS:
     void configChanged();
+    void iconSizeChanged();
     void onConfigAccepted();
     void onLaunchersChanged();
     void onPopupTriggerClicked();
-    void onAddIconAction();
-    void onRemoveIconAction();
+    void onAddLauncherAction();
+    void onEditLauncherAction();
+    void onRemoveLauncherAction();
 
 private:
     void showContextMenu(
@@ -97,8 +100,9 @@ private:
     Plasma::IconWidget *m_popupTrigger;
     Popup *m_popup;
 
-    QAction* m_addIconAction;
-    QAction* m_removeIconAction;
+    QAction* m_addLauncherAction;
+    QAction* m_editLauncherAction;
+    QAction* m_removeLauncherAction;
 
     LauncherList *m_currentLauncherList;
     int m_currentLauncherIndex;

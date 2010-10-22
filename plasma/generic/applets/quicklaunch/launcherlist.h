@@ -84,6 +84,9 @@ public:
     bool launcherNamesVisible() const;
     void setLauncherNamesVisible(bool enable);
 
+    void setPreferredIconSize(int size);
+
+
     /**
      * Indicates whether this LauncherList is locked and thus does not allow
      * adding, removing or reordering launchers by drag & drop.

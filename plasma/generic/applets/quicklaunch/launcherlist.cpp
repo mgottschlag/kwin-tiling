@@ -109,6 +109,7 @@ LauncherList::LauncherList(LauncherListType type, QGraphicsItem *parent)
 {
     if (type == IconGrid) {
         m_layout = new IconGridLayout();
+        m_dropMarker->setOrientation(Qt::Vertical);
     } else {
         QGraphicsLinearLayout* layout = new QGraphicsLinearLayout();
         layout->setOrientation(Qt::Vertical);
@@ -142,6 +143,22 @@ void LauncherList::setLauncherNamesVisible(bool enable)
     }
     m_dropMarker->setNameVisible(enable);
     m_launcherNamesVisible = enable;
+}
+
+void LauncherList::setPreferredIconSize(int size)
+{
+    kDebug() << "Setting preferred icon size to " << size;
+
+    QSizeF newSize(size, size);
+    m_dropMarker->setPreferredIconSize(newSize);
+
+    Q_FOREACH (Launcher *launcher, m_launchers) {
+        launcher->setPreferredIconSize(newSize);
+    }
+
+    if (m_placeHolder) {
+        m_placeHolder->setPreferredIconSize(newSize);
+    }
 }
 
 bool LauncherList::locked() const
@@ -480,6 +497,7 @@ void LauncherList::initPlaceHolder() {
     Q_ASSERT(!m_placeHolder);
 
     m_placeHolder = new Plasma::IconWidget(KIcon("fork"), QString(), this);
+    m_placeHolder->setPreferredIconSize(m_dropMarker->preferredIconSize());
 
     Plasma::ToolTipContent tcp(
         i18n("Quicklaunch"),
