@@ -154,6 +154,10 @@ void SaverEngine::SimulateUserActivity()
     {
         mXAutoLock->resetTrigger();
     }
+    else if (mLockProcess)
+    {
+        ::kill(mLockProcess->pid(), SIGUSR1);
+    }
 }
 
 //---------------------------------------------------------------------------

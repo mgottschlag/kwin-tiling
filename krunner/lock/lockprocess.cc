@@ -259,6 +259,12 @@ static void sighup_handler(int)
     ::write( signal_pipe[1], &tmp, 1);
 }
 
+static void sigusr1_handler(int)
+{
+    char tmp = '1';
+    ::write(signal_pipe[1], &tmp, 1);
+}
+
 void LockProcess::timerEvent(QTimerEvent *ev)
 {
     if (ev->timerId() == mAutoLogoutTimerId)
@@ -285,6 +291,9 @@ void LockProcess::setupSignals()
     // SIGHUP forces lock
     act.sa_handler= sighup_handler;
     sigaction(SIGHUP, &act, 0L);
+    // SIGUSR1 simulates user activity
+    act.sa_handler= sigusr1_handler;
+    sigaction(SIGUSR1, &act, 0L);
 
     pipe(signal_pipe);
     QSocketNotifier* notif = new QSocketNotifier(signal_pipe[0], QSocketNotifier::Read, this);
@@ -296,9 +305,15 @@ void LockProcess::signalPipeSignal()
 {
     char tmp;
     ::read( signal_pipe[0], &tmp, 1);
-    if( tmp == 'T' )
+    if (tmp == 'T') {
         quitSaver();
-    else if( tmp == 'H' ) {
+    } else if (tmp == '1') {
+        if (!mBusy && mDialogs.isEmpty()) {
+            mBusy = true;
+            quit();
+            mBusy = false;
+        }
+    } else if (tmp == 'H') {
         if( !mLocked )
             startLock();
     }
