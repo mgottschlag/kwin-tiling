@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2007-2008 by Riccardo Iaconelli <riccardo@kde.org>      *
- *   Copyright (C) 2007-2008 by Sebastian Kuegler <sebas@kde.org>          *
+ *   Copyright (C) 2007-2010 by Sebastian Kügler <sebas@kde.org>           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -70,7 +70,7 @@ Clock::~Clock()
 void Clock::init()
 {
     ClockApplet::init();
-    
+
     configChanged();
 
     dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
@@ -246,7 +246,7 @@ void Clock::clockConfigAccepted()
         cg.writeEntry("showSeconds", m_showSeconds);
 
         if (m_showSeconds) {
-            //We don't need to cache the applet if it update every seconds
+            //We don't need to cache the applet if it update every second
             setCacheMode(QGraphicsItem::NoCache);
         } else {
             setCacheMode(QGraphicsItem::DeviceCoordinateCache);
@@ -482,7 +482,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     // Choose a relatively big font size to start with
     m_plainClockFont.setPointSizeF(qMax(m_timeRect.height(), KGlobalSettings::smallestReadableFont().pointSize()));
     preparePainter(p, m_timeRect, m_plainClockFont, fakeTimeString, true);
-    
+
     if (!m_dateString.isEmpty()) {
         if (m_dateTimezoneBesides) {
             QFontMetrics fm(m_plainClockFont);
@@ -505,11 +505,45 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
         p->setFont(f);
     }
-    
+
     QFontMetrics fm(p->font());
-    
-    p->drawText(QPoint(m_timeRect.center().x() - fm.width(fakeTimeString) / 2,
-                       m_timeRect.center().y() + fm.height() / 3), timeString);
+
+    QPointF timeTextOrigin(QPointF(qMax(0, (m_timeRect.center().x() - fm.width(fakeTimeString) / 2)),
+                        (m_timeRect.center().y() + fm.height() / 3)));
+    p->translate(-0.5, -0.5);
+
+    QPen tmpPen = p->pen();
+
+    // Paint a backdrop behind the time's text
+    qreal shadowOffset = 1.0;
+    QPen shadowPen;
+    QColor shadowColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+    shadowColor.setAlphaF(.4);
+    shadowPen.setColor(shadowColor);
+    p->setPen(shadowPen);
+    QPointF shadowTimeTextOrigin = QPointF(timeTextOrigin.x() + shadowOffset,
+                                           timeTextOrigin.y() + shadowOffset);
+    p->drawText(shadowTimeTextOrigin, timeString);
+
+    p->setPen(tmpPen);
+
+    // Paint the time itself with a linear translucency gradient
+    QLinearGradient gradient = QLinearGradient(QPointF(0, 0), QPointF(0, fm.height()));
+    QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+
+    QColor startColor = textColor;
+    startColor.setAlphaF(.95);
+    QColor stopColor = textColor;
+    stopColor.setAlphaF(.7);
+
+    gradient.setColorAt(0.0, startColor);
+    gradient.setColorAt(0.5, stopColor);
+    gradient.setColorAt(1.0, startColor);
+    QBrush gradientBrush(gradient);
+
+    QPen gradientPen(gradientBrush, tmpPen.width());
+    p->setPen(gradientPen);
+    p->drawText(timeTextOrigin, timeString);
 }
 
 QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text, bool singleline)
