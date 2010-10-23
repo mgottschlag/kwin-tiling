@@ -115,28 +115,22 @@ int main(int argc, char *argv[])
             //QString file = KStandardDirs::locate("services", service->entryPath());
             //kDebug() << "Looking at " << file;
             const QString saverType = service->property("X-KDE-Type").toString();
-            if (saverType.isEmpty()) { // no X-KDE-Type defined so must be OK
-                availableSavers.append(service);
-            } else {
-                const QStringList saverTypes = saverType.split( ";");
-                for (QStringList::ConstIterator it =  saverTypes.begin(); it != saverTypes.end(); ++it ) {
-                    kDebug() << "saverTypes is "<< *it;
-                    if (*it == "ManipulateScreen") {
-                        if (manipulatescreen) {
-                            availableSavers.append(service);
-                        }
-                    } else if (*it == "OpenGL") {
-                        if (opengl) {
-                            availableSavers.append(service);
-                        }
-                    } else if (*it == "Fortune") {
-                        if (fortune) {
-                            availableSavers.append(service);
-                        }
-                    }
-		}
+            foreach (const QString &type, saverType.split(QLatin1Char(';'))) {
+                //kDebug() << "saverTypes is "<< type;
+                if (type == QLatin1String("ManipulateScreen")) {
+                    if (!manipulatescreen)
+                        goto fail;
+                } else if (type == QLatin1String("OpenGL")) {
+                    if (!opengl)
+                        goto fail;
+                } else if (type == QLatin1String("Fortune")) {
+                    if (!fortune)
+                        goto fail;
+                }
             }
-	}
+            availableSavers.append(service);
+          fail: ;
+        }
 
 	KRandomSequence rnd;
 	const int indx = rnd.getLong(availableSavers.count());
