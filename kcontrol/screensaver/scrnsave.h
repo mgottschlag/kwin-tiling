@@ -88,9 +88,7 @@ protected:
     void getSaverNames();
     void setMonitor();
     void setDefaults();
-    void resizeEvent( QResizeEvent * );
-    void mousePressEvent(QMouseEvent *);
-    void keyPressEvent(QKeyEvent *);
+    bool event(QEvent *);
 
     QTreeWidgetItem * treeItemForSaverFile(const QString &);
     int indexForSaverFile(const QString &);

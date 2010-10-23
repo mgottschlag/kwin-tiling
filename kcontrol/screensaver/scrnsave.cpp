@@ -210,30 +210,21 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::resizeEvent( QResizeEvent * )
+bool KScreenSaver::event(QEvent *e)
 {
-
-  if (mMonitor)
-    {
-      mMonitor->setGeometry( mMonitorPreview->previewRect() );
+    if (e->type() == QEvent::Resize) {
+        if (mMonitor)
+            mMonitor->setGeometry(mMonitorPreview->previewRect());
+    } else if (e->type() == QEvent::KeyPress ||
+               e->type() == QEvent::MouseButtonPress) {
+        if (mTesting) {
+            slotStopTest();
+            return true;
+        }
     }
+    return KCModule::event(e);
 }
 
-//---------------------------------------------------------------------------
-//
-void KScreenSaver::mousePressEvent( QMouseEvent *)
-{
-    if ( mTesting )
-	slotStopTest();
-}
-
-//---------------------------------------------------------------------------
-//
-void KScreenSaver::keyPressEvent( QKeyEvent *)
-{
-    if ( mTesting )
-	slotStopTest();
-}
 //---------------------------------------------------------------------------
 //
 KScreenSaver::~KScreenSaver()
