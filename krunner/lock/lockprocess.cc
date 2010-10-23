@@ -450,26 +450,17 @@ void LockProcess::readSaver()
         const bool manipulatescreen = KAuthorized::authorizeKAction(QLatin1String( "manipulatescreen_screensavers" ));
         KDesktopFile config( file );
         KConfigGroup desktopGroup = config.desktopGroup();
-        if (!desktopGroup.readEntry("X-KDE-Type").isEmpty())
-        {
-            const QString saverType = desktopGroup.readEntry("X-KDE-Type");
-            const QStringList saverTypes = saverType.split( QLatin1Char( ';' ));
-            const int nbSaverTypes = saverTypes.count();
-            for (int i = 0; i < nbSaverTypes ; ++i)
-            {
-                if ((saverTypes[i] == QLatin1String( "ManipulateScreen" )) && !manipulatescreen)
-                {
+        foreach (const QString &type, desktopGroup.readEntry("X-KDE-Type").split(QLatin1Char(';'))) {
+            if (type == QLatin1String("ManipulateScreen")) {
+                if (!manipulatescreen) {
                     kDebug(1204) << "Screensaver is type ManipulateScreen and ManipulateScreen is forbidden";
                     mForbidden = true;
                 }
-                if ((saverTypes[i] == QLatin1String( "OpenGL" )) && !opengl)
-                {
+            } else if (type == QLatin1String("OpenGL")) {
+                mOpenGLVisual = true;
+                if (!opengl) {
                     kDebug(1204) << "Screensaver is type OpenGL and OpenGL is forbidden";
                     mForbidden = true;
-                }
-                if (saverTypes[i] == QLatin1String( "OpenGL" ))
-                {
-                    mOpenGLVisual = true;
                 }
             }
         }
