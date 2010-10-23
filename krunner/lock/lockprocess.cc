@@ -660,8 +660,9 @@ void LockProcess::setVRoot(Window win, Window vr)
     unsigned int numChildren;
     Window top = win;
     while (1) {
-        XQueryTree(QX11Info::display(), top , &rootReturn, &parentReturn,
-                                 &children, &numChildren);
+        if (!XQueryTree(QX11Info::display(), top , &rootReturn, &parentReturn,
+                                 &children, &numChildren))
+            return;
         if (children)
             XFree((char *)children);
         if (parentReturn == rw) {
