@@ -111,7 +111,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, const
 
     KSeparator *sep = new KSeparator( Qt::Horizontal, w );
 
-    ok = new KPushButton( i18n("Unl&ock"), w );
+    ok = new KPushButton( KGuiItem(i18n("Unl&ock"), QLatin1String( "unlock" )), w );
     cancel = new KPushButton( KStandardGuiItem::cancel(), w );
     mNewSessButton = new KPushButton( KGuiItem(i18n("Sw&itch User..."), QLatin1String( "fork" )), w );
 
