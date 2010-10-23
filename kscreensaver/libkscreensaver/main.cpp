@@ -107,6 +107,21 @@ protected:
 typedef WId Window;
 #endif
 
+#ifdef Q_WS_X11
+extern "C" {
+
+static int (*oldXErrorHandler)(Display *, XErrorEvent *);
+
+static int xErrorHandler(Display *dpy, XErrorEvent *err)
+{
+    if (getppid() == 1)
+        kFatal() << "Got X error after loss of parent process. Terminating.";
+    return oldXErrorHandler(dpy, err);
+}
+
+}
+#endif
+
 int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverInterface )
 {
     KLocale::setMainCatalog("libkscreensaver");
@@ -141,6 +156,9 @@ int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverI
         QObject::connect(sn, SIGNAL(activated(int)), &app, SLOT(quit()));
     }
 
+#ifdef Q_WS_X11
+    oldXErrorHandler = XSetErrorHandler(xErrorHandler);
+#endif
     KCrash::setCrashHandler( crashHandler );
     KGlobal::locale()->insertCatalog("klock");
     KGlobal::locale()->insertCatalog("kscreensaver");
