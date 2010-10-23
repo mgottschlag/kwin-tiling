@@ -14,7 +14,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#include <QTextStream>
 #include <QLayout>
 #include <QCheckBox>
 #include <QWidget>
@@ -33,12 +32,13 @@
 #include <kconfig.h>
 #include <kservice.h>
 #include <kdeversion.h>
+#include <kmacroexpander.h>
+#include <kshell.h>
 #include "kscreensaver_vroot.h"
 #include "random.h"
 #include <QX11Info>
 #include <QFrame>
 #include <kservicetypetrader.h>
-#define MAX_ARGS    20
 
 void usage(char *name)
 {
@@ -145,37 +145,21 @@ int main(int argc, char *argv[])
         if (cmd.isEmpty())
             cmd = service->exec();
 
-	QTextStream ts(&cmd, QIODevice::ReadOnly);
-	QString word;
-	ts >> word;
-	QString exeFile = KStandardDirs::findExe(word);
+    QHash<QChar, QString> keyMap;
+    keyMap.insert('w', QString::number(windowId));
+    const QStringList words = KShell::splitArgs(KMacroExpander::expandMacrosShellQuote(cmd, keyMap));
+    if (!words.isEmpty()) {
+        QString exeFile = KStandardDirs::findExe(words.first());
+        if (!exeFile.isEmpty()) {
+            char **sargs = new char *[words.size() + 1];
+            int i = 0;
+            for (; i < words.size(); i++)
+                sargs[i] = qstrdup(words[i].toLocal8Bit().constData());
+            sargs[i] = 0;
 
-	if (!exeFile.isEmpty())
-	{
-		char *sargs[MAX_ARGS];
-		sargs[0] = new char [strlen(word.toAscii())+1];
-		strcpy(sargs[0], word.toAscii());
-
-		int i = 1;
-		while (!ts.atEnd() && i < MAX_ARGS-1)
-		{
-			ts >> word;
-			if (word == "%w")
-			{
-				word = word.setNum(windowId);
-			}
-
-			sargs[i] = new char [strlen(word.toAscii())+1];
-			strcpy(sargs[i], word.toAscii());
-			kDebug() << "word is " << word.toAscii();
-
-			i++;
-		}
-
-		sargs[i] = 0;
-
-		execv(exeFile.toAscii(), sargs);
-	}
+            execv(exeFile.toLocal8Bit(), sargs);
+        }
+    }
 
 	// If we end up here then we couldn't start a saver.
 	// If we have been supplied a window id or root window then blank it.
