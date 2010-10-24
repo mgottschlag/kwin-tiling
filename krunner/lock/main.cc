@@ -66,8 +66,28 @@ int main( int argc, char **argv )
     options.add("dontlock", ki18n("Only start screen saver"));
     options.add("blank", ki18n("Only use the blank screen saver"));
     options.add("plasmasetup", ki18n("start with plasma unlocked for configuring"));
+    options.add("daemon", ki18n("Fork into the background after starting up"));
     KCmdLineArgs::addCmdLineOptions( options );
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+    bool daemonize = false;
+    int daemonPipe[2];
+    char daemonBuf;
+    if (args->isSet("daemon")) {
+        daemonize = true;
+        if (pipe(daemonPipe))
+            kFatal() << "pipe() failed";
+        switch (fork()) {
+        case -1:
+            kFatal() << "fork() failed";
+        case 0:
+            break;
+        default:
+            if (read(daemonPipe[0], &daemonBuf, 1) != 1)
+                _exit(1);
+            _exit(0);
+        }
+    }
 
     putenv(strdup("SESSION_MANAGER="));
 
@@ -170,6 +190,10 @@ int main( int argc, char **argv )
         kscreensaver.saverLockReady();
     }
     args->clear();
+    if (daemonize) {
+        daemonBuf = 0;
+        write(daemonPipe[1], &daemonBuf, 1);
+    }
     return app.exec();
 }
 
