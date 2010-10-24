@@ -34,12 +34,12 @@ function setup() {
     provider.addQueryItem("submit", "submit");
 }
 
-function handleResultData(url) {
+function handleResultData(data) {
     var res = data.match("(Info.+)");
     if (res != "") {
         return;
     }
-    provider.error("Error trying to post");
+    provider.error(data);
 }
 
 function handleRedirection(url) {

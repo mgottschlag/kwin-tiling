@@ -33,12 +33,12 @@ function setup() {
     provider.addQueryItem("secure_paste", "off");
 }
 
-function handleResultData(url) {
+function handleResultData(data) {
     var res = data.match("(Error.+)");
     if (res != "") {
         return;
     }
-    provider.error("Error trying to post");
+    provider.error(data);
 }
 
 function handleRedirection(url) {

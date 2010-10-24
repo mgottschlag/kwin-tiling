@@ -33,7 +33,7 @@ function setup() {
 
 function handleResultData(data) {
     // Whenever no redirection was received, it is an error
-    provider.error("Error trying to post.");
+    provider.error(data);
 }
 
 function handleRedirection(url) {
