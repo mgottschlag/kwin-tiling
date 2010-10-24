@@ -24,7 +24,7 @@
 
 
 SharePackage::SharePackage(QObject *parent, QVariantList args)
-    : Plasma::PackageStructure(parent, "Share")
+    : Plasma::PackageStructure(parent, "Plasma/ShareProvider")
 {
     Q_UNUSED(args)
 
