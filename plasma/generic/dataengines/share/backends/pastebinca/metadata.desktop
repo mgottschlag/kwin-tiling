@@ -1,24 +1,5 @@
 [Desktop Entry]
-Name=Pastebin
-Name[de]=Pastebin
-Name[en_GB]=Pastebin
-Name[es]=Pastebin
-Name[et]=Pastebin
-Name[hr]=Pastebin
-Name[ia]=Pastebin
-Name[ja]=Pastebin
-Name[nb]=Pastebin
-Name[nds]=pastebin
-Name[nl]=Pastebin
-Name[pa]=ਪੇਸਟਬਿਨ
-Name[pt]=Colagem
-Name[pt_BR]=Pastebin
-Name[ru]=Pastebin
-Name[sv]=Pastebin
-Name[tr]=Pastebin
-Name[uk]=Pastebin
-Name[x-test]=xxPastebinxx
-Name[zh_TW]=Pastebin
+Name=pastebin.ca
 Comment=Enables the share of text using pastebin.ca service
 Comment[de]=Ermöglicht die Veröffentlichung von Text auf pastebin.ca
 Comment[en_GB]=Enables the share of text using pastebin.ca service
