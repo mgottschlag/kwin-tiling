@@ -55,7 +55,7 @@ public:
     /**
      * start the screensaver locked
      */
-    bool lock();
+    bool lock(bool initial = false);
 
     /**
      * start the screensaver unlocked
@@ -186,6 +186,7 @@ private:
     static QVariant getConf(void *ctx, const char *key, const QVariant &dflt);
     bool loadGreetPlugin();
 
+    bool        mInitialLock;
     bool        mLocked;
     int         mLockGrace;
     int         mPriority;

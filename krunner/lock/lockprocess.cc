@@ -137,6 +137,7 @@ static QLatin1String s_overlayServiceName("org.kde.plasma-overlay");
 //
 LockProcess::LockProcess(bool child, bool useBlankOnly)
     : QWidget(0L, Qt::X11BypassWindowManagerHint),
+      mInitialLock(false),
       mLocked(false),
       mBusy(false),
       mPlasmaDBus(0),
@@ -320,7 +321,7 @@ void LockProcess::signalPipeSignal()
 }
 
 //---------------------------------------------------------------------------
-bool LockProcess::lock()
+bool LockProcess::lock(bool initial)
 {
     if (startSaver()) {
         // In case of a forced lock we don't react to events during
@@ -329,6 +330,7 @@ bool LockProcess::lock()
         // the screensaver kicks in because the user moved the mouse after
         // selecting "lock screen", that looks really untidy.
         mBusy = true;
+        mInitialLock = initial;
         if (startLock())
         {
             QTimer::singleShot(1000, this, SLOT(slotDeadTimePassed()));
@@ -342,6 +344,8 @@ bool LockProcess::lock()
 //---------------------------------------------------------------------------
 void LockProcess::slotDeadTimePassed()
 {
+    if (mInitialLock)
+        quit();
     mBusy = false;
 }
 

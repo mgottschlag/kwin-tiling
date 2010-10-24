@@ -64,6 +64,7 @@ int main( int argc, char **argv )
     KCmdLineOptions options;
     options.add("forcelock", ki18n("Force session locking"));
     options.add("dontlock", ki18n("Only start screen saver"));
+    options.add("showunlock", ki18n("Immediately show the unlock dialog"));
     options.add("blank", ki18n("Only use the blank screen saver"));
     options.add("plasmasetup", ki18n("start with plasma unlocked for configuring"));
     options.add("daemon", ki18n("Fork into the background after starting up"));
@@ -171,7 +172,7 @@ int main( int argc, char **argv )
     bool rt;
     bool sig = false;
     if (!child && (args->isSet("forcelock"))) {
-        rt = process.lock();
+        rt = process.lock(args->isSet("showunlock"));
         sig = true;
     }
     else if( child || args->isSet( "dontlock" ))
