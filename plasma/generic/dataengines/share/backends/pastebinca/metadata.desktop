@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=pastebin.ca
+Name[x-test]=xxpastebin.caxx
 Comment=Enables the share of text using pastebin.ca service
 Comment[de]=Ermöglicht die Veröffentlichung von Text auf pastebin.ca
 Comment[en_GB]=Enables the share of text using pastebin.ca service

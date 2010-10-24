@@ -4,6 +4,7 @@ X-KDE-ServiceType=SolidModemManager
 
 Comment=Modem Management Backend
 Comment[ar]=المنتهى الخلفي لإدارة المودم
+Comment[ca]=Dorsal de gestió de mòdem
 Comment[de]=Modem-Verwaltungsmodul
 Comment[en_GB]=Modem Management Backend
 Comment[es]=Motor de gestión del módem

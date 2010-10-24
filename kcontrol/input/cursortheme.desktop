@@ -10,6 +10,7 @@ X-KDE-System-Settings-Parent-Category=desktop-appearance
 X-DocPath=kcontrol/cursortheme/index.html
 
 Name=Cursor Theme
+Name[ca]=Tema de cursor
 Name[de]=Zeigerdesigns
 Name[es]=Tema de cursores
 Name[et]=Kursoriteema
@@ -28,6 +29,7 @@ Name[x-test]=xxCursor Themexx
 Name[zh_TW]=游標主題
 
 Comment=Customize the mouse cursor appearance
+Comment[ca]=Personalitza l'aparença del cursor del ratolí
 Comment[de]=Das Erscheinungsbild des Mauszeigers anpassen
 Comment[es]=Personalizar la apariencia del cursor del ratón
 Comment[et]=Hiirekursori välimuse kohandamine
