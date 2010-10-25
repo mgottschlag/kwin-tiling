@@ -76,6 +76,9 @@ class RssEngine : public Plasma::DataEngine
         QHash<QString, QDateTime>            m_feedTimes;
         bool                                 m_forceUpdate;
 
+        QVariantList                         m_rssSources;
+        QSet<QString>                        m_rssSourceNames;
+
         QDBusInterface *                     m_favIconsModule;
         QSignalMapper *                      m_signalMapper;
 };

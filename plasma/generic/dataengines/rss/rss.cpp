@@ -225,6 +225,17 @@ void RssEngine::processRss(Syndication::Loader* loader,
             dataItem["icon"] = m_feedIcons[url.toLower()];
 
             items.append(dataItem);
+
+            if (!m_rssSourceNames.contains(url)) {
+                QMap<QString, QVariant> sourceItem;
+
+                sourceItem["feed_title"] = feed->title();
+                sourceItem["feed_url"] = url;
+                sourceItem["icon"] = m_feedIcons[url.toLower()];
+
+                m_rssSources.append(sourceItem);
+                m_rssSourceNames.insert(url);
+            }
         }
         m_feedItems[url.toLower()] = items;
         m_feedTimes[url.toLower()] = QDateTime::currentDateTime();
@@ -264,10 +275,12 @@ void RssEngine::updateFeeds(const QString & source, const QString & title)
      */
     const QVariantList list = mergeFeeds(source);
     setData(source, "items", list);
-    const QStringList sources = source.split(' ', QString::SkipEmptyParts);
-    if (sources.size() >  1) {
+
+    setData(source, "sources", m_rssSources);
+    const QStringList sourceNames = source.split(' ', QString::SkipEmptyParts);
+    if (sourceNames.size() >  1) {
         setData(source, "title", i18np("1 RSS feed fetched",
-                                       "%1 RSS feeds fetched", sources.size()));
+                                       "%1 RSS feeds fetched", sourceNames.size()));
     } else {
         setData(source, "title", title);
     }
