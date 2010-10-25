@@ -1,5 +1,8 @@
 [Desktop Entry]
 Name=ShareProvider
+Name[pt]=Fornecedor de Partilha
+Name[sv]=Delningstjänst
+Name[uk]=Служба оприлюднення
 Name[x-test]=xxShareProviderxx
 Comment=Share Package Structure
 Comment[de]=Paketstruktur bereitstellen
