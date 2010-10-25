@@ -90,6 +90,9 @@ class DeviceNotifier : public Plasma::PopupApplet
 
         QList<QAction *> contextualActions();
 
+        static const int LONG_NOTIFICATION_TIMEOUT = 7500;
+        static const int SHORT_NOTIFICATION_TIMEOUT = 2500;
+
     protected:
         /**
         * Reimplemented from Plasma::Applet
@@ -138,8 +141,10 @@ class DeviceNotifier : public Plasma::PopupApplet
         /**
         * Shows a message
         * @param message the text of the message
+        * @param details details of the notification
+        * @param udi the udi of the device
         **/
-        void showErrorMessage(const QString &message, const QString &details, const QString &udi);
+        void showNotification(const QString &message, const QString &details, const QString &udi);
 
     protected slots:
         /**
@@ -250,6 +255,9 @@ class DeviceNotifier : public Plasma::PopupApplet
 
         ///if true the applet will check if the removed devices were hidded
         bool m_checkHiddenDevices : 1;
+
+        ///if true we are triggering the popup internally 
+        bool m_triggeringPopupinternally : 1;
 
         ///embedded KCM modules in the configuration dialog
         KCModuleProxy *m_autoMountingWidget;

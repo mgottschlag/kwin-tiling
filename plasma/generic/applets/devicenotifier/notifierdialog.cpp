@@ -623,7 +623,14 @@ void NotifierDialog::showStatusBarMessage(const QString & message, const QString
     m_statusText->setText(message);
     m_mainLayout->addItem(m_statusWidget);
     m_statusWidget->show();
+
     m_statusDetailsText->setText(details);
+    if (details.isEmpty()) {
+        m_statusExpandButton->hide();
+    } else {
+        m_statusExpandButton->show();
+    }
+
     showStatusBarDetails(false);
     m_errorUdi = udi;
 }
@@ -661,11 +668,13 @@ void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorD
     }
 
     if (!error || !errorData.isValid()) {
-        m_notifier->changeNotifierIcon("dialog-ok", 5000);
-        m_notifier->update();
+        m_notifier->changeNotifierIcon("dialog-ok", DeviceNotifier::LONG_NOTIFICATION_TIMEOUT);
         expireStatusBar(udi);
+    } else {
+        m_notifier->changeNotifierIcon("dialog-error", DeviceNotifier::LONG_NOTIFICATION_TIMEOUT);
     }
 
+    m_notifier->update();
     devItem->setState(DeviceItem::Idle);
 }
 
@@ -674,10 +683,13 @@ void NotifierDialog::storageEjectDone(Solid::ErrorType error, QVariant errorData
     Q_UNUSED(udi);
 
     if (!error || !errorData.isValid()) {
-        m_notifier->changeNotifierIcon("dialog-ok", 2000);
-        m_notifier->update();
+        m_notifier->changeNotifierIcon("dialog-ok", DeviceNotifier::SHORT_NOTIFICATION_TIMEOUT);
         expireStatusBar(udi);
+    } else {
+        m_notifier->changeNotifierIcon("dialog-error", DeviceNotifier::LONG_NOTIFICATION_TIMEOUT);
     }
+
+    m_notifier->update();
 
     QList<DeviceItem*> deviceList = itemsForParentUdi(udi);
     if (deviceList.isEmpty()) {
@@ -697,11 +709,15 @@ void NotifierDialog::storageSetupDone(Solid::ErrorType error, QVariant errorData
         return;
     }
 
-     if (!error || !errorData.isValid()) {
-        m_notifier->changeNotifierIcon("dialog-ok", 2000);
-        m_notifier->update();
+    if (!error || !errorData.isValid()) {
+        m_notifier->changeNotifierIcon("dialog-ok", DeviceNotifier::SHORT_NOTIFICATION_TIMEOUT);
         expireStatusBar(udi);
+    } else {
+        m_notifier->changeNotifierIcon("dialog-error", DeviceNotifier::LONG_NOTIFICATION_TIMEOUT);
     }
+
+    m_notifier->update();
+
     devItem->setState(DeviceItem::Idle);
 }
 

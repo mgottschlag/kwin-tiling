@@ -49,7 +49,6 @@ using namespace Plasma;
 using namespace Notifier;
 
 static const char DEFAULT_ICON_NAME[] = "device-notifier";
-static const int NOTIFICATION_TIMEOUT = 10000;
 
 K_EXPORT_PLASMA_APPLET(devicenotifier, DeviceNotifier)
 
@@ -63,6 +62,7 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
       m_itemsValidity(0),
       m_globalVisibility(false),
       m_checkHiddenDevices(true),
+      m_triggeringPopupinternally(false),
       m_autoMountingWidget(0),
       m_deviceActionsWidget(0)
 {
@@ -115,7 +115,7 @@ void DeviceNotifier::newNotification(const QString &source)
 {
     DataEngine::Data data = m_deviceNotificationsEngine->query(source);
     //TODO Check if we are actually displaying the device in question
-    showErrorMessage(data["error"].toString(), data["errorDetails"].toString(), data["udi"].toString());
+    showNotification(data["error"].toString(), data["errorDetails"].toString(), data["udi"].toString());
 }
 
 void DeviceNotifier::configChanged()
@@ -186,7 +186,10 @@ void DeviceNotifier::popupEvent(bool show)
     } else {
         m_dialog->collapseDevices();
     }
-    changeNotifierIcon();
+
+    if (!m_triggeringPopupinternally) {
+        changeNotifierIcon();
+    }
 }
 
 void DeviceNotifier::dataUpdated(const QString &udi, Plasma::DataEngine::Data data)
@@ -282,8 +285,10 @@ void DeviceNotifier::notifyDevice(const QString &udi)
 
     if (!m_fillingPreviousDevices) {
         emit activate();
-        showPopup(NOTIFICATION_TIMEOUT);
-        changeNotifierIcon("preferences-desktop-notification", NOTIFICATION_TIMEOUT);
+        changeNotifierIcon("preferences-desktop-notification", LONG_NOTIFICATION_TIMEOUT);
+        m_triggeringPopupinternally = true;
+        showPopup(LONG_NOTIFICATION_TIMEOUT);
+        m_triggeringPopupinternally = false;
         update();
         setStatus(Plasma::NeedsAttentionStatus);
     } else {
@@ -497,13 +502,16 @@ void DeviceNotifier::setGlobalVisibility(bool visibility)
     resetDevices();
 }
 
-void DeviceNotifier::showErrorMessage(const QString &message, const QString &details, const QString &udi)
+void DeviceNotifier::showNotification(const QString &message, const QString &details, const QString &udi)
 {
-    m_dialog->showStatusBarMessage(message, details, udi);
     if (!isPopupShowing()) {
-        showPopup(NOTIFICATION_TIMEOUT);
+        m_triggeringPopupinternally = true;
+        showPopup(LONG_NOTIFICATION_TIMEOUT);
+        m_triggeringPopupinternally = false;
     }
-    changeNotifierIcon("dialog-error", NOTIFICATION_TIMEOUT);
+
+    m_dialog->showStatusBarMessage(message, details, udi);
+
     update();
 }
 
