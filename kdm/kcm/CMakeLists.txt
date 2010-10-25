@@ -32,6 +32,9 @@ kde4_add_plugin(kcm_kdm ${kcm_kdm_PART_SRCS})
 
 target_link_libraries(kcm_kdm ${KDE4_KIO_LIBS} ${QIMAGEBLITZ_LIBRARIES} ${KDE4_KNEWSTUFF3_LIBS} ${X11_LIBRARIES} kworkspace)
 
+macro_add_file_dependencies(kdm-shut.cpp ${confci})
+add_dependencies(kcm_kdm ConfigCi)
+
 install(TARGETS kcm_kdm  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 #### KAuth helper and actions ####

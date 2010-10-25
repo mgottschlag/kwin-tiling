@@ -19,6 +19,8 @@
 
 #include "kdm-shut.h"
 
+#include <config.ci>
+
 #include "kbackedcombobox.h"
 
 #include <KDialog>
@@ -187,16 +189,16 @@ void KDMSessionsWidget::load()
     readSD(sdrcombo, "Root", config->group("X-*-Core"));
 
     KConfigGroup configGrp = config->group("Shutdown");
-    restart_lined->setUrl(configGrp.readEntry("RebootCmd", "/sbin/reboot"));
-    shutdown_lined->setUrl(configGrp.readEntry("HaltCmd", "/sbin/halt"));
+    restart_lined->setUrl(configGrp.readEntry("RebootCmd", REBOOT_CMD));
+    shutdown_lined->setUrl(configGrp.readEntry("HaltCmd", HALT_CMD));
 
     bm_combo->setCurrentId(configGrp.readEntry("BootManager", "None"));
 }
 
 void KDMSessionsWidget::defaults()
 {
-    restart_lined->setUrl(KUrl("/sbin/reboot"));
-    shutdown_lined->setUrl(KUrl("/sbin/halt"));
+    restart_lined->setUrl(KUrl(REBOOT_CMD));
+    shutdown_lined->setUrl(KUrl(HALT_CMD));
 
     sdlcombo->setCurrentIndex(SdAll);
     sdrcombo->setCurrentIndex(SdRoot);
