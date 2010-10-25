@@ -27,6 +27,7 @@
 #include <QSignalMapper>
 
 #include <QtGui/QGraphicsLinearLayout>
+#include <QtGui/QGraphicsGridLayout>
 #include <QtGui/QTextDocument>
 #include <QtGui/QFontMetrics>
 #include <QtGui/QGraphicsSceneResizeEvent>
@@ -86,7 +87,7 @@ public:
     Plasma::IconWidget *icon;
     QGraphicsLinearLayout *titleLayout;
     QGraphicsLinearLayout *mainLayout;
-    QGraphicsLinearLayout *bodyLayout;
+    QGraphicsGridLayout *bodyLayout;
     QGraphicsWidget *body;
     QGraphicsWidget *iconPlaceSmall;
     QGraphicsWidget *iconPlaceBig;
@@ -139,7 +140,7 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     d->body = new QGraphicsWidget(this);
     d->body->setContentsMargins(0,0,0,0);
     d->body->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    d->bodyLayout = new QGraphicsLinearLayout(Qt::Horizontal, d->body);
+    d->bodyLayout = new QGraphicsGridLayout(d->body);
     d->bodyLayout->setContentsMargins(0,0,0,0);
 
     d->messageLabel = new Plasma::TextBrowser(d->body);
@@ -154,8 +155,8 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     d->iconPlaceBig->setMaximumWidth(KIconLoader::SizeHuge);
     d->iconPlaceBig->setMinimumWidth(KIconLoader::SizeHuge);
     d->iconPlaceBig->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-    d->bodyLayout->addItem(d->iconPlaceBig);
-    d->bodyLayout->addItem(d->messageLabel);
+    d->bodyLayout->addItem(d->iconPlaceBig, 0, 0, Qt::AlignCenter);
+    d->bodyLayout->addItem(d->messageLabel, 0, 1, Qt::AlignCenter);
 
     d->mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     d->mainLayout->setSpacing(0);
@@ -397,6 +398,7 @@ void NotificationWidgetPrivate::updateActions()
     actionsWidget = new QGraphicsWidget(body);
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(actionsWidget);
     layout->setOrientation(Qt::Vertical);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->addStretch();
     actionsWidget->setContentsMargins(0, 0, 0, 0);
 
@@ -414,8 +416,9 @@ void NotificationWidgetPrivate::updateActions()
 
         layout->addItem(button);
     }
+    layout->addStretch();
 
-    bodyLayout->addItem(actionsWidget);
+    bodyLayout->addItem(actionsWidget, 0, 2, Qt::AlignCenter);
 }
 
 void NotificationWidgetPrivate::buttonClicked()
