@@ -210,6 +210,9 @@ private:
     QTimer      mCheckDPMS;
     QStack< QWidget* > mDialogs;
     QHash< QWidget*, QWidget* > mFrames;
+    QList<WId>  mVisibleDialogs;
+    QQueue<XEvent> mEventQueue;
+    bool        mEventRecursed;
     bool        mRestoreXF86Lock;
     bool        mForbidden;
     QStringList mPlugins, mPluginOptions;

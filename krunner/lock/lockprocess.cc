@@ -149,6 +149,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
       mUseBlankOnly(useBlankOnly),
       mSuspended(false),
       mVisibility(false),
+      mEventRecursed(false),
       mRestoreXF86Lock(false),
       mForbidden(false),
       mAutoLogoutTimerId(0)
@@ -1319,6 +1320,9 @@ void LockProcess::updateFocus()
 //
 bool LockProcess::x11Event(XEvent *event)
 {
+    if (mEventRecursed)
+        return false;
+
     bool ret = false;
     switch (event->type)
     {
@@ -1352,10 +1356,35 @@ bool LockProcess::x11Event(XEvent *event)
                     killTimer(mAutoLogoutTimerId);
                     mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout * 1000);
                 }
-            } else if (!mLocked || checkPass()) {
+            } else if (!mLocked) {
                 quitSaver();
                 mBusy = false;
                 return true; //it's better not to forward any input while quitting, right?
+            } else {
+                if (event->type == KeyPress) {
+                    // Bounce the keypress to the dialog
+                    QByteArray chars;
+                    chars.resize(513);
+                    KeySym keysym;
+                    XLookupString(&event->xkey, chars.data(), chars.size(), &keysym, 0);
+                    switch (keysym) {
+                    // These would cause immediate failure
+                    case XK_Escape:
+                    case XK_Return:
+                    case XK_KP_Enter:
+                    // These just make no sense
+                    case XK_Tab:
+                    case XK_space:
+                        break;
+                    default:
+                        mEventQueue.enqueue(*event);
+                    }
+                }
+                if (checkPass()) {
+                    quitSaver();
+                    mBusy = false;
+                    return true; //it's better not to forward any input while quitting, right?
+                }
             }
             mBusy = false;
             ret = true;
@@ -1411,6 +1440,8 @@ bool LockProcess::x11Event(XEvent *event)
         case MapNotify: // from SubstructureNotifyMask on the root window
             if( event->xmap.event == QX11Info::appRootWindow()) {
                 kDebug(1204) << "MapNotify:" << event->xmap.window;
+                if (!mDialogs.isEmpty() && mDialogs.first()->winId() == event->xmap.window)
+                    mVisibleDialogs.append(event->xmap.window);
                 int index = findWindowInfo( event->xmap.window );
                 if( index >= 0 )
                     windowInfo[ index ].viewable = true;
@@ -1448,6 +1479,7 @@ bool LockProcess::x11Event(XEvent *event)
                     windowInfo[ index ].viewable = false;
                 else
                     kDebug(1204) << "Unknown toplevel for MapNotify";
+                mVisibleDialogs.removeAll(event->xunmap.window);
                 mForeignWindows.removeAll(event->xunmap.window);
                 if (mForeignInputWindows.removeAll(event->xunmap.window)) {
                     updateFocus();
@@ -1516,23 +1548,29 @@ bool LockProcess::x11Event(XEvent *event)
     // so let's simply dupe it with correct destination window,
     // and ignore the original one.
     if (!mDialogs.isEmpty()) {
-        if ((event->type == KeyPress || event->type == KeyRelease) &&
-                event->xkey.window != mDialogs.first()->winId()) {
-            //kDebug() << "forward to dialog";
-            XEvent ev2 = *event;
-            ev2.xkey.window = ev2.xkey.subwindow = mDialogs.first()->winId();
-            qApp->x11ProcessEvent( &ev2 );
+        if (event->type == KeyPress || event->type == KeyRelease) {
+            mEventQueue.enqueue(*event);
             ret = true;
         }
-    } else if (!mForeignInputWindows.isEmpty()) {
-        //when there are no dialogs, forward some events to plasma
-        switch (event->type) {
-        case KeyPress:
-        case KeyRelease:
-        case ButtonPress:
-        case ButtonRelease:
-        case MotionNotify:
-            {
+        if (!mVisibleDialogs.isEmpty())
+            while (!mEventQueue.isEmpty()) {
+                //kDebug() << "forward to dialog";
+                XEvent ev2 = mEventQueue.dequeue();
+                ev2.xkey.window = ev2.xkey.subwindow = mVisibleDialogs.last();
+                mEventRecursed = true;
+                qApp->x11ProcessEvent( &ev2 );
+                mEventRecursed = false;
+            }
+    } else {
+        mEventQueue.clear();
+        if (!mForeignInputWindows.isEmpty()) {
+            //when there are no dialogs, forward some events to plasma
+            switch (event->type) {
+            case KeyPress:
+            case KeyRelease:
+            case ButtonPress:
+            case ButtonRelease:
+            case MotionNotify: {
                 //kDebug() << "forward to plasma";
                 XEvent ev2 = *event;
                 Window root_return;
@@ -1563,9 +1601,10 @@ bool LockProcess::x11Event(XEvent *event)
                 }
                 XSendEvent(QX11Info::display(), targetWindow, False, NoEventMask, &ev2);
                 ret = true;
+                break; }
+            default:
+                break;
             }
-        default:
-            break;
         }
     }
 
