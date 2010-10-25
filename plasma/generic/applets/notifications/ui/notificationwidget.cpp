@@ -38,15 +38,17 @@
 
 #include <KColorScheme>
 #include <KPushButton>
+#include <KTextBrowser>
 
-#include <plasma/extender.h>
-#include <plasma/theme.h>
-#include <plasma/widgets/pushbutton.h>
-#include <Plasma/Animator>
 #include <Plasma/Animation>
-#include <Plasma/Label>
+#include <Plasma/Animator>
+#include <Plasma/Extender>
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
+#include <Plasma/Label>
+#include <Plasma/PushButton>
+#include <Plasma/TextBrowser>
+#include <Plasma/Theme>
 
 class NotificationWidgetPrivate
 {
@@ -78,7 +80,7 @@ public:
     bool collapsed;
 
     QString message;
-    Plasma::Label *messageLabel;
+    Plasma::TextBrowser *messageLabel;
     Plasma::Label *title;
     Plasma::IconWidget *closeButton;
     Plasma::IconWidget *icon;
@@ -117,6 +119,7 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
 
     d->title = new Plasma::Label(this);
     d->title->setWordWrap(false);
+    d->title->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     d->title->setAlignment(Qt::AlignCenter);
 
     d->closeButton = new Plasma::IconWidget(this);
@@ -139,12 +142,13 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     d->bodyLayout = new QGraphicsLinearLayout(Qt::Horizontal, d->body);
     d->bodyLayout->setContentsMargins(0,0,0,0);
 
-    d->messageLabel = new Plasma::Label(d->body);
-    d->messageLabel->nativeWidget()->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
-    d->messageLabel->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+    d->messageLabel = new Plasma::TextBrowser(d->body);
+    d->messageLabel->nativeWidget()->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
+    d->messageLabel->nativeWidget()->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
+    d->messageLabel->nativeWidget()->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+    d->messageLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     connect(d->messageLabel, SIGNAL(linkActivated(const QString &)),
             notification, SLOT(linkActivated(const QString &)));
-    d->messageLabel->nativeWidget()->setTextFormat(Qt::RichText);
 
     d->iconPlaceBig = new QGraphicsWidget(this);
     d->iconPlaceBig->setMaximumWidth(KIconLoader::SizeHuge);
@@ -238,6 +242,12 @@ void NotificationWidget::setCollapsed(bool collapse, bool animate)
 
             d->icon->setGeometry(d->bigIconRect());
         }
+    }
+
+    if (collapse) {
+        d->messageLabel->nativeWidget()->setTextInteractionFlags(Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse|Qt::TextSelectableByKeyboard);
+    } else {
+        d->messageLabel->nativeWidget()->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
     }
 
     d->body->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
