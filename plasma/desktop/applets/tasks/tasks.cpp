@@ -44,6 +44,7 @@
 Tasks::Tasks(QObject* parent, const QVariantList &arguments)
      : Plasma::Applet(parent, arguments),
        m_showTooltip(false),
+       m_highlightWindows(false),
        m_taskItemBackground(0),
        m_leftMargin(0),
        m_topMargin(0),
