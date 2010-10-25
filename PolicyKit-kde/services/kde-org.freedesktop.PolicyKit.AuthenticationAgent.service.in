@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=org.freedesktop.PolicyKit.AuthenticationAgent
-Exec=@LIBEXEC_INSTALL_DIR@/polkit-kde-manager
