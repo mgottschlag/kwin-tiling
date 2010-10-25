@@ -90,14 +90,16 @@ can start it by typing <command>ksysguard</command> in a terminal.</para>
 and status bar, and the work space. Custom worksheets will also show the sensor
 browser.
 </para>
-<para>Download Save Import tabs</para>
+<!--
+<para>Download, Save, Import tabs</para>
+-->
 <para>
 By default &ksysguard; shows two worksheets: <guilabel>Process Table</guilabel> 
 and <guilabel>System Load</guilabel>. The <guilabel>Process Table</guilabel> 
 lists the running processes and lets the user control them.
 Multiple processes can be selected and controlled at once.
 The <guilabel>System Load</guilabel> worksheet shows graphs of system utilization: 
-<guilabel>CPU History</guilabel>, <guilabel>Memory and Swap History</guilabel>
+<guilabel>CPU History</guilabel>, <guilabel>Memory and Swap History</guilabel>,
 and the <guilabel>Network History</guilabel>.
 </para>
 
@@ -200,7 +202,7 @@ the context menu of this column header</entry>
 <entry>This is the amount of virtual memory space that the process is using, 
 included shared libraries, graphics memory, files on disk, and so on. This 
 number is almost meaningless. Use the context menu to select the 
-<guilabel>Dispay Units</guilabel></entry>
+<guilabel>Display Units</guilabel></entry>
 </row>
 <row>
 <entry><guilabel>Command</guilabel></entry>
@@ -240,7 +242,7 @@ It can also be a <guilabel>Username</guilabel> or a Process <abbrev>ID</abbrev> 
 in the table. You can filter out processes you are not interested in. Currently
 you can display <guilabel>All Processes</guilabel> in a flat or tree view, <guilabel>System 
 Processes</guilabel> only, <guilabel>User Processes</guilabel> only, your 
-<guilabel>Own Processes</guilabel> only or <guilabel>Programms Only</guilabel>.</para>
+<guilabel>Own Processes</guilabel> only or <guilabel>Programs Only</guilabel>.</para>
 
 <para>The tree view has been designed to show the relationships between the
 running processes. A process that is started by another process is called the
@@ -313,7 +315,7 @@ monitors a certain system value.</para>
 <sect2 id="line-graph">
 <title>Line Graph</title>
 
-<para>The line Graph prints samples of one or more sensors over time. If, 
+<para>The line graph prints samples of one or more sensors over time. If, 
 several sensors are displayed, the values are piled in different colors. If
 the display is large enough a grid will be displayed to show the range of the
 plotted samples. By default, the automatic range mode is active so the minimum
