@@ -45,6 +45,9 @@ public:
     int timeout() const;
     QImage image() const;
 
+    void setUrgency(int urgency);
+    int urgency() const;
+
     QHash<QString, QString> actions() const;
     QStringList actionOrder() const;
 

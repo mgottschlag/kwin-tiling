@@ -94,6 +94,7 @@ void DBusNotificationProtocol::dataUpdated(const QString &source, const Plasma::
     notification->setSummary(data.value("summary").toString());
     notification->setMessage(data.value("body").toString());
     notification->setTimeout(data.value("expireTimeout").toInt());
+    notification->setUrgency(data.value("urgency").toInt());
 
     if (data.contains("image")) {
         QImage image = qvariant_cast<QImage>(data.value("image"));

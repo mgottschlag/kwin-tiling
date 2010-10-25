@@ -32,6 +32,7 @@ class Notification::Private
 public:
     Private()
         : timeout(0),
+          urgency(0),
           hideTimer(0),
           expired(false),
           read(false)
@@ -44,6 +45,7 @@ public:
     QString message;
     QString summary;
     int timeout;
+    int urgency;
     QImage image;
     QTimer *deleteTimer;
     QTimer *hideTimer;
@@ -148,12 +150,35 @@ void Notification::setTimeout(int timeout)
         d->timeout = timeout;
     }
 
+    if (d->urgency >= 2) {
+        return;
+    }
+
     if (!d->hideTimer) {
         d->hideTimer = new QTimer(this);
         d->hideTimer->setSingleShot(true);
         connect(d->hideTimer, SIGNAL(timeout()), this, SLOT(hide()));
     }
     d->hideTimer->start(d->timeout);
+}
+
+void Notification::setUrgency(int urgency)
+{
+    if (urgency != d->urgency) {
+        d->urgency = urgency;
+        if (urgency >= 2) {
+            d->hideTimer->stop();
+            d->deleteTimer->stop();
+        } else {
+            setTimeout(d->timeout);
+            startDeletionCountdown();
+        }
+    }
+}
+
+int Notification::urgency() const
+{
+    return d->urgency;
 }
 
 QHash<QString, QString> Notification::actions() const
@@ -206,6 +231,10 @@ void Notification::hide()
 
 void Notification::startDeletionCountdown()
 {
+    if (d->urgency >= 2) {
+        return;
+    }
+
     //keep it available for 20 minutes
     d->deleteTimer->start(20*60*1000);
 }
