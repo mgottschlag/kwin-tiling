@@ -28,6 +28,6 @@ ADD_CUSTOM_TARGET(hp scp
 	${CMAKE_CURRENT_SOURCE_DIR}/TODO
 	devel-home:files/kdm)
 
-# after build_confci is defined
+# after confci is defined
 add_subdirectory(backend)
 add_subdirectory(kfrontend)
