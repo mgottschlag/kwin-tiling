@@ -28,6 +28,12 @@ ADD_CUSTOM_TARGET(hp scp
 	${CMAKE_CURRENT_SOURCE_DIR}/TODO
 	devel-home:files/kdm)
 
+set(backgroundlib_SRCS
+    ${CMAKE_CURRENT_SOURCE_DIR}/kcm/background/bgrender.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kcm/background/bgsettings.cpp
+)
+
 # after confci is defined
 add_subdirectory(backend)
 add_subdirectory(kfrontend)
+add_subdirectory(kcm)
