@@ -193,6 +193,10 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id,
     }
     notificationData.insert("image", image);
 
+    if (hints.contains("urgency")) {
+        notificationData.insert("urgency", hints["urgency"].toInt());
+    }
+
     setData(source, notificationData );
 
     if (timeout) {
