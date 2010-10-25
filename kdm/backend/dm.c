@@ -1514,6 +1514,7 @@ rStopDisplay(struct display *d, int endState)
 #endif
     } else if (endState == DS_RESERVE) {
         d->status = reserve;
+        d->hstent->lastExit = 0;
 #ifdef XDMCP
     } else if (endState == DS_REMOTE) {
         startRemoteLogin(d);
