@@ -185,13 +185,6 @@ void NotificationStack::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
-void NotificationStack::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (QPointF(event->buttonDownScenePos(event->button()) - event->scenePos()).manhattanLength() > KGlobalSettings::dndEventDelay()) {
-        emit moveRequested(QPointF(event->lastScenePos() - event->scenePos()).toPoint());
-    }
-}
-
 NotificationWidget *NotificationStack::currentNotificationWidget() const
 {
     if (m_currentNotificationWidget) {

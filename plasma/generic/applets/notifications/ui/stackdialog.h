@@ -69,9 +69,6 @@ protected:
     bool event(QEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
 
-protected Q_SLOTS:
-    void moveRequested(const QPoint &point);
-
 private:
     Plasma::Applet *m_applet;
     QWidget *m_windowToTile;
