@@ -102,6 +102,9 @@ int main( int argc, char *argv[] )
   if ( !tip.isEmpty() )
     cmd.setDefaultTip( tip );
 
+  // Apply icon and tooltip
+  cmd.refresh();
+
   // Keep running flag
   if ( args->isSet( "keeprunning" )  )
     cmd.setNoQuit( true );

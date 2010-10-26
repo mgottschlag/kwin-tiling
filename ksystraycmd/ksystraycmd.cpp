@@ -159,14 +159,15 @@ void KSysTrayCmd::refresh()
   if ( win ) {
     if (ownIcon)
     {
-      setIcon( KIcon( KGlobal::activeComponent().aboutData()->programIconName() ) );
+      setIcon( KApplication::windowIcon() );
     }
     else
     {
       setIcon( KWindowSystem::icon( win, 22, 22, true ) );
     }
 
-    this->setToolTip( KWindowSystem::windowInfo( win, NET::WMName ).name() );
+    if ( tooltip.isEmpty() )
+      this->setToolTip( KWindowSystem::windowInfo( win, NET::WMName ).name() );
   }
   else {
     if ( !tooltip.isEmpty() )
@@ -176,7 +177,7 @@ void KSysTrayCmd::refresh()
     else
       this->setToolTip( window );
 
-    setIcon( KIcon( KGlobal::activeComponent().aboutData()->programIconName() ) );
+    setIcon( KApplication::windowIcon() );
   }
 }
 
