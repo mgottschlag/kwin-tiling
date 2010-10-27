@@ -42,7 +42,7 @@ class KDE_EXPORT FakeNetworkManager : public Solid::Control::Ifaces::NetworkMana
 {
 Q_OBJECT
     public:
-        FakeNetworkManager(QObject * parent, const QStringList  & args);
+        FakeNetworkManager(QObject * parent, const QVariantList  & args);
         FakeNetworkManager(QObject * parent, const QStringList  & args, const QString  & xmlFile);
         virtual ~FakeNetworkManager();
         Solid::Networking::Status status() const;

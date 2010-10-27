@@ -20,8 +20,8 @@
 #include "fakenetworkmanager.h"
 
 // KDE includes
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
-typedef KGenericFactory<FakeNetworkManager, Solid::Control::Ifaces::NetworkManager> FakeNetBackendFactory;
-K_EXPORT_COMPONENT_FACTORY(solid_fake_netmgmt, FakeNetBackendFactory("fakenetbackend"))
+K_PLUGIN_FACTORY(FakeNetBackendFactory, registerPlugin<FakeNetworkManager>();)
+K_EXPORT_PLUGIN(FakeNetBackendFactory("fakenetbackend"))
 

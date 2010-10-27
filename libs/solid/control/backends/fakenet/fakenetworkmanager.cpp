@@ -29,7 +29,8 @@
 #include "fakewirednetworkinterface.h"
 #include "fakewirelessnetworkinterface.h"
 
-FakeNetworkManager::FakeNetworkManager(QObject * parent, const QStringList  &) : Solid::Control::Ifaces::NetworkManager(parent)
+FakeNetworkManager::FakeNetworkManager(QObject * parent, const QVariantList  &)
+    : Solid::Control::Ifaces::NetworkManager(parent)
 {
     mUserNetworkingEnabled = true;
     mUserWirelessEnabled = true;
