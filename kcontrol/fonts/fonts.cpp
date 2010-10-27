@@ -40,6 +40,7 @@
 #include "fonts.moc"
 
 #include <kdebug.h>
+#include <klocale.h>
 
 #ifdef HAVE_FREETYPE
 #include <ft2build.h>
