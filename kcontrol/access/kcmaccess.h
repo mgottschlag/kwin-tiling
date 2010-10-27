@@ -33,7 +33,7 @@ class ExtendedIntNumInput : public KIntNumInput
 	  * with base 10 and initial value 0.
 	  */
 		ExtendedIntNumInput(QWidget *parent=0);
-		
+
     /**
 	  * Destructor
 	  */
@@ -50,7 +50,7 @@ class ExtendedIntNumInput : public KIntNumInput
 	private Q_SLOTS:
 		void slotSpinValueChanged(int);
 		void slotSliderValueChanged(int);
-	
+
 	private:
 		int min, max;
 		int sliderMax;
@@ -62,9 +62,9 @@ class KAccessConfig : public KCModule
 
 public:
 
-  KAccessConfig( QWidget *parent, const QStringList& );
+  KAccessConfig( QWidget *parent, const QVariantList& );
   virtual ~KAccessConfig();
-  
+
   void load();
   void save();
   void defaults();

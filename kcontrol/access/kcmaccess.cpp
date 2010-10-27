@@ -24,6 +24,7 @@
 #include <QGroupBox>
 #include <klocale.h>
 
+#include <KPluginFactory>
 #include <kcombobox.h>
 #include <kstandarddirs.h>
 #include <kcolorbutton.h>
@@ -43,9 +44,8 @@
 
 #include "kcmaccess.moc"
 
-#include <kgenericfactory.h>
-typedef KGenericFactory<KAccessConfig, QWidget> KAccessConfigFactory;
-K_EXPORT_COMPONENT_FACTORY(kcm_access, KAccessConfigFactory("kcmaccess"))
+K_PLUGIN_FACTORY(KAccessConfigFactory, registerPlugin<KAccessConfig>();)
+K_EXPORT_PLUGIN(KAccessConfigFactory("kcmaccess"))
 
 ExtendedIntNumInput::ExtendedIntNumInput
 				(QWidget* parent)
@@ -230,7 +230,7 @@ QString mouseKeysShortcut (Display *display) {
   return result;
 }
 
-KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
+KAccessConfig::KAccessConfig(QWidget *parent, const QVariantList& args)
   : KCModule(KAccessConfigFactory::componentData(), parent, args)
 {
 
@@ -850,10 +850,8 @@ extern "C"
    */
   KDE_EXPORT void kcminit_access()
   {
-    KConfig *config = new KConfig( "kaccessrc", KConfig::NoGlobals );
-    bool run = needToRunKAccessDaemon( config );
-
-    delete config;
+    KConfig config("kaccessrc", KConfig::NoGlobals);
+    const bool run = needToRunKAccessDaemon(&config);
     if (run)
       KToolInvocation::startServiceByDesktopName("kaccess");
   }
