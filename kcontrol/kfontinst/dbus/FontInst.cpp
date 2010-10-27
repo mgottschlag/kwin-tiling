@@ -102,7 +102,7 @@ FontInst::FontInst()
 
     new FontinstAdaptor(this);
     QDBusConnection bus=QDBusConnection::sessionBus();
-    
+
     KFI_DBUG << "Connecting to session bus";
     if(!bus.registerService(OrgKdeFontinstInterface::staticInterfaceName()))
     {
@@ -125,7 +125,7 @@ FontInst::FontInst()
 
     for(int i=0; i<(isSystem ? 1 : FOLDER_COUNT); ++i)
         theFolders[i].init(FOLDER_SYS==i, isSystem);
-    
+
     updateFontList(false);
 }
 
@@ -254,7 +254,7 @@ void FontInst::install(const QString &file, bool createAfm, bool toSystem, int p
             }
         }
     }
-        
+
     emit status(pid, result);
     itsConnectionsTimer->start(constConnectionsTimeout);
     itsFontListTimer->start(constFontListTimeout);
@@ -273,7 +273,7 @@ void FontInst::uninstall(const QString &family, quint32 style, bool fromSystem, 
     FamilyCont::ConstIterator fam;
     StyleCont::ConstIterator  st;
     int                       result=findFont(family, style, folder, fam, st) ? (int)STATUS_OK : (int)KIO::ERR_DOES_NOT_EXIST;
-        
+
     if(STATUS_OK==result)
     {
         Family                  del((*fam).name());
@@ -293,7 +293,7 @@ void FontInst::uninstall(const QString &family, quint32 style, bool fromSystem, 
                 theFolders[FOLDER_SYS].addModifiedDir(Misc::getDir((*it).path()));
                 if(!wasDisabled && Misc::isHidden(Misc::getFile((*it).path())))
                     wasDisabled=true;
-            }        
+            }
             QVariantMap args;
             args["method"] = "uninstall";
             args["files"] = fileList;
@@ -328,7 +328,7 @@ void FontInst::uninstall(const QString &family, quint32 style, bool fromSystem, 
                         theFolders[folder].setDisabledDirty();
                 }
         }
-        
+
         if(STATUS_OK==result)
         {
             if((*st).files().isEmpty())
@@ -342,7 +342,7 @@ void FontInst::uninstall(const QString &family, quint32 style, bool fromSystem, 
             del.add(s);
         }
         emit fontsRemoved(Families(del, FOLDER_SYS==folder));
-        
+
     }
     KFI_DBUG << "status" << result;
     emit status(pid, result);
@@ -499,14 +499,17 @@ void FontInst::reconfigure(int pid)
     bool sysModified(theFolders[FOLDER_SYS].isModified());
 
     saveDisabled();
-    
+
     KFI_DBUG << theFolders[FOLDER_USER].isModified() << sysModified;
     if(!isSystem && theFolders[FOLDER_USER].isModified())
         theFolders[FOLDER_USER].configure();
 
     if(sysModified)
+    {
         if(isSystem)
+        {
             theFolders[FOLDER_SYS].configure();
+        }
         else
         {
             QVariantMap args;
@@ -514,6 +517,7 @@ void FontInst::reconfigure(int pid)
             performAction(args);
             theFolders[FOLDER_SYS].clearModified();
         }
+    }
 
     itsConnectionsTimer->start(constConnectionsTimeout);
     itsFontListTimer->start(constFontListTimeout);
@@ -603,7 +607,7 @@ void FontInst::updateFontList(bool emitChanges)
 
         for(int i=0; i<(isSystem ? 1 : FOLDER_COUNT); ++i)
             theFolders[i].clearFonts();
-            
+
         KFI_DBUG << "update list of fonts";
 
         FcPattern   *pat = FcPatternCreate();
@@ -736,10 +740,16 @@ void FontInst::toggle(bool enable, const QString &family, quint32 style, bool in
                                            : Misc::hide(Misc::getFile(*ait)));
 
                     if(to!=*ait)
+                    {
                         if((inSystem && !isSystem) || renameFontFile(*ait, to))
+                        {
                             movedAssoc[*ait]=to;
+                        }
                         else
+                        {
                             result=KIO::ERR_WRITE_ACCESS_DENIED;
+                        }
+                    }
                 }
             }
             else
@@ -750,7 +760,7 @@ void FontInst::toggle(bool enable, const QString &family, quint32 style, bool in
     if(inSystem && !isSystem)
     {
         Family toggleFam((*fam).name());
-        
+
         toggleFam.add(*st);
         QVariantMap args;
         args["method"] = "toggle";
@@ -761,7 +771,7 @@ void FontInst::toggle(bool enable, const QString &family, quint32 style, bool in
         args["enable"] = enable;
         result=performAction(args);
     }
-                
+
     if(STATUS_OK==result)
     {
         Family addFam((*fam).name()),
@@ -855,6 +865,7 @@ bool FontInst::findFont(const QString &font, EFolder folder,
     decompose(font, family, style);
 
     if(!findFontReal(family, style, folder, fam, st))
+    {
         if(updateList)
         {
             // Not found, so refresh font list and try again...
@@ -862,7 +873,10 @@ bool FontInst::findFont(const QString &font, EFolder folder,
             return findFontReal(family, style, folder, fam, st);
         }
         else
+        {
             return false;
+        }
+    }
 
     return true;
 }
@@ -889,6 +903,7 @@ bool FontInst::findFont(const QString &family, quint32 style, EFolder folder,
 {
     KFI_DBUG;
     if(!findFontReal(family, style, folder, fam, st))
+    {
         if(updateList)
         {
             // Not found, so refresh font list and try again...
@@ -896,21 +911,24 @@ bool FontInst::findFont(const QString &family, quint32 style, EFolder folder,
             return findFontReal(family, style, folder, fam, st);
         }
         else
+        {
             return false;
+        }
+    }
     return true;
 }
 
 int FontInst::performAction(const QVariantMap &args)
 {
     KAuth::Action action("org.kde.fontinst.manage");
-    
+
     action.setHelperID("org.kde.fontinst");
     action.setArguments(args);
     KFI_DBUG << "Call " << args["method"].toString() << " on helper";
     itsFontListTimer->stop();
     itsConnectionsTimer->stop();
     KAuth::ActionReply reply = action.execute();
-    
+
     switch(reply.type())
     {
         case KAuth::ActionReply::KAuthError:
@@ -920,7 +938,7 @@ int FontInst::performAction(const QVariantMap &args)
             KFI_DBUG << "Helper failed - error code:" << reply.errorCode();
             return (int)reply.errorCode();
     }
-    
+
     KFI_DBUG << "Success!";
     return STATUS_OK;
 }
