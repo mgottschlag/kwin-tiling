@@ -25,7 +25,7 @@
 #include <KMenu>
 #include <KShortcutsDialog>
 #include <KDebug>
-#include <KEditListBox>
+#include <KEditListWidget>
 
 #include <QHeaderView>
 
@@ -361,9 +361,12 @@ AdvancedWidget::AdvancedWidget( QWidget *parent )
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
-    editListBox = new KEditListBox(i18n("D&isable Actions for Windows of Type WM_CLASS"), this);
+    QGroupBox *groupBox = new QGroupBox(i18n("D&isable Actions for Windows of Type WM_CLASS"), this);
+    groupBox->setLayout(new QVBoxLayout(groupBox));
 
-    editListBox->setButtons(KEditListBox::Add | KEditListBox::Remove);
+    editListBox = new KEditListWidget(groupBox);
+
+    editListBox->setButtons(KEditListWidget::Add | KEditListWidget::Remove);
     editListBox->setCheckAtEntering(true);
 
     editListBox->setWhatsThis(i18n("<qt>This lets you specify windows in which Klipper should "
@@ -373,7 +376,9 @@ AdvancedWidget::AdvancedWidget( QWidget *parent )
                                    "Next, click on the window you want to examine. The "
                                    "first string it outputs after the equal sign is the one "
                                    "you need to enter here.</qt>"));
-    mainLayout->addWidget(editListBox);
+    groupBox->layout()->addWidget(editListBox);
+
+    mainLayout->addWidget(groupBox);
 
     editListBox->setFocus();
 }

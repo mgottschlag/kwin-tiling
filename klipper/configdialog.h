@@ -32,7 +32,7 @@ class KConfigSkeleton;
 class KShortcutsEditor;
 class QPushButton;
 class Klipper;
-class KEditListBox;
+class KEditListWidget;
 class KActionCollection;
 class EditActionDialog;
 
@@ -96,7 +96,7 @@ public:
     QStringList wmClasses() const;
 
 private:
-    KEditListBox *editListBox;
+    KEditListWidget *editListBox;
 };
 
 class ConfigDialog : public KConfigDialog
