@@ -23,7 +23,6 @@
 #include <kservice.h>
 
 class KCmdLineArgs;
-class KLibLoader;
 
 class KCMInit : public QObject
 {
@@ -39,7 +38,7 @@ class KCMInit : public QObject
         KCMInit( KCmdLineArgs* args );
         virtual ~KCMInit();
     private:
-        bool runModule(const QString &libName, KLibLoader *loader, KService::Ptr service);
+        bool runModule(const QString &libName, KService::Ptr service);
         void runModules( int phase );
         KService::List list;
         QStringList alreadyInitialized;

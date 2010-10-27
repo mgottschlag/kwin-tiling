@@ -30,7 +30,7 @@
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include <kservice.h>
-#include <klibloader.h>
+#include <klibrary.h>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kconfiggroup.h>
@@ -67,10 +67,10 @@ static void waitForReady()
   close( ready[ 0 ] );
 }
 
-bool KCMInit::runModule(const QString &libName, KLibLoader *loader, KService::Ptr service)
+bool KCMInit::runModule(const QString &libName, KService::Ptr service)
 {
-    KLibrary *lib = loader->library(libName);
-    if (lib) {
+    KLibrary lib(libName);
+    if (lib.load()) {
         QVariant tmp = service->property("X-KDE-Init-Symbol", QVariant::String);
         QString kcminit;
         if( tmp.isValid() )
@@ -83,7 +83,7 @@ bool KCMInit::runModule(const QString &libName, KLibLoader *loader, KService::Pt
             kcminit = "kcminit_" + libName;
 
 	// get the kcminit_ function
-        KLibrary::void_function_ptr init = lib->resolveFunction(kcminit.toUtf8());
+        KLibrary::void_function_ptr init = lib.resolveFunction(kcminit.toUtf8());
 	if (init) {
 	    // initialize the module
 	    kDebug(1208) << "Initializing " << libName << ": " << kcminit;
@@ -92,14 +92,12 @@ bool KCMInit::runModule(const QString &libName, KLibLoader *loader, KService::Pt
 	    func();
 	    return true;
 	}
-	loader->unloadLibrary(libName);
     }
     return false;
 }
 
 void KCMInit::runModules( int phase )
 {
-  KLibLoader *loader = KLibLoader::self();
   for(KService::List::Iterator it = list.begin();
       it != list.end();
       ++it) {
@@ -132,10 +130,10 @@ void KCMInit::runModules( int phase )
 
       // try to load the library
       if (! alreadyInitialized.contains( library.toAscii() )) {
-	  if (!runModule(library, loader, service)) {
+	  if (!runModule(library, service)) {
 	      library = QLatin1String( "lib" ) + library;
 	      if (! alreadyInitialized.contains( library.toAscii() )) {
-		  runModule(library, loader, service);
+		  runModule(library, service);
 		  alreadyInitialized.append( library.toAscii() );
 	      }
 	  } else
