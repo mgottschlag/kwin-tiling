@@ -28,6 +28,7 @@
 #include <QtCore/QPointF>
 #include <QtCore/QSize>
 #include <QtCore/QSizeF>
+#include <QtCore/QStringList>
 
 // Plasma
 #include <Plasma/Applet>
@@ -91,6 +92,13 @@ private:
     void initPopup();
     void updatePopupTrigger();
     void deletePopup();
+
+    static QStringList defaultLaunchers();
+    static QString defaultBrowserPath();
+    static QString defaultFileManagerPath();
+    static QString defaultEmailClientPath();
+
+    static QString determineNewDesktopFilePath(const QString &baseName);
 
     Ui::quicklaunchConfig uiConfig;
 

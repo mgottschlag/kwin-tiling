@@ -22,8 +22,11 @@
 // Qt
 #include <Qt>
 #include <QtGlobal>
+#include <QtCore/QDateTime>
 #include <QtCore/QDir>
 #include <QtCore/QEvent>
+#include <QtCore/QFile>
+#include <QtCore/QFileInfo>
 #include <QtCore/QPoint>
 #include <QtCore/QSize>
 #include <QtGui/QGraphicsLinearLayout>
@@ -32,15 +35,22 @@
 
 // KDE
 #include <KConfig>
+#include <KConfigGroup>
 #include <KConfigDialog>
 #include <KDesktopFile>
 #include <KDialog>
+#include <KEMailSettings>
+#include <KGlobal>
 #include <KGlobalSettings>
 #include <KMenu>
 #include <KMessageBox>
 #include <KMimeType>
+#include <KMimeTypeTrader>
 #include <KOpenWithDialog>
 #include <KPropertiesDialog>
+#include <KSharedConfig>
+#include <KShell>
+#include <KStandardDirs>
 #include <KWindowSystem>
 #include <KUrl>
 
@@ -209,25 +219,23 @@ bool Quicklaunch::eventFilter(QObject *watched, QEvent *event)
 void Quicklaunch::constraintsEvent(Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
-        FormFactor newFormFactor = formFactor();
+        FormFactor ff = formFactor();
 
         m_launcherList->gridLayout()->setMode(
-            newFormFactor == Plasma::Horizontal
+            ff == Plasma::Horizontal
                 ? IconGridLayout::PreferRows
                 : IconGridLayout::PreferColumns);
 
-        if (newFormFactor == Plasma::Planar) {
-            // Ignore wrapLimit / maxSectionCountForced when in planar
-            // form factor.
+        if (ff == Plasma::Planar || ff == Plasma::MediaCenter) {
+            // Ignore maxSectionCount in these form factors.
             m_launcherList->gridLayout()->setMaxSectionCount(0);
-            m_launcherList->gridLayout()->setMaxSectionCountForced(false);
         }
 
         // Apply icon size
         iconSizeChanged();
 
         m_layout->setOrientation(
-            newFormFactor == Plasma::Vertical ? Qt::Vertical : Qt::Horizontal);
+            ff == Plasma::Vertical ? Qt::Vertical : Qt::Horizontal);
     }
 
     if (constraints & Plasma::LocationConstraint) {
@@ -255,8 +263,6 @@ void Quicklaunch::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
 void Quicklaunch::configChanged()
 {
-    kDebug() << "configChanged";
-
     KConfigGroup config = this->config();
 
     // Migrate old configuration keys
@@ -372,19 +378,7 @@ void Quicklaunch::configChanged()
             config.readEntry("launchersOnPopup", QStringList());
 
         if (newLauncherUrls.isEmpty() && newLaunchersOnPopupUrls.isEmpty()) {
-            QStringList defaultApps;
-            defaultApps << "konqbrowser" << "dolphin" << "kopete";
-
-            Q_FOREACH (const QString &defaultApp, defaultApps) {
-                KService::Ptr service = KService::serviceByStorageId(defaultApp);
-                if (service && service->isValid()) {
-                    QString path = service->entryPath();
-
-                    if (!path.isEmpty() && QDir::isAbsolutePath(path)) {
-                        newLauncherUrls.append(path);
-                    }
-                }
-            }
+            newLauncherUrls = defaultLaunchers();
         }
 
         Q_FOREACH(QString launcherUrl, newLauncherUrls) {
@@ -466,8 +460,6 @@ void Quicklaunch::iconSizeChanged()
 
 void Quicklaunch::onConfigAccepted()
 {
-    kDebug() << "onConfigAccepted";
-
     const int sectionCount =
         uiConfig.autoSectionCountEnabledCheckBox->isChecked()
             ? 0
@@ -592,21 +584,60 @@ void Quicklaunch::onEditLauncherAction()
 {
     Q_ASSERT(m_currentLauncherList && m_currentLauncherIndex != -1);
 
-    KUrl url(m_currentLauncherList->launcherAt(m_currentLauncherIndex).url());
+    LauncherData launcherData(
+        m_currentLauncherList->launcherAt(m_currentLauncherIndex));
 
-    // TODO: Maybe, tf the launcher does not point to a desktop file, create one,
-    // so that user can change icon, text and description.
-    /* if (!url.isLocalFile() || !KDesktopFile::isDesktopFile(url)) {
+    KUrl url(launcherData.url());
 
-    } */
+    // If the launcher does not point to a desktop file, create one,
+    // so that user can change url, icon, text and description.
+    bool desktopFileCreated = false;
+
+    if (!url.isLocalFile() || !KDesktopFile::isDesktopFile(url.toLocalFile())) {
+
+        QString desktopFilePath = determineNewDesktopFilePath("launcher");
+
+        KConfig desktopFile(desktopFilePath);
+        KConfigGroup desktopEntry(&desktopFile, "Desktop Entry");
+
+        desktopEntry.writeEntry("Name", launcherData.name());
+        desktopEntry.writeEntry("Comment", launcherData.description());
+        desktopEntry.writeEntry("Icon", launcherData.icon());
+        desktopEntry.writeEntry("Type", "Link");
+        desktopEntry.writeEntry("URL", launcherData.url());
+
+        desktopEntry.sync();
+
+        url = KUrl::fromPath(desktopFilePath);
+        desktopFileCreated = true;
+    }
 
     KPropertiesDialog propertiesDialog(url);
 
     if (propertiesDialog.exec() == QDialog::Accepted) {
-        LauncherData newLauncherData(propertiesDialog.kurl());
+
+        url = propertiesDialog.kurl();
+        QString path = url.toLocalFile();
+
+        // If the user has renamed the file, make sure that the new
+        // file name has the extension ".desktop".
+        if (!path.endsWith(".desktop")) {
+            QFile::rename(path, path+".desktop");
+            path += ".desktop";
+            url = KUrl::fromLocalFile(path);
+        }
+
+        LauncherData newLauncherData(url);
+
         // TODO: This calls for a setLauncherDataAt method...
         m_currentLauncherList->insert(m_currentLauncherIndex, newLauncherData);
         m_currentLauncherList->removeAt(m_currentLauncherIndex+1);
+    } else {
+
+        if (desktopFileCreated) {
+            // User didn't save the data, delete the temporary desktop file.
+            QFile::remove(propertiesDialog.kurl().toLocalFile());
+        }
     }
 }
 
@@ -734,6 +765,196 @@ void Quicklaunch::deletePopup()
 
     m_popup = 0;
     m_popupTrigger = 0;
+}
+
+QStringList Quicklaunch::defaultLaunchers()
+{
+    QStringList defaultLauncherPaths;
+
+    defaultLauncherPaths << defaultBrowserPath();
+    defaultLauncherPaths << defaultFileManagerPath();
+    defaultLauncherPaths << defaultEmailClientPath();
+
+    // Some people use the same program as browser and file manager.
+    defaultLauncherPaths.removeDuplicates();
+
+    QStringList defaultLauncherUrls;
+    Q_FOREACH(const QString &path, defaultLauncherPaths) {
+        if (!path.isEmpty() && QDir::isAbsolutePath(path)) {
+            defaultLauncherUrls << KUrl::fromPath(path).url();
+        }
+    }
+    return defaultLauncherUrls;
+}
+
+QString Quicklaunch::defaultBrowserPath()
+{
+    KConfigGroup globalConfigGeneral(KGlobal::config(), "General");
+
+    if (globalConfigGeneral.hasKey("BrowserApplication")) {
+        QString browser =
+            globalConfigGeneral.readPathEntry("BrowserApplication", QString());
+
+        if (!browser.isEmpty()) {
+            if (browser.startsWith('!')) { // Literal command
+
+                browser = browser.mid(1);
+
+                // Strip away command line arguments, so we can treat this
+                // as a file name.
+                QStringList browserCmdArgs(
+                    KShell::splitArgs(browser, KShell::AbortOnMeta));
+
+                if (!browserCmdArgs.isEmpty()) {
+                    browser = browserCmdArgs.at(0);
+                } else {
+                    browser.clear();
+                }
+
+                if (!browser.isEmpty()) {
+                    QFileInfo browserFileInfo(browser);
+
+                    if (browserFileInfo.isAbsolute()) {
+                        if (browserFileInfo.isExecutable()) {
+                            return browser;
+                        }
+                    } else { // !browserFileInfo.isAbsolute()
+                        browser = KStandardDirs::findExe(browser);
+                        if (!browser.isEmpty()) {
+                            return browser;
+                        }
+                    }
+                }
+            } else {
+                KService::Ptr service = KService::serviceByStorageId(browser);
+                if (service && service->isValid()) {
+                    return service->entryPath();
+                }
+            }
+        }
+    }
+
+    // No global browser configured or configuration is invalid. Falling
+    // back to MIME type association.
+    KService::Ptr service;
+    service = KMimeTypeTrader::self()->preferredService("text/html");
+    if (service && service->isValid()) {
+        return service->entryPath();
+    }
+
+    service = KMimeTypeTrader::self()->preferredService("application/xml+xhtml");
+    if (service && service->isValid()) {
+        return service->entryPath();
+    }
+
+    // Fallback to konqueror.
+    service = KService::serviceByStorageId("konqueror");
+    if (service && service->isValid()) {
+        return service->entryPath();
+    }
+
+    // Give up.
+    return QString();
+}
+
+QString Quicklaunch::defaultFileManagerPath()
+{
+    KService::Ptr service;
+    service = KMimeTypeTrader::self()->preferredService("inode/directory");
+    if (service && service->isValid()) {
+        return service->entryPath();
+    }
+
+    // Fallback to dolphin.
+    service = KService::serviceByStorageId("dolphin");
+    if (service && service->isValid()) {
+        return service->entryPath();
+    }
+
+    // Give up.
+    return QString();
+}
+
+QString Quicklaunch::defaultEmailClientPath()
+{
+    KEMailSettings emailSettings;
+    QString mua = emailSettings.getSetting(KEMailSettings::ClientProgram);
+
+    if (!mua.isEmpty()) {
+
+        // Strip away command line arguments, so we can treat this
+        // as a file name.
+        QStringList muaCmdArgs(KShell::splitArgs(mua, KShell::AbortOnMeta));
+
+        if (!muaCmdArgs.isEmpty()) {
+            mua = muaCmdArgs.at(0);
+        } else {
+            mua.clear();
+        }
+
+        if (!mua.isEmpty()) {
+            // Strictly speaking, this is incorrect, but it's much better to
+            // find the service than just the plain command, so we'll search
+            // for services that have the same name as the executable and
+            // hope for the best.
+            KService::Ptr service = KService::serviceByStorageId(mua);
+
+            if (service && service->isValid()) {
+                return service->entryPath();
+            }
+
+            // Fallback to the exectuable.
+            QFileInfo muaFileInfo(mua);
+
+            if (muaFileInfo.isAbsolute()) {
+                if (muaFileInfo.isExecutable()) {
+                    return mua;
+                }
+            } else { // !muaFileInfo.isAbsolute()
+                mua = KStandardDirs::findExe(mua);
+
+                if (!mua.isEmpty()) {
+                    return mua;
+                }
+            }
+        }
+    }
+
+    // Fallback to kmail (if it is installed).
+    KService::Ptr service = KService::serviceByStorageId("kmail");
+    if (service && service->isValid()) {
+        return service->entryPath();
+    }
+
+    // Give up.
+    return QString();
+}
+
+QString Quicklaunch::determineNewDesktopFilePath(const QString &baseName)
+{
+    QString desktopFilePath =
+        KStandardDirs::locateLocal(
+            "appdata", "quicklaunch/"+baseName+".desktop", true);
+
+    QString appendix;
+
+    while(QFile::exists(desktopFilePath)) {
+        if (appendix.isEmpty()) {
+            qsrand(QDateTime::currentDateTime().toTime_t());
+            appendix += '-';
+        }
+
+        // Limit to [0-9] and [a-z] range.
+        char newChar = qrand() % 36;
+        newChar += newChar < 10 ? 48 : 97-10;
+        appendix += newChar;
+
+        desktopFilePath =
+            KStandardDirs::locateLocal(
+                "appdata", "quicklaunch/"+baseName+appendix+".desktop");
+    }
+
+    return desktopFilePath;
 }
 }
 
