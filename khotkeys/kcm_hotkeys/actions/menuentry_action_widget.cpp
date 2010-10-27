@@ -80,7 +80,6 @@ void MenuentryActionWidget::doCopyFromObject()
 void MenuentryActionWidget::doCopyToObject()
     {
     Q_ASSERT(action());
-    kDebug() << KService::serviceByName(ui.application->text());
     action()->set_service( KService::serviceByStorageId(storage_id));
     }
 
