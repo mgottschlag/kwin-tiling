@@ -82,16 +82,16 @@ bool KCMInit::runModule(const QString &libName, KService::Ptr service)
         else
             kcminit = "kcminit_" + libName;
 
-	// get the kcminit_ function
+        // get the kcminit_ function
         KLibrary::void_function_ptr init = lib.resolveFunction(kcminit.toUtf8());
-	if (init) {
-	    // initialize the module
-	    kDebug(1208) << "Initializing " << libName << ": " << kcminit;
+        if (init) {
+            // initialize the module
+            kDebug(1208) << "Initializing " << libName << ": " << kcminit;
 
-	    void (*func)() = (void(*)())init;
-	    func();
-	    return true;
-	}
+            void (*func)() = (void(*)())init;
+            func();
+            return true;
+        }
     }
     return false;
 }
@@ -129,15 +129,9 @@ void KCMInit::runModules( int phase )
           continue;
 
       // try to load the library
-      if (! alreadyInitialized.contains( library.toAscii() )) {
-	  if (!runModule(library, service)) {
-	      library = QLatin1String( "lib" ) + library;
-	      if (! alreadyInitialized.contains( library.toAscii() )) {
-		  runModule(library, service);
-		  alreadyInitialized.append( library.toAscii() );
-	      }
-	  } else
-	      alreadyInitialized.append( library.toAscii() );
+      if (!alreadyInitialized.contains(library)) {
+          runModule(library, service);
+          alreadyInitialized.append(library);
       }
   }
 }
@@ -161,7 +155,7 @@ KCMInit::KCMInit( KCmdLineArgs* args )
     {
       KService::Ptr service = (*it);
       if (service->library().isEmpty())
-	continue; // Skip
+        continue; // Skip
       printf("%s\n", QFile::encodeName(service->desktopEntryName()).data());
     }
     return;
@@ -253,8 +247,8 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
   startup = ( strcmp( argv[ 0 ], "kcminit_startup" ) == 0 ); // started from startkde?
   KAboutData aboutData( "kcminit", "kcminit", ki18n("KCMInit"),
-	"",
-	ki18n("KCMInit - runs startup initialization for Control Modules."));
+                        "",
+                        ki18n("KCMInit - runs startup initialization for Control Modules."));
 
   KCmdLineArgs::init(argc, argv, &aboutData);
 
