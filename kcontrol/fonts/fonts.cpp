@@ -774,7 +774,7 @@ void KFonts::save()
     KMessageBox::information(this,
       i18n(
         "<p>Some changes such as anti-aliasing will only affect newly started applications.</p>"
-      ), i18n("Font Settings Changed"), "FontSettingsChanged", false);
+      ), i18n("Font Settings Changed"), "FontSettingsChanged");
     useAA_original = useAA;
     dpi_original = dpi;
   }
@@ -783,7 +783,7 @@ void KFonts::save()
     KMessageBox::information(this,
       i18n(
         "<p>Some changes such as DPI will only affect newly started applications.</p>"
-      ), i18n("Font Settings Changed"), "FontSettingsChanged", false);
+      ), i18n("Font Settings Changed"), "FontSettingsChanged");
     dpi_original = dpi;
   }
 #endif
