@@ -2,10 +2,12 @@
 Name=pastebin.ca
 Name[et]=pastebin.ca
 Name[ia]=pastebin.ca
+Name[nds]=pastebin.ca
 Name[pt]=pastebin.ca
 Name[sv]=pastebin.ca
 Name[uk]=pastebin.ca
 Name[x-test]=xxpastebin.caxx
+Name[zh_TW]=pastebin.ca
 Comment=Enables the share of text using pastebin.ca service
 Comment[de]=Ermöglicht die Veröffentlichung von Text auf pastebin.ca
 Comment[en_GB]=Enables the share of text using pastebin.ca service
