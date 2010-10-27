@@ -338,7 +338,7 @@ void Activity::open()
     KConfig external(fileName, KConfig::SimpleConfig, "appdata");
 
     //TODO only load existing screens
-    foreach (Plasma::Containment *newContainment, m_corona->importLayout(external)) {
+    foreach (Plasma::Containment *newContainment, m_corona->importLayout(external.group(QByteArray()))) {
         insertContainment(newContainment);
         //ensure it's hooked up (if something odd happened we don't want orphan containments)
         Plasma::Context *context = newContainment->context();

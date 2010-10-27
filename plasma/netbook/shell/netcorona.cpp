@@ -89,7 +89,7 @@ void NetCorona::loadDefaultLayout()
         // temporary to importLayout, ie importLayout(KConfig(defaultConfig)) fails
         // on gcc < 4.3.0
         KConfig c(defaultConfig);
-        importLayout(c);
+        importLayout(c.group(QByteArray()));
 
         return;
     }
