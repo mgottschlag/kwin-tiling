@@ -40,6 +40,7 @@
 #include <KColorUtils>
 #include <KInputDialog>
 #include <KMessageBox>
+#include <KPluginFactory>
 #include <KStandardDirs>
 #include <kio/netaccess.h>
 #include <knewstuff3/downloaddialog.h>
