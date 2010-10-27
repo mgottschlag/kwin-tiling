@@ -283,7 +283,7 @@ static void getSessionLocation(CKSession &lsess, SessEnt &se)
 bool
 KDisplayManager::canShutdown()
 {
-    if (DMType == NewGDM) {
+    if (DMType == NewGDM || DMType == NoDM) {
         QDBusReply<bool> canStop = CKManager().call(QLatin1String("CanStop"));
         return (canStop.isValid() && canStop.value());
     }
@@ -315,7 +315,7 @@ KDisplayManager::shutdown(KWorkSpace::ShutdownType shutdownType,
         if (!bootOption.isEmpty())
             return;
 
-        if (DMType == NewGDM) {
+        if (DMType == NewGDM || DMType == NoDM) {
             // FIXME: entirely ignoring shutdownMode
             CKManager().call(QLatin1String(
                     shutdownType == KWorkSpace::ShutdownTypeReboot ? "Restart" : "Stop"));
