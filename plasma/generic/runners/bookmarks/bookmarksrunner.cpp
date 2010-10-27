@@ -122,6 +122,8 @@ void BookmarksRunner::prep()
                 m_dbCacheFile = KStandardDirs::locateLocal("cache", "") + "bookmarkrunnerfirefoxdbfile.sqlite";
             }
 
+            // ### DO NOT USE KIO FROM RUNNER THREADS!
+            // ### This looks like a local copy, so use QFile::copy instead.
             KIO::Job *job = KIO::file_copy(m_dbFile, m_dbCacheFile, -1,
                                            KIO::HideProgressInfo | KIO::Overwrite);
             connect(job, SIGNAL(result(KJob*)), this, SLOT(dbCopied(KJob*)));
