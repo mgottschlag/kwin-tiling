@@ -1,4 +1,7 @@
-add_subdirectory(animators)
+if(NOT KDE_PLATFORM_FEATURE_DISABLE_DEPRECATED)
+    add_subdirectory(animators)
+endif(NOT KDE_PLATFORM_FEATURE_DISABLE_DEPRECATED)
+
 add_subdirectory(applets)
 add_subdirectory(containmentactions)
 add_subdirectory(dataengines)
