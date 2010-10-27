@@ -21,7 +21,6 @@
 #define ION_H
 
 #include <QtCore/QObject>
-#include <KDE/KGenericFactory>
 #include <Plasma/DataEngine>
 
 #include "ion_export.h"

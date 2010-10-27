@@ -23,10 +23,8 @@
 #include <QCoreApplication>
 #include <QTimer>
 
-#include <KDateTime>
 #include <KLocale>
 #include <KSycoca>
-#include <KServiceTypeTrader>
 
 #include <Plasma/DataEngineManager>
 #include <Plasma/DataContainer>

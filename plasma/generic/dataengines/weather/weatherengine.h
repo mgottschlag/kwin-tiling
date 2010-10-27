@@ -22,9 +22,6 @@
 
 #include <QTimer>
 
-#include <KService>
-#include <KGenericFactory>
-
 #include <Solid/Networking>
 
 #include <Plasma/DataEngine>
