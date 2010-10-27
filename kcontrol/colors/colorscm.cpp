@@ -34,7 +34,6 @@
 #include <KColorButton>
 #include <KColorDialog>
 #include <KFileDialog>
-#include <KGenericFactory>
 #include <KGlobal>
 #include <KGlobalSettings>
 #include <KColorUtils>

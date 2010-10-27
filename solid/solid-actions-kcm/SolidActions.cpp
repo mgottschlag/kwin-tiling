@@ -27,7 +27,7 @@
 #include <KDesktopFile>
 #include <KIO/NetAccess>
 #include <KStandardDirs>
-#include <KGenericFactory>
+#include <KPluginFactory>
 #include <KBuildSycocaProgressDialog>
 
 #include <QComboBox>

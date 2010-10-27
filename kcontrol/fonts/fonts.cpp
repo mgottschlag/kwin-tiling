@@ -28,7 +28,6 @@
 #include <kacceleratormanager.h>
 #include <kapplication.h>
 #include <kglobalsettings.h>
-#include <kgenericfactory.h>
 #include <kmessagebox.h>
 #include <knuminput.h>
 #include <kprocess.h>
