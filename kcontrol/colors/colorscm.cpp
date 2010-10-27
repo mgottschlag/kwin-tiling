@@ -33,6 +33,7 @@
 #include <KAboutData>
 #include <KColorButton>
 #include <KColorDialog>
+#include <KDebug>
 #include <KFileDialog>
 #include <KGlobal>
 #include <KGlobalSettings>
