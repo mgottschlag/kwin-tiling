@@ -21,8 +21,8 @@
 #include "manager.h"
 
 // KDE includes
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
-typedef KGenericFactory<MMModemManager, Solid::Control::Ifaces::ModemManager> ModemManagerBackendFactory;
-K_EXPORT_COMPONENT_FACTORY(solid_modemmanager04, ModemManagerBackendFactory("ModemManagerbackend"))
+K_PLUGIN_FACTORY(ModemManagerBackendFactory, registerPlugin<MMModemManager>();)
+K_EXPORT_PLUGIN(ModemManagerBackendFactory("ModemManagerbackend"))
 

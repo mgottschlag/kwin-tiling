@@ -38,7 +38,8 @@ MMModemManagerPrivate::MMModemManagerPrivate() : iface(MMModemManager::DBUS_SERV
     kDebug(1441) << MMModemManager::DBUS_SERVICE;
 }
 
-MMModemManager::MMModemManager(QObject * parent, const QStringList &)
+MMModemManager::MMModemManager(QObject * parent, const QVariantList &)
+    : Solid::Control::Ifaces::ModemManager(parent)
 {
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
     registerModemManagerTypes();

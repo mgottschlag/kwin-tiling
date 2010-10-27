@@ -40,7 +40,7 @@ public:
     static const QString DBUS_USER_SETTINGS_PATH;
     static const QString DBUS_SYSTEM_SETTINGS_PATH;
 
-    MMModemManager(QObject * parent, const QStringList & args);
+    MMModemManager(QObject * parent, const QVariantList & args);
     ~MMModemManager();
     Solid::Networking::Status status() const;
     QStringList modemInterfaces() const;
