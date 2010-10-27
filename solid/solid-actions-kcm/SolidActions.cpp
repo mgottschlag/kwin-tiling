@@ -217,7 +217,7 @@ void SolidActions::toggleEditDelete()
     if( selectedAction()->isUserSupplied() ) {
         // We are able to directly delete it, enable full delete functionality
         mainUi.PbDeleteAction->setGuiItem( KStandardGuiItem::remove() );
-    } else if( KIO::NetAccess::exists(writeDesktopFile, true, this) ) { // Does the write file exist?
+    } else if( KIO::NetAccess::exists(writeDesktopFile, KIO::NetAccess::SourceSide, this) ) { // Does the write file exist?
         // We are able to revert, lets show it
         mainUi.PbDeleteAction->setGuiItem( KStandardGuiItem::discard() );
     } else {
