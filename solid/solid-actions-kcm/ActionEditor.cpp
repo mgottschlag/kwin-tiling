@@ -65,7 +65,7 @@ void ActionEditor::setActionToEdit( ActionItem * item )
     // Set all the text appropriately
     ui.IbActionIcon->setIcon( item->icon() );
     ui.LeActionFriendlyName->setText( item->name() );
-    ui.LeActionCommand->setPath( item->exec() );
+    ui.LeActionCommand->setUrl( KUrl(item->exec()) );
 
     setPredicate( item->predicate() );
     setCaption( i18n("Editing Action %1", item->name()) ); // Set a friendly i18n caption
