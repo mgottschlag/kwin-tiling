@@ -78,6 +78,7 @@ class Image : public Plasma::Wallpaper
         void newStuffFinished();
         void setConfigurationInterfaceModel();
         void updateDirs();
+        void addDirFromSelectionDialog();
 
     protected:
         void init(const KConfigGroup &config);
@@ -86,7 +87,6 @@ class Image : public Plasma::Wallpaper
         void calculateGeometry();
         void setSingleImage();
         void updateWallpaperActions();
-        void addDirFromSelectionDialog();
 
     private:
         static bool s_startupResumed;
