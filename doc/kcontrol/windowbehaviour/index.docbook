@@ -16,8 +16,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2008-07-27</date>
-<releaseinfo>4.2</releaseinfo>
+<date>2010-10-28</date>
+<releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -69,6 +69,42 @@ front &mdash; this is referred to as <quote>raised</quote>, and
 although this is configured here as well, focus and raising of windows
 are configured independently.</para>
 
+<sect3 id="action-focus-focusstealin">
+<title>Focus stealing prevention level</title>
+
+<para>This option specifies how much KWin will try to prevent unwanted focus 
+stealing caused by unexpected activation of new windows.</para> 
+<note><para>This feature does not work with the <guilabel>Focus Under Mouse</guilabel> 
+or <guilabel>Focus Strictly Under Mouse</guilabel> focus policies.</para></note>
+<variablelist>
+<varlistentry>
+<term><guilabel>None</guilabel></term>
+<listitem><para>Prevention is turned off and new windows always become activated.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Low</guilabel></term>
+<listitem><para>Prevention is enabled; when some window does not have support 
+for the underlying mechanism and KWin cannot reliably decide whether to activate 
+the window or not, it will be activated. This setting may have both worse and better 
+results than the medium level, depending on the applications.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Medium</guilabel></term>
+<listitem><para>Prevention is enabled. High New windows get activated only 
+if no window is currently active or if they belong to the currently active 
+application. This setting is probably not really usable when not using mouse 
+focus policy.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Extreme</guilabel></term>
+<listitem><para>All windows must be explicitly activated by the user.</para></listitem>
+</varlistentry>
+</variablelist>
+<para>Windows that are prevented from stealing focus are marked as demanding 
+attention, which by default means their taskbar entry will be highlighted. 
+This can be changed in the Notifications control module.</para>
+</sect3>
+  
 <sect3 id="action-focus-focuspolicy">
 <title>Focus Policy</title>
 
@@ -143,11 +179,13 @@ raising options.
 </para>
 
 <para>
-By placing a mark in front of <guilabel>Auto raise</guilabel>, &kde; can
+By placing a mark in front of <guilabel>Raise, with the following delay</guilabel>, &kde; can
 bring a window to the front if the mouse is over that window for a
-specified period of time.  This is very useful with the <guilabel>Focus
-Follows Mouse</guilabel> option.  You can determine the delay by using
-the slider bar/spin box combination.
+specified period of time. When <guilabel>Delay focus by</guilabel> is enabled, 
+there will be a delay after which the window the mouse pointer is over will become 
+active (receive focus).
+This is very useful with the <guilabel>Focus Follows Mouse</guilabel> option.  
+You can determine the delay for both options by using the spin box controls.
 </para>
 
 <tip>
@@ -161,9 +199,9 @@ that window to the front.
 </tip>
 
 <para>
-If you do not use <guilabel>Auto raise</guilabel>, make sure the
+If you do not use auto raise, make sure the
 <guilabel>Click raise active window</guilabel> option has a mark in front of it.  You
-will not be happy with both <guilabel>Auto raise</guilabel> and
+will not be happy with both auto raise and
 <guilabel>Click raise active window</guilabel> disabled, the net effect is that
 windows are not raised at all.
 </para>
@@ -247,6 +285,7 @@ restores the window to its normal size.
 </para>
 
 <!-- <guilabel>Titlebar wheel event</guilabel> missing -->
+
 <tip>
 <para>
 You can have windows automatically unshade when you simply place the
@@ -333,6 +372,16 @@ are already on top.
 </varlistentry>
 </variablelist>
 </sect3>
+
+<sect3 id="action-actions-maximize-button">
+<title><guilabel>Maximize Button</guilabel></title>
+<para>
+This section allows you to determine the behavior of the three mouse buttons 
+onto the maximize button. You have the choice between vertical only, horizontal 
+only or both directions.
+</para>
+</sect3>
+
 </sect2>
 
 <sect2 id="window-actions">
@@ -406,7 +455,8 @@ made on a window.</para>
 <para>
 Once again, you can select different actions for
 <mousebutton>Left</mousebutton>, <mousebutton>Middle</mousebutton> and
-<mousebutton>Right</mousebutton> button clicks.
+<mousebutton>Right</mousebutton> button clicks and the <guilabel>Mouse 
+wheel</guilabel>.
 </para>
 
 <para>Your choices are:</para>
@@ -516,30 +566,13 @@ size in pixels of a window as you resize it.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Allow moving and resizing of maximized windows</guilabel></term>
+<term><guilabel>Display borders on maximized windows</guilabel></term>
 <listitem>
 <para>When enabled, this feature activates the border of maximized
 windows, and allows you to move or resize them just as you can normal
 windows.</para>
 </listitem>
 </varlistentry>
-
-<varlistentry>
-<term><guilabel>Placement:</guilabel></term>
-<listitem>
-
-<para>The placement policy determines where a new window will appear
-on the desktop.  <guilabel>Smart</guilabel> will try to achieve a minimum
-overlap of windows, <guilabel>Cascade</guilabel> will cascade the
-windows, and <guilabel>Random</guilabel> will use a random
-position.  <guilabel>Centered</guilabel> will open all new windows in
-the center of the screen, and <guilabel>Zero-Cornered</guilabel> will
-open all windows with their top left corner in the top left corner of
-the screen.</para>
-
-</listitem>
-</varlistentry>
-
 </variablelist>
 
 </sect3>
@@ -573,7 +606,16 @@ as if the windows were magnetized.</para>
 </listitem>
 </varlistentry>
 
-<!-- Center snap zone:  missing-->
+<varlistentry>
+<term><guilabel>Center snap zone:</guilabel></term>
+<listitem>
+
+<para>Here you can set the snap zone for the screen center, &ie; the 
+<quote>strength</quote> of the magnetic field which will make windows snap 
+to the center of the screen when moved near it.</para>
+</listitem>
+</varlistentry>
+
 
 <varlistentry>
 <term><guilabel>Snap windows only when overlapping</guilabel></term>
@@ -600,7 +642,7 @@ tuning to the window behavior.
 <variablelist>
 <title>Shading</title>
 
-<!--varlistentry>
+<!--not in 4.5 varlistentry>
 <term><guilabel>Animate</guilabel></term>
 <listitem>
 <para>If this option is enabled,  shading, or rolling up a window until just
@@ -620,6 +662,75 @@ the slider to configure the delay un-shading.
 </varlistentry>
 </variablelist>
 
+<variablelist>
+<title>Window Tabbing</title>
+
+<varlistentry>
+<term><guilabel>When turned on attempt to automatically detect when a newly opened window is 
+"related to an existing one and place them in the same window group.</guilabel></term>
+<listitem><para>
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Switch to automatically grouped windows immediately</guilabel></term>
+<listitem><para>When turned on immediately switch to any new window tabs that were 
+automatically added to the current group.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Placement</guilabel></term>
+<listitem><para>The placement policy determines where a new window will appear
+on the desktop.  <guilabel>Smart</guilabel> will try to achieve a minimum
+overlap of windows, <guilabel>Cascade</guilabel> will cascade the
+windows, and <guilabel>Random</guilabel> will use a random
+position.  <guilabel>Centered</guilabel> will open all new windows in
+the center of the screen, and <guilabel>Zero-Cornered</guilabel> will
+open all windows with their top left corner in the top left corner of
+the screen.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Hide utility windows for inactive applications</guilabel></term>
+<listitem><para>When turned on, utility windows (tool windows, torn-off menus,...) of 
+inactive applications will be hidden and will be shown only when the 
+application becomes active. Note that applications have to mark the windows 
+with the proper window type for this feature to work.</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist>
+<title>Tiling</title>
+
+<varlistentry>
+<term><guilabel>Enable Tiling</guilabel></term>
+<listitem><para>A tiling window manager lays out all the windows in a 
+non-overlapping manner. This way all windows are always visible.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Default Tiling Layout</guilabel></term>
+<listitem><para>Select <guilabel>Spiral</guilabel>, <guilabel>Columns</guilabel>
+(Two-column horizontal tiling layout) or <guilabel>Floating</guilabel> (Floating 
+layout, windows are not tiled at all) as default here.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Floating Windows Raising</guilabel></term>
+<listitem><para>The window raising policy determines how floating windows are stacked.
+<guilabel>Raise/Lower floating windows</guilabel> all will raise all floating 
+windows when a floating window is activated. <guilabel>Raise/Lower current 
+window only</guilabel> will raise only the current window. <guilabel>Floating windows 
+are always on top</guilabel> keep floating windows on top, even when a tiled window 
+is activated.</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+<!--not in 4.5 in this module
 <para>Finally, you can configure <guilabel>Active Desktop
 Borders</guilabel>.  If this is enabled, moving the mouse to a screen
 border will change your desktop.  This is useful if you want to drag
@@ -630,7 +741,7 @@ is the default, to <guilabel>Only when moving windows</guilabel>, or
 to <guilabel>Always enabled</guilabel> in which case just pushing your
 mouse against the side of the screen will switch you to a new
 desktop.</para>
-
+-->
 </sect2>
 
 </sect1>
