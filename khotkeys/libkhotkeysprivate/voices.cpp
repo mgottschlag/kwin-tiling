@@ -204,8 +204,6 @@ void Voice::set_shortcut( const KShortcut &shortcut)
 
 void Voice::slot_key_pressed()
 {
-    if( !haveArts())
-        return;
 	if( _recording )
 		record_stop();
 	else

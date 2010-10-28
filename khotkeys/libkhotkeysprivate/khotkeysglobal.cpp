@@ -84,29 +84,4 @@ QString get_menu_entry_from_path( const QString& path_P )
     return path_P;
     }
 
-static int have_arts = -1;
-
-bool haveArts()
-    {
-    return false;
-// FIXME: SOUND
-#if 0
-    if( have_arts == -1 )
-        {
-        have_arts = 0;
-        KLibrary* arts = KLibLoader::self()->library( QLatin1String("khotkeys_arts") );
-        if( arts == NULL )
-            kDebug() << "Couldn't load khotkeys_arts:" << KLibLoader::self()->lastErrorMessage();
-        if( arts != NULL && SoundRecorder::init( arts ))
-            have_arts = 1;
-        }
-    return have_arts != 0;
-#endif
-    }
-
-void disableArts()
-    {
-    have_arts = 0;
-    }
-
 } // namespace KHotKeys
