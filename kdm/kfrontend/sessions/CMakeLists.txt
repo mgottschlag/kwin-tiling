@@ -1,9 +1,9 @@
-configure_file(kde.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/kde.desktop)
-configure_file(kde-safe.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/kde-safe.desktop)
+configure_file(kde-plasma.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/kde-plasma.desktop)
+configure_file(kde-plasma-safe.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/kde-plasma-safe.desktop)
 
 install(FILES
-	${CMAKE_CURRENT_BINARY_DIR}/kde.desktop
-	${CMAKE_CURRENT_BINARY_DIR}/kde-safe.desktop
+	${CMAKE_CURRENT_BINARY_DIR}/kde-plasma.desktop
+	${CMAKE_CURRENT_BINARY_DIR}/kde-plasma-safe.desktop
 	gnome.desktop
 	9wm.desktop
 	aewm++.desktop
