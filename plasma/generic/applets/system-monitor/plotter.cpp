@@ -128,7 +128,7 @@ void Plotter::setCustomPlots(const QList<QColor>& colors)
         m_plotter->removePlot(0);
     }
     m_plotCount = colors.count();
-    foreach (QColor color, colors) {
+    foreach (const QColor& color, colors) {
         m_plotter->addPlot(color);
     }
 }

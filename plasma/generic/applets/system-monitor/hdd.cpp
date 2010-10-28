@@ -261,7 +261,7 @@ void Hdd::applyTheme(Plasma::Meter *w)
 
 void Hdd::themeChanged()
 {
-    foreach (const QString source, connectedSources()) {
+    foreach (const QString& source, connectedSources()) {
         applyTheme(qobject_cast<Plasma::Meter*>(visualization(source)));
     }
 }

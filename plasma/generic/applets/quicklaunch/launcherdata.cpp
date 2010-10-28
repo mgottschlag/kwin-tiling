@@ -144,7 +144,7 @@ QList<LauncherData> LauncherData::fromMimeData(const QMimeData *mimeData)
         QList<KUrl> urlList =
             extractUrls(KBookmark::List::fromMimeData(mimeData, tempDoc));
 
-        Q_FOREACH(KUrl url, urlList) {
+        Q_FOREACH(const KUrl& url, urlList) {
             data.append(LauncherData(url));
         }
     }
@@ -156,7 +156,7 @@ QList<LauncherData> LauncherData::fromMimeData(const QMimeData *mimeData)
 
 bool LauncherData::hasUrls(const QList<KBookmark> &bookmarkList)
 {
-    Q_FOREACH(KBookmark bookmark, bookmarkList) {
+    Q_FOREACH(const KBookmark& bookmark, bookmarkList) {
         if (bookmark.isGroup() && hasUrls(bookmark.toGroup())) {
             return true;
         }
@@ -191,7 +191,7 @@ QList<KUrl> LauncherData::extractUrls(const QList<KBookmark> &bookmarkList)
 {
     QList<KUrl> urlList;
 
-    Q_FOREACH(KBookmark bookmark, bookmarkList) {
+    Q_FOREACH(const KBookmark& bookmark, bookmarkList) {
         if (bookmark.isGroup()) {
             urlList.append(extractUrls(bookmark.toGroup()));
         } else if (!bookmark.isSeparator()) {

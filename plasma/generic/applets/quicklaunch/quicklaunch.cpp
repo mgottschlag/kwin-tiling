@@ -381,11 +381,11 @@ void Quicklaunch::configChanged()
             newLauncherUrls = defaultLaunchers();
         }
 
-        Q_FOREACH(QString launcherUrl, newLauncherUrls) {
+        Q_FOREACH(const QString& launcherUrl, newLauncherUrls) {
             newLaunchers.append(LauncherData(launcherUrl));
         }
 
-        Q_FOREACH(QString launcherUrl, newLaunchersOnPopupUrls) {
+        Q_FOREACH(const QString& launcherUrl, newLaunchersOnPopupUrls) {
             newLaunchersOnPopup.append(LauncherData(launcherUrl));
         }
     }
