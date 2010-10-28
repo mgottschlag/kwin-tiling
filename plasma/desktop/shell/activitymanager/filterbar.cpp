@@ -181,7 +181,9 @@ void FilterBar::populateActivityMenu()
             const QString scriptFile = package.filePath("mainscript");
             if (!scriptFile.isEmpty()) {
                 QAction *action = m_newActivityMenu->addAction(KIcon(info.icon()), info.name());
-                action->setData("plasma-desktop-template:" + scriptFile);
+                QStringList data;
+                data << scriptFile << info.name() << info.icon();
+                action->setData(data);
             }
         }
     }
@@ -196,18 +198,15 @@ void FilterBar::populateActivityMenu()
 
 void FilterBar::createActivity(QAction *action)
 {
-    QString type = action->data().toString();
-    if (type.isEmpty()) {
+    QVariant::Type type = action->data().type();
+    if (type == QVariant::String) {
+        QString plugin = action->data().toString();
+        PlasmaApp::self()->createActivity(plugin);
+    } else if (type == QVariant::StringList) {
+        QStringList data = action->data().toStringList();
+        PlasmaApp::self()->createActivityFromScript(data[0], data[1], data[2]);
+    } else { //invalid
         PlasmaApp::self()->cloneCurrentActivity();
-    } else if (type.startsWith("plasma-desktop-template:")) {
-        DesktopCorona *corona = qobject_cast<DesktopCorona*>(scene());
-        if (corona) {
-            corona->evaluateScripts(QStringList() << type.right(type.length() - qstrlen("plasma-desktop-template:")));
-            //FIXME how are those scripts going to correctly create an activity and not just a
-            //containment?
-        }
-    } else {
-        PlasmaApp::self()->createActivity(type);
     }
 }
 

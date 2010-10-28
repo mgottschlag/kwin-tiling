@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Photos Activity
+Icon=digikam
+Type=Service
+ServiceTypes=Plasma/LayoutTemplate
+X-Plasma-Shell=plasma-desktop
+X-Plasma-ContainmentCategories=desktop
+X-KDE-PluginInfo-Author=Chani Armitage
+X-KDE-PluginInfo-Email=chani@kde.org
+X-KDE-PluginInfo-Name=org.kde.plasma-desktop.photoActivity
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true

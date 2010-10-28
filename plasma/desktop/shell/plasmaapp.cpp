@@ -1064,6 +1064,16 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
         if (a) {
             delete a; //activities handle removal now
         }
+        if (!(m_loadingActivity.isEmpty() || m_corona->offscreenWidgets().contains(containment))) {
+            Plasma::Context *context = containment->context();
+            if (context->currentActivityId().isEmpty()) {
+                //kDebug() << "@#$%@#$%@#$%@#$%#@$#@%@$#^%$&^$^$%#%$";
+                //kDebug() << "script->containment->activity";
+                Activity *activity = m_corona->activity(m_loadingActivity);
+                Q_ASSERT(activity);
+                activity->replaceContainment(containment);
+            }
+        }
 
         if (containment->containmentType() == Plasma::Containment::DesktopContainment) {
             foreach (QAction *action, m_corona->actions()) {
@@ -1316,12 +1326,26 @@ void PlasmaApp::createActivity(const QString &plugin)
     QString id = controller.addActivity(i18n("unnamed"));
 
     Activity *a = m_corona->activity(id);
-    if (!a) {
-        kDebug() << "!*!*!*!*!*!*!*!*!*!**!*!*!*!!*!*!*!*!*!*";
-    }
+    Q_ASSERT(a);
     a->setDefaultPlugin(plugin);
 
     controller.setCurrentActivity(id);
+}
+
+void PlasmaApp::createActivityFromScript(const QString &script, const QString &name, const QString &icon)
+{
+    KActivityController controller;
+    m_loadingActivity = controller.addActivity(name);
+    Activity *a = m_corona->activity(m_loadingActivity);
+    Q_ASSERT(a);
+    a->setIcon(icon);
+
+    //kDebug() << "$$$$$$$$$$$$$$$$ begin script for" << m_loadingActivity;
+    m_corona->evaluateScripts(QStringList() << script);
+    //kDebug() << "$$$$$$$$$$$$$$$$ end script for" << m_loadingActivity;
+
+    controller.setCurrentActivity(m_loadingActivity);
+    m_loadingActivity.clear();
 }
 
 #include "plasmaapp.moc"

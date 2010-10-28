@@ -117,6 +117,10 @@ public Q_SLOTS:
      * create a new blank activity with @p plugin containment type
      */
     void createActivity(const QString &plugin);
+    /**
+     * create a new activity from @p script
+     */
+    void createActivityFromScript(const QString &script, const QString &name = QString(), const QString &icon = QString());
 
 protected:
 #ifdef Q_WS_X11
@@ -173,6 +177,7 @@ private:
     bool m_ignoreDashboardClosures;
     int m_primaryScreen;
     bool m_pendingFixedDashboard;
+    QString m_loadingActivity;
 };
 
 #endif // multiple inclusion guard
