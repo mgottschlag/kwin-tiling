@@ -28,7 +28,7 @@
 
 #include <Plasma/DataEngine>
 #include <Plasma/Containment>
-#include <Plasma/Service>
+#include <Plasma/ServiceJob>
 
 AppLauncher::AppLauncher(QObject *parent, const QVariantList &args)
     : Plasma::ContainmentActions(parent, args)
@@ -106,7 +106,8 @@ void AppLauncher::switchTo(QAction *action)
     kDebug() << source;
     Plasma::Service *service = dataEngine("apps")->serviceForSource(source);
     if (service) {
-        service->startOperationCall(service->operationDescription("launch"));
+        Plasma::ServiceJob *job = service->startOperationCall(service->operationDescription("launch"));
+        connect(job, SIGNAL(finished(KJob*)), service, SLOT(deleteLater()));
     }
 }
 
