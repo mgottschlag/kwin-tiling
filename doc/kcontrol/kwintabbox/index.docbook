@@ -12,7 +12,7 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2010-09-23</date>
+<date>2010-10-28</date>
 <releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
@@ -39,6 +39,7 @@ The first set of effects on the <guilabel>Main</guilabel> tab has predefined sho
 <title>List windows and Sort order</title>
 <para>You can configure which windows should be shown in the list initiated by pressing <keycombo>&Alt;&Tab;</keycombo> (predefined for the settings on the <guilabel>Main</guilabel> tab) or the user defined shortcut for the alternative settings. So it is possible to only show windows on the current desktop or windows from all desktops. It is also possible to influence the sort order, you can either use a sort order based on the last usage of the windows or the stacking order of the windows.
 </para>
+<para>If you check <guilabel>Include desktop</guilabel> an entry for the desktop will be added to list with application windows. Then you can select this entry in the list to minimize all windows.</para>
 </sect2>
 
 <sect2 id="desktop-effects">

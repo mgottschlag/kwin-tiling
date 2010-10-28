@@ -14,7 +14,7 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2010-06-23</date>
+<date>2010-10-28</date>
 <releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
@@ -44,9 +44,7 @@ effects</guilabel> to activate compositing, select the compositing type
 group. This activates the corresponding items in the context menu.</para>
 
 <para>If you are looking for the setting to enable switching of desktops by 
-pushing your mouse cursor against the edge of the screen you can find it in 
-the settings module <menuchoice><guilabel>Workspace Appearance and Behavior</guilabel> <guilabel>Window 
-Behavior</guilabel></menuchoice> on the <ulink url="help:/kcontrol/kwintabbox/index.html">
-<guilabel>Task Switcher</guilabel></ulink> page.</para>
+pushing your mouse cursor against the edge of the screen choose one of the <guilabel>Present 
+Windows</guilabel> effects from the context menu.</para>
 
 </article>
