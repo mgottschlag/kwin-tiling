@@ -20,6 +20,7 @@
 
 #include "kactivityinfo.h"
 #include "kactivityinfo_p.h"
+#include "kactivitymanager_p.h"
 
 #ifdef HAVE_SOPRANO_PLUGIN_RAPTORPARSER
 #include "nfo.h"
@@ -29,34 +30,11 @@
 
 // Private
 
-org::kde::nepomuk::services::NepomukActivitiesService * KActivityInfo::Private::s_store = 0;
-org::kde::ActivityManager * KActivityInfo::Private::s_manager = 0;
-
-org::kde::ActivityManager * KActivityInfo::Private::manager() {
-    if (!s_manager) {
-        s_manager = new org::kde::ActivityManager(
-                "org.kde.ActivityManager",
-                "/ActivityManager",
-                QDBusConnection::sessionBus()
-                );
-    }
-
-    return s_manager;
-}
-
 KActivityInfo::Private::Private(KActivityInfo *info, const QString &activityId)
     : q(info),
       id(activityId)
 {
-    if (!s_store) {
-        s_store = new org::kde::nepomuk::services::NepomukActivitiesService(
-                "org.kde.nepomuk.services.nepomukactivitiesservice",
-                "/nepomukactivitiesservice",
-                QDBusConnection::sessionBus()
-                );
-    }
-
-    manager();
+    KActivityManager::self();
 }
 
 KUrl KActivityInfo::Private::urlForType(KActivityInfo::ResourceType resourceType) const
@@ -83,10 +61,10 @@ KUrl KActivityInfo::Private::urlForType(KActivityInfo::ResourceType resourceType
     }
 }
 
-void KActivityInfo::Private::activityNameChanged(const QString &idChanged, const QString &toId) const
+void KActivityInfo::Private::activityChanged(const QString &idChanged) const
 {
     if (idChanged == id) {
-        emit q->nameChanged(toId);
+        emit q->nameChanged(q->name());
     }
 }
 
@@ -96,8 +74,11 @@ KActivityInfo::KActivityInfo(const QString &activityId, QObject *parent)
       d(new Private(this, activityId))
 {
     d->id = activityId;
-    connect(Private::manager(), SIGNAL(ActivityNameChanged(const QString &, const QString &)),
-            this, SLOT(activityNameChanged(const QString &, const QString &)));
+    qDebug() << "KActivityInfo::KActivityInfo connecting" <<
+    connect(KActivityManager::self(), SIGNAL(ActivityChanged(const QString &)),
+            this, SLOT(activityChanged(const QString &)));
+
+    qDebug() << "KActivityInfo" << name() << icon() << isValid();
 }
 
 KActivityInfo::~KActivityInfo()
@@ -107,8 +88,7 @@ KActivityInfo::~KActivityInfo()
 
 bool KActivityInfo::isValid() const
 {
-    return Private::manager()->AvailableActivities().value().contains(d->id) ||
-           Private::s_store->listAvailable().value().contains(d->id);
+    return (KActivityManager::self()->ActivityState(d->id) != Invalid);
 }
 
 void KActivityInfo::associateResource(const KUrl & resource, ResourceType resourceType)
@@ -118,14 +98,16 @@ void KActivityInfo::associateResource(const KUrl & resource, ResourceType resour
 
 void KActivityInfo::associateResource(const KUrl & resource, const KUrl & resourceType)
 {
-    Private::s_store
-        ->associateResource(d->id, resource.url(), resourceType.url());
+    // TODO:
+    // Private::s_store
+    //     ->associateResource(d->id, resource.url(), resourceType.url());
 }
 
 void KActivityInfo::disassociateResource(const KUrl & resource)
 {
-    Private::s_store
-        ->disassociateResource(d->id, resource.url());
+    // TODO:
+    // Private::s_store
+    //     ->disassociateResource(d->id, resource.url());
 }
 
 QList < KUrl > KActivityInfo::associatedResources(ResourceType resourceType) const
@@ -137,16 +119,17 @@ QList < KUrl > KActivityInfo::associatedResources(const KUrl & resourceType) con
 {
     QList < KUrl > result;
 
-    QDBusReply < QStringList > reply = Private::s_store
-        ->associatedResources(d->id, resourceType.url());
+    // TODO:
+    // QDBusReply < QStringList > reply = Private::s_store
+    //     ->associatedResources(d->id, resourceType.url());
 
-    if (reply.isValid()) {
-        QStringList associatedResources = reply.value();
+    // if (reply.isValid()) {
+    //     QStringList associatedResources = reply.value();
 
-        foreach (const QString & uri, associatedResources) {
-            result << KUrl(uri);
-        }
-    }
+    //     foreach (const QString & uri, associatedResources) {
+    //         result << KUrl(uri);
+    //     }
+    // }
 
     return result;
 }
@@ -166,14 +149,18 @@ QList < KUrl > KActivityInfo::associatedResources(const KUrl & resourceType) con
 
 KUrl KActivityInfo::uri() const
 {
-    KACTIVITYINFO_DBUS_CAST_RETURN(
-        QString, KUrl, Private::s_store->uri(d->id));
+    // TODO:
+    return KUrl();
+    // KACTIVITYINFO_DBUS_CAST_RETURN(
+    //     QString, KUrl, Private::s_store->uri(d->id));
 }
 
 KUrl KActivityInfo::resourceUri() const
 {
-    KACTIVITYINFO_DBUS_CAST_RETURN(
-        QString, KUrl, Private::s_store->resourceUri(d->id));
+    // TODO:
+    return KUrl();
+    // KACTIVITYINFO_DBUS_CAST_RETURN(
+    //     QString, KUrl, Private::s_store->resourceUri(d->id));
 }
 
 QString KActivityInfo::id() const
@@ -184,19 +171,19 @@ QString KActivityInfo::id() const
 QString KActivityInfo::name() const
 {
     KACTIVITYINFO_DBUS_CAST_RETURN(
-        QString, QString, Private::manager()->ActivityName(d->id));
+        QString, QString, KActivityManager::self()->ActivityName(d->id));
 }
 
 QString KActivityInfo::icon() const
 {
     KACTIVITYINFO_DBUS_CAST_RETURN(
-        QString, QString, Private::manager()->ActivityIcon(d->id));
+        QString, QString, KActivityManager::self()->ActivityIcon(d->id));
 }
 
 QString KActivityInfo::name(const QString & id)
 {
     KACTIVITYINFO_DBUS_CAST_RETURN(
-        QString, QString, Private::manager()->ActivityName(id));
+        QString, QString, KActivityManager::self()->ActivityName(id));
 }
 
 #undef KACTIVITYINFO_DBUS_CAST_RETURN
@@ -205,10 +192,10 @@ KActivityInfo::Availability KActivityInfo::availability() const
 {
     Availability result = Nothing;
 
-    if (Private::manager()->AvailableActivities().value().contains(d->id)) {
+    if (KActivityManager::self()->ListActivities().value().contains(d->id)) {
         result = BasicInfo;
 
-        if (Private::s_store->listAvailable().value().contains(d->id)) {
+        if (KActivityManager::self()->IsBackstoreAvailable()) {
             result = Everything;
         }
     }

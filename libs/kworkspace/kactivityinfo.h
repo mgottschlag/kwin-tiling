@@ -75,6 +75,17 @@ public:
     };
 
     /**
+     * State of the activity
+     */
+    enum State {
+        Invalid  = 0,
+        Running  = 2,
+        Starting = 3,
+        Stopped  = 4,
+        Stopping = 5
+    };
+
+    /**
      * @returns what info is provided by this instance of KActivityInfo
      */
     Availability availability() const;
@@ -172,7 +183,7 @@ Q_SIGNALS:
 private:
     class Private;
     Private * const d;
-    Q_PRIVATE_SLOT(d, void activityNameChanged(const QString &, const QString &))
+    Q_PRIVATE_SLOT(d, void activityChanged(const QString &))
 };
 
 #endif // ACTIVITY_INFO_H

@@ -18,18 +18,15 @@
 
 #include "kactivityconsumer.h"
 #include "kactivityconsumer_p.h"
-#include "activitymanager_interface.h"
-#include "nepomukactivitiesservice_interface.h"
+#include "kactivitymanager_p.h"
 
 #include <KDebug>
-
-org::kde::ActivityManager * KActivityConsumerPrivate::managerService = 0;
 
 KActivityConsumer::KActivityConsumer(QObject * parent)
     : QObject(parent), d(new KActivityConsumerPrivate())
 {
     connect(
-        d->manager(), SIGNAL(CurrentActivityChanged(const QString &)),
+        KActivityManager::self(), SIGNAL(CurrentActivityChanged(const QString &)),
         this,       SIGNAL(currentActivityChanged(const QString &))
     );
 }
@@ -56,27 +53,32 @@ KActivityConsumer::~KActivityConsumer()
 
 QString KActivityConsumer::currentActivity() const
 {
+    kDebug() << KActivityManager::self()->CurrentActivity().value();
+
     KACTIVITYCONSUMER_DBUS_RETURN(
-        QString, d->manager()->CurrentActivity(), QString() );
+        QString, KActivityManager::self()->CurrentActivity(), QString() );
 }
 
 QStringList KActivityConsumer::availableActivities() const
 {
+    kDebug() << KActivityManager::self()->ListActivities().value();
+    qDebug() << "Activities" << KActivityManager::self()->ListActivities().value();
+
     KACTIVITYCONSUMER_DBUS_RETURN(
-        QStringList, d->manager()->AvailableActivities(), QStringList() );
+        QStringList, KActivityManager::self()->ListActivities(), QStringList() );
 }
 
 QStringList KActivityConsumer::activitiesForResource(const KUrl & uri)
 {
     KACTIVITYCONSUMER_DBUS_RETURN(
-        QStringList, d->manager()->ActivitiesForResource(uri.url()), QStringList() );
+        QStringList, KActivityManager::self()->ActivitiesForResource(uri.url()), QStringList() );
 }
 
 #undef KACTIVITYCONSUMER_DBUS_RETURN
 
 void KActivityConsumer::registerResourceWindow(WId wid, const KUrl & uri)
 {
-    d->manager()->RegisterResourceWindow(
+    KActivityManager::self()->NotifyResourceOpened(
         QCoreApplication::instance()->applicationName(),
         (uint)wid,
         uri.url()
@@ -85,6 +87,9 @@ void KActivityConsumer::registerResourceWindow(WId wid, const KUrl & uri)
 
 void KActivityConsumer::unregisterResourceWindow(WId wid, const KUrl & uri)
 {
-    d->manager()->UnregisterResourceWindow((uint)wid, uri.url());
+    KActivityManager::self()->NotifyResourceClosed(
+        (uint)wid,
+        uri.url()
+    );
 }
 

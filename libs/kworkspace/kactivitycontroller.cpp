@@ -17,41 +17,24 @@
  */
 
 #include "kactivitycontroller.h"
-#include "kactivitycontrollerdbus_p.h"
 #include "kactivityconsumer_p.h"
+#include "kactivitymanager_p.h"
 
 #include <KDebug>
 class KActivityController::Private {
 public:
     Private()
     {
-        if (s_dbusController) {
-            dbusController = s_dbusController;
-        } else {
-            dbusController = QSharedPointer<KActivityControllerDbus>(new KActivityControllerDbus(manager(), 0));
-            s_dbusController = dbusController;
-        }
     }
-
-    QSharedPointer<KActivityControllerDbus> dbusController;
-
-    org::kde::ActivityManager *manager()
-    {
-        return KActivityConsumerPrivate::manager();
-    }
-
-    static QWeakPointer<KActivityControllerDbus> s_dbusController;
 };
-
-QWeakPointer<KActivityControllerDbus> KActivityController::Private::s_dbusController;
 
 KActivityController::KActivityController(QObject * parent)
     : KActivityConsumer(parent), d(new Private())
 {
-    connect(d->dbusController.data(), SIGNAL(activityAdded(QString)), this, SIGNAL(activityAdded(QString)));
-    connect(d->dbusController.data(), SIGNAL(activityRemoved(QString)), this, SIGNAL(activityRemoved(QString)));
-    connect(d->dbusController.data(), SIGNAL(resourceWindowRegistered(QString,uint,QString)), this, SIGNAL(resourceWindowRegistered(QString,uint,QString)));
-    connect(d->dbusController.data(), SIGNAL(resourceWindowUnregistered(uint,QString)), this, SIGNAL(resourceWindowUnregistered(uint,QString)));
+    connect(KActivityManager::self(), SIGNAL(ActivityAdded(QString)), this, SIGNAL(activityAdded(QString)));
+    connect(KActivityManager::self(), SIGNAL(ActivityRemoved(QString)), this, SIGNAL(activityRemoved(QString)));
+    // connect(d->manager(), SIGNAL(resourceWindowRegistered(QString,uint,QString)), this, SIGNAL(resourceWindowRegistered(QString,uint,QString)));
+    // connect(d->manager(), SIGNAL(resourceWindowUnregistered(uint,QString)), this, SIGNAL(resourceWindowUnregistered(uint,QString)));
 }
 
 KActivityController::~KActivityController()
@@ -61,26 +44,26 @@ KActivityController::~KActivityController()
 
 void KActivityController::setActivityName(const QString & id, const QString & name)
 {
-    d->manager()->SetActivityName(id, name);
+    KActivityManager::self()->SetActivityName(id, name);
 }
 
 void KActivityController::setActivityIcon(const QString & id, const QString & icon)
 {
-    d->manager()->SetActivityIcon(id, icon);
+    KActivityManager::self()->SetActivityIcon(id, icon);
 }
 
 bool KActivityController::setCurrentActivity(const QString & id)
 {
-    return d->manager()->SetCurrentActivity(id);
+    return KActivityManager::self()->SetCurrentActivity(id);
 }
 
 QString KActivityController::addActivity(const QString & name)
 {
-    return d->manager()->AddActivity(name);
+    return KActivityManager::self()->AddActivity(name);
 }
 
 void KActivityController::removeActivity(const QString & id)
 {
-    d->manager()->RemoveActivity(id);
+    KActivityManager::self()->RemoveActivity(id);
 }
 

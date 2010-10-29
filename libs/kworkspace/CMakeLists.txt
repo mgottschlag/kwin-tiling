@@ -5,8 +5,8 @@ set(kworkspace_LIB_SRCS kdisplaymanager.cpp
                         kworkspace.cpp
                         kactivityconsumer.cpp
                         kactivitycontroller.cpp
-                        kactivitycontrollerdbus_p.cpp
                         kactivityinfo.cpp
+                        kactivitymanager_p.cpp
    )
 
 if(SOPRANO_PLUGIN_RAPTORPARSER_FOUND AND SHAREDDESKTOPONTOLOGIES_ROOT_DIR)
@@ -50,25 +50,11 @@ set_source_files_properties(${kwin_xml} PROPERTIES INCLUDE "interface_util.h")
 
 qt4_add_dbus_interface( kworkspace_LIB_SRCS ${kwin_xml} kwin_interface )
 
-qt4_add_dbus_adaptor(
-    kworkspace_LIB_SRCS
-    org.kde.ActivityController.xml
-    kactivitycontrollerdbus_p.h
-    KActivityControllerDbus
-)
-
 qt4_add_dbus_interface(
     kworkspace_LIB_SRCS
     org.kde.ActivityManager.xml
     activitymanager_interface
 )
-
-qt4_add_dbus_interface(
-    kworkspace_LIB_SRCS
-    org.kde.nepomuk.ActivitiesService.xml
-    nepomukactivitiesservice_interface
-)
-
 
 if(WIN32)
     set (LIB_MODE)

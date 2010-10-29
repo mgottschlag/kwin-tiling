@@ -20,7 +20,6 @@
 #define ACTIVITY_INFO_PH
 
 #include "activitymanager_interface.h"
-#include "nepomukactivitiesservice_interface.h"
 #include "kactivityinfo.h"
 
 class KActivityInfo::Private {
@@ -28,16 +27,10 @@ public:
     Private(KActivityInfo *info, const QString &activityId);
 
     KUrl urlForType(KActivityInfo::ResourceType resourceType) const;
-    void activityNameChanged(const QString &, const QString &) const;
+    void activityChanged(const QString &) const;
 
     KActivityInfo *q;
     QString id;
-
-    //TODO: reference counted
-    static org::kde::nepomuk::services::NepomukActivitiesService * s_store;
-    static org::kde::ActivityManager * s_manager;
-
-    static org::kde::ActivityManager * manager();
 };
 
 #endif // ACTIVITY_INFO_PH

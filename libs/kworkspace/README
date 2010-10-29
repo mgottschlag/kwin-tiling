@@ -1,14 +1,6 @@
 Until the KActivity* classes go to kdelibs, the
 following files in kdebase need to be synced
 
-workspace/libs/kworkspace/org.kde.ActivityController.xml
-runtime/activitymanager/org.kde.ActivityController.xml
-
 workspace/libs/kworkspace/org.kde.ActivityManager.xml
 runtime/activitymanager/org.kde.ActivityManager.xml
-
-workspace/libs/kworkspace/org.kde.nepomuk.ActivitiesService.xml
-runtime/nepomuk/services/activities/org.kde.nepomuk.ActivitiesService.xml
-
-
 

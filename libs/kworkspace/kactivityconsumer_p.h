@@ -22,22 +22,6 @@
 #include "activitymanager_interface.h"
 
 class KActivityConsumerPrivate {
-private:
-    static org::kde::ActivityManager * managerService;
-
-public:
-    static org::kde::ActivityManager * manager()
-    {
-        if (!managerService) {
-            managerService = new org::kde::ActivityManager(
-                "org.kde.ActivityManager",
-                "/ActivityManager",
-                QDBusConnection::sessionBus()
-            );
-        }
-
-        return managerService;
-    }
 };
 
 #endif // ACTIVITY_CONSUMER_H
