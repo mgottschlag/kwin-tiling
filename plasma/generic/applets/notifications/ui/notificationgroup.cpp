@@ -37,7 +37,6 @@ NotificationGroup::NotificationGroup(Extender *parent, uint groupId)
    : Plasma::ExtenderGroup(parent, groupId)
 {
     setTransient(true);
-    setAutoCollapse(true);
     config().writeEntry("type", "notification");
     setName("notifications");
     setTitle(i18n("Notifications"));
@@ -61,6 +60,8 @@ NotificationGroup::NotificationGroup(Extender *parent, uint groupId)
     m_tabsLayout->addStretch();
 
     setWidget(widget);
+    setCollapsed(true);
+    setAutoCollapse(false);
 }
 
 NotificationGroup::~NotificationGroup()
@@ -113,6 +114,10 @@ void NotificationGroup::addNotification(Notification *notification)
 
     if (!found) {
         m_notificationBar->addTab(notification->applicationIcon(), notification->applicationName());
+        if (m_notificationBar->count() > 2) {
+            setCollapsed(false);
+            setAutoCollapse(true);
+        }
     }
 
     if (items().count() == 1) {
@@ -176,6 +181,11 @@ void NotificationGroup::removeNotification(Notification *notification)
                 m_notificationBar->setCurrentIndex(0);
             }
             m_notificationBar->removeTab(i);
+            //2 tabs means just "all" and a single application, no need to display it
+            if (m_notificationBar->count() <= 2) {
+                setCollapsed(true);
+                setAutoCollapse(false);
+            }
         }
     }
 }
