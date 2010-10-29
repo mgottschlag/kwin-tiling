@@ -666,9 +666,9 @@ the slider to configure the delay un-shading.
 <title>Window Tabbing</title>
 
 <varlistentry>
-<term><guilabel>When turned on attempt to automatically detect when a newly opened window is 
-"related to an existing one and place them in the same window group.</guilabel></term>
-<listitem><para>
+<term>When turned on attempt to automatically detect when a newly opened window is 
+related to an existing one and place them in the same window group.</term>
+<listitem><para>&nbsp;
 </para></listitem>
 </varlistentry>
 
