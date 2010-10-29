@@ -31,7 +31,7 @@ JobTotalsWidget::JobTotalsWidget(Job *job, QGraphicsWidget *parent)
       m_job(job),
       m_updateTimerId(0)
 {
-    m_extenderItem = qobject_cast<Plasma::ExtenderItem *>(parent),
+    m_extenderGroup = qobject_cast<Plasma::ExtenderGroup *>(parent),
 
     setSvg("widgets/bar_meter_horizontal");
     setMeterType(Plasma::Meter::BarMeterHorizontal);
@@ -76,9 +76,13 @@ void JobTotalsWidget::updateJob()
 {
     setValue(m_job->percentage());
 
-    if (m_extenderItem) {
-        m_extenderItem->setTitle(m_job->message());
-        m_extenderItem->setIcon(m_job->applicationIconName());
+    if (m_extenderGroup) {
+        if (m_extenderGroup->items().count() > 1 || m_extenderGroup->isGroupCollapsed()) {
+            m_extenderGroup->setTitle(m_job->message());
+        } else {
+            m_extenderGroup->setTitle(i18nc("Generic title for the job transfer popup", "Jobs"));
+        }
+        m_extenderGroup->setIcon(m_job->applicationIconName());
     } else {
         setLabelAlignment(0, Qt::AlignLeft|Qt::AlignVCenter);
         setLabel(0, m_job->message());

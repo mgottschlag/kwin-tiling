@@ -279,12 +279,18 @@ void Notifications::addNotification(Notification *notification)
 
 void Notifications::addJob(Job *job)
 {
+    Plasma::ExtenderGroup *group = extender()->group("jobGroup");
+
     Plasma::ExtenderItem *extenderItem = new Plasma::ExtenderItem(extender());
     extenderItem->setTransient(true);
     extenderItem->config().writeEntry("type", "job");
     extenderItem->setWidget(new JobWidget(job, extenderItem));
 
-    extenderItem->setGroup(extender()->group("jobGroup"));
+    extenderItem->setGroup(group);
+
+    if (group) {
+        group->setCollapsed(group->items().count() < 2);
+    }
 
     if (isPopupShowing()) {
         return;
@@ -332,6 +338,10 @@ void Notifications::initExtenderItem(Plasma::ExtenderItem *extenderItem)
     if (extenderItem->name() == "jobGroup") {
         m_jobSummaryWidget = new JobTotalsWidget(m_manager->jobTotals(), extenderItem);
         extenderItem->setWidget(m_jobSummaryWidget);
+        Plasma::ExtenderGroup *group = qobject_cast<Plasma::ExtenderGroup*>(extenderItem);
+        if (group) {
+            extenderItem->setCollapsed(!group->isGroupCollapsed());
+        }
         return;
     }
 
@@ -387,6 +397,12 @@ void Notifications::finishJob(Job *job)
     CompletedJobNotification *notification = new CompletedJobNotification(this);
     notification->setJob(job);
     m_manager->addNotification(notification);
+
+    Plasma::ExtenderGroup *group = extender()->group("jobGroup");
+    if (group) {
+        // < 3 because the second still hasn't been removed from the extendergroup
+        group->setCollapsed(!group->isGroupCollapsed() && group->items().count() < 3);
+    }
 }
 
 void Notifications::open(const QString &url)

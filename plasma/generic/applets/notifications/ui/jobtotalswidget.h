@@ -27,7 +27,7 @@
 
 #include <plasma/widgets/meter.h>
 #include <Plasma/Service>
-#include <Plasma/ExtenderItem>
+#include <Plasma/ExtenderGroup>
 #include <plasma/dataengine.h>
 
 namespace Plasma
@@ -56,7 +56,7 @@ class JobTotalsWidget : public Plasma::Meter
     private:
         void updateJob();
 
-        Plasma::ExtenderItem *m_extenderItem;
+        Plasma::ExtenderGroup *m_extenderGroup;
         Job *m_job;
         int m_updateTimerId;
 };
