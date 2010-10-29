@@ -175,15 +175,46 @@ public:
 
 Q_SIGNALS:
     /**
-     * Emitted when the activity's name is changed
-     * @param newName new name of the activity
+     * Emitted when the activity's name, icon or description is changed
      */
-    void nameChanged(const QString & newName);
+    void changed();
+
+    /**
+     * Emitted when the activity is added
+     */
+    void added();
+
+    /**
+     * Emitted when the activity is removed
+     */
+    void removed();
+
+    /**
+     * Emitted when the activity is started
+     */
+    void started();
+
+    /**
+     * Emitted when the activity is stopped
+     */
+    void stopped();
+
+    /**
+     * Emitted when the activity changes state
+     * @param state new state of the activity
+     */
+    void stateChanged(State state);
 
 private:
     class Private;
     Private * const d;
-    Q_PRIVATE_SLOT(d, void activityChanged(const QString &))
+
+    Q_PRIVATE_SLOT(d, void activityStateChanged(const QString &, KActivityInfo::State))
+    Q_PRIVATE_SLOT(d, void added(const QString &))
+    Q_PRIVATE_SLOT(d, void removed(const QString &))
+    Q_PRIVATE_SLOT(d, void started(const QString &))
+    Q_PRIVATE_SLOT(d, void stopped(const QString &))
+    Q_PRIVATE_SLOT(d, void changed(const QString &))
 };
 
 #endif // ACTIVITY_INFO_H

@@ -61,10 +61,24 @@ KUrl KActivityInfo::Private::urlForType(KActivityInfo::ResourceType resourceType
     }
 }
 
-void KActivityInfo::Private::activityChanged(const QString &idChanged) const
+#define IMPLEMENT_SIGNAL_HANDLER(ORIGINAL, INTERNAL) \
+    void KActivityInfo::Private::INTERNAL(const QString & _id) const  \
+    {                                                                 \
+        if (id == _id) emit q->INTERNAL();                            \
+    }
+
+IMPLEMENT_SIGNAL_HANDLER(ActivityAdded,   added)
+IMPLEMENT_SIGNAL_HANDLER(ActivityRemoved, removed)
+IMPLEMENT_SIGNAL_HANDLER(ActivityStarted, started)
+IMPLEMENT_SIGNAL_HANDLER(ActivityStopped, stopped)
+IMPLEMENT_SIGNAL_HANDLER(ActivityChanged, changed)
+
+#undef IMPLEMENT_SIGNAL_HANDLER
+
+void KActivityInfo::Private::activityStateChanged(const QString & idChanged, KActivityInfo::State state) const
 {
     if (idChanged == id) {
-        emit q->nameChanged(q->name());
+        emit q->stateChanged(state);
     }
 }
 
@@ -74,9 +88,29 @@ KActivityInfo::KActivityInfo(const QString &activityId, QObject *parent)
       d(new Private(this, activityId))
 {
     d->id = activityId;
+    qDebug() << "KActivityInfo::KActivityInfo connecting 1" <<
+    connect(KActivityManager::self(), SIGNAL(ActivityStateChanged(const QString &, int)),
+            this, SLOT(activityChanged(const QString &, int)));
+
     qDebug() << "KActivityInfo::KActivityInfo connecting" <<
     connect(KActivityManager::self(), SIGNAL(ActivityChanged(const QString &)),
-            this, SLOT(activityChanged(const QString &)));
+            this, SLOT(changed(const QString &)));
+
+    qDebug() << "KActivityInfo::KActivityInfo connecting" <<
+    connect(KActivityManager::self(), SIGNAL(ActivityAdded(const QString &)),
+            this, SLOT(added(const QString &)));
+
+    qDebug() << "KActivityInfo::KActivityInfo connecting" <<
+    connect(KActivityManager::self(), SIGNAL(ActivityRemoved(const QString &)),
+            this, SLOT(removed(const QString &)));
+
+    qDebug() << "KActivityInfo::KActivityInfo connecting" <<
+    connect(KActivityManager::self(), SIGNAL(ActivityStarted(const QString &)),
+            this, SLOT(started(const QString &)));
+
+    qDebug() << "KActivityInfo::KActivityInfo connecting" <<
+    connect(KActivityManager::self(), SIGNAL(ActivityStopped(const QString &)),
+            this, SLOT(stopped(const QString &)));
 
     qDebug() << "KActivityInfo" << name() << icon() << isValid();
 }
