@@ -566,7 +566,7 @@ static void createWindow()
     XClassHint class_hint;
     class_hint.res_name = const_cast< char* >( "ksplashx" );
     class_hint.res_class = const_cast< char* >( "ksplashx" );
-    XSetWMProperties( qt_xdisplay(), window, NULL, NULL, NULL, NULL, NULL, NULL, &class_hint );
+    XSetWMProperties( qt_xdisplay(), window, NULL, NULL, NULL, 0, NULL, NULL, &class_hint );
     XMapRaised( qt_xdisplay(), window );
     }
 

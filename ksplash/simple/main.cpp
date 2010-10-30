@@ -157,7 +157,7 @@ int main( int argc, char* argv[])
         XClassHint class_hint;
         class_hint.res_name = const_cast< char* >( "ksplashsimple" );
         class_hint.res_class = const_cast< char* >( "ksplashsimple" );
-        XSetWMProperties( dpy, wins[ i ], NULL, NULL, NULL, NULL, NULL, NULL, &class_hint );
+        XSetWMProperties( dpy, wins[ i ], NULL, NULL, NULL, 0, NULL, NULL, &class_hint );
         XMapWindow( dpy, wins[ i ] );
         }
     int pos = 0;
