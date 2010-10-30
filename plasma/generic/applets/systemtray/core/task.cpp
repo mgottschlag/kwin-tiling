@@ -177,20 +177,14 @@ Task::Status Task::status() const
 
 void Task::resetHiddenStatus()
 {
-    if (d->status == NeedsAttention) {
-        setOrder(First);
-        if (hidden() & AutoHidden) {
-            setHidden(hidden() ^ AutoHidden);
-        }
-    } else {
-        if (d->status == Active && (hidden() & AutoHidden)) {
-            setHidden(hidden() ^ AutoHidden);
-        } else if (d->status == Passive) {
-            setHidden(hidden() | AutoHidden);
-        }
-
-        setOrder(Normal);
+    //Apparently setOrder(First) when d->status == NeedsAttention seems the most hated feature ever :/
+    if ((d->status == Active || d->status == NeedsAttention) && (hidden() & AutoHidden)) {
+        setHidden(hidden() ^ AutoHidden);
+    } else if (d->status == Passive) {
+        setHidden(hidden() | AutoHidden);
     }
+
+    setOrder(Normal);
 }
 
 }
