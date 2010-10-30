@@ -1,6 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Photos Activity
+Name[ia]=Activitate de Photos
+Name[nl]=Activiteit met foto's
+Name[pt]=Actividade de Fotografias
+Name[uk]=Простір дій фотографій
 Name[x-test]=xxPhotos Activityxx
 Icon=digikam
 Type=Service
