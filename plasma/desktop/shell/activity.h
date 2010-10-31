@@ -83,9 +83,13 @@ public:
      */
     void setDefaultPlugin(const QString &plugin);
 
+    /**
+     * @returns the info object for this activity
+     */
+    const KActivityInfo * info() const;
+
 signals:
-    void nameChanged(const QString &name);
-    void iconChanged(const QString &icon);
+    void changed();
 
     void opened();
     void closed();
@@ -122,6 +126,7 @@ public slots:
 private slots:
     void updateActivityName(Plasma::Context *context);
     void containmentDestroyed(QObject *object);
+    void activityChanged();
 
 private:
     void activateContainment(int screen, int desktop);

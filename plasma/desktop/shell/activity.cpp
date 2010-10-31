@@ -47,7 +47,7 @@ Activity::Activity(const QString &id, QObject *parent)
       m_id(id),
       m_info(new KActivityInfo(id, this))
 {
-    connect(m_info, SIGNAL(nameChanged(QString)), this, SLOT(setName(QString)));
+    // connect(m_info, SIGNAL(changed()), this, SLOT(setName(QString)));
 
     if (m_info) {
         m_name = m_info->name();
@@ -74,6 +74,11 @@ Activity::~Activity()
 {
 }
 
+void Activity::activityChanged()
+{
+    setName(m_info->name());
+    setIcon(m_info->icon());
+}
 
 QString Activity::id()
 {
@@ -200,7 +205,7 @@ void Activity::setName(const QString &name)
 
     m_name = name;
     KActivityController().setActivityName(m_id, name);
-    emit nameChanged(name);
+    emit changed();
 
     foreach (Plasma::Containment *c, m_containments) {
         c->context()->setCurrentActivity(name);
@@ -210,7 +215,7 @@ void Activity::setName(const QString &name)
 void Activity::setIcon(const QString &icon)
 {
     KActivityController().setActivityIcon(m_id, icon);
-    emit iconChanged(icon);
+    emit changed();
 }
 
 void Activity::updateActivityName(Plasma::Context *context)
@@ -364,6 +369,11 @@ void Activity::setDefaultPlugin(const QString &plugin)
 {
     m_plugin = plugin;
     //FIXME save&restore this setting
+}
+
+const KActivityInfo * Activity::info() const
+{
+    return m_info;
 }
 
 #include "activity.moc"
