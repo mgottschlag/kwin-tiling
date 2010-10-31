@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Activity Bar
 Name[ar]=شريط الأنشطة
+Name[ast]=Barra de xera
 Name[be@latin]=Panel zaniatkaŭ
 Name[bg]=Лента за активност
 Name[ca]=Barra d'activitat
@@ -70,6 +71,7 @@ Name[zh_CN]=活动栏
 Name[zh_TW]=活動列
 Comment=Tab bar to switch activities
 Comment[ar]=شريط ألسنة للتبديل بين الأنشطة
+Comment[ast]=Barra de llingüetes pa camudar actividaes
 Comment[bg]=Лента за превключване на активността
 Comment[ca]=Barra de pestanyes per a canviar d'activitats
 Comment[ca@valencia]=Barra de pestanyes per a canviar d'activitats

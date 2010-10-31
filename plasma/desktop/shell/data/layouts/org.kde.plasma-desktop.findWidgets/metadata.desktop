@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Find Widgets
+Name[ast]=Guetar componentes
 Name[ca]=Cerca estris
 Name[de]=Miniprogramme suchen
 Name[en_GB]=Find Widgets
@@ -20,6 +21,7 @@ Name[pt]=Procurar Elementos
 Name[pt_BR]=Localizar widgets
 Name[ru]=Поиск виджетов
 Name[sv]=Sök efter grafiska komponenter
+Name[th]=ค้นหาวิดเจ็ต
 Name[uk]=Пошук віджетів
 Name[x-test]=xxFind Widgetsxx
 Name[zh_TW]=尋找元件

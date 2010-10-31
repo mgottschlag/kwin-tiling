@@ -4,6 +4,7 @@
 [KdmGreeterTheme]
 Greeter=ethais.xml
 Name=Ethais
+Name[ast]=Ethais
 Name[ca]=Ethais
 Name[ca@valencia]=Ethais
 Name[cs]=Ethais

@@ -2,6 +2,7 @@
 Name=Task Manager
 Name[af]=Taakbestuurder
 Name[ar]=مدير المهام
+Name[ast]=Xestor de xeres
 Name[be]=Кіраванне заданнямі
 Name[be@latin]=Kiraŭnik zadańniaŭ
 Name[bg]=Мениджър на задачи
@@ -79,6 +80,7 @@ Name[zh_CN]=任务管理器
 Name[zh_TW]=工作管理員
 Comment=Switch between running applications
 Comment[ar]=بدّل بين التطبيقات التي تعمل
+Comment[ast]=Camudar ente aplicaciones n'execución
 Comment[be@latin]=Pieraklučeńnie dziejnych aplikacyjaŭ
 Comment[bg]=Превключване между стартирани програми
 Comment[ca]=Commuta entre aplicacions en execució

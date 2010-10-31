@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Device Information
 Name[ar]=معلومات الأجهزة
+Name[ast]=Información del preséu
 Name[be@latin]=Źviestki z pryłady
 Name[bg]=Информация за устройства
 Name[bn]=ডিভাইস তথ্য
@@ -73,6 +74,7 @@ Name[zh_CN]=设备信息
 Name[zh_TW]=裝置資訊
 Comment=Device data via Solid
 Comment[ar]=بيانات الأجهزة عن طريق سوليد
+Comment[ast]=Datos de preséu vía Solid
 Comment[bg]=Данни за устройствата (чрез Solid)
 Comment[ca]=Dades dels dispositius via Solid
 Comment[ca@valencia]=Dades dels dispositius via Solid

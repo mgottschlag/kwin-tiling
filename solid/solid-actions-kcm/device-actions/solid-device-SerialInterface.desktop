@@ -1,6 +1,7 @@
 [Desktop Action driverHandle]
 Name=Driver Handle
 Name[ar]=مقبض المشغل
+Name[ast]=Controlador de preséu
 Name[bg]=Управление на драйвера
 Name[bn]=ড্রাইভার হ্যাণ্ডল
 Name[ca]=Gestor de controlador
@@ -64,6 +65,7 @@ Name[zh_TW]=驅動程式處理
 [Desktop Action port]
 Name=Port
 Name[ar]=المنفذ
+Name[ast]=Puertu
 Name[bg]=Порт
 Name[bn]=পোর্ট
 Name[ca]=Port
@@ -131,6 +133,7 @@ Name[zh_TW]=連接埠
 [Desktop Action serialType]
 Name=Serial Type
 Name[ar]=نوع التسلسل
+Name[ast]=Triba serie
 Name[bg]=Сериен тип
 Name[bn]=সিরিয়াল টাইপ
 Name[ca]=Tipus de sèrie
@@ -199,6 +202,7 @@ Name[zh_TW]=序列類型
 Actions=driverHandle;port;serialType;
 Name=Solid Device
 Name[ar]=جهاز في سوليد
+Name[ast]=Preseos de Solid
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

@@ -1,6 +1,7 @@
 [Misc]
 Name=Cleanlooks
 Name[ar]=المظهر النظيف
+Name[ast]=Cleanlooks
 Name[ca]=Cleanlooks
 Name[ca@valencia]=Cleanlooks
 Name[cs]=Cleanlooks
@@ -60,6 +61,7 @@ Name[zh_CN]=Cleanlooks
 Name[zh_TW]=乾淨外觀
 Comment=Built-in unthemed style similar to Clearlooks from GNOME
 Comment[ar]=نمط مضمّن من دون سمة مشابه للمظهر النقي من جنوم
+Comment[ast]=Estilu integráu ensin tema asemeyáu al Clearlooks de GNOME
 Comment[ca]=Un estil sense tema integrat, similar al Clearlooks de GNOME
 Comment[ca@valencia]=Un estil sense tema integrat, similar al Clearlooks de GNOME
 Comment[cs]=Zabudovaný styl bez motivu podobný Clearlooks z GNOME

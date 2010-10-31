@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Hard Disk Status
 Name[ar]=حالة القرص الثابت
+Name[ast]=Estáu del discu duru
 Name[ca]=Estat del disc dur
 Name[ca@valencia]=Estat del disc dur
 Name[cs]=Stav pevného disku
@@ -51,6 +52,7 @@ Name[zh_CN]=硬盘状态
 Name[zh_TW]=硬碟狀態
 Comment=A hard disk usage monitor
 Comment[ar]=يراقب استعمال القرص الصلب
+Comment[ast]=Monitor del usu de discu
 Comment[be@latin]=Nazirańnik zaniataści ćviordaha dysku
 Comment[bg]=Наблюдение натоварването на твърдия диск
 Comment[ca]=Un controlador d'ús del disc dur

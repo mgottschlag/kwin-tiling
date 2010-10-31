@@ -1,6 +1,7 @@
 [Desktop Action hwAddress]
 Name=Hw Address
 Name[ar]=عنوان العتاد
+Name[ast]=Direición HW
 Name[bg]=Hw адрес
 Name[bn]=Hw অ্যাড্রেস
 Name[ca]=Adreça maquinari
@@ -69,6 +70,7 @@ Name[zh_TW]=硬體位址
 [Desktop Action ifaceName]
 Name=Iface Name
 Name[ar]=اسم الواجهة
+Name[ast]=Nome d'interface
 Name[bg]=Iface
 Name[bn]=Iface-এর নাম
 Name[ca]=Nom d'interfície
@@ -135,6 +137,7 @@ Name[zh_TW]=介面名稱
 [Desktop Action macAddress]
 Name=Mac Address
 Name[ar]=عنوان Mac
+Name[ast]=Direición MAC
 Name[bg]=МАС адрес
 Name[bn]=ম্যাক অ্যাড্রেস
 Name[ca]=Adreça MAC
@@ -204,6 +207,7 @@ Name[zh_TW]=Mac 位址
 [Desktop Action wireless]
 Name=Wireless
 Name[ar]=لاسلكي
+Name[ast]=Inalámbricu
 Name[bg]=Безжична мрежа
 Name[bn]=ওয়্যারলেস
 Name[ca]=Xarxa sense fils
@@ -272,6 +276,7 @@ Name[zh_TW]=無線
 Actions=hwAddress;ifaceName;macAddress;wireless;
 Name=Solid Device
 Name[ar]=جهاز في سوليد
+Name[ast]=Preseos de Solid
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

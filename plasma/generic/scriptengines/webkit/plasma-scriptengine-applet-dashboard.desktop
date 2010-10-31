@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Dashboard
 Name[ar]=لوحة الودجات
+Name[ast]=Tableru de mandos
 Name[be@latin]=Dashboard
 Name[bg]=Табло
 Name[bn]=ড্যাশবোর্ড
@@ -72,6 +73,7 @@ Name[zh_CN]=部件板
 Name[zh_TW]=資訊看板
 Comment=MacOS X dashboard widget
 Comment[ar]=ودجة لوحة MacOS
+Comment[ast]=Elementu gráficu del tableru de mandos de MacOS X
 Comment[be@latin]=Widžet „Dashboard” systemy „MacOS X”.
 Comment[bg]=Джаджа MacOS X
 Comment[ca]=Estri del tauler del MacOS X

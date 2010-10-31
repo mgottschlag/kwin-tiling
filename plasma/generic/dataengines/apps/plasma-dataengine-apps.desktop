@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Application Information
 Name[ar]=معلومات التطبيقات
+Name[ast]=Información de l'aplicación
 Name[bn]=অ্যাপলিকেশন তথ্য
 Name[ca]=Informació de les aplicacions
 Name[ca@valencia]=Informació de les aplicacions
@@ -61,6 +62,7 @@ Name[zh_CN]=程序信息
 Name[zh_TW]=應用程式資訊
 Comment=Information and launching of all applications in the app menu.
 Comment[ar]=معلومات وتشغيل جميع البرامج في قائمة البرامج
+Comment[ast]=Información y execución de toles aplicaciones nel menú d'aplicaciones.
 Comment[ca]=Informació i execució de totes les aplicacions en el menú d'aplicacions.
 Comment[ca@valencia]=Informació i execució de totes les aplicacions en el menú d'aplicacions.
 Comment[cs]=Informace a spouštění všech aplikací v menu aplikací.

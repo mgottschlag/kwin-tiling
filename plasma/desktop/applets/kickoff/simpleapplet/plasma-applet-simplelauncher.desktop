@@ -2,6 +2,7 @@
 Name=Application Launcher Menu
 Name[af]=Programlanseerder-kieslys
 Name[ar]=قائمة مطلق التطبيقات
+Name[ast]=Menú del llanzador d'aplicaciones
 Name[be@latin]=Menu dla ŭklučeńnia aplikacyjaŭ
 Name[bg]=Стартиране на програми
 Name[bn]=অ্যাপলিকেশন লঞ্চার মেনু
@@ -75,6 +76,7 @@ Name[zh_TW]=應用程式啟動器選單
 Comment=Traditional menu based application launcher
 Comment[af]=Tradisionele kieslys as programlanseerder
 Comment[ar]=مطلق تطبيقات تقليدي على شكل قائمة
+Comment[ast]=Llanzador d'aplicaciones tradicional basáu en menú
 Comment[be@latin]=Tradycyjnaje menu dla ŭklučeńnia aplikacyjaŭ
 Comment[bg]=Традиционно стартиране на програми
 Comment[ca]=Llançador d'aplicacions basat en el menú tradicional

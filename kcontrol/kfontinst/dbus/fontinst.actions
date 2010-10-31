@@ -2,6 +2,7 @@
 Name=Font Installer
 Name[af]=Skrif tipe Installeerder
 Name[ar]=مثبت الخطوط
+Name[ast]=Instalador de tribes de lletra
 Name[be]=Устаноўка шрыфтоў
 Name[be@latin]=Instalatar šryftoŭ
 Name[bg]=Шрифтове
@@ -92,6 +93,7 @@ Icon=preferences-desktop-font-installer
 [org.kde.fontinst.manage]
 Name=Manage system-wide fonts.
 Name[ar]=أدر الخطوط على مستوى النظام
+Name[ast]=Xestión de tribes de lletra del sistema.
 Name[ca]=Gestiona els tipus de lletra del sistema.
 Name[ca@valencia]=Gestiona els tipus de lletra del sistema.
 Name[cs]=Spravovat systémová písma.
@@ -149,6 +151,7 @@ Name[zh_CN]=管理系统字体。
 Name[zh_TW]=管理系統字型。
 Description=Modifying the system-wide font configuration requires privileges.
 Description[ar]=تعديل الخطوط على مستوى النظام يحتاج إلى تصريحات
+Description[ast]=Necesítense privilexos pa camudar la configuración global del sistema de tribes de lletra.
 Description[ca]=La modificació de la configuració dels tipus de lletra del sistema requereix privilegis.
 Description[ca@valencia]=La modificació de la configuració dels tipus de lletra del sistema requereix privilegis.
 Description[csb]=Do sprôwianiô sytemòwą szérzą fòntów nót je ekstra pawów.

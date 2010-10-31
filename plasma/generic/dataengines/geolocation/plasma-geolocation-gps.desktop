@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Geolocation GPS
 Name[ar]=الموقع الجغرافي جي بي اس
+Name[ast]=Xeollocalización per aciu de GPS
 Name[bg]=Геолокация GPS
 Name[ca]=Geolocalització GPS
 Name[ca@valencia]=Geolocalització GPS
@@ -62,6 +63,7 @@ Name[zh_CN]=GPS 位置
 Name[zh_TW]=Geolocation GPS
 Comment=Geolocation from GPS address.
 Comment[ar]=الموقع الجغرافي من عنوان جي بي اس
+Comment[ast]=Xeollocalización dende una direición GPS.
 Comment[bg]=Геолокация от GPS адрес.
 Comment[ca]=Geolocalització des d'una adreça GPS.
 Comment[ca@valencia]=Geolocalització des d'una adreça GPS.

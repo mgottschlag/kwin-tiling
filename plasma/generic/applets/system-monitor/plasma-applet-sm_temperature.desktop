@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Hardware Temperature
 Name[ar]=حرارة العتاد
+Name[ast]=Temperatura del hardware
 Name[ca]=Temperatura del maquinari
 Name[ca@valencia]=Temperatura del maquinari
 Name[cs]=Teplota hardwaru
@@ -51,6 +52,7 @@ Name[zh_CN]=硬件温度计
 Name[zh_TW]=硬體溫度
 Comment=A system temperature monitor
 Comment[ar]=يراقب حرارة النظام
+Comment[ast]=Monitor de la temperatura del sistema
 Comment[be@latin]=Nazirańnik za temperaturaju systemy
 Comment[bg]=Наблюдение на температурата на компютъра
 Comment[ca]=Un controlador de la temperatura del sistema

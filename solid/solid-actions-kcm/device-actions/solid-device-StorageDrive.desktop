@@ -1,6 +1,7 @@
 [Desktop Action bus]
 Name=Bus
 Name[ar]=الناقل
+Name[ast]=Bus
 Name[bg]=Шина
 Name[bn]=বাস
 Name[ca]=Bus
@@ -69,6 +70,7 @@ Name[zh_TW]=匯流排
 [Desktop Action driveType]
 Name=Drive Type
 Name[ar]=نوع المشغل
+Name[ast]=Triba de discu
 Name[bg]=Тип устройство
 Name[bn]=ড্রাইভ-এর ধরন
 Name[ca]=Tipus d'unitat
@@ -138,6 +140,7 @@ Name[zh_TW]=磁碟型態
 [Desktop Action hotpluggable]
 Name=Hotpluggable
 Name[ar]=قابل للتوصيل
+Name[ast]=Conexón en caliente
 Name[bn]=হট-প্লাগ-যোগ্য
 Name[ca]=Connectable en calent
 Name[ca@valencia]=Connectable en calent
@@ -201,6 +204,7 @@ Name[zh_TW]=可熱插拔
 [Desktop Action removable]
 Name=Removable
 Name[ar]=قابل للإزالة
+Name[ast]=Estrayible
 Name[bg]=Преносим
 Name[bn]=অপসারণযোগ্য
 Name[ca]=Extraïble
@@ -268,6 +272,7 @@ Name[zh_TW]=可移除
 [Desktop Action size]
 Name=Size
 Name[ar]=الحجم
+Name[ast]=Tamañu
 Name[bg]=Големина
 Name[bn]=মাপ
 Name[ca]=Mida
@@ -336,6 +341,7 @@ Name[zh_TW]=大小
 Actions=bus;driveType;hotpluggable;removable;size;
 Name=Solid Device
 Name[ar]=جهاز في سوليد
+Name[ast]=Preseos de Solid
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

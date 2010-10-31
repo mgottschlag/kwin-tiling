@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Calendar
 Name[ar]=التقويم
+Name[ast]=Calendariu
 Name[be@latin]=Kalandar
 Name[bg]=Календар
 Name[bn]=ক্যালেণ্ডার
@@ -73,6 +74,7 @@ Name[zh_CN]=日历
 Name[zh_TW]=行事曆
 Comment=View and pick dates from the calendar
 Comment[ar]=اعرض واختر تواريخاً من تقويمك
+Comment[ast]=Ver y coyer feches del calendariu
 Comment[be@latin]=Prahladaj i vybiraj daty z kalendara
 Comment[bg]=Преглед и избор на дати от календара
 Comment[ca]=Vegeu i seleccioneu dates del calendari

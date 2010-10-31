@@ -2,6 +2,7 @@
 Name=Date and Time
 Name[ar]=التاريخ و الوقت
 Name[as]=তাৰিখ আৰু সময়
+Name[ast]=Data y hora
 Name[be@latin]=Data j čas
 Name[bg]=Дата и час
 Name[bn]=তারিখ এবং সময়
@@ -74,6 +75,7 @@ Name[zh_CN]=日期和时间
 Name[zh_TW]=日期與時間
 Comment=Date and time by timezone
 Comment[ar]=التاريخ و الوقت بواسطة المنطقة الزمنية
+Comment[ast]=Data y hora por estaya horaria
 Comment[bg]=Настройване на датата и часа
 Comment[bn]=টাইম-জোন অনুসারে তারিখ এবং সময়
 Comment[ca]=Data i l'hora per zona horària

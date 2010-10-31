@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=imagebin.ca
+Name[ast]=imagebin.ca
 Name[de]=imagebin.ca
 Name[en_GB]=imagebin.ca
 Name[es]=imagebin.ca
@@ -22,6 +23,7 @@ Name[uk]=imagebin.ca
 Name[x-test]=xximagebin.caxx
 Name[zh_TW]=imagebin.ca
 Comment=Enables the share of images using the imagebin.ca service
+Comment[ast]=Permite compartir imáxenes a traviés del serviciu d'imagebin.ca
 Comment[de]=Ermöglicht die Veröffentlichung von Bildern auf imagebin.ca
 Comment[en_GB]=Enables the share of images using the imagebin.ca service
 Comment[es]=Permite compartir imágenes a través del servicio de imagebin.ca

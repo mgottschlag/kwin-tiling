@@ -6,6 +6,7 @@ InitialPreference=80
 
 Name=Lirc
 Name[ar]=جهاز التحكم عن بعد Lirc
+Name[ast]=Lirc
 Name[bg]=Lirc
 Name[bn]=Lirc
 Name[ca]=LIRC
@@ -71,6 +72,7 @@ Name[zh_TW]=Lirc
 
 Comment=Linux Infrared Remote Control
 Comment[ar]=التحكم عن بعد بواسطة الأشعة تحت الحمراء في Linux
+Comment[ast]=Mandu a distancia por infrarroxos de Linux
 Comment[bn]=লিনাক্স ইনফ্রারেড রিমোট কন্ট্রোল
 Comment[ca]=Control remot per infraroigs de Linux
 Comment[ca@valencia]=Control remot per infraroigs de Linux

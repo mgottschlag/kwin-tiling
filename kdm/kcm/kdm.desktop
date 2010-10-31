@@ -12,6 +12,7 @@ X-KDE-System-Settings-Parent-Category=system-administration
 
 Name=Login Screen
 Name[ar]=شاشة الولوج
+Name[ast]=Pantalla d'accesu
 Name[ca]=Pantalla d'inici de sessió
 Name[ca@valencia]=Pantalla d'inici de sessió
 Name[cs]=Přihlašovací obrazovka
@@ -62,6 +63,7 @@ Name[zh_TW]=登入畫面
 Comment=Configure the login manager (KDM)
 Comment[af]=Konfigureer die aanteken bestuurder (Kdm)
 Comment[ar]=اضبط مدير الولوج (KDM)
+Comment[ast]=Configura'l xestor d'accesu (KDM)
 Comment[be]=Настаўленні кіраўніка ўваходу (KDM)
 Comment[be@latin]=Nałady kiraŭnika ŭvachodaŭ u systemu („KDM”)
 Comment[bg]=Настройване на графичната системата за вход

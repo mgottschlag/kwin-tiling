@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=privatepaste.com
+Name[ast]=privatepaste.com
 Name[de]=privatepaste.com
 Name[en_GB]=privatepaste.com
 Name[es]=privatepaste.com
@@ -21,6 +22,7 @@ Name[uk]=privatepaste.com
 Name[x-test]=xxprivatepaste.comxx
 Name[zh_TW]=privatepaste.com
 Comment=Paste text with the PrivatePaste.com service
+Comment[ast]=Apegar testu per aciu del serviciu PrivatePaste.com
 Comment[de]=Text auf PrivatePaste.com veröffentlichen
 Comment[en_GB]=Paste text with the PrivatePaste.com service
 Comment[es]=Pegar texto mediante el servicio PrivatePaste.com

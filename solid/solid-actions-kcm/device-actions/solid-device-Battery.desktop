@@ -1,6 +1,7 @@
 [Desktop Action chargePercent]
 Name=Charge Percent
 Name[ar]=نسبة الشحن
+Name[ast]=Porcentaxe de carga
 Name[bg]=Зареждане (%)
 Name[bn]=শতকরা চার্জ
 Name[ca]=Percentatge de càrrega
@@ -68,6 +69,7 @@ Name[zh_TW]=充電百分比
 [Desktop Action chargeState]
 Name=Charge State
 Name[ar]=حالة الشحن
+Name[ast]=Estáu de carga
 Name[bg]=Състояние на зареждането
 Name[bn]=চার্জের অবস্থা
 Name[ca]=Estat de la càrrega
@@ -135,6 +137,7 @@ Name[zh_TW]=充電狀態
 [Desktop Action plugged]
 Name=Plugged
 Name[ar]=موصول
+Name[ast]=Coneutáu
 Name[bg]=Вкл.
 Name[bn]=লাগানো
 Name[ca]=Endollat
@@ -201,6 +204,7 @@ Name[zh_TW]=已插入
 [Desktop Action rechargeable]
 Name=Rechargeable
 Name[ar]=قابلة للشحن
+Name[ast]=Recargable
 Name[bg]=Презаредима
 Name[bn]=রিচার্জযোগ্য
 Name[ca]=Recarregable
@@ -265,6 +269,7 @@ Name[zh_TW]=可重新充電
 [Desktop Action type]
 Name=Type
 Name[ar]=النوع
+Name[ast]=Triba
 Name[bg]=Тип
 Name[bn]=ধরন
 Name[ca]=Tipus
@@ -335,6 +340,7 @@ Name[zh_TW]=類型
 Actions=chargePercent;chargeState;plugged;rechargeable;type;
 Name=Solid Device
 Name[ar]=جهاز في سوليد
+Name[ast]=Preseos de Solid
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

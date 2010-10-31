@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Now Playing
 Name[ar]=المشغلة حالياً
+Name[ast]=Reproduciendo
 Name[be@latin]=Ciapier hraje
 Name[bg]=Текущо възпроизвеждане
 Name[bn]=এখন চলছে
@@ -74,6 +75,7 @@ Name[zh_TW]=現正播放
 
 Comment=Lists currently playing music
 Comment[ar]=تسرد الموسيقى المشغلة حالياً
+Comment[ast]=Amuesa la música que ta sonando
 Comment[be@latin]=Pakazvaje muzyku, jakuju ciapier hraje systema
 Comment[bg]=Текущо възпроизвеждана музика
 Comment[ca]=Llista la música que s'està reproduint actualment

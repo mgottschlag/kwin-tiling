@@ -2,6 +2,7 @@
 Type=Service
 Name=Image
 Name[ar]=صورة
+Name[ast]=Imaxe
 Name[be@latin]=Vyjava
 Name[bg]=Изображение
 Name[bn]=ছবি
@@ -92,6 +93,7 @@ X-Plasma-DropMimeTypes=image/jpeg,image/png,image/svg+xml,image/svg+xml-compress
 [Desktop Action SingleImage]
 Name=Image
 Name[ar]=صورة
+Name[ast]=Imaxe
 Name[be@latin]=Vyjava
 Name[bg]=Изображение
 Name[bn]=ছবি
@@ -170,6 +172,7 @@ Exec=plasma
 [Desktop Action Slideshow]
 Name=Slideshow
 Name[ar]=عرض شرائح
+Name[ast]=Presentación
 Name[be@latin]=Słajdy
 Name[bg]=Слайдшоу
 Name[bn]=স্লাইড-শো

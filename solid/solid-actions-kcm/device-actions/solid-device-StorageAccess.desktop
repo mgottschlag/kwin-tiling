@@ -1,6 +1,7 @@
 [Desktop Action accessible]
 Name=Accessible
 Name[ar]=متاح
+Name[ast]=Accesible
 Name[bg]=Достъпен
 Name[bn]=সহায়ক প্রযুক্তি
 Name[ca]=Accessible
@@ -67,6 +68,7 @@ Name[zh_TW]=可存取
 [Desktop Action filePath]
 Name=File Path
 Name[ar]=مسار الملف
+Name[ast]=Camín a ficheru
 Name[bg]=Път до файл
 Name[bn]=ফাইল পাথ
 Name[ca]=Camí al fitxer
@@ -134,6 +136,7 @@ Name[zh_TW]=檔案路徑
 Actions=accessible;filePath;
 Name=Solid Device
 Name[ar]=جهاز في سوليد
+Name[ast]=Preseos de Solid
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

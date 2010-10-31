@@ -11,6 +11,7 @@ X-DocPath=kcontrol/desktopthemedetails/index.html
 
 Name=Desktop Theme
 Name[ar]=سمة سطح المكتب
+Name[ast]=Tema d'escritoriu
 Name[ca]=Tema d'escriptori
 Name[ca@valencia]=Tema d'escriptori
 Name[cs]=Motiv plochy
@@ -60,6 +61,7 @@ Name[zh_CN]=桌面主题
 Name[zh_TW]=桌面主題
 Comment=Customize the desktop theme
 Comment[ar]=خصص عناصر السمة سطح المكتب بشكل منفرد
+Comment[ast]=Personalizar el tema d'escritoriu
 Comment[ca]=Personalitza el tema d'escriptori
 Comment[ca@valencia]=Personalitza el tema d'escriptori
 Comment[cs]=Upravit vzhled plochy

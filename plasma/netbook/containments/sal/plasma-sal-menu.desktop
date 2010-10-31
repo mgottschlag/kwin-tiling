@@ -4,6 +4,7 @@ X-KDE-ServiceType=Plasma/Sal/Menu
 
 Name=Plasma Search and Launch menu
 Name[ar]=قائمة بلازما للبحث والإطلاق
+Name[ast]=Menú Plasma de gueta y llanzamientu
 Name[ca]=Menú de cerca i llançament del Plasma
 Name[ca@valencia]=Menú de cerca i llançament del Plasma
 Name[csb]=Menu szëkbë ë zrëszaniô plazmë
@@ -59,6 +60,7 @@ Name[zh_CN]=Plasma 搜索与启动菜单
 Name[zh_TW]=Plasma 搜尋與啟動選單
 Comment=Menu entry for The Plasma search and launch activity
 Comment[ar]=مدخلة قائمة لنشاط بلازما للبحث والإطلاق
+Comment[ast]=Entrada de menú pa la xera de gueta y llanzamientu de Plasma
 Comment[ca]=Entrada de menú per a l'activitat de cerca i llançament del Plasma
 Comment[ca@valencia]=Entrada de menú per a l'activitat de cerca i llançament del Plasma
 Comment[da]=Menupunkt til Plasma søg og opstart-aktivitet

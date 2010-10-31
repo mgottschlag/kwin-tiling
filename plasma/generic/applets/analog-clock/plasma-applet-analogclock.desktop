@@ -2,6 +2,7 @@
 Name=Analog Clock
 Name[af]=Analooghorlosie
 Name[ar]=ساعة عادية
+Name[ast]=Reló analóxicu
 Name[be]=Аналагавы гадзіннік
 Name[be@latin]=Analahavy hadzińnik
 Name[bg]=Аналогов часовник
@@ -83,6 +84,7 @@ Name[zh_CN]=模拟时钟
 Name[zh_TW]=類比時鐘
 Comment=A clock with hands
 Comment[ar]=ساعة بعقارب
+Comment[ast]=Un reló con manecielles
 Comment[ca]=Un rellotge amb agulles
 Comment[ca@valencia]=Un rellotge amb agulles
 Comment[cs]=Ručičkové hodiny

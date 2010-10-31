@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Windowed widgets
 Name[ar]=ودجات مُنوفذة
+Name[ast]=Componentes en ventana
 Name[ca]=Estris en finestres
 Name[ca@valencia]=Estris en finestres
 Name[da]=Widgets som vinduer
@@ -38,6 +39,7 @@ Name[sr@ijekavian]=виџети с прозором
 Name[sr@ijekavianlatin]=vidžeti s prozorom
 Name[sr@latin]=vidžeti s prozorom
 Name[sv]=Fönsterbaserade grafiska komponenter
+Name[th]=วิดเจ็ตที่เป็นหน้าต่าง
 Name[tr]=Pencerelendirilmiş gereçler
 Name[uk]=Віджети-вікна
 Name[x-test]=xxWindowed widgetsxx
@@ -47,6 +49,7 @@ Name[zh_TW]=視窗元件
 
 Comment=Find Plasma widgets that can be run as standalone windows
 Comment[ar]=ابحث عن ودجات بلازما التي يمكن تشغيلها كنوافذ مستقلة
+Comment[ast]=Gueta componentes Plasma que pueden executase como ventanes independientes
 Comment[ca]=Cerca estris del Plasma que es poden executar en finestres autònomes
 Comment[ca@valencia]=Cerca estris del Plasma que es poden executar en finestres autònomes
 Comment[cs]=Najít Plasma widgety, které mohou být spuštěny ve vlastních oknech

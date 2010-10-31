@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Window Information
 Name[ar]=معلومات النافذة
+Name[ast]=Información de ventana
 Name[be@latin]=Źviestki z akna
 Name[bg]=Информация за прозорци
 Name[bn]=উইণ্ডো তথ্য
@@ -72,6 +73,7 @@ Name[zh_CN]=窗口信息
 Name[zh_TW]=視窗資訊
 Comment=Information and management services for all available windows.
 Comment[ar]=معلومات و خدمات الإدارة لجميع النوافذ المتاحة.
+Comment[ast]=Información y servicios de xestión pa toles ventanes disponibles.
 Comment[bg]=Информация и услуги за всички налични прозорци.
 Comment[ca]=Serveis d'informació i gestió de totes les finestres disponibles.
 Comment[ca@valencia]=Serveis d'informació i gestió de totes les finestres disponibles.

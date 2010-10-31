@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=MacOS Dashboard Widgets
 Name[ar]=ودجات لوحة MacOS
+Name[ast]=Elementos gráficos del tableru de mandos de MacOS
 Name[be@latin]=Widžety „Dashboard” dla systemy „MacOS”
 Name[bg]=Джаджи MacOS Dashboard
 Name[ca]=Estri del tauler del MacOS
@@ -68,6 +69,7 @@ Name[zh_CN]=MacOS 部件板部件
 Name[zh_TW]=MacOS 資訊看板元件
 Comment=MacOS dashboard widget
 Comment[ar]=ودجة لوحة MacOS
+Comment[ast]=Elementu gráficu del tableru de mandos de MacOS
 Comment[be@latin]=Widžet „Dashboard” dla systemy „MacOS”
 Comment[bg]=Джаджа MacOS
 Comment[ca]=Estri del tauler del MacOS

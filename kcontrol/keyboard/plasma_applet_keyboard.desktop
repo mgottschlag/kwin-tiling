@@ -2,6 +2,7 @@
 Name=Keyboard Layout
 Name[af]=Sleutelbord Uitleg
 Name[ar]=تخطيط لوحة المفاتيح
+Name[ast]=Disposición del tecláu
 Name[be]=Раскладка клавіятуры
 Name[be@latin]=Vykład klavijatury
 Name[bg]=Клавиатурни подредби
@@ -88,6 +89,7 @@ Name[x-test]=xxKeyboard Layoutxx
 Name[zh_CN]=键盘布局
 Name[zh_TW]=鍵盤配置
 Comment=View and switch between active keyboard layouts
+Comment[ast]=Ver y camudar ente les distribuciones de tecláu actives
 Comment[ca]=Vista i commutació entre disposicions actives de teclat
 Comment[de]=Aktive Tastaturbelegungen anzeigen und zwischen ihnen umschalten
 Comment[en_GB]=View and switch between active keyboard layouts

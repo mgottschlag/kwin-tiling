@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Web Widgets
 Name[ar]=ودجات الوِب
+Name[ast]=Elementos gráficos Web
 Name[be@latin]=Sieciŭnyja widžety
 Name[bg]=Уеб джаджи
 Name[bn]=ওয়েব উইজেট
@@ -71,6 +72,7 @@ Name[zh_CN]=网页部件
 Name[zh_TW]=網頁元件
 Comment=HTML widget
 Comment[ar]=ودجة HTML
+Comment[ast]=Elementu gráficu HTML
 Comment[be@latin]=Widžet HTML
 Comment[bg]=HTML джаджи
 Comment[bn]=HTML উইজেট

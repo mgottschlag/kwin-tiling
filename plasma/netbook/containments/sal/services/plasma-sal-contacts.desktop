@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Contacts
 Name[ar]=المراسلون
+Name[ast]=Contautos
 Name[ca]=Contactes
 Name[ca@valencia]=Contactes
 Name[cs]=Kontakty
@@ -62,6 +63,7 @@ Name[zh_CN]=联系人
 Name[zh_TW]=聯絡人
 Comment=List all your contacts
 Comment[ar]=اسرد جميع مراسليك
+Comment[ast]=Llistar tolos contautos
 Comment[ca]=Llista tots els contactes
 Comment[ca@valencia]=Llista tots els contactes
 Comment[cs]=Seznam všech vašich kontaktů

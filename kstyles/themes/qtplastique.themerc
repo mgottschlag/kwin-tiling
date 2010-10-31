@@ -1,6 +1,7 @@
 [Misc]
 Name=Plastique
 Name[ar]=بلاستك
+Name[ast]=Plastique
 Name[ca]=Plastique
 Name[ca@valencia]=Plastique
 Name[cs]=Plastique
@@ -64,6 +65,7 @@ Name[zh_CN]=Plastique
 Name[zh_TW]=Plastique
 Comment=Built-in unthemed style similar to Plastik from KDE3
 Comment[ar]=نمط مضمّن ومن دون سمة مشابه لبلاستِك من كدي 3
+Comment[ast]=Estilu integráu ensin tema asemeyáu al Plastik de KDE3
 Comment[ca]=Un estil sense tema integrat, similar Plastik del KDE3
 Comment[ca@valencia]=Un estil sense tema integrat, similar Plastik del KDE3
 Comment[cs]=Zabudovaný styl bez motivu podobný Plastik z KDE3

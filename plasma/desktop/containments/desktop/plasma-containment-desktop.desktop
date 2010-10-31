@@ -2,6 +2,7 @@
 # ctxt: plasma containment
 Name=Desktop
 Name[ar]=سطح المكتب
+Name[ast]=Escritoriu
 Name[bg]=Работен плот
 Name[ca]=Escriptori
 Name[ca@valencia]=Escriptori
@@ -64,6 +65,7 @@ Name[x-test]=xxDesktopxx
 Name[zh_CN]=桌面
 Name[zh_TW]=桌面
 Comment=Default desktop
+Comment[ast]=Escritoriu predetermináu
 Comment[ca]=Escriptori per defecte
 Comment[de]=Standard-Arbeitsfläche
 Comment[en_GB]=Default desktop
@@ -81,6 +83,7 @@ Comment[pt]=Ecrã por omissão
 Comment[pt_BR]=Área de trabalho padrão
 Comment[ru]=Рабочий стол по умолчанию
 Comment[sv]=Standardskrivbord
+Comment[th]=พื้นที่ทำงานปริยาย
 Comment[tr]=Öntanımlı masaüstü
 Comment[uk]=Типова стільниця
 Comment[x-test]=xxDefault desktopxx

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Search Box
 Name[ar]=صندوق البحث
+Name[ast]=Caxa de gueta
 Name[bn]=অনুসন্ধান বাক্স
 Name[ca]=Caixa de cerca
 Name[ca@valencia]=Caixa de cerca
@@ -61,6 +62,7 @@ Name[zh_CN]=搜索框
 Name[zh_TW]=搜尋盒
 Comment=Search Box for a given RunnerManager
 Comment[ar]=صندوق بحث لـ RunnerManager معين
+Comment[ast]=Caxa de gueta pa un determináu xestor de llanzamientu
 Comment[ca]=Caixa de cerca per a un gestor d'execució indicat
 Comment[ca@valencia]=Caixa de cerca per a un gestor d'execució indicat
 Comment[da]=Søgfelt til en given RunnerManager

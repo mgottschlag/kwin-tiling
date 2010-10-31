@@ -12,6 +12,7 @@ X-KDE-System-Settings-Parent-Category=startup-and-shutdown
 
 Name=Session Management
 Name[ar]=إدارة الجلسات
+Name[ast]=Xestión de sesiones
 Name[ca]=Gestió de sessions
 Name[ca@valencia]=Gestió de sessions
 Name[cs]=Správa sezení
@@ -63,6 +64,7 @@ Name[zh_TW]=工作階段管理程式
 Comment=Configure the session manager and logout settings
 Comment[af]=Konfigureer die sessie bestuurder en teken af instellings
 Comment[ar]=اضبط مدير الجلسات وإعدادات تسجيل الخروج
+Comment[ast]=Configurar el xestor de sesiones y les preferencies de zarru de sesión
 Comment[be]=Настаўленні кіраўніка сеансаў і параметраў выхаду
 Comment[be@latin]=Nałady kiraŭnika sesijaŭ i vychadu z systemy
 Comment[bg]=Настройване сесиите на системата и поведението при изход

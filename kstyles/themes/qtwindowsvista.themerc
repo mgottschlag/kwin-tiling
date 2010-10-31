@@ -1,6 +1,7 @@
 [Misc]
 Name=MS Windows Vista
 Name[ar]=مايكروسوفت وندوز فيزتا
+Name[ast]=MS Windows Vista
 Name[ca]=MS Windows Vista
 Name[ca@valencia]=MS Windows Vista
 Name[cs]=MS Windows Vista
@@ -64,6 +65,7 @@ Name[zh_CN]=微软 Windows Vista
 Name[zh_TW]=MS Windows Vista
 Comment=Style that uses the Windows Vista style engine
 Comment[ar]=نمط يستخدم محرك ويندوز فيزتا للأنماط
+Comment[ast]=Estilu qu'usa'l motor d'estilos de Windows Vista
 Comment[ca]=Estil que utilitza el motor d'estils del Windows Vista
 Comment[ca@valencia]=Estil que utilitza el motor d'estils del Windows Vista
 Comment[csb]=Sztél brëkùjący mòtóra sztélu Windowsa Vista

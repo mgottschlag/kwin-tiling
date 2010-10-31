@@ -2,6 +2,7 @@
 IconName=utilities-terminal
 Comment=Local system message service
 Comment[ar]=خدمة رسائل النظام المحلية
+Comment[ast]=Serviciu de mensaxes del sistema llocal
 Comment[bn]=স্থানীয় সিস্টেম বার্তা সার্ভিস
 Comment[ca]=Servei de missatges del sistema local
 Comment[ca@valencia]=Servei de missatges del sistema local
@@ -51,6 +52,7 @@ Comment[zh_TW]=本地端系統訊息服務
 [Event/NewMessage]
 Name=New message received
 Name[ar]=وصلت رسالة جديدة
+Name[ast]=Recibióse un nuevu mensaxe
 Name[be@latin]=Atrymanaje novaje paviedamleńnie
 Name[bg]=Получено е ново съобщение
 Name[ca]=S'ha rebut un missatge nou
@@ -119,6 +121,7 @@ Name[zh_CN]=收到新消息
 Name[zh_TW]=接到新訊息
 Comment=The daemon received a new message sent with wall(1) or write(1)
 Comment[ar]=تلقى المراقب رسالة جديدة أرسلت بـwall(1) أو write(1)
+Comment[ast]=El degorriu recibió un nuevu mensaxe mandáu per aciu de wall(1) o write(1)
 Comment[be@latin]=Słužba atrymała novaje paviedamleńnie ad „wall(1)” ci „write(1)”.
 Comment[bg]=Демонът получи ново съобщение (wall(1) или write(1))
 Comment[ca]=El dimoni ha rebut un missatge nou enviat amb wall(1) o write(1)

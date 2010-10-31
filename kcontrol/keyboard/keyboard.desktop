@@ -11,6 +11,7 @@ OnlyShowIn=KDE;
 
 Name=Keyboard Daemon
 Name[ar]=مراقب لوحة المفاتيح
+Name[ast]=Degorriu de tecláu
 Name[ca]=Dimoni del teclat
 Name[ca@valencia]=Dimoni del teclat
 Name[da]=Tastatur-dæmon

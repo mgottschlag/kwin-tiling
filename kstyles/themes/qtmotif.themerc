@@ -2,6 +2,7 @@
 Name=Motif
 Name[af]=Motif
 Name[ar]=Motif
+Name[ast]=Motif
 Name[be]=Motif
 Name[be@latin]=Motif
 Name[bg]=Motif
@@ -83,6 +84,7 @@ Name[zh_CN]=Motif
 Name[zh_TW]=Motif
 Comment=Built-in unthemed Motif style
 Comment[ar]=نمط Motif المضمّن ومن دون سمة
+Comment[ast]=Estilu Motif ensin tema
 Comment[be]=Убудаваны стыль Motif
 Comment[be@latin]=Styl widžetaŭ „Motif”
 Comment[bg]=Вграден стил Motif

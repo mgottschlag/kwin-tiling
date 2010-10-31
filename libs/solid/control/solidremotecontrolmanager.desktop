@@ -3,6 +3,7 @@ Type=ServiceType
 X-KDE-ServiceType=SolidRemoteControlManager
 Comment=Remote Control Management Backend
 Comment[ar]=المنتهى الخلفي لإدارة التحكم عن بعد
+Comment[ast]=Motor de xestión de control remotu
 Comment[ca]=Dorsal de gestió de control remot
 Comment[ca@valencia]=Dorsal de gestió de control remot
 Comment[cs]=Backend pro vzdálenou správu

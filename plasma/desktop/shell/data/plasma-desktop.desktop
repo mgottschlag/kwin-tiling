@@ -3,6 +3,7 @@ Exec=plasma-desktop
 X-DBUS-StartupType=wait
 Name=Plasma Desktop Workspace
 Name[ar]=مساحة عمل بلازما
+Name[ast]=Espaciu de trabayu del escritoriu Plasma
 Name[be@latin]=Rabočy abšar stała „Plasma”
 Name[bg]=Работно пространство Plasma
 Name[ca]=Espai de treball de l'escriptori Plasma

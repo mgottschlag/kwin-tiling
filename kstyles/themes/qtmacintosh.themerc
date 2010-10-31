@@ -1,6 +1,7 @@
 [Misc]
 Name=Mac OS X
 Name[ar]=Mac OS X
+Name[ast]=Mac OS X
 Name[ca]=Mac OS X
 Name[ca@valencia]=Mac OS X
 Name[cs]=Mac OS X
@@ -66,6 +67,7 @@ Name[zh_CN]=Mac OS X
 Name[zh_TW]=Mac OS X
 Comment=Style that uses the Apple Appearance Manager
 Comment[ar]=نمط يستخدم مدير مظهر آبل
+Comment[ast]=Estilu qu'usa'l Xestor d'Apariencia d'Apple
 Comment[ca]=Estil que utilitza el Gestor d'aparences d'Apple
 Comment[ca@valencia]=Estil que utilitza el Gestor d'aparences d'Apple
 Comment[csb]=Sztél brëkùjący menadżera wëzdrzatkù Apple

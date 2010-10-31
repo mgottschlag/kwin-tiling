@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Switch Window
 Name[ar]=بدّل النافذة
+Name[ast]=Camudar ventana
 Name[ca]=Canvi de finestra
 Name[ca@valencia]=Canvi de finestra
 Name[cs]=Přepnout okna
@@ -61,6 +62,7 @@ Type=Service
 Icon=preferences-system-windows
 Comment=Show a list of windows to switch to
 Comment[ar]=أظهر لائحة بالنوافذ للانتقال لإحداها
+Comment[ast]=Amosar una llista de ventanes a les que camudar
 Comment[ca]=Mostra una llista de les finestres per a canviar
 Comment[ca@valencia]=Mostra una llista de les finestres per a canviar
 Comment[cs]=Zobrazit seznam oken k přepnutí

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Write Daemon
 Name[ar]=مراقب الكتابة
+Name[ast]=Degorriu d'escritura
 Name[ca]=Dimoni d'escriptura
 Name[ca@valencia]=Dimoni d'escriptura
 Name[cs]=Zapisovací démon
@@ -50,6 +51,7 @@ Name[zh_TW]=Write 伺服程式
 Comment=Watch for messages from local users sent with write(1) or wall(1)
 Comment[af]=Kyk uit vir boodskappe vanaf plaaslike gebruikers wat met write(1) of wall(1) gestuur is
 Comment[ar]=لمشاهدة رسائل من المستخدمين المحليين ارسلت  بـwall(1) أو write(1)
+Comment[ast]=Ver los mensaxes d'usuarios llocales mandaos con write(1) o wall(1)
 Comment[be]=Назірае за паведамленнямі ад мясцовых карыстальнікаў, дасланымі праз write(1) ці wall(1)
 Comment[be@latin]=Adsočvaje paviedamleńnia ad miascovych karystańnikaŭ, dasyłanyja zahadami „write(1)” ci „wall(1)”.
 Comment[bg]=Наблюдение за съобщения от локални потребители, изпратени с write(1) или wall(1)

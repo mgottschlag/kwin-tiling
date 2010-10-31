@@ -2,6 +2,7 @@
 Name=Pager
 Name[af]=Pager
 Name[ar]=المنادي
+Name[ast]=Paxinador
 Name[be@latin]=Stały
 Name[bg]=Пейджър
 Name[bn]=পেজার
@@ -80,6 +81,7 @@ Name[zh_CN]=分页器
 Name[zh_TW]=呼叫器
 Comment=Switch between virtual desktops
 Comment[ar]=يبدل بين أسطح المكتب الإفتراضية
+Comment[ast]=Camudar ente escritorios virtuales
 Comment[be@latin]=Pieraklučeńnie virtualnych stałoŭ
 Comment[bg]=Превключване между работните плотове
 Comment[ca]=Commuta entre escriptoris virtuals

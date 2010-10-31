@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Paste
 Name[ar]=ألصِق
+Name[ast]=Apegar
 Name[bn]=পেস্ট
 Name[ca]=Enganxa
 Name[ca@valencia]=Enganxa
@@ -63,6 +64,7 @@ Type=Service
 Icon=edit-paste
 Comment=Creates a widget from the contents of the clipboard
 Comment[ar]=أنشئ ودجة من محتويات الحافظة
+Comment[ast]=Crea un elementu gráficu colos conteníos del cartafueyu
 Comment[ca]=Crea un estri a partir del contingut del porta-retalls
 Comment[ca@valencia]=Crea un estri a partir del contingut del porta-retalls
 Comment[cs]=Vytvoří widget z obsahu schránky

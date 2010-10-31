@@ -2,6 +2,7 @@
 # ctxt: plasma runner
 Name=Web Shortcuts
 Name[ar]=اختصارات الوِب
+Name[ast]=Accesos rápidos pa web
 Name[bg]=Уеб отметки
 Name[bn]=ওয়েব শর্টকাট
 Name[ca]=Dreceres web
@@ -65,6 +66,7 @@ Name[zh_CN]=网页快捷方式
 Name[zh_TW]=網頁捷徑
 Comment=Allows user to use Konqueror's Web shortcuts
 Comment[ar]=يسمح للمستخدم باستخدام اختصارات كونكيورر لتصفح الوِب
+Comment[ast]=Permite al usuariu usar atayos web de Konqueror
 Comment[be@latin]=Dazvalaje karystacca sieciŭnymi skarotami prahramy „Konqueror”.
 Comment[bg]=Потребителя може да изпозлва уеб-отметките на Konqueror
 Comment[ca]=Permet que l'usuari utilitzi les dreceres web del Konqueror

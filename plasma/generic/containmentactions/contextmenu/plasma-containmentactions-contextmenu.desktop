@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Standard Menu
 Name[ar]=القائمة المعيارية
+Name[ast]=Menú standard
 Name[ca]=Menú estàndard
 Name[ca@valencia]=Menú estàndard
 Name[cs]=Standardní menu
@@ -61,6 +62,7 @@ Name[zh_CN]=标准菜单
 Name[zh_TW]=標準選單
 Comment=The menu that normally shows on right-click
 Comment[ar]=القائمة التي تظهر عادة عند الضغط بالزر الأيمن
+Comment[ast]=El menú que se suel amosar al calcar col botón drechu
 Comment[ca]=Menú que es mostra normalment amb un clic del botó dret
 Comment[ca@valencia]=Menú que es mostra normalment amb un clic del botó dret
 Comment[csb]=Menu wëskrzëniwóné zwëczajno pò klëkniãcô prawą knąpą

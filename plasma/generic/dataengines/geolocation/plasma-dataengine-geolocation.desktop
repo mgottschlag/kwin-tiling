@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Geolocation
 Name[ar]=الموقع الجغرافي
+Name[ast]=Xeollocalización
 Name[bg]=Геолокация
 Name[ca]=Geolocalització
 Name[ca@valencia]=Geolocalització
@@ -63,6 +64,7 @@ Name[zh_CN]=地理
 Name[zh_TW]=Geolocation
 Comment=Geolocation Data Engine
 Comment[ar]=محرك بيانات الموقع الجغرافي
+Comment[ast]=Motor de datos de xeollocalización
 Comment[bg]=Ядро геолокация
 Comment[ca]=Motor de dades de geolocalització
 Comment[ca@valencia]=Motor de dades de geolocalització

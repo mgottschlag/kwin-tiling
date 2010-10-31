@@ -2,6 +2,7 @@
 Name=Web style
 Name[af]=Webstyl
 Name[ar]=أسلوب الوِب
+Name[ast]=Estilu web
 Name[be]=Стыль Сеціва
 Name[be@latin]=Web
 Name[bg]=Уеб стил
@@ -81,6 +82,7 @@ Name[zh_CN]=网页风格
 Name[zh_TW]=網頁樣式
 Comment=Web widget style
 Comment[ar]=نمط ودجات الوِب
+Comment[ast]=Estilu d'elementos gráficos web
 Comment[be]=Стыль Сеціва
 Comment[be@latin]=Styl widžetaŭ „Web”
 Comment[bg]=Стил "уеб"

@@ -1,6 +1,7 @@
 [Misc]
 Name=GTK+ Style
 Name[ar]=نمط GTK+
+Name[ast]=Estilu GTK+
 Name[ca]=Estil GTK+
 Name[ca@valencia]=Estil GTK+
 Name[cs]=GTK+ styl
@@ -64,6 +65,7 @@ Name[zh_CN]=GTK+ 风格
 Name[zh_TW]=GTK+ 風格
 Comment=Style that uses the GTK+ theming engine
 Comment[ar]=نمط يستخدم محرك سمات GTK+
+Comment[ast]=Estilu qu'usa'l motor de temes de GTK+
 Comment[ca]=Estil que utilitza el motor de temes GTK+
 Comment[ca@valencia]=Estil que utilitza el motor de temes GTK+
 Comment[cs]=Styl, který používá systém motivů GTK+

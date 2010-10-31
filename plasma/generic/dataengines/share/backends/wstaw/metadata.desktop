@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=wstaw.org
+Name[ast]=wstaw.org
 Name[de]=wstaw.org
 Name[en_GB]=wstaw.org
 Name[es]=wstaw.org
@@ -23,6 +24,7 @@ Name[uk]=wstaw.org
 Name[x-test]=xxwstaw.orgxx
 Name[zh_TW]=wstaw.org
 Comment=Enables the share of images using the wstaw.org service
+Comment[ast]=Permite compartir imáxenes a traviés del serviciu de wstaw.org
 Comment[de]=Ermöglicht die Veröffentlichung von Bildern auf wstaw.org
 Comment[en_GB]=Enables the share of images using the wstaw.org service
 Comment[es]=Permite compartir imágenes a través del servicio de wstaw.org

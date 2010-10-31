@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Switch Activity
 Name[ar]=بدّل النشاط
+Name[ast]=Camudar xera
 Name[ca]=Canvi d'activitat
 Name[ca@valencia]=Canvi d'activitat
 Name[cs]=Přepnout aktivitu
@@ -61,6 +62,7 @@ Type=Service
 Icon=dashboard-show
 Comment=Switch to another activity
 Comment[ar]=بدّل إلى نشاط آخر
+Comment[ast]=Camudar a otra xera
 Comment[ca]=Canvia a una altra activitat
 Comment[ca@valencia]=Canvia a una altra activitat
 Comment[cs]=Přepnout na jinou aktivitu

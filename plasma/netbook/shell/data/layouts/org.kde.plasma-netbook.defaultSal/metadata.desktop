@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Search and launch
 Name[ar]=البحث والإطلاق
+Name[ast]=Gueta y execución
 Name[ca]=Cerca i llançament
 Name[ca@valencia]=Cerca i llançament
 Name[cs]=Vyhledat a spustit
@@ -41,6 +42,7 @@ Name[sr@ijekavianlatin]=Traženje i pokretanje
 Name[sr@latin]=Traženje i pokretanje
 Name[sv]=Sök och starta
 Name[tg]=Ҷустуҷӯӣ ва оғозӣ
+Name[th]=ค้นหาและเรียกใช้งาน
 Name[tr]=Ara ve çalıştır
 Name[uk]=Рушій пошуку і запуску
 Name[x-test]=xxSearch and launchxx

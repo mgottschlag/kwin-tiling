@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Python Widget
 Name[ar]=ودجة بايثون
+Name[ast]=Widget de Python
 Name[be@latin]=Widžet „Python”
 Name[bg]=Джаджа за Python
 Name[bn]=পাইথন উইজেট
@@ -71,6 +72,7 @@ Name[zh_CN]=Python 部件
 Name[zh_TW]=Python 元件
 Comment=Plasma widget support written in Python
 Comment[ar]=دعم ودجات البلازما  المكتوبة بالبايثون
+Comment[ast]=Elementu gráficu nativu de Plasma escritu en Python
 Comment[be@latin]=Widžet systemy „Plasma”, napisany ŭ movie „Python”
 Comment[bg]=Оригинална джаджа за Plasma, написана на Python
 Comment[ca]=Estri nadiu del Plasma escrit en Python

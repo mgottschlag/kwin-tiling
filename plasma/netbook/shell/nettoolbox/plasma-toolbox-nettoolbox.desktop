@@ -1,5 +1,6 @@
 [Desktop Entry]
 Comment=Default toolbox for the netbook shell
+Comment[ast]=Caxa de ferramientes predeterminada de la shell pa netbooks
 Comment[de]=Standard-Werkzeugkasten für die Plasma-Netbook-Oberfläche
 Comment[en_GB]=Default toolbox for the netbook shell
 Comment[es]=Caja de herramientas predeterminada de la shell para netbooks
@@ -20,6 +21,7 @@ Comment[x-test]=xxDefault toolbox for the netbook shellxx
 Comment[zh_TW]=netbook shell 的預設工具盒
 Icon=plasma
 Name=Net toolbox
+Name[ast]=Caxa de ferramientes netbook
 Name[de]=Werkzeugkasten für Netbooks
 Name[en_GB]=Net toolbox
 Name[es]=Caja de herramientas netbook
@@ -35,6 +37,7 @@ Name[pa]=ਨੈੱਟ ਟੂਲਬਾਕਸ
 Name[pt]=Barra da rede
 Name[pt_BR]=Barra da rede
 Name[sv]=Nätverksverktyg
+Name[th]=เครื่องมือระบบเครือข่าย
 Name[uk]=Набір інструментів для субноутбуків
 Name[x-test]=xxNet toolboxxx
 Name[zh_TW]=網路工具盒

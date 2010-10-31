@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Search and Launch Engine
 Name[ar]=محرك البحث والإطلاق
+Name[ast]=Motor de gueta y llanzamientu
 Name[ca]=Motor de cerca i llançament
 Name[ca@valencia]=Motor de cerca i llançament
 Name[csb]=Mòtórë szëkbë ë zrëszaniô
@@ -57,6 +58,7 @@ Name[zh_CN]=搜索与启动引擎
 Name[zh_TW]=搜索與啟動引擎
 Comment=Engine to handle queries to SAL containment
 Comment[ar]=محرك لمعاملة الاستعلامات إلى حاوية البحث والإطلاق
+Comment[ast]=Motor pa remanar consultes a un contenedor SAL
 Comment[ca]=Motor per gestionar consultes al contenidor SAL
 Comment[ca@valencia]=Motor per gestionar consultes al contenidor SAL
 Comment[da]=Motor til at håndtere forespørgsler til SAL-beholderen

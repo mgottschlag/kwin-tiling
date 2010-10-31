@@ -1,6 +1,7 @@
 [Desktop Action device]
 Name=Device
 Name[ar]=الجهاز
+Name[ast]=Preseos
 Name[bg]=Устройство
 Name[bn]=ডিভাইস
 Name[ca]=Dispositiu
@@ -68,6 +69,7 @@ Name[zh_TW]=裝置
 [Desktop Action major]
 Name=Major
 Name[ar]=عام
+Name[ast]=Mayor
 Name[bn]=মেজর
 Name[ca]=Major
 Name[ca@valencia]=Major
@@ -133,6 +135,7 @@ Name[zh_TW]=主要
 [Desktop Action minor]
 Name=Minor
 Name[ar]=فرعي
+Name[ast]=Menor
 Name[bn]=মাইনর
 Name[ca]=Menor
 Name[ca@valencia]=Menor
@@ -199,6 +202,7 @@ Name[zh_TW]=次要
 Actions=device;major;minor;
 Name=Solid Device
 Name[ar]=جهاز في سوليد
+Name[ast]=Preseos de Solid
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Empty Panel
 Name[ar]=لوحة فارغة
+Name[ast]=Panel baleru
 Name[ca]=Plafó buit
 Name[ca@valencia]=Plafó buit
 Name[cs]=Prázdný panel
@@ -48,6 +49,7 @@ Name[x-test]=xxEmpty Panelxx
 Name[zh_CN]=空面板
 Name[zh_TW]=空白面板
 Comment=A simple linear panel
+Comment[ast]=Un panel llinial simple
 Comment[ca]=Un plafó lineal senzill
 Comment[de]=Eine einfache, gerade Kontrollleiste
 Comment[en_GB]=A simple linear panel

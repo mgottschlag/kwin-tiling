@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Command Line
 Name[ar]=سطر الأوامر
+Name[ast]=Execución d'órdenes
 Name[be@latin]=Zahadny radok
 Name[bg]=Команден ред
 Name[bn]=কমান্ড লাইন
@@ -75,6 +76,7 @@ Name[zh_CN]=命令行
 Name[zh_TW]=命令列
 Comment=Executes shell commands
 Comment[ar]=ينفذ أوامر الصدفة
+Comment[ast]=Executa órdenes de la consola
 Comment[be@latin]=Vykanańnie zahadaŭ abałonki.
 Comment[bg]=Изпълнение на шел команди
 Comment[bn]=শেল কমাণ্ড চালায়

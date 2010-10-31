@@ -2,6 +2,7 @@
 Name=Battery Monitor
 Name[af]=Battery-monitor
 Name[ar]=مراقب البطارية
+Name[ast]=Monitor de batería
 Name[be]=Назіранне за батарэяй
 Name[be@latin]=Nazirańnik za batarejaj
 Name[bg]=Мониторинг на батерията
@@ -82,6 +83,7 @@ Name[zh_CN]=电池监视器
 Name[zh_TW]=電池監視器
 Comment=See the power status of your battery
 Comment[ar]=راقب حالة الطاقة لبطارياتك
+Comment[ast]=Mira l'estáu de potencia de la batería
 Comment[be@latin]=Naziraje za kolkaściu enerhii ŭ tvajoj batarei
 Comment[bg]=Показва състоянието на батерията
 Comment[ca]=Vegeu l'estat d'energia de la bateria

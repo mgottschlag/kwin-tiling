@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Desktop Sessions
 Name[ar]=جلسات سطح المكتب
+Name[ast]=Sesiones d'escritoriu
 Name[be@latin]=Sesii rabočaha stała
 Name[bg]=Сесии
 Name[bn]=ডেস্কটপ সেশন
@@ -73,6 +74,7 @@ Name[zh_CN]=桌面会话
 Name[zh_TW]=桌面工作階段
 Comment=Fast user switching
 Comment[ar]=تبديل سريع للمستخدم
+Comment[ast]=Cambéu rápidu d'usuariu
 Comment[be@latin]=Chutkaje pieraklučeńnie karystańnikaŭ
 Comment[bg]=Превключване на потребители
 Comment[ca]=Commutador ràpid d'usuari

@@ -1,6 +1,7 @@
 [Desktop Action device]
 Name=Device
 Name[ar]=الجهاز
+Name[ast]=Preseos
 Name[bg]=Устройство
 Name[bn]=ডিভাইস
 Name[ca]=Dispositiu
@@ -68,6 +69,7 @@ Name[zh_TW]=裝置
 [Desktop Action deviceAdapter]
 Name=Device Adapter
 Name[ar]=محول الجهاز
+Name[ast]=Adautador de preséu
 Name[bg]=Адаптор на устройството
 Name[bn]=ডিভাইস অ্যাডাপ্টার
 Name[ca]=Adaptador de dispositius
@@ -134,6 +136,7 @@ Name[zh_TW]=裝置接合器
 [Desktop Action deviceIndex]
 Name=Device Index
 Name[ar]=فهرس الجهاز
+Name[ast]=Índiz de preséu
 Name[bg]=Индекс на устройство
 Name[bn]=ডিভাইস ইন্ডেক্স
 Name[ca]=Índex de dispositius
@@ -200,6 +203,7 @@ Name[zh_TW]=裝置索引
 [Desktop Action deviceType]
 Name=Device Type
 Name[ar]=نوع الجهاز
+Name[ast]=Triba de preséu
 Name[bg]=Тип устройство
 Name[bn]=ডিভাইস ধরন
 Name[ca]=Tipus de dispositiu
@@ -267,6 +271,7 @@ Name[zh_TW]=裝置類型
 Actions=device;deviceAdapter;deviceIndex;deviceType;
 Name=Solid Device
 Name[ar]=جهاز في سوليد
+Name[ast]=Preseos de Solid
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

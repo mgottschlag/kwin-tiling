@@ -1,6 +1,7 @@
 [Desktop Action bus]
 Name=Bus
 Name[ar]=الناقل
+Name[ast]=Bus
 Name[bg]=Шина
 Name[bn]=বাস
 Name[ca]=Bus
@@ -69,6 +70,7 @@ Name[zh_TW]=匯流排
 [Desktop Action driveType]
 Name=Drive Type
 Name[ar]=نوع المشغل
+Name[ast]=Triba de discu
 Name[bg]=Тип устройство
 Name[bn]=ড্রাইভ-এর ধরন
 Name[ca]=Tipus d'unitat
@@ -138,6 +140,7 @@ Name[zh_TW]=磁碟型態
 [Desktop Action hotpluggable]
 Name=Hotpluggable
 Name[ar]=قابل للتوصيل
+Name[ast]=Conexón en caliente
 Name[bn]=হট-প্লাগ-যোগ্য
 Name[ca]=Connectable en calent
 Name[ca@valencia]=Connectable en calent
@@ -201,6 +204,7 @@ Name[zh_TW]=可熱插拔
 [Desktop Action readSpeed]
 Name=Read Speed
 Name[ar]=سرعة القراءة
+Name[ast]=Velocidá de llectura
 Name[bg]=Скорост на четене
 Name[bn]=পড়ার গতি
 Name[ca]=Velocitat de lectura
@@ -267,6 +271,7 @@ Name[zh_TW]=讀取速度
 [Desktop Action removable]
 Name=Removable
 Name[ar]=قابل للإزالة
+Name[ast]=Estrayible
 Name[bg]=Преносим
 Name[bn]=অপসারণযোগ্য
 Name[ca]=Extraïble
@@ -334,6 +339,7 @@ Name[zh_TW]=可移除
 [Desktop Action size]
 Name=Size
 Name[ar]=الحجم
+Name[ast]=Tamañu
 Name[bg]=Големина
 Name[bn]=মাপ
 Name[ca]=Mida
@@ -401,6 +407,7 @@ Name[zh_TW]=大小
 [Desktop Action supportedMedia]
 Name=Supported Media
 Name[ar]=الوسائط المدعومة
+Name[ast]=Medios sofitaos
 Name[bg]=Поддържа медия
 Name[bn]=সমর্থিত মিডিয়া
 Name[ca]=Suports acceptats
@@ -469,6 +476,7 @@ Name[zh_TW]=支援的媒體
 [Desktop Action writeSpeed]
 Name=Write Speed
 Name[ar]=سرعة الكتابة
+Name[ast]=Velocidá d'escritura
 Name[bg]=Скорост на запис
 Name[bn]=লেখার গতি
 Name[ca]=Velocitat d'escriptura
@@ -538,6 +546,7 @@ Name[zh_TW]=寫入速度
 [Desktop Action writeSpeeds]
 Name=Write Speeds
 Name[ar]=سرعات الكتابة
+Name[ast]=Velocidaes d'escritura
 Name[bg]=Скорости на четене
 Name[bn]=লেখার গতি
 Name[ca]=Velocitats d'escriptura
@@ -608,6 +617,7 @@ Name[zh_TW]=寫入速度
 Actions=bus;driveType;hotpluggable;readSpeed;removable;size;supportedMedia;writeSpeed;writeSpeeds;
 Name=Solid Device
 Name[ar]=جهاز في سوليد
+Name[ast]=Preseos de Solid
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

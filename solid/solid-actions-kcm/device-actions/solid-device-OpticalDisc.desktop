@@ -1,6 +1,7 @@
 [Desktop Action appendable]
 Name=Appendable
 Name[ar]=قابل للإضافة
+Name[ast]=Pue amestase
 Name[bg]=Незавършен диск
 Name[bn]=যোগ করা যাবে
 Name[ca]=Afegible
@@ -66,6 +67,7 @@ Name[zh_TW]=可附加
 [Desktop Action availableContent]
 Name=Available Content
 Name[ar]=المحتويات المتوفرة
+Name[ast]=Conteníu disponible
 Name[bg]=Налично съдържание
 Name[bn]=পাওয়া যাচ্ছে
 Name[ca]=Contingut disponible
@@ -133,6 +135,7 @@ Name[zh_TW]=可用的內容
 [Desktop Action blank]
 Name=Blank
 Name[ar]=فارغ
+Name[ast]=Baleru
 Name[bg]=Празен диск
 Name[bn]=ফাঁকা
 Name[ca]=En blanc
@@ -200,6 +203,7 @@ Name[zh_TW]=空白
 [Desktop Action capacity]
 Name=Capacity
 Name[ar]=السعة
+Name[ast]=Capacidá
 Name[bg]=Капацитет
 Name[bn]=পরিমাপ
 Name[ca]=Capacitat
@@ -267,6 +271,7 @@ Name[zh_TW]=空間
 [Desktop Action discType]
 Name=Disc Type
 Name[ar]=نوع القرص
+Name[ast]=Triba de discu
 Name[bg]=Тип диск
 Name[bn]=ডিস্ক ধরন
 Name[ca]=Tipus de disc
@@ -336,6 +341,7 @@ Name[zh_TW]=磁碟型態
 [Desktop Action fsType]
 Name=Fs Type
 Name[ar]=نوع نظام الملفات
+Name[ast]=Triba de Fs
 Name[bg]=Тип Fs
 Name[bn]=Fs ধরন
 Name[ca]=Tipus de sistema de fitxers
@@ -403,6 +409,7 @@ Name[zh_TW]=檔案系統型態
 [Desktop Action ignored]
 Name=Ignored
 Name[ar]=متجاهَل
+Name[ast]=Inoráu
 Name[bg]=Игнориран
 Name[bn]=উপেক্ষিত
 Name[ca]=Ignorat
@@ -469,6 +476,7 @@ Name[zh_TW]=忽略
 [Desktop Action label]
 Name=Label
 Name[ar]=التسمية
+Name[ast]=Etiqueta
 Name[bg]=Етикет
 Name[bn]=লেবেল
 Name[ca]=Etiqueta
@@ -535,6 +543,7 @@ Name[zh_TW]=標籤
 [Desktop Action rewritable]
 Name=Rewritable
 Name[ar]=قابل للكتابة
+Name[ast]=Regrabable
 Name[bg]=Презаписваем диск
 Name[bn]=আবার লেখা যাবে
 Name[ca]=Regravable
@@ -602,6 +611,7 @@ Name[zh_TW]=可覆寫
 [Desktop Action size]
 Name=Size
 Name[ar]=الحجم
+Name[ast]=Tamañu
 Name[bg]=Големина
 Name[bn]=মাপ
 Name[ca]=Mida
@@ -669,6 +679,7 @@ Name[zh_TW]=大小
 [Desktop Action usage]
 Name=Usage
 Name[ar]=الاستعمال
+Name[ast]=Usu
 Name[bg]=Използване
 Name[bn]=ব্যবহার
 Name[ca]=Ús
@@ -736,6 +747,7 @@ Name[zh_TW]=使用量
 [Desktop Action uuid]
 Name=Uuid
 Name[ar]=المعرف الفريد عالمياً (Uuid)
+Name[ast]=Uuid
 Name[bg]=Uuid
 Name[bn]=Uuid
 Name[ca]=UUID
@@ -804,6 +816,7 @@ Name[zh_TW]=UUID
 Actions=appendable;availableContent;blank;capacity;discType;fsType;ignored;label;rewritable;size;usage;uuid;
 Name=Solid Device
 Name[ar]=جهاز في سوليد
+Name[ast]=Preseos de Solid
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

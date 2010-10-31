@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Places
 Name[ar]=الأماكن
+Name[ast]=Llugares
 Name[be@latin]=Miescy
 Name[bg]=Места
 Name[bn]=স্থান
@@ -74,6 +75,7 @@ Name[zh_CN]=位置
 Name[zh_TW]=地方
 Comment=Places, as seen in the file manager and in file dialogs.
 Comment[ar]=الأماكن كما تُرى في مدير الملفات وحوارات الملف.
+Comment[ast]=Llugares, como se ven nel xestor de ficheros y nos diálogos de ficheros.
 Comment[bg]=Местата както се виждат във файловия мениджър и прозорците.
 Comment[ca]=Llocs, com es veuen en el gestor de fitxers i en els diàlegs de fitxer.
 Comment[ca@valencia]=Llocs, com es veuen en el gestor de fitxers i en els diàlegs de fitxer.

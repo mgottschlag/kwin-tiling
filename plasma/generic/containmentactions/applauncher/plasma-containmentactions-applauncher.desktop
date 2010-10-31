@@ -2,6 +2,7 @@
 Name=Application Launcher
 Name[af]=Programlanseerder
 Name[ar]=مطلق التطبيقات
+Name[ast]=Llanzador d'aplicaciones
 Name[be]=Запуск праграмаў
 Name[be@latin]=Uklučeńnie aplikacyi
 Name[bg]=Стартиране на програми
@@ -84,6 +85,7 @@ Type=Service
 Icon=preferences-desktop-launch-feedback
 Comment=Simple application launcher
 Comment[ar]=مطلق التطبيقات البسيط
+Comment[ast]=Llanzador d'aplicaciones simple
 Comment[ca]=Llançador d'aplicacions senzill
 Comment[ca@valencia]=Llançador d'aplicacions senzill
 Comment[cs]=Jednoduchý spouštěč aplikací

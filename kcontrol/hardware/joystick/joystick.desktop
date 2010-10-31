@@ -16,6 +16,7 @@ X-KDE-Weight=70
 
 Comment=Joystick settings
 Comment[ar]=إعدادات عصى الألعاب
+Comment[ast]=Preferencies del Joystick
 Comment[be@latin]=Nałady džojstyka
 Comment[bg]=Настройване на джойстика
 Comment[bn]=জয়স্টিক সেটিংস
@@ -134,6 +135,7 @@ X-KDE-Keywords[zh_TW]=joystick,gamepad,搖桿,遊戲台
 Name=Joystick
 Name[af]=Joystick
 Name[ar]=عصا الألعاب
+Name[ast]=Joystick
 Name[be]=Джойстык
 Name[be@latin]=Džojstyk
 Name[bg]=Джойстик

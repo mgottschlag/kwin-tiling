@@ -1,6 +1,7 @@
 [Desktop Action hasState]
 Name=Has State
 Name[ar]=يملك حالة
+Name[ast]=Tien estáu
 Name[ca]=Té estat
 Name[ca@valencia]=Té estat
 Name[cs]=Má stav
@@ -66,6 +67,7 @@ Name[zh_TW]=有狀態
 [Desktop Action stateValue]
 Name=State Value
 Name[ar]=قيمة الحالة
+Name[ast]=Valor del estáu
 Name[ca]=Valor de l'estat
 Name[ca@valencia]=Valor de l'estat
 Name[cs]=Hodnota stavu
@@ -129,6 +131,7 @@ Name[zh_TW]=狀態值
 [Desktop Action type]
 Name=Type
 Name[ar]=النوع
+Name[ast]=Triba
 Name[bg]=Тип
 Name[bn]=ধরন
 Name[ca]=Tipus
@@ -199,6 +202,7 @@ Name[zh_TW]=類型
 Actions=hasState;stateValue;type;
 Name=Solid Device
 Name[ar]=جهاز في سوليد
+Name[ast]=Preseos de Solid
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

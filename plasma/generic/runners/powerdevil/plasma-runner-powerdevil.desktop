@@ -1,6 +1,7 @@
 [Desktop Entry]
 Comment=Basic Power Management Operations
 Comment[ar]=عمليات إدارة الطاقة الأساسية
+Comment[ast]=Operaciones básiques de xestión de la batería
 Comment[be@latin]=Prostyja aperacyi dla kiravańnia enerhijaj
 Comment[bg]=Основни операции по захранването
 Comment[ca]=Operacions bàsiques de gestió d'energia
@@ -70,6 +71,7 @@ Comment[zh_TW]=基本的電源管理操作
 Icon=preferences-system-power-management
 Name=PowerDevil
 Name[ar]=عفريت الطاقة
+Name[ast]=PowerDevil
 Name[be@latin]=PowerDevil
 Name[bg]=PowerDevil
 Name[bn]=পাওয়ার-ডেভিল

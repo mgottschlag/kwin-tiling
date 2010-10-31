@@ -1,6 +1,7 @@
 [Domain]
 Name=Login Manager Control Module
 Name[ar]=وحدة التحكم بمدير الولوج
+Name[ast]=Módulu de control de la xestión d'accesu
 Name[ca]=Mòdul de control del gestor d'accés
 Name[ca@valencia]=Mòdul de control del gestor d'accés
 Name[da]=Kontrolmodul til login-håndtering
@@ -50,6 +51,7 @@ Icon=preferences-system-login
 [org.kde.kcontrol.kcmkdm.save]
 Name=Save the Login Manager settings
 Name[ar]=احفظ إعدادات مدير الولوج
+Name[ast]=Guardar les preferencies de la xestión d'accesu
 Name[ca]=Desa la configuració del gestor d'accés
 Name[ca@valencia]=Alça la configuració del gestor d'accés
 Name[da]=Gem indstillinger for login-håndtering
@@ -96,6 +98,7 @@ Name[zh_CN]=保存登录管理器设置
 Name[zh_TW]=儲存登入管理設定值
 Description=Administrator authorization is required to change the Login Manager settings
 Description[ar]=تصريح المدير مطلوب لتغيير إعدادت مدير الولوج
+Description[ast]=Tienes de tener permisos d'alministrador pa camudar les preferencies del xestor d'accesu
 Description[ca]=Es requereix autorització de l'administrador per canviar l'arranjament del gestor d'accés
 Description[ca@valencia]=Es requereix autorització de l'administrador per canviar l'arranjament del gestor d'accés
 Description[cs]=Pro změnu správce přihlášení je potřeba oprávnění administrátora
@@ -144,6 +147,7 @@ Policy=auth_admin
 [org.kde.kcontrol.kcmkdm.managefaces]
 Name=Manage user images shown in the Login Manager
 Name[ar]=أدر صور المستخدمين الظاهرة في مدير الولوج
+Name[ast]=Xestionar les imáxenes d'usuariu amosaes nel xestor d'accesu
 Name[ca]=Gestiona les imatges dels usuaris en el gestor d'accés
 Name[ca@valencia]=Gestiona les imatges dels usuaris en el gestor d'accés
 Name[da]=Håndtér brugerbileder som vises i login-håndteringen
@@ -188,6 +192,7 @@ Name[zh_CN]=管理登录管理器中的用户头像
 Name[zh_TW]=管理在登入管理員中顯示的使用者圖像
 Description=Administrator authorization is required to manage user images for the Login Manager
 Description[ar]=تصريح المدير مطلوب لإدارة صور المستخدمين الظاهرة في مدير الولوج
+Description[ast]=Tienes de tener permisos d'alministrador pa camudar les imáxenes d'usuarios del xestor d'accesu
 Description[ca]=Es requereix autorització de l'administrador per gestionar les imatges dels usuaris del gestor d'accés
 Description[ca@valencia]=Es requereix autorització de l'administrador per gestionar les imatges dels usuaris del gestor d'accés
 Description[cs]=Pro správu uživatelských obrázků správce přihlášení je potřeba oprávnění administrátora
@@ -236,6 +241,7 @@ Persistence=session
 [org.kde.kcontrol.kcmkdm.managethemes]
 Name=Manage themes for the Login Manager
 Name[ar]=أدر سمات مدير الولوج
+Name[ast]=Xestionar temes del xestor d'accesu
 Name[ca]=Gestiona els temes en el gestor d'accés
 Name[ca@valencia]=Gestiona els temes en el gestor d'accés
 Name[da]=Håndtér temaer for login-håndteringen
@@ -281,6 +287,7 @@ Name[zh_CN]=管理登录管理器主题
 Name[zh_TW]=管理在登入管理員中顯示的主題
 Description=Administrator authorization is required to manage themes for the Login Manager
 Description[ar]=تصريح المدير مطلوب لإدارة سمات مدير الولوج
+Description[ast]=Tienes de tener permisos d'alministrador pa camudar los temes del xestor d'accesu
 Description[ca]=Es requereix autorització de l'administrador per gestionar els temes del gestor d'accés
 Description[ca@valencia]=Es requereix autorització de l'administrador per gestionar els temes del gestor d'accés
 Description[cs]=Pro správu motivů správce přihlášení je potřeba oprávnění administrátora

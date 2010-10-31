@@ -11,6 +11,7 @@ X-KDE-ParentApp=kcontrol
 
 Name=Custom Shortcuts
 Name[ar]=اختصارات مخصصة
+Name[ast]=Accesos rápidos personalizaos
 Name[ca]=Dreceres personalitzades
 Name[ca@valencia]=Dreceres personalitzades
 Name[cs]=Vlastní zkratky
@@ -60,6 +61,7 @@ Name[zh_TW]=自訂捷徑
 
 Comment=Configure Input Actions settings
 Comment[ar]=اضبط إعدادات إجراءات الإدخال
+Comment[ast]=Configuración de les preferencies d'aiciones d'entrada
 Comment[bg]=Настройване на входящите действия
 Comment[ca]=Configura l'arranjament de les accions d'entrada
 Comment[ca@valencia]=Configura l'arranjament de les accions d'entrada
