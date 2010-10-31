@@ -79,6 +79,8 @@ class Image : public Plasma::Wallpaper
         void setConfigurationInterfaceModel();
         void updateDirs();
         void addDirFromSelectionDialog();
+        void systemCheckBoxToggled(bool);
+        void downloadedCheckBoxToggled(bool);
 
     protected:
         void init(const KConfigGroup &config);

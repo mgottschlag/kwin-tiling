@@ -191,8 +191,20 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_uiSlideshow.setupUi(m_configWidget);
         m_uiSlideshow.m_newStuff->setIcon(KIcon("get-hot-new-stuff"));
         m_uiSlideshow.m_dirlist->clear();
+        m_uiSlideshow.m_systemCheckBox->setChecked(false);
+        m_uiSlideshow.m_downloadedCheckBox->setChecked(false);
+
+        QString systemPath = KStandardDirs::installPath("wallpaper");
+        QString localPath = KGlobal::dirs()->saveLocation("wallpaper");
+
         foreach (const QString &dir, m_dirs) {
-            m_uiSlideshow.m_dirlist->addItem(dir);
+            if (dir == KStandardDirs::installPath("wallpaper")) {
+                m_uiSlideshow.m_systemCheckBox->setChecked(true);
+            } else if (dir == localPath) {
+                m_uiSlideshow.m_downloadedCheckBox->setChecked(true);
+            } else {
+                m_uiSlideshow.m_dirlist->addItem(dir);
+            }
         }
         m_uiSlideshow.m_dirlist->setCurrentRow(0);
         updateDirs();
@@ -227,6 +239,10 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         connect(m_uiSlideshow.m_color, SIGNAL(changed(const QColor&)), this, SLOT(colorChanged(const QColor&)));
         connect(m_uiSlideshow.m_newStuff, SIGNAL(clicked()), this, SLOT(getNewWallpaper()));
 
+        connect(m_uiSlideshow.m_systemCheckBox, SIGNAL(toggled(bool)),
+                this, SLOT(systemCheckBoxToggled(bool)));
+        connect(m_uiSlideshow.m_downloadedCheckBox, SIGNAL(toggled(bool)),
+                this, SLOT(downloadedCheckBoxToggled(bool)));
         connect(m_uiSlideshow.m_color, SIGNAL(changed(const QColor&)), this, SLOT(modified()));
         connect(m_uiSlideshow.m_resizeMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(modified()));
         connect(m_uiSlideshow.m_addDir, SIGNAL(clicked()), this, SLOT(modified()));
@@ -237,6 +253,26 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 
     connect(this, SIGNAL(settingsChanged(bool)), parent, SLOT(settingsChanged(bool)));
     return m_configWidget;
+}
+
+void Image::systemCheckBoxToggled(bool checked)
+{
+    if (checked) {
+        m_dirs << KStandardDirs::installPath("wallpaper");
+    } else {
+        m_dirs.removeAll(KStandardDirs::installPath("wallpaper"));
+    }
+    modified();
+}
+
+void Image::downloadedCheckBoxToggled(bool checked)
+{
+    if (checked) {
+        m_dirs << KGlobal::dirs()->saveLocation("wallpaper");
+    } else {
+        m_dirs.removeAll(KGlobal::dirs()->saveLocation("wallpaper"));
+    }
+    modified();
 }
 
 void Image::setConfigurationInterfaceModel()
@@ -351,6 +387,14 @@ void Image::removeDir()
 void Image::updateDirs()
 {
     m_dirs.clear();
+
+    if (m_uiSlideshow.m_systemCheckBox->isChecked()) {
+        m_dirs << KStandardDirs::installPath("wallpaper");
+    }
+    if (m_uiSlideshow.m_downloadedCheckBox->isChecked()) {
+        m_dirs << KGlobal::dirs()->saveLocation("wallpaper");
+    }
+
     const int dirCount = m_uiSlideshow.m_dirlist->count();
     for (int i = 0; i < dirCount; ++i) {
         m_dirs.append(m_uiSlideshow.m_dirlist->item(i)->text());
@@ -533,7 +577,7 @@ void Image::showFileDialog()
         if(m_wallpaper.indexOf(QDir::homePath()) > -1){
             baseUrl = KUrl(m_wallpaper);
         }
-      
+
         m_dialog = new KFileDialog(baseUrl, "*.png *.jpeg *.jpg *.xcf *.svg *.svgz *.bmp", m_configWidget);
         m_dialog->setOperationMode(KFileDialog::Opening);
         m_dialog->setInlinePreviewShown(true);
