@@ -99,24 +99,34 @@ Q_SIGNALS:
     void activityRemoved(const QString & id);
 
     /**
-     * This signal is emitted when a client registers
-     * a resource with a specific window
-     * @param wid window id
+     * Emitted when the client application accesses
+     * the file but is not interested in registering more advanced
+     * events like open/modify/close.
+     * @param application unformatted name of the application
      * @param uri uri of the resource
      */
-    void resourceWindowRegistered(const QString & application, uint wid, const QString & uri);
+    void resourceAccessed(const QString & application, const KUrl & uri);
 
     /**
-     * This signal is emitted when a client unregisters
-     * a resource from a specific window
-     * @param wid window id
+     * Emitted when the client application
+     * opens a new resource identifiable by an uri.
+     * @param application unformatted name of the application
+     * @param windowId ID of the window that registers the resource
      * @param uri uri of the resource
+     * @param action performed action
+     *
+     * @note application parameter is only specified on action == Opened
      */
-    void resourceWindowUnregistered(uint wid, const QString & uri);
+    void resourceAccessed(const QString & application, uint windowId, const KUrl & uri, ResourceAction action);
 
 private:
     class Private;
     Private * const d;
+
+    Q_PRIVATE_SLOT(d, void resourceAccessed(const QString &, const QString &));
+    Q_PRIVATE_SLOT(d, void resourceOpened(const QString &, uint, const QString &));
+    Q_PRIVATE_SLOT(d, void resourceModified(uint, const QString &));
+    Q_PRIVATE_SLOT(d, void resourceClosed(uint, const QString &));
 };
 
 #endif // ACTIVITY_CONTROLLER_H

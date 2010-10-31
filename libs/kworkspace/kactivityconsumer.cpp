@@ -41,29 +41,24 @@ KActivityConsumer::~KActivityConsumer()
 // @param METHOD invocation of the d-bus method
 // @param DEFAULT value to be used if the reply was not valid
 #define KACTIVITYCONSUMER_DBUS_RETURN(TYPE, METHOD, DEFAULT)  \
-    QDBusReply < TYPE > dbusReply = METHOD;          \
-    if (dbusReply.isValid()) {                       \
-        return dbusReply.value();                    \
+    QDBusReply < TYPE > dbusReply = METHOD;                   \
+    if (dbusReply.isValid()) {                                \
+        return dbusReply.value();                             \
     } else {                                                  \
         kDebug() << "d-bus reply was invalid"                 \
-                 << dbusReply.value()                \
-                 << dbusReply.error();               \
+                 << dbusReply.value()                         \
+                 << dbusReply.error();                        \
         return DEFAULT;                                       \
     }
 
 QString KActivityConsumer::currentActivity() const
 {
-    kDebug() << KActivityManager::self()->CurrentActivity().value();
-
     KACTIVITYCONSUMER_DBUS_RETURN(
         QString, KActivityManager::self()->CurrentActivity(), QString() );
 }
 
 QStringList KActivityConsumer::availableActivities() const
 {
-    kDebug() << KActivityManager::self()->ListActivities().value();
-    qDebug() << "Activities" << KActivityManager::self()->ListActivities().value();
-
     KACTIVITYCONSUMER_DBUS_RETURN(
         QStringList, KActivityManager::self()->ListActivities(), QStringList() );
 }
@@ -76,20 +71,38 @@ QStringList KActivityConsumer::activitiesForResource(const KUrl & uri)
 
 #undef KACTIVITYCONSUMER_DBUS_RETURN
 
-void KActivityConsumer::registerResourceWindow(WId wid, const KUrl & uri)
+void KActivityConsumer::resourceAccessed(const KUrl & uri)
 {
-    KActivityManager::self()->NotifyResourceOpened(
+    KActivityManager::self()->NotifyResourceAccessed(
         QCoreApplication::instance()->applicationName(),
-        (uint)wid,
         uri.url()
     );
 }
 
-void KActivityConsumer::unregisterResourceWindow(WId wid, const KUrl & uri)
+void KActivityConsumer::resourceAccessed(WId wid, const KUrl & uri, ResourceAction action)
 {
-    KActivityManager::self()->NotifyResourceClosed(
-        (uint)wid,
-        uri.url()
-    );
+    switch (action) {
+        case Opened:
+            KActivityManager::self()->NotifyResourceOpened(
+                    QCoreApplication::instance()->applicationName(),
+                    (uint)wid,
+                    uri.url()
+                );
+            break;
+
+        case Modified:
+            KActivityManager::self()->NotifyResourceModified(
+                    (uint)wid,
+                    uri.url()
+                );
+            break;
+
+        case Closed:
+            KActivityManager::self()->NotifyResourceClosed(
+                    (uint)wid,
+                    uri.url()
+                );
+            break;
+    }
 }
 

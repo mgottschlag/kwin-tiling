@@ -27,7 +27,7 @@ public:
     Private(KActivityInfo *info, const QString &activityId);
 
     KUrl urlForType(KActivityInfo::ResourceType resourceType) const;
-    void activityStateChanged(const QString &, KActivityInfo::State) const;
+    void activityStateChanged(const QString &, int) const;
 
     void added(const QString &) const;
     void removed(const QString &) const;

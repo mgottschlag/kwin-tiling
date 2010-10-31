@@ -60,6 +60,15 @@ class KDE_EXPORT KActivityConsumer: public QObject {
     Q_PROPERTY(QStringList availableActivities READ availableActivities)
 
 public:
+    /**
+     * Enum holds different actions regarding accessing some resource
+     */
+    enum ResourceAction {
+        Opened,
+        Modified,
+        Closed
+    };
+
     explicit KActivityConsumer(QObject * parent = 0);
 
     ~KActivityConsumer();
@@ -94,22 +103,26 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     /**
-     * Should be called when the client application
-     * opens a new resource identifiable by an URI.
-     * @param wid ID of the window that registers the resource
+     * Should be called when the client application accesses an URI which
+     * is important to remember, but it doesn't want to register open,
+     * modify and close events for it.
      * @param uri uri of the resource
      */
-    void registerResourceWindow(WId wid, const KUrl & uri);
+    void resourceAccessed(const KUrl & uri);
 
     /**
-     * Should be called when the client application
-     * closes a resource previously registered with
-     * registerResourceWindow.
-     * @param wid ID of the window that unregisters the resource
-     * @param uri uri of the resource, if uri is not defined,
-     * all resources associated with the window are unregistered
+     * Should be called when the client application opens, modifies or
+     * closes a resource.
+     * @param wid ID of the window that accesses the resource
+     * @param uri uri of the resource
+     * @param action is the resource being opened, modified or closed
+     * @note You need to call this method with action == Opened before
+     *     calling it with any other action
+     * @note When the window that has registered any resources is destroyed,
+     *     it will automatically call this method with action == Closed
+     *     for all opened resources
      */
-    void unregisterResourceWindow(WId wid, const KUrl & uri = KUrl());
+    void resourceAccessed(WId wid, const KUrl & uri, ResourceAction action);
 
 private:
     KActivityConsumerPrivate * const d;

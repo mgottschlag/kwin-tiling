@@ -20,21 +20,57 @@
 #include "kactivityconsumer_p.h"
 #include "kactivitymanager_p.h"
 
+#include <QObject>
 #include <KDebug>
-class KActivityController::Private {
+
+class KActivityController::Private: public QObject {
 public:
-    Private()
+    Private(KActivityController * parent)
+        : q(parent)
     {
     }
+
+public Q_SLOTS:
+    void resourceAccessed(const QString & application, const QString & uri) {
+        q->resourceAccessed(application, uri);
+    }
+
+    void resourceOpened(const QString & application, uint wid, const QString & uri) {
+        q->resourceAccessed(application, wid, uri, KActivityController::Opened);
+    }
+
+    void resourceModified(uint wid, const QString & uri) {
+        q->resourceAccessed(QString(), wid, uri, KActivityController::Modified);
+    }
+
+    void resourceClosed(uint wid, const QString & uri) {
+        q->resourceAccessed(QString(), wid, uri, KActivityController::Closed);
+    }
+
+private:
+    KActivityController * const q;
 };
 
 KActivityController::KActivityController(QObject * parent)
-    : KActivityConsumer(parent), d(new Private())
+    : KActivityConsumer(parent), d(new Private(this))
 {
-    connect(KActivityManager::self(), SIGNAL(ActivityAdded(QString)), this, SIGNAL(activityAdded(QString)));
-    connect(KActivityManager::self(), SIGNAL(ActivityRemoved(QString)), this, SIGNAL(activityRemoved(QString)));
-    // connect(d->manager(), SIGNAL(resourceWindowRegistered(QString,uint,QString)), this, SIGNAL(resourceWindowRegistered(QString,uint,QString)));
-    // connect(d->manager(), SIGNAL(resourceWindowUnregistered(uint,QString)), this, SIGNAL(resourceWindowUnregistered(uint,QString)));
+    connect(KActivityManager::self(), SIGNAL(ActivityAdded(QString)),
+            this, SIGNAL(activityAdded(QString)));
+
+    connect(KActivityManager::self(), SIGNAL(ActivityRemoved(QString)),
+            this, SIGNAL(activityRemoved(QString)));
+
+    connect(KActivityManager::self(), SIGNAL(ResourceAccessed(QString, QString)),
+            this, SLOT(resourceAccessed(QString, QString)));
+
+    connect(KActivityManager::self(), SIGNAL(ResourceOpened(QString, uint, QString)),
+            this, SLOT(resourceOpened(QString, uint, QString)));
+
+    connect(KActivityManager::self(), SIGNAL(ResourceModified(uint, QString)),
+            this, SLOT(resourceModified(uint, QString)));
+
+    connect(KActivityManager::self(), SIGNAL(ResourceClosed(uint, QString)),
+            this, SLOT(resourceClosed(uint, QString)));
 }
 
 KActivityController::~KActivityController()
@@ -67,3 +103,4 @@ void KActivityController::removeActivity(const QString & id)
     KActivityManager::self()->RemoveActivity(id);
 }
 
+#include "kactivitycontroller.moc"

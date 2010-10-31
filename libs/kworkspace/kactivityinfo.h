@@ -209,7 +209,7 @@ private:
     class Private;
     Private * const d;
 
-    Q_PRIVATE_SLOT(d, void activityStateChanged(const QString &, KActivityInfo::State))
+    Q_PRIVATE_SLOT(d, void activityStateChanged(const QString &, int))
     Q_PRIVATE_SLOT(d, void added(const QString &))
     Q_PRIVATE_SLOT(d, void removed(const QString &))
     Q_PRIVATE_SLOT(d, void started(const QString &))
