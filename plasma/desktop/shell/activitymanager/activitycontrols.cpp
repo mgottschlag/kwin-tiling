@@ -29,6 +29,11 @@ ActivityControls::ActivityControls(ActivityIcon * parent)
 {
 }
 
+bool ActivityControls::hidesContents() const
+{
+    return false;
+}
+
 // ActivityRemovalConfirmation
 
 ActivityRemovalConfirmation::ActivityRemovalConfirmation(ActivityIcon * parent)
@@ -86,6 +91,7 @@ ActivityConfiguration::ActivityConfiguration(ActivityIcon * parent, Activity * a
     m_layoutMain = new QGraphicsLinearLayout(m_main);
     m_layoutMain->setOrientation(Qt::Vertical);
     m_layoutMain->setContentsMargins(0, 0, 0, 0);
+    m_layoutMain->setSpacing(0);
 
     m_activityName = new Plasma::LineEdit(this);
     m_layoutMain->addItem(m_activityName);
@@ -153,3 +159,7 @@ void ActivityConfiguration::chooseIcon()
     }
 }
 
+bool ActivityConfiguration::hidesContents() const
+{
+    return true;
+}

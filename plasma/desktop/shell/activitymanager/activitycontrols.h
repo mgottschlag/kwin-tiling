@@ -17,6 +17,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#ifndef ACTIVITY_CONTROLS_H_
+#define ACTIVITY_CONTROLS_H_
+
 #include <QGraphicsWidget>
 #include <QGraphicsLinearLayout>
 #include <Plasma/Label>
@@ -30,6 +33,8 @@ class ActivityControls : public QGraphicsWidget {
     Q_OBJECT
 public:
     ActivityControls(ActivityIcon * parent);
+
+    virtual bool hidesContents() const;
 
 Q_SIGNALS:
     void closed();
@@ -58,6 +63,8 @@ public:
     ActivityConfiguration(ActivityIcon * parent, Activity * activity);
     ~ActivityConfiguration();
 
+    bool hidesContents() const;
+
 private Q_SLOTS:
     void applyChanges();
     void chooseIcon();
@@ -82,3 +89,5 @@ private:
     Activity              * m_activity;
     QString                 m_iconName;
 };
+
+#endif // ACTIVITY_CONTROLS_H_

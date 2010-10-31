@@ -87,18 +87,18 @@ public:
 
 ActivityIcon::ActivityIcon(const QString &id)
     :AbstractIcon(0),
-    m_inlineWidgetAnim(0),
     m_buttonStop(0),
     m_buttonRemove(0),
     m_buttonStart(0),
-    m_buttonConfigure(0)
+    m_buttonConfigure(0),
+    m_inlineWidgetAnim(0)
 {
     DesktopCorona *c = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
     m_activity = c->activity(id);
     connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)), m_activity, SLOT(activate()));
     connect(m_activity, SIGNAL(opened()), this, SLOT(updateButtons()));
     connect(m_activity, SIGNAL(closed()), this, SLOT(updateButtons()));
-    connect(m_activity, SIGNAL(nameChanged(QString)), this, SLOT(setName(QString)));
+    connect(m_activity, SIGNAL(changed()), this, SLOT(updateContents()));
     setName(m_activity->name());
 
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
@@ -159,7 +159,7 @@ private:
     qreal m_startRightMargin;
 };
 
-void ActivityIcon::showInlineWidget(QGraphicsWidget * w)
+void ActivityIcon::showInlineWidget(ActivityControls * w)
 {
     hideInlineWidget(true);
 
@@ -176,7 +176,7 @@ void ActivityIcon::showInlineWidget(QGraphicsWidget * w)
 
 void ActivityIcon::showRemovalConfirmation()
 {
-    QGraphicsWidget * w = new ActivityRemovalConfirmation(this);
+    ActivityControls * w = new ActivityRemovalConfirmation(this);
 
     connect(w, SIGNAL(removalConfirmed()), m_activity, SLOT(destroy()));
 
@@ -352,6 +352,21 @@ void ActivityIcon::stopActivity()
 void ActivityIcon::startActivity()
 {
     emit clicked(this);
+}
+
+void ActivityIcon::updateContents()
+{
+    setName(m_activity->name());
+    update();
+}
+
+void ActivityIcon::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
+{
+    if (m_inlineWidget && m_inlineWidget.data()->hidesContents()) {
+        return;
+    }
+
+    AbstractIcon::paint(painter, option, widget);
 }
 
 #include "activityicon.moc"

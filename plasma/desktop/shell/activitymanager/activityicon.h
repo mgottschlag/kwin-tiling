@@ -28,6 +28,7 @@
 class QAbstractAnimation;
 class Activity;
 class ActivityActionWidget;
+class ActivityControls;
 
 class ActivityIcon : public Plasma::AbstractIcon
 {
@@ -45,6 +46,7 @@ class ActivityIcon : public Plasma::AbstractIcon
         QMimeData* mimeData();
 
         void setGeometry(const QRectF & rect);
+        void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
 
     private Q_SLOTS:
         void stopActivity();
@@ -53,10 +55,11 @@ class ActivityIcon : public Plasma::AbstractIcon
         void showConfiguration();
         void makeInlineWidgetVisible();
         void hideInlineWidget(bool aboutToShowAnother = false);
-        void showInlineWidget(QGraphicsWidget * widget);
+        void showInlineWidget(ActivityControls * widget);
         void startInlineAnim();
         void updateLayout();
         void updateButtons();
+        void updateContents();
 
     private:
         QString m_id;
@@ -69,7 +72,7 @@ class ActivityIcon : public Plasma::AbstractIcon
         bool m_closable : 1;
 
         Activity *m_activity;
-        QWeakPointer<QGraphicsWidget> m_inlineWidget;
+        QWeakPointer < ActivityControls > m_inlineWidget;
         QAbstractAnimation *m_inlineWidgetAnim;
 
         friend class ActivityActionWidget;
