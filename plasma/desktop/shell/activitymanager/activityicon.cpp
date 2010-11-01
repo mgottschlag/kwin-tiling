@@ -366,6 +366,8 @@ void ActivityIcon::paint(QPainter * painter, const QStyleOptionGraphicsItem * op
         return;
     }
 
+    setSelected(m_activity->isActive());
+
     AbstractIcon::paint(painter, option, widget);
 }
 

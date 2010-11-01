@@ -70,6 +70,7 @@ class ActivityIcon : public Plasma::AbstractIcon
         ActivityActionWidget * m_buttonConfigure;
 
         bool m_closable : 1;
+        bool m_active : 1;
 
         Activity *m_activity;
         QWeakPointer < ActivityControls > m_inlineWidget;

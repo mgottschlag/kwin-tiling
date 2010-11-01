@@ -1,6 +1,7 @@
 /*
  *   Copyright (C) 2009 by Ana Cecília Martins <anaceciliamb@gmail.com>
  *   Copyright (C) 2010 by Chani Armitage <chani@kde.org>
+ *   Copyright (C) 2010 by Ivan Cukic <ivan.cukic@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library/Lesser General Public License
@@ -49,7 +50,8 @@ AbstractIcon::AbstractIcon(QGraphicsItem *parent)
     setCacheMode(DeviceCoordinateCache);
     setAcceptHoverEvents(true);
     m_background = new Plasma::FrameSvg(this);
-    m_background->setImagePath("widgets/background");
+    m_background->setImagePath("widgets/tasks");
+    m_background->setElementPrefix("normal");
 }
 
 AbstractIcon::~AbstractIcon()
@@ -129,12 +131,14 @@ void AbstractIcon::hoverEnterEvent(QGraphicsSceneHoverEvent *)
     QMimeData *data = mimeData();
     if (data && !data->formats().isEmpty()) {
     }
+    update();
 }
 
 void AbstractIcon::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 {
     m_hovered = false;
     emit hoverLeave(this);
+    update();
 }
 
 void AbstractIcon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -188,7 +192,10 @@ void AbstractIcon::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 void AbstractIcon::setSelected(bool selected)
 {
-    m_selected = selected;
+    if (m_selected != selected) {
+        m_selected = selected;
+        update();
+    }
 }
 
 bool AbstractIcon::isSelected() const
@@ -213,10 +220,27 @@ void AbstractIcon::setDraggable(bool draggable)
 
 void AbstractIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
+    paintBackground(painter, option, widget);
+    paintForeground(painter, option, widget);
+}
+
+void AbstractIcon::paintBackground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    if (m_selected) {
+        qDebug() << "SELECTED!!!";
+        m_background->setElementPrefix("focus");
+    } else if (m_hovered) {
+        qDebug() << "HOVERED!!!";
+        m_background->setElementPrefix("hover");
+    } else {
+        m_background->setElementPrefix("normal");
+    }
 
     m_background->paintFrame(painter, option->rect, option->rect);
+}
+
+void AbstractIcon::paintForeground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
     const QRectF rect = contentsRect();
     const int width = rect.width();
     const int height = rect.height();

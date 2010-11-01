@@ -99,10 +99,12 @@ signals:
 public slots:
     void setName(const QString &name);
     void setIcon(const QString &icon);
+
     /**
      * delete the activity forever
      */
     void destroy();
+
     /**
      * make this activity the current activity
      */

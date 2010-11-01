@@ -41,7 +41,10 @@ class PLASMAGENERICSHELL_EXPORT AbstractIcon : public QGraphicsWidget
 
         bool isSelected() const;
         void setSelected(bool selected);
+
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+        void paintForeground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+        void paintBackground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
         QString name() const;
 
@@ -52,6 +55,7 @@ class PLASMAGENERICSHELL_EXPORT AbstractIcon : public QGraphicsWidget
          * return the background image
          */
         virtual QPixmap pixmap(const QSize &size) = 0;
+
         /**
          * return the mime data for d&d
          */
