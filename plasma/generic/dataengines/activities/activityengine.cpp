@@ -38,7 +38,7 @@ void ActivityEngine::init()
         //FIXME can I read a setting or something instead?
     } else {
         m_activityController = new KActivityController(this);
-        QStringList activities = m_activityController->availableActivities();
+        QStringList activities = m_activityController->listActivities();
         //setData("allActivities", activities);
         foreach (const QString &id, activities) {
             insertActivity(id);
