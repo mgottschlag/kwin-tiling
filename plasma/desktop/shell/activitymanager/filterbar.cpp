@@ -154,6 +154,7 @@ void FilterBar::populateActivityMenu()
         return;
     }
 
+    QMenu *templatesMenu = m_newActivityMenu->addMenu(i18n("Templates"));
     //TODO sort alphabetically. see DesktopCorona::populateAddPanelsMenu
     //except we can probably improve that by switching to kplugininfo beforehand
 
@@ -163,8 +164,12 @@ void FilterBar::populateActivityMenu()
         if (info.property("NoDisplay").toBool()) {
             continue;
         }
-
-        QAction *action = m_newActivityMenu->addAction(KIcon(info.icon()), info.name());
+        QAction *action;
+        if (info.pluginName() == "desktop") { //suggest this one for newbies
+            action = m_newActivityMenu->addAction(KIcon(info.icon()), i18n("Empty Desktop"));
+        } else {
+            action = templatesMenu->addAction(KIcon(info.icon()), info.name());
+        }
         action->setData(info.pluginName());
     }
 
@@ -180,7 +185,7 @@ void FilterBar::populateActivityMenu()
             Plasma::Package package(path, structure);
             const QString scriptFile = package.filePath("mainscript");
             if (!scriptFile.isEmpty()) {
-                QAction *action = m_newActivityMenu->addAction(KIcon(info.icon()), info.name());
+                QAction *action = templatesMenu->addAction(KIcon(info.icon()), info.name());
                 QStringList data;
                 data << scriptFile << info.name() << info.icon();
                 action->setData(data);
@@ -189,7 +194,6 @@ void FilterBar::populateActivityMenu()
     }
 
     //and finally, clone
-    m_newActivityMenu->addSeparator();
     QAction *action = new QAction(KIcon("edit-copy"), i18n("Clone current activity"), this);
     m_newActivityMenu->addAction(action);
 
