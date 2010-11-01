@@ -342,6 +342,8 @@ QStringList KSMServer::windowWmCommand(WId w)
             return QStringList() << "thunderbird";
         if( command.endsWith( "sunbird-bin" ))
             return QStringList() << "sunbird";
+        if( command.endsWith( "seamonkey-bin" ))
+            return QStringList() << "seamonkey";
     }
     return ret;
 }
