@@ -155,8 +155,7 @@ void FilterBar::populateActivityMenu()
     }
 
     QMenu *templatesMenu = m_newActivityMenu->addMenu(i18n("Templates"));
-    //TODO sort alphabetically. see DesktopCorona::populateAddPanelsMenu
-    //except we can probably improve that by switching to kplugininfo beforehand
+    QMap<QString, QAction*> sorted; //qmap sorts alphabetically
 
     //regular plugins
     KPluginInfo::List plugins = Plasma::Containment::listContainmentsOfType("desktop");
@@ -168,7 +167,8 @@ void FilterBar::populateActivityMenu()
         if (info.pluginName() == "desktop") { //suggest this one for newbies
             action = m_newActivityMenu->addAction(KIcon(info.icon()), i18n("Empty Desktop"));
         } else {
-            action = templatesMenu->addAction(KIcon(info.icon()), info.name());
+            action = new QAction(KIcon(info.icon()), info.name(), templatesMenu);
+            sorted.insert(info.name(), action);
         }
         action->setData(info.pluginName());
     }
@@ -185,12 +185,18 @@ void FilterBar::populateActivityMenu()
             Plasma::Package package(path, structure);
             const QString scriptFile = package.filePath("mainscript");
             if (!scriptFile.isEmpty()) {
-                QAction *action = templatesMenu->addAction(KIcon(info.icon()), info.name());
+                QAction *action = new QAction(KIcon(info.icon()), info.name(), templatesMenu);
                 QStringList data;
                 data << scriptFile << info.name() << info.icon();
                 action->setData(data);
+                sorted.insert(info.name(), action);
             }
         }
+    }
+
+    //set up sorted menu
+    foreach (QAction *action, sorted) {
+        templatesMenu->addAction(action);
     }
 
     //and finally, clone
