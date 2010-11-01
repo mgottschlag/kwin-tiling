@@ -69,6 +69,15 @@ public:
         Closed
     };
 
+    /**
+     * Different states of the activities service
+     */
+    enum ServiceStatus {
+        NotRunning,        ///< Service is not running
+        BareFunctionality, ///< Service is running without nepomuk backend
+        FullFunctionality, ///< Service is running, and nepomuk is available
+    };
+
     explicit KActivityConsumer(QObject * parent = 0);
 
     ~KActivityConsumer();
@@ -92,6 +101,11 @@ public:
      * @param uri uri of the resource
      */
     QStringList activitiesForResource(const KUrl & uri);
+
+    /**
+     * @returns status of the activities service
+     */
+    static ServiceStatus serviceStatus();
 
 Q_SIGNALS:
     /**

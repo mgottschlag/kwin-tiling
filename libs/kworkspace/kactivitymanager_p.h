@@ -26,6 +26,8 @@ class KActivityManager: public org::kde::ActivityManager {
 public:
     static KActivityManager * self();
 
+    static bool isActivityServiceRunning();
+
 private:
     KActivityManager();
 

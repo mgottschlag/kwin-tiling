@@ -47,13 +47,14 @@ Activity::Activity(const QString &id, QObject *parent)
       m_id(id),
       m_info(new KActivityInfo(id, this))
 {
-    // connect(m_info, SIGNAL(changed()), this, SLOT(setName(QString)));
+    connect(m_info, SIGNAL(changed()), this, SLOT(activityChanged()));
 
     if (m_info) {
         m_name = m_info->name();
+        m_icon = m_info->icon();
     } else {
         m_name = m_id;
-        kDebug() << "nepomuk is probably broken :(";
+        m_icon = QString();
     }
 
     m_corona = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
@@ -214,6 +215,12 @@ void Activity::setName(const QString &name)
 
 void Activity::setIcon(const QString &icon)
 {
+    if (m_icon == icon) {
+        return;
+    }
+
+    m_icon = icon;
+
     KActivityController().setActivityIcon(m_id, icon);
     emit changed();
 }

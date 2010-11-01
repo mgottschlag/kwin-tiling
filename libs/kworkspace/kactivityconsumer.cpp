@@ -106,3 +106,16 @@ void KActivityConsumer::resourceAccessed(WId wid, const KUrl & uri, ResourceActi
     }
 }
 
+KActivityConsumer::ServiceStatus KActivityConsumer::serviceStatus()
+{
+    if (!KActivityManager::isActivityServiceRunning()) {
+        return NotRunning;
+    }
+
+    if (!KActivityManager::self()->IsBackstoreAvailable()) {
+        return BareFunctionality;
+    }
+
+    return FullFunctionality;
+}
+

@@ -136,6 +136,7 @@ private:
 
     QString m_id;
     QString m_name;
+    QString m_icon;
     QString m_plugin;
     QHash<QPair<int,int>, Plasma::Containment*> m_containments;
     KActivityInfo *m_info;

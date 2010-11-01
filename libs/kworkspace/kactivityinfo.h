@@ -167,6 +167,11 @@ public:
     QString icon() const;
 
     /**
+     * @returns the state of the activity
+     */
+    State state() const;
+
+    /**
      * This function is provided for convenience.
      * @returns the name of the specified activity
      * @param id id of the activity

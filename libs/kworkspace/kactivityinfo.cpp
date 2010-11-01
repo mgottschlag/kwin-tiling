@@ -167,7 +167,7 @@ QList < KUrl > KActivityInfo::associatedResources(const KUrl & resourceType) con
 #define KACTIVITYINFO_DBUS_CAST_RETURN(REPLY_TYPE, CAST_TYPE, METHOD)  \
     QDBusReply < REPLY_TYPE > dbusReply = METHOD;                      \
     if (dbusReply.isValid()) {                                         \
-        return CAST_TYPE(dbusReply.value());                               \
+        return (CAST_TYPE)(dbusReply.value());                         \
     } else {                                                           \
         return CAST_TYPE();                                            \
     }
@@ -206,6 +206,17 @@ QString KActivityInfo::icon() const
         QString, QString, KActivityManager::self()->ActivityIcon(d->id));
 }
 
+KActivityInfo::State KActivityInfo::state() const
+{
+    QDBusReply < int > dbusReply = KActivityManager::self()->ActivityState(d->id);
+
+    if (dbusReply.isValid()) {
+        return (State)(dbusReply.value());
+    } else {
+        return Invalid;
+    }
+}
+
 QString KActivityInfo::name(const QString & id)
 {
     KACTIVITYINFO_DBUS_CAST_RETURN(
@@ -217,6 +228,10 @@ QString KActivityInfo::name(const QString & id)
 KActivityInfo::Availability KActivityInfo::availability() const
 {
     Availability result = Nothing;
+
+    if (!KActivityManager::isActivityServiceRunning()) {
+        return result;
+    }
 
     if (KActivityManager::self()->ListActivities().value().contains(d->id)) {
         result = BasicInfo;

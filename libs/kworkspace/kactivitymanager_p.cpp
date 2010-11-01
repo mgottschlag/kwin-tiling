@@ -42,7 +42,7 @@ KActivityManager * KActivityManager::self()
 {
     if (!s_instance) {
         // check if the activity manager is already running
-        if (!QDBusConnection::sessionBus().interface()->isServiceRegistered(ACTIVITY_MANAGER_DBUS_PATH)) {
+        if (!isActivityServiceRunning()) {
 
             // not running, trying to launch it
             QString error;
@@ -64,5 +64,10 @@ KActivityManager * KActivityManager::self()
     }
 
     return s_instance;
+}
+
+bool KActivityManager::isActivityServiceRunning()
+{
+    return QDBusConnection::sessionBus().interface()->isServiceRegistered(ACTIVITY_MANAGER_DBUS_PATH);
 }
 
