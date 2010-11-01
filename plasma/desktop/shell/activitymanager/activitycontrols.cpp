@@ -51,12 +51,12 @@ ActivityRemovalConfirmation::ActivityRemovalConfirmation(ActivityIcon * parent)
     m_layout->addItem(m_labelRemoveActivity);
 
     m_buttonConfirmRemoval = new Plasma::PushButton(this);
-    m_buttonConfirmRemoval->setText(i18n("Confirm Removal"));
+    m_buttonConfirmRemoval->setText(i18n("Remove"));
     m_layout->addItem(m_buttonConfirmRemoval);
     connect(m_buttonConfirmRemoval, SIGNAL(clicked()), this, SIGNAL(removalConfirmed()));
 
     m_buttonCancel = new Plasma::PushButton(this);
-    m_buttonCancel->setText(i18n("Cancel Removal"));
+    m_buttonCancel->setText(i18n("Cancel"));
     m_layout->addItem(m_buttonCancel);
     connect(m_buttonCancel, SIGNAL(clicked()), this, SIGNAL(closed()));
 }
