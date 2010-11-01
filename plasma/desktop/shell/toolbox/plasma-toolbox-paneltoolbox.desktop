@@ -1,6 +1,7 @@
 [Desktop Entry]
 Comment=Default panel toolbox for the Plasma desktop shell
 Comment[ast]=Barra ferramientes panel por defeutu de la shell d'escritoriu Plasma
+Comment[ca]=Caixa d'eines per defecte del plafó per a l'intèrpret d'ordres de l'escriptori Plasma
 Comment[de]=Standard-Werkzeugkasten für die Plasma-Kontrollleiste
 Comment[en_GB]=Default panel toolbox for the Plasma desktop shell
 Comment[et]=Plasma töölauakooriku vaikimisi paneeli tööriistakast
@@ -21,6 +22,7 @@ Comment[zh_TW]=預設的 Plasma 桌面 shell 的面板工具盒
 Icon=plasma
 Name=Panel toolbox
 Name[ast]=Caxa de ferramientes del panel
+Name[ca]=Caixa d'eines del plafó
 Name[de]=Werkzeugkasten für die Kontrollleiste
 Name[en_GB]=Panel toolbox
 Name[es]=Caja de herramientas del panel

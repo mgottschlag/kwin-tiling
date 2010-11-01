@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=pastebin.ca
 Name[ast]=pastebin.ca
+Name[ca]=pastebin.ca
 Name[en_GB]=pastebin.ca
 Name[et]=pastebin.ca
 Name[ia]=pastebin.ca
@@ -16,6 +17,7 @@ Name[x-test]=xxpastebin.caxx
 Name[zh_TW]=pastebin.ca
 Comment=Enables the share of text using pastebin.ca service
 Comment[ast]=Permite compartir testu a traviés del serviciu de pastebin.ca
+Comment[ca]=Habilita la compartició de text utilitzant el servei pastebin.ca
 Comment[de]=Ermöglicht die Veröffentlichung von Text auf pastebin.ca
 Comment[en_GB]=Enables the share of text using pastebin.ca service
 Comment[es]=Permite compartir texto a través del servicio de pastebin.ca
