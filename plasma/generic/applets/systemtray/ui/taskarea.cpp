@@ -106,6 +106,8 @@ public:
     Plasma::Location location;
     Plasma::ItemBackground *itemBackground;
     QTimer *hiddenRelayoutTimer;
+    QList<Task*> delayedRepositionTasks;
+    QTimer *repositionTimer;
 
     QSet<QString> hiddenTypes;
     QSet<QString> alwaysShownTypes;
@@ -126,6 +128,10 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
     d->topLayout->addItem(d->lastTasksLayout);
     d->topLayout->setContentsMargins(0, 0, 0, 0);
     d->topLayout->setSpacing(5);
+
+    d->repositionTimer = new QTimer(this);
+    d->repositionTimer->setSingleShot(true);
+    connect(d->repositionTimer, SIGNAL(timeout()), this, SLOT(delayedReposition()));
 
     d->hiddenTasksWidget = new QGraphicsWidget(this);
     d->hiddenTasksLayout = new QGraphicsGridLayout(d->hiddenTasksWidget);
@@ -189,6 +195,18 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
     emit sizeHintChanged(Qt::PreferredSize);
 }
 
+void TaskArea::delayedReposition()
+{
+    foreach (Task *task, d->delayedRepositionTasks) {
+        //kDebug() << "checking" << task->name() << task->typeId() << d->alwaysShownTypes;
+        addWidgetForTask(task);
+    }
+
+    checkUnhideTool();
+    d->topLayout->invalidate();
+    emit sizeHintChanged(Qt::PreferredSize);
+}
+
 void TaskArea::addTask(Task *task)
 {
     bool changedPositioning = addWidgetForTask(task);
@@ -216,6 +234,13 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
 {
     if (!task->isEmbeddable(d->host)) {
         //kDebug() << "task is not embeddable, so FAIL" << task->name();
+        return false;
+    }
+
+    //Delay the reposition if the applet is under the mouse cursor
+    if (d->host->isUnderMouse()) {
+        d->delayedRepositionTasks.append(task);
+        d->repositionTimer->start(2000);
         return false;
     }
 
