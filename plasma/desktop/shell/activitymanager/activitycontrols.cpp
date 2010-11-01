@@ -77,13 +77,13 @@ ActivityConfiguration::ActivityConfiguration(ActivityIcon * parent, Activity * a
     m_layoutButtons->addItem(m_labelConfiguration);
 
     m_buttonConfirmChanges = new Plasma::PushButton(this);
-    m_buttonConfirmChanges->setText(i18n("Apply Changes"));
+    m_buttonConfirmChanges->setText(i18n("Apply"));
     m_layoutButtons->addItem(m_buttonConfirmChanges);
     connect(m_buttonConfirmChanges, SIGNAL(clicked()), this, SLOT(applyChanges()));
     connect(m_buttonConfirmChanges, SIGNAL(clicked()), this, SIGNAL(closed()));
 
     m_buttonCancel = new Plasma::PushButton(this);
-    m_buttonCancel->setText(i18n("Cancel Changes"));
+    m_buttonCancel->setText(i18n("Cancel"));
     m_layoutButtons->addItem(m_buttonCancel);
     connect(m_buttonCancel, SIGNAL(clicked()), this, SIGNAL(closed()));
 
