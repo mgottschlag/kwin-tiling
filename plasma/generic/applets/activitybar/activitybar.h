@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Marco Martin <notmart@gmail.com>                *
+ *   Copyright (C) 2010 by Chani Armitage <chanika@gmail.com>              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -22,15 +23,13 @@
 
 
 #include <Plasma/Applet>
+#include <Plasma/DataEngine>
 
 namespace Plasma
 {
     class TabBar;
     class Containment;
 }
-
-class KActivityController;
-class KActivityInfo;
 
 class ActivityBar : public Plasma::Applet
 {
@@ -59,14 +58,13 @@ private Q_SLOTS:
     void switchActivity(int newActive);
     void activityAdded(const QString &id);
     void activityRemoved(const QString &id);
-    void activityNameChanged(const QString &newName);
-    void currentActivityChanged(const QString &newId);
+    void dataUpdated(const QString &source, const Plasma::DataEngine::Data &data);
 
 private:
     Plasma::TabBar *m_tabBar;
     QList<Plasma::Containment*> m_containments;
-    QList<KActivityInfo*> m_activities;
-    KActivityController *m_activityController;
+    QStringList m_activities;
+    Plasma::DataEngine *m_engine;
 };
 
 

@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Marco Martin <notmart@gmail.com>                *
+ *   Copyright (C) 2010 by Chani Armitage <chanika@gmail.com>              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -30,14 +31,11 @@
 #include <Plasma/Context>
 #include <Plasma/Containment>
 #include <Plasma/TabBar>
-
-#include <kactivitycontroller.h>
-#include <kactivityinfo.h>
-
+#include <Plasma/ServiceJob>
 
 ActivityBar::ActivityBar(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
-      m_activityController(0)
+      m_engine(0)
 {
     resize(200, 60);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
@@ -61,17 +59,15 @@ void ActivityBar::init()
     //while using the new activity API for plasma-desktop.
     //TODO 4.6 convert netbook to the activity API so we won't need this
     if (qApp->applicationName() == "plasma-desktop") {
-        m_activityController = new KActivityController(this);
-        QStringList activities = m_activityController->availableActivities();
+        m_engine = dataEngine("org.kde.activities");
+        QStringList activities = m_engine->sources();
+        //kDebug() << "$$$$$$$$$$$$# sources:" << activities.size();
         foreach (const QString &id, activities) {
             insertActivity(id);
         }
-        m_tabBar->setCurrentIndex(activities.indexOf(m_activityController->currentActivity()));
-
-        connect(m_activityController, SIGNAL(activityAdded(QString)), this, SLOT(activityAdded(QString)));
-        connect(m_activityController, SIGNAL(activityRemoved(QString)), this, SLOT(activityRemoved(QString)));
-        connect(m_activityController, SIGNAL(currentActivityChanged(QString)), this, SLOT(currentActivityChanged(QString)));
-
+        m_engine->connectAllSources(this);
+        connect(m_engine, SIGNAL(sourceAdded(QString)), this, SLOT(activityAdded(QString)));
+        connect(m_engine, SIGNAL(sourceRemoved(QString)), this, SLOT(activityRemoved(QString)));
         connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchActivity(int)));
     } else {
         m_tabBar->nativeWidget()->installEventFilter(this);
@@ -148,15 +144,9 @@ void ActivityBar::insertContainment(Plasma::Containment *cont)
 void ActivityBar::insertActivity(const QString &id)
 {
     //assumption: activities are always added at the end of the list
-    KActivityInfo *activity = new KActivityInfo(id, this);
-    m_activities.append(activity);
-    if (activity->isValid() && !activity->icon().isEmpty()) {
-        m_tabBar->addTab(KIcon(activity->icon()), activity->name());
-    } else {
-        m_tabBar->addTab(activity->name());
-    }
-
-    connect(activity, SIGNAL(nameChanged(QString)), this, SLOT(activityNameChanged(QString)));
+    //kDebug() << "activity" << id;
+    m_activities.append(id);
+    m_tabBar->addTab(QString()); //name will be added on dataUpdated
 }
 
 void ActivityBar::constraintsEvent(Plasma::Constraints constraints)
@@ -212,7 +202,10 @@ void ActivityBar::switchActivity(int newActive)
     if (newActive >= m_activities.count() || newActive < 0) {
         return;
     }
-    m_activityController->setCurrentActivity(m_activities.at(newActive)->id());
+    Plasma::Service *service = m_engine->serviceForSource(m_activities.at(newActive));
+    KConfigGroup op = service->operationDescription("setCurrent");
+    Plasma::ServiceJob *job = service->startOperationCall(op);
+    connect(job, SIGNAL(finished(KJob*)), service, SLOT(deleteLater()));
 }
 
 void ActivityBar::currentDesktopChanged(const int currentDesktop)
@@ -233,25 +226,6 @@ void ActivityBar::currentDesktopChanged(const int currentDesktop)
 
     if (index != -1) {
         m_tabBar->setCurrentIndex(index);
-    }
-}
-
-void ActivityBar::currentActivityChanged(const QString &newId)
-{
-    int index = 0;
-    bool found = false;
-    foreach (KActivityInfo *info, m_activities) {
-        if (info->id() == newId) {
-            found = true;
-            break;
-        }
-        ++index;
-    }
-
-    if (found) {
-        m_tabBar->setCurrentIndex(index);
-    } else {
-        kDebug() << "can't find" << newId;
     }
 }
 
@@ -276,12 +250,7 @@ void ActivityBar::containmentAdded(Plasma::Containment *cont)
 void ActivityBar::activityAdded(const QString &id)
 {
     insertActivity(id);
-
-    kDebug() << id;
-    if (m_activityController->currentActivity() == id) {
-        kDebug() << "current";
-        m_tabBar->setCurrentIndex(m_activities.count() - 1);
-    }
+    m_engine->connectSource(id, this);
 
     setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
     emit sizeHintChanged(Qt::PreferredSize);
@@ -305,20 +274,12 @@ void ActivityBar::containmentDestroyed(QObject *obj)
 
 void ActivityBar::activityRemoved(const QString &id)
 {
-    int index = 0;
-    bool found = false;
-    foreach (KActivityInfo *info, m_activities) {
-        if (info->id() == id) {
-            found = true;
-            m_activities.removeAt(index);
-            delete info;
-            break;
-        }
-        ++index;
-    }
-    if (!found) {
+    int index = m_activities.indexOf(id);
+    if (index < 0) {
         return;
     }
+
+    m_activities.removeAt(index);
 
     m_tabBar->blockSignals(true);
     m_tabBar->removeTab(index);
@@ -357,15 +318,19 @@ void ActivityBar::contextChanged(Plasma::Context *context)
     }
 }
 
-void ActivityBar::activityNameChanged(const QString &newName)
+void ActivityBar::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
 {
-    KActivityInfo *info = qobject_cast<KActivityInfo*>(sender());
-    if (!info) {
+    //kDebug() << "$$$$$$$$$$$$$$$$$$$" << source;
+    if (source.startsWith('_')) {
+        //special source, not used yet
         return;
     }
-    int index = m_activities.indexOf(info);
-    if (index != -1) {
-        m_tabBar->setTabText(index, newName);
+
+    int index = m_activities.indexOf(source);
+    m_tabBar->setTabText(index, data["Name"].toString());
+    m_tabBar->setTabIcon(index, KIcon(data["Icon"].toString()));
+    if (data["Current"].toBool()) {
+        m_tabBar->setCurrentIndex(index);
     }
 }
 
