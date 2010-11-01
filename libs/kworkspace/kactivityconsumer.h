@@ -25,6 +25,7 @@
 #include <KUrl>
 #include <QStringList>
 
+#include "kactivityinfo.h"
 #include <kdemacros.h>
 
 class KActivityConsumerPrivate;
@@ -90,7 +91,18 @@ public:
     /**
      * @returns the list of all existing activities
      */
-    QStringList availableActivities() const;
+    KDE_DEPRECATED QStringList availableActivities() const;
+
+    /**
+     * @returns the list of activities filtered by state
+     * @param state state of the activity
+     */
+    QStringList listActivities(KActivityInfo::State state) const;
+
+    /**
+     * @returns the list of all existing activities
+     */
+    QStringList listActivities() const;
 
     /**
      * Returns the list of activities of a currently
@@ -114,6 +126,13 @@ Q_SIGNALS:
      * @param id id of the new current activity
      */
     void currentActivityChanged(const QString & id);
+
+    /**
+     * This signal is emitted when the activity service
+     * goes online or offline
+     * @param status new status of the service
+     */
+    void serviceStatusChanged(ServiceStatus status);
 
 public Q_SLOTS:
     /**

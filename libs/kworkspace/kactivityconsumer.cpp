@@ -57,6 +57,18 @@ QString KActivityConsumer::currentActivity() const
         QString, KActivityManager::self()->CurrentActivity(), QString() );
 }
 
+QStringList KActivityConsumer::listActivities(KActivityInfo::State state) const
+{
+    KACTIVITYCONSUMER_DBUS_RETURN(
+        QStringList, KActivityManager::self()->ListActivities(state), QStringList() );
+}
+
+QStringList KActivityConsumer::listActivities() const
+{
+    KACTIVITYCONSUMER_DBUS_RETURN(
+        QStringList, KActivityManager::self()->ListActivities(), QStringList() );
+}
+
 QStringList KActivityConsumer::availableActivities() const
 {
     KACTIVITYCONSUMER_DBUS_RETURN(
