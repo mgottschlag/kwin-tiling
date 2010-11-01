@@ -201,6 +201,7 @@ void TaskArea::delayedReposition()
         //kDebug() << "checking" << task->name() << task->typeId() << d->alwaysShownTypes;
         addWidgetForTask(task);
     }
+    d->delayedRepositionTasks.clear();
 
     checkUnhideTool();
     d->topLayout->invalidate();
