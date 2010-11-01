@@ -517,6 +517,15 @@ void DesktopCorona::addPanel(const QString &plugin)
 void DesktopCorona::checkActivities()
 {
     kDebug() << "containments to start with" << containments().count();
+
+    KActivityConsumer::ServiceStatus status = m_activityController->serviceStatus();
+    //kDebug() << "$%$%$#%$%$%Status:" << status;
+    if (status == KActivityConsumer::NotRunning) {
+        //panic and give up - better than causing a mess
+        kDebug() << "No ActivityManager? Help, I've fallen and I can't get up!";
+        return;
+    }
+
     QStringList existingActivities = m_activityController->availableActivities();
     foreach (const QString &id, existingActivities) {
         activityAdded(id);
