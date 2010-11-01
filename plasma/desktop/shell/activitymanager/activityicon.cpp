@@ -363,6 +363,7 @@ void ActivityIcon::updateContents()
 void ActivityIcon::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
     if (m_inlineWidget && m_inlineWidget.data()->hidesContents()) {
+        paintBackground(painter, option, widget);
         return;
     }
 
