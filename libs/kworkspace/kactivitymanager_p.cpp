@@ -26,7 +26,8 @@
 
 KActivityManager * KActivityManager::s_instance = NULL;
 
-#define ACTIVITY_MANAGER_DBUS_PATH   "org.kde.ActivityManager"
+// #define ACTIVITY_MANAGER_DBUS_PATH   "org.kde.ActivityManager"
+#define ACTIVITY_MANAGER_DBUS_PATH   "org.kde.kactivitymanagerd"
 #define ACTIVITY_MANAGER_DBUS_OBJECT "/ActivityManager"
 
 KActivityManager::KActivityManager()
