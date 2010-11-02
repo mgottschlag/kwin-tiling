@@ -60,7 +60,8 @@ void ActivityBar::init()
     //TODO 4.6 convert netbook to the activity API so we won't need this
     if (qApp->applicationName() == "plasma-desktop") {
         m_engine = dataEngine("org.kde.activities");
-        QStringList activities = m_engine->sources();
+        Plasma::DataEngine::Data data = m_engine->query("_Convenience");
+        QStringList activities = data["Running"].toStringList();
         //kDebug() << "$$$$$$$$$$$$# sources:" << activities.size();
         foreach (const QString &id, activities) {
             insertActivity(id);
@@ -327,11 +328,33 @@ void ActivityBar::dataUpdated(const QString &source, const Plasma::DataEngine::D
     }
 
     int index = m_activities.indexOf(source);
+    if (data["State"].toString() == "Stopped") {
+        if (index >= 0) {
+            //take it out
+            m_activities.removeAt(index);
+            m_tabBar->blockSignals(true);
+            m_tabBar->removeTab(index);
+            m_tabBar->blockSignals(false);
+
+            setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
+            emit sizeHintChanged(Qt::PreferredSize);
+        }
+        return;
+    } else if (index < 0) {
+        //add it back in
+        index = m_activities.size();
+        insertActivity(source);
+    }
+
+    //update the actual content
     m_tabBar->setTabText(index, data["Name"].toString());
     m_tabBar->setTabIcon(index, KIcon(data["Icon"].toString()));
     if (data["Current"].toBool()) {
         m_tabBar->setCurrentIndex(index);
     }
+
+    setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
+    emit sizeHintChanged(Qt::PreferredSize);
 }
 
 #include "activitybar.moc"
