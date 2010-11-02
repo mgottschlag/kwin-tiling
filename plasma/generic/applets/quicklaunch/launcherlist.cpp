@@ -218,7 +218,7 @@ void LauncherList::insert(int index, const QList<LauncherData> &launcherDataList
         index = m_launchers.size();
     }
 
-    Q_FOREACH(LauncherData launcherData, launcherDataList) {
+    Q_FOREACH(const LauncherData &launcherData, launcherDataList) {
 
         Launcher *launcher = new Launcher(launcherData);
 
@@ -236,12 +236,14 @@ void LauncherList::insert(int index, const QList<LauncherData> &launcherDataList
 
         m_launchers.insert(index, launcher);
 
-        int layoutIndex;
+        int layoutIndex = index;
 
-        if (m_dropMarkerIndex != -1 && m_dropMarkerIndex <= index) {
-            layoutIndex = index+1;
-        } else {
-            layoutIndex = index;
+        if (m_dropMarkerIndex != -1) {
+            if (m_dropMarkerIndex <= index) {
+                layoutIndex++;
+            } else {
+                m_dropMarkerIndex++;
+            }
         }
 
         if (m_type == IconGrid) {
@@ -258,19 +260,20 @@ void LauncherList::insert(int index, const QList<LauncherData> &launcherDataList
 
 void LauncherList::removeAt(int index)
 {
-    if (m_dropMarkerIndex != -1 && m_dropMarkerIndex <= index) {
-        m_layout->removeAt(index+1);
-    }
-    else {
-        m_layout->removeAt(index);
-        if (m_dropMarkerIndex != -1) {
+    int layoutIndex = index;
+
+    if (m_dropMarkerIndex != -1) {
+        if (m_dropMarkerIndex <= index) {
+            layoutIndex++;
+        } else {
             m_dropMarkerIndex--;
         }
     }
 
+    m_layout->removeAt(layoutIndex);
     delete m_launchers.takeAt(index);
 
-    if (m_launchers.size() == 0) {
+    if (m_launchers.size() == 0 && m_dropMarkerIndex == -1) {
         initPlaceHolder();
     }
 
@@ -389,7 +392,6 @@ void LauncherList::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
             }
 
             if (m_launchers.size() != 0) {
-
                 m_dropMarkerIndex = determineDropMarkerIndex(
                     mapFromScene(event->scenePos()));
 
@@ -430,17 +432,10 @@ void LauncherList::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
         if (m_type == IconGrid) {
             gridLayout()->moveItem(m_dropMarkerIndex, newDropMarkerIndex);
         } else {
-
             QGraphicsLinearLayout *layout = listLayout();
 
-            // XXX: We already have a reference to the drop marker.
-            QGraphicsLayoutItem *item = layout->itemAt(m_dropMarkerIndex);
-
             layout->removeAt(m_dropMarkerIndex);
-            layout->insertItem(newDropMarkerIndex, item);
-            // XXX: This should only be necessary when on the popup
-            // as this needs the new size immediately.
-            // layout->activate();
+            layout->insertItem(newDropMarkerIndex, m_dropMarker);
         }
 
         m_dropMarkerIndex = newDropMarkerIndex;
