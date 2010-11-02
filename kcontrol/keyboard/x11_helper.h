@@ -89,10 +89,37 @@ struct LayoutUnit {
 	bool operator==(const LayoutUnit& layoutItem) const {
 		return layout==layoutItem.layout && variant==layoutItem.variant;
 	}
+	bool operator!=(const LayoutUnit& layoutItem) const {
+		return ! (*this == layoutItem);
+	}
 	QString toString() const;
 
 private:
 	QString displayName;
+};
+
+struct LayoutSet {
+	QList<LayoutUnit> layouts;
+	LayoutUnit currentLayout;
+
+	LayoutSet() {};
+
+	LayoutSet(const LayoutSet& currentLayouts) {
+		this->layouts = currentLayouts.layouts;
+		this->currentLayout = currentLayouts.currentLayout;
+	}
+
+	bool operator == (const LayoutSet& currentLayouts) const {
+		return this->layouts == currentLayouts.layouts
+				&& this->currentLayout == currentLayouts.currentLayout;
+	}
+
+	LayoutSet& operator = (const LayoutSet& currentLayouts) {
+		this->layouts = currentLayouts.layouts;
+		this->currentLayout = currentLayouts.currentLayout;
+		return *this;
+	}
+
 };
 
 class X11Helper
@@ -110,6 +137,7 @@ public:
 	static bool setDefaultLayout();
 	static bool setLayout(const LayoutUnit& layout);
 	static LayoutUnit getCurrentLayout();
+	static LayoutSet getCurrentLayouts();
 	static QList<LayoutUnit> getLayoutsList();
 	static QStringList getLayoutsListAsString(const QList<LayoutUnit>& layoutsList);
 

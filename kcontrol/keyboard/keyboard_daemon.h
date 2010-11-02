@@ -37,11 +37,11 @@ class KDE_EXPORT KeyboardDaemon : public KDEDModule
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.KeyboardLayouts")
 
+	KeyboardConfig* keyboardConfig;
     KActionCollection *actionCollection;
     XInputEventNotifier* xEventNotifier;
-    LayoutMemory layoutMemory;
     LayoutTrayIcon* layoutTrayIcon;
-	KeyboardConfig* keyboardConfig;
+    LayoutMemory layoutMemory;
 
     void registerListeners();
     void registerShortcut();

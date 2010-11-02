@@ -124,6 +124,26 @@ LayoutUnit X11Helper::getCurrentLayout()
 	return LayoutUnit();
 }
 
+LayoutSet X11Helper::getCurrentLayouts()
+{
+	LayoutSet layoutSet;
+
+	QList<LayoutUnit> currentLayouts = getLayoutsList();
+	layoutSet.layouts = currentLayouts;
+
+	unsigned int group = X11Helper::getGroup();
+	if( group < (unsigned int)currentLayouts.size() ) {
+		layoutSet.currentLayout = currentLayouts[group];
+	}
+	else {
+		qWarning() << "Current group number" << group << "is outside of current layout list" << getLayoutsListAsString(currentLayouts);
+		layoutSet.currentLayout = LayoutUnit();
+	}
+
+	return layoutSet;
+}
+
+
 //static QString addNum(const QString& str, int n)
 //{
 //    QString format("%1%2");

@@ -38,7 +38,7 @@
 #include "keyboard_hardware.h"
 
 // for sys tray icon
-#include "layout_widget.h"
+#include "layout_tray_icon.h"
 
 
 K_PLUGIN_FACTORY(KeyboardFactory, registerPlugin<KeyboardDaemon>();)
@@ -46,10 +46,11 @@ K_EXPORT_PLUGIN(KeyboardFactory("keyboard", "kxkb"))
 
 KeyboardDaemon::KeyboardDaemon(QObject *parent, const QList<QVariant>&)
 	: KDEDModule(parent),
+	  keyboardConfig(new KeyboardConfig()),
 	  actionCollection(NULL),
 	  xEventNotifier(NULL),
 	  layoutTrayIcon(NULL),
-	  keyboardConfig(new KeyboardConfig())
+	  layoutMemory(*keyboardConfig)
 {
 	if( ! X11Helper::xkbSupported(NULL) )
 		return;		//TODO: shut down the daemon?
@@ -85,7 +86,8 @@ void KeyboardDaemon::configureKeyboard()
 
 	keyboardConfig->load();
 	XkbHelper::initializeKeyboardLayouts(*keyboardConfig);
-	layoutMemory.setSwitchingPolicy(keyboardConfig->switchingPolicy);
+	layoutMemory.configChanged();
+
 	setupTrayIcon();
 }
 

@@ -20,7 +20,6 @@
 #ifndef KEYBOARD_APPLET_H_
 #define KEYBOARD_APPLET_H_
 
-//#include <Plasma/Applet>
 #include <plasma/applet.h>
 
 #include <QtCore/QList>
@@ -34,6 +33,7 @@ class KConfigDialog;
 class QActionGroup;
 class Rules;
 class KeyboardConfig;
+class LayoutsMenu;
 
 class KeyboardApplet : public Plasma::Applet
 {
@@ -60,7 +60,6 @@ protected:
 //	void createConfigurationInterface(KConfigDialog *parent);
 
 private Q_SLOTS:
-	void actionTriggered(QAction* action);
 	void keyboardConfigChanged();
 
 private:
@@ -71,9 +70,9 @@ private:
 //	bool drawFlag;
 	Flags flags;
 	XEventNotifier xEventNotifier;
-	QActionGroup* actionGroup;
-	Rules* rules;
+	const Rules* rules;
 	KeyboardConfig* keyboardConfig;
+	LayoutsMenu* layoutsMenu;
 };
 
 #endif /* KEYBOARD_APPLET_H_ */

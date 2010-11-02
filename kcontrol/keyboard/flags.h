@@ -37,14 +37,14 @@ public:
 
 	const QIcon getIcon(const QString& layout);
 	const QIcon getIconWithText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig);
-	const QPixmap& getTransparentPixmap() { return *transparentPixmap; }
+	const QPixmap& getTransparentPixmap() const { return *transparentPixmap; }
 	void clearCache();
 
 	static QString getLongText(const LayoutUnit& layoutUnit, const Rules* rules);
 	static QString getShortText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig);
 
 private:
-	QString getCountryFromLayoutName(const QString& fullLayoutName);
+	QString getCountryFromLayoutName(const QString& fullLayoutName) const;
 
 	QMap<QString, QIcon> iconMap;
 	QMap<QString, QIcon> iconOrTextMap;

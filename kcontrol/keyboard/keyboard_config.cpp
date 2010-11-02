@@ -31,6 +31,7 @@ static const char* DEFAULT_MODEL = "pc104";
 static const QString CONFIG_FILENAME("kxkbrc");
 static const QString CONFIG_GROUPNAME("Layout");
 
+const int KeyboardConfig::NO_LOOPING = -1;
 
 
 static int findStringIndex(const char* strings[], const QString& toFind, int defaultIndex)
@@ -53,6 +54,7 @@ void KeyboardConfig::setDefaults()
 	configureLayouts = false;
 	layouts.clear();
 //	layouts.append(LayoutUnit(DEFAULT_LAYOUT));
+	layoutLoopCount = NO_LOOPING;
 
 	// switch cotrol options
 	switchingPolicy = SWITCH_POLICY_GLOBAL;
@@ -89,6 +91,8 @@ void KeyboardConfig::load()
     if( layouts.isEmpty() ) {
     	configureLayouts = false;
     }
+
+    layoutLoopCount = config.readEntry("LayoutLoopCount", NO_LOOPING);
 
 	QString layoutMode = config.readEntry("SwitchMode", "Global");
 	switchingPolicy = static_cast<SwitchingPolicy>(findStringIndex(SWITCHING_POLICIES, layoutMode, SWITCH_POLICY_GLOBAL));
@@ -130,6 +134,8 @@ void KeyboardConfig::save()
     }
     config.writeEntry("LayoutList", layoutStrings.join(LIST_SEPARATOR));
 
+    config.writeEntry("LayoutLoopCount", layoutLoopCount);
+
     QStringList displayNames;
     foreach(const LayoutUnit& layoutUnit, layouts) {
     	displayNames << layoutUnit.getRawDisplayName();
@@ -143,4 +149,25 @@ void KeyboardConfig::save()
 	config.writeEntry("ShowSingle", showSingle);
 
 	config.sync();
+}
+
+QList<LayoutUnit> KeyboardConfig::getDefaultLayouts() const
+{
+	QList<LayoutUnit> defaultLayoutList;
+	int i = 0;
+	foreach(const LayoutUnit& layoutUnit, layouts) {
+		defaultLayoutList.append(layoutUnit);
+		if( layoutLoopCount != KeyboardConfig::NO_LOOPING && i >= layoutLoopCount-1 )
+			break;
+		i++;
+	}
+	return defaultLayoutList;
+}
+
+QList<LayoutUnit> KeyboardConfig::getExtraLayouts() const
+{
+	if( layoutLoopCount == KeyboardConfig::NO_LOOPING )
+		return QList<LayoutUnit>();
+
+	return layouts.mid(layoutLoopCount, layouts.size());
 }

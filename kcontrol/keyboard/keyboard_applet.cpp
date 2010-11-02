@@ -19,23 +19,22 @@
 #include "keyboard_applet.h"
 
 #include <kglobalsettings.h>
-#include <KIconLoader>
+#include <kiconloader.h>
 #include <plasma/theme.h>
 #include <plasma/tooltipmanager.h>
-#include <ktoolinvocation.h>
 
 #include <QtGui/QPainter>
 #include <QtGui/QPixmap>
 #include <QtGui/QGraphicsSceneMouseEvent>
 #include <QtGui/QAction>
-#include <QtGui/QActionGroup>
-#include <QtGui/QCheckBox>
 #include <QtDBus/QtDBus>
 
 #include "x11_helper.h"
 #include "xkb_rules.h"
 #include "keyboard_config.h"
 #include "keyboard_dbus.h"
+#include "layouts_menu.h"
+//#include "utils.h"
 
 
 K_EXPORT_PLASMA_APPLET(keyboard, KeyboardApplet)
@@ -43,9 +42,9 @@ K_EXPORT_PLASMA_APPLET(keyboard, KeyboardApplet)
 KeyboardApplet::KeyboardApplet(QObject *parent, const QVariantList &args):
 	Plasma::Applet(parent, args),
 	xEventNotifier(),
-	actionGroup(NULL),
-	rules(NULL),
-	keyboardConfig(new KeyboardConfig())
+	rules(Rules::readRules()),
+	keyboardConfig(new KeyboardConfig()),
+	layoutsMenu(new LayoutsMenu(*keyboardConfig, *rules, flags))
 {
 	if( ! X11Helper::xkbSupported(NULL) ) {
 		setFailedToLaunch(true, i18n("XKB extension failed to initialize"));
@@ -61,8 +60,6 @@ KeyboardApplet::KeyboardApplet(QObject *parent, const QVariantList &args):
 	setBackgroundHints(DefaultBackground);
 	connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
 
-	rules = Rules::readRules();
-
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.connect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT( configChanged() ));
 }
@@ -72,7 +69,7 @@ KeyboardApplet::~KeyboardApplet()
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.disconnect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT( configChanged() ));
 
-    delete actionGroup;
+    delete layoutsMenu;
 	delete rules;
 }
 
@@ -171,6 +168,10 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 		font.setPixelSize(fontSize);
 		p->setFont(font);
 		p->drawText(contentsRect, Qt::AlignCenter, shortText);
+
+//		QPixmap pixmap = Utils::shadowText(shortText, font, Qt::black, Qt::white, QPoint(), 4);
+//		p->drawPixmap(contentsRect, pixmap);
+
 		p->restore();
 	}
 }
@@ -181,48 +182,6 @@ void KeyboardApplet::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 		X11Helper::switchToNextLayout();
 	}
 	event->ignore();
-}
-
-void KeyboardApplet::actionTriggered(QAction* action)
-{
-	QString data = action->data().toString();
-	if( data == "config" ) {
-		QStringList args;
-		args << "kcm_keyboard";
-		KToolInvocation::kdeinitExec("kcmshell4", args);
-	}
-	else {
-		X11Helper::setLayout(LayoutUnit(action->data().toString()));
-	}
-}
-
-QList<QAction*> KeyboardApplet::contextualActions()
-{
-	if( actionGroup ) {
-		disconnect(actionGroup, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
-		delete actionGroup;
-	}
-	actionGroup = new QActionGroup(this);
-
-	X11Helper::getLayoutsList(); //UGLY: seems to be more reliable with extra call
-	QList<LayoutUnit> layouts = X11Helper::getLayoutsList();
-	foreach(const LayoutUnit& layoutUnit, layouts) {
-		QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
-		QString longText = Flags::getLongText(layoutUnit, rules);
-		QString menuText = i18nc("short layout label - full layout name", "%1 - %2", shortText, longText);
-//		QString menuText = longText;
-		QAction* action = new QAction(getFlag(layoutUnit.layout), menuText, actionGroup);
-		action->setData(layoutUnit.toString());
-		actionGroup->addAction(action);
-	}
-	QAction* separator = new QAction(actionGroup);
-	separator->setSeparator(true);
-	actionGroup->addAction(separator);
-	QAction* configAction = new QAction(i18n("Configure..."), actionGroup);
-	actionGroup->addAction(configAction);
-	configAction->setData("config");
-	connect(actionGroup, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
-	return actionGroup->actions();
 }
 
 void KeyboardApplet::constraintsEvent(Plasma::Constraints constraints)
@@ -239,13 +198,7 @@ void KeyboardApplet::constraintsEvent(Plasma::Constraints constraints)
     }
 }
 
-//void KeyboardApplet::createConfigurationInterface(KConfigDialog *parent)
-//{
-////	Applet::createConfigurationInterface(parent);
-//	QWidget* widget = new QWidget();
-////	QCheckBox* showFlagCheckbox =
-//			new QCheckBox(i18n("Show Flag"), widget);
-//	parent->addPage(widget, i18n("Indicator Options"));
-//	//TODO: apply config
-//}
-
+QList<QAction*> KeyboardApplet::contextualActions()
+{
+	return layoutsMenu->contextualActions();
+}

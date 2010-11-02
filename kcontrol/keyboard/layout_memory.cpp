@@ -18,18 +18,18 @@
 
 #include "layout_memory.h"
 
+#include <QtCore/QSet>
 #include <QtGui/QX11Info>
 
 #include <kdebug.h>
 #include <kwindowsystem.h>
-//#include <netwm.h>
 
 #include "x11_helper.h"
+#include "xkb_helper.h"
 
 
-LayoutMemory::LayoutMemory():
-	switchingPolicy(KeyboardConfig::SWITCH_POLICY_GLOBAL),
-	layoutList(X11Helper::getLayoutsList())
+LayoutMemory::LayoutMemory(const KeyboardConfig& keyboardConfig_):
+	keyboardConfig(keyboardConfig_)
 {
 	registerListeners();
 }
@@ -39,22 +39,21 @@ LayoutMemory::~LayoutMemory()
 	unregisterListeners();
 }
 
-void LayoutMemory::setSwitchingPolicy(KeyboardConfig::SwitchingPolicy switchingPolicy)
+void LayoutMemory::configChanged()
 {
 	this->layoutMap.clear();
-	this->switchingPolicy = switchingPolicy;
 	unregisterListeners();
 	registerListeners();
 }
 
 void LayoutMemory::registerListeners()
 {
-	if( switchingPolicy ==  KeyboardConfig::SWITCH_POLICY_WINDOW
-			|| switchingPolicy ==  KeyboardConfig::SWITCH_POLICY_APPLICATION ) {
+	if( keyboardConfig.switchingPolicy ==  KeyboardConfig::SWITCH_POLICY_WINDOW
+			|| keyboardConfig.switchingPolicy ==  KeyboardConfig::SWITCH_POLICY_APPLICATION ) {
 		connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
 //		connect(KWindowSystem::self(), SIGNAL(windowRemoved(WId)), this, SLOT(windowRemoved(WId)));
 	}
-	if( switchingPolicy ==  KeyboardConfig::SWITCH_POLICY_DESKTOP ) {
+	if( keyboardConfig.switchingPolicy ==  KeyboardConfig::SWITCH_POLICY_DESKTOP ) {
 		connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(desktopChanged(int)));
 	}
 }
@@ -67,7 +66,7 @@ void LayoutMemory::unregisterListeners()
 }
 
 QString LayoutMemory::getCurrentMapKey() {
-	switch(switchingPolicy) {
+	switch(keyboardConfig.switchingPolicy) {
 	case KeyboardConfig::SWITCH_POLICY_WINDOW: {
 		WId wid = KWindowSystem::self()->activeWindow();
 		KWindowInfo winInfo = KWindowSystem::windowInfo(wid, NET::WMWindowType);
@@ -108,13 +107,40 @@ QString LayoutMemory::getCurrentMapKey() {
 	}
 }
 
+static
+bool isExtraSubset(const QList<LayoutUnit>& allLayouts, const QList<LayoutUnit>& newList)
+{
+	if( allLayouts.first() != newList.first() )
+		return false;
+	foreach(const LayoutUnit& layoutUnit, newList) {
+		if( ! allLayouts.contains(layoutUnit) )
+			return false;
+	}
+	return true;
+}
+
 void LayoutMemory::layoutMapChanged()
 {
 	QList<LayoutUnit> newLayoutList(X11Helper::getLayoutsList());
-	if( newLayoutList != layoutList ) {
-		layoutList = newLayoutList;
-		kDebug() << "Clearing layout memory as layout map has changed";
-		layoutMap.clear();
+
+	if( prevLayoutList == newLayoutList )
+		return;
+
+	prevLayoutList = newLayoutList;
+
+	//TODO: need more thinking here on how to support external map resetting
+	if( keyboardConfig.configureLayouts
+			&& keyboardConfig.layoutLoopCount != KeyboardConfig::NO_LOOPING
+			&& isExtraSubset(keyboardConfig.layouts, newLayoutList) ) {
+		kDebug() << "Layout map change for extra layout";
+		layoutChanged();	// to remember new map for active "window"
+	}
+	else {
+//		if( newLayoutList != keyboardConfig.getDefaultLayouts() ) {
+			//		layoutList = newLayoutList;
+			kDebug() << "Layout map change from external source: clearing layout memory";
+			layoutMap.clear();
+//		}
 	}
 }
 
@@ -124,7 +150,7 @@ void LayoutMemory::layoutChanged()
 	if( layoutMapKey.isEmpty() )
 		return;
 
-	layoutMap[ layoutMapKey ] = X11Helper::getCurrentLayout();
+	layoutMap[ layoutMapKey ] = X11Helper::getCurrentLayouts();
 }
 
 void LayoutMemory::setCurrentLayoutFromMap()
@@ -133,18 +159,31 @@ void LayoutMemory::setCurrentLayoutFromMap()
 	if( layoutMapKey.isEmpty() )
 		return;
 
-	LayoutUnit layoutFromMap = layoutMap[layoutMapKey];
-	kDebug() << "layout map item" << layoutFromMap.toString() << "for container key" << layoutMapKey;
-	if( layoutFromMap.isEmpty() ) {
+	LayoutSet currentLayouts = X11Helper::getCurrentLayouts();
+	if( ! layoutMap.contains(layoutMapKey) ) {
+		//TODO: cycle: default
 		if( ! X11Helper::isDefaultLayout() ) {
 //			kDebug() << "setting default layout for container key" << layoutMapKey;
+			XkbHelper::initializeKeyboardLayouts(keyboardConfig.getDefaultLayouts());
 			X11Helper::setDefaultLayout();
 		}
 	}
-	else if( ! (layoutFromMap == X11Helper::getCurrentLayout()) ) {
-//		kDebug() << "setting layout" <<  layoutFromMap << "for container key" << layoutMapKey;
-		X11Helper::setLayout( layoutFromMap );
+	else {
+		LayoutSet layoutFromMap = layoutMap[layoutMapKey];
+		kDebug() << "layout map item" /*<< layoutFromMap.layouts*/ << layoutFromMap.currentLayout.toString()
+				<< "for container key" << layoutMapKey;
+
+		if( layoutFromMap.layouts != currentLayouts.layouts ) {
+			//		kDebug() << "setting layout map" <<  layoutFromMap << "for container key" << layoutMapKey;
+			XkbHelper::initializeKeyboardLayouts(layoutFromMap.layouts);
+			X11Helper::setLayout( layoutFromMap.currentLayout );
+		}
+		else if( layoutFromMap.currentLayout != currentLayouts.currentLayout ) {
+			//		kDebug() << "setting layout" <<  layoutFromMap << "for container key" << layoutMapKey;
+			X11Helper::setLayout( layoutFromMap.currentLayout );
+		}
 	}
+
 	previousLayoutMapKey = layoutMapKey;
 }
 
@@ -157,9 +196,3 @@ void LayoutMemory::desktopChanged(int /*desktop*/)
 {
 	setCurrentLayoutFromMap();
 }
-
-//TODO: window removed
-//void LayoutMemory::windowRemoved(WId wId)
-//{
-//	setCurrentLayoutFromMap();
-//}

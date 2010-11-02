@@ -17,8 +17,8 @@
  */
 
 
-#ifndef LAYOUT_WIDGET_H_
-#define LAYOUT_WIDGET_H_
+#ifndef LAYOUT_TRAY_ICON_H_
+#define LAYOUT_TRAY_ICON_H_
 
 #include <QtCore/QVariant>
 #include <QtGui/QWidget>
@@ -26,34 +26,42 @@
 #include "flags.h"
 #include "x11_helper.h"
 
-class QPushButton;
 class KeyboardConfig;
 class LayoutsMenu;
 
 /**
- * Note: does not listen to configuraton changes as currently we only use it in screen lock dialog
+ *  System tray icon to show layouts
  */
-class LayoutWidget : public QWidget
+class KStatusNotifierItem;
+class QActionGroup;
+class Rules;
+class Flags;
+class LayoutTrayIcon : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	LayoutWidget(QWidget* parent = 0, const QList<QVariant>& args = QList<QVariant>());
-	virtual ~LayoutWidget();
+    LayoutTrayIcon();
+    ~LayoutTrayIcon();
 
 private Q_SLOTS:
 	void toggleLayout();
     void layoutChanged();
-    //    void configChanged();
+    void layoutMapChanged();
+    void scrollRequested(int, Qt::Orientation);
 
 private:
 	void init();
 	void destroy();
+	const QIcon getFlag(const QString& layout) const;
 
 	XEventNotifier xEventNotifier;
-	QPushButton* widget;
 	KeyboardConfig* keyboardConfig;
+	const Rules* rules;
 	Flags* flags;
+    KStatusNotifierItem *m_notifierItem;
+	LayoutsMenu* layoutsMenu;
 };
+
 
 #endif /* LAYOUT_WIDGET_H_ */

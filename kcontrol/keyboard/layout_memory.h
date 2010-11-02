@@ -24,6 +24,7 @@
 #include <QtCore/QMap>
 #include <QtGui/QWidgetList> //For WId
 
+#include "x11_helper.h"
 #include "keyboard_config.h"
 
 class LayoutMemory : public QObject
@@ -31,12 +32,12 @@ class LayoutMemory : public QObject
     Q_OBJECT
 
     //QVariant does not support long for WId so we'll use QString for key instead
-    QMap<QString, LayoutUnit> layoutMap;
-    KeyboardConfig::SwitchingPolicy switchingPolicy;
+    QMap<QString, LayoutSet> layoutMap;
     // if there's some transient windows coming up we'll need to either ignore it
     // or in case of layout switcher popup menu to apply new layout to previous key
     QString previousLayoutMapKey;
-    QList<LayoutUnit> layoutList;
+    QList<LayoutUnit> prevLayoutList;
+    const KeyboardConfig& keyboardConfig;
 
     void registerListeners();
     void unregisterListeners();
@@ -50,10 +51,10 @@ public Q_SLOTS:
 	void desktopChanged(int desktop);
 
 public:
-	LayoutMemory();
+	LayoutMemory(const KeyboardConfig& keyboardConfig);
 	virtual ~LayoutMemory();
 
-	void setSwitchingPolicy(KeyboardConfig::SwitchingPolicy switchingPolicy);
+	void configChanged();
 };
 
 #endif /* LAYOUT_MEMORY_H_ */

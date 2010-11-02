@@ -91,6 +91,7 @@ private:
     void moveSelectedLayouts(int shift);
     void populateWithCurrentLayouts();
     void populateWithCurrentXkbOptions();
+    void updateLoopCount();
 };
 
 

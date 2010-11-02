@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>662</width>
-    <height>446</height>
+    <height>522</height>
    </rect>
   </property>
   <property name="currentIndex">
-   <number>0</number>
+   <number>1</number>
   </property>
   <widget class="QWidget" name="tabHardware">
    <attribute name="title">
@@ -90,7 +90,7 @@
    <attribute name="title">
     <string>Layouts</string>
    </attribute>
-   <layout class="QGridLayout" name="gridLayout_4">
+   <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
@@ -282,8 +282,8 @@
       <property name="title">
        <string/>
       </property>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QPushButton" name="addLayoutBtn">
@@ -337,7 +337,7 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
+       <item>
         <widget class="QTableView" name="layoutsTableView">
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectRows</enum>
@@ -348,9 +348,32 @@
          <attribute name="verticalHeaderVisible">
           <bool>false</bool>
          </attribute>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="layoutLoopingCheckBox">
+         <property name="text">
+          <string>Spare layouts</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="layoutLoopingGroupBox">
+         <property name="title">
+          <string/>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Main layout count:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="layoutLoopCountSpinBox"/>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>

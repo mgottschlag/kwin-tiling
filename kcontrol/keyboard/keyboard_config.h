@@ -35,6 +35,7 @@ class KeyboardConfig
 {
 public:
 	static const int MAX_LABEL_LEN = 3;
+	static const int NO_LOOPING; // = -1;
 
 	enum SwitchingPolicy {
 		SWITCH_POLICY_GLOBAL = 0,
@@ -51,6 +52,7 @@ public:
 	// init layouts options
 	bool configureLayouts;
 	QList<LayoutUnit> layouts;
+	int layoutLoopCount;
 
 	// switch cotrol options
 	SwitchingPolicy switchingPolicy;
@@ -61,6 +63,9 @@ public:
 	bool showIndicator;
 	bool showFlag;
 	bool showSingle;
+
+	QList<LayoutUnit> getDefaultLayouts() const;
+	QList<LayoutUnit> getExtraLayouts() const;
 
 	void setDefaults();
 	void load();

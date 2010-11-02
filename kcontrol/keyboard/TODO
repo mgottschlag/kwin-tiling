@@ -12,12 +12,11 @@ KCM UI cleanup:
 * layouts, sizes, alignment etc in kcm
 
 plasma applet:
-* make applet use shadowed text
 
-kxkb part
+kxkb part:
 * tooltip (currently does not work in lockdlg for some reason)
 
-tray icon
+tray icon:
 
 Code cleanup:
 * rules, iso_codes:

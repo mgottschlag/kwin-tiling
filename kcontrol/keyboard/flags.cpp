@@ -74,7 +74,7 @@ const QIcon Flags::getIcon(const QString& layout)
 //static
 //const QStringList NON_COUNTRY_LAYOUTS = QString("ara,brai,epo,latam,mao").split(",");
 
-QString Flags::getCountryFromLayoutName(const QString& layout)
+QString Flags::getCountryFromLayoutName(const QString& layout)  const
 {
 	QString countryCode = layout;
 

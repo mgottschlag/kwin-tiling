@@ -16,10 +16,40 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <kpluginfactory.h>
+#ifndef LAYOUTS_MENU_H_
+#define LAYOUTS_MENU_H_
 
-#include "layout_widget.h"
+#include <QtCore/QList>
+#include <QtGui/QIcon>
 
-K_PLUGIN_FACTORY(LayoutWidgetFactory, registerPlugin<LayoutWidget>();)
-K_EXPORT_PLUGIN(LayoutWidgetFactory("keyboard_layout_widget"))
+class QAction;
+class KeyboardConfig;
+class Flags;
+class Rules;
+class QActionGroup;
 
+
+class LayoutsMenu : public QObject
+{
+    Q_OBJECT
+
+public:
+	LayoutsMenu(const KeyboardConfig& keyboardConfig, const Rules& rules, Flags& flags);
+	virtual ~LayoutsMenu();
+
+	QList<QAction*> contextualActions();
+
+private Q_SLOTS:
+	void actionTriggered(QAction* action);
+
+private:
+	const QIcon getFlag(const QString& layout) const;
+	QAction* createAction(const LayoutUnit& layoutUnit) const;
+
+	const KeyboardConfig& keyboardConfig;
+	const Rules& rules;
+	Flags& flags;
+    QActionGroup* actionGroup;
+};
+
+#endif /* LAYOUTS_MENU_H_ */

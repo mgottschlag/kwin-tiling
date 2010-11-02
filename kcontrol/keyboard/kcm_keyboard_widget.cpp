@@ -53,6 +53,9 @@ static const int TAB_HARDWARE = 0;
 //static const int TAB_LAYOUTS = 1;
 static const int TAB_ADVANCED = 2;
 
+static const int MIN_LOOPING_COUNT = 2;
+
+
 KCMKeyboardWidget::KCMKeyboardWidget(Rules* rules_, KeyboardConfig* keyboardConfig_, const KComponentData componentData_, QWidget* /*parent*/):
 	rules(rules_),
 	componentData(componentData_),
@@ -137,14 +140,6 @@ void KCMKeyboardWidget::uiChanged()
 	keyboardConfig->showFlag = uiWidget->showFlagRadioBtn->isChecked();
 
 	keyboardConfig->resetOldXkbOptions = uiWidget->configureKeyboardOptionsChk->isChecked();
-//    if( keyboardConfig->resetOldXkbOptions ) {
-//    	if( ! keyboardConfig->xkbOptions.contains(RESET_XKB_OPTIONS) ) {
-//    		keyboardConfig->xkbOptions.insert(0, RESET_XKB_OPTIONS);
-//    	}
-//    }
-//    else {
-//    	keyboardConfig->xkbOptions.removeAll(RESET_XKB_OPTIONS);
-//    }
 
 	if( uiWidget->switchByDesktopRadioBtn->isChecked() ) {
 		keyboardConfig->switchingPolicy = KeyboardConfig::SWITCH_POLICY_DESKTOP;
@@ -162,6 +157,15 @@ void KCMKeyboardWidget::uiChanged()
 	}
 
 	updateXkbShortcutsButtons();
+
+	updateLoopCount();
+	int loop = uiWidget->layoutLoopCountSpinBox->text().isEmpty()
+			? KeyboardConfig::NO_LOOPING
+			: uiWidget->layoutLoopCountSpinBox->value();
+	keyboardConfig->layoutLoopCount = loop;
+
+	layoutsTableModel->refresh();
+
 	emit changed(true);
 }
 
@@ -180,7 +184,7 @@ void KCMKeyboardWidget::initializeKeyboardModelUI()
 
 void KCMKeyboardWidget::addLayout()
 {
-	if( keyboardConfig->layouts.count() >= X11Helper::MAX_GROUP_COUNT ) {
+	if( keyboardConfig->layouts.count() >= X11Helper::MAX_GROUP_COUNT * 2 ) { // artificial limit now
 		QMessageBox msgBox;
 		msgBox.setText(i18np("Only up to %1 keyboard layout is supported", "Only up to %1 keyboard layouts are supported", X11Helper::MAX_GROUP_COUNT));
 		// more information https://bugs.freedesktop.org/show_bug.cgi?id=19501
@@ -195,6 +199,42 @@ void KCMKeyboardWidget::addLayout()
     	layoutsTableModel->refresh();
     	uiChanged();
     }
+
+    updateLoopCount();
+}
+
+static
+inline int min(int x, int y) { return x < y ? x : y; }
+
+void KCMKeyboardWidget::updateLoopCount()
+{
+	int maxLoop = min(X11Helper::MAX_GROUP_COUNT, keyboardConfig->layouts.count() - 1);
+	uiWidget->layoutLoopCountSpinBox->setMaximum(maxLoop);
+
+	if( maxLoop < MIN_LOOPING_COUNT ) {
+		uiWidget->layoutLoopingCheckBox->setEnabled(false);
+		uiWidget->layoutLoopingCheckBox->setChecked(false);
+	}
+	else if( maxLoop >= X11Helper::MAX_GROUP_COUNT ) {
+		uiWidget->layoutLoopingCheckBox->setEnabled(false);
+		uiWidget->layoutLoopingCheckBox->setChecked(true);
+	}
+	else{
+		uiWidget->layoutLoopingCheckBox->setEnabled(true);
+	}
+
+	uiWidget->layoutLoopingGroupBox->setEnabled(uiWidget->layoutLoopingCheckBox->isChecked());
+
+	if( uiWidget->layoutLoopingCheckBox->isChecked() ) {
+		if( uiWidget->layoutLoopCountSpinBox->text() == "" ) {
+			uiWidget->layoutLoopCountSpinBox->setValue(maxLoop);
+//			keyboardConfig->layoutLoopCount = maxLoop;
+		}
+	}
+	else {
+		uiWidget->layoutLoopCountSpinBox->clear();
+//		keyboardConfig->layoutLoopCount = KeyboardConfig::NO_LOOPING;
+	}
 }
 
 void KCMKeyboardWidget::initializeLayoutsUI()
@@ -218,12 +258,14 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 
 	connect(layoutsTableModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(uiChanged()));
 
+	uiWidget->layoutLoopCountSpinBox->setMinimum(MIN_LOOPING_COUNT);
+
 #ifdef DRAG_ENABLED
 	uiWidget->layoutsTableView->setDragEnabled(true);
 	uiWidget->layoutsTableView->setAcceptDrops(true);
 #endif
 
-    uiWidget->moveUpBtn->setIcon(KIcon("arrow-up"));
+	uiWidget->moveUpBtn->setIcon(KIcon("arrow-up"));
     uiWidget->moveDownBtn->setIcon(KIcon("arrow-down"));
 //    uiWidget->moveUpBtn->setArrowType(Qt::UpArrow);
 //    uiWidget->moveUpBtn->setArrowType(Qt::UpDown);
@@ -267,6 +309,9 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 	connect(uiWidget->showFlagRadioBtn, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
 	connect(uiWidget->showLabelRadioBtn, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
 	connect(uiWidget->showSingleChk, SIGNAL(toggled(bool)), this, SLOT(uiChanged()));
+
+	connect(uiWidget->layoutLoopingCheckBox, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
+	connect(uiWidget->layoutLoopCountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(uiChanged()));
 }
 
 void KCMKeyboardWidget::configureLayoutsChanged()
@@ -329,6 +374,8 @@ void KCMKeyboardWidget::removeLayout()
 	}
 
 	layoutSelectionChanged();
+
+	updateLoopCount();
 }
 
 void KCMKeyboardWidget::moveUp()
@@ -528,6 +575,16 @@ void KCMKeyboardWidget::updateLayoutsUI()
 	uiWidget->showSingleChk->setChecked(keyboardConfig->showSingle);
 	uiWidget->showFlagRadioBtn->setChecked(keyboardConfig->showFlag);
 	uiWidget->showLabelRadioBtn->setChecked(!keyboardConfig->showFlag);
+
+	bool loopingOn = keyboardConfig->layoutLoopCount != KeyboardConfig::NO_LOOPING;
+	uiWidget->layoutLoopingCheckBox->setChecked(loopingOn);
+	uiWidget->layoutLoopingGroupBox->setEnabled(loopingOn);
+	if( loopingOn ) {
+		uiWidget->layoutLoopCountSpinBox->setValue(keyboardConfig->layoutLoopCount);
+	}
+	else {
+		uiWidget->layoutLoopCountSpinBox->clear();
+	}
 }
 
 void KCMKeyboardWidget::updateHardwareUI()

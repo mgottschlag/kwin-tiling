@@ -22,6 +22,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
+#include <QtCore/QTime>
 #include <QtGui/QX11Info>
 
 #include <kglobal.h>
@@ -33,9 +34,13 @@
 
 
 static const char* SETXKBMAP_EXEC = "setxkbmap";
+static const char* XMODMAP_EXEC = "xmodmap";
 
 static bool setxkbmapNotFound = false;
 static QString setxkbmapExe;
+
+static bool xmodmapNotFound = false;
+static QString xmodmapExe;
 
 static const QString COMMAND_OPTIONS_SEPARATOR(",");
 
@@ -59,18 +64,79 @@ QString getSetxkbmapExe()
 static
 void executeXmodmap(const QString& configFileName)
 {
+	if( xmodmapNotFound )
+		return;
+
     if( QFile(configFileName).exists() ) {
-    	QString xmodmap_exe = KGlobal::dirs()->findExe("xmodmap");
-    	if( ! xmodmap_exe.isEmpty() ) {
-    		KProcess xmodmapProcess;
-    		xmodmapProcess << xmodmap_exe;
-    		xmodmapProcess << configFileName;
-    		kDebug() << "Executing" << xmodmapProcess.program().join(" ");
-    		if( xmodmapProcess.execute() != 0 ) {
-    			kError() << "Failed to execute " << xmodmapProcess.program();
-    		}
+    	if( xmodmapExe.isEmpty() ) {
+    		xmodmapExe = KGlobal::dirs()->findExe(XMODMAP_EXEC);
+        	if( xmodmapExe.isEmpty() ) {
+    			xmodmapNotFound = true;
+    			kError() << "Can't find" << XMODMAP_EXEC << "- xmodmap files won't be run";
+    			return;
+        	}
+    	}
+
+    	KProcess xmodmapProcess;
+    	xmodmapProcess << xmodmapExe;
+    	xmodmapProcess << configFileName;
+    	kDebug() << "Executing" << xmodmapProcess.program().join(" ");
+    	if( xmodmapProcess.execute() != 0 ) {
+    		kError() << "Failed to execute " << xmodmapProcess.program();
     	}
     }
+}
+
+static
+void restoreXmodmap()
+{
+	// TODO: is just home .Xmodmap enough or should system be involved too?
+	//    QString configFileName = QDir("/etc/X11/xinit").filePath(".Xmodmap");
+	//    executeXmodmap(configFileName);
+	QString configFileName = QDir::home().filePath(".Xmodmap");
+	executeXmodmap(configFileName);
+}
+
+//TODO: make private
+bool XkbHelper::runConfigLayoutCommand(const QStringList& setxkbmapCommandArguments)
+{
+	QTime timer;
+	timer.start();
+
+	KProcess setxkbmapProcess;
+	setxkbmapProcess << getSetxkbmapExe() << setxkbmapCommandArguments;
+	int res = setxkbmapProcess.execute();
+
+	if( res == 0 ) {	// restore Xmodmap mapping reset by setxkbmap
+		kDebug() << "Executed successfully in " << timer.elapsed() << "ms" << setxkbmapProcess.program().join(" ");
+		restoreXmodmap();
+		kDebug() << "\t and with xmodmap" << timer.elapsed() << "ms";
+	    return true;
+	}
+	else {
+		kError() << "Failed to run" << setxkbmapProcess.program().join(" ") << "return code:" << res;
+	}
+	return false;
+}
+
+bool XkbHelper::initializeKeyboardLayouts(const QList<LayoutUnit>& layoutUnits)
+{
+	QStringList layouts;
+	QStringList variants;
+	foreach (const LayoutUnit& layoutUnit, layoutUnits) {
+		layouts.append(layoutUnit.layout);
+		variants.append(layoutUnit.variant);
+	}
+
+	QStringList setxkbmapCommandArguments;
+	setxkbmapCommandArguments.append("-layout");
+	setxkbmapCommandArguments.append(layouts.join(COMMAND_OPTIONS_SEPARATOR));
+	if( ! variants.join("").isEmpty() ) {
+		setxkbmapCommandArguments.append("-variant");
+		setxkbmapCommandArguments.append(variants.join(COMMAND_OPTIONS_SEPARATOR));
+	}
+
+	return runConfigLayoutCommand(setxkbmapCommandArguments);
 }
 
 bool XkbHelper::initializeKeyboardLayouts(KeyboardConfig& config)
@@ -87,7 +153,8 @@ bool XkbHelper::initializeKeyboardLayouts(KeyboardConfig& config)
 	if( config.configureLayouts ) {
 		QStringList layouts;
 		QStringList variants;
-		foreach (const LayoutUnit& layoutUnit, config.layouts) {
+		QList<LayoutUnit> defaultLayouts = config.getDefaultLayouts();
+		foreach (const LayoutUnit& layoutUnit, defaultLayouts) {
 			layouts.append(layoutUnit.layout);
 			variants.append(layoutUnit.variant);
 		}
@@ -108,23 +175,7 @@ bool XkbHelper::initializeKeyboardLayouts(KeyboardConfig& config)
 	}
 
 	if( ! setxkbmapCommandArguments.isEmpty() ) {
-		KProcess setxkbmapProcess;
-		setxkbmapProcess << getSetxkbmapExe() << setxkbmapCommandArguments;
-		int res = setxkbmapProcess.execute();
-
-		if( res == 0 ) {	// restore Xmodmap mapping reset by setxkbmap
-			kDebug() << "Executed successfully" << setxkbmapProcess.program().join(" ");
-
-			// TODO: is just home .Xmodmap enough or should system be involved too?
-			//    QString configFileName = QDir("/etc/X11/xinit").filePath(".Xmodmap");
-			//    executeXmodmap(configFileName);
-			QString configFileName = QDir::home().filePath(".Xmodmap");
-			executeXmodmap(configFileName);
-		    return true;
-		}
-		else {
-			kError() << "Failed to run" << setxkbmapProcess.program().join(" ") << "return code: " + res;
-		}
+		return runConfigLayoutCommand(setxkbmapCommandArguments);
 	}
 	return false;
 }

@@ -145,6 +145,13 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
     	 }
      }
      else
+     if( role == Qt::BackgroundRole ) {
+    	 if( keyboardConfig->layoutLoopCount != KeyboardConfig::NO_LOOPING
+    			 && index.row() >= keyboardConfig->layoutLoopCount ) {
+    		 return QBrush(Qt::lightGray);
+    	 }
+     }
+     else
      if (role == Qt::DisplayRole) {
     	 switch( index.column() ) {
     	 case MAP_COLUMN:
