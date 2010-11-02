@@ -48,6 +48,12 @@ void ActivityEngine::init()
         connect(m_activityController, SIGNAL(activityAdded(QString)), this, SLOT(activityAdded(QString)));
         connect(m_activityController, SIGNAL(activityRemoved(QString)), this, SLOT(activityRemoved(QString)));
         connect(m_activityController, SIGNAL(currentActivityChanged(QString)), this, SLOT(currentActivityChanged(QString)));
+
+        //some convenience sources for times when checking every activity source would suck
+        //it starts with _ so that it can easily be filtered out of sources()
+        //maybe I should just make it not included in sources() instead?
+        setData("_Convenience", "Current", m_currentActivity);
+        setData("_Convenience", "Running", m_activityController->listActivities(KActivityInfo::Running));
     }
 }
 
@@ -62,19 +68,23 @@ void ActivityEngine::insertActivity(const QString &id) {
 }
 
 void ActivityEngine::activityAdded(const QString &id) {
-    //setData("allActivities", m_activityController->availableActivities()); //FIXME horribly inefficient
     insertActivity(id);
+    setData("_Convenience", "Running",
+            m_activityController->listActivities(KActivityInfo::Running)); //FIXME horribly inefficient
 }
 
 void ActivityEngine::activityRemoved(const QString &id) {
-    //setData("allActivities", m_activityController->availableActivities()); //FIXME horribly inefficient
     //FIXME delete the KActivityInfo
     removeSource(id);
+    setData("_Convenience", "Running",
+            m_activityController->listActivities(KActivityInfo::Running)); //FIXME horribly inefficient
 }
 
 void ActivityEngine::currentActivityChanged(const QString &id) {
     setData(m_currentActivity, "Current", false);
+    m_currentActivity = id;
     setData(id, "Current", true);
+    setData("_Convenience", "Current", id);
 }
 
 void ActivityEngine::activityNameChanged(const QString &newName)
