@@ -245,8 +245,8 @@ void Notifications::addNotification(Notification *notification)
             containment()->corona()->addOffscreenWidget(m_notificationStack);
         }
         m_notificationStackDialog = new StackDialog;
-        m_notificationStackDialog->setApplet(this);
         m_notificationStackDialog->setNotificationStack(m_notificationStack);
+        m_notificationStackDialog->setApplet(this);
         connect(m_notificationStack, SIGNAL(stackEmpty()), m_notificationStackDialog, SLOT(hide()));
         connect(m_notificationStack, SIGNAL(showRequested()), m_notificationStackDialog, SLOT(show()));
         m_notificationStackDialog->setAutoHide(m_autoHidePopup);
@@ -261,15 +261,12 @@ void Notifications::addNotification(Notification *notification)
     m_notificationStackDialog->syncToGraphicsWidget();
 
     if (containment() && containment()->corona()) {
-        m_notificationStackDialog->move(containment()->corona()->popupPosition(this, m_notificationStackDialog->size()));
-
         if (!m_notificationStackDialog->isVisible()) {
             m_notificationStack->setCurrentNotification(notification);
         }
 
         KWindowSystem::setOnAllDesktops(m_notificationStackDialog->winId(), true);
         m_notificationStackDialog->show();
-        Plasma::WindowEffects::slideWindow(m_notificationStackDialog, location());
     }
 
     Plasma::Animation *pulse = Plasma::Animator::create(Plasma::Animator::PulseAnimation, m_busyWidget);

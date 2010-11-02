@@ -23,6 +23,7 @@
 #include "notificationwidget.h"
 
 #include <QGraphicsLayout>
+#include <QLayout>
 #include <QPropertyAnimation>
 #include <QTimer>
 
@@ -32,6 +33,7 @@
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 #include <Plasma/FrameSvg>
+#include <Plasma/WindowEffects>
 
 static const uint hideTimeout = 15 * 1000;
 
@@ -42,7 +44,8 @@ StackDialog::StackDialog(QWidget *parent, Qt::WindowFlags f)
         m_notificationStack(0),
         m_drawLeft(true),
         m_drawRight(true),
-        m_autoHide(true)
+        m_autoHide(true),
+        m_hasCustomPosition(true)
 {
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/extender-background");
@@ -61,6 +64,14 @@ StackDialog::~StackDialog()
 void StackDialog::setNotificationStack(NotificationStack *stack)
 {
     setGraphicsWidget(stack);
+
+    if (!m_view && layout()) {
+        m_view = qobject_cast<QGraphicsView *>(layout()->itemAt(0)->widget());
+        if (m_view) {
+            m_view->installEventFilter(this);
+        }
+    }
+
     if (m_notificationStack) {
         disconnect(m_notificationStack, 0, this, 0);
     }
@@ -79,6 +90,7 @@ NotificationStack *StackDialog::notificartionStack() const
 void StackDialog::setApplet(Plasma::Applet *applet)
 {
     m_applet = applet;
+    adjustPosition(QPoint(-1, -1));
 }
 
 Plasma::Applet *StackDialog::applet() const
@@ -117,7 +129,7 @@ bool StackDialog::autoHide() const
 
 void StackDialog::adjustWindowToTilePos()
 {
-    if (m_applet && m_windowToTile) {
+    if (m_applet && m_windowToTile && m_hasCustomPosition) {
         m_windowToTileAnimation->setStartValue(m_windowToTile->pos());
 
         if (isVisible()) {
@@ -194,6 +206,8 @@ void StackDialog::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
 
+    adjustPosition(pos());
+
     if (m_autoHide) {
         m_hideTimer->start(hideTimeout);
     }
@@ -218,6 +232,7 @@ void StackDialog::resizeEvent(QResizeEvent *event)
 
     adjustWindowToTilePos();
     Plasma::Dialog::resizeEvent(event);
+    adjustPosition(pos());
 }
 
 void StackDialog::moveEvent(QMoveEvent *event)
@@ -245,6 +260,47 @@ void StackDialog::leaveEvent(QEvent *event)
     Plasma::Dialog::leaveEvent(event);
 }
 
+void StackDialog::adjustPosition(const QPoint &pos)
+{
+    if (!m_applet) {
+        return;
+    }
+
+    QPoint customPosition = pos;
+    if (customPosition == QPoint(-1, -1)) {
+        customPosition = m_applet->config().readEntry("customPosition", QPoint(-1, -1));
+    }
+
+
+    const QPoint popupPosition = m_applet->containment()->corona()->popupPosition(m_applet, size());
+
+    if ((customPosition == QPoint(-1, -1)) ||
+        QPoint(popupPosition - customPosition).manhattanLength() < 128) {
+
+        move(popupPosition);
+        Plasma::WindowEffects::slideWindow(this, m_applet->location());
+        m_hasCustomPosition = false;
+        m_applet->config().deleteEntry("customPosition");
+    } else {
+
+        if (m_applet->containment() &&
+            m_applet->containment()->corona() &&
+            m_notificationStack) {
+            QRect screenRect = m_applet->containment()->corona()->availableScreenRegion(m_applet->containment()->screen()).boundingRect();
+
+            customPosition.rx() = qMax(customPosition.x(), screenRect.left());
+            customPosition.ry() = qMax(customPosition.y(), screenRect.top());
+            customPosition.rx() = qMin(customPosition.x() + size().width(), screenRect.right()) - size().width();
+            customPosition.ry() = qMin(customPosition.y() + size().height(), screenRect.bottom()) - size().height();
+        }
+
+        move(customPosition);
+        Plasma::WindowEffects::slideWindow(this, Plasma::Desktop);
+        m_hasCustomPosition = true;
+        m_applet->config().writeEntry("customPosition", customPosition);
+    }
+}
+
 bool StackDialog::event(QEvent *event)
 {
     bool ret = Dialog::event(event);
@@ -266,6 +322,12 @@ bool StackDialog::eventFilter(QObject *watched, QEvent *event)
     if (m_windowToTile && watched == m_windowToTile &&
         event->type() == QEvent::Show && isVisible()) {
         adjustWindowToTilePos();
+    } else if (watched == m_notificationStack && event->type() == QEvent::GraphicsSceneMousePress) {
+        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
+        m_dragPos = me->pos().toPoint();
+    } else if (watched == m_notificationStack && event->type() == QEvent::GraphicsSceneMouseMove) {
+        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
+        adjustPosition(me->screenPos() - m_dragPos);
     }
 
     return Plasma::Dialog::eventFilter(watched, event);

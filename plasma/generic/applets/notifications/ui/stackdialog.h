@@ -68,18 +68,22 @@ protected:
     void moveEvent(QMoveEvent *event);
     bool event(QEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
+    void adjustPosition(const QPoint &pos = QPoint(-1, -1));
 
 private:
     Plasma::Applet *m_applet;
     QWidget *m_windowToTile;
     QPropertyAnimation *m_windowToTileAnimation;
+    QPoint m_dragPos;
 
     Plasma::FrameSvg *m_background;
     NotificationStack *m_notificationStack;
     QTimer *m_hideTimer;
+    QGraphicsView *m_view;
     bool m_drawLeft;
     bool m_drawRight;
     bool m_autoHide;
+    bool m_hasCustomPosition;
 };
 
 #endif
