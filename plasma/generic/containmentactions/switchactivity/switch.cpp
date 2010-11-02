@@ -25,12 +25,12 @@
 
 #include <KDebug>
 #include <KMenu>
+#include <KIcon>
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
-
-#include <kactivitycontroller.h>
-#include <kactivityinfo.h>
+#include <Plasma/ServiceJob>
+#include <Plasma/DataEngine>
 
 Q_DECLARE_METATYPE(QWeakPointer<Plasma::Containment>)
 
@@ -60,13 +60,17 @@ void SwitchActivity::contextEvent(QEvent *event)
 void SwitchActivity::makeMenu(QMenu *menu)
 {
     if (m_useNepomuk) {
-        KActivityController controller;
-        QString current = controller.currentActivity();
-        foreach (const QString& id, controller.availableActivities()) {
-            QString name = KActivityInfo::name(id);
-            QAction *action = menu->addAction(name);
+        Plasma::DataEngine *engine = dataEngine("org.kde.activities");
+        if (!engine->isValid()) {
+            return;
+        }
+        Plasma::DataEngine::Data data = engine->query("_Convenience");
+        QStringList activities = data["Running"].toStringList();
+        foreach (const QString& id, activities) {
+            Plasma::DataEngine::Data data = engine->query(id);
+            QAction *action = menu->addAction(KIcon(data["Icon"].toString()), data["Name"].toString());
             action->setData(QVariant(id));
-            if (id==current) {
+            if (data["Current"].toBool()) {
                 action->setEnabled(false);
             }
         }
@@ -132,7 +136,10 @@ void SwitchActivity::switchTo(QAction *action)
 {
     if (m_useNepomuk) {
         QString id = action->data().toString();
-        KActivityController().setCurrentActivity(id);
+        Plasma::Service *service = dataEngine("org.kde.activities")->serviceForSource(id);
+        KConfigGroup op = service->operationDescription("setCurrent");
+        Plasma::ServiceJob *job = service->startOperationCall(op);
+        connect(job, SIGNAL(finished(KJob*)), service, SLOT(deleteLater()));
     } else {
         QWeakPointer<Plasma::Containment> ctmt = action->data().value<QWeakPointer<Plasma::Containment> >();
         if (!ctmt) {
@@ -152,11 +159,20 @@ void SwitchActivity::wheelEvent(QGraphicsSceneWheelEvent *event)
     int step = (event->delta() < 0) ? 1 : -1;
 
     if (m_useNepomuk) {
-        KActivityController controller;
-        QStringList list = controller.availableActivities();
-        int start = list.indexOf(controller.currentActivity());
+        Plasma::DataEngine *engine = dataEngine("org.kde.activities");
+        if (!engine->isValid()) {
+            return;
+        }
+        Plasma::DataEngine::Data data = engine->query("_Convenience");
+        QStringList list = data["Running"].toStringList();
+        QString current = data["Current"].toString();
+        int start = list.indexOf(current);
         int next = (start + step + list.size()) % list.size();
-        controller.setCurrentActivity(list.at(next));
+
+        Plasma::Service *service = engine->serviceForSource(list.at(next));
+        KConfigGroup op = service->operationDescription("setCurrent");
+        Plasma::ServiceJob *job = service->startOperationCall(op);
+        connect(job, SIGNAL(finished(KJob*)), service, SLOT(deleteLater()));
         return;
     }
 
