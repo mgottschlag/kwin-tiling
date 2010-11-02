@@ -29,6 +29,7 @@
 #include <QtGui/QGraphicsLinearLayout>
 
 // KDE
+#include <KAuthorized>
 #include <KIcon>
 #include <KDebug>
 #include <KConfigDialog>
@@ -103,7 +104,7 @@ LauncherApplet::~LauncherApplet()
 
 void LauncherApplet::init()
 {
-    if (KService::serviceByStorageId("kde4-kmenuedit.desktop")) {
+    if (KService::serviceByStorageId("kde4-kmenuedit.desktop") && KAuthorized::authorize("action/menuedit")) {
         QAction* menueditor = new QAction(i18n("Edit Applications..."), this);
         d->actions.append(menueditor);
         connect(menueditor, SIGNAL(triggered(bool)), this, SLOT(startMenuEditor()));
