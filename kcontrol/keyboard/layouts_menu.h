@@ -27,7 +27,7 @@ class KeyboardConfig;
 class Flags;
 class Rules;
 class QActionGroup;
-
+class LayoutUnit;
 
 class LayoutsMenu : public QObject
 {
