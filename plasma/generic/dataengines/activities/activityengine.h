@@ -41,7 +41,8 @@ public slots:
     void activityRemoved(const QString &id);
     void currentActivityChanged(const QString &id);
 
-    void activityNameChanged(const QString &newName);
+    void activityDataChanged();
+    void activityStateChanged();
 
 private:
     void insertActivity(const QString &id);
