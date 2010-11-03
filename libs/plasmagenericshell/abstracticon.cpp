@@ -226,14 +226,15 @@ void AbstractIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 void AbstractIcon::paintBackground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    if (m_selected) {
-        qDebug() << "SELECTED!!!";
-        m_background->setElementPrefix("focus");
-    } else if (m_hovered) {
-        qDebug() << "HOVERED!!!";
+    if (m_hovered) {
         m_background->setElementPrefix("hover");
+
+    } else if (m_selected) {
+        m_background->setElementPrefix("focus");
+
     } else {
         m_background->setElementPrefix("normal");
+
     }
 
     m_background->paintFrame(painter, option->rect, option->rect);
