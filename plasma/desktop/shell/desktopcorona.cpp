@@ -526,7 +526,7 @@ void DesktopCorona::checkActivities()
         return;
     }
 
-    QStringList existingActivities = m_activityController->availableActivities();
+    QStringList existingActivities = m_activityController->listActivities();
     foreach (const QString &id, existingActivities) {
         activityAdded(id);
     }
@@ -652,7 +652,7 @@ void DesktopCorona::activityRemoved(const QString &id)
 
 void DesktopCorona::activateNextActivity()
 {
-    QStringList list = m_activityController->availableActivities();
+    QStringList list = m_activityController->listActivities();
     if (list.isEmpty()) {
         return;
     }
@@ -665,7 +665,7 @@ void DesktopCorona::activateNextActivity()
 
 void DesktopCorona::activatePreviousActivity()
 {
-    QStringList list = m_activityController->availableActivities();
+    QStringList list = m_activityController->listActivities();
     if (list.isEmpty()) {
         return;
     }

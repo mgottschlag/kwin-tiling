@@ -32,7 +32,7 @@ ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
     : AbstractIconList(location, parent),
       m_activityController(new KActivityController(this))
 {
-    QStringList activities = m_activityController->availableActivities();
+    QStringList activities = m_activityController->listActivities();
     foreach (const QString &activity, activities) {
         createActivityIcon(activity);
     }

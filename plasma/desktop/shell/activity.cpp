@@ -272,7 +272,7 @@ void Activity::close()
     if (controller.currentActivity() == m_id) {
         //activate someone else
         //TODO we could use a better strategy here
-        QStringList list = controller.availableActivities();
+        QStringList list = controller.listActivities();
         QString next = list.first();
         if (next == m_id && list.count() > 1) {
             next = list.at(1);

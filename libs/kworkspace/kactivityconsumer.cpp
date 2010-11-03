@@ -69,12 +69,6 @@ QStringList KActivityConsumer::listActivities() const
         QStringList, KActivityManager::self()->ListActivities(), QStringList() );
 }
 
-QStringList KActivityConsumer::availableActivities() const
-{
-    KACTIVITYCONSUMER_DBUS_RETURN(
-        QStringList, KActivityManager::self()->ListActivities(), QStringList() );
-}
-
 QStringList KActivityConsumer::activitiesForResource(const KUrl & uri)
 {
     KACTIVITYCONSUMER_DBUS_RETURN(

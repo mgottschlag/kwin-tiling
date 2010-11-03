@@ -58,7 +58,7 @@ class KDE_EXPORT KActivityConsumer: public QObject {
     Q_OBJECT
 
     Q_PROPERTY(QString currentActivity READ currentActivity)
-    Q_PROPERTY(QStringList availableActivities READ availableActivities)
+    Q_PROPERTY(QStringList activities READ listActivities)
 
 public:
     /**
@@ -87,11 +87,6 @@ public:
      * @returns the id of the current activity
      */
     QString currentActivity() const;
-
-    /**
-     * @returns the list of all existing activities
-     */
-    KDE_DEPRECATED QStringList availableActivities() const;
 
     /**
      * @returns the list of activities filtered by state
