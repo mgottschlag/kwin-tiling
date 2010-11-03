@@ -42,12 +42,13 @@ ActivityRemovalConfirmation::ActivityRemovalConfirmation(ActivityIcon * parent)
 {
     m_layout = new QGraphicsLinearLayout(this);
     m_layout->setOrientation(Qt::Vertical);
-    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setContentsMargins(16, 0, 0, 0);
     setLayout(m_layout);
 
     m_labelRemoveActivity = new Plasma::Label(this);
     m_labelRemoveActivity->setText(i18n("Remove activity?"));
     m_labelRemoveActivity->setAlignment(Qt::AlignCenter);
+    m_labelRemoveActivity->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     m_layout->addItem(m_labelRemoveActivity);
 
     m_buttonConfirmRemoval = new Plasma::PushButton(this);
@@ -68,12 +69,13 @@ ActivityConfiguration::ActivityConfiguration(ActivityIcon * parent, Activity * a
 {
     m_layoutButtons = new QGraphicsLinearLayout(this);
     m_layoutButtons->setOrientation(Qt::Vertical);
-    m_layoutButtons->setContentsMargins(0, 0, 0, 0);
+    m_layoutButtons->setContentsMargins(16, 0, 0, 0);
     setLayout(m_layoutButtons);
 
     m_labelConfiguration = new Plasma::Label(this);
     m_labelConfiguration->setText(i18n("Accept changes?"));
     m_labelConfiguration->setAlignment(Qt::AlignCenter);
+    m_labelConfiguration->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     m_layoutButtons->addItem(m_labelConfiguration);
 
     m_buttonConfirmChanges = new Plasma::PushButton(this);
