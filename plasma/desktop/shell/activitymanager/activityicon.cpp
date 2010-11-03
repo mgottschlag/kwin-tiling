@@ -98,7 +98,7 @@ ActivityIcon::ActivityIcon(const QString &id)
     connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)), m_activity, SLOT(activate()));
     connect(m_activity, SIGNAL(opened()), this, SLOT(updateButtons()));
     connect(m_activity, SIGNAL(closed()), this, SLOT(updateButtons()));
-    connect(m_activity, SIGNAL(changed()), this, SLOT(updateContents()));
+    connect(m_activity, SIGNAL(infoChanged()), this, SLOT(updateContents()));
     setName(m_activity->name());
 
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));

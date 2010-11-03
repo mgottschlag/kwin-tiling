@@ -22,14 +22,25 @@
 
 #include "activitymanager_interface.h"
 
+#include <QDBusServiceWatcher>
+
 class KActivityManager: public org::kde::ActivityManager {
+    Q_OBJECT
 public:
     static KActivityManager * self();
 
     static bool isActivityServiceRunning();
 
+public Q_SLOTS:
+    void serviceOwnerChanged(const QString & serviceName, const QString & oldOwner, const QString & newOwner);
+
+Q_SIGNALS:
+    void presenceChanged(bool present);
+
 private:
     KActivityManager();
+
+    QDBusServiceWatcher m_watcher;
 
     static KActivityManager * s_instance;
 };

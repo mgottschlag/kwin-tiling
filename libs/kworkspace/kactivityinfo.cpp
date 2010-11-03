@@ -71,7 +71,7 @@ IMPLEMENT_SIGNAL_HANDLER(ActivityAdded,   added)
 IMPLEMENT_SIGNAL_HANDLER(ActivityRemoved, removed)
 IMPLEMENT_SIGNAL_HANDLER(ActivityStarted, started)
 IMPLEMENT_SIGNAL_HANDLER(ActivityStopped, stopped)
-IMPLEMENT_SIGNAL_HANDLER(ActivityChanged, changed)
+IMPLEMENT_SIGNAL_HANDLER(ActivityChanged, infoChanged)
 
 #undef IMPLEMENT_SIGNAL_HANDLER
 
@@ -92,7 +92,7 @@ KActivityInfo::KActivityInfo(const QString &activityId, QObject *parent)
             this, SLOT(activityStateChanged(const QString &, int)));
 
     connect(KActivityManager::self(), SIGNAL(ActivityChanged(const QString &)),
-            this, SLOT(changed(const QString &)));
+            this, SLOT(infoChanged(const QString &)));
 
     connect(KActivityManager::self(), SIGNAL(ActivityAdded(const QString &)),
             this, SLOT(added(const QString &)));

@@ -33,7 +33,7 @@ public:
     void removed(const QString &) const;
     void started(const QString &) const;
     void stopped(const QString &) const;
-    void changed(const QString &) const;
+    void infoChanged(const QString &) const;
 
     KActivityInfo *q;
     QString id;

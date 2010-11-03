@@ -47,7 +47,7 @@ Activity::Activity(const QString &id, QObject *parent)
       m_id(id),
       m_info(new KActivityInfo(id, this))
 {
-    connect(m_info, SIGNAL(changed()), this, SLOT(activityChanged()));
+    connect(m_info, SIGNAL(infoChanged()), this, SLOT(activityChanged()));
 
     if (m_info) {
         m_name = m_info->name();
@@ -206,7 +206,7 @@ void Activity::setName(const QString &name)
 
     m_name = name;
     KActivityController().setActivityName(m_id, name);
-    emit changed();
+    emit infoChanged();
 
     foreach (Plasma::Containment *c, m_containments) {
         c->context()->setCurrentActivity(name);
@@ -222,7 +222,7 @@ void Activity::setIcon(const QString &icon)
     m_icon = icon;
 
     KActivityController().setActivityIcon(m_id, icon);
-    emit changed();
+    emit infoChanged();
 }
 
 void Activity::updateActivityName(Plasma::Context *context)

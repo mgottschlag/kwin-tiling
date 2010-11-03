@@ -89,7 +89,7 @@ public:
     const KActivityInfo * info() const;
 
 signals:
-    void changed();
+    void infoChanged();
 
     void opened();
     void closed();

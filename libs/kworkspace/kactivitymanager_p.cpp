@@ -37,6 +37,8 @@ KActivityManager::KActivityManager()
             QDBusConnection::sessionBus()
             )
 {
+    connect(&m_watcher, SIGNAL(serviceOwnerChanged(const QString &, const QString &, const QString &)),
+            this, SLOT(serviceOwnerChanged(const QString &, const QString &, const QString &)));
 }
 
 KActivityManager * KActivityManager::self()
@@ -70,5 +72,12 @@ KActivityManager * KActivityManager::self()
 bool KActivityManager::isActivityServiceRunning()
 {
     return QDBusConnection::sessionBus().interface()->isServiceRegistered(ACTIVITY_MANAGER_DBUS_PATH);
+}
+
+void KActivityManager::serviceOwnerChanged(const QString & serviceName, const QString & oldOwner, const QString & newOwner)
+{
+    if (serviceName == ACTIVITY_MANAGER_DBUS_PATH) {
+        emit presenceChanged(!newOwner.isEmpty());
+    }
 }
 

@@ -182,7 +182,7 @@ Q_SIGNALS:
     /**
      * Emitted when the activity's name, icon or description is changed
      */
-    void changed();
+    void infoChanged();
 
     /**
      * Emitted when the activity is added
@@ -219,7 +219,7 @@ private:
     Q_PRIVATE_SLOT(d, void removed(const QString &))
     Q_PRIVATE_SLOT(d, void started(const QString &))
     Q_PRIVATE_SLOT(d, void stopped(const QString &))
-    Q_PRIVATE_SLOT(d, void changed(const QString &))
+    Q_PRIVATE_SLOT(d, void infoChanged(const QString &))
 };
 
 #endif // ACTIVITY_INFO_H
