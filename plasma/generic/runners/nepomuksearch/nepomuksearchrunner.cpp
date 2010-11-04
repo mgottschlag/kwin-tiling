@@ -18,8 +18,6 @@
 
 #include "nepomuksearchrunner.h"
 #include "queryclientwrapper.h"
-#include "nie.h"
-#include "nfo.h"
 
 #include <QMenu>
 
@@ -28,6 +26,8 @@
 #include <KDebug>
 #include <KUrl>
 
+#include <nepomuk/nie.h>
+#include <nepomuk/nfo.h>
 #include <Nepomuk/Resource>
 #include <Nepomuk/Variant>
 #include <Nepomuk/ResourceManager>
