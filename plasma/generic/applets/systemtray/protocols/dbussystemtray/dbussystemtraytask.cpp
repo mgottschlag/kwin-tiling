@@ -266,12 +266,10 @@ void DBusSystemTrayTask::syncIcons(const Plasma::DataEngine::Data &properties)
         overlayIcon = KIcon(properties["OverlayIconName"].value<QString>());
     }
 
-    if (!overlayIcon.isNull()) {
-        foreach (QGraphicsWidget *widget, widgetsByHost()) {
-            DBusSystemTrayWidget *iconWidget = qobject_cast<DBusSystemTrayWidget *>(widget);
-            if (iconWidget) {
-                iconWidget->setOverlayIcon(overlayIcon);
-            }
+    foreach (QGraphicsWidget *widget, widgetsByHost()) {
+        DBusSystemTrayWidget *iconWidget = qobject_cast<DBusSystemTrayWidget *>(widget);
+        if (iconWidget) {
+            iconWidget->setOverlayIcon(overlayIcon);
         }
     }
 }
