@@ -27,6 +27,7 @@
 
 #define KDE3_SUPPORT
 #include <kcmodule.h>
+#include <QVariantList>
 #undef KDE3_SUPPORT
 
 #include "smartcardbase.h"
@@ -45,7 +46,7 @@ class KSmartcardConfig : public KCModule, public DCOPObject
 
 
 public:
-  KSmartcardConfig(QWidget *parent, const QStringList &args)
+  KSmartcardConfig(QWidget *parent, const QVariantList &args)
   virtual ~KSmartcardConfig();
 
   SmartcardBase *base;

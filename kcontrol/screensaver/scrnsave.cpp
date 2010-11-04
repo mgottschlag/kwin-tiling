@@ -89,7 +89,7 @@ const uint widgetEventMask =                 // X event mask
 //===========================================================================
 // DLL Interface for kcontrol
 K_PLUGIN_FACTORY(KSSFactory,
-        registerPlugin<KScreenSaver>(); // K_EXPORT_COMPONENT_FACTORY (screensaver
+        registerPlugin<KScreenSaver>();
 )
 K_EXPORT_PLUGIN(KSSFactory("kcmscreensaver"))
 

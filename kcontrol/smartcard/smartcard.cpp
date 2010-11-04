@@ -40,14 +40,14 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kmenu.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
 #include "smartcard.h"
 
-typedef KGenericFactory<KSmartcardConfig> KSmartcardConfigFactory;
-K_EXPORT_COMPONENT_FACTORY(kcm_smartcard, KSmartcardConfigFactory("kcmsmartcard"))
+K_PLUGIN_FACTORY(KSmartcardConfigFactory, registerPlugin<KSmartcardConfig>();)
+K_EXPORT_PLUGIN(KSmartcardConfigFactory("kcmsmartcard"))
 
-KSmartcardConfig::KSmartcardConfig(QWidget *parent, const QStringList &)
+KSmartcardConfig::KSmartcardConfig(QWidget *parent, const QVariantList &)
   : KCModule(KSmartcardConfig::componentData(), parent)
   , DCOPObject("kcmsmartcard")
 {

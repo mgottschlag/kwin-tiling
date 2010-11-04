@@ -21,8 +21,8 @@
 #include "fakebluetoothmanager.h"
 
 // KDE includes
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
-typedef KGenericFactory<FakeBluetoothManager, Solid::Control::Ifaces::BluetoothManager> FakeBluetoothBackendFactory;
-K_EXPORT_COMPONENT_FACTORY(solid_fake_bluetoothmgmt, FakeBluetoothBackendFactory("fakebluetoothbackend"))
+K_PLUGIN_FACTORY(FakeBluetoothBackendFactory, registerPlugin<FakeBluetoothManager>();)
+K_EXPORT_PLUGIN(FakeBluetoothBackendFactory("fakebluetoothbackend"))
 
