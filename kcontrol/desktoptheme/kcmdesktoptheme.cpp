@@ -41,7 +41,6 @@
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
-#include <KLibLoader>
 
 K_PLUGIN_FACTORY(KCMDesktopThemeFactory, registerPlugin<KCMDesktopTheme>();)
 K_EXPORT_PLUGIN(KCMDesktopThemeFactory("kcmdesktoptheme","kcm_desktopthemedetails"))

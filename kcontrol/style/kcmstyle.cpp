@@ -42,6 +42,7 @@
 #include <kstandarddirs.h>
 #include <kautostart.h>
 #include <KDebug>
+#include <KLibrary>
 #include <KColorScheme>
 #include <KStandardDirs>
 #include <knewstuff3/downloaddialog.h>
@@ -78,7 +79,6 @@
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
-#include <KLibLoader>
 
 K_PLUGIN_FACTORY(KCMStyleFactory, registerPlugin<KCMStyle>();)
 K_EXPORT_PLUGIN(KCMStyleFactory("kcmstyle"))
