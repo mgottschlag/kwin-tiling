@@ -48,6 +48,9 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_plainClockFont(KGlobalSettings::generalFont()),
       m_useCustomColor(false),
       m_plainClockColor(),
+      m_useCustomShadowColor(false),
+      m_plainClockShadowColor(),
+      m_drawShadow(true),
       m_showDate(false),
       m_showYear(false),
       m_showDay(false),
@@ -174,12 +177,12 @@ void Clock::clockConfigChanged()
     }
 
     m_plainClockFont = cg.readEntry("plainClockFont", m_plainClockFont);
-    m_useCustomColor = cg.readEntry("useCustomColor", false);
-    if (m_useCustomColor) {
-        m_plainClockColor = cg.readEntry("plainClockColor", m_plainClockColor);
-    } else {
-        updateColors();
-    }
+    m_useCustomColor = cg.readEntry("useCustomColor", m_useCustomColor);
+    m_plainClockColor = cg.readEntry("plainClockColor", m_plainClockColor);
+    m_useCustomShadowColor = cg.readEntry("useCustomShadowColor", m_useCustomShadowColor);
+    m_plainClockShadowColor = cg.readEntry("plainClockShadowColor", m_plainClockShadowColor);
+    m_drawShadow = cg.readEntry("plainClockDrawShadow", m_drawShadow);
+    updateColors();
 
     const QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
     const QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
@@ -229,6 +232,20 @@ void Clock::createClockConfigurationInterface(KConfigDialog *parent)
     ui.plainClockFont->setCurrentFont(m_plainClockFont);
     ui.useCustomColor->setChecked(m_useCustomColor);
     ui.plainClockColor->setColor(m_plainClockColor);
+    ui.drawShadow->setChecked(m_drawShadow);
+    ui.useCustomShadowColor->setChecked(m_useCustomShadowColor);
+    ui.plainClockShadowColor->setColor(m_plainClockShadowColor);
+
+    connect(ui.drawShadow, SIGNAL(toggled(bool)),
+            this, SLOT(configDrawShadowToggled(bool)));
+    configDrawShadowToggled(m_drawShadow);
+}
+
+void Clock::configDrawShadowToggled(bool value)
+{
+    ui.useCustomShadowColor->setEnabled(value);
+    ui.customShadowColorLabel->setEnabled(value);
+    ui.plainClockShadowColor->setEnabled(value && ui.useCustomShadowColor->isChecked());
 }
 
 void Clock::clockConfigAccepted()
@@ -265,18 +282,28 @@ void Clock::clockConfigAccepted()
     cg.writeEntry("showSeconds", m_showSeconds);
 
     m_useCustomColor = ui.useCustomColor->isChecked();
+    cg.writeEntry("useCustomColor", m_useCustomColor);
     if (m_useCustomColor) {
         m_plainClockColor = ui.plainClockColor->color();
+        cg.writeEntry("plainClockColor", m_plainClockColor);
     } else {
-        updateColors();
+        m_plainClockColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     }
+
+    m_useCustomShadowColor = ui.useCustomShadowColor->isChecked();
+    cg.writeEntry("useCustomShadowColor", m_useCustomShadowColor);
+    if (m_useCustomShadowColor) {
+        m_plainClockShadowColor = ui.plainClockShadowColor->color();
+        cg.writeEntry("plainClockShadowColor", m_plainClockShadowColor);
+    } else {
+        m_plainClockShadowColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+    }
+    m_drawShadow = ui.drawShadow->isChecked();
+    cg.writeEntry("plainClockDrawShadow", m_drawShadow);
 
     m_plainClockFont.setBold(ui.plainClockFontBold->checkState() == Qt::Checked);
     m_plainClockFont.setItalic(ui.plainClockFontItalic->checkState() == Qt::Checked);
-
     cg.writeEntry("plainClockFont", m_plainClockFont);
-    cg.writeEntry("useCustomColor", m_useCustomColor);
-    cg.writeEntry("plainClockColor", m_plainClockColor);
 
     constraintsEvent(Plasma::SizeConstraint);
     update();
@@ -512,37 +539,38 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                         (m_timeRect.center().y() + fm.height() / 3)));
     p->translate(-0.5, -0.5);
 
-    QPen tmpPen = p->pen();
+    if (m_drawShadow) {
+        QPen tmpPen = p->pen();
 
-    // Paint a backdrop behind the time's text
-    qreal shadowOffset = 1.0;
-    QPen shadowPen;
-    QColor shadowColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-    shadowColor.setAlphaF(.4);
-    shadowPen.setColor(shadowColor);
-    p->setPen(shadowPen);
-    QPointF shadowTimeTextOrigin = QPointF(timeTextOrigin.x() + shadowOffset,
-                                           timeTextOrigin.y() + shadowOffset);
-    p->drawText(shadowTimeTextOrigin, timeString);
+        // Paint a backdrop behind the time's text
+        qreal shadowOffset = 1.0;
+        QPen shadowPen;
+        QColor shadowColor = m_plainClockShadowColor;
+        shadowColor.setAlphaF(.4);
+        shadowPen.setColor(shadowColor);
+        p->setPen(shadowPen);
+        QPointF shadowTimeTextOrigin = QPointF(timeTextOrigin.x() + shadowOffset,
+                                               timeTextOrigin.y() + shadowOffset);
+        p->drawText(shadowTimeTextOrigin, timeString);
 
-    p->setPen(tmpPen);
+        p->setPen(tmpPen);
 
-    // Paint the time itself with a linear translucency gradient
-    QLinearGradient gradient = QLinearGradient(QPointF(0, 0), QPointF(0, fm.height()));
-    QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+        // Paint the time itself with a linear translucency gradient
+        QLinearGradient gradient = QLinearGradient(QPointF(0, 0), QPointF(0, fm.height()));
 
-    QColor startColor = textColor;
-    startColor.setAlphaF(.95);
-    QColor stopColor = textColor;
-    stopColor.setAlphaF(.7);
+        QColor startColor = m_plainClockColor;
+        startColor.setAlphaF(.95);
+        QColor stopColor = m_plainClockColor;
+        stopColor.setAlphaF(.7);
 
-    gradient.setColorAt(0.0, startColor);
-    gradient.setColorAt(0.5, stopColor);
-    gradient.setColorAt(1.0, startColor);
-    QBrush gradientBrush(gradient);
+        gradient.setColorAt(0.0, startColor);
+        gradient.setColorAt(0.5, stopColor);
+        gradient.setColorAt(1.0, startColor);
+        QBrush gradientBrush(gradient);
 
-    QPen gradientPen(gradientBrush, tmpPen.width());
-    p->setPen(gradientPen);
+        QPen gradientPen(gradientBrush, tmpPen.width());
+        p->setPen(gradientPen);
+    }
     p->drawText(timeTextOrigin, timeString);
 }
 
@@ -588,6 +616,11 @@ void Clock::updateColors()
 {
     if (!m_useCustomColor) {
         m_plainClockColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    }
+    if (!m_useCustomShadowColor) {
+        m_plainClockShadowColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+    }
+    if (!m_useCustomColor || !m_useCustomShadowColor) {
         update();
     }
 }

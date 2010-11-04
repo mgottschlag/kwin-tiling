@@ -55,6 +55,9 @@ class Clock : public ClockApplet
         void createClockConfigurationInterface(KConfigDialog *parent);
         void changeEngineTimezone(const QString &oldTimezone, const QString &newTimezone);
 
+    private slots:
+        void configDrawShadowToggled(bool value);
+
     private:
         void updateSize();
         bool showTimezone() const;
@@ -65,6 +68,9 @@ class Clock : public ClockApplet
         QFont m_plainClockFont;
         bool m_useCustomColor;
         QColor m_plainClockColor;
+        bool m_useCustomShadowColor;
+        QColor m_plainClockShadowColor;
+        bool m_drawShadow;
         QRect m_timeRect;
         QRect m_dateRect;
 
