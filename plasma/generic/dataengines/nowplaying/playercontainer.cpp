@@ -21,9 +21,9 @@
 
 #include "playercontrol.h"
 
-PlayerContainer::PlayerContainer(Player::Ptr m_player, QObject* parent)
+PlayerContainer::PlayerContainer(Player::Ptr player, QObject* parent)
     : DataContainer(parent)
-    , m_player(m_player)
+    , m_player(player)
     , m_controller(0)
 {
     Q_ASSERT(m_player);
