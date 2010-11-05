@@ -74,15 +74,22 @@ void DeviceWrapper::dataUpdated(const QString &source, Plasma::DataEngine::Data 
             }
         }
         m_isEncryptedContainer = data["isEncryptedContainer"].toBool();
-    } else if (data["Device Types"].toStringList().contains("Storage Access")) {
-        m_isStorageAccess = true;
-        if (data["Accessible"].toBool() == true) {
-            m_isAccessible = true;
-        } else {
-            m_isAccessible = false;
-        }
     } else {
-        m_isStorageAccess = false;
+        if (data["Device Types"].toStringList().contains("Storage Access")) {
+            m_isStorageAccess = true;
+            if (data["Accessible"].toBool() == true) {
+                m_isAccessible = true;
+            } else {
+                m_isAccessible = false;
+            }
+        } else {
+            m_isStorageAccess = false;
+        }
+        if (data["Device Types"].toStringList().contains("OpticalDisc")) {
+            m_isOpticalDisc = true;
+        } else {
+            m_isOpticalDisc = false;
+        }
     }
 
     m_emblems = m_device.emblems();
@@ -115,15 +122,26 @@ bool DeviceWrapper::isEncryptedContainer() const {
     return m_isEncryptedContainer;
 }
 
+bool DeviceWrapper::isOpticalDisc() const {
+    return m_isOpticalDisc;
+}
+
 QString DeviceWrapper::description() const {
     return m_device.description();
+}
+
+void DeviceWrapper::setForceEject(bool force)
+{
+    m_forceEject = force;
 }
 
 QString DeviceWrapper::defaultAction() const {
 
     QString actionString;
 
-    if (m_isStorageAccess) {
+    if (m_isOpticalDisc && m_forceEject) {
+        actionString = i18n("Eject medium");
+    } else if (m_isStorageAccess) {
         if (!m_isEncryptedContainer) {
             if (!m_isAccessible) {
                 actionString = i18n("Mount the device");
@@ -154,6 +172,14 @@ void DeviceWrapper::runAction(QAction * action)
             soliduiserver.asyncCall("showActionsDialog", id(), desktopFiles);
         }
     } else {
+        if (isOpticalDisc() && m_forceEject) {
+            Solid::OpticalDrive *drive = m_device.parent().as<Solid::OpticalDrive>();
+            if (drive) {
+                drive->eject();
+            }
+            return;
+        }
+
         if (m_device.is<Solid::StorageVolume>()) {
             Solid::StorageAccess *access = m_device.as<Solid::StorageAccess>();
             if (access) {
@@ -165,7 +191,8 @@ void DeviceWrapper::runAction(QAction * action)
                 return;
             }
         }
-        if (m_device.is<Solid::OpticalDisc>()) {
+
+        if (isOpticalDisc()) {
             Solid::OpticalDrive *drive = m_device.parent().as<Solid::OpticalDrive>();
             if (drive) {
                 drive->eject();

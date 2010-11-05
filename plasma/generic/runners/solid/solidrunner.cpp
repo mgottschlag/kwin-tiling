@@ -133,6 +133,8 @@ void SolidRunner::createOrUpdateMatches(const QStringList &udiList)
     bool onlyMounted = false;
     bool onlyMountable = false;
     bool onlyEncrypted = false;
+    bool onlyOptical = false;
+    bool forceEject = false;
     bool showDevices = false;
     if (keywords[0].startsWith(i18nc("Note this is a KRunner keyword", "device") , Qt::CaseInsensitive)) {
         showDevices = true;
@@ -147,6 +149,11 @@ void SolidRunner::createOrUpdateMatches(const QStringList &udiList)
         } else if (keywords[0].startsWith(i18nc("Note this is a KRunner keyword", "unmount") , Qt::CaseInsensitive)) {
             showDevices = true;
             onlyMounted = true;
+            keywords.removeFirst();
+        } else if (keywords[0].startsWith(i18nc("Note this is a KRunner keyword", "eject") , Qt::CaseInsensitive)) {
+            showDevices = true;
+            onlyOptical = true;
+            forceEject = true;
             keywords.removeFirst();
         } else if (keywords[0].startsWith(i18nc("Note this is a KRunner keyword", "unlock") , Qt::CaseInsensitive)) {
             showDevices = true;
@@ -170,10 +177,11 @@ void SolidRunner::createOrUpdateMatches(const QStringList &udiList)
         if ((deviceDescription.isEmpty() && showDevices) || dev->description().contains(deviceDescription, Qt::CaseInsensitive)) {
             // This is getting quite messy indeed
             if (((!onlyEncrypted) || (onlyEncrypted && dev->isEncryptedContainer())) &&
+                ((!onlyOptical) || (onlyOptical && dev->isOpticalDisc())) &&
                 ((onlyMounted && dev->isAccessible()) ||
                  (onlyMountable && dev->isStorageAccess() && !dev->isAccessible()) ||
                  (!onlyMounted && !onlyMountable))) {
-
+                dev->setForceEject(forceEject);
                 Plasma::QueryMatch match = deviceMatch(dev);
                 if (dev->description().compare(deviceDescription, Qt::CaseInsensitive)) {
                     match.setType(Plasma::QueryMatch::ExactMatch);

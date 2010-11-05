@@ -43,11 +43,13 @@ class DeviceWrapper : public QObject
     KIcon icon() const;
     bool isStorageAccess() const;
     bool isAccessible() const;
+    bool isOpticalDisc() const;
     bool isEncryptedContainer() const;
     QString description() const;
     QString defaultAction() const;
     void runAction(QAction *) ;
     QStringList actionIds() const;
+    void setForceEject(bool force);
     
     signals:
     void registerAction(QString &id, QString icon, QString text, QString desktop);
@@ -71,6 +73,8 @@ class DeviceWrapper : public QObject
     bool m_isStorageAccess;
     bool m_isAccessible;
     bool m_isEncryptedContainer;
+    bool m_isOpticalDisc;
+    bool m_forceEject;
     QString m_description;
     QStringList m_actionIds;
     // Solid doesn't like multithreading that much
