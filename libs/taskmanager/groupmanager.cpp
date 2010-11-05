@@ -400,19 +400,19 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
             abstractSortingStrategy->handleGroup(rootGroups[newDesktop]);
         }
     }
-    
+
     if (onlyGroupWhenFull) {
         QObject::disconnect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
         QObject::disconnect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
     }
-    
+
     currentDesktop = newDesktop;
-    
+
     if (onlyGroupWhenFull) {
         QObject::connect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
         QObject::connect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
     }
-    
+
     reloadTasks();
 }
 
