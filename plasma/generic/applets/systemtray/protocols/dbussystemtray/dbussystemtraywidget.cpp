@@ -109,6 +109,12 @@ void DBusSystemTrayWidget::contextMenuEvent(QGraphicsSceneContextMenuEvent *even
 
 void DBusSystemTrayWidget::showContextMenu(KJob *job)
 {
+    if (QCoreApplication::closingDown()) {
+        // apparently an edge case can be triggered due to the async nature of all this
+        // see: https://bugs.kde.org/show_bug.cgi?id=251977
+        return;
+    }
+
     m_waitingOnContextMenu = false;
     Plasma::ServiceJob *sjob = qobject_cast<Plasma::ServiceJob *>(job);
     if (!sjob) {
