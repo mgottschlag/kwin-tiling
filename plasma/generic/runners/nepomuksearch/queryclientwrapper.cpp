@@ -18,9 +18,9 @@
 
 #include "queryclientwrapper.h"
 #include "nepomuksearchrunner.h"
-#include "nie.h"
-#include "nfo.h"
 
+#include <nepomuk/nie.h>
+#include <nepomuk/nfo.h>
 #include <Nepomuk/Resource>
 #include <Nepomuk/Variant>
 #include <Nepomuk/Types/Class>
