@@ -636,7 +636,7 @@ void PanelView::updatePanelGeometry()
 
     kDebug() << "New panel geometry is" << c->geometry();
 
-    QSize size = c->size().toSize();
+    QSize size = c->size().expandedTo(c->minimumSize()).toSize();
     QRect geom(QPoint(0,0), size);
     int screen = c->screen();
 
@@ -772,7 +772,6 @@ void PanelView::updatePanelGeometry()
         m_strutsTimer->stop();
         m_strutsTimer->start(STRUTSTIMERDELAY);
     } else {
-
         if (m_panelController && QPoint(pos() - geom.topLeft()).manhattanLength() > 100) {
             resize(geom.size());
             QPropertyAnimation *panelAnimation = new QPropertyAnimation(this, "pos", this);
