@@ -6,112 +6,11 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>531</width>
-    <height>430</height>
+    <width>522</width>
+    <height>356</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="1" column="1">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Font style:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>plainClockFont</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="KFontComboBox" name="plainClockFont"/>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>78</width>
-         <height>17</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="2" colspan="2">
-    <widget class="QCheckBox" name="plainClockFontBold">
-     <property name="toolTip">
-      <string>Check if you want the font in bold</string>
-     </property>
-     <property name="whatsThis">
-      <string>When this is checked, the clock font will be bold.</string>
-     </property>
-     <property name="text">
-      <string>&amp;Bold</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2" colspan="2">
-    <widget class="QCheckBox" name="plainClockFontItalic">
-     <property name="toolTip">
-      <string>Check if you want the font in italic</string>
-     </property>
-     <property name="whatsThis">
-      <string>When this is checked, the clock font will be in italic.</string>
-     </property>
-     <property name="text">
-      <string>&amp;Italic</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1" colspan="3">
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>409</width>
-       <height>5</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="5" column="1">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Custom font color:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>useCustomColor</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="14" column="3">
-    <spacer>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
+  <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="label_6">
      <property name="font">
@@ -125,7 +24,69 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="1" column="1">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Font style:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>plainClockFont</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="KFontComboBox" name="plainClockFont"/>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::MinimumExpanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>17</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="2">
+    <widget class="QCheckBox" name="plainClockFontBold">
+     <property name="toolTip">
+      <string>Check if you want the font in bold</string>
+     </property>
+     <property name="whatsThis">
+      <string>When this is checked, the clock font will be bold.</string>
+     </property>
+     <property name="text">
+      <string>&amp;Bold</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QCheckBox" name="plainClockFontItalic">
+     <property name="toolTip">
+      <string>Check if you want the font in italic</string>
+     </property>
+     <property name="whatsThis">
+      <string>When this is checked, the clock font will be in italic.</string>
+     </property>
+     <property name="text">
+      <string>&amp;Italic</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
     <spacer name="horizontalSpacer_9">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -141,233 +102,107 @@
      </property>
     </spacer>
    </item>
-   <item row="13" column="1">
-    <widget class="QLabel" name="label_5">
+   <item row="4" column="1">
+    <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Show seconds:</string>
+      <string>Custom font color:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
      <property name="buddy">
-      <cstring>secondsCheckbox</cstring>
+      <cstring>useCustomColor</cstring>
      </property>
     </widget>
    </item>
-   <item row="9" column="3">
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
+   <item row="4" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
      <item>
-      <widget class="QCheckBox" name="showDate">
-       <property name="toolTip">
-        <string>Display the date of the day</string>
-       </property>
-       <property name="whatsThis">
-        <string/>
-       </property>
+      <widget class="QCheckBox" name="useCustomColor">
        <property name="text">
         <string/>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_7">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item row="12" column="3">
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QCheckBox" name="showTimeZone">
-       <property name="toolTip">
-        <string>Display the time zone name</string>
-       </property>
-       <property name="whatsThis">
-        <string>Display the time zone name under the time.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item row="11" column="3">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>5</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="9" column="1">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Show date:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>showDate</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="3">
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <widget class="QCheckBox" name="secondsCheckbox">
-       <property name="toolTip">
-        <string>Show the seconds</string>
-       </property>
-       <property name="whatsThis">
-        <string>Check this if you want to show the seconds.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_5">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item row="10" column="3">
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="1">
-      <widget class="QCheckBox" name="showDay">
+      <widget class="KColorButton" name="plainClockColor">
        <property name="enabled">
         <bool>false</bool>
        </property>
        <property name="toolTip">
-        <string>Display day of the week</string>
+        <string>Color chooser</string>
        </property>
        <property name="whatsThis">
-        <string>Add the day of the week to the date display.</string>
-       </property>
-       <property name="text">
-        <string>Show day of the &amp;week</string>
+        <string>Click on this button and the KDE standard color dialog will show. You can then choose the new color you want for your clock.</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <spacer name="horizontalSpacer_2">
+     <item>
+      <spacer name="horizontalSpacer_6">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>20</width>
+         <width>40</width>
          <height>20</height>
         </size>
        </property>
       </spacer>
      </item>
-     <item row="1" column="1">
-      <widget class="QCheckBox" name="showYear">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Display the current year</string>
-       </property>
-       <property name="whatsThis">
-        <string>Add the year to the date string.</string>
-       </property>
-       <property name="text">
-        <string>Show &amp;year</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
-   <item row="8" column="0" colspan="2">
-    <widget class="QLabel" name="label_7">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
+   <item row="5" column="1">
+    <widget class="QLabel" name="label_9">
      <property name="text">
-      <string>Information</string>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="1">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>Show time zone:</string>
+      <string>Show shadow:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
      <property name="buddy">
-      <cstring>showTimeZone</cstring>
+      <cstring>drawShadow</cstring>
      </property>
     </widget>
    </item>
-   <item row="7" column="2" colspan="2">
+   <item row="5" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QCheckBox" name="drawShadow">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_13">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="6" column="1">
+    <widget class="QLabel" name="customShadowColorLabel">
+     <property name="text">
+      <string>Custom shadow color:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>useCustomShadowColor</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="2">
     <layout class="QGridLayout" name="gridLayout_3">
      <item row="0" column="1">
       <widget class="KColorButton" name="plainClockShadowColor">
@@ -407,92 +242,258 @@
      </item>
     </layout>
    </item>
-   <item row="5" column="2" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
+   <item row="7" column="0" colspan="2">
+    <widget class="QLabel" name="label_7">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Information</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Show time zone:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>showTimeZone</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QCheckBox" name="useCustomColor">
+      <widget class="QCheckBox" name="showTimeZone">
+       <property name="toolTip">
+        <string>Display the time zone name</string>
+       </property>
+       <property name="whatsThis">
+        <string>Display the time zone name under the time.</string>
+       </property>
        <property name="text">
         <string/>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KColorButton" name="plainClockColor">
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="9" column="1">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Show seconds:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>secondsCheckbox</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QCheckBox" name="secondsCheckbox">
+       <property name="toolTip">
+        <string>Show the seconds</string>
+       </property>
+       <property name="whatsThis">
+        <string>Check this if you want to show the seconds.</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="10" column="1">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Show date:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>showDate</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QCheckBox" name="showDate">
+       <property name="toolTip">
+        <string>Display the date of the day</string>
+       </property>
+       <property name="whatsThis">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_7">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="11" column="1">
+    <widget class="QLabel" name="label_8">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Include the day of the week:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>showDay</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QCheckBox" name="showDay">
        <property name="enabled">
         <bool>false</bool>
        </property>
        <property name="toolTip">
-        <string>Color chooser</string>
+        <string>Display day of the week</string>
        </property>
        <property name="whatsThis">
-        <string>Click on this button and the KDE standard color dialog will show. You can then choose the new color you want for your clock.</string>
+        <string>Add the day of the week to the date display.</string>
        </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_6">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item row="6" column="1">
-    <widget class="QLabel" name="label_9">
-     <property name="text">
-      <string>Show shadow:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>drawShadow</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="2" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QCheckBox" name="drawShadow">
        <property name="text">
         <string/>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_13">
+      <spacer name="horizontalSpacer_8">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>37</width>
+         <height>18</height>
         </size>
        </property>
       </spacer>
      </item>
     </layout>
    </item>
-   <item row="7" column="1">
-    <widget class="QLabel" name="customShadowColorLabel">
+   <item row="12" column="1">
+    <widget class="QLabel" name="label_10">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="text">
-      <string>Custom shadow color:</string>
+      <string>Include the year:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
      <property name="buddy">
-      <cstring>useCustomShadowColor</cstring>
+      <cstring>showYear</cstring>
      </property>
     </widget>
+   </item>
+   <item row="12" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_8">
+     <item>
+      <widget class="QCheckBox" name="showYear">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Display the current year</string>
+       </property>
+       <property name="whatsThis">
+        <string>Add the year to the date string.</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_10">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>37</width>
+         <height>18</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="13" column="2">
+    <spacer>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
@@ -522,12 +523,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>197</x>
-     <y>238</y>
+     <x>210</x>
+     <y>308</y>
     </hint>
     <hint type="destinationlabel">
-     <x>525</x>
-     <y>265</y>
+     <x>200</x>
+     <y>335</y>
     </hint>
    </hints>
   </connection>
@@ -538,12 +539,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>197</x>
-     <y>238</y>
+     <x>210</x>
+     <y>308</y>
     </hint>
     <hint type="destinationlabel">
-     <x>525</x>
-     <y>290</y>
+     <x>195</x>
+     <y>360</y>
     </hint>
    </hints>
   </connection>
@@ -576,6 +577,38 @@
     <hint type="destinationlabel">
      <x>209</x>
      <y>182</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showDate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>label_8</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>191</x>
+     <y>300</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>45</x>
+     <y>330</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showDate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>label_10</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>191</x>
+     <y>295</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>70</x>
+     <y>359</y>
     </hint>
    </hints>
   </connection>
