@@ -51,8 +51,13 @@ SolidRunner::SolidRunner(QObject* parent, const QVariantList& args)
                                    i18n("Lists all devices and allows them to be mounted, unmounted or ejected.")));
     addSyntax(Plasma::RunnerSyntax(i18nc("Note this is a KRunner keyword", "mount"),
                                    i18n("Lists all devices which can be mounted, and allows them to be mounted.")));
+    addSyntax(Plasma::RunnerSyntax(i18nc("Note this is a KRunner keyword", "unlock"),
+                                   i18n("Lists all encrypted devices which can be unlocked, and allows them to be unlocked.")));
     addSyntax(Plasma::RunnerSyntax(i18nc("Note this is a KRunner keyword", "unmount"),
                                    i18n("Lists all devices which can be unmounted, and allows them to be unmounted.")));
+    addSyntax(Plasma::RunnerSyntax(i18nc("Note this is a KRunner keyword", "lock"),
+                                   i18n("Lists all encrypted devices which can be locked, and allows them to be locked.")));
+
     addSyntax(Plasma::RunnerSyntax(i18nc("Note this is a KRunner keyword", "eject"),
                                    i18n("Lists all devices which can be ejected, and allows them to be ejected.")));
 
@@ -127,6 +132,7 @@ void SolidRunner::createOrUpdateMatches(const QStringList &udiList)
     QString deviceDescription;
     bool onlyMounted = false;
     bool onlyMountable = false;
+    bool onlyEncrypted = false;
     bool showDevices = false;
     if (keywords[0].startsWith(i18nc("Note this is a KRunner keyword", "device") , Qt::CaseInsensitive)) {
         showDevices = true;
@@ -142,6 +148,16 @@ void SolidRunner::createOrUpdateMatches(const QStringList &udiList)
             showDevices = true;
             onlyMounted = true;
             keywords.removeFirst();
+        } else if (keywords[0].startsWith(i18nc("Note this is a KRunner keyword", "unlock") , Qt::CaseInsensitive)) {
+            showDevices = true;
+            onlyMountable = true;
+            onlyEncrypted = true;
+            keywords.removeFirst();
+        } else if (keywords[0].startsWith(i18nc("Note this is a KRunner keyword", "lock") , Qt::CaseInsensitive)) {
+            showDevices = true;
+            onlyMounted = true;
+            onlyEncrypted = true;
+            keywords.removeFirst();
         }
     }
 
@@ -152,9 +168,11 @@ void SolidRunner::createOrUpdateMatches(const QStringList &udiList)
     foreach (const QString& udi,  udiList) {
         DeviceWrapper * dev = m_deviceList.value(udi);
         if ((deviceDescription.isEmpty() && showDevices) || dev->description().contains(deviceDescription, Qt::CaseInsensitive)) {
-            if ((onlyMounted && dev->isAccessible()) ||
-                (onlyMountable && dev->isStorageAccess() && !dev->isAccessible()) ||
-                (!onlyMounted && !onlyMountable)) {
+            // This is getting quite messy indeed
+            if (((!onlyEncrypted) || (onlyEncrypted && dev->isEncryptedContainer())) &&
+                ((onlyMounted && dev->isAccessible()) ||
+                 (onlyMountable && dev->isStorageAccess() && !dev->isAccessible()) ||
+                 (!onlyMounted && !onlyMountable))) {
 
                 Plasma::QueryMatch match = deviceMatch(dev);
                 if (dev->description().compare(deviceDescription, Qt::CaseInsensitive)) {

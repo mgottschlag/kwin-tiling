@@ -43,6 +43,7 @@ class DeviceWrapper : public QObject
     KIcon icon() const;
     bool isStorageAccess() const;
     bool isAccessible() const;
+    bool isEncryptedContainer() const;
     QString description() const;
     QString defaultAction() const;
     void runAction(QAction *) ;

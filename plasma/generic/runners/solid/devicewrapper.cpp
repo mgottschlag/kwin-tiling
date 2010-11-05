@@ -111,6 +111,10 @@ bool DeviceWrapper::isAccessible() const {
     return m_isAccessible;
 }
 
+bool DeviceWrapper::isEncryptedContainer() const {
+    return m_isEncryptedContainer;
+}
+
 QString DeviceWrapper::description() const {
     return m_device.description();
 }
