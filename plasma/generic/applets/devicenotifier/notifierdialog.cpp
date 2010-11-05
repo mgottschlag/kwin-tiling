@@ -139,7 +139,14 @@ void NotifierDialog::insertDevice(const QString &udi)
     }
 
     ++m_deviceCount;
-    DeviceItem *devItem = new DeviceItem(udi);
+    Solid::Device device(udi);
+    Solid::Device parentDevice(device.parentUdi());
+    bool unpluggable = true;
+    if (parentDevice.is<Solid::StorageDrive>()) {
+        Solid::StorageDrive *drive = parentDevice.as<Solid::StorageDrive>();
+        unpluggable = (drive->isHotpluggable() || drive->isRemovable());
+    }
+    DeviceItem *devItem = new DeviceItem(udi, unpluggable);
     connect(devItem, SIGNAL(leftActionActivated(DeviceItem *)), this, SLOT(leftActionActivated(DeviceItem *)));
     connect(devItem, SIGNAL(actionActivated(DeviceItem *, const QString &, const QString &)),
             this, SLOT(actionActivated(DeviceItem *, const QString &, const QString &)));
@@ -152,7 +159,6 @@ void NotifierDialog::insertDevice(const QString &udi)
     devItem->setData(VisibilityRole, true);
 
     //search or create the category for inserted device
-    Solid::Device device(udi);
     QString categoryOfInsertedDevice = getCategoryNameOfDevice(device);
     int index = searchOrCreateDeviceCategory(categoryOfInsertedDevice);
 

@@ -50,12 +50,13 @@
 
 using namespace Notifier;
 
-DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
+DeviceItem::DeviceItem(const QString &udi, bool unpluggable, QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_udi(udi),
       m_hovered(false),
       m_mounted(false),
       m_safelyRemovable(true),
+      m_unpluggable(unpluggable),
       m_state(DeviceItem::Idle),
       m_labelFade(0),
       m_barFade(0)
@@ -279,21 +280,38 @@ void DeviceItem::setSafelyRemovable(const bool safe)
     updateTooltip();
 }
 
+bool DeviceItem::unpluggable()
+{
+    return m_unpluggable;
+}
+
 void DeviceItem::updateTooltip()
 {
     if (m_mounted) {
         if (data(NotifierDialog::IsOpticalMedia).toBool()) {
             m_leftActionIcon->setToolTip(i18n("Click to eject this disc."));
         } else {
-            m_leftActionIcon->setToolTip(i18n("Click to safely remove this device."));
+            if (unpluggable()) {
+                m_leftActionIcon->setToolTip(i18n("Click to safely remove this device."));
+            } else {
+                m_leftActionIcon->setToolTip(i18n("Click to unmount this device."));
+            }
         }
-        m_deviceIcon->setToolTip(i18n("It is currently <b>not safe</b> to remove this device: applications may be accessing it. Click the eject button to safely remove this device."));
+        if (unpluggable()) {
+            m_deviceIcon->setToolTip(i18n("It is currently <b>not safe</b> to remove this device: applications may be accessing it. Click the eject button to safely remove this device."));
+        } else {
+            m_deviceIcon->setToolTip(i18n("This device is currently accessible."));
+        }
     } else {
         m_leftActionIcon->setToolTip(i18n("Click to access this device from other applications."));
-        if (safelyRemovable()) {
-            m_deviceIcon->setToolTip(i18n("It is currently safe to remove this device."));
+        if (unpluggable()) {
+            if (safelyRemovable()) {
+                m_deviceIcon->setToolTip(i18n("It is currently safe to remove this device."));
+            } else {
+                m_deviceIcon->setToolTip(i18n("It is currently <b>not safe</b> to remove this device: applications may be accessing other volumes on this device. Click the eject button on these other volumes to safely remove this device."));
+            }
         } else {
-            m_deviceIcon->setToolTip(i18n("It is currently <b>not safe</b> to remove this device: applications may be accessing other volumes on this device. Click the eject button on these other volumes to safely remove this device."));
+            m_deviceIcon->setToolTip(i18n("This device is currently not accessible."));
         }
     }
 }

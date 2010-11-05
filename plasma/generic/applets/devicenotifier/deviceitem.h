@@ -65,9 +65,10 @@ class DeviceItem : public QGraphicsWidget
         /**
         * Constructor of the item
         * @param udi the udi of the device
+	* @param unpluggable indicates if the device can be unplugged or not
         * @param parent the parent of the device
         */
-        explicit DeviceItem(const QString &udi, QGraphicsWidget *parent = 0);
+        explicit DeviceItem(const QString &udi, bool unpluggable, QGraphicsWidget *parent = 0);
 
         /**
         * Default destructor
@@ -165,6 +166,12 @@ class DeviceItem : public QGraphicsWidget
 	 * @param safe true if it can be safely removed
 	 **/
 	void setSafelyRemovable(const bool safe = true);
+
+	/**
+	 * Used to know if this item can be unplugged.
+	 * 
+	 */
+	bool unpluggable();
 
         /**
         * Indicates if the device is mounted
@@ -305,6 +312,9 @@ class DeviceItem : public QGraphicsWidget
 
 	///True if the device can be safely removed
 	bool m_safelyRemovable;
+
+	///True if the device is unpluggable
+	bool m_unpluggable;
 
         ///The action the left icon will do if activated
         LeftActions m_leftAction;
