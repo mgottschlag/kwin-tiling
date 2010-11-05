@@ -212,10 +212,10 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device, bool added)
         data.insert("added", added);
         data.insert("udi", device.udi());
 
-        if (device.vendor().isEmpty()) {
+        if (!device.description().isEmpty()) {
             data.insert("text", device.description());
         } else {
-            data.insert("text", device.vendor() + ' ' + device.description());
+            data.insert("text", device.vendor() + ' ' + device.product());
         }
         data.insert("icon", device.icon());
         data.insert("emblems", device.emblems());
