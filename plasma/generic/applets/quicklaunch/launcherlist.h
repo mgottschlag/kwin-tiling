@@ -167,6 +167,7 @@ private:
     LauncherListType m_type;
     QList<Launcher*> m_launchers;
     bool m_launcherNamesVisible;
+    QSizeF m_preferredIconSize;
     bool m_locked;
 
     QGraphicsLayout *m_layout;

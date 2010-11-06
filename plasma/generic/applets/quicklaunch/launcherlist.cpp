@@ -100,6 +100,7 @@ LauncherList::LauncherList(LauncherListType type, QGraphicsItem *parent)
     m_type(type),
     m_launchers(),
     m_launcherNamesVisible(false),
+    m_preferredIconSize(),
     m_locked(false),
     m_layout(0),
     m_mousePressedPos(),
@@ -147,9 +148,13 @@ void LauncherList::setLauncherNamesVisible(bool enable)
 
 void LauncherList::setPreferredIconSize(int size)
 {
-    kDebug() << "Setting preferred icon size to " << size;
-
     QSizeF newSize(size, size);
+
+    if (newSize == m_preferredIconSize) {
+        return;
+    }
+
+    m_preferredIconSize = newSize;
     m_dropMarker->setPreferredIconSize(newSize);
 
     Q_FOREACH (Launcher *launcher, m_launchers) {
@@ -229,6 +234,10 @@ void LauncherList::insert(int index, const QList<LauncherData> &launcherDataList
             launcher->setOrientation(Qt::Horizontal);
             launcher->setNameVisible(true);
             launcher->setMaximumHeight(KIconLoader::SizeSmallMedium);
+        }
+
+        if (m_preferredIconSize.isValid()) {
+            launcher->setPreferredIconSize(m_preferredIconSize);
         }
 
         launcher->installEventFilter(this);
