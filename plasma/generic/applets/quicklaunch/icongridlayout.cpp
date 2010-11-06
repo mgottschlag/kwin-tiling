@@ -27,6 +27,7 @@
 #include <QtGui/QSizePolicy>
 
 // KDE
+#include <KDebug>
 #include <KIconLoader>
 
 // stdlib
@@ -44,9 +45,9 @@ IconGridLayout::IconGridLayout(QGraphicsLayoutItem *parent)
       m_maxSectionCount(0),
       m_maxSectionCountForced(false),
       m_rowCount(0),
-      m_rowHeight(0),
       m_columnCount(0),
-      m_columnWidth(0)
+      m_rowHeights(),
+      m_columnWidths()
 {
     setContentsMargins(0, 0, 0, 0);
 
@@ -199,7 +200,6 @@ void IconGridLayout::removeAt(int index)
 void IconGridLayout::setGeometry(const QRectF &rect)
 {
     QGraphicsLayout::setGeometry(rect);
-
     updateGridParameters();
 
     qreal offsetLeft =
@@ -212,18 +212,26 @@ void IconGridLayout::setGeometry(const QRectF &rect)
             contentsRect().top(),
             (contentsRect().height() - preferredHeight()) / 2);
 
+    QPointF pos(offsetLeft, offsetTop);
+    QSizeF size;
+
     int itemCount = m_items.size();
-
     for (int i = 0; i < itemCount; i++) {
-
         int row = i / m_columnCount;
         int column = i % m_columnCount;
 
-        m_items[i]->setGeometry(
-            QRectF(
-                offsetLeft + column * (m_columnWidth + m_cellSpacing),
-                offsetTop + row * (m_rowHeight + m_cellSpacing),
-                m_columnWidth, m_rowHeight));
+        if (column == 0) {
+            size.setHeight(m_rowHeights.at(row));
+            if (row > 0) {
+                pos.rx() = offsetLeft;
+                pos.ry() += m_rowHeights.at(row-1) + m_cellSpacing;
+            }
+        } else {
+            pos.rx() += m_columnWidths.at(column-1) + m_cellSpacing;
+        }
+
+        size.setWidth(m_columnWidths.at(column));
+        m_items[i]->setGeometry(QRectF(pos, size));
     }
 }
 
@@ -240,89 +248,167 @@ QSizeF IconGridLayout::sizeHint(
     }
 }
 
-void IconGridLayout::updateGridParameters()
+void IconGridLayout::computeGridParameters(
+    QList<int> &rowHeights, QList<int> &columnWidths,
+    QSizeF &preferredSize) const
 {
-    const int itemCount = m_items.size();
+    columnWidths.clear();
+    rowHeights.clear();
 
+    const int itemCount = m_items.size();
     if (itemCount == 0) {
-        m_rowCount = 0;
-        m_columnCount = 0;
-        m_columnWidth = 0;
-        m_rowHeight = 0;
+        preferredSize.setWidth(.0);
+        preferredSize.setHeight(.0);
         return;
     }
 
-    const int width = int(contentsRect().width());
-    const int height = int(contentsRect().height());
-
-    // Determine the minimum and preferred cell size according to the
-    // children's size hints.
-    int minCellWidth = 0;
-    int minCellHeight = 0;
-
-    Q_FOREACH(QGraphicsLayoutItem *item, m_items) {
-        minCellWidth = qMax(minCellWidth, (int)item->minimumWidth());
-        minCellHeight = qMax(minCellHeight, (int)item->minimumHeight());
-    }
+    int rowCount;
+    int columnCount;
 
     if (m_mode == PreferRows) {
+        const int height = int(contentsRect().height());
+        int minRowHeight = 0;
+        Q_FOREACH(QGraphicsLayoutItem *item, m_items) {
+            minRowHeight = qMax(minRowHeight, (int)item->minimumHeight());
+        }
 
         if (m_maxSectionCount > 0 && m_maxSectionCountForced) {
-            m_rowCount = qMin(itemCount, m_maxSectionCount);
+            rowCount = qMin(itemCount, m_maxSectionCount);
         }
         else {
-            m_rowCount = height / (minCellHeight + m_cellSpacing);
-            m_rowCount = qBound(1, m_rowCount, itemCount);
+            rowCount = height / (minRowHeight + m_cellSpacing);
+            rowCount = qBound(1, rowCount, itemCount);
 
             if (m_maxSectionCount > 0) {
-                m_rowCount = qMin(m_rowCount, m_maxSectionCount);
+                rowCount = qMin(rowCount, m_maxSectionCount);
             }
         }
-        m_columnCount = ceil(double(itemCount) / m_rowCount);
+        columnCount = ceil(double(itemCount) / rowCount);
+
+        // Determine row heights.
+        int maxRowHeight =
+            qMax(minRowHeight,
+                 (height - (rowCount - 1) * m_cellSpacing) / rowCount);
+
+        for (int row = 0; row < rowCount; row++) {
+            int desiredRowHeight = 0;
+            for (int column = 0; column < columnCount; column++) {
+                int itemIndex = row * columnCount + column;
+
+                if (itemIndex >= itemCount) {
+                    break;
+                }
+                desiredRowHeight =
+                    qMax(desiredRowHeight, int(m_items.at(itemIndex)->preferredHeight()));
+            }
+            rowHeights.append(desiredRowHeight < maxRowHeight ? desiredRowHeight : maxRowHeight);
+        }
+
+        // Determine column widths.
+        for (int column = 0; column < columnCount; column++) {
+            int columnWidth = 0;
+            for (int row = 0; row < rowCount; row++) {
+                int itemIndex = row * columnCount + column;
+
+                if (itemIndex >= itemCount) {
+                    break;
+                }
+
+                int preferredItemWidth =
+                    int(m_items.at(itemIndex)->effectiveSizeHint(Qt::PreferredSize, QSizeF(-1, rowHeights.at(row))).width());
+
+                columnWidth = qMax(columnWidth, preferredItemWidth);
+
+            }
+            columnWidths.append(columnWidth);
+        }
     } else { // m_mode == PreferColumns
+        const int width = int(contentsRect().width());
+        int minColumnWidth = 0;
+        Q_FOREACH(QGraphicsLayoutItem *item, m_items) {
+            minColumnWidth = qMax(minColumnWidth, (int)item->minimumWidth());
+        }
 
         if (m_maxSectionCount > 0 && m_maxSectionCountForced) {
-            m_columnCount = qMin(itemCount, m_maxSectionCount);
+            columnCount = qMin(itemCount, m_maxSectionCount);
         }
         else {
-            m_columnCount = width / (minCellWidth + m_cellSpacing);
-            m_columnCount = qBound(1, m_columnCount, itemCount);
+            columnCount = width / (minColumnWidth + m_cellSpacing);
+            columnCount = qBound(1, columnCount, itemCount);
 
             if (m_maxSectionCount > 0) {
-                m_columnCount = qMin(m_columnCount, m_maxSectionCount);
+                columnCount = qMin(columnCount, m_maxSectionCount);
             }
         }
-        m_rowCount = ceil(double(itemCount) / m_columnCount);
+        rowCount = ceil(double(itemCount) / columnCount);
+
+        // Determine column widths.
+        int maxColumnWidth =
+            qMax(minColumnWidth,
+                 (width - (columnCount - 1) * m_cellSpacing) / columnCount);
+
+        for (int column = 0; column < columnCount; column++) {
+
+            int desiredColumnWidth = 0;
+            for (int row = 0; row < rowCount; row++) {
+                int itemIndex = row * columnCount + column;
+
+                if (itemIndex >= itemCount) {
+                    break;
+                }
+                desiredColumnWidth =
+                    qMax(desiredColumnWidth, int(m_items.at(itemIndex)->preferredWidth()));
+            }
+            columnWidths.append(desiredColumnWidth < maxColumnWidth ? desiredColumnWidth : maxColumnWidth);
+        }
+
+        // Determine row heights.
+        for (int row = 0; row < rowCount; row++) {
+            int rowHeight = 0;
+            for (int column = 0; column < columnCount; column++) {
+                int itemIndex = row * columnCount + column;
+                if (itemIndex >= itemCount) {
+                    break;
+                }
+
+                int preferredItemHeight =
+                    int(m_items.at(itemIndex)->effectiveSizeHint(Qt::PreferredSize, QSizeF(columnWidths.at(column), -1)).height());
+
+                rowHeight = qMax(rowHeight, preferredItemHeight);
+            }
+            rowHeights.append(rowHeight);
+        }
     }
 
-    Q_ASSERT(m_rowCount > 0 && m_columnCount > 0);
+    Q_ASSERT(rowCount > 0 && columnCount > 0);
+    Q_ASSERT(rowHeights.length() == rowCount && columnWidths.length() == columnCount);
 
-    const int availableCellWidth =
-        (width - (m_columnCount - 1) * m_cellSpacing) / m_columnCount;
+    preferredSize.setWidth((columnCount - 1) * m_cellSpacing);
+    preferredSize.setHeight((rowCount - 1) * m_cellSpacing);
 
-    const int availableCellHeight =
-        (height - (m_rowCount - 1) * m_cellSpacing) / m_rowCount;
+    for (int i = 0; i < columnCount; i++) {
+        preferredSize.rwidth() += columnWidths.at(i);
+    }
+    for (int i = 0; i < rowCount; i++) {
+            preferredSize.rheight() += rowHeights.at(i);
+    }
+}
 
-    const int availableCellSize = qMin(availableCellWidth, availableCellHeight);
+void IconGridLayout::updateGridParameters()
+{
+    QSizeF newPreferredSize;
 
-    m_columnWidth = qMax(minCellWidth, availableCellSize);
-    m_rowHeight = qMax(minCellHeight, availableCellSize);
+    computeGridParameters(
+        m_rowHeights, m_columnWidths,
+        newPreferredSize);
 
-    // Giving the availableCellHeight as preferred cell width
-    // (and the other way round) is a bit of a hack that  makes the panel allocate just
-    // the right size and allows us to request more width when
-    // the height changes.
-    int preferredWidth =
-        m_columnCount * (qMax(minCellWidth, availableCellHeight) + m_cellSpacing) - m_cellSpacing;
+    m_rowCount = m_rowHeights.size();
+    m_columnCount = m_columnWidths.size();
 
-    int preferredHeight =
-        m_rowCount * (qMax(minCellHeight, availableCellWidth) + m_cellSpacing) - m_cellSpacing;
-
-    if (preferredWidth != int(m_preferredSizeHint.width()) ||
-        preferredHeight != int(m_preferredSizeHint.height())) {
-
-        m_preferredSizeHint = QSizeF(preferredWidth, preferredHeight);
+    if (newPreferredSize != m_preferredSizeHint) {
+        m_preferredSizeHint = newPreferredSize;
         updateGeometry();
     }
+
 }
 }

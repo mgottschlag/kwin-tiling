@@ -33,11 +33,7 @@ namespace Quicklaunch {
 class IconGridLayout : public QGraphicsLayout {
 
 public:
-    /**
-     * This enum type describes whether the layout prefers growing
-     * horizontally by creating new columns or whether it prefers growing
-     * vertically by creating new rows.
-     */
+
     enum Mode {
         PreferColumns, /**< Prefer columns over rows. */
         PreferRows     /**< Prefer rows over columns. */
@@ -88,6 +84,10 @@ public:
     static const int DEFAULT_CELL_SPACING;
 
 private:
+    void computeGridParameters(
+            QList<int> &rowHeights, QList<int> &columnWidths,
+            QSizeF &preferredSize) const;
+
     void updateGridParameters();
 
     QList<QGraphicsLayoutItem*> m_items;
@@ -97,9 +97,9 @@ private:
     bool m_maxSectionCountForced;
 
     int m_rowCount;
-    int m_rowHeight;
     int m_columnCount;
-    int m_columnWidth;
+    QList<int> m_rowHeights;
+    QList<int> m_columnWidths;
     QSizeF m_preferredSizeHint;
 };
 }
