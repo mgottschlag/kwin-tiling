@@ -57,9 +57,7 @@ void DBusSystemTrayProtocol::newTask(const QString &service)
         return;
     }
 
-    DBusSystemTrayTask *task = new DBusSystemTrayTask(service, m_dataEngine->serviceForSource(service), this);
-
-    m_dataEngine->connectSource(service, task);
+    DBusSystemTrayTask *task = new DBusSystemTrayTask(service, m_dataEngine, this);
 
     if (!task->isValid()) {
         // we failed to load our task, *sob*

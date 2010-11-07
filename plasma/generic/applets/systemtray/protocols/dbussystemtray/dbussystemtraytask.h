@@ -44,7 +44,7 @@ class DBusSystemTrayTask : public Task
     friend class DBusSystemTrayProtocol;
 
 public:
-    DBusSystemTrayTask(const QString &serviceName, Plasma::Service *service, QObject *parent);
+    DBusSystemTrayTask(const QString &name, Plasma::DataEngine *service, QObject *parent);
     ~DBusSystemTrayTask();
 
     QGraphicsWidget* createWidget(Plasma::Applet *host);
@@ -64,8 +64,10 @@ private Q_SLOTS:
     void updateMovieFrame();
     void blinkAttention();
     void dataUpdated(const QString &taskName, const Plasma::DataEngine::Data &taskData);
+    void updateWidgets();
 
 private:
+    QString m_serviceName;
     QString m_typeId;
     QString m_name;
     QString m_title;
@@ -75,6 +77,7 @@ private:
     QString m_attentionIconName;
     QMovie *m_movie;
     QTimer *m_blinkTimer;
+    Plasma::DataEngine *m_dataEngine;
     Plasma::Service *m_service;
     bool m_blink : 1;
     bool m_valid : 1;

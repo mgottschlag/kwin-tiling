@@ -34,14 +34,15 @@
 #include <KIconLoader>
 #include <KStandardDirs>
 
-#include <plasma/plasma.h>
+#include <Plasma/Applet>
 #include <Plasma/Corona>
+#include <Plasma/DataContainer>
+#include <Plasma/DataEngineManager>
 #include <Plasma/View>
 #include <Plasma/IconWidget>
 #include <Plasma/ToolTipContent>
 #include <Plasma/ToolTipManager>
-#include <Plasma/Applet>
-#include <Plasma/DataEngineManager>
+#include <Plasma/Plasma>
 
 #include "dbussystemtraywidget.h"
 
@@ -50,25 +51,29 @@
 namespace SystemTray
 {
 
-DBusSystemTrayTask::DBusSystemTrayTask(const QString &service, Plasma::Service *dataService, QObject *parent)
+DBusSystemTrayTask::DBusSystemTrayTask(const QString &serviceName, Plasma::DataEngine *dataEngine, QObject *parent)
     : Task(parent),
+      m_serviceName(serviceName),
+      m_typeId(serviceName),
+      m_name(serviceName),
       m_movie(0),
       m_blinkTimer(0),
-      m_service(dataService),
+      m_dataEngine(dataEngine),
+      m_service(dataEngine->serviceForSource(serviceName)),
       m_blink(false),
       m_valid(false),
       m_embeddable(false)
 {
     kDebug();
-    m_typeId = service;
-    m_name = service;
     m_service->setParent(this);
 
     //TODO: how to behave if its not m_valid?
-    m_valid = !service.isEmpty();
+    m_valid = !serviceName.isEmpty();
 
     if (m_valid) {
-        dataUpdated(service, Plasma::DataEngine::Data());
+        //TODO: is this call to dataUpdated required?
+        dataUpdated(serviceName, Plasma::DataEngine::Data());
+        m_dataEngine->connectSource(serviceName, this);
     }
 }
 
@@ -82,6 +87,16 @@ QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
 {
     kDebug();
     DBusSystemTrayWidget *m_iconWidget = new DBusSystemTrayWidget(host, m_service);
+    if (isUsed()) {
+        // we already have an icon, so this isn't the first time we've been created and 
+        // the data likely already exists in the DataEngine. we can't wait for an update
+        // from the status notifier item since it may never come or only after a while
+        // when the item actually changes.
+        // the call also needs to be delayed, since createWidget is called before the widget is added
+        // to the widgetsByHost() collection, and so an immediate call won't atually work here
+        QTimer::singleShot(0, this, SLOT(updateWidgets()));
+    }
+
     m_iconWidget->show();
 
     m_iconWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -89,9 +104,19 @@ QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
     //standard fdo icon sizes is 24x24, opposed to the 22x22 SizeSmallMedium
     m_iconWidget->setPreferredSize(24, 24);
 
-    //Delay because syncStatus needs that createWidget is done
-//     QTimer::singleShot(0, this, SLOT(connectToData()));
     return m_iconWidget;
+}
+
+void DBusSystemTrayTask::updateWidgets()
+{
+    if (Plasma::DataContainer *c = m_dataEngine->containerForSource(m_serviceName)) {
+        // fairly inneficient as it updates _all_ icons!
+        Plasma::DataEngine::Data data = c->data();
+        data["IconsChanged"] = true;
+        data["StatusChanged"] = true;
+        data["ToolTipChanged"] = true;
+        dataUpdated(m_serviceName, data);
+    }
 }
 
 bool DBusSystemTrayTask::isValid() const
