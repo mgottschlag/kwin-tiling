@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Activities Engine
 Name[ia]=Motor de Activitate
+Name[ko]=활동 엔진
 Name[nds]=Aktivitetenpleger
 Name[nl]=Activiteiten-engine
 Name[pt]=Motor de Actividades
@@ -10,6 +11,7 @@ Name[uk]=Рушій просторів дій
 Name[x-test]=xxActivities Enginexx
 Comment=Information on Plasma Activities
 Comment[ia]=Information re Activitates de Plasma
+Comment[ko]=Plasma 활동 정보
 Comment[nds]=Informatschonen över Plasma-Aktiviteten
 Comment[nl]=Informatie over Plasma activiteiten
 Comment[pt]=Informação sobre as Actividades do Plasma
