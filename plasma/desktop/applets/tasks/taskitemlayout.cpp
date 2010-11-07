@@ -312,15 +312,7 @@ void TaskItemLayout::layoutItems()
     foreach (AbstractTaskItem *item, m_itemPositions) {
         int row;
         int col;
-        if (m_forceRows) {
-            if (m_layoutOrientation == Qt::Vertical) {
-                row = numberOfItems / rows;
-                col = numberOfItems % rows;
-            } else {
-                row = numberOfItems % rows;
-                col = numberOfItems / rows;
-            }
-        } else if (m_layoutOrientation == Qt::Vertical) {
+        if (m_layoutOrientation == Qt::Vertical) {
             row = numberOfItems % columns;
             col = numberOfItems / columns;
         } else {
@@ -497,11 +489,7 @@ int TaskItemLayout::insertionIndexAt(const QPointF &pos)
 
     //kDebug() << row << col;
 
-    if (!m_forceRows) {
-        insertIndex = row * numberOfColumns() + col;
-    } else {
-        insertIndex = col * numberOfRows() + row;
-    }
+    insertIndex = row * numberOfColumns() + col;
 
     if (insertIndex > count()) {
         insertIndex--;
