@@ -533,9 +533,8 @@ void DesktopCorona::checkActivities()
 
     QStringList newActivities;
     QString newCurrentActivity;
-    QHash<QString,QString> invalidIds;
     //migration checks:
-    //-containments with an invalid id are given a new one and kept together.
+    //-containments with an invalid id are deleted.
     //-containments that claim they were on a screen are kept together, and are preferred if we
     //need to initialize the current activity.
     //-containments that don't know where they were or who they were with just get made into their
@@ -548,14 +547,12 @@ void DesktopCorona::checkActivities()
             QString oldId = context->currentActivityId();
             if (!oldId.isEmpty()) {
                 if (existingActivities.contains(oldId)) {
-                    continue;
+                    continue; //it's already claimed
                 }
                 kDebug() << "invalid id" << oldId;
-                if (invalidIds.contains(oldId)) {
-                    //it belongs with one of the already-rescued ones
-                    context->setCurrentActivityId(invalidIds.value(oldId));
-                    continue;
-                }
+                //byebye
+                cont->destroy(false);
+                continue;
             }
             if (cont->screen() > -1) {
                 //it belongs on the current activity
@@ -572,9 +569,6 @@ void DesktopCorona::checkActivities()
             QString id = m_activityController->addActivity(context->currentActivity());
             context->setCurrentActivityId(id);
             newActivities << id;
-            if (!oldId.isEmpty()) {
-                invalidIds.insert(oldId, id);
-            }
             if (cont->screen() > -1) {
                 newCurrentActivity = id;
             }
@@ -598,7 +592,11 @@ void DesktopCorona::checkActivities()
         if (existingActivities.isEmpty()) {
             if (newCurrentActivity.isEmpty()) {
                 if (newActivities.isEmpty()) {
-                    kDebug() << "no activities!?! can't happen!!!";
+                    kDebug() << "no activities!?! Bad activitymanager, no cookie!";
+                    QString id = m_activityController->addActivity(i18n("unnamed"));
+                    activityAdded(id);
+                    m_activityController->setCurrentActivity(id);
+                    kDebug() << "created emergency activity" << id;
                 } else {
                     m_activityController->setCurrentActivity(newActivities.first());
                 }
