@@ -90,7 +90,12 @@ results than the medium level, depending on the applications.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Medium</guilabel></term>
-<listitem><para>Prevention is enabled. High New windows get activated only 
+<listitem><para>Prevention is enabled.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>High</guilabel></term>
+<listitem><para>New windows get activated only 
 if no window is currently active or if they belong to the currently active 
 application. This setting is probably not really usable when not using mouse 
 focus policy.</para></listitem>
