@@ -532,31 +532,31 @@ void TaskArea::updateUnhideToolIcon()
     switch(d->location) {
     case Plasma::LeftEdge:
         if (d->showingHidden) {
-            d->unhider->setSvg("widgets/systemtray", "expander-left");
+            d->unhider->setSvg("widgets/arrows", "left-arrow");
         } else {
-            d->unhider->setSvg("widgets/systemtray", "expander-right");
+            d->unhider->setSvg("widgets/arrows", "right-arrow");
         }
         break;
     case Plasma::RightEdge:
         if (d->showingHidden) {
-            d->unhider->setSvg("widgets/systemtray", "expander-right");
+            d->unhider->setSvg("widgets/arrows", "right-arrow");
         } else {
-            d->unhider->setSvg("widgets/systemtray", "expander-left");
+            d->unhider->setSvg("widgets/arrows", "left-arrow");
         }
         break;
     case Plasma::TopEdge:
         if (d->showingHidden) {
-            d->unhider->setSvg("widgets/systemtray", "expander-up");
+            d->unhider->setSvg("widgets/arrows", "up-arrow");
         } else {
-            d->unhider->setSvg("widgets/systemtray", "expander-down");
+            d->unhider->setSvg("widgets/arrows", "down-arrow");
         }
         break;
     case Plasma::BottomEdge:
     default:
         if (d->showingHidden) {
-            d->unhider->setSvg("widgets/systemtray", "expander-down");
+            d->unhider->setSvg("widgets/arrows", "down-arrow");
         } else {
-            d->unhider->setSvg("widgets/systemtray", "expander-up");
+            d->unhider->setSvg("widgets/arrows", "up-arrow");
         }
     }
 }
