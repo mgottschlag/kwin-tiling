@@ -650,11 +650,12 @@ void DesktopCorona::activityRemoved(const QString &id)
 
 void DesktopCorona::activateNextActivity()
 {
-    QStringList list = m_activityController->listActivities();
+    QStringList list = m_activityController->listActivities(KActivityInfo::Running);
     if (list.isEmpty()) {
         return;
     }
 
+    //FIXME: if the current activity is in transition the "next" will be the first
     int start = list.indexOf(m_activityController->currentActivity());
     int i = (start + 1) % list.size();
 
@@ -663,16 +664,17 @@ void DesktopCorona::activateNextActivity()
 
 void DesktopCorona::activatePreviousActivity()
 {
-    QStringList list = m_activityController->listActivities();
+    QStringList list = m_activityController->listActivities(KActivityInfo::Running);
     if (list.isEmpty()) {
         return;
     }
 
+    //FIXME: if the current activity is in transition the "previous" will be the last
     int start = list.indexOf(m_activityController->currentActivity());
     //fun fact: in c++, (-1 % foo) == -1
     int i = start - 1;
     if (i < 0) {
-        i += list.size();
+        i = list.size() - 1;
     }
 
     m_activityController->setCurrentActivity(list.at(i));
