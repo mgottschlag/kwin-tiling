@@ -22,6 +22,7 @@
 #include <Qt>
 #include <QtCore/QEvent>
 #include <QtCore/QMimeData>
+#include <QtCore/QPointer>
 #include <QtCore/QPointF>
 #include <QtCore/QRectF>
 #include <QtCore/QUrl>
@@ -196,7 +197,6 @@ int LauncherList::launcherCount() const
 
 void LauncherList::clear()
 {
-    // TODO: Optimize this.
     while(launcherCount() > 0) {
         removeAt(0);
     }
@@ -331,7 +331,7 @@ bool LauncherList::eventFilter(QObject *watched, QEvent *event)
                 QMimeData *mimeData = new QMimeData();
                 sourceData.populateMimeData(mimeData);
 
-                QDrag *drag = new QDrag(mouseEvent->widget());
+                QPointer<QDrag> drag = new QDrag(mouseEvent->widget());
                 drag->setMimeData(mimeData);
                 drag->setPixmap(sourceLauncher->icon().pixmap(16, 16));
 
@@ -349,7 +349,6 @@ bool LauncherList::eventFilter(QObject *watched, QEvent *event)
             }
         }
     }
-
     return false;
 }
 
@@ -396,7 +395,7 @@ void LauncherList::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
                 if (m_launcherNamesVisible || m_type == IconList) {
                     m_dropMarker->setText(i18n("Multiple items"));
                 } else {
-                    m_dropMarker->setText(QString::null);
+                    m_dropMarker->setText(QString());
                 }
             }
 
@@ -490,14 +489,14 @@ void LauncherList::dropEvent(QGraphicsSceneDragDropEvent *event)
     event->accept();
 }
 
-void LauncherList::onPlaceHolderActivated() {
-
+void LauncherList::onPlaceHolderActivated()
+{
     Q_ASSERT(m_placeHolder);
     Plasma::ToolTipManager::self()->show(m_placeHolder);
 }
 
-void LauncherList::initPlaceHolder() {
-
+void LauncherList::initPlaceHolder()
+{
     Q_ASSERT(!m_placeHolder);
 
     m_placeHolder = new Plasma::IconWidget(KIcon("fork"), QString(), this);
@@ -518,8 +517,8 @@ void LauncherList::initPlaceHolder() {
     }
 }
 
-void LauncherList::deletePlaceHolder() {
-
+void LauncherList::deletePlaceHolder()
+{
     Q_ASSERT(m_placeHolder);
 
     m_layout->removeAt(0);

@@ -79,13 +79,11 @@ public:
      * @param type the type of the LauncherList
      * @param parent the parent QGraphicsItem
      */
-    LauncherList(LauncherListType type, QGraphicsItem *parent = 0);
+    explicit LauncherList(LauncherListType type, QGraphicsItem *parent = 0);
 
     bool launcherNamesVisible() const;
     void setLauncherNamesVisible(bool enable);
-
     void setPreferredIconSize(int size);
-
 
     /**
      * Indicates whether this LauncherList is locked and thus does not allow

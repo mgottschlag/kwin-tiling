@@ -38,13 +38,11 @@ class Launcher : public Plasma::IconWidget
     Q_OBJECT
 
 public:
-    Launcher(const LauncherData &data, QGraphicsItem *parent = 0);
+    explicit Launcher(const LauncherData &data, QGraphicsItem *parent = 0);
 
     void setNameVisible(bool enable);
     bool isNameVisible() const;
-
     void setLauncherData(const LauncherData &data);
-
     LauncherData launcherData() const;
     KUrl url() const;
 

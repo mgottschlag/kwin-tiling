@@ -60,7 +60,7 @@ void Launcher::setNameVisible(bool enable)
     if (enable) {
         setText(m_data.name());
     } else {
-        setText(QString::null);
+        setText(QString());
     }
 }
 
