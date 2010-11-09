@@ -20,7 +20,6 @@
 #include "desktopcorona.h"
 #include "plasma-shell-desktop.h"
 #include "kactivitycontroller.h"
-#include "kactivityinfo.h"
 #include "activitymanager/kidenticongenerator.h"
 
 #include <QPixmap>
@@ -48,13 +47,19 @@ Activity::Activity(const QString &id, QObject *parent)
       m_info(new KActivityInfo(id, this))
 {
     connect(m_info, SIGNAL(infoChanged()), this, SLOT(activityChanged()));
+    connect(m_info, SIGNAL(stateChanged(KActivityInfo::State)), this, SLOT(activityStateChanged(KActivityInfo::State)));
+    connect(m_info, SIGNAL(started()), this, SLOT(opened()));
+    connect(m_info, SIGNAL(stopped()), this, SLOT(closed()));
+    connect(m_info, SIGNAL(removed()), this, SLOT(removed()));
 
     if (m_info) {
         m_name = m_info->name();
         m_icon = m_info->icon();
+        m_state = m_info->state();
     } else {
         m_name = m_id;
         m_icon = QString();
+        m_state = KActivityInfo::Invalid;
     }
 
     m_corona = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
@@ -68,7 +73,7 @@ Activity::Activity(const QString &id, QObject *parent)
         }
     }
 
-    kDebug() << m_containments.size();
+    //kDebug() << m_containments.size();
 }
 
 Activity::~Activity()
@@ -79,6 +84,12 @@ void Activity::activityChanged()
 {
     setName(m_info->name());
     setIcon(m_info->icon());
+}
+
+void Activity::activityStateChanged(KActivityInfo::State state)
+{
+    m_state = state;
+    emit stateChanged();
 }
 
 QString Activity::id()
@@ -100,23 +111,31 @@ QPixmap Activity::pixmap(const QSize &size)
     }
 }
 
-bool Activity::isActive()
+bool Activity::isCurrent()
 {
     KActivityConsumer c;
     return m_id == c.currentActivity();
     //TODO maybe plasmaapp should cache the current activity to reduce dbus calls?
 }
 
-bool Activity::isRunning()
+KActivityInfo::State Activity::state()
 {
-    return !m_containments.isEmpty();
+    return m_state;
 }
 
-void Activity::destroy()
+void Activity::remove()
 {
     KActivityController().removeActivity(m_id);
-    foreach (Plasma::Containment *c, m_containments) {
-        c->destroy(false);
+}
+
+void Activity::removed()
+{
+    if (! m_containments.isEmpty()) {
+        //FIXME only m_corona has authority to remove properly
+        kDebug() << "!!!!! if your widgets are locked you've hit a BUG now";
+        foreach (Plasma::Containment *c, m_containments) {
+            c->destroy(false);
+        }
     }
 
     const QString name = "activities/" + m_id;
@@ -178,7 +197,7 @@ void Activity::activate()
 void Activity::ensureActive()
 {
     if (m_containments.isEmpty()) {
-        open();
+        opened();
     }
 
     //ensure there's a containment for every screen & desktop.
@@ -257,6 +276,11 @@ void Activity::save(KConfig &external)
 
 void Activity::close()
 {
+    KActivityController().stopActivity(m_id);
+}
+
+void Activity::closed()
+{
     const QString name = "activities/" + m_id;
     KConfig external(name, KConfig::SimpleConfig, "appdata");
 
@@ -264,20 +288,10 @@ void Activity::close()
     KConfigGroup group = external.group(QString());
     m_corona->exportLayout(group, m_containments.values());
 
-    m_containments.clear();
-    emit closed();
-    //TODO save a thumbnail to a file too
-
-    KActivityController controller;
-    if (controller.currentActivity() == m_id) {
-        //activate someone else
-        //TODO we could use a better strategy here
-        QStringList list = controller.listActivities();
-        QString next = list.first();
-        if (next == m_id && list.count() > 1) {
-            next = list.at(1);
-        }
-        controller.setCurrentActivity(next);
+    //hrm, shouldn't the containments' deleted signals have done this for us?
+    if (! m_containments.isEmpty()) {
+        kDebug() << "isn't close supposed to *remove* containments??";
+        m_containments.clear();
     }
 }
 
@@ -294,7 +308,7 @@ void Activity::insertContainment(Plasma::Containment* cont, bool force)
     //desktop -1 and 0 should share the same containment (for when PVD is changed)
     if (desktop == -1) {
         desktop = 0;
-        kDebug() << "desktop was -1";
+        //kDebug() << "desktop was -1";
     }
 
     kDebug() << screen << desktop;
@@ -345,11 +359,19 @@ void Activity::containmentDestroyed(QObject *object)
 
 void Activity::open()
 {
+    KActivityController().startActivity(m_id);
+}
+
+void Activity::opened()
+{
+    if (! m_containments.isEmpty()) {
+        kDebug() << "already open!";
+        return;
+    }
     QString fileName = "activities/";
     fileName += m_id;
     KConfig external(fileName, KConfig::SimpleConfig, "appdata");
 
-    //TODO only load existing screens
     foreach (Plasma::Containment *newContainment, m_corona->importLayout(external.group(QByteArray()))) {
         insertContainment(newContainment);
         //ensure it's hooked up (if something odd happened we don't want orphan containments)
@@ -369,7 +391,6 @@ void Activity::open()
 
     m_corona->requireConfigSync();
     external.sync();
-    emit opened();
 }
 
 void Activity::setDefaultPlugin(const QString &plugin)

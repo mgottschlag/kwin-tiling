@@ -636,7 +636,7 @@ void DesktopCorona::activityAdded(const QString &id)
     }
 
     Activity *a = new Activity(id, this);
-    if (a->isActive()) {
+    if (a->isCurrent()) {
         a->ensureActive();
     }
     m_activities.insert(id, a);

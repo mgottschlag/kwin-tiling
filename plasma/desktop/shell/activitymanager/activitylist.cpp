@@ -64,8 +64,7 @@ void ActivityList::createActivityIcon(const QString &id)
     ActivityIcon *icon = new ActivityIcon(id);
     addIcon(icon);
     m_allAppletsHash.insert(id, icon);
-    connect(icon->activity(), SIGNAL(opened()), this, SLOT(activityOpened()));
-    connect(icon->activity(), SIGNAL(closed()), this, SLOT(activityClosed()));
+    connect(icon->activity(), SIGNAL(stateChanged()), this, SLOT(updateClosable()));
 }
 /*
 void AppletsListWidget::appletIconDoubleClicked(AbstractIcon *icon)
@@ -118,11 +117,6 @@ void ActivityList::activityRemoved(const QString &id)
     updateList();
 }
 
-void ActivityList::activityClosed()
-{
-    updateClosable();
-}
-
 void ActivityList::updateClosable()
 {
     ActivityIcon * running = 0;
@@ -131,7 +125,7 @@ void ActivityList::updateClosable()
     foreach (Plasma::AbstractIcon *i, m_allAppletsHash) {
         ActivityIcon *icon = qobject_cast<ActivityIcon*>(i);
 
-        if (icon && icon->activity()->isRunning()) {
+        if (icon && icon->activity()->state() == KActivityInfo::Running) {
             if (running) {
                 //found two, no worries
                 twoRunning = true;
@@ -151,17 +145,3 @@ void ActivityList::updateClosable()
         running->setClosable(false);
     }
 }
-
-void ActivityList::activityOpened()
-{
-    updateClosable();
-
-//    foreach (Plasma::AbstractIcon *i, m_allAppletsHash) {
-//        ActivityIcon *icon = qobject_cast<ActivityIcon*>(i);
-//        if (icon && icon->activity()->isRunning()) {
-//            icon->setClosable(true);
-//        }
-//    }
-}
-
-

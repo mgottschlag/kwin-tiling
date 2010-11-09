@@ -96,8 +96,7 @@ ActivityIcon::ActivityIcon(const QString &id)
     DesktopCorona *c = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
     m_activity = c->activity(id);
     connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)), m_activity, SLOT(activate()));
-    connect(m_activity, SIGNAL(opened()), this, SLOT(updateButtons()));
-    connect(m_activity, SIGNAL(closed()), this, SLOT(updateButtons()));
+    connect(m_activity, SIGNAL(stateChanged()), this, SLOT(updateButtons()));
     connect(m_activity, SIGNAL(infoChanged()), this, SLOT(updateContents()));
     setName(m_activity->name());
 
@@ -178,7 +177,7 @@ void ActivityIcon::showRemovalConfirmation()
 {
     ActivityControls * w = new ActivityRemovalConfirmation(this);
 
-    connect(w, SIGNAL(removalConfirmed()), m_activity, SLOT(destroy()));
+    connect(w, SIGNAL(removalConfirmed()), m_activity, SLOT(remove()));
 
     showInlineWidget(w);
 }
@@ -312,7 +311,8 @@ void ActivityIcon::updateButtons()
         A = 0;                             \
     }
 
-    if (m_activity->isRunning()) {
+    switch (m_activity->state()) {
+    case KActivityInfo::Running:
         DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStart);
         DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonRemove);
 
@@ -323,8 +323,9 @@ void ActivityIcon::updateButtons()
         } else {
             DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStop);
         }
+        break;
 
-    } else {
+    case KActivityInfo::Stopped:
         DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStop);
 
         if (!m_buttonRemove) {
@@ -334,7 +335,13 @@ void ActivityIcon::updateButtons()
         if (!m_buttonStart) {
             m_buttonStart = new ActivityActionWidget(this, "startActivity", START_ICON, i18n("Stop activity"), QSize(32, 32));
         }
+        break;
 
+    default: //transitioning or invalid: don't let the user mess with it
+        DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStart);
+        DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonRemove);
+        DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStop);
+        DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonConfigure);
     }
 
 #undef DESTROY_ACTIVITY_ACTION_WIDIGET
@@ -367,7 +374,8 @@ void ActivityIcon::paint(QPainter * painter, const QStyleOptionGraphicsItem * op
         return;
     }
 
-    setSelected(m_activity->isActive());
+    //a dbus call during paint; this can be optimized :)
+    setSelected(m_activity->isCurrent());
 
     AbstractIcon::paint(painter, option, widget);
 }

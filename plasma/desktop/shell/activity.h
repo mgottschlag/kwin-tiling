@@ -23,10 +23,11 @@
 #include <QObject>
 #include <QHash>
 
+#include "kactivityinfo.h"
+
 class QSize;
 class QString;
 class QPixmap;
-class KActivityInfo;
 class KConfig;
 class DesktopCorona;
 namespace Plasma
@@ -56,11 +57,11 @@ public:
     /**
      * whether this is the currently active activity
      */
-    bool isActive();
+    bool isCurrent();
     /**
-     * whether this is one of the activities currently loaded
+     * state of the activity
      */
-    bool isRunning();
+    KActivityInfo::State state();
 
     /**
      * save (copy) the activity out to an @p external config
@@ -90,11 +91,7 @@ public:
 
 signals:
     void infoChanged();
-
-    void opened();
-    void closed();
-
-//TODO signals for other changes
+    void stateChanged();
 
 public slots:
     void setName(const QString &name);
@@ -103,7 +100,7 @@ public slots:
     /**
      * delete the activity forever
      */
-    void destroy();
+    void remove();
 
     /**
      * make this activity the current activity
@@ -129,6 +126,11 @@ private slots:
     void updateActivityName(Plasma::Context *context);
     void containmentDestroyed(QObject *object);
     void activityChanged();
+    void activityStateChanged(KActivityInfo::State);
+
+    void removed();
+    void opened();
+    void closed();
 
 private:
     void activateContainment(int screen, int desktop);
@@ -140,6 +142,7 @@ private:
     QString m_name;
     QString m_icon;
     QString m_plugin;
+    KActivityInfo::State m_state;
     QHash<QPair<int,int>, Plasma::Containment*> m_containments;
     KActivityInfo *m_info;
     DesktopCorona *m_corona;
