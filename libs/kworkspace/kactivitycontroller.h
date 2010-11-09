@@ -83,6 +83,18 @@ public:
      */
     void removeActivity(const QString & id);
 
+    /**
+     * Stops the activity
+     * @param id id of the activity to stop
+     */
+    void stopActivity(const QString & id);
+
+    /**
+     * Starts the activity
+     * @param id id of the activity to start
+     */
+    void startActivity(const QString & id);
+
 Q_SIGNALS:
     /**
      * This signal is emitted when the global

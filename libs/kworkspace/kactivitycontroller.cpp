@@ -103,4 +103,14 @@ void KActivityController::removeActivity(const QString & id)
     KActivityManager::self()->RemoveActivity(id);
 }
 
+void KActivityController::stopActivity(const QString & id)
+{
+    KActivityManager::self()->StopActivity(id);
+}
+
+void KActivityController::startActivity(const QString & id)
+{
+    KActivityManager::self()->StartActivity(id);
+}
+
 #include "kactivitycontroller.moc"
