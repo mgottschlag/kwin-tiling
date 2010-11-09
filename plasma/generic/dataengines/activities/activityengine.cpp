@@ -85,7 +85,7 @@ void ActivityEngine::insertActivity(const QString &id) {
     setData(id, "State", state);
 
     connect(activity, SIGNAL(infoChanged()), this, SLOT(activityDataChanged()));
-    connect(activity, SIGNAL(stateChanged(State)), this, SLOT(activityStateChanged()));
+    connect(activity, SIGNAL(stateChanged(KActivityInfo::State)), this, SLOT(activityStateChanged()));
 }
 
 void ActivityEngine::activityAdded(const QString &id) {

@@ -208,7 +208,7 @@ Q_SIGNALS:
      * Emitted when the activity changes state
      * @param state new state of the activity
      */
-    void stateChanged(State state);
+    void stateChanged(KActivityInfo::State state);
 
 private:
     class Private;
