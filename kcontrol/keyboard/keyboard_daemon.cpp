@@ -157,11 +157,13 @@ void KeyboardDaemon::unregisterListeners()
 	//TODO: unlist for config changes
 	// disconnect(SIGNAL(configChanges), SLOT(configureKeyboard));
 
-	xEventNotifier->stop();
-	disconnect(xEventNotifier, SIGNAL(newPointerDevice()), this, SLOT(configureMouse()));
-	disconnect(xEventNotifier, SIGNAL(newKeyboardDevice()), this, SLOT(configureKeyboard()));
-	disconnect(xEventNotifier, SIGNAL(layoutChanged()), &layoutMemory, SLOT(layoutChanged()));
-	disconnect(xEventNotifier, SIGNAL(layoutMapChanged()), &layoutMemory, SLOT(layoutMapChanged()));
+	if( xEventNotifier != NULL ) {
+		xEventNotifier->stop();
+		disconnect(xEventNotifier, SIGNAL(newPointerDevice()), this, SLOT(configureMouse()));
+		disconnect(xEventNotifier, SIGNAL(newKeyboardDevice()), this, SLOT(configureKeyboard()));
+		disconnect(xEventNotifier, SIGNAL(layoutChanged()), &layoutMemory, SLOT(layoutChanged()));
+		disconnect(xEventNotifier, SIGNAL(layoutMapChanged()), &layoutMemory, SLOT(layoutMapChanged()));
+	}
 }
 
 void KeyboardDaemon::globalSettingsChanged(int category)
