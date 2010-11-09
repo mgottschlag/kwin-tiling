@@ -255,6 +255,7 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 
     connect(cbStyle, SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
     connect(fineTuningUi.cbIconsOnButtons,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
+    connect(fineTuningUi.cbIconsInMenus,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
     connect(fineTuningUi.comboGraphicEffectsLevel, SIGNAL(activated(int)),   this, SLOT(setEffectsDirty()));
     connect(fineTuningUi.comboToolbarIcons,    SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
     connect(fineTuningUi.comboSecondaryToolbarIcons,    SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
@@ -375,11 +376,19 @@ void KCMStyle::save()
     if ( !(m_bStyleDirty | m_bEffectsDirty ) )
         return;
 
+    const bool showMenuIcons = !QApplication::testAttribute(Qt::AA_DontShowIconsInMenus);
+    if (fineTuningUi.cbIconsInMenus->isChecked() != showMenuIcons) {
+        KMessageBox::information(this,
+          i18n("<p>Changes to the visibilty of menu icons will only affect newly started applications.</p>"),
+          i18nc("@title:window", "Menu Icons Changed"), "MenuIconsChanged");
+    }
+
     // Save effects.
         KConfig      _config("kdeglobals", KConfig::NoGlobals);
         KConfigGroup config(&_config, "KDE");
     // Effects page
     config.writeEntry( "ShowIconsOnPushButtons", fineTuningUi.cbIconsOnButtons->isChecked());
+    config.writeEntry( "ShowIconsInMenuItems", fineTuningUi.cbIconsInMenus->isChecked());
     KConfigGroup g( &_config, "KDE-Global GUI Settings" );
     g.writeEntry( "GraphicEffectsLevel", fineTuningUi.comboGraphicEffectsLevel->itemData(fineTuningUi.comboGraphicEffectsLevel->currentIndex()));
 
@@ -479,6 +488,7 @@ void KCMStyle::defaults()
     fineTuningUi.comboToolbarIcons->setCurrentIndex(toolbarButtonIndex("TextBesideIcon"));
     fineTuningUi.comboSecondaryToolbarIcons->setCurrentIndex(toolbarButtonIndex("TextBesideIcon"));
     fineTuningUi.cbIconsOnButtons->setChecked(true);
+    fineTuningUi.cbIconsInMenus->setChecked(true);
     fineTuningUi.comboGraphicEffectsLevel->setCurrentIndex(fineTuningUi.comboGraphicEffectsLevel->findData(((int) KGlobalSettings::graphicEffectsLevelDefault())));
     emit changed(true);
 }
@@ -710,6 +720,7 @@ void KCMStyle::loadEffects( KConfig& config )
 
     configGroup = config.group("KDE");
     fineTuningUi.cbIconsOnButtons->setChecked(configGroup.readEntry("ShowIconsOnPushButtons", true));
+    fineTuningUi.cbIconsInMenus->setChecked(configGroup.readEntry("ShowIconsInMenuItems", true));
 
     KConfigGroup graphicConfigGroup = config.group("KDE-Global GUI Settings");
     fineTuningUi.comboGraphicEffectsLevel->setCurrentIndex(fineTuningUi.comboGraphicEffectsLevel->findData(graphicConfigGroup.readEntry("GraphicEffectsLevel", ((int) KGlobalSettings::graphicEffectsLevel()))));
@@ -737,6 +748,8 @@ void KCMStyle::addWhatsThis()
                             "Text is aligned below the icon.") );
     fineTuningUi.cbIconsOnButtons->setWhatsThis( i18n( "If you enable this option, KDE Applications will "
                             "show small icons alongside some important buttons.") );
+    fineTuningUi.cbIconsInMenus->setWhatsThis( i18n( "If you enable this option, KDE Applications will "
+                            "show small icons alongside most menu items.") );
     fineTuningUi.comboGraphicEffectsLevel->setWhatsThis( i18n( "If you enable this option, KDE Applications will "
                             "run internal animations.") );
 }
