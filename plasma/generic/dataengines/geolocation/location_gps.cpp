@@ -16,6 +16,7 @@
  */
 
 #include "location_gps.h"
+#include <kdebug.h>
 
 Gpsd::Gpsd(gps_data_t* gpsdata)
     : m_gpsdata(gpsdata)
