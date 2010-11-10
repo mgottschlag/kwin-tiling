@@ -26,6 +26,7 @@
 #include <syndication/feed.h>
 #include <Solid/Networking>
 #include <Plasma/DataEngine>
+#include <QSet>
 
 class QDBusInterface;
 class QSignalMapper;
