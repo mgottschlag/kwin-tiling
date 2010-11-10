@@ -301,7 +301,7 @@ class CalendarTablePrivate
             }
         }
 
-        void addHolidaysRegion(const QString &holidayRegion)
+        void addHolidaysRegion(const QString &holidayRegion, bool daysOff)
         {
             if (!holidaysRegions.contains(holidayRegion) && dataEngine) {
                 Plasma::DataEngine::Data regions;
@@ -310,12 +310,22 @@ class CalendarTablePrivate
                 Plasma::DataEngine::DataIterator i(regions);
                 while (i.hasNext()) {
                     i.next();
-                    holidaysRegions.insert(i.key(), i.value().toHash());
+                    Plasma::DataEngine::Data region = i.value().toHash();
+                    region.insert("UseForDaysOff", daysOff);
+                    holidaysRegions.insert(i.key(), region);
                 }
             }
         }
 
-        void insertPimOccurence(const QString &type, const QDate &date, Plasma::DataEngine::Data occurrence) {
+        bool holidayIsDayOff(Plasma::DataEngine::Data holidayData)
+        {
+            return ( holidayData.value("ObservanceType").toString() == "PublicHoliday" &&
+                     holidaysRegions.value(holidayData.value("RegionCode").toString()).value("UseForDaysOff").toBool() );
+        }
+
+
+        void insertPimOccurence(const QString &type, const QDate &date, Plasma::DataEngine::Data occurrence)
+        {
             if (date >= viewStartDate && date <= viewEndDate) {
                 int julian = date.toJulianDay();
                 if (type == "Event" && !events.contains(julian, occurrence)) {
@@ -510,7 +520,7 @@ void CalendarTable::setDisplayHolidays(bool showHolidays)
         }
 
         if (d->holidaysRegions.isEmpty()) {
-            addHolidaysRegion(d->defaultHolidaysRegion());
+            addHolidaysRegion(d->defaultHolidaysRegion(), true);
         }
 
         foreach ( const QString &holidayRegion, holidaysRegions() ) {
@@ -556,20 +566,17 @@ void CalendarTable::setDisplayEvents(bool display)
     }
 }
 
-void CalendarTable::setHolidaysRegions(const QStringList &regionList)
+void CalendarTable::clearHolidaysRegions()
 {
     clearHolidays();
     d->holidaysRegions.clear();
-    foreach ( const QString &region, regionList ) {
-        d->addHolidaysRegion(region);
-    }
     populateHolidays();
 }
 
-void CalendarTable::addHolidaysRegion(const QString &region)
+void CalendarTable::addHolidaysRegion(const QString &region, bool daysOff)
 {
     if (d->isValidHolidaysRegion(region)) {
-        d->addHolidaysRegion(region);
+        d->addHolidaysRegion(region, daysOff);
         populateHolidays();
     }
 }
@@ -577,6 +584,19 @@ void CalendarTable::addHolidaysRegion(const QString &region)
 QStringList CalendarTable::holidaysRegions() const
 {
     return QStringList(d->holidaysRegions.keys());
+}
+
+QStringList CalendarTable::holidaysRegionsDaysOff() const
+{
+    QStringList regions;
+    QHashIterator<QString, Plasma::DataEngine::Data> it(d->holidaysRegions);
+    while (it.hasNext()) {
+        it.next();
+        if (it.value().value("UseForDaysOff").toBool()) {
+            regions.append(it.key());
+        }
+    }
+    return regions;
 }
 
 void CalendarTable::clearHolidays()
@@ -615,21 +635,24 @@ QString CalendarTable::dateDetails(const QDate &date) const
 
         foreach (int holidayUid, d->holidays.values(julian)) {
             Plasma::DataEngine::Data holidayData = d->holidayEvents.value(holidayUid);
-            if (holidayData.value("ObservanceType").toString() == "PublicHoliday") {
+            if (d->holidayIsDayOff(holidayData)) {
                 QString region = holidayData.value("RegionCode").toString();
-                details += i18n("<i>Holiday</i>: %1 (%2)", holidayData.value("Name").toString(),
-                                                           d->holidaysRegions.value(region).value("Name").toString());
+                details += i18nc("Day off: Holiday name (holiday region)",
+                                 "<i>Holiday</i>: %1 (%2)",
+                                 holidayData.value("Name").toString(),
+                                 d->holidaysRegions.value(region).value("Name").toString());
                 details += "<br>";
             }
         }
 
         foreach (int holidayUid, d->holidays.values(julian)) {
             Plasma::DataEngine::Data holidayData = d->holidayEvents.value(holidayUid);
-            if (holidayData.value("ObservanceType").toString() == "Other") {
-                //TODO add a type when strings not frozen
+            if (!d->holidayIsDayOff(holidayData)) {
                 QString region = holidayData.value("RegionCode").toString();
-                details += i18n("<i>Holiday</i>: %1 (%2)", holidayData.value("Name").toString(),
-                                                           d->holidaysRegions.value(region).value("Name").toString());
+                details += i18nc("Not day off: Holiday name (holiday region)",
+                                 "<i>Other</i>: %1 (%2)",
+                                 holidayData.value("Name").toString(),
+                                 d->holidaysRegions.value(region).value("Name").toString());
                 details += "<br>";
             }
         }
@@ -783,14 +806,20 @@ void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine:
 void CalendarTable::applyConfiguration(KConfigGroup cg)
 {
     setCalendar(cg.readEntry("calendarType", "locale"));
-    setHolidaysRegions(cg.readEntry("holidaysRegion", QStringList(d->defaultHolidaysRegion())));
+    QStringList regions = cg.readEntry("holidaysRegions", QStringList(d->defaultHolidaysRegion()));
+    QStringList daysOff = cg.readEntry("holidaysRegionsDaysOff", QStringList(d->defaultHolidaysRegion()));
+    clearHolidaysRegions();
+    foreach(const QString & region, regions) {
+        addHolidaysRegion(region, daysOff.contains(region));
+    }
     setDisplayHolidays(cg.readEntry("displayHolidays", true));
 }
 
 void CalendarTable::writeConfiguration(KConfigGroup cg)
 {
     cg.writeEntry("calendarType", d->calendarType);
-    cg.writeEntry("holidaysRegion", holidaysRegions());
+    cg.writeEntry("holidaysRegions", holidaysRegions());
+    cg.writeEntry("holidaysRegionsDaysOff", holidaysRegionsDaysOff());
     cg.writeEntry("displayHolidays", d->displayHolidays);
 }
 
@@ -807,44 +836,41 @@ void CalendarTable::createConfigurationInterface(KConfigDialog *parent)
     }
     d->calendarConfigUi.calendarComboBox->setCurrentIndex( d->calendarConfigUi.calendarComboBox->findData( QVariant( d->calendarType ) ) );
 
-    Plasma::DataEngine::Data regions;
-    if (d->dataEngine) {
-        regions = d->dataEngine->query("holidaysRegions");
-    }
-    QMap<QString, QString> regionsMap;
-    Plasma::DataEngine::DataIterator i(regions);
-    while (i.hasNext()) {
-        i.next();
-        Plasma::DataEngine::Data regionData = i.value().toHash();
-        QString name = regionData.value("Name").toString();
-        QString languageName = KGlobal::locale()->languageCodeToName(regionData.value("LanguageCode").toString());
-        QString label;
-        if (languageName.isEmpty()) {
-            label = name;
+    QHashIterator<QString, Plasma::DataEngine::Data> it(d->holidaysRegions);
+    while (it.hasNext()) {
+        it.next();
+        if (it.value().value("UseForDaysOff").toBool()) {
+            d->calendarConfigUi.holidayRegionWidget->setHolidayRegionStatus(it.key(), KHolidays::HolidayRegionSelector::RegionSelectedSecondary);
         } else {
-            label = i18nc("Holday region (region language)", "%1 (%2)", name, languageName);
+            d->calendarConfigUi.holidayRegionWidget->setHolidayRegionStatus(it.key(), KHolidays::HolidayRegionSelector::RegionSelected);
         }
-        regionsMap.insert(label, i.key());
     }
-
-    d->calendarConfigUi.regionComboBox->addItem(i18n("Do not show holidays"), QString());
-    QMapIterator<QString, QString> j(regionsMap);
-    while ( j.hasNext() ) {
-        j.next();
-        d->calendarConfigUi.regionComboBox->addItem(j.key(), QVariant(j.value()));
-    }
-    d->calendarConfigUi.regionComboBox->setCurrentIndex( d->calendarConfigUi.regionComboBox->findData( holidaysRegions().join(QString()) ) );
+    d->calendarConfigUi.holidayRegionWidget->setDescriptionHidden(true);
 }
 
 void CalendarTable::applyConfigurationInterface()
 {
     setCalendar(d->calendarConfigUi.calendarComboBox->itemData(d->calendarConfigUi.calendarComboBox->currentIndex()).toString());
-    setHolidaysRegions(QStringList(d->calendarConfigUi.regionComboBox->itemData(d->calendarConfigUi.regionComboBox->currentIndex()).toString()));
-    setDisplayHolidays(!d->calendarConfigUi.regionComboBox->itemData(d->calendarConfigUi.regionComboBox->currentIndex()).toString().isEmpty());
+    clearHolidaysRegions();
+    QHash<QString, KHolidays::HolidayRegionSelector::SelectionStatus> regions = d->calendarConfigUi.holidayRegionWidget->holidayRegionsStatus();
+    QHashIterator<QString, KHolidays::HolidayRegionSelector::SelectionStatus> it(regions);
+    bool displayHolidays = false;
+    while (it.hasNext()) {
+        it.next();
+        if (it.value() == KHolidays::HolidayRegionSelector::RegionSelectedSecondary) {
+            addHolidaysRegion(it.key(), true);
+            displayHolidays = true;
+        } else if (it.value() == KHolidays::HolidayRegionSelector::RegionSelected) {
+            addHolidaysRegion(it.key(), false);
+            displayHolidays = true;
+        }
+    }
+    setDisplayHolidays(displayHolidays);
 }
 
 void CalendarTable::configAccepted(KConfigGroup cg)
 {
+kDebug() << "configAccepted";
     applyConfigurationInterface();
     writeConfiguration(cg);
 }
@@ -1034,8 +1060,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
             }
 
             foreach (int holidayUid, d->holidays.values(julian)) {
-                Plasma::DataEngine::Data holidayData = d->holidayEvents.value(holidayUid);
-                if (holidayData.value("ObservanceType").toString() == "PublicHoliday") {
+                if (d->holidayIsDayOff(d->holidayEvents.value(holidayUid))) {
                     type |= CalendarTable::PublicHoliday;
                 } else {
                     type |= CalendarTable::Holiday;

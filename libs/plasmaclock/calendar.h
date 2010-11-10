@@ -63,8 +63,8 @@ public:
     void setDisplayHolidays(bool showHolidays);
     bool displayHolidays();
 
-    void setHolidaysRegions(const QStringList &regionList);
-    void addHolidaysRegion(const QString &region);
+    void clearHolidaysRegions();
+    void addHolidaysRegion(const QString &regionCode, bool daysOff);
     QStringList holidaysRegions() const;
 
     bool dateHasDetails(const QDate &date) const;

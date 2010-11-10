@@ -73,9 +73,10 @@ public:
     void setDisplayHolidays(bool showHolidays);
     bool displayHolidays();
 
-    void setHolidaysRegions(const QStringList &regionCodeList);
-    void addHolidaysRegion(const QString &regionCode);
+    void clearHolidaysRegions();
+    void addHolidaysRegion(const QString &regionCode, bool daysOff);
     QStringList holidaysRegions() const;
+    QStringList holidaysRegionsDaysOff() const;
 
     void clearHolidays();
     void addHoliday(Plasma::DataEngine::Data holidayData);
