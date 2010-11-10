@@ -56,6 +56,14 @@ void TimeEngine::init()
     //QDBusInterface *ktimezoned = new QDBusInterface("org.kde.kded", "/modules/ktimezoned", "org.kde.KTimeZoned");
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.connect(QString(), QString(), "org.kde.KTimeZoned", "configChanged", this, SLOT(tzConfigChanged()));
+    dbus.connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT(clockSkewed()));
+}
+
+void TimeEngine::clockSkewed()
+{
+    kDebug() << "Time engine Clock skew signaled";
+    updateAllSources();
+    forceImmediateUpdateOfAllVisualizations();
 }
 
 void TimeEngine::tzConfigChanged()

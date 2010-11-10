@@ -45,6 +45,7 @@ class TimeEngine : public Plasma::DataEngine
         bool updateSourceEvent(const QString &source);
 
     protected Q_SLOTS:
+        void clockSkewed(); // call when system time changed and all clocks should be updated
         void tzConfigChanged();
 };
 
