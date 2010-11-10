@@ -26,7 +26,7 @@
 #include <KCalendarSystem>
 #include <KDateTime>
 #include <KSystemTimeZones>
-#include <KHolidays/Holidays>
+#include <KHolidays/HolidayRegion>
 
 #include <Akonadi/ChangeRecorder>
 #include <Akonadi/Session>
