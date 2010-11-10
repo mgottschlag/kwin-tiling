@@ -14,7 +14,6 @@
 
 #include <kdebug.h>
 #include <kstandarddirs.h>
-#include <klibloader.h>
 
 #include "input.h"
 #include "windows_handler.h"

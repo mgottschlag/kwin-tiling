@@ -18,6 +18,7 @@
 
 #include "keyboard_applet.h"
 
+#include <kdebug.h>
 #include <kglobalsettings.h>
 #include <kiconloader.h>
 #include <plasma/theme.h>

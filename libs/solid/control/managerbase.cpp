@@ -21,7 +21,6 @@
 
 #include <kservicetypetrader.h>
 #include <kservice.h>
-#include <klibloader.h>
 
 #include <klocale.h>
 #include <kdebug.h>
