@@ -14,8 +14,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2010-06-22</date>
-<releaseinfo>&kde; 4.5</releaseinfo>
+<date>2010-11-10</date>
+<releaseinfo>&kde; 4.6</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -181,6 +181,16 @@ you are moving them around on the screen.</para>
 <guibutton>Apply</guibutton>) will have a small icon located within them to act
 as a visual reference.  If this option is not selected, then only text
 will appear on the button.</para>
+</listitem> 
+</varlistentry> 
+
+<varlistentry> 
+<term><guilabel>Show icons in menus</guilabel></term>
+<listitem>
+<para>If this option is selected, &kde; applications will show small icons alongside 
+most menu items.  If this option is not selected, then only text
+will appear in the menus. Changes to the visibility of menu icons will only affect newly started 
+applications.</para>
 </listitem> 
 </varlistentry> 
 

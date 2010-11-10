@@ -379,7 +379,7 @@ void KCMStyle::save()
     const bool showMenuIcons = !QApplication::testAttribute(Qt::AA_DontShowIconsInMenus);
     if (fineTuningUi.cbIconsInMenus->isChecked() != showMenuIcons) {
         KMessageBox::information(this,
-          i18n("<p>Changes to the visibilty of menu icons will only affect newly started applications.</p>"),
+          i18n("<p>Changes to the visibility of menu icons will only affect newly started applications.</p>"),
           i18nc("@title:window", "Menu Icons Changed"), "MenuIconsChanged");
     }
 
