@@ -19,6 +19,7 @@
 #include <QStandardItemModel>
 
 #include <KColorScheme>
+#include <KDebug>
 #include <KDesktopFile>
 #include <KStandardDirs>
 

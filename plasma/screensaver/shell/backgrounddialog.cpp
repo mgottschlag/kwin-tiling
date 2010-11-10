@@ -15,6 +15,7 @@
 //#include <QAbstractItemView>
 //#include <QStandardItemModel>
 
+#include <KDebug>
 //#include <KStandardDirs>
 //#include <KDesktopFile>
 //#include <KColorScheme>

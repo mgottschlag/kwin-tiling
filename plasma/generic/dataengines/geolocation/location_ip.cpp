@@ -19,6 +19,7 @@
  */
 
 #include "location_ip.h"
+#include <KDebug>
 #include <KJob>
 #include <KIO/Job>
 #include <KIO/TransferJob>

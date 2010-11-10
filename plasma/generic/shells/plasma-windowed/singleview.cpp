@@ -23,6 +23,7 @@
 #include <QDir>
 #include <QFileInfo>
 
+#include <KDebug>
 #include <KStandardAction>
 #include <KAction>
 #include <KIconLoader>

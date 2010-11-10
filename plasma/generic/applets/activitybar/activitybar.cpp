@@ -23,6 +23,7 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneMouseEvent>
 
+#include <KDebug>
 #include <KWindowSystem>
 #include <KIcon>
 

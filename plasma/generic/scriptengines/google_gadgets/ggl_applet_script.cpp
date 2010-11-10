@@ -27,6 +27,8 @@
 #include <QtGui/QColor>
 #include <QtGui/QGraphicsSceneMouseEvent>
 
+#include <KDebug>
+
 #include <Plasma/Applet>
 #include <Plasma/Package>
 

@@ -20,6 +20,8 @@
 #include "appsengine.h"
 #include "appservice.h"
 
+#include <KDebug>
+
 AppSource::AppSource(KServiceGroup::Ptr group, QObject *parent) :
     Plasma::DataContainer(parent),
     m_group(group),

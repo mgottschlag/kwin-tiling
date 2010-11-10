@@ -20,6 +20,8 @@
 #include "ion.h"
 #include "ion.moc"
 
+#include <KDebug>
+
 class IonInterface::Private
 {
 public:

@@ -31,6 +31,7 @@
 #include <QGraphicsLinearLayout>
 
 // KDE
+#include <KDebug>
 #include <KIcon>
 #include <KJob>
 #include <KAuthorized>

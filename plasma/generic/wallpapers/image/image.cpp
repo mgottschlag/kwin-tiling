@@ -19,6 +19,7 @@
 #include <QPropertyAnimation>
 #include <QTimer>
 
+#include <KDebug>
 #include <KDirSelectDialog>
 #include <KDirWatch>
 #include <KFileDialog>

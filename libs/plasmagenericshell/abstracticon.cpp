@@ -23,6 +23,7 @@
 
 #include <QApplication>
 #include <QCursor>
+#include <QDebug>
 #include <QFontMetrics>
 #include <QGraphicsSceneMouseEvent>
 #include <QStyleOptionGraphicsItem>

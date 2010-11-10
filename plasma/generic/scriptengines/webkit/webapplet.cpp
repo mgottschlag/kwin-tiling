@@ -29,6 +29,8 @@ THE SOFTWARE.
 #include <QWebPage>
 #include <QFile>
 
+#include <KDebug>
+
 #include <Plasma/Applet>
 #include <Plasma/Package>
 #include <Plasma/WebView>

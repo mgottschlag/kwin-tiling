@@ -19,6 +19,8 @@
 
 #include "playercontainer.h"
 
+#include <KDebug>
+
 #include "playercontrol.h"
 
 PlayerContainer::PlayerContainer(Player::Ptr player, QObject* parent)

@@ -23,6 +23,7 @@
 #include <Plasma/Containment>
 #include <Plasma/ToolTipManager>
 #include <Plasma/Theme>
+#include <KDebug>
 #include <KStandardDirs>
 #include <KIcon>
 #include <QGraphicsLinearLayout>

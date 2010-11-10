@@ -23,6 +23,7 @@
 
 // Qt
 #include <QAbstractItemView>
+#include <QDebug>
 #include <QMap>
 
 // KDE

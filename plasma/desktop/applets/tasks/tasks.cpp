@@ -30,6 +30,7 @@
 
 // KDE
 #include <KConfigDialog>
+#include <KDebug>
 
 // Qt
 #include <QGraphicsScene>

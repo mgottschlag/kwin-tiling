@@ -20,6 +20,7 @@
 #include "monitorbutton.h"
 #include "applet.h"
 #include <QGraphicsLinearLayout>
+#include <KDebug>
 #include <KPushButton>
 #include <Plasma/Containment>
 #include <Plasma/Corona>

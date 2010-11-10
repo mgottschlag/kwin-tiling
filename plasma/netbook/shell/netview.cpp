@@ -27,6 +27,7 @@
 #include <QtOpenGL/QtOpenGL>
 #endif
 
+#include <KDebug>
 #include <KWindowSystem>
 
 #include <Plasma/Applet>

@@ -27,6 +27,7 @@
 // http://api.wetter.com/forecast/weather/city/DE0004329/project/weatherion/cs/89f1264869cce5c6fd5a2db80051f3d8
 
 #include "ion_wettercom.h"
+#include <KDebug>
 #include <KUnitConversion/Converter>
 
 /*

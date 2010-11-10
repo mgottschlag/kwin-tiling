@@ -21,6 +21,8 @@
 #include "notificationservice.h"
 #include "notificationsadaptor.h"
 
+#include <KDebug>
+
 #include <Plasma/DataContainer>
 #include <Plasma/Service>
 

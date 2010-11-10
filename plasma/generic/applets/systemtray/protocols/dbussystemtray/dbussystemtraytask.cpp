@@ -30,6 +30,7 @@
 #include <QMetaEnum>
 
 #include <KAction>
+#include <KDebug>
 #include <KIcon>
 #include <KIconLoader>
 #include <KStandardDirs>

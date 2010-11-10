@@ -35,6 +35,7 @@
 #include <QPropertyAnimation>
 #include <QAction>
 
+#include <KDebug>
 #include <KIconLoader>
 #include <KIcon>
 

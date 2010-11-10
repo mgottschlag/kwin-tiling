@@ -26,6 +26,7 @@
 
 //KDE
 #include <KConfigDialog>
+#include <KDebug>
 #include <KGlobal>
 #include <KStandardDirs>
 #include <KCModuleProxy>

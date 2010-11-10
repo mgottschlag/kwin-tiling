@@ -24,6 +24,7 @@
 #include "plasmoidtask.h"
 #include <fixx11h.h>
 
+#include <KDebug>
 #include <KIcon>
 #include <KIconLoader>
 

@@ -32,6 +32,8 @@
 #include <ggadget/qt/qt_view_host.h>
 #include <ggadget/gadget.h>
 
+#include <KDebug>
+
 #include <Plasma/Applet>
 #include <Plasma/ToolTipManager>
 #include "plasma_view_host.h"

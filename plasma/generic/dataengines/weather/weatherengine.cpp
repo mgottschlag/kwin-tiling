@@ -23,6 +23,7 @@
 #include <QCoreApplication>
 #include <QTimer>
 
+#include <KDebug>
 #include <KLocale>
 #include <KSycoca>
 

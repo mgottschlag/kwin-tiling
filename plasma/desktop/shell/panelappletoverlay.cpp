@@ -28,6 +28,7 @@
 #include <QAction>
 #include <QMenu>
 
+#include <KDebug>
 #include <KGlobalSettings>
 #include <KIcon>
 

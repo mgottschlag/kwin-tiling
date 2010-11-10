@@ -28,6 +28,9 @@
 #include <QGraphicsScene>
 #include <QGraphicsGridLayout>
 
+// KDE
+#include <KDebug>
+
 #include <math.h>
 
 #include "windowtaskitem.h"

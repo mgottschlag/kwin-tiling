@@ -23,6 +23,7 @@
 #include "dbusnotificationprotocol.h"
 
 #include <KConfigGroup>
+#include <KDebug>
 #include <KIcon>
 
 #include <Plasma/DataEngineManager>

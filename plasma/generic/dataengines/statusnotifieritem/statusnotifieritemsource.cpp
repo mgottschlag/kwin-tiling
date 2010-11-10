@@ -26,6 +26,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QIcon>
+#include <KDebug>
 #include <KIcon>
 #include <KIconLoader>
 #include <KStandardDirs>

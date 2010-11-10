@@ -28,6 +28,8 @@ THE SOFTWARE.
 #include <QFile>
 #include <QXmlStreamReader>
 
+#include <KDebug>
+
 #include <KIO/CopyJob>
 #include <KIO/Job>
 

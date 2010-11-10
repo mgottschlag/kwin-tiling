@@ -20,6 +20,7 @@
 #include <QtGui/QFontDatabase>
 #include <QtGui/QMessageBox>
 #include <kconfiggroup.h>
+#include <kdebug.h>
 #include <kstandarddirs.h>
 #include <ggadget/gadget.h>
 #include <ggadget/gadget_consts.h>

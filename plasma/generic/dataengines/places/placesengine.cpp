@@ -20,6 +20,7 @@
 
 #include <QtCore/QString>
 
+#include <KDebug>
 #include <KDiskFreeSpaceInfo>
 
 #include "placeservice.h"

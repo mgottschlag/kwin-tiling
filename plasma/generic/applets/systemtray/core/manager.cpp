@@ -22,6 +22,7 @@
 
 #include "manager.h"
 
+#include <KDebug>
 #include <KGlobal>
 
 #include <plasma/applet.h>

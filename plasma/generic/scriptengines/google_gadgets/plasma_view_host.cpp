@@ -22,6 +22,7 @@
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QToolTip>
 
+#include <KDebug>
 #include <KInputDialog>
 #include <KMessageBox>
 #include <Plasma/Applet>

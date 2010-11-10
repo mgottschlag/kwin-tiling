@@ -21,6 +21,7 @@
 #include <QTimer>
 #include <QProcess>
 
+#include <KDebug>
 #include <KLocale>
 
 #include <Plasma/DataContainer>
