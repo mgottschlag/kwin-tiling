@@ -36,12 +36,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kicon.h>
 #include <klocale.h>
 #include <KDebug>
+#include <KService>
+#include <KServiceTypeTrader>
+#include <KStandardDirs>
+#include <KDesktopFile>
 
 namespace TaskManager
 {
 
 
-QAction *standardGroupableAction(GroupableAction action, AbstractGroupableItem *item, QObject *parent, int desktop)
+QAction *standardGroupableAction(GroupableAction action, AbstractGroupableItem *item, GroupManager *strategy, QObject *parent, int desktop)
 {
     Q_ASSERT(item);
 
@@ -69,6 +73,9 @@ QAction *standardGroupableAction(GroupableAction action, AbstractGroupableItem *
             break;
         case KeepBelowAction:
             return new KeepBelowActionImpl(parent, item);
+            break;
+        case ToggleLauncherAction:
+            return new ToggleLauncherActionImpl(parent, item, strategy);
             break;
     }
 
@@ -299,6 +306,51 @@ void LeaveGroupActionImpl::leaveGroup()
     groupingStrategy->manualGroupingRequest(abstractItem,abstractItem->parentGroup()->parentGroup());
 }
 
+ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGroupableItem *item, GroupManager *strategy)
+    : QAction(parent), m_abstractItem(item), m_groupingStrategy(strategy), m_url()
+{
+    connect(this, SIGNAL(triggered()), this, SLOT(toggleLauncher()));
+    setText(i18n("&Pin Task"));
+    setCheckable(true);
+    if (item->itemType() == TaskItemType) {
+        m_name = qobject_cast< TaskItem* >(item)->task()->classClass().toLower();
+    } else {
+        m_name = item->name().toLower();
+    }
+    setChecked(m_groupingStrategy->findLauncher(m_name));
+    if (!m_groupingStrategy->findLauncher(m_name)) {
+        // Search for applications which are executable and case-insensitively match the windowclass of the task and
+        // See http://techbase.kde.org/Development/Tutorials/Services/Traders#The_KTrader_Query_Language
+        // if the following is unclear to you.
+        QString query = QString("exist Exec and ('%1' =~ Name)").arg(m_name);
+        KService::List services = KServiceTypeTrader::self()->query("Application", query);
+        if(!services.empty()) {
+            m_url.setUrl(services[0]->entryPath());
+        } else { // No desktop-file was found, so try to find at least the executable
+            QString path = KStandardDirs::findExe(m_name.toLower());
+            if (!path.isEmpty()) {
+                m_url.setUrl(path);
+            } else { //if it still can't find one, don't show the possibility to add a launcher
+                kDebug() << "No executable found for" << m_name;
+                setVisible(false);
+            }
+        }
+    }
+}
+
+void ToggleLauncherActionImpl::toggleLauncher()
+{
+    if (m_groupingStrategy->findLauncher(m_name)) {
+        m_groupingStrategy->removeLauncher(m_groupingStrategy->findLauncher(m_name));
+    } else if (m_url.isValid()) {
+        if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
+            m_groupingStrategy->addLauncher(m_url);
+        } else {
+            m_groupingStrategy->addLauncher(m_url, m_abstractItem->icon(), m_name);
+        }
+    }
+}
+
 EditGroupActionImpl::EditGroupActionImpl(QObject *parent, TaskGroup *group, GroupManager *groupManager)
     : QAction(parent)
 {
@@ -352,6 +404,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
     addAction(new MinimizeActionImpl(this, item));
     addAction(new MaximizeActionImpl(this, item));
     addAction(new ShadeActionImpl(this, item));
+    addAction(new ToggleLauncherActionImpl(this, item, strategy));
 
     addMenu(new AdvancedMenu(this, item));
 
@@ -399,6 +452,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     addAction(new MinimizeActionImpl(this, group));
     addAction(new MaximizeActionImpl(this, group));
     addAction(new ShadeActionImpl(this, group));
+    addAction(new ToggleLauncherActionImpl(this, group, strategy));
 
     addMenu(new AdvancedMenu(this, group));
 
@@ -418,6 +472,24 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
 
     addSeparator();
     addAction(new CloseActionImpl(this, group));
+}
+
+BasicMenu::BasicMenu(QWidget *parent, LauncherItem* item, GroupManager *strategy, QList<QAction *> visualizationActions)
+    : QMenu(parent)
+{
+    Q_ASSERT(item);
+    Q_ASSERT(strategy);
+
+    setTitle(item->name());
+    setIcon(item->icon());
+
+    addAction(new ToggleLauncherActionImpl(this, item, strategy));
+
+    addSeparator();
+
+    foreach (QAction *action, visualizationActions) {
+        addAction(action);
+    }
 }
 
 GroupPopupMenu::GroupPopupMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManager)

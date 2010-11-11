@@ -48,15 +48,20 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
 {
     //kDebug();
     QMap<QString, AbstractGroupableItem*> map;
+    QMap<QString, AbstractGroupableItem*> launcherMap;
 
     foreach (AbstractGroupableItem *groupable, items) {
         if (groupable->itemType() == GroupItemType) {
-            TaskGroup *group = qobject_cast<TaskGroup*>(groupable);
-            if (!group) {
+            if (!groupable) {
                 continue;
             }
-
-            map.insertMulti(group->name().toLower(), groupable);
+            map.insertMulti(groupable->name().toLower(), groupable);
+            continue;
+        } else if (groupable->itemType() == LauncherItemType) {
+            if (!groupable) {
+                continue;
+            }
+            launcherMap.insertMulti(groupable->name().toLower(), groupable);
             continue;
         }
 
@@ -78,10 +83,8 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
     }
 
     items.clear();
-    QMapIterator<QString, AbstractGroupableItem *> it(map);
-    while (it.hasNext()) {
-        items << it.next().value();
-    }
+    items << launcherMap.values();
+    items << map.values();
 }
 
 } //namespace

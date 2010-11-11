@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <taskmanager/taskitem.h>
 #include <taskmanager/taskmanager_export.h>
 #include <KDE/KUrl>
+#include "launcheritem.h"
 
 namespace TaskManager
 {
@@ -127,11 +128,24 @@ public:
      */
     void reconnect();
 
-    void addLauncher(const KUrl &url);
+    /** Adds a Launcher for the executable/.desktop-file at url and returns a reference to the launcher*/
+    LauncherItem *addLauncher(const KUrl &url, QIcon icon=QIcon(), QString name=QString(), QString genericName=QString(), bool emitSignal = true);
+    /** Removes the given launcher*/
+    void removeLauncher( LauncherItem* launcher, bool emitSignal = true);
+    /** If there is a matching launcher, it returns a reference to it, else it returns NULL*/
+    LauncherItem *findLauncher(const QString &name);
 
 Q_SIGNALS:
     /** Signal that the rootGroup has to be reloaded in the visualization */
     void reload();
+    /** Signal that a Launcher has been added*/
+    void launcherAdded(LauncherItem*);
+    /** Signal that a Launcher has been removed*/
+    void launcherRemoved(LauncherItem*);
+
+public Q_SLOTS:
+    /** updates the Launcher; if the item's not a launcher it will update the matching launcher if existing*/
+    void updateLauncher(AbstractGroupableItem *item);
 
 private:
     Q_PRIVATE_SLOT(d, void currentDesktopChanged(int))

@@ -26,8 +26,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "abstractgroupableitem.h"
 #include "taskmanager_export.h"
 
-#include <QtGui/QIcon>
-
 // KDE
 #include <KDE/KIcon>
 #include <KDE/KUrl>
@@ -47,16 +45,18 @@ public:
     /**
     * @deprecated: use itemType() instead
     **/
-    KDE_DEPRECATED virtual bool isGroupItem() const;
+    KDE_DEPRECATED bool isGroupItem() const;
     ItemType itemType() const;
-    bool isVisible() const;
 
+    KUrl url() const;
     QIcon icon() const;
     QString name() const;
+    QString genericName() const;
 
     void setUrl(const KUrl &url);
-    void addWindowInstance();
-    void removeWindowInstance();
+    void setIcon(const QIcon &icon);
+    void setName(const QString &name);
+    void setGenericName(const QString &genericName);
 
     //reimplemented pure virtual methods from abstractgroupableitem
     bool isOnCurrentDesktop() const;
@@ -96,7 +96,7 @@ public Q_SLOTS:
 
     void close();
 
-    void execute();
+    void launch();
 
 private:
     class Private;

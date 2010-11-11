@@ -25,6 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define TASKACTIONS_P_H
 
 #include "taskmanager.h"
+#include <KUrl>
 
 namespace TaskManager
 {
@@ -52,6 +53,22 @@ class ShadeActionImpl : public QAction
     Q_OBJECT
 public:
     ShadeActionImpl(QObject *parent, AbstractGroupableItem *task);
+};
+
+class ToggleLauncherActionImpl : public QAction
+{
+    Q_OBJECT
+public:
+    ToggleLauncherActionImpl(QObject* parent, AbstractGroupableItem* item, GroupManager* strategy);
+
+private Q_SLOTS:
+    void toggleLauncher();
+
+private:
+    AbstractGroupableItem *m_abstractItem;
+    GroupManager *m_groupingStrategy;
+    KUrl m_url;
+    QString m_name;
 };
 
 /** Resize a window or all windows in a group*/

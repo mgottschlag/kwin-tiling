@@ -131,10 +131,6 @@ bool AbstractGroupableItem::isStartupItem() const
     return false;
 }
 
-void AbstractGroupableItem::execute()
-{
-}
-
 } // TaskManager namespace
 
 #include "abstractgroupableitem.moc"

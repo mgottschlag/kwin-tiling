@@ -23,11 +23,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // Own
 #include "launcheritem.h"
 
-#include <KDE/KDesktopFile>
-#include <KDE/KMimeType>
-#include <KDE/KRun>
+#include <KDesktopFile>
+#include <KMimeType>
+#include <KRun>
 #include "taskgroup.h"
-
 
 namespace TaskManager
 {
@@ -38,25 +37,31 @@ public:
     KUrl        url;
     QIcon       icon;
     QString     name;
-    int         windowInstances;
+    QString     genericName;
 };
 
 LauncherItem::LauncherItem(QObject *parent, const KUrl &url)
     : AbstractGroupableItem(parent),
     d(new Private)
 {
+    d->genericName = QString();
+    d->name = QString();
     if (!url.isEmpty()) {
         setUrl(url);
     } else {
         d->icon = KIcon("unknown");
     }
-    d->windowInstances = 0;
 }
 
 LauncherItem::~LauncherItem()
 {
     emit destroyed(this);
     delete d;
+}
+
+KUrl LauncherItem::url() const
+{
+    return d->url;
 }
 
 QIcon LauncherItem::icon() const
@@ -69,14 +74,9 @@ QString LauncherItem::name() const
     return d->name;
 }
 
-ItemType LauncherItem::itemType() const
+QString LauncherItem::genericName() const
 {
-    return LauncherItemType;
-}
-
-bool LauncherItem::isGroupItem() const
-{
-    return false;
+    return d->genericName;
 }
 
 void LauncherItem::setUrl(const KUrl &url)
@@ -91,17 +91,17 @@ void LauncherItem::setUrl(const KUrl &url)
 
     d->url = newUrl;
 
-    if (d->url.isLocalFile() &&
-        KDesktopFile::isDesktopFile(d->url.toLocalFile())) {
+    if (d->url.isLocalFile() && KDesktopFile::isDesktopFile(d->url.toLocalFile())) {
         KDesktopFile f(d->url.toLocalFile());
 
         d->icon = KIcon(f.readIcon());
         d->name = f.readName();
+        d->genericName = f.readGenericName();
     } else {
         d->icon = KIcon(KMimeType::iconNameForUrl(d->url));
     }
 
-    if (d->name.isNull()) {
+    if (d->name.isEmpty()) {
         d->name = d->url.fileName();
     }
 
@@ -110,30 +110,34 @@ void LauncherItem::setUrl(const KUrl &url)
     }
 }
 
-void LauncherItem::execute()
+void LauncherItem::setIcon(const QIcon& icon)
+{
+    d->icon = icon;
+}
+
+void LauncherItem::setName(const QString& name)
+{
+    d->name = name;
+}
+
+void LauncherItem::setGenericName(const QString& genericName)
+{
+    d->genericName = genericName;
+}
+
+ItemType LauncherItem::itemType() const
+{
+    return LauncherItemType;
+}
+
+bool LauncherItem::isGroupItem() const
+{
+    return false;
+}
+
+void LauncherItem::launch()
 {
     new KRun(d->url, 0);
-}
-
-void LauncherItem::addWindowInstance()
-{
-    d->windowInstances++;
-    if (parentGroup() && d->windowInstances == 1) {
-        parentGroup()->launcherStatusChanged(this);
-    }
-}
-
-void LauncherItem::removeWindowInstance()
-{
-    d->windowInstances--;
-    if (parentGroup() && d->windowInstances == 0) {
-        parentGroup()->launcherStatusChanged(this);
-    }
-}
-
-bool LauncherItem::isVisible() const
-{
-    return d->windowInstances == 0;
 }
 
 //BEGIN reimplemented pure virtual methods from abstractgroupableitem

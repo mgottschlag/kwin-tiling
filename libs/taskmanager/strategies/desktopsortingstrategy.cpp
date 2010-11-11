@@ -67,6 +67,17 @@ bool DesktopSortingStrategy::lessThan(const AbstractGroupableItem *left, const A
             return true;
     }
 
+    if (left->itemType() == LauncherItemType) {
+        if (right->itemType() == LauncherItemType) {
+            return left->name().toLower() < right->name().toLower();
+        }
+        return true;
+    }
+
+    if (right->itemType() == LauncherItemType) {
+        return false;
+    }
+
     const int leftDesktop = left->desktop();
     const int rightDesktop = right->desktop();
     if (leftDesktop == rightDesktop) {

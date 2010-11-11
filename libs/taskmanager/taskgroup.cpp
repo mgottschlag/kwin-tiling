@@ -58,7 +58,6 @@ public:
     TaskGroup *q;
     QList<AbstractGroupableItem *> signalRemovalsFor;
     ItemList members;
-    QList<LauncherItem*> invisibleLaunchers;
     QString groupName;
     QColor groupColor;
     QIcon groupIcon;
@@ -250,19 +249,6 @@ void TaskGroup::Private::itemChanged(::TaskManager::TaskChanges changes)
     }
 }
 
-void TaskGroup::launcherStatusChanged(LauncherItem* launcher)
-{
-    if (launcher->isVisible()) {
-        d->members.append(launcher);
-        d->invisibleLaunchers.removeAll(launcher);
-    }
-    else
-    {
-        d->members.removeAll(launcher);
-        d->invisibleLaunchers.append(launcher);
-    }
-}
-
 void TaskGroup::remove(AbstractGroupableItem *item)
 {
     Q_ASSERT(item);
@@ -304,19 +290,6 @@ void TaskGroup::remove(AbstractGroupableItem *item)
 ItemList TaskGroup::members() const
 {
     return d->members;
-}
-
-QList<LauncherItem*> TaskGroup::Launchers() const
-{
-    QList<LauncherItem*> list;
-    foreach (AbstractGroupableItem *item, d->members) {
-        if (item->itemType() == LauncherItemType) {
-            LauncherItem *launcher = static_cast<LauncherItem*>(item);
-            list.append(launcher);
-        }
-    }
-    list.append(d->invisibleLaunchers);
-    return list;
 }
 
 void TaskGroup::setColor(const QColor &color)
@@ -668,7 +641,6 @@ bool TaskGroup::moveItem(int oldIndex, int newIndex)
 
     AbstractGroupableItem *item = d->members.at(oldIndex);
     d->members.move(oldIndex, newIndex);
-    //kDebug() << "new index " << d->members.indexOf(item);
     emit itemPositionChanged(item);
     return true;
 }

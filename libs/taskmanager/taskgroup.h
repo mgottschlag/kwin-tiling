@@ -46,7 +46,6 @@ public:
     ~TaskGroup();
 
     ItemList members() const;
-    QList<LauncherItem*> Launchers() const;
     WindowList winIds() const;
     WindowList directMemberwinIds() const;
 
@@ -67,7 +66,7 @@ public:
     /**
     * @deprecated: use itemType() instead
     **/
-    KDE_DEPRECATED virtual bool isGroupItem() const;
+    KDE_DEPRECATED bool isGroupItem() const;
     bool isRootGroup() const;
 
     bool isPinned() const;
@@ -95,7 +94,6 @@ public:
     bool isOnAllDesktops() const;
     bool isOnCurrentDesktop() const;
     void addMimeData(QMimeData *mimeData) const;
-    void launcherStatusChanged(LauncherItem* launcher);
 
     /**
      * Sorting strategies may use this to move items around

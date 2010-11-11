@@ -59,7 +59,7 @@ public:
     /**
     * @deprecated: use itemType() instead
     **/
-    KDE_DEPRECATED virtual bool isGroupItem() const;
+    KDE_DEPRECATED bool isGroupItem() const;
 
     QIcon icon() const;
     QString name() const;

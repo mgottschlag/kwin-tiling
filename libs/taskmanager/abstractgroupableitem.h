@@ -128,8 +128,6 @@ public Q_SLOTS:
 
     virtual void close() = 0;
 
-    virtual void execute();
-
     void setParentGroup(const GroupPtr group);
     /*void removedFromGroup();
     void addedToGroup(const GroupPtr group);*/

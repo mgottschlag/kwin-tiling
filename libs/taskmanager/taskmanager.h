@@ -25,12 +25,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef TASKMANAGER_H
 #define TASKMANAGER_H
 
-#include <QtCore/QHash>
-#include <QtCore/QSet>
-#include <QtCore/QVector>
+#include <QHash>
+#include <QSet>
+#include <QVector>
 
-#include <KDE/KSharedPtr>
-#include <KDE/KWindowSystem>
+#include <KSharedPtr>
+#include <KWindowSystem>
 
 struct QUuid;
 

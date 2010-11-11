@@ -58,14 +58,13 @@ public:
     /** DesktopChanges time to backup any needed data */
     virtual void desktopChanged(int newDesktop);
 
-    /** Returns list of actions that a task can do in this groupingStrategy
+    /**
+    * Returns list of actions that a task can do in this groupingStrategy
     *  If the visualization supports grouping it has to show these actions.
     */
     virtual QList<QAction*> strategyActions(QObject *parent, AbstractGroupableItem *item);
 
-    /**
-     * Returns the root group to use in grouping
-     */
+    /** Returns the root group to use in grouping */
     GroupPtr rootGroup() const;
 
     enum EditableGroupProperties
@@ -77,12 +76,13 @@ public:
         Members = 8,
         All = 15
     };
-    /** Returns which group properties are editable by the user and which are handled solely by the strategy. 
+    /**
+    * Returns which group properties are editable by the user and which are handled solely by the strategy.
     * The visualization should create a configuration interface based on this.
     */
     virtual EditableGroupProperties editableGroupProperties() = 0;
 
-    /** The following functions check if a property is editable and sets it on group*/
+    /* The following functions check if a property is editable and sets it on group*/
 
     virtual bool setName(const QString &, TaskGroup*);
     /** Returns a List of unused Names*/
@@ -96,9 +96,7 @@ public:
     /** Returns a list of icons*/
     virtual QList<QIcon> iconSuggestions(TaskGroup *);
 
-    /** 
-    * Adds an item to group if EditableGroupProperties::Members is set
-    */
+    /** Adds an item to group if EditableGroupProperties::Members is set */
     bool manualGroupingRequest(AbstractGroupableItem* taskItem, TaskGroup* groupItem);
     /** 
     * Creates a new group if EditableGroupProperties::Members is set
