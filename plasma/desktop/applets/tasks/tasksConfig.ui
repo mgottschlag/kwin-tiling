@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>444</width>
-    <height>347</height>
+    <width>479</width>
+    <height>366</height>
    </rect>
   </property>
   <layout class="QFormLayout" name="formLayout">
@@ -315,6 +315,26 @@
     </widget>
    </item>
    <item row="12" column="0">
+    <widget class="QLabel" name="label_14">
+     <property name="text">
+      <string>Only show tasks from the current activity</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>showOnlyCurrentActivity</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QCheckBox" name="showOnlyCurrentActivity">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0">
     <widget class="QLabel" name="label_13">
      <property name="text">
       <string>Only show tasks that are minimized</string>
@@ -327,14 +347,14 @@
      </property>
     </widget>
    </item>
-   <item row="12" column="1">
+   <item row="13" column="1">
     <widget class="QCheckBox" name="showOnlyMinimized">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="13" column="1">
+   <item row="14" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
