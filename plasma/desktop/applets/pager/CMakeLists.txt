@@ -2,6 +2,7 @@ project(plasma-pager)
 
 include_directories(
     ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
+include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kworkspace)
 
 set(pager_SRCS
     pager.cpp)
@@ -9,6 +10,7 @@ set(pager_SRCS
 kde4_add_ui_files(pager_SRCS pagerConfig.ui )
 kde4_add_plugin(plasma_applet_pager ${pager_SRCS})
 target_link_libraries(plasma_applet_pager ${KDE4_KIO_LIBS} ${KDE4_PLASMA_LIBS} ${KDE4_KCMUTILS_LIBRARY} kephal taskmanager)
+target_link_libraries(plasma_applet_pager kworkspace)
 
 install(TARGETS plasma_applet_pager DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-pager-default.desktop DESTINATION ${SERVICES_INSTALL_DIR})

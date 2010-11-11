@@ -49,6 +49,7 @@
 #include <Plasma/Animator>
 
 #include <kephal/screens.h>
+#include <kactivityconsumer.h>
 
 #include <taskmanager/task.h>
 
@@ -150,7 +151,7 @@ void Pager::init()
     connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)), this, SLOT(numberOfDesktopsChanged(int)));
     connect(KWindowSystem::self(), SIGNAL(desktopNamesChanged()), this, SLOT(desktopNamesChanged()));
     connect(KWindowSystem::self(), SIGNAL(stackingOrderChanged()), this, SLOT(stackingOrderChanged()));
-    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned int)), this, SLOT(windowChanged(WId,unsigned int)));
+    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned long*)), this, SLOT(windowChanged(WId,unsigned long*)));
     connect(KWindowSystem::self(), SIGNAL(showingDesktopChanged(bool)), this, SLOT(showingDesktopChanged(bool)));
     connect(Kephal::Screens::self(), SIGNAL(screenAdded(Kephal::Screen *)), SLOT(desktopsSizeChanged()));
     connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)), SLOT(desktopsSizeChanged()));
@@ -168,6 +169,10 @@ void Pager::init()
     recalculateGridSizes(m_rows);
 
     m_currentDesktop = KWindowSystem::currentDesktop();
+
+    KActivityConsumer *act = new KActivityConsumer(this);
+    connect(act, SIGNAL(currentActivityChanged(QString)), this, SLOT(currentActivityChanged(QString)));
+    m_currentActivity = act->currentActivity();
 }
 
 void Pager::configChanged()
@@ -574,6 +579,17 @@ void Pager::recalculateWindowRects()
             continue;
         }
 
+        //check activity
+        unsigned long properties[] = { 0, NET::WM2Activities };
+        NETWinInfo netInfo(QX11Info::display(), window, QX11Info::appRootWindow(), properties, 2);
+        QString result(netInfo.activities());
+        if (!result.isEmpty()) {
+            QStringList activities = result.split(',');
+            if (!activities.contains(m_currentActivity)) {
+                continue;
+            }
+        }
+
         for (int i = 0; i < m_desktopCount; i++) {
             if (!info.isOnDesktop(i+1)) {
                 continue;
@@ -663,6 +679,15 @@ void Pager::currentDesktopChanged(int desktop)
     }
 }
 
+void Pager::currentActivityChanged(const QString &activity)
+{
+    m_currentActivity = activity;
+
+    if (!m_timer->isActive()) {
+        m_timer->start(FAST_UPDATE_DELAY);
+    }
+}
+
 void Pager::windowAdded(WId id)
 {
     Q_UNUSED(id)
@@ -725,12 +750,12 @@ void Pager::stackingOrderChanged()
     }
 }
 
-void Pager::windowChanged(WId id, unsigned int properties)
+void Pager::windowChanged(WId id, unsigned long* dirty)
 {
     Q_UNUSED(id)
 
-    if (properties & NET::WMGeometry ||
-        properties & NET::WMDesktop) {
+    if (dirty[NETWinInfo::PROTOCOLS] & (NET::WMGeometry | NET::WMDesktop) ||
+        dirty[NETWinInfo::PROTOCOLS2] & NET::WM2Activities) {
         if (!m_timer->isActive()) {
             m_timer->start(UPDATE_DELAY);
         }

@@ -95,6 +95,7 @@ class Pager : public Plasma::Applet
 
         void configAccepted();
         void currentDesktopChanged(int desktop);
+        void currentActivityChanged(const QString &activity);
         void desktopsSizeChanged();
         void windowAdded(WId id);
         void windowRemoved(WId id);
@@ -102,7 +103,7 @@ class Pager : public Plasma::Applet
         void numberOfDesktopsChanged(int num);
         void desktopNamesChanged();
         void stackingOrderChanged();
-        void windowChanged(WId id, unsigned int properties);
+        void windowChanged(WId id, unsigned long *dirty);
         void showingDesktopChanged(bool showing);
 #ifdef Q_WS_X11
         void slotAddDesktop();
@@ -145,6 +146,7 @@ class Pager : public Plasma::Applet
         int m_columns;
         int m_desktopCount;
         int m_currentDesktop;
+        QString m_currentActivity;
         bool m_desktopDown;
         qreal m_widthScaleFactor;
         qreal m_heightScaleFactor;
