@@ -30,6 +30,7 @@
 #include <kpushbutton.h>
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
+#include <knewstuff3/downloaddialog.h>
 
 #include <plasma/theme.h>
 #include <plasma/corona.h>
@@ -199,11 +200,14 @@ void FilterBar::populateActivityMenu()
         templatesMenu->addAction(action);
     }
 
-    //and finally, clone
-    QAction *action = new QAction(KIcon("edit-copy"), i18n("Clone current activity"), this);
-    m_newActivityMenu->addAction(action);
+    //clone
+    QAction *action = m_newActivityMenu->addAction(KIcon("edit-copy"), i18n("Clone current activity"));
+    action->setData(0);
 
-    //TODO: add GHNS/local-install option
+    //ghns
+    templatesMenu->addSeparator();
+    action = templatesMenu->addAction(KIcon("get-hot-new-stuff"), i18n("Get New Templates..."));
+    action->setData(1);
 }
 
 void FilterBar::createActivity(QAction *action)
@@ -215,8 +219,13 @@ void FilterBar::createActivity(QAction *action)
     } else if (type == QVariant::StringList) {
         QStringList data = action->data().toStringList();
         PlasmaApp::self()->createActivityFromScript(data[0], data[1], data[2]);
-    } else { //invalid
+    } else if (action->data().toInt() == 0) {
         PlasmaApp::self()->cloneCurrentActivity();
+    } else { //ghns
+        KNS3::DownloadDialog *dialog = new KNS3::DownloadDialog( "activities.knsrc", 0 );
+        connect(dialog, SIGNAL(accepted()), m_newActivityMenu, SLOT(clear()));
+        connect(dialog, SIGNAL(accepted()), dialog, SLOT(deleteLater()));
+        dialog->show();
     }
 }
 

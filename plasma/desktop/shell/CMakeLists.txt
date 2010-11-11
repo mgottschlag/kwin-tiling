@@ -61,6 +61,7 @@ if(UNIX AND Q_WS_X11)
 endif(UNIX AND Q_WS_X11)
 
 target_link_libraries(kdeinit_plasma-desktop kephal)
+target_link_libraries(kdeinit_plasma-desktop ${KDE4_KNEWSTUFF3_LIBS})
 
 install(TARGETS kdeinit_plasma-desktop DESTINATION ${LIB_INSTALL_DIR})
 install(TARGETS plasma-desktop ${INSTALL_TARGETS_DEFAULT_ARGS})
@@ -71,6 +72,7 @@ install(FILES data/plasma.desktop data/plasma-desktop.desktop DESTINATION ${AUTO
 endif(WIN32)
 install(FILES data/plasma-shell-desktop.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES data/plasma-themes.knsrc DESTINATION  ${CONFIG_INSTALL_DIR})
+install(FILES activitymanager/activities.knsrc DESTINATION  ${CONFIG_INSTALL_DIR})
 install(FILES data/plasma-desktop.notifyrc DESTINATION ${DATA_INSTALL_DIR}/plasma-desktop)
 install(FILES data/layouts/00-defaultLayout.js DESTINATION ${DATA_INSTALL_DIR}/plasma-desktop/init)
 install(FILES data/plasma-desktop-js.xml DESTINATION ${DATA_INSTALL_DIR}/katepart/syntax/)
