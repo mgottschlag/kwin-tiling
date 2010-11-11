@@ -3,6 +3,7 @@ add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1204)
 ########### next target ###############
 
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
+include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kworkspace)
 
 set(taskmanager_LIB_SRCS
    abstractgroupableitem.cpp
@@ -44,6 +45,7 @@ if (X11_Xcomposite_FOUND)
 endif (X11_Xcomposite_FOUND)
 
 target_link_libraries(taskmanager kephal)
+target_link_libraries(taskmanager kworkspace)
 
 set_target_properties(taskmanager PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS taskmanager EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )

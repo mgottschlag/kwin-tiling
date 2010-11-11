@@ -93,6 +93,9 @@ public:
     bool showOnlyCurrentDesktop() const;
     void setShowOnlyCurrentDesktop(bool);
 
+    bool showOnlyCurrentActivity() const;
+    void setShowOnlyCurrentActivity(bool);
+
     bool showOnlyMinimized() const;
     void setShowOnlyMinimized(bool);
 
@@ -132,6 +135,7 @@ Q_SIGNALS:
 
 private:
     Q_PRIVATE_SLOT(d, void currentDesktopChanged(int))
+    Q_PRIVATE_SLOT(d, void currentActivityChanged(QString))
     Q_PRIVATE_SLOT(d, void taskChanged(TaskPtr, ::TaskManager::TaskChanges))
     Q_PRIVATE_SLOT(d, void checkScreenChange())
     Q_PRIVATE_SLOT(d, void startupItemDestroyed(AbstractGroupableItem *))

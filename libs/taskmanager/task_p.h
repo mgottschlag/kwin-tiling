@@ -73,6 +73,8 @@ public:
     QPixmap lastIcon;
     bool active : 1;
     bool lastResize : 1;
+
+    QStringList activities;
 };
 }
 

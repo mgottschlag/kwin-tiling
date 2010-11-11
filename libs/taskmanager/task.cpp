@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QTimer>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QtGui/QX11Info>
 
 // KDE
 #include <KDebug>
@@ -50,6 +51,7 @@ Task::Task(WId w, QObject *parent, const char *name)
 
     // try to load icon via net_wm
     refreshIcon();
+    refreshActivities();
 }
 
 Task::~Task()
@@ -141,6 +143,11 @@ void Task::refreshIcon()
 
     if (dirty.netWindowInfoProperties & NET::WMIcon) {
         refreshIcon();
+    }
+
+    if (dirty.netWindowInfoProperties2 & NET::WM2Activities) {
+        refreshActivities();
+        changes |= ActivitiesChanged;
     }
 
     if (changes != TaskUnchanged) {
@@ -652,6 +659,59 @@ Task::WindowProperties::WindowProperties(unsigned int netWinInfoProperties, unsi
 {
 }
 
+bool Task::isOnCurrentActivity() const
+{
+    return activities().isEmpty() || activities().contains(TaskManager::self()->currentActivity());
+}
+
+bool Task::isOnAllActivities() const
+{
+    return activities().isEmpty();
+}
+
+QStringList Task::activities() const
+{
+    return d->activities;
+}
+
+void Task::refreshActivities()
+{
+    unsigned long properties[] = { 0, NET::WM2Activities };
+    NETWinInfo info(QX11Info::display(), d->win, QX11Info::appRootWindow(), properties, 2);
+    QString result(info.activities());
+    if (result.isEmpty()) {
+        d->activities.clear();
+    } else {
+        d->activities = result.split(',');
+    }
+}
+
+/*
+    QStringList newActivitiesList;
+    Atom type;
+    int format, status;
+    unsigned long nitems = 0;
+    unsigned long extra = 0;
+    unsigned char *data = 0;
+    KXErrorHandler handler; // ignore errors
+    status = XGetWindowProperty( display(), window(), "_KDE_NET_WM_ACTIVITIES", 0, 10000,
+                                 false, XA_STRING, &type, &format,
+                                 &nitems, &extra, &data );
+    if (status == Success && data) {
+        QString result = (const char*) data;
+        if (!result.isEmpty()) {
+            newActivitiesList = QString(data).split(',');
+        }
+        XFree(data);
+    }
+    if (newActivitiesList == d->activities) {
+        return;
+    }
+
+    d->activities = newActivitiesList;
+    emit changed(ActivitiesChanged);
+}
+*/
 } // TaskManager namespace
 
 #include "task.moc"

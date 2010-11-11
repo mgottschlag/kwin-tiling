@@ -57,6 +57,7 @@ enum TaskChange { TaskUnchanged = 0,
                   TransientsChanged = 512,
                   IconChanged = 1024,
                   ColorChanged = 2048,
+                  ActivitiesChanged = 4096,
                   EverythingChanged = 0xffff
                 };
 Q_DECLARE_FLAGS(TaskChanges, TaskChange)
@@ -83,6 +84,7 @@ class TASKMANAGER_EXPORT TaskManager : public QObject
     Q_OBJECT
     Q_PROPERTY( int currentDesktop READ currentDesktop )
     Q_PROPERTY( int numberOfDesktops READ numberOfDesktops )
+    Q_PROPERTY( QString currentActivity READ currentActivity )
 
 public:
     static TaskManager* self();
@@ -124,6 +126,11 @@ public:
      * Returns the number of the current desktop.
      */
     int currentDesktop() const;
+
+    /**
+     * Returns the number of the current desktop.
+     */
+    QString currentActivity() const;
 
     /**
      * Returns true if the specified task is on top.
@@ -176,6 +183,11 @@ Q_SIGNALS:
     void desktopChanged(int desktop);
 
     /**
+     * Emitted when the current activity changes.
+     */
+    void activityChanged(const QString &activity);
+
+    /**
      * Emitted when a window changes desktop.
      */
     void windowChanged(TaskPtr task, ::TaskManager::TaskChanges change);
@@ -192,6 +204,8 @@ protected Q_SLOTS:
     void activeWindowChanged(WId);
     //* @internal
     void currentDesktopChanged(int);
+    //* @internal
+    void currentActivityChanged(const QString&);
     //* @internal
     void killStartup( const KStartupInfoId& );
     //* @internal

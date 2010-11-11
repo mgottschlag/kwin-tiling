@@ -48,6 +48,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 
 #include <kephal/screens.h>
+#include <kactivityconsumer.h>
 
 namespace TaskManager
 {
@@ -101,6 +102,7 @@ public:
     StartupList startups;
     WindowList skiptaskbarWindows;
     QSet<QUuid> trackGeometryTokens;
+    KActivityConsumer activityConsumer;
 };
 
 TaskManager::TaskManager()
@@ -118,6 +120,8 @@ TaskManager::TaskManager()
             this,       SLOT(currentDesktopChanged(int)));
     connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,const unsigned long*)),
             this,       SLOT(windowChanged(WId,const unsigned long*)));
+    connect(&d->activityConsumer, SIGNAL(currentActivityChanged(QString)),
+            this,       SLOT(currentActivityChanged(QString)));
     if (QCoreApplication::instance()) {
         connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(onAppExitCleanup()));
     }
@@ -204,6 +208,7 @@ TaskPtr TaskManager::findTask(int desktop, const QPoint& p)
         {
             continue;
         }
+        //FIXME activities?
 
         if (t->isIconified() || t->isShaded())
         {
@@ -418,6 +423,11 @@ void TaskManager::currentDesktopChanged(int desktop)
     emit desktopChanged(desktop);
 }
 
+void TaskManager::currentActivityChanged(const QString &activity)
+{
+    emit activityChanged(activity);
+}
+
 void TaskManager::gotNewStartup( const KStartupInfoId& id, const KStartupInfoData& data )
 {
     StartupPtr s( new Startup( id, data, 0 ) );
@@ -563,6 +573,11 @@ bool TaskManager::isOnScreen(int screen, const WId wid)
 int TaskManager::currentDesktop() const
 {
     return KWindowSystem::currentDesktop();
+}
+
+QString TaskManager::currentActivity() const
+{
+    return d->activityConsumer.currentActivity(); //TODO cache
 }
 
 } // TaskManager namespace

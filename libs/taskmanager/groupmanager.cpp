@@ -58,6 +58,7 @@ public:
           currentScreen(-1),
           groupIsFullLimit(0),
           showOnlyCurrentDesktop(false),
+          showOnlyCurrentActivity(false),
           showOnlyCurrentScreen(false),
           showOnlyMinimized(false),
           onlyGroupWhenFull(false),
@@ -73,6 +74,7 @@ public:
     * Keep track of changes in Taskmanager
     */
     void currentDesktopChanged(int);
+    void currentActivityChanged(QString);
     void taskChanged(TaskPtr, ::TaskManager::TaskChanges);
     void checkScreenChange();
     void taskDestroyed(QObject *item);
@@ -100,14 +102,16 @@ public:
     QSet<Task *> geometryTasks;
     int groupIsFullLimit;
     bool showOnlyCurrentDesktop : 1;
+    bool showOnlyCurrentActivity : 1;
     bool showOnlyCurrentScreen : 1;
     bool showOnlyMinimized : 1;
     bool onlyGroupWhenFull : 1;
     bool changingGroupingStrategy : 1;
     QUuid configToken;
 
-    QHash<int, TaskGroup*> rootGroups; //container for groups
+    QHash<QString, QHash<int, TaskGroup*> > rootGroups; //container for groups
     int currentDesktop;
+    QString currentActivity;
 };
 
 
@@ -123,7 +127,9 @@ GroupManager::GroupManager(QObject *parent)
     connect(TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)), this, SLOT(removeStartup(StartupPtr)));
 
     d->currentDesktop = TaskManager::self()->currentDesktop();
-    d->rootGroups[d->currentDesktop] = new TaskGroup(this, "RootGroup", Qt::transparent);
+    d->currentActivity = TaskManager::self()->currentActivity();
+
+    d->rootGroups[d->currentActivity][d->currentDesktop] = new TaskGroup(this, "RootGroup", Qt::transparent);
 
     d->reloadTimer.setSingleShot(true);
     d->reloadTimer.setInterval(0);
@@ -149,7 +155,7 @@ GroupManager::~GroupManager()
 
 TaskGroup *GroupManagerPrivate::currentRootGroup()
 {
-    return rootGroups[currentDesktop];
+    return rootGroups[currentActivity][currentDesktop];
 }
 
 void GroupManagerPrivate::reloadTasks()
@@ -234,6 +240,12 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
         if (showOnlyCurrentDesktop && !task->isOnCurrentDesktop()) {
             /* kDebug() << "Not on this desktop and showOnlyCurrentDesktop"
                      << KWindowSystem::currentDesktop() << task->desktop(); */
+            return false;
+        }
+
+        if (showOnlyCurrentActivity && !task->isOnCurrentActivity()) {
+            /* kDebug() << "Not on this desktop and showOnlyCurrentActivity"
+                     << KWindowSystem::currentActivity() << task->desktop(); */
             return false;
         }
 
@@ -382,6 +394,38 @@ GroupPtr GroupManager::rootGroup() const
     return d->currentRootGroup();
 }
 
+void GroupManagerPrivate::currentActivityChanged(QString newActivity)
+{
+    if (!showOnlyCurrentActivity) {
+        return;
+    }
+    if (currentActivity == newActivity) {
+        return;
+    }
+
+    if (!rootGroups.contains(newActivity)) {
+        kDebug() << "created new desk group";
+        rootGroups[newActivity][currentDesktop] = new TaskGroup(q, "RootGroup", Qt::transparent);
+        if (abstractSortingStrategy) {
+            abstractSortingStrategy->handleGroup(rootGroups[newActivity][currentDesktop]);
+        }
+    }
+
+    if (onlyGroupWhenFull) {
+        QObject::disconnect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
+        QObject::disconnect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
+    }
+
+    currentActivity = newActivity;
+
+    if (onlyGroupWhenFull) {
+        QObject::connect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
+        QObject::connect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
+    }
+
+    reloadTasks();
+}
+
 void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
 {
     //kDebug();
@@ -393,11 +437,11 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
         return;
     }
 
-    if (!rootGroups.contains(newDesktop)) {
+    if (!rootGroups[currentActivity].contains(newDesktop)) {
         kDebug() << "created new desk group";
-        rootGroups[newDesktop] = new TaskGroup(q, "RootGroup", Qt::transparent);
+        rootGroups[currentActivity][newDesktop] = new TaskGroup(q, "RootGroup", Qt::transparent);
         if (abstractSortingStrategy) {
-            abstractSortingStrategy->handleGroup(rootGroups[newDesktop]);
+            abstractSortingStrategy->handleGroup(rootGroups[currentActivity][newDesktop]);
         }
     }
 
@@ -426,6 +470,12 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
     if (showOnlyCurrentDesktop && changes & ::TaskManager::DesktopChanged) {
         takeAction = true;
         show = task->isOnCurrentDesktop();
+        //kDebug() << task->visibleName() << "on" << TaskManager::self()->currentDesktop();
+    }
+
+    if (showOnlyCurrentActivity && changes & ::TaskManager::ActivitiesChanged) {
+        takeAction = true;
+        show = task->isOnCurrentActivity();
         //kDebug() << task->visibleName() << "on" << TaskManager::self()->currentDesktop();
     }
 
@@ -490,14 +540,20 @@ void GroupManager::reconnect()
     kDebug();
     disconnect(TaskManager::self(), SIGNAL(desktopChanged(int)),
                this, SLOT(currentDesktopChanged(int)));
+    disconnect(TaskManager::self(), SIGNAL(activityChanged(int)),
+               this, SLOT(currentActivityChanged(int)));
     disconnect(TaskManager::self(), SIGNAL(windowChanged(TaskPtr,::TaskManager::TaskChanges)),
                this, SLOT(taskChanged(TaskPtr,::TaskManager::TaskChanges)));
 
-    if (d->showOnlyCurrentDesktop || d->showOnlyMinimized || d->showOnlyCurrentScreen) {
+    if (d->showOnlyCurrentDesktop || d->showOnlyMinimized || d->showOnlyCurrentScreen || d->showOnlyCurrentActivity) {
         // listen to the relevant task manager signals
         if (d->showOnlyCurrentDesktop) {
             connect(TaskManager::self(), SIGNAL(desktopChanged(int)),
                     this, SLOT(currentDesktopChanged(int)));
+        }
+        if (d->showOnlyCurrentActivity) {
+            connect(TaskManager::self(), SIGNAL(activityChanged(QString)),
+                    this, SLOT(currentActivityChanged(QString)));
         }
 
         connect(TaskManager::self(), SIGNAL(windowChanged(TaskPtr,::TaskManager::TaskChanges)),
@@ -603,6 +659,17 @@ void GroupManager::setShowOnlyCurrentDesktop(bool showOnlyCurrentDesktop)
     reconnect();
 }
 
+bool GroupManager::showOnlyCurrentActivity() const
+{
+    return d->showOnlyCurrentActivity;
+}
+
+void GroupManager::setShowOnlyCurrentActivity(bool showOnlyCurrentActivity)
+{
+    d->showOnlyCurrentActivity = showOnlyCurrentActivity;
+    reconnect();
+}
+
 bool GroupManager::showOnlyMinimized() const
 {
     return d->showOnlyMinimized;
@@ -657,8 +724,11 @@ void GroupManager::setSortingStrategy(TaskSortingStrategy sortOrder)
             kDebug() << "Invalid Strategy";
     }
     if (d->abstractSortingStrategy) {
-        foreach (TaskGroup *group, d->rootGroups) {
-            d->abstractSortingStrategy->handleGroup(group);
+        typedef QHash<int,TaskGroup*> Metagroup;
+        foreach (Metagroup metagroup, d->rootGroups) {
+            foreach (TaskGroup *group, metagroup) {
+                d->abstractSortingStrategy->handleGroup(group);
+            }
         }
     }
 
