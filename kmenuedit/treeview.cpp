@@ -160,7 +160,6 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
       m_layoutDirty(false)
 {
     setObjectName(name);
-	setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
     setAllColumnsShowFocus(true);
     setRootIsDecorated(true);
     setSorting(-1);
