@@ -421,13 +421,12 @@ void NotifierDialog::setMounted(bool mounted, const QString &udi)
         }
     } else {
         bool safelyRemovable = true;
-        QString parentUdi = Solid::Device(udi).parent().udi();
-        foreach (DeviceItem* sibling, itemsForParentUdi(parentUdi)) {
-            if ((sibling->udi() != udi) && (sibling->isMounted())) {
-                safelyRemovable = false;
+        Solid::Device parent = Solid::Device(udi).parent();
+        if (parent.is<Solid::StorageDrive>()) {
+                safelyRemovable = !parent.as<Solid::StorageDrive>()->isInUse();
             }
-        }
-        foreach (DeviceItem* sibling, itemsForParentUdi(parentUdi)) {
+
+        foreach (DeviceItem* sibling, itemsForParentUdi(parent.udi())) {
                 sibling->setSafelyRemovable(safelyRemovable);
         }
     }
