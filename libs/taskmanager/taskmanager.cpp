@@ -353,7 +353,8 @@ void TaskManager::windowChanged(WId w, const unsigned long *dirty)
     if (!(dirty[NETWinInfo::PROTOCOLS] & (NET::WMVisibleName | NET::WMName |
                                           NET::WMState | NET::WMIcon |
                                           NET::XAWMState | NET::WMDesktop) ||
-          (trackGeometry() && dirty[NETWinInfo::PROTOCOLS] & NET::WMGeometry))) {
+          (trackGeometry() && dirty[NETWinInfo::PROTOCOLS] & NET::WMGeometry) ||
+         (dirty[NETWinInfo::PROTOCOLS2] & NET::WM2Activities))) {
         return;
     }
 
