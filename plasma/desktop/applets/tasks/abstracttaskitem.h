@@ -230,12 +230,17 @@ protected:
     static const int TaskItemHorizontalMargin = 4;
     static const int TaskItemVerticalMargin = 4;
 
-private:
-    QPixmap m_cachedShadow;
+    //TODO: remove when we have animated layouts
+    QPropertyAnimation *m_layoutAnimation;
+    QPropertyAnimation *m_backgroundFadeAnim;
 
     qreal m_alpha;
     QString m_oldBackgroundPrefix;
     QString m_backgroundPrefix;
+
+private:
+    QPixmap m_cachedShadow;
+
     QRectF m_activeRect;
 
     QTime m_lastGeometryUpdate;
@@ -248,9 +253,6 @@ private:
     int m_attentionTimerId;
     int m_attentionTicks;
 
-    //TODO: remove when we have animated layouts
-    QPropertyAnimation *m_layoutAnimation;
-    QPropertyAnimation *m_backgroundFadeAnim;
     WId m_lastViewId;
 
     bool m_showText : 1;

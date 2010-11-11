@@ -50,6 +50,7 @@
 #include "tasks.h"
 #include "taskitemlayout.h"
 #include "windowtaskitem.h"
+#include "applauncheritem.h"
 
 TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet)
     : AbstractTaskItem(parent, applet),
@@ -454,6 +455,9 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupab
         TaskGroupItem *groupItem = new TaskGroupItem(this, m_applet);
         groupItem->setGroup(static_cast<TaskManager::TaskGroup*>(groupableItem));
         item = groupItem;
+    } else if (groupableItem->itemType() == TaskManager::LauncherItemType) {
+        AppLauncherItem *launcherItem = new AppLauncherItem(this, m_applet, static_cast<TaskManager::LauncherItem*>(groupableItem));
+        item = launcherItem;
     } else { //it's a window task
         WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet);
         windowItem->setTask(static_cast<TaskManager::TaskItem*>(groupableItem));

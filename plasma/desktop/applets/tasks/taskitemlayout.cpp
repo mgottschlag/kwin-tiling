@@ -240,7 +240,17 @@ int TaskItemLayout::preferredColumns()
         if (m_layoutOrientation == Qt::Vertical) {
             m_rowSize = qMax(1, int(m_groupItem->geometry().height() / itemSize.height()));
         } else {
-            m_rowSize = qMax(1, int(m_groupItem->geometry().width() / itemSize.width()));
+            //Launchers doesn't need the same space as task- and groupitems on horizontal Layouts so the size needs to be adjusted
+            qreal horizontalSpace = m_groupItem->geometry().width();
+            int numberOflaunchers = 0;
+            foreach (AbstractTaskItem *item, m_itemPositions) {
+                if (item->abstractItem()->itemType() == TaskManager::LauncherItemType) {
+                    horizontalSpace -= item->preferredHeight(); //The icon is a square so we can use the height as width
+                    numberOflaunchers++;
+                }
+            }
+            m_rowSize = qMax(1, int(horizontalSpace / itemSize.width()));
+            m_rowSize += numberOflaunchers;
         }
     }
     //kDebug() << "preferred columns: " << qMax(1, m_rowSize);
@@ -334,7 +344,11 @@ void TaskItemLayout::layoutItems()
                 setRowMaximumHeight(row, maximumCellSize.height());
                 setColumnMaximumWidth(col, QWIDGETSIZE_MAX);
             } else {
-                setColumnMaximumWidth(col, maximumCellSize.width());
+                if (item->abstractItem()->itemType() == TaskManager::LauncherItemType) {
+                    setColumnFixedWidth(col, maximumCellSize.height()); //The Icon size is a sqare, so it needs the same width as height
+                } else {
+                    setColumnMaximumWidth(col, maximumCellSize.width());
+                }
                 setRowMaximumHeight(row, QWIDGETSIZE_MAX);
             }
             setRowPreferredHeight(row, maximumCellSize.height());

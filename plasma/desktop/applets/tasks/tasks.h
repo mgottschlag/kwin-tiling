@@ -58,6 +58,7 @@ using TaskManager::AbstractGroupableItem;
 using TaskManager::GroupManager;
 using TaskManager::TaskItem;
 using TaskManager::TaskGroup;
+using TaskManager::LauncherItem;
 
 /**
  * An applet which provides a visual representation of running
@@ -132,6 +133,8 @@ private slots:
         void reload();
         void changeSizeHint(Qt::SizeHint which);
         void dialogGroupingChanged(int index);
+        void launcherAdded(LauncherItem *launcher);
+        void launcherRemoved(LauncherItem *launcher);
 
 private:
         bool m_showTooltip;

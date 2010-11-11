@@ -118,6 +118,8 @@ void Tasks::init()
     setLayout(layout);
 
     configChanged();
+    connect(m_groupManager, SIGNAL(launcherAdded(LauncherItem*)), this, SLOT(launcherAdded(LauncherItem*)));
+    connect(m_groupManager, SIGNAL(launcherRemoved(LauncherItem*)), this, SLOT(launcherRemoved(LauncherItem*)));
 }
 
 void Tasks::configChanged()
@@ -199,10 +201,47 @@ void Tasks::configChanged()
         changed = true;
     }
 
+    KConfigGroup launcherCg(&cg, "Launchers");
+    foreach (const QString &key, launcherCg.keyList()) {
+        QStringList item = launcherCg.readEntry(key, QStringList());
+        if (item.length() == 4) {
+            KUrl url(item[0]);
+            KIcon icon;
+            if (!item[1].isEmpty()) {
+                icon = KIcon(item[1]);
+            } else {
+                icon = KIcon();
+            }
+            QString name(item[2]);
+            QString genericName(item[3]);
+            m_groupManager->addLauncher(url, icon, name, genericName, false);
+        }
+    }
+
     if (changed) {
         emit settingsChanged();
         update();
     }
+}
+
+void Tasks::launcherAdded(LauncherItem *launcher)
+{
+    KConfigGroup cg = config();
+    KConfigGroup launcherCg(&cg, "Launchers");
+
+    QStringList launcherProperties;
+    launcherProperties.append(launcher->url().url());
+    launcherProperties.append(launcher->icon().name());
+    launcherProperties.append(launcher->name());
+    launcherProperties.append(launcher->genericName());
+    launcherCg.writeEntry(launcher->name(), launcherProperties);
+}
+
+void Tasks::launcherRemoved(LauncherItem *launcher )
+{
+    KConfigGroup cg = config();
+    KConfigGroup launcherCg(&cg, "Launchers");
+    launcherCg.deleteEntry(launcher->name());
 }
 
 void Tasks::reload()

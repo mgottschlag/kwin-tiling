@@ -472,14 +472,12 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
                 }
 
                 foreach (AbstractGroupableItem *item, group->members()) {
-                    if (item->itemType() == TaskManager::GroupItemType) {
-                        //TODO: recurse through sub-groups?
-                    } else {
+                    if (item->itemType() == TaskManager::TaskItemType) {
                         TaskManager::TaskItem *taskItem = qobject_cast<TaskManager::TaskItem *>(item);
                         if (taskItem && taskItem->task()) {
                             windows.append(taskItem->task()->window());
                         }
-                    }
+                    } //TODO: if taskgroup, recurse through sub-groups?
                 }
             }
         } else {
@@ -516,8 +514,10 @@ void AbstractTaskItem::paint(QPainter *painter,
     //kDebug() << "painting" << (QObject*)this << text();
     painter->setRenderHint(QPainter::Antialiasing);
 
-    // draw background
-    drawBackground(painter, option, widget);
+    if (m_abstractItem->itemType() != TaskManager::LauncherItemType) { //Launchers have no frame
+        // draw background
+        drawBackground(painter, option, widget);
+    }
 
     // draw icon and text
     drawTask(painter, option, widget);
@@ -679,38 +679,40 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
 
     painter->setPen(QPen(textColor(), 1.0));
 
-    if (m_showText) {
-        QRect rect = textRect(bounds).toRect();
-        if (rect.height() > 20) {
-            rect.adjust(2, 2, -2, -2); // Create a text margin
+    if (m_abstractItem->itemType() != TaskManager::LauncherItemType) {
+        if (m_showText) {
+            QRect rect = textRect(bounds).toRect();
+            if (rect.height() > 20) {
+                rect.adjust(2, 2, -2, -2); // Create a text margin
+            }
+            QTextLayout layout;
+            layout.setFont(KGlobalSettings::taskbarFont());
+            layout.setTextOption(textOption());
+
+            layoutText(layout, text(), rect.size());
+            drawTextLayout(painter, layout, rect);
         }
-        QTextLayout layout;
-        layout.setFont(KGlobalSettings::taskbarFont());
-        layout.setTextOption(textOption());
 
-        layoutText(layout, text(), rect.size());
-        drawTextLayout(painter, layout, rect);
-    }
+        TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(this);
+        if (groupItem) {
+            QFont font(KGlobalSettings::smallestReadableFont());
+            QFontMetrics fm(font);
+            QRectF rect(expanderRect(bounds));
 
-    TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(this);
-    if (groupItem) {
-        QFont font(KGlobalSettings::smallestReadableFont());
-        QFontMetrics fm(font);
-        QRectF rect(expanderRect(bounds));
+            Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
-        Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
+            if (itemBackground->hasElement(expanderElement())) {
+                QSizeF arrowSize(itemBackground->elementSize(expanderElement()));
+                QRectF arrowRect(rect.center()-QPointF(arrowSize.width()/2, arrowSize.height()+fm.xHeight()/2), arrowSize);
+                itemBackground->paint(painter, arrowRect, expanderElement());
 
-        if (itemBackground->hasElement(expanderElement())) {
-            QSizeF arrowSize(itemBackground->elementSize(expanderElement()));
-            QRectF arrowRect(rect.center()-QPointF(arrowSize.width()/2, arrowSize.height()+fm.xHeight()/2), arrowSize);
-            itemBackground->paint(painter, arrowRect, expanderElement());
-
-            painter->setFont(font);
-            rect.setTop(arrowRect.bottom());
-            painter->drawText(rect, Qt::AlignHCenter|Qt::AlignTop, QString::number(groupItem->count()));
-        } else {
-            painter->setFont(font);
-            painter->drawText(rect, Qt::AlignCenter, QString::number(groupItem->count()));
+                painter->setFont(font);
+                rect.setTop(arrowRect.bottom());
+                painter->drawText(rect, Qt::AlignHCenter|Qt::AlignTop, QString::number(groupItem->count()));
+            } else {
+                painter->setFont(font);
+                painter->drawText(rect, Qt::AlignCenter, QString::number(groupItem->count()));
+            }
         }
     }
 }
