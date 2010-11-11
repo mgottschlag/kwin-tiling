@@ -154,7 +154,9 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
                                                               "batteryRemainingTime");
             QDBusPendingReply< int > reply = QDBusConnection::sessionBus().asyncCall(msg);
             reply.waitForFinished();
-            setData("Battery", "Remaining msec", reply.value());
+            if (reply.isValid()) {
+                setData("Battery", "Remaining msec", reply.value());
+            }
         }
 
         m_sources = basicSourceNames() + batterySources;
@@ -304,7 +306,9 @@ void PowermanagementEngine::reloadPowerDevilData()
                                                           "currentProfile");
         QDBusPendingReply< QString > reply = QDBusConnection::sessionBus().asyncCall(msg);
         reply.waitForFinished();
-        profileChanged(reply.value());
+        if (reply.isValid()) {
+            profileChanged(reply.value());
+        }
     }
 
     {
@@ -314,7 +318,9 @@ void PowermanagementEngine::reloadPowerDevilData()
                                                           "batteryRemainingTime");
         QDBusPendingReply< int > reply = QDBusConnection::sessionBus().asyncCall(msg);
         reply.waitForFinished();
-        batteryRemainingTimeChanged(reply.value());
+        if (reply.isValid()) {
+            batteryRemainingTimeChanged(reply.value());
+        }
     }
 
     availableProfilesChanged();
