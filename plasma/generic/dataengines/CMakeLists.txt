@@ -24,7 +24,7 @@ if (NEPOMUK_FOUND)
     add_subdirectory(metadata)
 endif (NEPOMUK_FOUND)
 
-macro_optional_find_package(KdepimLibs 4.4.60)
+macro_optional_find_package(KdepimLibs 4.5.60)
 macro_log_feature(KDEPIMLIBS_FOUND "kdepimlibs" "KDE PIM libraries" "http://www.kde.org" FALSE "" "Needed for building several plasma dataengines")
 
 if(KDEPIMLIBS_FOUND)
