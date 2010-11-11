@@ -128,8 +128,7 @@ void MousePlugins::configAccepted()
         }
     }
 
-    KConfigGroup baseCfg = m_containment->config();
-    baseCfg = KConfigGroup(&baseCfg, "ActionPlugins");
+    KConfigGroup baseCfg = m_containment->containmentActionsConfig();
     foreach (const QString &trigger, m_modifiedKeys) {
         //delete any old config (who knows what it could be from)
         KConfigGroup cfg = KConfigGroup(&baseCfg, trigger);

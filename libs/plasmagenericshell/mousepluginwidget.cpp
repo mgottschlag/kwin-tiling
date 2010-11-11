@@ -192,8 +192,7 @@ void MousePluginWidget::configure()
         if (m_lastConfigLocation.isEmpty()) {
             pluginInstance->restore(m_tempConfig);
         } else {
-            KConfigGroup cfg = m_containment->config();
-            cfg = KConfigGroup(&cfg, "ActionPlugins");
+            KConfigGroup cfg = m_containment->containmentActionsConfig();
             cfg = KConfigGroup(&cfg, m_lastConfigLocation);
             pluginInstance->restore(cfg);
         }
@@ -252,8 +251,7 @@ void MousePluginWidget::prepareForSave()
     }
 
     //back up our config because it'll be erased for saving
-    KConfigGroup cfg = m_containment->config();
-    cfg = KConfigGroup(&cfg, "ActionPlugins");
+    KConfigGroup cfg = m_containment->containmentActionsConfig();
     cfg = KConfigGroup(&cfg, m_lastConfigLocation);
     cfg.copyTo(&m_tempConfig);
     //kDebug() << "copied to temp";
@@ -268,8 +266,7 @@ void MousePluginWidget::save()
     }
 
     if (m_pluginInstance || !m_lastConfigLocation.isEmpty()) {
-        KConfigGroup cfg = m_containment->config();
-        cfg = KConfigGroup(&cfg, "ActionPlugins");
+        KConfigGroup cfg = m_containment->containmentActionsConfig();
         cfg = KConfigGroup(&cfg, trigger);
         if (m_pluginInstance) {
             m_pluginInstance.data()->save(cfg);
