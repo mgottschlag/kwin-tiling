@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>calendarConfig</class>
- <widget class="QWidget" name="calendarConfig">
+ <class>calendarHolidaysConfig</class>
+ <widget class="QWidget" name="calendarHolidaysConfig">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>323</width>
-    <height>69</height>
+    <width>502</width>
+    <height>271</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -70,18 +70,21 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="2">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="1" column="0" colspan="2">
+    <widget class="QLabel" name="label_7">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
+     <property name="text">
+      <string>Holidays</string>
      </property>
-    </spacer>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="3">
+    <widget class="KHolidays::HolidayRegionSelector" name="holidayRegionWidget"/>
    </item>
   </layout>
  </widget>
@@ -90,6 +93,11 @@
    <class>KComboBox</class>
    <extends>QComboBox</extends>
    <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KHolidays::HolidayRegionSelector</class>
+   <extends>QWidget</extends>
+   <header>kholidays/holidayregionselector.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

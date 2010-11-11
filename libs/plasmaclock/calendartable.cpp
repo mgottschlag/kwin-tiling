@@ -19,6 +19,7 @@
  */
 
 #include "calendartable.h"
+#include "config-calendartable.h"
 
 //Qt
 #include <QtCore/QDate>
@@ -40,7 +41,11 @@
 #include <Plasma/Theme>
 #include <Plasma/DataEngine>
 
+#ifdef HAVE_KDEPIMLIBS
+#include "ui_calendarHolidaysConfig.h"
+#else
 #include "ui_calendarConfig.h"
+#endif
 
 #include <cmath>
 
@@ -379,7 +384,11 @@ class CalendarTablePrivate
 
         QPointF lastSeenMousePos;
 
+#ifdef HAVE_KDEPIMLIBS
+        Ui::calendarHolidaysConfig calendarConfigUi;
+#else
         Ui::calendarConfig calendarConfigUi;
+#endif
 
         Plasma::Svg *svg;
         float opacity; //transparency for the inactive text
@@ -836,6 +845,7 @@ void CalendarTable::createConfigurationInterface(KConfigDialog *parent)
     }
     d->calendarConfigUi.calendarComboBox->setCurrentIndex( d->calendarConfigUi.calendarComboBox->findData( QVariant( d->calendarType ) ) );
 
+#ifdef HAVE_KDEPIMLIBS
     QHashIterator<QString, Plasma::DataEngine::Data> it(d->holidaysRegions);
     while (it.hasNext()) {
         it.next();
@@ -846,11 +856,14 @@ void CalendarTable::createConfigurationInterface(KConfigDialog *parent)
         }
     }
     d->calendarConfigUi.holidayRegionWidget->setDescriptionHidden(true);
+#endif
 }
 
 void CalendarTable::applyConfigurationInterface()
 {
     setCalendar(d->calendarConfigUi.calendarComboBox->itemData(d->calendarConfigUi.calendarComboBox->currentIndex()).toString());
+
+#ifdef HAVE_KDEPIMLIBS
     clearHolidaysRegions();
     QHash<QString, KHolidays::HolidayRegionSelector::SelectionStatus> regions = d->calendarConfigUi.holidayRegionWidget->holidayRegionsStatus();
     QHashIterator<QString, KHolidays::HolidayRegionSelector::SelectionStatus> it(regions);
@@ -866,11 +879,11 @@ void CalendarTable::applyConfigurationInterface()
         }
     }
     setDisplayHolidays(displayHolidays);
+#endif
 }
 
 void CalendarTable::configAccepted(KConfigGroup cg)
 {
-kDebug() << "configAccepted";
     applyConfigurationInterface();
     writeConfiguration(cg);
 }
