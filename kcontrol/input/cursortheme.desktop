@@ -33,6 +33,7 @@ Name[ru]=Тема курсоров
 Name[sv]=Muspekartema
 Name[uk]=Тема вказівника
 Name[x-test]=xxCursor Themexx
+Name[zh_CN]=光标主题
 Name[zh_TW]=游標主題
 
 Comment=Customize the mouse cursor appearance
@@ -57,6 +58,7 @@ Comment[ru]=Настройка внешнего вида курсора мыши
 Comment[sv]=Anpassa muspekarens utseende
 Comment[uk]=Налаштування вигляду вказівника миші на екрані
 Comment[x-test]=xxCustomize the mouse cursor appearancexx
+Comment[zh_CN]=定制鼠标指针外观
 Comment[zh_TW]=自訂滑鼠游標外觀
 
 X-KDE-Keywords=Mouse,Cursor,Theme
