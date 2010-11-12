@@ -22,6 +22,8 @@
 #include "notificationstack.h"
 #include "notificationwidget.h"
 
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QGraphicsLayout>
 #include <QLayout>
 #include <QPropertyAnimation>
@@ -267,8 +269,12 @@ void StackDialog::adjustPosition(const QPoint &pos)
     }
 
     QPoint customPosition = pos;
+    int screen = QApplication::desktop()->screenNumber(this);
     if (customPosition == QPoint(-1, -1)) {
         customPosition = m_applet->config().readEntry("customPosition", QPoint(-1, -1));
+        screen = m_applet->config().readEntry("screen", 0);
+        //the position is saved relative to the screen, since screen position can change
+        customPosition = (customPosition + QApplication::desktop()->screenGeometry(screen).topLeft());
     }
 
 
@@ -295,9 +301,12 @@ void StackDialog::adjustPosition(const QPoint &pos)
         }
 
         move(customPosition);
+        customPosition = (customPosition - QApplication::desktop()->screenGeometry(screen).topLeft());
         Plasma::WindowEffects::slideWindow(this, Plasma::Desktop);
         m_hasCustomPosition = true;
+        //the position is saved relative to the screen, since screen position can change
         m_applet->config().writeEntry("customPosition", customPosition);
+        m_applet->config().writeEntry("screen", screen);
     }
 }
 
