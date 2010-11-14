@@ -93,15 +93,13 @@ exe(int fd, const char *in, int len)
         fprintf(stderr, "Cannot send command\n");
         return 1;
     }
-    if ((len = read(fd, buf, sizeof(buf))) <= 0) {
-        fprintf(stderr, "Cannot receive reply\n");
-        return 1;
-    }
-    if (len == sizeof(buf) && buf[sizeof(buf) - 1] != '\n')
-        fprintf(stderr, "Warning: reply is too long\n");
-    fwrite(buf, 1, len, stdout);
-    if (len == sizeof(buf) && buf[sizeof(buf) - 1] != '\n')
-        puts("[...]");
+    do {
+        if ((len = read(fd, buf, sizeof(buf))) <= 0) {
+            fprintf(stderr, "Cannot receive reply\n");
+            return 1;
+        }
+        fwrite(buf, 1, len, stdout);
+    } while (buf[len - 1] != '\n');
     return 0;
 }
 
