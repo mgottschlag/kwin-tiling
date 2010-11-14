@@ -542,7 +542,7 @@ verify(GConvFunc gconv, int rootok)
             return False;
         if (isNoPassAllowed(curuser)) {
             gconv(GCONV_PASS_ND, 0);
-            if (!*curpass) {
+            if (!curpass || !*curpass) {
                 pnopass = True;
                 sprintf(psrvb, "%.31s-np", PAMService);
                 psrv = psrvb;
