@@ -129,10 +129,7 @@ GroupManager::GroupManager(QObject *parent)
 
     d->currentDesktop = TaskManager::self()->currentDesktop();
     d->currentActivity = TaskManager::self()->currentActivity();
-
-    connect(d->currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem*)), this, SLOT(updateLauncher(AbstractGroupableItem*)));
-    connect(d->currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(updateLauncher(AbstractGroupableItem*)));
-
+    
     d->rootGroups[d->currentActivity][d->currentDesktop] = new TaskGroup(this, "RootGroup", Qt::transparent);
 
     d->reloadTimer.setSingleShot(true);
@@ -314,6 +311,8 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
     }
     geometryTasks.insert(task.data());
 
+	q->updateLauncher(item);
+	
     return true;
 }
 
@@ -334,6 +333,8 @@ void GroupManagerPrivate::removeTask(TaskPtr task)
     if (item->parentGroup()) {
         item->parentGroup()->remove(item);
     }
+
+    q->updateLauncher(item);
 
     //the item must exist as long as the TaskPtr does because of activate calls so don't delete the item here, it will delete itself.
 }
@@ -407,6 +408,13 @@ void GroupManagerPrivate::currentActivityChanged(QString newActivity)
 
     currentActivity = newActivity;
 
+    foreach (AbstractGroupableItem *item, launcherAssociations.values()) {
+        if (item->itemType() == LauncherItemType)
+        {
+            rootGroups[currentActivity][currentDesktop]->add(item);
+        }
+    }
+
     if (onlyGroupWhenFull) {
         QObject::connect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
         QObject::connect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
@@ -440,6 +448,13 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
     }
 
     currentDesktop = newDesktop;
+
+	foreach (AbstractGroupableItem *item, launcherAssociations.values()) {
+        if (item->itemType() == LauncherItemType)
+        {
+            rootGroups[currentActivity][currentDesktop]->add(item);
+        }
+	}
 
     if (onlyGroupWhenFull) {
         QObject::connect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
@@ -606,7 +621,7 @@ void GroupManager::updateLauncher(AbstractGroupableItem* item)
                         rootGroup->remove(launcher);
                     }
                 }
-            } else if (!d->currentRootGroup()->members().contains(launcher) && d->launcherAssociations.values(name).length() == 1) { // Launcher isn't shown but the isn't running
+            } else if (!d->currentRootGroup()->members().contains(launcher) && d->launcherAssociations.values(name).length() == 1) { // Launcher isn't shown but the task isn't running
                 typedef QHash<int,TaskGroup*> Metagroup;
                 foreach (Metagroup metagroup, d->rootGroups) {
                     foreach (TaskGroup *rootGroup, metagroup) {

@@ -204,6 +204,7 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
             //TODO: maybe add the condition that the subgroup was created by programGrouping?
             if (programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
                 //kDebug() << "joined subGroup";
+                rootGroup()->add(taskItem);
                 return true;
             }
         } else {
@@ -229,7 +230,8 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
             groupItem->add(taskItem);
         }
 
-        return true;
+		rootGroup()->add(taskItem);
+		return true;
     }
 
     return false;
