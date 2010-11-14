@@ -313,11 +313,11 @@ ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGrou
     setText(i18n("&Pin Task"));
     setCheckable(true);
     if (item->itemType() == TaskItemType) {
-        m_name = qobject_cast< TaskItem* >(item)->task()->classClass().toLower();
+        m_name = qobject_cast< TaskItem* >(item)->task()->classClass();
     } else {
-        m_name = item->name().toLower();
+        m_name = item->name();
     }
-    setChecked(m_groupingStrategy->findLauncher(m_name));
+    setChecked(m_groupingStrategy->findLauncher(m_name.toLower()));
     if (!m_groupingStrategy->findLauncher(m_name)) {
         // Search for applications which are executable and case-insensitively match the windowclass of the task and
         // See http://techbase.kde.org/Development/Tutorials/Services/Traders#The_KTrader_Query_Language
@@ -340,8 +340,8 @@ ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGrou
 
 void ToggleLauncherActionImpl::toggleLauncher()
 {
-    if (m_groupingStrategy->findLauncher(m_name)) {
-        m_groupingStrategy->removeLauncher(m_groupingStrategy->findLauncher(m_name));
+    if (m_groupingStrategy->findLauncher(m_name.toLower())) {
+        m_groupingStrategy->removeLauncher(m_groupingStrategy->findLauncher(m_name.toLower()));
     } else if (m_url.isValid()) {
         if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
             m_groupingStrategy->addLauncher(m_url);
