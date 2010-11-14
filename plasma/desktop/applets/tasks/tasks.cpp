@@ -36,6 +36,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsLinearLayout>
 #include <QVariant>
+#include <QBuffer>
+#include <QIODevice>
 
 // Plasma
 #include <Plasma/Containment>
@@ -204,13 +206,16 @@ void Tasks::configChanged()
     KConfigGroup launcherCg(&cg, "Launchers");
     foreach (const QString &key, launcherCg.keyList()) {
         QStringList item = launcherCg.readEntry(key, QStringList());
-        if (item.length() == 4) {
+        if (item.length() >= 4) {
             KUrl url(item[0]);
             KIcon icon;
             if (!item[1].isEmpty()) {
                 icon = KIcon(item[1]);
-            } else {
-                icon = KIcon();
+            } else if (item.length() >= 5) {
+                QPixmap pixmap;
+                QByteArray bytes = QByteArray::fromBase64(item[4].toAscii());
+                pixmap.loadFromData(bytes);
+                icon.addPixmap(pixmap);
             }
             QString name(item[2]);
             QString genericName(item[3]);
@@ -229,11 +234,21 @@ void Tasks::launcherAdded(LauncherItem *launcher)
     KConfigGroup cg = config();
     KConfigGroup launcherCg(&cg, "Launchers");
 
-    QStringList launcherProperties;
+    QVariantList launcherProperties;
     launcherProperties.append(launcher->url().url());
     launcherProperties.append(launcher->icon().name());
     launcherProperties.append(launcher->name());
     launcherProperties.append(launcher->genericName());
+
+    if (launcher->icon().name().isEmpty()) {
+        QPixmap pixmap = launcher->icon().pixmap(QSize(64,64));
+        QByteArray bytes;
+        QBuffer buffer(&bytes);
+        buffer.open(QIODevice::WriteOnly);
+        pixmap.save(&buffer, "PNG");
+        launcherProperties.append(bytes.toBase64());
+    }
+
     launcherCg.writeEntry(launcher->name(), launcherProperties);
 }
 
