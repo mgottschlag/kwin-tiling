@@ -111,6 +111,7 @@ class KRunnerDialog : public QWidget
         bool m_resizing : 1;
         bool m_rightResize : 1;
         bool m_vertResize : 1;
+        bool m_runningTimer : 1;
         QString m_singleRunnerId;
 };
 
