@@ -56,7 +56,6 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     : QWidget(parent, f),
       m_runnerManager(runnerManager),
       m_configWidget(0),
-      m_lastPressPos(-1),
       m_oldScreen(-1),
       m_floating(!KRunnerSettings::freeFloating()),
       m_resizing(false),
@@ -378,16 +377,18 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
 {
     m_background->resizeFrame(e->size());
 
-    if (m_resizing && !m_vertResize && !m_floating) {
+    if (m_resizing && !m_vertResize) {
         QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
         //kDebug() << "if" << x() << ">" << r.left() << "&&" << r.right() << ">" << (x() + width());
         const Plasma::FrameSvg::EnabledBorders borders = m_background->enabledBorders();
         if (borders & Plasma::FrameSvg::LeftBorder) {
-            const int dx = x() + (e->oldSize().width() / 2) - (width() / 2);
-            int dy = r.top();
+            const int dx = x() + (e->oldSize().width() - width()) / 2 ;
+            const int dy = (m_floating ? pos().y() : r.top());
             move(qBound(r.left(), dx, r.right() - width() + 1), dy);
-            m_screenPos.insert(m_oldScreen, pos() - Kephal::ScreenUtils::screenGeometry(m_oldScreen).topLeft());
-            if (!checkBorders(r)) {
+            if (!m_floating) {
+                m_screenPos.insert(m_oldScreen, pos() - Kephal::ScreenUtils::screenGeometry(m_oldScreen).topLeft());
+            }
+            if (m_floating || !checkBorders(r)) {
                 updateMask();
             }
         } else {
@@ -401,50 +402,39 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
 void KRunnerDialog::mousePressEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton) {
-        m_lastPressPos = -1;
+        m_lastPressPos = e->globalPos();
 
-        if (m_floating) {
-            m_vertResize = e->y() > height() - qMax(5, m_bottomBorderHeight);
-            kDebug() << m_vertResize << e->y() << height() << qMax(5, m_bottomBorderHeight);
-            if (m_vertResize) {
-                m_lastPressPos = e->globalY();
-                m_resizing = true;
-                grabMouse();
-            } else {
+        const bool leftResize = e->x() < qMax(5, m_leftBorderWidth);
+        m_rightResize = e->x() > width() - qMax(5, m_rightBorderWidth);
+        m_vertResize = e->y() > height() - qMax(5, m_bottomBorderHeight);
+        kWarning() << "right:" << m_rightResize << "left:" << leftResize << "vert:" << m_vertResize;
+        if (m_rightResize || m_vertResize || leftResize) {
+            // let's do a resize! :)
+            grabMouse();
+            m_resizing = true;
+        } else if (m_floating) {
 #ifdef Q_WS_X11
-                // We have to release the mouse grab before initiating the move operation.
-                // Ideally we would call releaseMouse() to do this, but when we only have an
-                // implicit passive grab, Qt is unaware of it, and will refuse to release it.
-                XUngrabPointer(x11Info().display(), CurrentTime);
+            m_lastPressPos = QPoint();
+            // We have to release the mouse grab before initiating the move operation.
+            // Ideally we would call releaseMouse() to do this, but when we only have an
+            // implicit passive grab, Qt is unaware of it, and will refuse to release it.
+            XUngrabPointer(x11Info().display(), CurrentTime);
 
-                // Ask the window manager to start an interactive move operation.
-                NETRootInfo rootInfo(x11Info().display(), NET::WMMoveResize);
-                rootInfo.moveResizeRequest(winId(), e->globalX(), e->globalY(), NET::Move);
+            // Ask the window manager to start an interactive move operation.
+            NETRootInfo rootInfo(x11Info().display(), NET::WMMoveResize);
+            rootInfo.moveResizeRequest(winId(), e->globalX(), e->globalY(), NET::Move);
 #endif
-            }
-        } else {
-            m_vertResize = e->y() > height() - qMax(5, m_bottomBorderHeight);
-            m_rightResize = e->x() > width() - qMax(5, m_rightBorderWidth);
-            const bool leftResize = e->x() < qMax(5, m_leftBorderWidth);
-            m_lastPressPos = m_vertResize ? e->globalY() : e->globalX();
-
-            if (leftResize || m_rightResize || m_vertResize) {
-                // let's do a resize! :)
-                grabMouse();
-                m_resizing = true;
-            }
         }
-
         e->accept();
     }
 }
 
 void KRunnerDialog::mouseReleaseEvent(QMouseEvent *)
 {
-    if (m_lastPressPos != -1) {
+    if (!m_lastPressPos.isNull()) {
         releaseMouse();
         unsetCursor();
-        m_lastPressPos = -1;
+        m_lastPressPos = QPoint();
         m_resizing = false;
     }
 }
@@ -481,17 +471,17 @@ void KRunnerDialog::leaveEvent(QEvent *)
 void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
 {
     //kDebug() << e->x() << m_leftBorderWidth << width() << m_rightBorderWidth;
-    if (m_lastPressPos == -1) {
+    if (m_lastPressPos.isNull()) {
         checkCursor(e->pos());
     } else {
         if (m_resizing) {
             if (m_vertResize) {
-                const int deltaY = e->globalY() - m_lastPressPos;
+                const int deltaY = e->globalY() - m_lastPressPos.y();
                 resize(width(), height() + deltaY);
-                m_lastPressPos = e->globalY();
+                m_lastPressPos = e->globalPos();
             } else {
                 QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
-                const int deltaX = (m_rightResize ? -1 : 1) * (m_lastPressPos - e->globalX());
+                const int deltaX = (m_rightResize ? -1 : 1) * (m_lastPressPos.x() - e->globalX());
                 int newWidth = width() + deltaX;
                 // don't let it grow beyond the opposite screen edge
                 if (m_rightResize) {
@@ -499,23 +489,23 @@ void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
                         newWidth += qMin(deltaX, x() - r.left());
                     }
                 } else if (m_rightBorderWidth > 0) {
-                    newWidth += qBound(0, deltaX, r.right() - (x() + width() - 1));
+                    newWidth += qMin(deltaX, r.right() - (x() + width() - 1));
                 } else if (newWidth > minimumWidth() && newWidth < width()) {
                     move(r.right() - newWidth + 1, y());
                 }
 
-                if (newWidth > minimumWidth()) {
+                if (newWidth > minimumWidth()) {;
                     resize(newWidth, height());
-                    m_lastPressPos = e->globalX();
+                    m_lastPressPos = e->globalPos();
                 }
             }
         } else {
             QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
-            int newX = qBound(r.left(), x() - (m_lastPressPos - e->globalX()), r.right() - width() + 1);
+            int newX = qBound(r.left(), x() - (m_lastPressPos.x() - e->globalX()), r.right() - width() + 1);
             if (abs(r.center().x() - (newX + (width() / 2))) < 20) {
                 newX = r.center().x() - (width() / 2);
             } else {
-                m_lastPressPos = e->globalX();
+                m_lastPressPos = e->globalPos();
             }
 
             move(newX, y());

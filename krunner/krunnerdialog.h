@@ -102,10 +102,10 @@ class KRunnerDialog : public QWidget
         Plasma::FrameSvg *m_background;
         QPixmap *m_cachedBackground;
         QHash<int, QPoint> m_screenPos;
+        QPoint m_lastPressPos;
         int m_leftBorderWidth;
         int m_rightBorderWidth;
         int m_bottomBorderHeight;
-        int m_lastPressPos;
         int m_oldScreen;
         bool m_floating : 1;
         bool m_resizing : 1;
