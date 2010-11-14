@@ -93,8 +93,6 @@ ActivityIcon::ActivityIcon(const QString &id)
     m_buttonConfigure(0),
     m_inlineWidgetAnim(0)
 {
-    qDebug() << "### creating activity icon" << id;
-
     DesktopCorona *c = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
     m_activity = c->activity(id);
 
@@ -268,9 +266,6 @@ void ActivityIcon::updateLayout()
             0
             );
 
-    qDebug() << "### ActivityIcon::updateLayout" << m_activity->name() <<
-        "rect: " << rect << "contentsRect: " << contentsRect() << "iconSize: " << iconSize();
-
     if (m_buttonStop) {
         m_buttonStop->setGeometry(QRectF(
             rect.topRight() - QPointF(m_buttonStop->m_iconSize.width(), 0),
@@ -290,9 +285,6 @@ void ActivityIcon::updateLayout()
             rect.bottomRight() - QPointF(m_buttonConfigure->m_iconSize.width(), m_buttonConfigure->m_iconSize.height()),
             m_buttonConfigure->m_iconSize
         ));
-        qDebug() << "### ActivityIcon::updateLayout " << m_activity->name() << "m_buttonConfigure.geometry" << m_buttonConfigure->geometry();
-    } else {
-        qDebug() << "### ActivityIcon::updateLayout " << m_activity->name() << "m_buttonConfigure is NULL!";
     }
 
     if (m_buttonStart) {
@@ -306,15 +298,11 @@ void ActivityIcon::updateLayout()
 void ActivityIcon::updateButtons()
 {
     if (!m_activity) {
-        qDebug() << "### ActivityIcon::updateButtons - activity is null";
         return;
     }
 
-    qDebug() << "### ActivityIcon::updateButtons - activity is not null" << m_activity->name();
-
     if (!m_buttonConfigure) {
         m_buttonConfigure = new ActivityActionWidget(this, "showConfiguration", CONFIGURE_ICON, i18n("Configure activity"));
-        qDebug() << "### ActivityIcon::updateButtons - creating configure button for" << m_activity->name() << " = " << (m_buttonConfigure != NULL);
     }
 
 #define DESTROY_ACTIVITY_ACTION_WIDIGET(A) \
@@ -355,7 +343,6 @@ void ActivityIcon::updateButtons()
         // no break
 
     default: //transitioning or invalid: don't let the user mess with it
-        qDebug() << "### Activity" << m_activity->name() << " state is " << m_activity->state();
         DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStart);
         DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonRemove);
         DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStop);
