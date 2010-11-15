@@ -46,7 +46,12 @@ class PythonDataEngineScript(Plasma.DataEngineScript):
             relpath = relpath[:-3]
         relpath = relpath.replace("/",".")
         self.module = __import__(self.pluginName+'.'+relpath)
-        self.pydataengine = self.module.main.CreateDataEngine(None)
+        # The script may not necessarily be called "main"
+        # So we use __dict__ to look up the right name
+        basename = os.path.basename(str(self.mainScript()))
+        basename = os.path.splitext(basename)[0]
+
+        self.pydat  aengine = self.module.__dict__[basename].CreateDataEngine(None)
         self.pydataengine.setDataEngine(self.dataEngine())
         self.pydataengine.setDataEngineScript(self)
         self.pydataengine.init()
