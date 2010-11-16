@@ -728,7 +728,7 @@ void MenuLauncherApplet::showMenu(bool pressed)
             } else if(vtname == "Leave") {
                 Kickoff::LeaveModel *leavemodel = new Kickoff::LeaveModel(menuview);
                 leavemodel->updateModel();
-                d->addModel(leavemodel, Leave, Kickoff::MenuView::MergeFirstLevel, Kickoff::MenuView::Description);
+                d->addModel(leavemodel, Leave, Kickoff::MenuView::MergeFirstLevel, Kickoff::MenuView::Name);
             } else {
 #ifndef Q_WS_WIN
                 Solid::Control::PowerManager::SuspendMethods spdMethods = Solid::Control::PowerManager::supportedSuspendMethods();
