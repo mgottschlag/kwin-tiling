@@ -4,6 +4,8 @@ set(metadata_engine_SRCS metadata_engine.cpp)
  
 kde4_add_plugin(plasma_engine_metadata ${metadata_engine_SRCS})
 
+include_directories(${SOPRANO_INCLUDE_DIR})
+
 target_link_libraries(plasma_engine_metadata
 		      ${KDE4_KIO_LIBS}
                       ${KDE4_KDECORE_LIBS}
