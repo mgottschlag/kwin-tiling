@@ -62,6 +62,7 @@ class ResultScene : public QGraphicsScene
     signals:
         void itemActivated(ResultItem *item);
         void matchCountChanged(int count);
+        void sceneRectChanged();
         void ensureVisibility(QGraphicsItem *item);
 
     protected:

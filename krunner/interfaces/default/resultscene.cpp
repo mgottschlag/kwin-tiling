@@ -216,6 +216,7 @@ void ResultScene::arrangeItems()
 {
     int y = 0;
     QListIterator<ResultItem*> matchIt(m_items);
+    const QRectF rect = itemsBoundingRect();
     while (matchIt.hasNext()) {
         ResultItem *item = matchIt.next();
         //kDebug()  << item->name() << item->id() << item->priority() << i;
@@ -229,7 +230,12 @@ void ResultScene::arrangeItems()
     }
 
     //kDebug() << "setting scene rect to" << itemsBoundingRect();
-    setSceneRect(itemsBoundingRect());
+    const QRectF newRect = itemsBoundingRect();
+    setSceneRect(newRect);
+    if (!qFuzzyCompare(rect.height(), newRect.height()) ||
+        !qFuzzyCompare(rect.width(), newRect.width())) {
+        emit sceneRectChanged();
+    }
 }
 
 void ResultScene::highlightItem(QGraphicsItem *item)
