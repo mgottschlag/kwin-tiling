@@ -233,9 +233,9 @@ bool ResultItem::eventFilter(QObject *obj, QEvent *event)
                 if (actionButton->action()) {
                     m_match.setSelectedAction(actionButton->action());
                     emit activated(this);
-                    } else {
-                        showConfig();
-                    }
+                } else {
+                    showConfig();
+                }
                 return true;
             }
         }
