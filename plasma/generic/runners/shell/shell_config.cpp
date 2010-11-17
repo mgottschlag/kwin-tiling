@@ -53,8 +53,9 @@ ShellConfig::~ShellConfig()
 
 void ShellConfig::slotUpdateUser(bool b)
 {
-    m_ui.leUsername->setEnabled(b);
-    m_ui.lePassword->setEnabled(b);
+    if (b) {
+        m_ui.leUsername->setFocus();
+    }
 }
 
 #include "shell_config.moc"

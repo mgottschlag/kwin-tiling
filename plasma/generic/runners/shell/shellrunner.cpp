@@ -24,7 +24,7 @@
 #include <KAuthorized>
 #include <KDebug>
 #ifdef Q_OS_UNIX
-#include <KDEsuClient>
+#include <KDE/SuProcess>
 #endif
 #include <KIcon>
 #include <KLocale>
@@ -76,15 +76,6 @@ void ShellRunner::match(Plasma::RunnerContext &context)
     }
 }
 
-#ifdef Q_OS_UNIX
-class MySuClient : public KDESu::KDEsuClient
-{
-public:
-    MySuClient() : KDESu::KDEsuClient() {}
-    ~MySuClient() { kDebug() << "buh bye"; }
-};
-#endif
-
 void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
     Q_UNUSED(match);
@@ -103,7 +94,6 @@ void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryM
                 // we have to reimplement this from KToolInvocation because we need to use KDESu
                 KConfigGroup confGroup( KGlobal::config(), "General" );
                 exec = confGroup.readPathEntry("TerminalApplication", "konsole");
-
                 if (!exec.isEmpty()) {
                     if (exec == "konsole") {
                         args += " --noclose";
@@ -124,16 +114,12 @@ void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryM
 
             if (!exec.isEmpty()) {
                 exec = KStandardDirs::findExe(exec);
+                exec.append(args);
                 if (!exec.isEmpty()) {
-                    KDESu::KDEsuClient client;
-                    client.startServer();
-                    //kDebug() << "executing" << exec << m_username << m_password << args;
-                    if (client.exec(exec.toLocal8Bit(), m_username.toLocal8Bit(), args.toLocal8Bit()) == -1) {
-                        if (!m_password.isEmpty()) {
-                            const QByteArray password = m_password.toLocal8Bit();
-                            client.exec(exec.toLocal8Bit(), m_username.toLocal8Bit(), args.toLocal8Bit());
-                        }
-                    }
+                    KDESu::SuProcess client(m_username.toLocal8Bit(), exec.toLocal8Bit());
+                    const QByteArray password = m_password.toLocal8Bit();
+                    //TODO handle errors like wrong password via KNotifications in 4.7
+                    client.exec(password.constData());
                 }
             }
         } else
@@ -160,8 +146,8 @@ void ShellRunner::createRunOptions(QWidget *parent)
 
     QPalette pal = configWidget->palette();
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
-    pal.setColor(QPalette::Window, theme->color(Plasma::Theme::BackgroundColor));
-    pal.setColor(QPalette::WindowText, theme->color(Plasma::Theme::TextColor));
+    pal.setColor(QPalette::Normal, QPalette::Window, theme->color(Plasma::Theme::BackgroundColor));
+    pal.setColor(QPalette::Normal, QPalette::WindowText, theme->color(Plasma::Theme::TextColor));
     configWidget->setPalette(pal);
 
     connect(configWidget->m_ui.cbRunAsOther, SIGNAL(clicked(bool)), this, SLOT(setRunAsOtherUser(bool)));
