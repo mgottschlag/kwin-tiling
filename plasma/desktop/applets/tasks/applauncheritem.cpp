@@ -97,3 +97,4 @@ void AppLauncherItem::keyPressEvent(QKeyEvent *event)
 }
 
 #include "applauncheritem.moc"
+
