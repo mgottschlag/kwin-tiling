@@ -176,6 +176,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     QListIterator<ResultItem *> rit(m_items);
     QGraphicsWidget *prevTabItem = 0;
 
+    const int viewableHeight = m_viewableHeight;
     while (mit.hasPrevious() && rit.hasNext()) {
         ResultItem * item = rit.next();
         item->setMatch(mit.previous());
@@ -203,6 +204,9 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     }
 
     emit matchCountChanged(qMin(m.count(), maxItemsAllowed));
+    if (viewableHeight != m_viewableHeight) {
+        emit viewableHeightChanged();
+    }
 }
 
 void ResultScene::scheduleArrangeItems()
@@ -216,7 +220,7 @@ void ResultScene::arrangeItems()
 {
     int y = 0;
     QListIterator<ResultItem*> matchIt(m_items);
-    const QRectF rect = itemsBoundingRect();
+    const int viewableHeight = m_viewableHeight;
     while (matchIt.hasNext()) {
         ResultItem *item = matchIt.next();
         //kDebug()  << item->name() << item->id() << item->priority() << i;
@@ -232,9 +236,8 @@ void ResultScene::arrangeItems()
     //kDebug() << "setting scene rect to" << itemsBoundingRect();
     const QRectF newRect = itemsBoundingRect();
     setSceneRect(newRect);
-    if (!qFuzzyCompare(rect.height(), newRect.height()) ||
-        !qFuzzyCompare(rect.width(), newRect.width())) {
-        emit sceneRectChanged();
+    if (viewableHeight != m_viewableHeight) {
+        emit viewableHeightChanged();
     }
 }
 

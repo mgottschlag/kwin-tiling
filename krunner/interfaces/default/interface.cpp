@@ -153,7 +153,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_resultsView = new ResultsView(m_resultsScene, &m_resultData, this);
     m_layout->addWidget(m_resultsView);
 
-    connect(m_resultsScene, SIGNAL(sceneRectChanged()), this, SLOT(fitWindow()));
+    connect(m_resultsScene, SIGNAL(viewableHeightChanged()), this, SLOT(fitWindow()));
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
     connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
 
