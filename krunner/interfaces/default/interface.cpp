@@ -153,6 +153,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_resultsView = new ResultsView(m_resultsScene, &m_resultData, this);
     m_layout->addWidget(m_resultsView);
 
+    connect(m_resultsScene, SIGNAL(sceneRectChanged()), this, SLOT(fitWindow()));
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
     connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
 
@@ -551,30 +552,7 @@ void Interface::matchCountChanged(int count)
     if (show) {
         //kDebug() << "showing!" << minimumSizeHint();
 
-        QSize s = m_defaultSize;
-        const int resultsHeight = m_resultsScene->viewableHeight() + 2;
-        int spacing = m_layout->spacing();
-        if (spacing < 0) {
-            // KStyles allow for variable spacing via the layoutSpacingImplementation() method;
-            // in this case m_layout->spacing() returns -1 and we should ask for the
-            // spacing by ourselves.
-            // This is quite ugly, but at least gives the right guess, so that we avoid
-            // multiple resize events
-            spacing = style()->layoutSpacing(QSizePolicy::DefaultType, QSizePolicy::DefaultType, Qt::Vertical);
-        }
-
-        //kDebug() << m_minimumHeight << resultsHeight << spacing << s.height();
-
-        if (m_minimumHeight + resultsHeight + spacing < s.height()) {
-            s.setHeight(m_minimumHeight + resultsHeight + spacing);
-            m_resultsView->setMinimumHeight(resultsHeight);
-            // The layout will activate on the next event cycle, but
-            // we need to update the minimum size now, as we are going to
-            // resize the krunner window right away.
-            m_layout->activate();
-        }
-
-        resize(s);
+        //fitWindow();
 
         if (!m_resultsView->isVisible()) {
             // Next 2 lines are a workaround to allow arrow
@@ -592,6 +570,34 @@ void Interface::matchCountChanged(int count)
         m_delayedRun = false;
         m_hideResultsTimer.start(1000);
     }
+}
+
+void Interface::fitWindow()
+{
+    QSize s = m_defaultSize;
+    const int resultsHeight = m_resultsScene->viewableHeight() + 2;
+    int spacing = m_layout->spacing();
+    if (spacing < 0) {
+        // KStyles allow for variable spacing via the layoutSpacingImplementation() method;
+        // in this case m_layout->spacing() returns -1 and we should ask for the
+        // spacing by ourselves.
+        // This is quite ugly, but at least gives the right guess, so that we avoid
+        // multiple resize events
+        spacing = style()->layoutSpacing(QSizePolicy::DefaultType, QSizePolicy::DefaultType, Qt::Vertical);
+    }
+
+    //kDebug() << m_minimumHeight << resultsHeight << spacing << s.height();
+
+    if (m_minimumHeight + resultsHeight + spacing < s.height()) {
+        s.setHeight(m_minimumHeight + resultsHeight + spacing);
+        m_resultsView->setMinimumHeight(resultsHeight);
+        // The layout will activate on the next event cycle, but
+        // we need to update the minimum size now, as we are going to
+        // resize the krunner window right away.
+        m_layout->activate();
+    }
+
+    resize(s);
 }
 
 void Interface::hideResultsArea()

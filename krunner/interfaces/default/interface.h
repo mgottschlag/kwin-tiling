@@ -68,6 +68,7 @@ class Interface : public KRunnerDialog
         void hideEvent(QHideEvent *e);
 
     private slots:
+        void fitWindow();
         void run(ResultItem *item);
         void runDefaultResultItem();
         void queryTextEdited(const QString &query);
