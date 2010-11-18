@@ -44,6 +44,7 @@
 Activity::Activity(const QString &id, QObject *parent)
     : QObject(parent),
       m_id(id),
+      m_plugin("default"),
       m_info(new KActivityInfo(id, this))
 {
     connect(m_info, SIGNAL(infoChanged()), this, SLOT(activityChanged()));
@@ -149,37 +150,39 @@ Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
         desktop = 0;
     }
 
-    Plasma::Containment *c = m_containments.value(QPair<int,int>(screen, desktop));
-    if (!c) {
-        //TODO check if there are saved containments once we start saving them
-        kDebug() << "@@@@@adding containment for" << screen << desktop;
-        c = addContainment(screen, desktop);
-    }
-
-    return c;
-}
-
-Plasma::Containment* Activity::addContainment(int screen, int desktop)
-{
-    Plasma::Containment *containment = 0;
-    foreach (Plasma::Containment *c, m_corona->containments()) {
-        if ((c->containmentType() == Plasma::Containment::DesktopContainment ||
-             c->containmentType() == Plasma::Containment::CustomContainment) &&
-            !m_corona->offscreenWidgets().contains(c) &&
-            c->context()->currentActivityId().isEmpty() &&
-            m_containments.key(c,QPair<int,int>(-2,-2)) == QPair<int,int>(-2,-2)) {
-            containment = c;
-            containment->setScreen(screen, desktop);
-            break;
-        }
-    }
-
+    Plasma::Containment *containment = m_containments.value(QPair<int,int>(screen, desktop));
     if (!containment) {
-        containment = m_corona->addContainment(m_plugin);
+        kDebug() << "adding containment for" << screen << desktop;
+        // first look to see if there are any unnasigned containments that are candidates for
+        // being sucked into this Activity
+        foreach (Plasma::Containment *c, m_corona->containments()) {
+            if ((c->containmentType() == Plasma::Containment::DesktopContainment ||
+                c->containmentType() == Plasma::Containment::CustomContainment) &&
+                c->context()->currentActivityId().isEmpty() &&
+                !m_corona->offscreenWidgets().contains(c) &&
+                m_containments.key(c, QPair<int,int>(-2,-2)) == QPair<int,int>(-2,-2)) {
+                containment = c;
+                containment->setScreen(screen, desktop);
+                break;
+            }
+        }
+
+        if (!containment) {
+            // we ask for the containment for the screen with a default plugin, because
+            // this allows the corona to either grab one for us that already exists matching
+            // screen and desktop, or create a new one. this also works regardless of immutability
+            containment = m_corona->containmentForScreen(screen, desktop, m_plugin);
+            if (!containment) {
+                // possibly a plugin failure, let's go for the default
+                containment = m_corona->containmentForScreen(screen, desktop, "default");
+            }
+        }
+
+        Q_ASSERT(containment);
+        insertContainment(containment, screen, desktop);
+        m_corona->requestConfigSync();
     }
 
-    insertContainment(containment, screen, desktop);
-    m_corona->requestConfigSync();
     return containment;
 }
 
@@ -386,7 +389,7 @@ void Activity::opened()
     if (m_containments.isEmpty()) {
         //TODO check if we need more for screens/desktops
         kDebug() << "open failed (bad file?). creating new containment";
-        addContainment(0, 0);
+        containmentForScreen(0, 0);
     }
 
     m_corona->requireConfigSync();

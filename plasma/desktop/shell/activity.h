@@ -136,7 +136,6 @@ private:
     void activateContainment(int screen, int desktop);
     void insertContainment(Plasma::Containment* cont, bool force=false);
     void insertContainment(Plasma::Containment* containment, int screen, int desktop);
-    Plasma::Containment* addContainment(int screen, int desktop);
 
     QString m_id;
     QString m_name;
