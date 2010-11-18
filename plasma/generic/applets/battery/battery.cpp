@@ -595,10 +595,16 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         }
         // Configure button
         Plasma::IconWidget *configButton = createButton(m_controls);
-        configButton->setToolTip(i18nc("tooltip on the config button in the popup", "Configure Power Management..."));
+        QAction *action = new QAction(this);
+        action->setToolTip(i18nc("tooltip on the config button in the popup", "Configure Power Management..."));
+        action->setIcon(KIcon("configure"));
+        action->setText(i18n("Power save settings"));
+        connect(action, SIGNAL(triggered(bool)), this, SLOT(openConfig()));
+        connect(configButton, SIGNAL(activated()), this, SLOT(openConfig()));
+        addAction("configure_powersave", action);
+        configButton->setIcon(action->icon());
+        configButton->setToolTip(action->toolTip());
         configButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
-        configButton->setIcon("configure");
-        connect(configButton, SIGNAL(clicked()), this, SLOT(openConfig()));
         configButton->setEnabled(hasAuthorization("LaunchApp"));
 
         buttonLayout->addItem(configButton);
@@ -1083,6 +1089,14 @@ void Battery::setAcAlpha(qreal alpha)
 {
     m_acAlpha = alpha;
     update();
+}
+
+QList<QAction*> Battery::contextualActions()
+{
+    QList<QAction *> rv;
+    QAction *act = action("configure_powersave");
+    rv << act;
+    return rv;
 }
 
 qreal Battery::acAlpha() const

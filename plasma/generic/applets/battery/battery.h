@@ -65,6 +65,8 @@ class Battery : public Plasma::PopupApplet
         qreal acAlpha() const;
         void setAcAlpha(qreal alpha);
 
+        QList<QAction*> contextualActions();
+
     public Q_SLOTS:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
         void configChanged();
