@@ -26,6 +26,7 @@
 #include <QDebug>
 #include <QFontMetrics>
 #include <QGraphicsSceneMouseEvent>
+#include <QPropertyAnimation>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
 
@@ -44,15 +45,18 @@ namespace Plasma
 AbstractIcon::AbstractIcon(QGraphicsItem *parent)
     : QGraphicsWidget(parent),
       m_background(new Plasma::FrameSvg(this)),
+      m_backgroundFadeAnim(0),
+      m_backgroundPrefix("normal"),
       m_iconHeight(DEFAULT_ICON_SIZE),
       m_maxSize(maximumSize()),
+      m_backgroundAlpha(1),
       m_selected(false),
       m_hovered(false)
 {
     setCacheMode(DeviceCoordinateCache);
     setAcceptHoverEvents(true);
+    m_background->setCacheAllRenderedFrames(true);
     m_background->setImagePath("widgets/tasks");
-    m_background->setElementPrefix("normal");
 }
 
 AbstractIcon::~AbstractIcon()
@@ -128,18 +132,24 @@ void AbstractIcon::expand()
 void AbstractIcon::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 {
     m_hovered = true;
+
+    m_backgroundPrefix = "hover";
+    m_oldBackgroundPrefix = m_selected ? "focus" : "normal";
+
     emit hoverEnter(this);
-    QMimeData *data = mimeData();
-    if (data && !data->formats().isEmpty()) {
-    }
-    update();
+
+    fadeBackground(150);
 }
 
 void AbstractIcon::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 {
     m_hovered = false;
     emit hoverLeave(this);
-    update();
+
+    m_backgroundPrefix = m_selected ? "focus" : "normal";
+    m_oldBackgroundPrefix = "hover";
+
+    fadeBackground(250);
 }
 
 void AbstractIcon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -195,7 +205,16 @@ void AbstractIcon::setSelected(bool selected)
 {
     if (m_selected != selected) {
         m_selected = selected;
-        update();
+
+        if (m_selected) {
+            m_backgroundPrefix = "focus";
+            m_oldBackgroundPrefix = m_hovered ? "hover" : "normal";
+        } else {
+            m_backgroundPrefix = m_hovered ? "hover" : "normal";
+            m_oldBackgroundPrefix = "focus";
+        }
+
+        fadeBackground(150);
     }
 }
 
@@ -227,18 +246,22 @@ void AbstractIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 void AbstractIcon::paintBackground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
-    if (m_hovered) {
-        m_background->setElementPrefix("hover");
-
-    } else if (m_selected) {
-        m_background->setElementPrefix("focus");
-
-    } else {
-        m_background->setElementPrefix("normal");
-
+    if (!option->rect.isValid()) {
+        return;
     }
 
-    m_background->paintFrame(painter, option->rect, option->rect);
+    if (!m_backgroundFadeAnim || m_backgroundFadeAnim->state() != QAbstractAnimation::Running) {
+        m_background->setElementPrefix(m_backgroundPrefix);
+        m_background->paintFrame(painter);
+        return;
+    }
+
+    m_background->setElementPrefix(m_oldBackgroundPrefix);
+    QPixmap bg = m_background->framePixmap();
+
+    m_background->setElementPrefix(m_backgroundPrefix);
+    bg = Plasma::PaintUtils::transition(bg, m_background->framePixmap(), m_backgroundAlpha);
+    painter->drawPixmap(option->exposedRect, bg, option->exposedRect);
 }
 
 void AbstractIcon::paintForeground(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
@@ -266,6 +289,36 @@ void AbstractIcon::paintForeground(QPainter *painter, const QStyleOptionGraphics
 
     painter->drawPixmap(iconRect, pixmap(QSize(m_iconHeight, m_iconHeight)));
     painter->drawText(textRect, flags, m_name);
+}
+
+qreal AbstractIcon::backgroundFadeAlpha() const
+{
+    return m_backgroundAlpha;
+}
+
+void AbstractIcon::setBackgroundFadeAlpha(qreal progress)
+{
+    m_backgroundAlpha = progress;
+    update();
+}
+
+void AbstractIcon::fadeBackground(int duration)
+{
+    if (m_oldBackgroundPrefix.isEmpty()) {
+        update();
+    } else {
+        if (!m_backgroundFadeAnim) {
+            m_backgroundFadeAnim = new QPropertyAnimation(this);
+            m_backgroundFadeAnim->setEasingCurve(QEasingCurve::InQuad);
+            m_backgroundFadeAnim->setPropertyName("backgroundFadeAlpha");
+            m_backgroundFadeAnim->setTargetObject(this);
+            m_backgroundFadeAnim->setStartValue(0);
+            m_backgroundFadeAnim->setEndValue(1);
+        }
+
+        m_backgroundFadeAnim->setDuration(duration);
+        m_backgroundFadeAnim->start();
+    }
 }
 
 } // namespace Plasma

@@ -24,6 +24,8 @@
 #include <QGraphicsWidget>
 #include "plasmagenericshell_export.h"
 
+class QPropertyAnimation;
+
 namespace Plasma {
 
 class FrameSvg;
@@ -31,6 +33,7 @@ class FrameSvg;
 class PLASMAGENERICSHELL_EXPORT AbstractIcon : public QGraphicsWidget
 {
     Q_OBJECT
+    Q_PROPERTY(qreal backgroundFadeAlpha READ backgroundFadeAlpha WRITE setBackgroundFadeAlpha)
 
     public:
         explicit AbstractIcon(QGraphicsItem *parent = 0);
@@ -88,10 +91,18 @@ class PLASMAGENERICSHELL_EXPORT AbstractIcon : public QGraphicsWidget
         void setDraggable(bool draggable);
 
     private:
+        qreal backgroundFadeAlpha() const;
+        void setBackgroundFadeAlpha(qreal progress);
+        void fadeBackground(int duration);
+
         Plasma::FrameSvg *m_background;
+        QPropertyAnimation *m_backgroundFadeAnim;
+        QString m_backgroundPrefix;
+        QString m_oldBackgroundPrefix;
         QString m_name;
         int m_iconHeight;
         QSizeF m_maxSize;
+        qreal m_backgroundAlpha;
         bool m_selected : 1;
         bool m_hovered : 1;
 };
