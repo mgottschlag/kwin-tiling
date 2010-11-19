@@ -37,6 +37,8 @@
 #include <Plasma/Context>
 #include <Plasma/Corona>
 
+#include <kactivityconsumer.h>
+
 #include "plasmaapp.h"
 
 #include "activity.h"
@@ -45,25 +47,24 @@ Activity::Activity(const QString &id, QObject *parent)
     : QObject(parent),
       m_id(id),
       m_plugin("default"),
-      m_info(new KActivityInfo(id, this))
+      m_info(new KActivityInfo(id, this)),
+      m_activityConsumer(new KActivityConsumer(this)),
+      m_current(false)
 {
+    m_corona = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
+
+    m_name = m_info->name();
+    m_icon = m_info->icon();
+    m_state = m_info->state();
+
     connect(m_info, SIGNAL(infoChanged()), this, SLOT(activityChanged()));
     connect(m_info, SIGNAL(stateChanged(KActivityInfo::State)), this, SLOT(activityStateChanged(KActivityInfo::State)));
     connect(m_info, SIGNAL(started()), this, SLOT(opened()));
     connect(m_info, SIGNAL(stopped()), this, SLOT(closed()));
     connect(m_info, SIGNAL(removed()), this, SLOT(removed()));
 
-    if (m_info) {
-        m_name = m_info->name();
-        m_icon = m_info->icon();
-        m_state = m_info->state();
-    } else {
-        m_name = m_id;
-        m_icon = QString();
-        m_state = KActivityInfo::Invalid;
-    }
-
-    m_corona = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
+    connect(m_activityConsumer, SIGNAL(currentActivityChanged(QString)), this, SLOT(checkIfCurrent()));
+    checkIfCurrent();
 
     //find your containments
     foreach (Plasma::Containment *cont, m_corona->containments()) {
@@ -114,9 +115,17 @@ QPixmap Activity::pixmap(const QSize &size)
 
 bool Activity::isCurrent()
 {
-    KActivityConsumer c;
-    return m_id == c.currentActivity();
+    return m_current;
     //TODO maybe plasmaapp should cache the current activity to reduce dbus calls?
+}
+
+void Activity::checkIfCurrent()
+{
+    const bool current = m_id == m_activityConsumer->currentActivity();
+    if (current != m_current) {
+        m_current = current;
+        emit currentStatusChanged();
+    }
 }
 
 KActivityInfo::State Activity::state()

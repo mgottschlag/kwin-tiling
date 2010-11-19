@@ -60,6 +60,7 @@ class ActivityIcon : public Plasma::AbstractIcon
         void updateLayout();
         void updateButtons();
         void updateContents();
+        void currentStatusChanged();
 
     private:
         QString m_id;

@@ -101,6 +101,7 @@ ActivityIcon::ActivityIcon(const QString &id)
     connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)), m_activity, SLOT(activate()));
     connect(m_activity, SIGNAL(stateChanged()), this, SLOT(updateButtons()));
     connect(m_activity, SIGNAL(infoChanged()), this, SLOT(updateContents()));
+    connect(m_activity, SIGNAL(currentStatusChanged()), this, SLOT(currentStatusChanged()));
     setName(m_activity->name());
 
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
@@ -371,15 +372,17 @@ void ActivityIcon::updateContents()
     update();
 }
 
+void ActivityIcon::currentStatusChanged()
+{
+    setSelected(m_activity->isCurrent());
+}
+
 void ActivityIcon::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
     if (m_inlineWidget && m_inlineWidget.data()->hidesContents()) {
         paintBackground(painter, option, widget);
         return;
     }
-
-    //a dbus call during paint; this can be optimized :)
-    setSelected(m_activity->isCurrent());
 
     AbstractIcon::paint(painter, option, widget);
 }
