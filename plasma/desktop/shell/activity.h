@@ -29,12 +29,16 @@ class QSize;
 class QString;
 class QPixmap;
 class KConfig;
-class DesktopCorona;
+
+class KActivityConsumer;
+
 namespace Plasma
 {
     class Containment;
     class Context;
 } // namespace Plasma
+
+class DesktopCorona;
 
 /**
  * This class represents one activity.
@@ -92,6 +96,7 @@ public:
 signals:
     void infoChanged();
     void stateChanged();
+    void currentStatusChanged();
 
 public slots:
     void setName(const QString &name);
@@ -127,6 +132,7 @@ private slots:
     void containmentDestroyed(QObject *object);
     void activityChanged();
     void activityStateChanged(KActivityInfo::State);
+    void checkIfCurrent();
 
     void removed();
     void opened();
@@ -144,8 +150,9 @@ private:
     KActivityInfo::State m_state;
     QHash<QPair<int,int>, Plasma::Containment*> m_containments;
     KActivityInfo *m_info;
+    KActivityConsumer *m_activityConsumer;
     DesktopCorona *m_corona;
-
+    bool m_current;
 };
 
 #endif
