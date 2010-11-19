@@ -43,6 +43,7 @@ namespace Plasma
 
 AbstractIcon::AbstractIcon(QGraphicsItem *parent)
     : QGraphicsWidget(parent),
+      m_background(new Plasma::FrameSvg(this)),
       m_iconHeight(DEFAULT_ICON_SIZE),
       m_maxSize(maximumSize()),
       m_selected(false),
@@ -50,7 +51,6 @@ AbstractIcon::AbstractIcon(QGraphicsItem *parent)
 {
     setCacheMode(DeviceCoordinateCache);
     setAcceptHoverEvents(true);
-    m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/tasks");
     m_background->setElementPrefix("normal");
 }
@@ -225,7 +225,7 @@ void AbstractIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     paintForeground(painter, option, widget);
 }
 
-void AbstractIcon::paintBackground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void AbstractIcon::paintBackground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
     if (m_hovered) {
         m_background->setElementPrefix("hover");
@@ -241,7 +241,7 @@ void AbstractIcon::paintBackground(QPainter *painter, const QStyleOptionGraphics
     m_background->paintFrame(painter, option->rect, option->rect);
 }
 
-void AbstractIcon::paintForeground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void AbstractIcon::paintForeground(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     const QRectF rect = contentsRect();
     const int width = rect.width();

@@ -36,7 +36,6 @@
 #include <Plasma/Animator>
 #include <Plasma/Containment>
 #include <Plasma/Corona>
-#include <Plasma/ItemBackground>
 #include <Plasma/Theme>
 #include <Plasma/ToolButton>
 
@@ -83,7 +82,6 @@ void AbstractIconList::init()
     m_appletListLinearLayout->setSpacing(0);
     setWidget(m_appletListWidget);
     adjustFromOrientation();
-    m_hoverIndicator = new Plasma::ItemBackground(m_appletListWidget);
 }
 
 Plasma::Location AbstractIconList::location()
@@ -127,19 +125,6 @@ void AbstractIconList::setSearch()
     updateList();
 }
 
-void AbstractIconList::iconHoverEnter(Plasma::AbstractIcon *icon)
-{
-    if (icon) {
-        m_hoverIndicator->setTargetItem(icon);
-        if (!m_hoverIndicator->isVisible()) {
-            m_hoverIndicator->setGeometry(icon->geometry());
-            m_hoverIndicator->show();
-        }
-    } else {
-        m_hoverIndicator->hide();
-    }
-}
-
 //all items are always in the list. filter updates just hide/show.
 //what do we need the visible-list for? getting position, finding the end of the list,
 //calculating how many fit on the list...
@@ -179,9 +164,6 @@ void AbstractIconList::hideAllIcons()
 void AbstractIconList::addIcon(AbstractIcon *icon)
 {
     icon->setParent(m_appletListWidget); //FIXME redundant?
-    qreal l, t, r, b;
-    m_hoverIndicator->getContentsMargins(&l, &t, &r, &b);
-    icon->setContentsMargins(l, t, r, b);
 
     //we don't add it to the hash here because we don't know its id.
 
@@ -194,7 +176,6 @@ void AbstractIconList::addIcon(AbstractIcon *icon)
     m_appletListLinearLayout->setAlignment(icon, Qt::AlignHCenter);
     showIcon(icon);
 
-    connect(icon, SIGNAL(hoverEnter(Plasma::AbstractIcon*)), this, SLOT(iconHoverEnter(Plasma::AbstractIcon*)));
     connect(icon, SIGNAL(clicked(Plasma::AbstractIcon*)), this, SLOT(itemSelected(Plasma::AbstractIcon*)));
 }
 
@@ -216,7 +197,6 @@ void AbstractIconList::updateList()
     m_appletListWidget->adjustSize();
 
     updateGeometry();
-    m_hoverIndicator->hide();
     resetScroll();
 }
 

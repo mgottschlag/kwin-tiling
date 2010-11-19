@@ -120,7 +120,6 @@ private Q_SLOTS:
     void resetScroll();
 
     void itemSelected(Plasma::AbstractIcon *icon);
-    void iconHoverEnter(Plasma::AbstractIcon *icon);
 
     void setSearch();
 
@@ -133,8 +132,6 @@ private:
 
     Qt::Orientation m_orientation;
     Plasma::Location m_location;
-
-    Plasma::ItemBackground *m_hoverIndicator;
 
     AbstractIcon *m_selectedItem;
 
