@@ -69,6 +69,8 @@ protected:
     bool event(QEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
     void adjustPosition(const QPoint &pos = QPoint(-1, -1));
+    void savePosition(const QPoint &pos);
+    QPoint adjustedSavedPos() const;
 
 private:
     Plasma::Applet *m_applet;

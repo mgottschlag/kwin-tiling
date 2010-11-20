@@ -207,8 +207,7 @@ void StackDialog::paintEvent(QPaintEvent *e)
 void StackDialog::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
-
-    adjustPosition(pos());
+    adjustPosition(adjustedSavedPos());
 
     if (m_autoHide) {
         m_hideTimer->start(hideTimeout);
@@ -231,7 +230,6 @@ void StackDialog::hideEvent(QHideEvent *event)
 void StackDialog::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
-
     adjustWindowToTilePos();
     Plasma::Dialog::resizeEvent(event);
     adjustPosition(pos());
@@ -269,14 +267,6 @@ void StackDialog::adjustPosition(const QPoint &pos)
     }
 
     QPoint customPosition = pos;
-    int screen = QApplication::desktop()->screenNumber(this);
-    if (customPosition == QPoint(-1, -1)) {
-        customPosition = m_applet->config().readEntry("customPosition", QPoint(-1, -1));
-        screen = m_applet->config().readEntry("screen", 0);
-        //the position is saved relative to the screen, since screen position can change
-        customPosition = (customPosition + QApplication::desktop()->screenGeometry(screen).topLeft());
-    }
-
 
     const QPoint popupPosition = m_applet->containment()->corona()->popupPosition(m_applet, size());
 
@@ -286,9 +276,8 @@ void StackDialog::adjustPosition(const QPoint &pos)
         move(popupPosition);
         Plasma::WindowEffects::slideWindow(this, m_applet->location());
         m_hasCustomPosition = false;
-        m_applet->config().deleteEntry("customPosition");
-    } else {
 
+    } else {
         if (m_applet->containment() &&
             m_applet->containment()->corona() &&
             m_notificationStack) {
@@ -301,13 +290,71 @@ void StackDialog::adjustPosition(const QPoint &pos)
         }
 
         move(customPosition);
-        customPosition = (customPosition - QApplication::desktop()->screenGeometry(screen).topLeft());
         Plasma::WindowEffects::slideWindow(this, Plasma::Desktop);
         m_hasCustomPosition = true;
-        //the position is saved relative to the screen, since screen position can change
-        m_applet->config().writeEntry("customPosition", customPosition);
-        m_applet->config().writeEntry("screen", screen);
     }
+}
+
+void StackDialog::savePosition(const QPoint& pos)
+{
+    QByteArray horizSide, vertSide;
+    QPoint pixelsToSave;
+    QDesktopWidget widget;
+    const QRect realScreenRect = widget.screenGeometry(m_applet->containment()->screen());
+
+    int screenRelativeX = pos.x() - realScreenRect.x();
+    int diffWithRight = realScreenRect.width() - (screenRelativeX + size().width());
+    if (screenRelativeX < diffWithRight) {
+        horizSide = "l";
+        pixelsToSave.rx() = screenRelativeX;
+    } else {
+        horizSide = "r";
+        pixelsToSave.rx() = diffWithRight;
+    }
+
+    int screenRelativeY = pos.y() - realScreenRect.y();
+    int diffWithBottom = realScreenRect.height() - (screenRelativeY + size().height());
+    if (screenRelativeY < diffWithBottom) {
+        vertSide = "t";
+        pixelsToSave.ry() = screenRelativeY;
+    } else {
+        vertSide = "b";
+        pixelsToSave.ry() = diffWithBottom;
+    }
+
+    kDebug() << "Affinity-v" << vertSide;
+    kDebug() << "Affinity-h" << horizSide;
+    kDebug() << "Y: " << pixelsToSave.ry();
+    kDebug() << "X: " << pixelsToSave.rx();
+
+    m_applet->config().writeEntry("customPosition", pixelsToSave);
+    m_applet->config().writeEntry("customPositionAffinityHoriz", horizSide);
+    m_applet->config().writeEntry("customPositionAffinityVert", vertSide);
+}
+
+QPoint StackDialog::adjustedSavedPos() const
+{
+    QPoint pos = m_applet->config().readEntry("customPosition", QPoint(-1, -1));
+
+    if (pos != QPoint(-1, -1)) {
+        QDesktopWidget widget;
+        const QRect realScreenRect = widget.screenGeometry(m_applet->containment()->screen());
+        QByteArray horizSide = m_applet->config().readEntry("customPositionAffinityHoriz").toLatin1();
+        QByteArray vertSide = m_applet->config().readEntry("customPositionAffinityVert").toLatin1();
+
+        if (horizSide == "l") {
+            pos.rx() += realScreenRect.x();
+        } else {
+            pos.rx() = realScreenRect.x() + (realScreenRect.width() - pos.rx() - size().width());
+        }
+
+        if (vertSide == "t") {
+            pos.ry() += realScreenRect.y();
+        } else {
+            pos.ry() = realScreenRect.y() + (realScreenRect.height() - pos.ry() - size().height());
+        }
+    }
+    return pos;
 }
 
 bool StackDialog::event(QEvent *event)
@@ -337,6 +384,10 @@ bool StackDialog::eventFilter(QObject *watched, QEvent *event)
     } else if (watched == m_notificationStack && event->type() == QEvent::GraphicsSceneMouseMove) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
         adjustPosition(me->screenPos() - m_dragPos);
+    } else if (watched == m_notificationStack && event->type() == QEvent::GraphicsSceneMouseRelease) {
+        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
+        adjustPosition(me->screenPos() - m_dragPos);
+        savePosition(me->screenPos() - m_dragPos);
     }
 
     return Plasma::Dialog::eventFilter(watched, event);
