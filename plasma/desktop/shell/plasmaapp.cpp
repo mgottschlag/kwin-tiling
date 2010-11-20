@@ -461,13 +461,13 @@ QList<PanelView*> PlasmaApp::panelViews() const
     return m_panels;
 }
 
-void PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *containment)
+ControllerWindow *PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *containment)
 {
-    showController(screen, containment, true);
+    return showController(screen, containment, true);
 }
 
 //FIXME it'd be easier if we knew which containment triggered this action
-void PlasmaApp::showActivityManager()
+ControllerWindow *PlasmaApp::showActivityManager()
 {
     //try to find the "active" containment
     int currentScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
@@ -475,21 +475,21 @@ void PlasmaApp::showActivityManager()
     if (AppSettings::perVirtualDesktopViews()) {
         currentDesktop = KWindowSystem::currentDesktop()-1;
     }
-    Plasma::Containment *containment=m_corona->containmentForScreen(currentScreen, currentDesktop);
+    Plasma::Containment *containment = m_corona->containmentForScreen(currentScreen, currentDesktop);
 
-    showController(currentScreen, containment, false);
+    return showController(currentScreen, containment, false);
 }
 
-void PlasmaApp::showActivityManager(int screen, Plasma::Containment *containment)
+ControllerWindow *PlasmaApp::showActivityManager(int screen, Plasma::Containment *containment)
 {
-    showController(screen, containment, false);
+    return showController(screen, containment, false);
 }
 
-void PlasmaApp::showController(int screen, Plasma::Containment *containment, bool widgetExplorerMode)
+ControllerWindow *PlasmaApp::showController(int screen, Plasma::Containment *containment, bool widgetExplorerMode)
 {
     if (!containment) {
         kDebug() << "no containment";
-        return;
+        return 0;
     }
 
     QWeakPointer<ControllerWindow> controllerPtr = m_widgetExplorers.value(screen);
@@ -505,7 +505,9 @@ void PlasmaApp::showController(int screen, Plasma::Containment *containment, boo
     if (!containment || containment->screen() != screen) {
         controller->setScreen(screen);
     }
+
     controller->setLocation(containment->location());
+
     if (widgetExplorerMode) {
         controller->showWidgetExplorer();
     } else {
@@ -517,6 +519,7 @@ void PlasmaApp::showController(int screen, Plasma::Containment *containment, boo
     KWindowSystem::setOnAllDesktops(controller->winId(), true);
     KWindowSystem::activateWindow(controller->winId());
     KWindowSystem::setState(controller->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky | NET::KeepAbove);
+    return controller;
 }
 
 void PlasmaApp::hideController(int screen)

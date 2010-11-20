@@ -74,8 +74,8 @@ public:
      */
     QList<PanelView*> panelViews() const;
 
-    void showWidgetExplorer(int screen, Plasma::Containment *c);
-    void showActivityManager(int screen, Plasma::Containment *c);
+    ControllerWindow *showWidgetExplorer(int screen, Plasma::Containment *c);
+    ControllerWindow *showActivityManager(int screen, Plasma::Containment *c);
     void hideController(int screen);
 
     static bool isPanelContainment(Plasma::Containment *containment);
@@ -108,7 +108,7 @@ public Q_SLOTS:
     void createWaitingDesktops();
     void createView(Plasma::Containment *containment);
 
-    void showActivityManager();
+    ControllerWindow *showActivityManager();
     /**
      * create a new activity based on the active one
      */
@@ -132,7 +132,7 @@ protected:
 private:
     PlasmaApp();
     DesktopView* viewForScreen(int screen, int desktop) const;
-    void showController(int screen, Plasma::Containment *c, bool widgetExplorerMode);
+    ControllerWindow *showController(int screen, Plasma::Containment *c, bool widgetExplorerMode);
     bool canRelocatePanel(PanelView * view, Kephal::Screen *screen);
     PanelView *createPanelView(Plasma::Containment *containment);
 
