@@ -615,7 +615,7 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
             m_mousePollTimer->stop();
         }
 
-        QTimer::singleShot(2000, this, SLOT(startAutoHide()));
+        QTimer::singleShot(2000, this, SLOT(hideIfNotInUse()));
     }
 
     KWindowSystem::setOnAllDesktops(winId(), true);
@@ -1286,7 +1286,11 @@ void PanelView::showWidgetExplorer()
     }
 
     if (!m_panelController) {
-        PlasmaApp::self()->showWidgetExplorer(screen(), containment());
+        m_editing = true;
+        ControllerWindow *controller = PlasmaApp::self()->showWidgetExplorer(screen(), containment());
+        connect(controller, SIGNAL(destroyed(QObject*)), this, SLOT(editingComplete()), Qt::UniqueConnection);
+    } else {
+        m_panelController->showWidgetExplorer();
     }
 }
 
@@ -1330,7 +1334,7 @@ void PanelView::hideIfNotInUse()
 {
     //kDebug() << m_delayedUnhideTs.elapsed() << geometry().contains(QCursor::pos()) << hasPopup();
     //TODO: is 5s too long? not long enough?
-    if ((m_delayedUnhideTs.isNull() || m_delayedUnhideTs.elapsed() > 5000) &&
+    if ((m_delayedUnhideTs.isNull() || m_delayedUnhideTs.elapsed() > 5000) && !m_editing &&
         !geometry().adjusted(-10, -10, 10, 10).contains(QCursor::pos()) && !hasPopup()) {
         startAutoHide();
     }
