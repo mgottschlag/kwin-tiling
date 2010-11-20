@@ -615,7 +615,7 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
             m_mousePollTimer->stop();
         }
 
-        QTimer::singleShot(2000, this, SLOT(hideIfNotInUse()));
+        QTimer::singleShot(2000, this, SLOT(startAutoHide()));
     }
 
     KWindowSystem::setOnAllDesktops(winId(), true);
@@ -1097,7 +1097,7 @@ void PanelView::editingComplete()
     updateStruts();
 
     if (m_visibilityMode == LetWindowsCover || m_visibilityMode == AutoHide) {
-        hideIfNotInUse();
+        startAutoHide();
     }
 }
 
@@ -1330,16 +1330,6 @@ void PanelView::resizeEvent(QResizeEvent *event)
     }
 }
 
-void PanelView::hideIfNotInUse()
-{
-    //kDebug() << m_delayedUnhideTs.elapsed() << geometry().contains(QCursor::pos()) << hasPopup();
-    //TODO: is 5s too long? not long enough?
-    if ((m_delayedUnhideTs.isNull() || m_delayedUnhideTs.elapsed() > 5000) && !m_editing &&
-        !geometry().adjusted(-10, -10, 10, 10).contains(QCursor::pos()) && !hasPopup()) {
-        startAutoHide();
-    }
-}
-
 void PanelView::updateHinter()
 {
 #ifdef Q_WS_X11
@@ -1514,9 +1504,21 @@ void PanelView::resetTriggerEnteredSuppression()
 
 void PanelView::startAutoHide()
 {
+    //kDebug() << m_delayedUnhideTs.elapsed() << geometry().contains(QCursor::pos()) << hasPopup();
+    //TODO: is 5s too long? not long enough?
+    if ((!m_delayedUnhideTs.isNull() && m_delayedUnhideTs.elapsed() < 5000) ||
+        m_editing ||
+        geometry().adjusted(-10, -10, 10, 10).contains(QCursor::pos()) ||
+        hasPopup()) {
+        if (!m_mousePollTimer) {
+            leaveEvent(0);
+        }
+        return;
+    }
+
     if (m_mousePollTimer) {
         m_mousePollTimer->stop();
-        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()));
+        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(startAutoHide()));
     }
 
     if (m_visibilityMode == LetWindowsCover) {
@@ -1548,11 +1550,14 @@ void PanelView::leaveEvent(QEvent *event)
             m_mousePollTimer = new QTimer(this);
         }
 
-        connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()), Qt::UniqueConnection);
+        connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(startAutoHide()), Qt::UniqueConnection);
         m_mousePollTimer->start(200);
     }
 
-    Plasma::View::leaveEvent(event);
+    if (event) {
+        // startAutoHide calls this with a null event pointer, so we have to check it
+        Plasma::View::leaveEvent(event);
+    }
 }
 
 void PanelView::drawBackground(QPainter *painter, const QRectF &rect)

@@ -247,10 +247,7 @@ private Q_SLOTS:
     void overlayMoved(PanelAppletOverlay *overlay);
     void panelDeleted();
     void startAutoHide();
-    /**
-     * hides the panel if there's nothing keeping it open
-     */
-    void hideIfNotInUse();
+
     /**
      * update the appearance of the unhide hinter
      * and get rid of it if the mouse has gone elsewhere
