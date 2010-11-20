@@ -130,3 +130,8 @@ target_link_libraries(kcm_keyboard
 install(TARGETS kcm_keyboard DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES kcm_keyboard.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
+
+
+# Unit tests
+
+add_subdirectory( tests )
