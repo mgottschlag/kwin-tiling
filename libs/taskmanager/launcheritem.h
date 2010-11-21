@@ -34,11 +34,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace TaskManager
 {
 
+/** 
+ * An item shown in the taskmanager, in order to use it to launch the application (or file) the launcher is linked to.
+ * If the Application is running the launcher gets hidden, in order to not waste space.
+ */
 class TASKMANAGER_EXPORT LauncherItem : public AbstractGroupableItem
 {
     Q_OBJECT
 public:
-    /** Creates a LauncherItem for a executable*/
+    /** 
+     * Creates a LauncherItem for a executable
+     * @param url the URL to the application or file the launcher gets linked to
+     */
     LauncherItem(QObject *parent, const KUrl &url);
     ~LauncherItem();
 
@@ -71,7 +78,7 @@ public:
     bool isActionSupported(NET::Action) const;
     bool isActive() const;
     bool demandsAttention() const;
-    void addMimeData(QMimeData *) const;
+    void addMimeData(QMimeData *mimeData) const;
 
 public Q_SLOTS:
     void toDesktop(int);

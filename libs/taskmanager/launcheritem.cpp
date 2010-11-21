@@ -25,6 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <KDesktopFile>
 #include <KMimeType>
+#include <QMimeData>
 #include <KRun>
 #include "taskgroup.h"
 
@@ -140,6 +141,11 @@ void LauncherItem::launch()
     new KRun(d->url, 0);
 }
 
+void LauncherItem::addMimeData(QMimeData* mimeData ) const
+{
+    mimeData->setData("text/uri-list", d->url.url().toAscii());
+}
+
 //BEGIN reimplemented pure virtual methods from abstractgroupableitem
 bool LauncherItem::demandsAttention() const
 {
@@ -188,9 +194,6 @@ bool LauncherItem::isShaded() const
 int LauncherItem::desktop() const
 {
     return 0;
-}
-void LauncherItem::addMimeData(QMimeData* ) const
-{
 }
 
 void LauncherItem::setAlwaysOnTop(bool )

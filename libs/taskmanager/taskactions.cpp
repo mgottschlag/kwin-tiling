@@ -310,29 +310,33 @@ ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGrou
     : QAction(parent), m_abstractItem(item), m_groupingStrategy(strategy), m_url()
 {
     connect(this, SIGNAL(triggered()), this, SLOT(toggleLauncher()));
-    setText(i18n("&Pin Task"));
-    setCheckable(true);
     if (item->itemType() == TaskItemType) {
         m_name = qobject_cast< TaskItem* >(item)->task()->classClass();
     } else {
         m_name = item->name();
     }
-    setChecked(m_groupingStrategy->findLauncher(m_name.toLower()));
-    if (!m_groupingStrategy->findLauncher(m_name)) {
-        // Search for applications which are executable and case-insensitively match the windowclass of the task and
-        // See http://techbase.kde.org/Development/Tutorials/Services/Traders#The_KTrader_Query_Language
-        // if the following is unclear to you.
-        QString query = QString("exist Exec and ('%1' =~ Name)").arg(m_name);
-        KService::List services = KServiceTypeTrader::self()->query("Application", query);
-        if(!services.empty()) {
-            m_url.setUrl(services[0]->entryPath());
-        } else { // No desktop-file was found, so try to find at least the executable
-            QString path = KStandardDirs::findExe(m_name.toLower());
-            if (!path.isEmpty()) {
-                m_url.setUrl(path);
-            } else { //if it still can't find one, don't show the possibility to add a launcher
-                kDebug() << "No executable found for" << m_name;
-                setVisible(false);
+    if (item->itemType() == LauncherItemType) {
+        setText(i18n("Remove this Launcher"));
+    } else {
+        setText(i18n("&Pin Task"));
+        setCheckable(true);
+        setChecked(m_groupingStrategy->findLauncher(m_name));
+        if (!m_groupingStrategy->findLauncher(m_name)) {
+            // Search for applications which are executable and case-insensitively match the windowclass of the task and
+            // See http://techbase.kde.org/Development/Tutorials/Services/Traders#The_KTrader_Query_Language
+            // if the following is unclear to you.
+            QString query = QString("exist Exec and ('%1' =~ Name)").arg(m_name);
+            KService::List services = KServiceTypeTrader::self()->query("Application", query);
+            if(!services.empty()) {
+                m_url.setUrl(services[0]->entryPath());
+            } else { // No desktop-file was found, so try to find at least the executable
+                QString path = KStandardDirs::findExe(m_name.toLower());
+                if (!path.isEmpty()) {
+                    m_url.setUrl(path);
+                } else { //if it still can't find one, don't show the possibility to add a launcher
+                    kDebug() << "No executable found for" << m_name;
+                    setVisible(false);
+                }
             }
         }
     }
@@ -340,8 +344,8 @@ ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGrou
 
 void ToggleLauncherActionImpl::toggleLauncher()
 {
-    if (m_groupingStrategy->findLauncher(m_name.toLower())) {
-        m_groupingStrategy->removeLauncher(m_groupingStrategy->findLauncher(m_name.toLower()));
+    if (m_groupingStrategy->findLauncher(m_name)) {
+        m_groupingStrategy->removeLauncher(m_groupingStrategy->findLauncher(m_name));
     } else if (m_url.isValid()) {
         if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
             m_groupingStrategy->addLauncher(m_url);

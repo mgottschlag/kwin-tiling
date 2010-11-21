@@ -409,8 +409,7 @@ void GroupManagerPrivate::currentActivityChanged(QString newActivity)
     currentActivity = newActivity;
 
     foreach (AbstractGroupableItem *item, launcherAssociations.values()) {
-        if (item->itemType() == LauncherItemType)
-        {
+        if (item->itemType() == LauncherItemType) {
             rootGroups[currentActivity][currentDesktop]->add(item);
         }
     }
@@ -450,8 +449,7 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
     currentDesktop = newDesktop;
 
 	foreach (AbstractGroupableItem *item, launcherAssociations.values()) {
-        if (item->itemType() == LauncherItemType)
-        {
+        if (item->itemType() == LauncherItemType) {
             rootGroups[currentActivity][currentDesktop]->add(item);
         }
 	}
@@ -574,7 +572,7 @@ void GroupManager::reconnect()
 
 LauncherItem *GroupManager::addLauncher(const KUrl &url, QIcon icon, QString name, QString genericName, bool emitSignal)
 {
-    LauncherItem *launcher = findLauncher(name.toLower()); // Do not insert launchers twice
+    LauncherItem *launcher = findLauncher(name); // Do not insert launchers twice
     if (!launcher) {
         launcher = new LauncherItem(d->currentRootGroup(), url);
         if (!icon.isNull()) {
@@ -675,8 +673,8 @@ void GroupManager::updateLauncher(AbstractGroupableItem* item)
 
 LauncherItem *GroupManager::findLauncher(const QString& name)
 {
-    if (!d->launcherAssociations.values(name).isEmpty()) {
-        return qobject_cast< LauncherItem* >(d->launcherAssociations.values(name).last());
+    if (!d->launcherAssociations.values(name.toLower()).isEmpty()) {
+        return qobject_cast< LauncherItem* >(d->launcherAssociations.values(name.toLower()).last());
     } else {
         return 0;
     }
