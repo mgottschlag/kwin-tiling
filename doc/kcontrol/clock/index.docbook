@@ -48,7 +48,7 @@ to select a <guilabel>Time server</guilabel> from the drop down box and all othe
 settings in this dialog are disabled.</para>
 
 <para>If you do not use a time server, you are able to set the date manually 
-using the left half of the tab.  Simply
+using the lower half of the tab.  Simply
 choose your month and year using the controls at the top of the calendar
 and the day of the month by clicking on the day in the
 calendar.</para>
