@@ -96,5 +96,12 @@ void AppLauncherItem::keyPressEvent(QKeyEvent *event)
     }
 }
 
+void AppLauncherItem::setAdditionalMimeData(QMimeData* mimeData)
+{
+    if (m_launcher) {
+        m_launcher->addMimeData(mimeData);
+    }
+}
+
 #include "applauncheritem.moc"
 

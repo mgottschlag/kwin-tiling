@@ -41,7 +41,7 @@ public:
 
     virtual bool isWindowItem() const { return false; }
     virtual bool isActive() const { return false; }
-    virtual void setAdditionalMimeData(QMimeData* mimeData) {}
+    virtual void setAdditionalMimeData(QMimeData* mimeData);
     virtual void close() {}
     virtual void updateTask(TaskManager::TaskChanges changes) {}
 

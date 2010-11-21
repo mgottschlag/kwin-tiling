@@ -871,7 +871,8 @@ void AbstractTaskItem::setBackgroundFadeAlpha(qreal progress)
 void AbstractTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
-        event->mimeData()->hasFormat(TaskManager::Task::groupMimetype())) {
+        event->mimeData()->hasFormat(TaskManager::Task::groupMimetype()) ||
+        event->mimeData()->hasFormat("text/uri-list")) {
         event->ignore(); //ignore it so the taskbar gets the event
         return;
     }

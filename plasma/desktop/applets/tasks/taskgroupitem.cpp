@@ -33,6 +33,7 @@
 // KDE
 #include <KAuthorized>
 #include <KDebug>
+#include <KDesktopFile>
 
 #include <taskmanager/taskactions.h>
 #include <taskmanager/taskmanager.h>
@@ -1048,7 +1049,8 @@ void TaskGroupItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     //kDebug()<<"Drag enter";
     if (collapsed() &&
         (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
-         event->mimeData()->hasFormat(TaskManager::Task::groupMimetype()))) {
+         event->mimeData()->hasFormat(TaskManager::Task::groupMimetype()) ||
+         event->mimeData()->hasFormat("text/uri-list"))) {
         event->acceptProposedAction();
         //kDebug()<<"Drag enter accepted";
     } else {
@@ -1119,6 +1121,24 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 
         //kDebug() << "TaskItemLayout dropEvent done";
         event->acceptProposedAction();
+    } else if(event->mimeData()->hasFormat("text/uri-list")) {
+        KUrl url(event->mimeData()->data("text/uri-list"));
+        LauncherItem *launcher;
+
+        if (url.isLocalFile() && KDesktopFile::isDesktopFile(url.toLocalFile())) {
+            KDesktopFile f(url.toLocalFile());
+            launcher = m_applet->groupManager().findLauncher(f.readName());
+        } else {
+            launcher = m_applet->groupManager().findLauncher(url.fileName());
+        }
+
+        if (launcher && m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting) {
+            if (launcher->parentGroup() == m_group.data()) {
+                layoutTaskItem(m_groupMembers[launcher], event->pos());
+            }
+        } else if (!launcher) {
+            m_applet->groupManager().addLauncher(url);
+        }
     } else {
         event->ignore();
     }
