@@ -83,4 +83,4 @@ private Q_SLOTS:
 // need GUI for xkb protocol
 QTEST_KDEMAIN( RulesTest, GUI )
 
-#include "rules_test.moc"
+#include "xkb_rules_test.moc"
