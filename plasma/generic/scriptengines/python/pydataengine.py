@@ -51,7 +51,7 @@ class PythonDataEngineScript(Plasma.DataEngineScript):
         basename = os.path.basename(str(self.mainScript()))
         basename = os.path.splitext(basename)[0]
 
-        self.pydat  aengine = self.module.__dict__[basename].CreateDataEngine(None)
+        self.pydataengine = self.module.__dict__[basename].CreateDataEngine(None)
         self.pydataengine.setDataEngine(self.dataEngine())
         self.pydataengine.setDataEngineScript(self)
         self.pydataengine.init()
