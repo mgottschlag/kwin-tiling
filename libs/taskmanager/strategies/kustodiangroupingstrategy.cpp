@@ -60,7 +60,7 @@ KustodianGroupingStrategy::KustodianGroupingStrategy(GroupManager *groupManager)
         QList <AbstractGroupableItem *> list;
         TaskGroup* group = createGroup(list);
         group->setName(name);
-        group->setPinned(true);
+        group->setPersistentWithLauncher(true);
         KService::Ptr service = KService::serviceByDesktopName(name);
         if (service && service->isValid()) {
             QIcon icon = KIcon(service->icon());
@@ -159,7 +159,7 @@ void KustodianGroupingStrategy::checkGroup()
         return;
     }
 
-    if (group->members().size()==0 && !group->isPinned()) {
+    if (group->members().isEmpty() && !group->isPersistentWithLauncher()) {
         closeGroup(group);
     }
 }

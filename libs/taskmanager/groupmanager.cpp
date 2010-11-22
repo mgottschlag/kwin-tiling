@@ -386,10 +386,7 @@ GroupPtr GroupManager::rootGroup() const
 
 void GroupManagerPrivate::currentActivityChanged(QString newActivity)
 {
-    if (!showOnlyCurrentActivity) {
-        return;
-    }
-    if (currentActivity == newActivity) {
+    if (!showOnlyCurrentActivity || currentActivity == newActivity) {
         return;
     }
 
@@ -448,11 +445,11 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
 
     currentDesktop = newDesktop;
 
-	foreach (AbstractGroupableItem *item, launcherAssociations.values()) {
+    foreach (AbstractGroupableItem *item, launcherAssociations.values()) {
         if (item->itemType() == LauncherItemType) {
             rootGroups[currentActivity][currentDesktop]->add(item);
         }
-	}
+    }
 
     if (onlyGroupWhenFull) {
         QObject::connect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), q, SLOT(checkIfFull()));

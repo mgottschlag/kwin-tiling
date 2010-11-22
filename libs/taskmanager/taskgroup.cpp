@@ -63,7 +63,7 @@ public:
     QIcon groupIcon;
     bool aboutToDie;
     GroupManager *groupingStrategy;
-    bool pinned;
+    bool persistentWithLauncher;
 };
 
 TaskGroup::TaskGroup(GroupManager *parent,const QString &name, const QColor &color)
@@ -74,7 +74,7 @@ TaskGroup::TaskGroup(GroupManager *parent,const QString &name, const QColor &col
     d->groupName = name;
     d->groupColor = color;
     d->groupIcon = KIcon("xorg");
-    d->pinned = false;
+    d->persistentWithLauncher = false;
 
     //kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
 }
@@ -87,7 +87,7 @@ TaskGroup::TaskGroup(GroupManager *parent)
 //    d->groupName = "default";
     d->groupColor = Qt::red;
     d->groupIcon = KIcon("xorg");
-    d->pinned = false;
+    d->persistentWithLauncher = false;
 
     //kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
 }
@@ -335,14 +335,14 @@ bool TaskGroup::isGroupItem() const
     return true;
 }
 
-bool TaskGroup::isPinned() const
+bool TaskGroup::isPersistentWithLauncher() const
 {
-    return d->pinned;
+    return d->persistentWithLauncher;
 }
 
-void TaskGroup::setPinned(bool pinned)
+void TaskGroup::setPersistentWithLauncher(bool persistentWithLauncher)
 {
-    d->pinned = pinned;
+    d->persistentWithLauncher = persistentWithLauncher;
 }
 
 bool TaskGroup::isRootGroup() const
