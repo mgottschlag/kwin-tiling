@@ -199,7 +199,7 @@ ToCurrentDesktopActionImpl::ToCurrentDesktopActionImpl(QObject *parent, Abstract
     : AbstractGroupableItemAction(parent, item)
 {
     connect(this, SIGNAL(triggered()), this, SLOT(slotToCurrentDesktop()));
-    setText(i18n("&To Current Desktop"));
+    setText(i18n("Move &To Current Desktop"));
     setEnabled(!item->isOnCurrentDesktop() && item->isActionSupported(NET::ActionChangeDesktop));
 }
 
@@ -242,7 +242,7 @@ void ToDesktopActionImpl::slotToDesktop()
 DesktopsMenu::DesktopsMenu(QWidget *parent, AbstractGroupableItem *item)
     : QMenu(parent)
 {
-    setTitle( i18n("To &Desktop") );
+    setTitle( i18n("Move To &Desktop") );
     addAction( new ToDesktopActionImpl(this,item,0) );      //0 means all desktops
     addSeparator();
     for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
@@ -282,13 +282,26 @@ ViewFullscreenActionImpl::ViewFullscreenActionImpl(QObject *parent, AbstractGrou
     setEnabled(item->isActionSupported(NET::ActionFullScreen));
 }
 
-AdvancedMenu::AdvancedMenu(QWidget *parent, AbstractGroupableItem *item)
-    :QMenu(parent)
+AdvancedMenu::AdvancedMenu(QWidget *parent, AbstractGroupableItem *item, GroupManager *strategy)
+    : QMenu(parent)
 {
     setTitle(i18n("Ad&vanced"));
     addAction(new KeepAboveActionImpl(this, item));
     addAction(new KeepBelowActionImpl(this, item));
     addAction(new ViewFullscreenActionImpl(this, item));
+
+    addSeparator();
+
+    addAction(new ToggleLauncherActionImpl(this, item, strategy));
+    if (strategy->taskGrouper()) {
+        QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, item);
+        if (!groupingStrategyActions.isEmpty()) {
+            foreach (QAction *action, groupingStrategyActions) {
+                addAction(action);
+            }
+            // delete groupingStrategyActions;
+        }
+    }
 }
 
 LeaveGroupActionImpl::LeaveGroupActionImpl(QObject *parent, AbstractGroupableItem *item, GroupManager *strategy)
@@ -315,10 +328,11 @@ ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGrou
     } else {
         m_name = item->name();
     }
+
     if (item->itemType() == LauncherItemType) {
-        setText(i18n("Remove this Launcher"));
+        setText(i18n("Remove This Launcher"));
     } else {
-        setText(i18n("&Pin Task"));
+        setText(i18n("&Show A Launcher For %1 When It Is Not Running", m_name));
         setCheckable(true);
         setChecked(m_groupingStrategy->findLauncher(m_name));
         if (!m_groupingStrategy->findLauncher(m_name)) {
@@ -362,11 +376,15 @@ EditGroupActionImpl::EditGroupActionImpl(QObject *parent, TaskGroup *group, Grou
     connect(this, SIGNAL(triggered()), group, SIGNAL(groupEditRequest()));
     setText(i18n("&Edit Group"));
     //setIcon(KIcon("window-close"));
+    bool applicable = true;
     if (groupManager->groupingStrategy()) {
-        setEnabled(groupManager->taskGrouper()->editableGroupProperties());
+        applicable = groupManager->taskGrouper()->editableGroupProperties();
     } else {
-        setEnabled(false);
+        applicable = false;
     }
+
+    setEnabled(applicable);
+    setVisible(applicable);
 }
 
 GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableItem* item, GroupManager *strategy)
@@ -385,7 +403,6 @@ GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableIte
             }
         }
     }
-
 }
 
 
@@ -408,20 +425,8 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
     addAction(new MinimizeActionImpl(this, item));
     addAction(new MaximizeActionImpl(this, item));
     addAction(new ShadeActionImpl(this, item));
-    addAction(new ToggleLauncherActionImpl(this, item, strategy));
 
-    addMenu(new AdvancedMenu(this, item));
-
-    if (strategy->taskGrouper()) {
-        QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, item);
-        if (!groupingStrategyActions.isEmpty()) {
-            addSeparator();
-            foreach (QAction *action, groupingStrategyActions) {
-                addAction(action);
-            }
-            // delete groupingStrategyActions;
-        }
-    }
+    addMenu(new AdvancedMenu(this, item, strategy));
 
     foreach (QAction *action, visualizationActions) {
         addAction(action);
@@ -446,6 +451,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
             addMenu(new BasicMenu(this, dynamic_cast<TaskItem*>(item), strategy));
         }
     }
+
     addSeparator();
 
     if (TaskManager::self()->numberOfDesktops() > 1) {
@@ -456,21 +462,11 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     addAction(new MinimizeActionImpl(this, group));
     addAction(new MaximizeActionImpl(this, group));
     addAction(new ShadeActionImpl(this, group));
-    addAction(new ToggleLauncherActionImpl(this, group, strategy));
 
-    addMenu(new AdvancedMenu(this, group));
-
-    if (strategy->taskGrouper()) {
-        QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, group);
-        if (!groupingStrategyActions.isEmpty()) {
-            addSeparator();
-            foreach (QAction *action, groupingStrategyActions) {
-                addAction(action);
-            }
-        }
-    }
+    addMenu(new AdvancedMenu(this, group, strategy));
     addAction(new EditGroupActionImpl(this, group, strategy));
-    foreach(QAction *action, visualizationActions) {
+
+    foreach (QAction *action, visualizationActions) {
         addAction(action);
     }
 

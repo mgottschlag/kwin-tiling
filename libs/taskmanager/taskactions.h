@@ -107,7 +107,7 @@ class TASKMANAGER_EXPORT AdvancedMenu : public QMenu
 {
     Q_OBJECT
 public:
-    AdvancedMenu(QWidget *parent, AbstractGroupableItem *task);
+    AdvancedMenu(QWidget *parent, AbstractGroupableItem *task, GroupManager *strategy);
 };
 
 /** The standard menu*/
