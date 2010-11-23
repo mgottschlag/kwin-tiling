@@ -55,6 +55,7 @@
 #include <KDebug>
 #include <KCmdLineArgs>
 #include <KGlobalAccel>
+#include <KGlobalSettings>
 #include <KNotification>
 #include <KWindowSystem>
 
@@ -170,9 +171,24 @@ PlasmaApp::PlasmaApp()
     // Calculate the size required to hold background pixmaps for all screens.
     // Add 10% so that other (smaller) pixmaps can also be cached.
     int cacheSize = 0;
-    for (int i = 0; i < Kephal::ScreenUtils::numScreens(); i++) {
-        QSize size = Kephal::ScreenUtils::screenSize(i);
+
+    if (KGlobalSettings::isMultiHead()) {
+        int id = 0;
+#ifdef Q_WS_X11
+        Display *dpy = XOpenDisplay(NULL);
+        if (dpy) {
+            id = DefaultScreen(dpy);
+            XCloseDisplay(dpy);
+        }
+#endif
+        QSize size = Kephal::ScreenUtils::screenSize(id);
         cacheSize += 4 * size.width() * size.height() / 1024;
+    } else {
+        const int numScreens = Kephal::ScreenUtils::numScreens();
+        for (int i = 0; i < numScreens; i++) {
+            QSize size = Kephal::ScreenUtils::screenSize(i);
+            cacheSize += 4 * size.width() * size.height() / 1024;
+        }
     }
     cacheSize += cacheSize / 10;
 
@@ -274,8 +290,6 @@ void PlasmaApp::setupDesktop()
     const int xdndversion = 5;
     m_XdndVersionAtom = (Atom)xdndversion;
 #endif
-
-    m_primaryScreen = Kephal::ScreenUtils::primaryScreenId();
 
     // intialize the default theme and set the font
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
@@ -470,7 +484,7 @@ ControllerWindow *PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment 
 ControllerWindow *PlasmaApp::showActivityManager()
 {
     //try to find the "active" containment
-    int currentScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
+    int currentScreen = m_corona->screenId(QCursor::pos());
     int currentDesktop = -1;
     if (AppSettings::perVirtualDesktopViews()) {
         currentDesktop = KWindowSystem::currentDesktop()-1;
@@ -878,7 +892,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         m_panelsWaiting << containment;
         m_panelViewCreationTimer.start();
     } else if (containment->screen() > -1 &&
-               containment->screen() < Kephal::ScreenUtils::numScreens()) {
+               containment->screen() < m_corona->numScreens()) {
         if (AppSettings::perVirtualDesktopViews()) {
             if (containment->desktop() < 0 ||
                 containment->desktop() > KWindowSystem::numberOfDesktops() - 1) {
@@ -930,7 +944,7 @@ void PlasmaApp::createWaitingPanels()
         }
 
         // try to relocate the panel if it is on a now-non-existent screen
-        if (containment->screen() >= Kephal::ScreenUtils::numScreens()) {
+        if (containment->screen() >= m_corona->numScreens()) {
             m_panelRelocationCandidates << containment;
             continue;
         }
@@ -1012,7 +1026,7 @@ void PlasmaApp::createWaitingDesktops()
             }
 
             const int screen = containment->screen();
-            if (screen >= Kephal::ScreenUtils::numScreens() || screen < 0) {
+            if (screen >= m_corona->numScreens() || screen < 0) {
                 kDebug() << "not creating a view on screen" << screen << "as it does not exist";
                 continue;
             }
@@ -1026,7 +1040,7 @@ void PlasmaApp::createWaitingDesktops()
             }
 
             kDebug() << "creating a new view for" << containment->screen() << containment->desktop()
-                     << "and we have" << Kephal::ScreenUtils::numScreens() << "screens";
+                     << "and we have" << m_corona->numScreens() << "screens";
 
             // we have a new screen. neat.
             view = new DesktopView(containment, id, 0);
