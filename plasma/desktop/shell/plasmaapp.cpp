@@ -1012,7 +1012,7 @@ void PlasmaApp::createWaitingDesktops()
             }
 
             const int screen = containment->screen();
-            if (screen >= Kephal::ScreenUtils::numScreens()) {
+            if (screen >= Kephal::ScreenUtils::numScreens() || screen < 0) {
                 kDebug() << "not creating a view on screen" << screen << "as it does not exist";
                 continue;
             }
@@ -1093,12 +1093,13 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
 void PlasmaApp::containmentScreenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment *containment)
 {
     Q_UNUSED(wasScreen)
-    kDebug() << "@@@was" << wasScreen << "is" << isScreen << (QObject*)containment;
+    kDebug() << "@@@was" << wasScreen << "is" << isScreen << (QObject*)containment << m_desktops.count();
 
     if (isScreen < 0) {
         kDebug() << "@@@screen<0";
         return;
     }
+
     if (isPanelContainment(containment)) {
         kDebug() << "@@@isPanel";
         return;
