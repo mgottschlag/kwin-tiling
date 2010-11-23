@@ -46,6 +46,7 @@
 #include <Plasma/FrameSvg>
 #include <Plasma/Dialog>
 
+#include "desktopcorona.h"
 #include "plasmaapp.h"
 #include "positioningruler.h"
 #include "toolbutton.h"
@@ -546,22 +547,15 @@ void PanelController::mouseMoveFilter(QMouseEvent *event)
         return;
     }
 
-    Plasma::Corona *corona = PlasmaApp::self()->corona();
+    DesktopCorona *corona = PlasmaApp::self()->corona();
     const QRect screenGeom = corona->screenGeometry(containment()->screen());
 
     if (m_dragging == MoveButtonElement) {
 
         if (!screenGeom.contains(event->globalPos())) {
             //move panel to new screen if dragged there
-            const int numScreens = corona->numScreens();
-            int targetScreen = 0;
-            for (int i = 0; i < numScreens; ++i) {
-                const QRect geom = corona->screenGeometry(i);
-                if (geom.contains(event->globalPos())) {
-                    targetScreen = i;
-                    break;
-                }
-            }
+            int targetScreen = corona->screenId(event->globalPos());
+
             //kDebug() << "Moving panel from screen" << containment()->screen() << "to screen" << targetScreen;
             containment()->setScreen(targetScreen);
             return;

@@ -151,7 +151,6 @@ private:
     QHash<QPair<int,int>, Plasma::Containment*> m_containments;
     KActivityInfo *m_info;
     KActivityConsumer *m_activityConsumer;
-    DesktopCorona *m_corona;
     bool m_current;
 };
 

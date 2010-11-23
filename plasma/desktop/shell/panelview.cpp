@@ -41,11 +41,12 @@
 #include <Plasma/Theme>
 #include <Plasma/WindowEffects>
 
+#include <kephal/screens.h>
+
+#include "desktopcorona.h"
 #include "panelappletoverlay.h"
 #include "panelcontroller.h"
 #include "plasmaapp.h"
-
-#include <kephal/screens.h>
 
 class GlowBar : public QWidget
 {

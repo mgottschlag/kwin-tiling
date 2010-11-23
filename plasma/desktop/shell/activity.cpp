@@ -51,8 +51,6 @@ Activity::Activity(const QString &id, QObject *parent)
       m_activityConsumer(new KActivityConsumer(this)),
       m_current(false)
 {
-    m_corona = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
-
     m_name = m_info->name();
     m_icon = m_info->icon();
 
@@ -66,10 +64,10 @@ Activity::Activity(const QString &id, QObject *parent)
     checkIfCurrent();
 
     //find your containments
-    foreach (Plasma::Containment *cont, m_corona->containments()) {
+    foreach (Plasma::Containment *cont, PlasmaApp::self()->corona()->containments()) {
         if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
              cont->containmentType() == Plasma::Containment::CustomContainment) &&
-            !m_corona->offscreenWidgets().contains(cont) && cont->context()->currentActivityId() == id) {
+            !PlasmaApp::self()->corona()->offscreenWidgets().contains(cont) && cont->context()->currentActivityId() == id) {
             insertContainment(cont);
         }
     }
@@ -89,6 +87,7 @@ void Activity::activityChanged()
 
 void Activity::activityStateChanged(KActivityInfo::State state)
 {
+    Q_UNUSED(state)
     emit stateChanged();
 }
 
@@ -139,7 +138,7 @@ void Activity::remove()
 void Activity::removed()
 {
     if (! m_containments.isEmpty()) {
-        //FIXME only m_corona has authority to remove properly
+        //FIXME only PlasmaApp::self()->corona() has authority to remove properly
         kDebug() << "!!!!! if your widgets are locked you've hit a BUG now";
         foreach (Plasma::Containment *c, m_containments) {
             c->destroy(false);
@@ -157,11 +156,11 @@ Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
         kDebug() << "adding containment for" << screen << desktop;
         // first look to see if there are any unnasigned containments that are candidates for
         // being sucked into this Activity
-        foreach (Plasma::Containment *c, m_corona->containments()) {
+        foreach (Plasma::Containment *c, PlasmaApp::self()->corona()->containments()) {
             if ((c->containmentType() == Plasma::Containment::DesktopContainment ||
                 c->containmentType() == Plasma::Containment::CustomContainment) &&
                 c->context()->currentActivityId().isEmpty() &&
-                !m_corona->offscreenWidgets().contains(c) &&
+                !PlasmaApp::self()->corona()->offscreenWidgets().contains(c) &&
                 m_containments.key(c, QPair<int,int>(-2,-2)) == QPair<int,int>(-2,-2)) {
                 containment = c;
                 containment->setScreen(screen, desktop);
@@ -173,16 +172,16 @@ Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
             // we ask for the containment for the screen with a default plugin, because
             // this allows the corona to either grab one for us that already exists matching
             // screen and desktop, or create a new one. this also works regardless of immutability
-            containment = m_corona->containmentForScreen(screen, desktop, m_plugin);
+            containment = PlasmaApp::self()->corona()->containmentForScreen(screen, desktop, m_plugin);
             if (!containment) {
                 // possibly a plugin failure, let's go for the default
-                containment = m_corona->containmentForScreen(screen, desktop, "default");
+                containment = PlasmaApp::self()->corona()->containmentForScreen(screen, desktop, "default");
             }
         }
 
         Q_ASSERT(containment);
         insertContainment(containment, screen, desktop);
-        m_corona->requestConfigSync();
+        PlasmaApp::self()->corona()->requestConfigSync();
     }
 
     return containment;
@@ -294,7 +293,7 @@ void Activity::closed()
 
     //apparently this magic turns a kconfig into a kconfiggroup
     KConfigGroup group = external.group(QString());
-    m_corona->exportLayout(group, m_containments.values());
+    PlasmaApp::self()->corona()->exportLayout(group, m_containments.values());
 
     //hrm, shouldn't the containments' deleted signals have done this for us?
     if (!m_containments.isEmpty()) {
@@ -376,11 +375,12 @@ void Activity::opened()
         kDebug() << "already open!";
         return;
     }
+
     QString fileName = "activities/";
     fileName += m_id;
     KConfig external(fileName, KConfig::SimpleConfig, "appdata");
 
-    foreach (Plasma::Containment *newContainment, m_corona->importLayout(external.group(QByteArray()))) {
+    foreach (Plasma::Containment *newContainment, PlasmaApp::self()->corona()->importLayout(external.group(QByteArray()))) {
         insertContainment(newContainment);
         //ensure it's hooked up (if something odd happened we don't want orphan containments)
         Plasma::Context *context = newContainment->context();
@@ -397,7 +397,7 @@ void Activity::opened()
         checkScreens();
     }
 
-    m_corona->requireConfigSync();
+    PlasmaApp::self()->corona()->requireConfigSync();
     external.sync();
 }
 
