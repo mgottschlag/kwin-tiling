@@ -34,8 +34,7 @@
 #include <Plasma/Containment>
 #include <Plasma/Svg>
 
-#include <kephal/screens.h>
-
+#include "desktopcorona.h"
 #include "plasmaapp.h"
 #include "plasma-shell-desktop.h"
 #include "widgetsexplorer/widgetexplorer.h"
@@ -103,7 +102,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *vie
         setAttribute(Qt::WA_NoSystemBackground);
     }
 
-    setGeometry(Kephal::ScreenUtils::screenGeometry(containment->screen()));
+    setGeometry(PlasmaApp::self()->corona()->screenGeometry(containment->screen()));
 
     m_hideAction = new QAction(i18n("Hide Dashboard"), this);
     m_hideAction->setIcon(KIcon("preferences-desktop-display"));
