@@ -173,8 +173,8 @@ void DesktopCorona::updateImmutability(Plasma::ImmutabilityType immutability)
 void DesktopCorona::checkScreens(bool signalWhenExists)
 {
     // quick sanity check to ensure we have containments for each screen
-    int numScreens = Kephal::ScreenUtils::numScreens();
-    for (int i = 0; i < numScreens; ++i) {
+    int num = numScreens();
+    for (int i = 0; i < num; ++i) {
         checkScreen(i, signalWhenExists);
     }
 }
@@ -333,6 +333,19 @@ QRect DesktopCorona::availableScreenRect(int id) const
     }
 
     return r;
+}
+
+int DesktopCorona::screenId(const QPoint &pos) const
+{
+    const int num = numScreens();
+    for (int i = 0; i < num; ++i) {
+        const QRect geom = screenGeometry(i);
+        if (geom.contains(pos)) {
+            return i;
+        }
+    }
+
+    return 0;
 }
 
 void DesktopCorona::processUpdateScripts()

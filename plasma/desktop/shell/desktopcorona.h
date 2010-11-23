@@ -69,6 +69,7 @@ public:
     int numScreens() const;
     QRect screenGeometry(int id) const;
     QRegion availableScreenRegion(int id) const;
+    int screenId(const QPoint &pos) const;
 
     bool loadDefaultLayoutScripts();
     void processUpdateScripts();
