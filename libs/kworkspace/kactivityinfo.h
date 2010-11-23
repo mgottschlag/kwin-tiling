@@ -35,7 +35,8 @@
  *
  * @since 4.5
  */
-class KDE_EXPORT KActivityInfo: public QObject {
+class KDE_EXPORT KActivityInfo: public QObject
+{
     Q_OBJECT
 
     Q_PROPERTY(KUrl uri READ uri)

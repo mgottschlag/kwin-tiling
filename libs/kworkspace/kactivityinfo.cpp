@@ -32,6 +32,7 @@
 
 KActivityInfo::Private::Private(KActivityInfo *info, const QString &activityId)
     : q(info),
+      state(KActivityInfo::Invalid),
       id(activityId)
 {
     KActivityManager::self();
@@ -75,10 +76,11 @@ IMPLEMENT_SIGNAL_HANDLER(ActivityChanged, infoChanged)
 
 #undef IMPLEMENT_SIGNAL_HANDLER
 
-void KActivityInfo::Private::activityStateChanged(const QString & idChanged, int state) const
+void KActivityInfo::Private::activityStateChanged(const QString & idChanged, int newState)
 {
     if (idChanged == id) {
-        emit q->stateChanged((KActivityInfo::State)state);
+        state = static_cast<KActivityInfo::State>(newState);
+        emit q->stateChanged(state);
     }
 }
 
@@ -114,7 +116,7 @@ KActivityInfo::~KActivityInfo()
 
 bool KActivityInfo::isValid() const
 {
-    return (KActivityManager::self()->ActivityState(d->id) != Invalid);
+    return (state() != Invalid);
 }
 
 void KActivityInfo::associateResource(const KUrl & resource, ResourceType resourceType)
@@ -208,19 +210,21 @@ QString KActivityInfo::icon() const
 
 KActivityInfo::State KActivityInfo::state() const
 {
-    QDBusReply < int > dbusReply = KActivityManager::self()->ActivityState(d->id);
+    if (d->state == Invalid) {
+        QDBusReply < int > dbusReply = KActivityManager::self()->ActivityState(d->id);
 
-    if (dbusReply.isValid()) {
-        return (State)(dbusReply.value());
-    } else {
-        return Invalid;
+        if (dbusReply.isValid()) {
+            d->state = (State)(dbusReply.value());
+        }
     }
+
+    return d->state;
 }
 
 QString KActivityInfo::name(const QString & id)
 {
     KACTIVITYINFO_DBUS_CAST_RETURN(
-        QString, QString, KActivityManager::self()->ActivityName(id));
+            QString, QString, KActivityManager::self()->ActivityName(id));
 }
 
 #undef KACTIVITYINFO_DBUS_CAST_RETURN
