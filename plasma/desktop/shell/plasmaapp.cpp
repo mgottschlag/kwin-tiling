@@ -756,7 +756,7 @@ DesktopView* PlasmaApp::viewForScreen(int screen, int desktop) const
     return 0;
 }
 
-Plasma::Corona* PlasmaApp::corona()
+DesktopCorona* PlasmaApp::corona()
 {
     if (!m_corona) {
         QTime t;

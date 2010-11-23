@@ -58,11 +58,11 @@ class PlasmaApp : public KUniqueApplication
 public:
     ~PlasmaApp();
 
-    static PlasmaApp* self();
+    static PlasmaApp *self();
     static bool hasComposite();
 
     static void suspendStartup(bool completed);
-    Plasma::Corona* corona();
+    DesktopCorona *corona();
 
     /**
      * Should be called when a panel hides or unhides itself
