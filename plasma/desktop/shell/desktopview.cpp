@@ -276,6 +276,7 @@ void DesktopView::setContainment(Plasma::Containment *containment)
 {
     Plasma::Containment *oldContainment = this->containment();
     if (m_init && containment == oldContainment) {
+        //kDebug() << "initialized and containment is the same, aborting";
         return;
     }
 
@@ -356,17 +357,29 @@ void DesktopView::showDesktopUntoggled(WId id)
 
 void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* newContainment)
 {
-    //kDebug() << "was:" << wasScreen << "is:" << isScreen << "my screen:" << screen() << "containment:" << (QObject*)newContainment << newContainment->activity() << "myself:" << (QObject*)this <<"containment desktop:"<<newContainment->desktop() << "my desktop:"<<containment()->desktop();
     if (PlasmaApp::isPanelContainment(newContainment)) {
         // we don't care about panel containments changing screens on us
         return;
     }
 
-    if (wasScreen == screen() && this->containment() == newContainment) {
+    /*
+    kDebug() << "was:" << wasScreen << "is:" << isScreen << "my screen:" << screen()
+             << "containment:" << (QObject *)newContainment << newContainment->activity()
+             << "current containment" << (QObject *)containment() 
+             << "myself:" << (QObject *)this
+             << "containment desktop:" << newContainment->desktop() << "my desktop:" << m_desktop;
+    */
+
+    if (containment() == newContainment &&
+        wasScreen == screen() &&
+        (isScreen != wasScreen || AppSettings::perVirtualDesktopViews())) {
+        //kDebug() << "nulling out containment";
         setContainment(0);
     }
 
-    if (isScreen > -1 && isScreen == screen() && (!AppSettings::perVirtualDesktopViews() || newContainment->desktop() == m_desktop - 1) ) {
+    if (isScreen > -1 && isScreen == screen() &&
+        (!AppSettings::perVirtualDesktopViews() || newContainment->desktop() == m_desktop - 1) ) {
+        //kDebug() << "setting new containment";
         setContainment(newContainment);
     }
 }
