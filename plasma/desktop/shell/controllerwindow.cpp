@@ -37,6 +37,7 @@
 #include <Plasma/WindowEffects>
 
 #include "activitymanager/activitymanager.h"
+#include "desktopcorona.h"
 #include "panelview.h"
 #include "plasmaapp.h"
 #include "widgetsexplorer/widgetexplorer.h"
@@ -116,7 +117,7 @@ ControllerWindow::~ControllerWindow()
 
 void ControllerWindow::adjustAndSetMaxSize()
 {
-    QSize screenSize = Kephal::ScreenUtils::screenGeometry(Kephal::ScreenUtils::screenId(pos())).size();
+    QSize screenSize = PlasmaApp::self()->corona()->screenGeometry(PlasmaApp::self()->corona()->screenId(pos())).size();
     setMaximumSize(screenSize);
     adjustSize();
 }
@@ -248,8 +249,8 @@ void ControllerWindow::syncToGraphicsWidget()
         //may fail if syncToGraphicsWidget is called before a real position is set (so pos() will
         //just return 0x0, which may lead to the wrong screen
         const QRect screenRect = m_containment ? 
-                                 Kephal::ScreenUtils::screenGeometry(m_containment.data()->screen()) :
-                                 Kephal::ScreenUtils::screenGeometry(Kephal::ScreenUtils::screenId(pos()));
+                                 PlasmaApp::self()->corona()->screenGeometry(m_containment.data()->screen()) :
+                                 PlasmaApp::self()->corona()->screenGeometry(PlasmaApp::self()->corona()->screenId(pos()));
 
         QSize maxSize = KWindowSystem::workArea().intersect(screenRect).size();
 
@@ -346,11 +347,11 @@ QPoint ControllerWindow::positionForPanelGeometry(const QRect &panelGeom) const
     if (m_containment) {
         screen = m_containment.data()->screen();
     } else {
-        //guess
-        screen = Kephal::ScreenUtils::screenId(QCursor::pos());
+        //guess: 
+        screen = PlasmaApp::self()->corona()->screenId(QCursor::pos());
     }
 
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(screen);
+    QRect screenGeom = PlasmaApp::self()->corona()->screenGeometry(screen);
 
     switch (m_location) {
     case Plasma::LeftEdge:
