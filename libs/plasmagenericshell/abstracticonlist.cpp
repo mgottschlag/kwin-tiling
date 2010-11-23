@@ -47,14 +47,11 @@ namespace Plasma
 
 AbstractIconList::AbstractIconList(Plasma::Location loc, QGraphicsItem *parent)
     : Plasma::ScrollWidget(parent),
+      m_orientation((loc == Plasma::LeftEdge || loc == Plasma::RightEdge) ? Qt::Vertical : Qt::Horizontal),
+      m_location(loc),
       m_searchDelayTimer(new QTimer(this)),
       m_iconSize(16)
 {
-    m_selectedItem = 0;
-    m_location = loc;
-    m_orientation = ((loc == Plasma::LeftEdge || loc == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
-
-    //timer stuff
     m_searchDelayTimer->setSingleShot(true);
     m_searchDelayTimer->setInterval(SEARCH_DELAY);
     connect(m_searchDelayTimer, SIGNAL(timeout()), this, SLOT(setSearch()));
@@ -182,7 +179,7 @@ void AbstractIconList::addIcon(AbstractIcon *icon)
 void AbstractIconList::itemSelected(Plasma::AbstractIcon *icon)
 {
     if (m_selectedItem) {
-        m_selectedItem->setSelected(false);
+        m_selectedItem.data()->setSelected(false);
     }
 
     icon->setSelected(true);
