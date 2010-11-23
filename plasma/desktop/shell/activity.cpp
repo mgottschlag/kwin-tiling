@@ -31,7 +31,6 @@
 #include <KIcon>
 #include <KStandardDirs>
 #include <KWindowSystem>
-#include <kephal/screens.h>
 
 #include <Plasma/Containment>
 #include <Plasma/Context>
@@ -210,7 +209,7 @@ void Activity::ensureActive()
 void Activity::checkScreens()
 {
     //ensure there's a containment for every screen & desktop.
-    int numScreens = Kephal::ScreenUtils::numScreens();
+    int numScreens = PlasmaApp::self()->corona()->numScreens();
     int numDesktops = AppSettings::perVirtualDesktopViews() ? KWindowSystem::numberOfDesktops() : 0;
 
     for (int screen = 0; screen < numScreens; ++screen) {
