@@ -133,7 +133,7 @@ private:
     Qt::Orientation m_orientation;
     Plasma::Location m_location;
 
-    AbstractIcon *m_selectedItem;
+    QWeakPointer<AbstractIcon> m_selectedItem;
 
     QTimer *m_searchDelayTimer;
     QString m_searchString;
