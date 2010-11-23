@@ -108,7 +108,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     // put a delay also for this call in order to be sure
     // to have correct information set (e.g. screen())
     if (containment) {
-        QRect geom = Kephal::ScreenUtils::screenGeometry(containment->screen());
+        QRect geom = PlasmaApp::self()->corona()->screenGeometry(containment->screen());
         setGeometry(geom);
     }
 
@@ -185,7 +185,7 @@ void DesktopView::prepDashboard()
 
     //If a separate dashboard is used we must use the screen of this containment instead of the dashboard one
     if (!m_dashboardFollowsDesktop && containment()) {
-        m_dashboard->setGeometry(Kephal::ScreenUtils::screenGeometry(containment()->screen()));
+        m_dashboard->setGeometry(PlasmaApp::self()->corona()->screenGeometry(containment()->screen()));
     }
 }
 
@@ -247,7 +247,7 @@ void DesktopView::screenMoved(Kephal::Screen *s)
 void DesktopView::adjustSize()
 {
     // adapt to screen resolution changes
-    QRect geom = Kephal::ScreenUtils::screenGeometry(screen());
+    QRect geom = PlasmaApp::self()->corona()->screenGeometry(screen());
     kDebug() << "screen" << screen() << "geom" << geom;
     setGeometry(geom);
     if (containment()) {
