@@ -240,16 +240,47 @@ void DesktopCorona::checkDesktop(Activity *activity, bool signalWhenExists, int 
 
 int DesktopCorona::numScreens() const
 {
+#ifdef Q_WS_X11
+    if (KGlobalSettings::isMultiHead()) {
+        // with multihead, we "lie" and say that there is only one screen
+        return 1;
+    }
+#endif
+
     return Kephal::ScreenUtils::numScreens();
 }
 
 QRect DesktopCorona::screenGeometry(int id) const
 {
+#ifdef Q_WS_X11
+    if (KGlobalSettings::isMultiHead()) {
+        // with multihead, we "lie" and say that screen 0 is the default screen, in fact, we pretend
+        // we have only one screen at all
+        Display *dpy = XOpenDisplay(NULL);
+        if (dpy) {
+            id = DefaultScreen(dpy);
+            XCloseDisplay(dpy);
+        }
+    }
+#endif
+
     return Kephal::ScreenUtils::screenGeometry(id);
 }
 
 QRegion DesktopCorona::availableScreenRegion(int id) const
 {
+#ifdef Q_WS_X11
+    if (KGlobalSettings::isMultiHead()) {
+        // with multihead, we "lie" and say that screen 0 is the default screen, in fact, we pretend
+        // we have only one screen at all
+        Display *dpy = XOpenDisplay(NULL);
+        if (dpy) {
+            id = DefaultScreen(dpy);
+            XCloseDisplay(dpy);
+        }
+    }
+#endif
+
     if (id < 0) {
         id = Kephal::ScreenUtils::primaryScreenId();
     }
@@ -455,7 +486,11 @@ void DesktopCorona::addPanel(QAction *action)
 
 void DesktopCorona::addPanel(const QString &plugin)
 {
-    Plasma::Containment* panel = addContainment(plugin);
+    Plasma::Containment *panel = addContainment(plugin);
+    if (!panel) {
+        return;
+    }
+
     panel->showConfigurationInterface();
 
     //Fall back to the cursor position since we don't know what is the originating containment
