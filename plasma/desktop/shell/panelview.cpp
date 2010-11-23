@@ -240,7 +240,7 @@ public:
 
     void adjustMargins(const QRect &geo)
     {
-        QRect screenRect = Kephal::ScreenUtils::screenGeometry(m_panel->screen());
+        QRect screenRect = PlasmaApp::self()->corona()->screenGeometry(m_panel->screen());
 
         Plasma::FrameSvg::EnabledBorders enabledBorders = Plasma::FrameSvg::AllBorders;
         qreal left, top, right, bottom;
@@ -357,8 +357,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     KConfigGroup sizes = KConfigGroup(&viewConfig, "Sizes");
     m_lastHorizontal = isHorizontal();
 
-    const bool onScreen = panel->screen() < Kephal::ScreenUtils::numScreens();
-    const QRect screenRect = onScreen ?  Kephal::ScreenUtils::screenGeometry(panel->screen()) : QRect();
+    const bool onScreen = panel->screen() < PlasmaApp::self()->corona()->numScreens();
+    const QRect screenRect = onScreen ?  PlasmaApp::self()->corona()->screenGeometry(panel->screen()) : QRect();
     if (!onScreen) {
         resize(panel->size().toSize());
     }
@@ -425,7 +425,7 @@ void PanelView::setContainment(Plasma::Containment *containment)
     }
 
     // ensure we aren't overlapping other panels
-    const QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment->screen());
+    const QRect screenRect = PlasmaApp::self()->corona()->screenGeometry(containment->screen());
     const QRegion availGeom = PlasmaApp::self()->corona()->availableScreenRegion(containment->screen());
     const int w = containment->size().width();
     const int h = containment->size().height();
@@ -498,7 +498,7 @@ void PanelView::checkShadow()
 
 void PanelView::setPanelDragPosition(const QPoint &point)
 {
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+    QRect screenGeom = PlasmaApp::self()->corona()->screenGeometry(containment()->screen());
     QRect geom = geometry();
     geom.translate(-point);
     if (screenGeom.contains(geom)) {
@@ -527,7 +527,7 @@ void PanelView::setLocation(Plasma::Location location)
             // we're switching! swap the sizes about
             panelHeight = s.width();
             if (wasFullSize) {
-                QRect screenGeom = Kephal::ScreenUtils::screenGeometry(c->screen());
+                QRect screenGeom = PlasmaApp::self()->corona()->screenGeometry(c->screen());
                 panelWidth = screenGeom.width();
             } else {
                 panelWidth = s.height();
@@ -542,7 +542,7 @@ void PanelView::setLocation(Plasma::Location location)
             // we're switching! swap the sizes about
 
             if (wasFullSize) {
-                QRect screenGeom = Kephal::ScreenUtils::screenGeometry(c->screen());
+                QRect screenGeom = PlasmaApp::self()->corona()->screenGeometry(c->screen());
                 panelHeight = screenGeom.height();
             } else {
                 panelHeight = s.width();
@@ -569,7 +569,7 @@ void PanelView::setLocation(Plasma::Location location)
 #ifdef Q_WS_WIN
     appBarPosChanged();
 #endif
-    const QRect screenRect = Kephal::ScreenUtils::screenGeometry(c->screen());
+    const QRect screenRect = PlasmaApp::self()->corona()->screenGeometry(c->screen());
     pinchContainment(screenRect);
     KWindowSystem::setOnAllDesktops(winId(), true);
     //updatePanelGeometry();
@@ -646,7 +646,7 @@ void PanelView::updatePanelGeometry()
         screen = 0;
     }
 
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(screen);
+    QRect screenGeom = PlasmaApp::self()->corona()->screenGeometry(screen);
 
     if (m_alignment != Qt::AlignCenter) {
         m_offset = qMax(m_offset, 0);
@@ -821,7 +821,7 @@ bool PanelView::isHorizontal() const
 void PanelView::pinchContainmentToCurrentScreen()
 {
     kDebug() << "pinching to current screen";
-    const QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+    const QRect screenRect = PlasmaApp::self()->corona()->screenGeometry(containment()->screen());
     pinchContainment(screenRect);
 }
 
@@ -1134,13 +1134,19 @@ void PanelView::updateStruts()
     NETExtendedStrut strut;
 
     if (m_visibilityMode == NormalPanel) {
-        QRect thisScreen = Kephal::ScreenUtils::screenGeometry(containment()->screen());
-        QRect wholeScreen = Kephal::ScreenUtils::desktopGeometry();
+        const QRect thisScreen = PlasmaApp::self()->corona()->screenGeometry(containment()->screen());
+        const QRect wholeScreen = Kephal::ScreenUtils::desktopGeometry();
 
         //Extended struts against a screen edge near to another screen are really harmful, so windows maximized under the panel is a lesser pain
         //TODO: force "windows can cover" in those cases?
-        foreach (Kephal::Screen *screen, Kephal::Screens::self()->screens()) {
-            QRect otherScreen = screen->geom();
+        const int numScreens = PlasmaApp::self()->corona()->numScreens();
+        for (int i = 0; i < numScreens; ++i) {
+            if (i == containment()->screen()) {
+                continue;
+            }
+
+            const QRect otherScreen = PlasmaApp::self()->corona()->screenGeometry(i);
+
             switch (location())
             {
             case Plasma::TopEdge:
