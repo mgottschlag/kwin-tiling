@@ -51,8 +51,6 @@
 #include "toolbutton.h"
 #include "widgetsexplorer/widgetexplorer.h"
 
-#include <kephal/screens.h>
-
 class PanelController::ButtonGroup: public QFrame
 {
 public:
@@ -368,7 +366,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
         break;
     }
 
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+    const QRect screenGeom = PlasmaApp::self()->corona()->screenGeometry(containment()->screen());
 
     switch (loc) {
     case Plasma::LeftEdge:
@@ -548,13 +546,22 @@ void PanelController::mouseMoveFilter(QMouseEvent *event)
         return;
     }
 
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+    Plasma::Corona *corona = PlasmaApp::self()->corona();
+    const QRect screenGeom = corona->screenGeometry(containment()->screen());
 
     if (m_dragging == MoveButtonElement) {
 
         if (!screenGeom.contains(event->globalPos())) {
             //move panel to new screen if dragged there
-            int targetScreen = Kephal::ScreenUtils::screenId(event->globalPos());
+            const int numScreens = corona->numScreens();
+            int targetScreen = 0;
+            for (int i = 0; i < numScreens; ++i) {
+                const QRect geom = corona->screenGeometry(i);
+                if (geom.contains(event->globalPos())) {
+                    targetScreen = i;
+                    break;
+                }
+            }
             //kDebug() << "Moving panel from screen" << containment()->screen() << "to screen" << targetScreen;
             containment()->setScreen(targetScreen);
             return;
@@ -819,14 +826,14 @@ void PanelController::settingsPopup()
                 }
         }
 
-        QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+        const QRect screenGeom = PlasmaApp::self()->corona()->screenGeometry(containment()->screen());
 
-        if (pos.rx() + s.width() > screenRect.right()) {
-            pos.rx() -= ((pos.rx() + s.width()) - screenRect.right());
+        if (pos.rx() + s.width() > screenGeom.right()) {
+            pos.rx() -= ((pos.rx() + s.width()) - screenGeom.right());
         }
 
-        if (pos.ry() + s.height() > screenRect.bottom()) {
-            pos.ry() -= ((pos.ry() + s.height()) - screenRect.bottom());
+        if (pos.ry() + s.height() > screenGeom.bottom()) {
+            pos.ry() -= ((pos.ry() + s.height()) - screenGeom.bottom());
         }
 
         pos.rx() = qMax(0, pos.rx());
@@ -837,7 +844,7 @@ void PanelController::settingsPopup()
 
 void PanelController::syncRuler()
 {
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+    const QRect screenGeom = PlasmaApp::self()->corona()->screenGeometry(containment()->screen());
 
     switch (location()) {
         case Plasma::LeftEdge:
