@@ -337,15 +337,14 @@ QRect DesktopCorona::availableScreenRect(int id) const
 
 int DesktopCorona::screenId(const QPoint &pos) const
 {
-    const int num = numScreens();
-    for (int i = 0; i < num; ++i) {
-        const QRect geom = screenGeometry(i);
-        if (geom.contains(pos)) {
-            return i;
-        }
+#ifdef Q_WS_X11
+    if (KGlobalSettings::isMultiHead()) {
+        // with multihead, we "lie" and say that there is only one screen
+        return 0;
     }
+#endif
 
-    return 0;
+    return Kephal::ScreenUtils::screenId(pos);
 }
 
 void DesktopCorona::processUpdateScripts()
