@@ -142,12 +142,12 @@ private:
     void activateContainment(int screen, int desktop);
     void insertContainment(Plasma::Containment* cont, bool force=false);
     void insertContainment(Plasma::Containment* containment, int screen, int desktop);
+    void checkScreens();
 
     QString m_id;
     QString m_name;
     QString m_icon;
     QString m_plugin;
-    KActivityInfo::State m_state;
     QHash<QPair<int,int>, Plasma::Containment*> m_containments;
     KActivityInfo *m_info;
     KActivityConsumer *m_activityConsumer;

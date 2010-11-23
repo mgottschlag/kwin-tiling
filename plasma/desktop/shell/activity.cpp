@@ -55,7 +55,6 @@ Activity::Activity(const QString &id, QObject *parent)
 
     m_name = m_info->name();
     m_icon = m_info->icon();
-    m_state = m_info->state();
 
     connect(m_info, SIGNAL(infoChanged()), this, SLOT(activityChanged()));
     connect(m_info, SIGNAL(stateChanged(KActivityInfo::State)), this, SLOT(activityStateChanged(KActivityInfo::State)));
@@ -90,7 +89,6 @@ void Activity::activityChanged()
 
 void Activity::activityStateChanged(KActivityInfo::State state)
 {
-    m_state = state;
     emit stateChanged();
 }
 
@@ -130,7 +128,7 @@ void Activity::checkIfCurrent()
 
 KActivityInfo::State Activity::state()
 {
-    return m_state;
+    return m_info->state();
 }
 
 void Activity::remove()
@@ -154,11 +152,6 @@ void Activity::removed()
 
 Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
 {
-    //desktop -1 and 0 should share the same containment (for when PVD is changed)
-    if (desktop == -1) {
-        desktop = 0;
-    }
-
     Plasma::Containment *containment = m_containments.value(QPair<int,int>(screen, desktop));
     if (!containment) {
         kDebug() << "adding containment for" << screen << desktop;
@@ -212,14 +205,17 @@ void Activity::ensureActive()
         opened();
     }
 
+    checkScreens();
+}
+
+void Activity::checkScreens()
+{
     //ensure there's a containment for every screen & desktop.
     int numScreens = Kephal::ScreenUtils::numScreens();
-    int numDesktops = 0;
-    if (AppSettings::perVirtualDesktopViews()) {
-        numDesktops = KWindowSystem::numberOfDesktops();
-    }
+    int numDesktops = AppSettings::perVirtualDesktopViews() ? KWindowSystem::numberOfDesktops() : 0;
+
     for (int screen = 0; screen < numScreens; ++screen) {
-        if (numDesktops) {
+        if (numDesktops > 0) {
             for (int desktop = 0; desktop < numDesktops; ++desktop) {
                 activateContainment(screen, desktop);
             }
@@ -301,7 +297,7 @@ void Activity::closed()
     m_corona->exportLayout(group, m_containments.values());
 
     //hrm, shouldn't the containments' deleted signals have done this for us?
-    if (! m_containments.isEmpty()) {
+    if (!m_containments.isEmpty()) {
         kDebug() << "isn't close supposed to *remove* containments??";
         m_containments.clear();
     }
@@ -398,7 +394,7 @@ void Activity::opened()
     if (m_containments.isEmpty()) {
         //TODO check if we need more for screens/desktops
         kDebug() << "open failed (bad file?). creating new containment";
-        containmentForScreen(0, 0);
+        checkScreens();
     }
 
     m_corona->requireConfigSync();
