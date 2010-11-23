@@ -175,7 +175,6 @@ private:
     QHash<int, QWeakPointer<ControllerWindow> > m_widgetExplorers;
     int m_startupSuspendWaitCount;
     bool m_ignoreDashboardClosures;
-    int m_primaryScreen;
     bool m_pendingFixedDashboard;
     QString m_loadingActivity;
 };
