@@ -56,7 +56,7 @@ KcmSolid::KcmSolid(QWidget *parent, const QVariantList &args)
     m_powerChooser = new BackendChooser(this, "SolidPowerManager");
     m_networkChooser = new BackendChooser(this, "SolidNetworkManager");
     m_remoteControlChooser = new BackendChooser(this, "SolidRemoteControlManager");
-    m_modemChooser = new BackendChooser(this, "SolidNetworkManager");
+    m_modemChooser = new BackendChooser(this, "SolidModemManager");
 
     layout()->addWidget(m_powerChooser);
     layout()->addWidget(m_networkChooser);
