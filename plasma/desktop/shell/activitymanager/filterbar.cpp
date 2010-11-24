@@ -83,8 +83,8 @@ FilterBar::FilterBar(Qt::Orientation orientation, QGraphicsItem *parent)
     m_linearLayout->addItem(m_textSearch);
     //m_linearLayout->addItem(m_categoriesTabs);
     m_linearLayout->addStretch(10);
-    m_linearLayout->addItem(addWidgetsButton);
     m_linearLayout->addItem(m_newActivityButton);
+    m_linearLayout->addItem(addWidgetsButton);
 
     setOrientation(orientation);
 }
