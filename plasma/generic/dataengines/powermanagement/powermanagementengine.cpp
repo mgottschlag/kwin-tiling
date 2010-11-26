@@ -70,7 +70,7 @@ void PowermanagementEngine::init()
         if (!QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement",
                                                    "/org/kde/Solid/PowerManagement",
                                                    "org.kde.Solid.PowerManagement",
-                                                   "batteryRemainingTimeChanged", this,
+                                                   "profileChanged", this,
                                                    SLOT(profileChanged(const QString&)))) {
             kDebug() << "error connecting to Profile changes via dbus";
         }
@@ -78,13 +78,13 @@ void PowermanagementEngine::init()
                                                    "/org/kde/Solid/PowerManagement",
                                                    "org.kde.Solid.PowerManagement",
                                                    "batteryRemainingTimeChanged", this,
-                                                   SLOT(batteryRemainingTimeChanged(int)))) {
+                                                   SLOT(batteryRemainingTimeChanged(qulonglong)))) {
             kDebug() << "error connecting to remaining time changes";
         }
 
         // Listen to profile changes
         KDirWatch *profilesWatch = new KDirWatch(this);
-        profilesWatch->addFile(KStandardDirs::locate("config", "powerdevilprofilesrc"));
+        profilesWatch->addFile(KStandardDirs::locate("config", "powerdevil2profilesrc"));
         connect(profilesWatch,SIGNAL(dirty(QString)),this,SLOT(availableProfilesChanged()));
         connect(profilesWatch,SIGNAL(created(QString)),this,SLOT(availableProfilesChanged()));
         connect(profilesWatch,SIGNAL(deleted(QString)),this,SLOT(availableProfilesChanged()));
@@ -155,6 +155,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
             QDBusPendingReply< int > reply = QDBusConnection::sessionBus().asyncCall(msg);
             reply.waitForFinished();
             if (reply.isValid()) {
+                //kDebug() << "Remaining time 1:" << reply.value();
                 setData("Battery", "Remaining msec", reply.value());
             }
         }
@@ -284,14 +285,15 @@ void PowermanagementEngine::profileChanged(const QString &current)
     setData("PowerDevil", "Current profile", current);
 }
 
-void PowermanagementEngine::batteryRemainingTimeChanged(int time)
+void PowermanagementEngine::batteryRemainingTimeChanged(qulonglong time)
 {
-    setData("Battery0", "Remaining msec", time);
+    //kDebug() << "Remaining time 2:" << time;
+    setData("Battery", "Remaining msec", time);
 }
 
 void PowermanagementEngine::availableProfilesChanged()
 {
-    KConfig *profilesConfig = new KConfig("powerdevilprofilesrc", KConfig::SimpleConfig);
+    KConfig *profilesConfig = new KConfig("powerdevil2profilesrc", KConfig::SimpleConfig);
     setData("PowerDevil", "Available profiles", profilesConfig->groupList());
     delete profilesConfig;
 }

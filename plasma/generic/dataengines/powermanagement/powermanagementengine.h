@@ -54,7 +54,7 @@ private slots:
     void deviceRemoved(const QString& udi);
     void deviceAdded(const QString& udi);
     void profileChanged(const QString &current);
-    void batteryRemainingTimeChanged(int time);
+    void batteryRemainingTimeChanged(qulonglong time);
     void availableProfilesChanged();
     void reloadPowerDevilData();
 
