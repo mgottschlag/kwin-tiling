@@ -135,7 +135,7 @@ void KCMKeyboardWidget::uiChanged()
 	keyboardConfig->showIndicator = uiWidget->showIndicatorChk->isChecked();
 	keyboardConfig->showSingle = uiWidget->showSingleChk->isChecked();
 
-	keyboardConfig->configureLayouts = uiWidget->configureLayoutsChk->isChecked();
+	keyboardConfig->configureLayouts = uiWidget->layoutsGroupBox->isChecked();
 	keyboardConfig->keyboardModel = uiWidget->keyboardModelComboBox->itemData(uiWidget->keyboardModelComboBox->currentIndex()).toString();
 	keyboardConfig->showFlag = uiWidget->showFlagRadioBtn->isChecked();
 
@@ -211,6 +211,8 @@ void KCMKeyboardWidget::updateLoopCount()
 	int maxLoop = min(X11Helper::MAX_GROUP_COUNT, keyboardConfig->layouts.count() - 1);
 	uiWidget->layoutLoopCountSpinBox->setMaximum(maxLoop);
 
+	bool layoutsConfigured = uiWidget->layoutsGroupBox->isChecked();
+
 	if( maxLoop < MIN_LOOPING_COUNT ) {
 		uiWidget->layoutLoopingCheckBox->setEnabled(false);
 		uiWidget->layoutLoopingCheckBox->setChecked(false);
@@ -219,11 +221,12 @@ void KCMKeyboardWidget::updateLoopCount()
 		uiWidget->layoutLoopingCheckBox->setEnabled(false);
 		uiWidget->layoutLoopingCheckBox->setChecked(true);
 	}
-	else{
-		uiWidget->layoutLoopingCheckBox->setEnabled(true);
+	else {
+		uiWidget->layoutLoopingCheckBox->setEnabled(layoutsConfigured);
 	}
 
-	uiWidget->layoutLoopingGroupBox->setEnabled(uiWidget->layoutLoopingCheckBox->isChecked());
+	uiWidget->layoutLoopingGroupBox->setEnabled(
+			layoutsConfigured && uiWidget->layoutLoopingCheckBox->isChecked());
 
 	if( uiWidget->layoutLoopingCheckBox->isChecked() ) {
 		if( uiWidget->layoutLoopCountSpinBox->text() == "" ) {
@@ -301,8 +304,8 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 	connect(uiWidget->xkbGrpShortcutBtn, SIGNAL(clicked(bool)), this, SLOT(scrollToGroupShortcut()));
 	connect(uiWidget->xkb3rdLevelShortcutBtn, SIGNAL(clicked(bool)), this, SLOT(scrollTo3rdLevelShortcut()));
 
-	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), uiWidget->layoutsGroupBox, SLOT(setEnabled(bool)));
-	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), this, SLOT(configureLayoutsChanged()));
+	//	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), uiWidget->layoutsGroupBox, SLOT(setEnabled(bool)));
+	connect(uiWidget->layoutsGroupBox, SIGNAL(toggled(bool)), this, SLOT(configureLayoutsChanged()));
 
 	connect(uiWidget->showIndicatorChk, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
 	connect(uiWidget->showIndicatorChk, SIGNAL(toggled(bool)), uiWidget->showSingleChk, SLOT(setEnabled(bool)));
@@ -316,7 +319,7 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 
 void KCMKeyboardWidget::configureLayoutsChanged()
 {
-	if( uiWidget->configureLayoutsChk->isChecked() && keyboardConfig->layouts.isEmpty() ) {
+	if( uiWidget->layoutsGroupBox->isChecked()	&& keyboardConfig->layouts.isEmpty() ) {
 		populateWithCurrentLayouts();
 	}
 	uiChanged();
@@ -568,15 +571,15 @@ void KCMKeyboardWidget::updateXkbOptionsUI()
     uiWidget->configureKeyboardOptionsChk->setChecked(keyboardConfig->resetOldXkbOptions);
 }
 
-void KCMKeyboardWidget::updateLayoutsUI()
-{
-	uiWidget->configureLayoutsChk->setChecked(keyboardConfig->configureLayouts);
+void KCMKeyboardWidget::updateLayoutsUI() {
+	uiWidget->layoutsGroupBox->setChecked(keyboardConfig->configureLayouts);
 	uiWidget->showIndicatorChk->setChecked(keyboardConfig->showIndicator);
 	uiWidget->showSingleChk->setChecked(keyboardConfig->showSingle);
 	uiWidget->showFlagRadioBtn->setChecked(keyboardConfig->showFlag);
 	uiWidget->showLabelRadioBtn->setChecked(!keyboardConfig->showFlag);
 
-	bool loopingOn = keyboardConfig->layoutLoopCount != KeyboardConfig::NO_LOOPING;
+	bool loopingOn = keyboardConfig->configureLayouts && keyboardConfig->layoutLoopCount
+			!= KeyboardConfig::NO_LOOPING;
 	uiWidget->layoutLoopingCheckBox->setChecked(loopingOn);
 	uiWidget->layoutLoopingGroupBox->setEnabled(loopingOn);
 	if( loopingOn ) {
