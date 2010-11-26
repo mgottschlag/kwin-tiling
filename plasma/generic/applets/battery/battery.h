@@ -178,7 +178,7 @@ class Battery : public Plasma::PopupApplet
         int m_boxHoverAlpha;
         int m_numOfBattery;
         bool m_acAdapterPlugged;
-        int m_remainingMSecs;
+        qulonglong m_remainingMSecs;
 
         qreal m_labelAlpha;
         QPropertyAnimation *m_labelAnimation;

@@ -151,7 +151,6 @@ void Battery::init()
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(readColors()));
     connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()), SLOT(readColors()));
     connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(setupFonts()));
-    connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(setupFonts()));
 
     const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["Sources"].toStringList();
 
@@ -309,7 +308,11 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
 
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
-    if (source.startsWith(QLatin1String("Battery"))) {
+    if (source == "Battery") {
+        m_remainingMSecs = data["Remaining msec"].toULongLong();
+        kDebug() << "Remaining msecs on battery:" << m_remainingMSecs;
+    }
+    else if (source.startsWith(QLatin1String("Battery"))) {
         m_batteriesData[source] = data;
         //kDebug() << "new battery source" << source;
     } else if (source == "AC Adapter") {
@@ -318,14 +321,9 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     } else if (source == "PowerDevil") {
         m_availableProfiles = data["Available profiles"].toStringList();
         m_currentProfile = data["Current profile"].toString();
-        //kDebug() << "PowerDevil profiles:" << m_availableProfiles << "[" << m_currentProfile << "]";
+        kDebug() << "PowerDevil profiles:" << m_availableProfiles << "[" << m_currentProfile << "]";
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
-    }
-
-    if (source == "Battery0") {
-        m_remainingMSecs = data["Remaining msec"].toInt();
-        //kDebug() << "Remaining msecs on battery:" << m_remainingMSecs;
     }
 
     Plasma::ItemStatus status = Plasma::PassiveStatus;
@@ -965,7 +963,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             // paint battery with appropriate charge level
             paintBattery(p, corect, batteryData.value()["Percent"].toInt(), batteryData.value()["Plugged in"].toBool());
 
-            if (m_showBatteryLabel || !isConstrained()) {
+            if (!isConstrained()) {
                 // Show the charge percentage with a box on top of the battery
                 QString batteryLabel;
                 if (batteryData.value()["Plugged in"].toBool()) {
@@ -977,7 +975,6 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                     }
                     QString state = batteryData.value()["State"].toString();
 
-                    m_remainingMSecs = batteryData.value()["Remaining msec"].toInt();
                     if (m_remainingMSecs > 0 && (m_showRemainingTime && (state=="Charging" || state=="Discharging"))) {
                         QTime t = QTime(m_hours, m_minutes);
                         KLocale tmpLocale(*KGlobal::locale());
@@ -1044,6 +1041,7 @@ void Battery::connectSources()
 
     dataEngine("powermanagement")->connectSource("AC Adapter", this);
     dataEngine("powermanagement")->connectSource("PowerDevil", this);
+    dataEngine("powermanagement")->connectSource("Battery", this);
 
     connect(dataEngine("powermanagement"), SIGNAL(sourceAdded(QString)),
             this,                          SLOT(sourceAdded(QString)));
