@@ -40,8 +40,7 @@ private Q_SLOTS:
 
 };
 
-// need kde libs for config-workspace.h used in xkb_rules.cpp
-// need GUI for xkb protocol
+//TODO: something lighter than KDEMAIN ?
 QTEST_KDEMAIN( IsoCodesTest, NoGUI )
 
 #include "iso_codes_test.moc"
