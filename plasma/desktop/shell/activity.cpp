@@ -311,12 +311,6 @@ void Activity::insertContainment(Plasma::Containment* cont, bool force)
     int screen = cont->lastScreen();
     int desktop = cont->lastDesktop();
 
-    //desktop -1 and 0 should share the same containment (for when PVD is changed)
-    if (desktop == -1) {
-        desktop = 0;
-        //kDebug() << "desktop was -1";
-    }
-
     kDebug() << screen << desktop;
     if (screen == -1) {
         //the migration can't set lastScreen, so maybe we need to assign the containment here
