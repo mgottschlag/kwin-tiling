@@ -65,10 +65,10 @@ static void processUrl(KUrl &url, const QString &term)
     }
 }
 
-//Replaces the '#' sign with "man" and "##" with "info:" as it was in KDE3
-static QString manInfoLookup(QString term)
+//Suports accessing man/info-pages with '#' as the triggering shortcut
+//Replaces the '#' sign with "man" and "##" with "info:"
+QString manInfoLookup(QString term)
 {
-    //Suports KDE3 way of accessing man/info-pages
     if (term.startsWith("##")) {
         return term.replace(0, 2, "info:");
     } else if (term.startsWith("#")) {
