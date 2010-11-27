@@ -65,6 +65,19 @@ static void processUrl(KUrl &url, const QString &term)
     }
 }
 
+//Replaces the '#' sign with "man" and "##" with "info:" as it was in KDE3
+static QString manInfoLookup(QString term)
+{
+    //Suports KDE3 way of accessing man/info-pages
+    if (term.startsWith("##")) {
+        return term.replace(0, 2, "info:");
+    } else if (term.startsWith("#")) {
+        return term.replace(0, 1, "man:");
+    }
+
+    return term;
+}
+
 void LocationsRunner::match(Plasma::RunnerContext &context)
 {
     QString term = context.query();
@@ -98,8 +111,10 @@ void LocationsRunner::match(Plasma::RunnerContext &context)
         context.addMatch(term, match);
     } else if (type == Plasma::RunnerContext::NetworkLocation ||
                (type == Plasma::RunnerContext::UnknownType &&
-                term.contains(QRegExp("^[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,6}")))) {
-        KUrl url(term);
+                (term.startsWith('#') ||
+                term.contains(QRegExp("^[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,6}"))))) {
+
+        KUrl url(manInfoLookup(term));
         processUrl(url, term);
 
         if (!KProtocolInfo::isKnownProtocol(url.protocol())) {
@@ -148,7 +163,9 @@ void LocationsRunner::run(const Plasma::RunnerContext &context, const Plasma::Qu
 
     KUrl urlToRun(location);
 
-    if ((type == Plasma::RunnerContext::NetworkLocation || type == Plasma::RunnerContext::UnknownType) &&
+    if (location.startsWith('#')) {
+        urlToRun = manInfoLookup(location);
+    } else if ((type == Plasma::RunnerContext::NetworkLocation || type == Plasma::RunnerContext::UnknownType) &&
         (data.startsWith("http://") || data.startsWith("ftp://"))) {
         // the text may have changed while we were running, so we have to refresh
         // our content
