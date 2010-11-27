@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Share Services
 Name[ast]=Compartir Servicios
+Name[da]=Delingstjenester
 Name[de]=Veröffentlichungs-Dienste
 Name[en_GB]=Share Services
 Name[et]=Jagamisteenused
@@ -25,6 +26,7 @@ Name[x-test]=xxShare Servicesxx
 Name[zh_TW]=分享服務
 Comment=Engine to share content using different services
 Comment[ast]=Motor pa compartir conteníos a traviés d'estremaos servicios
+Comment[da]=Motor til at dele indhold ved brug af forskellige tjenester
 Comment[de]=Treiber für die Veröffentlichung von Inhalten über verschiedene Dienste
 Comment[en_GB]=Engine to share content using different services
 Comment[es]=Motor para compartir contenidos a través de diferentes servicios

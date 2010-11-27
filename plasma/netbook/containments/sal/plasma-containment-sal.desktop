@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Search and Launch
 Name[ast]=Guetar y executar
+Name[da]=Søg og start
 Name[de]=Suchen und ausführen
 Name[en_GB]=Search and Launch
 Name[es]=Buscar y ejecutar
@@ -27,6 +28,7 @@ Name[zh_CN]=搜索与启动
 Name[zh_TW]=搜尋並啟動
 Comment=Full screen application launcher with search interface
 Comment[ast]=Llanzador d'aplicaciones a pantalla completa con una interface de gueta
+Comment[da]=Startmenu i fuldskærm med søgefunktion
 Comment[de]=Anwendungsstarter im Vollbildmodus mit Suchfeld
 Comment[en_GB]=Full screen application launcher with search interface
 Comment[es]=Lanzador de aplicaciones a pantalla completa con una interfaz de búsqueda

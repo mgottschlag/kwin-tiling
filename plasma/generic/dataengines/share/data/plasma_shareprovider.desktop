@@ -3,6 +3,7 @@ Type=ServiceType
 X-KDE-ServiceType=Plasma/ShareProvider
 Comment=Plugin for Plasma Sharebin
 Comment[ast]=Complementu pa Plasma Sharebin
+Comment[da]=Plugin til Plasma Sharebin
 Comment[de]=Modul für Plasma-Sharebin
 Comment[en_GB]=Plugin for Plasma Sharebin
 Comment[es]=Complemento para Plasma Sharebin
