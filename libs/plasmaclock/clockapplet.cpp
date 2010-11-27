@@ -686,14 +686,15 @@ void ClockApplet::updateClipboardMenu()
     sep2->setSeparator(true);
     d->clipboardMenu->addAction(sep2);
 
+    QMenu *calendarMenu = d->clipboardMenu->addMenu( i18nc( "@item:inmenu Submenu for alternative calendar dates", "Other Calendars" ) );
     QStringList calendars = KCalendarSystem::calendarSystems();
     foreach ( const QString &cal, calendars ) {
         if (cal != calendar()->calendarType()) {
             KCalendarSystem *tempCal = KCalendarSystem::create(cal);
             QString text = tempCal->formatDate(dateTime.date(), KLocale::LongDate) + " (" + KCalendarSystem::calendarLabel(cal) + ')';
-            d->clipboardMenu->addAction(text);
+            calendarMenu->addAction(text);
             text = tempCal->formatDate(dateTime.date(), KLocale::ShortDate) + " (" + KCalendarSystem::calendarLabel(cal) + ')';
-            d->clipboardMenu->addAction(text);
+            calendarMenu->addAction(text);
             delete tempCal;
         }
     }
