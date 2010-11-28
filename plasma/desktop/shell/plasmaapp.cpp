@@ -1195,6 +1195,9 @@ void PlasmaApp::cloneCurrentActivity()
 //TODO accomodate activities
 void PlasmaApp::setPerVirtualDesktopViews(bool perDesktopViews)
 {
+    if (perDesktopViews == perVirtualDesktopViews()) {
+        return;
+    }
     AppSettings::setPerVirtualDesktopViews(perDesktopViews);
     AppSettings::self()->writeConfig();
 
