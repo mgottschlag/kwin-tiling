@@ -33,7 +33,7 @@ QT4_ADD_DBUS_INTERFACE(libkickoff_SRCS ${krunner_xml} krunner_interface)
 set(ksmserver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
 QT4_ADD_DBUS_INTERFACE(libkickoff_SRCS ${ksmserver_xml} ksmserver_interface)
 
-set(Kickoff_LIBS ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_SOLID_LIBS} solidcontrol)
+set(Kickoff_LIBS ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_SOLID_LIBS})
 if(NOT WIN32)
     set(Kickoff_LIBS ${Kickoff_LIBS} kworkspace)
 endif(NOT WIN32)
@@ -44,7 +44,7 @@ endif(HAVE_STRIGIDBUS)
 include_directories( ${STRIGI_INCLUDE_DIR} )
 
 kde4_add_library(kickoff SHARED ${libkickoff_SRCS})
-target_link_libraries(kickoff ${KDE4_PLASMA_LIBS} solidcontrol ${Kickoff_LIBS})
+target_link_libraries(kickoff ${KDE4_PLASMA_LIBS} ${Kickoff_LIBS})
 install(TARGETS kickoff ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 #######################################################################################
@@ -64,7 +64,7 @@ set(Applet_SRCS
 )
 kde4_add_ui_files(Applet_SRCS applet/kickoffConfig.ui )
 kde4_add_plugin(plasma_applet_launcher ${Applet_SRCS})
-target_link_libraries(plasma_applet_launcher ${KDE4_PLASMA_LIBS} solidcontrol ${Kickoff_LIBS} kickoff)
+target_link_libraries(plasma_applet_launcher ${KDE4_PLASMA_LIBS} ${Kickoff_LIBS} kickoff)
 install(TARGETS plasma_applet_launcher DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES applet/plasma-applet-launcher.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
@@ -77,7 +77,7 @@ set(SimpleApplet_SRCS
     simpleapplet/simpleapplet.cpp
 )
 kde4_add_plugin(plasma_applet_simplelauncher ${SimpleApplet_SRCS})
-target_link_libraries(plasma_applet_simplelauncher ${KDE4_KCMUTILS_LIBS} ${KDE4_PLASMA_LIBS} solidcontrol ${Kickoff_LIBS} kickoff)
+target_link_libraries(plasma_applet_simplelauncher ${KDE4_KCMUTILS_LIBS} ${KDE4_PLASMA_LIBS} ${Kickoff_LIBS} kickoff)
 install(TARGETS plasma_applet_simplelauncher DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES simpleapplet/plasma-applet-simplelauncher.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 

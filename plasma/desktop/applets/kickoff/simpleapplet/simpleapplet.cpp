@@ -52,10 +52,10 @@
 #include <KRun>
 #include <KServiceTypeTrader>
 #include <KToolInvocation>
+#include <Solid/PowerManagement>
 
 // KDE Base
 #include <kworkspace/kworkspace.h>
-#include <solid/control/powermanager.h>
 
 // Plasma
 #include <Plasma/IconWidget>
@@ -731,15 +731,15 @@ void MenuLauncherApplet::showMenu(bool pressed)
                 d->addModel(leavemodel, Leave, Kickoff::MenuView::MergeFirstLevel, Kickoff::MenuView::Name);
             } else {
 #ifndef Q_WS_WIN
-                Solid::Control::PowerManager::SuspendMethods spdMethods = Solid::Control::PowerManager::supportedSuspendMethods();
+                QSet< Solid::PowerManagement::SleepState > spdMethods = Solid::PowerManagement::supportedSleepStates();
                 if (vtname == "Standby") {
-                    if (spdMethods & Solid::Control::PowerManager::Standby)
+                    if (spdMethods.contains(Solid::PowerManagement::StandbyState))
                         menuview->addAction(KIcon(d->viewIcon(Standby)), d->viewText(Standby))->setData(KUrl("leave:/standby"));
                 } else if(vtname == "SuspendDisk") {
-                    if (spdMethods & Solid::Control::PowerManager::ToDisk)
+                    if (spdMethods.contains(Solid::PowerManagement::HibernateState))
                         menuview->addAction(KIcon(d->viewIcon(SuspendDisk)), d->viewText(SuspendDisk))->setData(KUrl("leave:/suspenddisk"));
                 } else if(vtname == "SuspendRAM") {
-                    if (spdMethods & Solid::Control::PowerManager::ToRam)
+                    if (spdMethods.contains(Solid::PowerManagement::SuspendState))
                         menuview->addAction(KIcon(d->viewIcon(SuspendRAM)), d->viewText(SuspendRAM))->setData(KUrl("leave:/suspendram"));
                 } else if(vtname == "Restart") {
                     if (KWorkSpace::canShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeReboot))

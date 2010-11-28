@@ -27,7 +27,7 @@
 #include <KConfigGroup>
 #include <KDebug>
 #include <KIcon>
-#include <solid/control/powermanager.h>
+#include <Solid/PowerManagement>
 #include <kworkspace/kworkspace.h>
 
 // Local
@@ -141,20 +141,20 @@ void LeaveModel::updateModel()
 
 //FIXME: the proper fix is to implement the KWorkSpace methods for Windows
 #ifndef Q_WS_WIN
-    Solid::Control::PowerManager::SuspendMethods spdMethods = Solid::Control::PowerManager::supportedSuspendMethods();
-    if (spdMethods & Solid::Control::PowerManager::Standby) {
+    QSet< Solid::PowerManagement::SleepState > spdMethods = Solid::PowerManagement::supportedSleepStates();
+    if (spdMethods.contains(Solid::PowerManagement::StandbyState)) {
         QStandardItem *standbyOption = createStandardItem("leave:/standby");
         systemOptions->appendRow(standbyOption);
         addSystemSession = true;
     }
 
-    if (spdMethods & Solid::Control::PowerManager::ToRam) {
+    if (spdMethods.contains(Solid::PowerManagement::SuspendState)) {
         QStandardItem *suspendramOption = createStandardItem("leave:/suspendram");
         systemOptions->appendRow(suspendramOption);
         addSystemSession = true;
     }
 
-    if (spdMethods & Solid::Control::PowerManager::ToDisk) {
+    if (spdMethods.contains(Solid::PowerManagement::HibernateState)) {
         QStandardItem *suspenddiskOption = createStandardItem("leave:/suspenddisk");
         systemOptions->appendRow(suspenddiskOption);
         addSystemSession = true;
