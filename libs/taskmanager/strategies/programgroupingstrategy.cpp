@@ -204,7 +204,6 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
             //TODO: maybe add the condition that the subgroup was created by programGrouping?
             if (programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
                 //kDebug() << "joined subGroup";
-                rootGroup()->add(taskItem);
                 return true;
             }
         } else {
@@ -227,11 +226,11 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
             connect(group, SIGNAL(checkIcon(TaskGroup*)), this, SLOT(updateIcon(TaskGroup*)));
         } else {
             //kDebug() << "joined this Group";
+            //this somehow isn't happening
             groupItem->add(taskItem);
         }
 
-		rootGroup()->add(taskItem);
-		return true;
+        return true;
     }
 
     return false;
