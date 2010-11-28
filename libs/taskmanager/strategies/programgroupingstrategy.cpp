@@ -226,7 +226,6 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
             connect(group, SIGNAL(checkIcon(TaskGroup*)), this, SLOT(updateIcon(TaskGroup*)));
         } else {
             //kDebug() << "joined this Group";
-            //this somehow isn't happening
             groupItem->add(taskItem);
         }
 
