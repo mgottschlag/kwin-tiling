@@ -143,7 +143,7 @@ Comment[x-test]=xxView and pick dates from the calendarxx
 Comment[zh_CN]=查看日历，选取日期
 Comment[zh_TW]=檢視並從行事曆中挑選日期
 Type=Service
-Icon=view-pim-calendar
+Icon=office-calendar
 X-KDE-ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_calendar
