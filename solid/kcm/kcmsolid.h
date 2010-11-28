@@ -41,7 +41,6 @@ private Q_SLOTS:
 private:
     int m_changedChooser;
 
-    BackendChooser *m_powerChooser;
     BackendChooser *m_networkChooser;
     BackendChooser *m_remoteControlChooser;
     BackendChooser *m_modemChooser;

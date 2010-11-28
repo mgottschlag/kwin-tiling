@@ -53,20 +53,16 @@ KcmSolid::KcmSolid(QWidget *parent, const QVariantList &args)
     layout()->setMargin(0);
     layout()->setSpacing(0);
 
-    m_powerChooser = new BackendChooser(this, "SolidPowerManager");
     m_networkChooser = new BackendChooser(this, "SolidNetworkManager");
     m_remoteControlChooser = new BackendChooser(this, "SolidRemoteControlManager");
     m_modemChooser = new BackendChooser(this, "SolidModemManager");
 
-    layout()->addWidget(m_powerChooser);
     layout()->addWidget(m_networkChooser);
     layout()->addWidget(m_remoteControlChooser);
     layout()->addWidget(m_modemChooser);
 
     load();
 
-    connect(m_powerChooser, SIGNAL(changed(bool)),
-             this, SLOT(slotChooserChanged(bool)));
     connect(m_networkChooser, SIGNAL(changed(bool)),
              this, SLOT(slotChooserChanged(bool)));
     connect(m_modemChooser, SIGNAL(changed(bool)),
@@ -76,7 +72,6 @@ KcmSolid::KcmSolid(QWidget *parent, const QVariantList &args)
 
 void KcmSolid::load()
 {
-    m_powerChooser->load();
     m_networkChooser->load();
     m_remoteControlChooser->load();
     m_modemChooser->load();
@@ -84,14 +79,12 @@ void KcmSolid::load()
 
 void KcmSolid::save()
 {
-    m_powerChooser->save();
     m_networkChooser->save();
     m_modemChooser->save();
 }
 
 void KcmSolid::defaults()
 {
-    m_powerChooser->defaults();
     m_networkChooser->defaults();
     m_modemChooser->defaults();
 }
