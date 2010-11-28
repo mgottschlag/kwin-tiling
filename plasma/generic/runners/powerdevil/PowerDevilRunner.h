@@ -45,11 +45,8 @@ class PowerDevilRunner : public Plasma::AbstractRunner
 
         QDBusConnection m_dbus;
 
-        QStringList m_supportedGovernors;
-        QHash<QString, int> m_governorData;
         QStringList m_availableProfiles;
         QHash<QString, QString> m_profileIcon;
-        QStringList m_supportedSchemes;
         QHash<int, QString> m_suspendMethods;
         QHash<QString, int> m_synonyms;
 

@@ -22,6 +22,7 @@
 
 #include <QDBusInterface>
 #include <QDBusReply>
+#include <QtDBus/QDBusConnectionInterface>
 
 #include <KIcon>
 #include <KLocale>
@@ -30,7 +31,7 @@
 #include <KStandardDirs>
 #include <KRun>
 
-#include <solid/control/powermanager.h>
+#include <Solid/PowerManagement>
 
 PowerDevilRunner::PowerDevilRunner(QObject *parent, const QVariantList &args)
         : Plasma::AbstractRunner(parent),
@@ -51,14 +52,11 @@ PowerDevilRunner::PowerDevilRunner(QObject *parent, const QVariantList &args)
 
     QStringList commands;
     commands << i18nc("Note this is a KRunner keyword", "power profile")
-             << i18nc("Note this is a KRunner keyword", "power profile")
              << i18nc("Note this is a KRunner keyword", "suspend")
              << i18nc("Note this is a KRunner keyword", "sleep")
              << i18nc("Note this is a KRunner keyword", "hibernate")
              << i18nc("Note this is a KRunner keyword", "to disk")
              << i18nc("Note this is a KRunner keyword", "to ram")
-             << i18nc("Note this is a KRunner keyword", "cpu policy")
-             << i18nc("Note this is a KRunner keyword", "power governor")
              << i18nc("Note this is a KRunner keyword", "screen brightness")
              << i18nc("Note this is a KRunner keyword", "dim screen");
 
@@ -74,30 +72,25 @@ void PowerDevilRunner::updateSyntaxes()
     QList<Plasma::RunnerSyntax> syntaxes;
     syntaxes.append(Plasma::RunnerSyntax(i18nc("Note this is a KRunner keyword", "power profile"),
                      i18n("Lists all power profiles and allows them to be activated")));
-    syntaxes.append(Plasma::RunnerSyntax(i18nc("Note this is a KRunner keyword", "power profile"),
-                     i18n("Lists all power saving schemes and allows them to be activated")));
     syntaxes.append(Plasma::RunnerSyntax(i18nc("Note this is a KRunner keyword", "suspend"),
                      i18n("Lists system suspend (e.g. sleep, hibernate) options "
                           "and allows them to be activated")));
 
-    if (m_synonyms.contains("sleep")) {
+    QSet< Solid::PowerManagement::SleepState > states = Solid::PowerManagement::supportedSleepStates();
+
+    if (states.contains(Solid::PowerManagement::SuspendState)) {
         Plasma::RunnerSyntax sleepSyntax(i18nc("Note this is a KRunner keyword", "sleep"),
                                          i18n("Suspends the system to RAM"));
         sleepSyntax.addExampleQuery(i18nc("Note this is a KRunner keyword", "to ram"));
         syntaxes.append(sleepSyntax);
     }
 
-    if (m_synonyms.contains("hibernate")) {
+    if (states.contains(Solid::PowerManagement::HibernateState)) {
         Plasma::RunnerSyntax hibernateSyntax(i18nc("Note this is a KRunner keyword", "hibernate"),
                                          i18n("Suspends the system to disk"));
         hibernateSyntax.addExampleQuery(i18nc("Note this is a KRunner keyword", "to disk"));
         syntaxes.append(hibernateSyntax);
     }
-
-    Plasma::RunnerSyntax cpuFreqSyntax(i18nc("Note this is a KRunner keyword", "cpu policy"),
-                         i18n("Lists all CPU frequency scaling policies and allows them to be activated"));
-    cpuFreqSyntax.addExampleQuery(i18nc("Note this is a KRunner keyword", "power governor"));
-    syntaxes.append(cpuFreqSyntax);
 
     Plasma::RunnerSyntax brightnessSyntax(i18nc("Note this is a KRunner keyword", "screen brightness"),
                             // xgettext:no-c-format
@@ -114,96 +107,35 @@ PowerDevilRunner::~PowerDevilRunner()
 
 void PowerDevilRunner::initUpdateTriggers()
 {
-
-    // listen for changes to the profiles
-    KDirWatch *profilesWatch = new KDirWatch(this);
-    profilesWatch->addFile(KStandardDirs::locate("config", "powerdevilprofilesrc"));
-    connect(profilesWatch,SIGNAL(dirty(QString)),this,SLOT(updateStatus()));
-    connect(profilesWatch,SIGNAL(created(QString)),this,SLOT(updateStatus()));
-    connect(profilesWatch,SIGNAL(deleted(QString)),this,SLOT(updateStatus()));
-
     // Also receive updates triggered through the DBus
-    QStringList modules;
-    QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
-    QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
-
-    if (!reply.isValid()) {
-        return;
-    }
-
-    modules = reply.value();
-
-    if (modules.contains("powerdevil")) {
-        if (!m_dbus.connect("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil",
-                          "profileChanged", this, SLOT(updateStatus()))) {
+    if (m_dbus.interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
+        if (!m_dbus.connect("org.kde.Solid.PowerManagement",
+                            "/org/kde/Solid/PowerManagement",
+                            "org.kde.Solid.PowerManagement",
+                            "profileChanged", this, SLOT(updateStatus()))) {
             kDebug() << "error!";
         }
-        if (!m_dbus.connect("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil",
-                          "stateChanged", this, SLOT(updateStatus()))) {
+        if (!m_dbus.connect("org.kde.Solid.PowerManagement",
+                            "/org/kde/Solid/PowerManagement",
+                            "org.kde.Solid.PowerManagement",
+                            "configurationReloaded", this, SLOT(updateStatus()))) {
             kDebug() << "error!";
         }
-
-        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded", "/modules/powerdevil",
-                           "org.kde.PowerDevil", "streamData");
-        m_dbus.asyncCall(msg);
     }
 }
 
 void PowerDevilRunner::updateStatus()
 {
-    // Governors
-    {
-        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded",
-                            "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedGovernors");
-        QDBusReply<QVariantMap> govs = m_dbus.asyncCall(msg);
-        m_supportedGovernors = govs.value().keys();
-        foreach(const QString &governor, m_supportedGovernors) {
-            m_governorData[governor] = govs.value()[governor].toInt();
-        }
-    }
-
     // Profiles and their icons
     {
-        KConfig *profilesConfig = new KConfig("powerdevilprofilesrc", KConfig::SimpleConfig);
+        KSharedConfigPtr profilesConfig = KSharedConfig::openConfig("powerdevil2profilesrc", KConfig::SimpleConfig);
         m_availableProfiles = profilesConfig->groupList();
         foreach(const QString &profile, m_availableProfiles) {
-            KConfigGroup *settings = new KConfigGroup(profilesConfig, profile);
-            if (settings->readEntry("iconname").isEmpty()) {
+            KConfigGroup settings(profilesConfig, profile);
+            if (settings.readEntry< QString >("icon", QString()).isEmpty()) {
                 m_profileIcon[profile] = "preferences-system-power-management";
             } else {
-                m_profileIcon[profile] = settings->readEntry("iconname");
-            }
-            delete settings;
-        }
-        delete profilesConfig;
-    }
-
-    // Schemes
-    {
-        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded",
-                            "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedSchemes");
-        QDBusReply<QStringList> schemes = m_dbus.asyncCall(msg);
-        m_supportedSchemes = schemes.value();
-    }
-
-    // Suspend
-    {
-        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded",
-                                "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedSuspendMethods");
-        QDBusReply<QVariantMap> methods = m_dbus.asyncCall(msg);
-        QMapIterator<QString, QVariant> it(methods);
-        m_suspendMethods.clear();
-        m_synonyms.clear();
-        while (it.hasNext()) {
-            it.next();
-            const int value = it.value().toInt();
-            m_suspendMethods[value] = it.key();
-            if (it.key() == i18n("Suspend to RAM")) {
-                m_synonyms[i18nc("Note this is a KRunner keyword", "sleep")] = value;
-                m_synonyms[i18nc("Note this is a KRunner keyword", "to ram")] = value;
-            } else  if (it.key() == i18n("Suspend to Disk")) {
-                m_synonyms[i18nc("Note this is a KRunner keyword", "hibernate")] = value;
-                m_synonyms[i18nc("Note this is a KRunner keyword", "to disk")] = value;
+                m_profileIcon[profile] = settings.readEntry< QString >("icon", QString());
             }
         }
     }
@@ -254,71 +186,6 @@ void PowerDevilRunner::match(Plasma::RunnerContext &context)
             matches.append(match);
         }
     } else if (parseQuery(term,
-                          QList<QRegExp>() << QRegExp(i18nc("Note this is a KRunner keyword; %1 is a parameter", "cpu policy %1", "(.*)"), Qt::CaseInsensitive)
-                                           << QRegExp(i18nc("Note this is a KRunner keyword", "cpu policy"), Qt::CaseInsensitive)
-                                           << QRegExp(i18nc("Note this is a KRunner keyword; %1 is a parameter", "power governor %1", "(.*)"), Qt::CaseInsensitive)
-                                           << QRegExp(i18nc("Note this is a KRunner keyword", "power governor"), Qt::CaseInsensitive),
-                          parameter)) {
-        foreach(const QString &ent, m_supportedGovernors) {
-            if (!parameter.isEmpty()) {
-                if (!ent.startsWith(parameter, Qt::CaseInsensitive)) {
-                    continue;
-                }
-            }
-            Plasma::QueryMatch match(this);
-            match.setType(Plasma::QueryMatch::ExactMatch);
-
-            switch (m_governorData[ent]) {
-                case (int) Solid::Control::PowerManager::Performance:
-                    match.setIcon(KIcon("preferences-system-performance"));
-                    break;
-                case (int) Solid::Control::PowerManager::OnDemand:
-                    match.setIcon(KIcon("system-switch-user"));
-                    break;
-                case (int) Solid::Control::PowerManager::Conservative:
-                    match.setIcon(KIcon("user-invisible"));
-                    break;
-                case (int) Solid::Control::PowerManager::Powersave:
-                    match.setIcon(KIcon("preferences-system-power-management"));
-                    break;
-                case (int) Solid::Control::PowerManager::Userspace:
-                    match.setIcon(KIcon("kuser"));
-                    break;
-                default:
-                    match.setIcon(KIcon("preferences-system-power-management"));
-                    break;
-            }
-
-            match.setText(i18n("Set CPU frequency scaling policy to '%1'", ent));
-            match.setData(m_governorData[ent]);
-            match.setRelevance(1);
-            match.setId("GovernorChange "+ent);
-            matches.append(match);
-        }
-    } else if (parseQuery(term,
-                   QList<QRegExp>() << QRegExp(i18nc("Note this is a KRunner keyword; %1 is a parameter", "power scheme %1", "(.*)"), Qt::CaseInsensitive)
-                                    << QRegExp(i18nc("Note this is a KRunner keyword", "power scheme"), Qt::CaseInsensitive),
-                   parameter)) {
-        foreach(const QString &ent, m_supportedSchemes) {
-            if (!parameter.isEmpty()) {
-                if (!ent.startsWith(parameter, Qt::CaseInsensitive)) {
-                    continue;
-                }
-            }
-
-            Plasma::QueryMatch match(this);
-
-            match.setType(Plasma::QueryMatch::ExactMatch);
-
-            match.setIcon(KIcon("preferences-system-power-management"));
-            match.setText(i18n("Set Powersaving Scheme to '%1'", ent));
-            match.setData(ent);
-
-            match.setRelevance(1);
-            match.setId("SchemeChange "+ent);
-            matches.append(match);
-        }
-    } else if (parseQuery(term,
                           QList<QRegExp>() << QRegExp(i18nc("Note this is a KRunner keyword; %1 is a parameter", "screen brightness %1", "(.*)"), Qt::CaseInsensitive)
                                            << QRegExp(i18nc("Note this is a KRunner keyword", "screen brightness"), Qt::CaseInsensitive)
                                            << QRegExp(i18nc("Note this is a KRunner keyword; %1 is a parameter", "dim screen %1", "(.*)"), Qt::CaseInsensitive)
@@ -364,13 +231,21 @@ void PowerDevilRunner::match(Plasma::RunnerContext &context)
             matches.append(match3);
         }
     } else if (term.startsWith(i18nc("Note this is a KRunner keyword", "suspend"))) {
-        QHashIterator<int, QString> it(m_suspendMethods);
-        while (it.hasNext()) {
-            it.next();
-            addSuspendMatch(it.key(), matches);
+        QSet< Solid::PowerManagement::SleepState > states = Solid::PowerManagement::supportedSleepStates();
+
+        if (states.contains(Solid::PowerManagement::SuspendState)) {
+            addSuspendMatch(Solid::PowerManagement::SuspendState, matches);
         }
-    } else if (m_synonyms.contains(term)) {
-        addSuspendMatch(m_synonyms.value(term), matches);
+
+        if (states.contains(Solid::PowerManagement::HibernateState)) {
+            addSuspendMatch(Solid::PowerManagement::HibernateState, matches);
+        }
+    } else if (term.startsWith(i18nc("Note this is a KRunner keyword", "sleep")) ||
+               term.startsWith(i18nc("Note this is a KRunner keyword", "to ram"))) {
+        addSuspendMatch(Solid::PowerManagement::SuspendState, matches);
+    } else if (term.startsWith(i18nc("Note this is a KRunner keyword", "hibernate")) ||
+               term.startsWith(i18nc("Note this is a KRunner keyword", "to disk"))) {
+        addSuspendMatch(Solid::PowerManagement::HibernateState, matches);
     }
 
     if (!matches.isEmpty()) {
@@ -383,23 +258,21 @@ void PowerDevilRunner::addSuspendMatch(int value, QList<Plasma::QueryMatch> &mat
     Plasma::QueryMatch match(this);
     match.setType(Plasma::QueryMatch::ExactMatch);
 
-    switch (value) {
-        case 1:
-        case 2:
+    switch ((Solid::PowerManagement::SleepState)value) {
+        case Solid::PowerManagement::SuspendState:
+        case Solid::PowerManagement::StandbyState:
             match.setIcon(KIcon("system-suspend"));
+            match.setText(i18n("Suspend to RAM"));
             break;
-        case 4:
+        case Solid::PowerManagement::HibernateState:
             match.setIcon(KIcon("system-suspend-hibernate"));
-            break;
-        default:
-            match.setIcon(KIcon("preferences-system-power-management"));
+            match.setText(i18n("Suspend to Disk"));
             break;
     }
 
-    match.setText(m_suspendMethods[value]);
     match.setData(value);
     match.setRelevance(1);
-    match.setId("Suspend " + m_suspendMethods[value]);
+    match.setId("Suspend");
     matches.append(match);
 }
 
@@ -407,13 +280,11 @@ void PowerDevilRunner::run(const Plasma::RunnerContext &context, const Plasma::Q
 {
     Q_UNUSED(context)
 
-    QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", m_dbus);
+    QDBusInterface iface("org.kde.Solid.PowerManagement",
+                         "/org/kde/Solid/PowerManagement",
+                         "org.kde.Solid.PowerManagement", m_dbus);
     if (match.id().startsWith("PowerDevil_ProfileChange")) {
-        iface.asyncCall("setProfile", match.data().toString());
-    } else if (match.id().startsWith("PowerDevil_GovernorChange")) {
-        iface.asyncCall("setGovernor", match.data().toInt());
-    } else if (match.id().startsWith("PowerDevil_SchemeChange")) { 
-        iface.asyncCall("setPowersavingScheme", match.data().toString());
+        iface.asyncCall("loadProfile", match.data().toString());
     } else if (match.id() == "PowerDevil_BrightnessChange") {
         iface.asyncCall("setBrightness", match.data().toInt());
     } else if (match.id() == "PowerDevil_DimTotal") {
@@ -421,9 +292,18 @@ void PowerDevilRunner::run(const Plasma::RunnerContext &context, const Plasma::Q
     } else if (match.id() == "PowerDevil_DimHalf") {
         iface.asyncCall("setBrightness", -2);
     } else if (match.id() == "PowerDevil_TurnOffScreen") {
-        iface.asyncCall("turnOffScreen");
+        // FIXME: Maybe this should be even removed
+        // iface.asyncCall("turnOffScreen");
     } else if (match.id().startsWith("PowerDevil_Suspend")) {
-        iface.asyncCall("suspend", match.data().toInt());
+        switch ((Solid::PowerManagement::SleepState)match.data().toInt()) {
+            case Solid::PowerManagement::SuspendState:
+            case Solid::PowerManagement::StandbyState:
+                iface.asyncCall("suspendToRam");
+                break;
+            case Solid::PowerManagement::HibernateState:
+                iface.asyncCall("suspendToDisk");
+                break;
+        }
     }
 }
 
