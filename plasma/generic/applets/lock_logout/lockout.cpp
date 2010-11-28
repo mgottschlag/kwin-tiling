@@ -43,8 +43,6 @@
 #include <screensaver_interface.h>
 #endif
 
-#include <solid/control/powermanager.h>
-
 // Windows
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -226,20 +224,16 @@ void LockOut::clickSleep()
             != KMessageBox::Yes) {
         return;
     }
-    // Check if powerdevil is running, and use its methods to suspend if available
-    // otherwise go through Solid directly
-    QStringList modules;
-    QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
-    QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
-    if (reply.isValid() && reply.value().contains("powerdevil")) {
-        kDebug() << "Using powerdevil to suspend";
-        QDBusConnection dbus(QDBusConnection::sessionBus());
-        QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus);
-        iface.call("suspend", Solid::Control::PowerManager::ToRam);
+    // Check if KDE Power Management System is running, and use its methods to suspend if available
+    if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
+        kDebug() << "Using KDE Power Management System to suspend";
+        QDBusMessage call = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
+                                                           "/org/kde/Solid/PowerManagement",
+                                                           "org.kde.Solid.PowerManagement",
+                                                           "suspendToRam");
+        QDBusConnection::sessionBus().asyncCall(call);
     } else {
-        kDebug() << "Powerdevil not available, using solid to suspend";
-        KJob * job = Solid::Control::PowerManager::suspend(Solid::Control::PowerManager::ToRam);
-        job->start();
+        kDebug() << "KDE Power Management System not available, suspend failed";
     }
 }
 
@@ -251,20 +245,16 @@ void LockOut::clickHibernate()
             != KMessageBox::Yes) {
         return;
     }
-    // Check if powerdevil is running, and use its methods to hibernate if available
-    // otherwise go through Solid directly
-    QStringList modules;
-    QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
-    QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
-    if (reply.isValid() && reply.value().contains("powerdevil")) {
-        kDebug() << "Using powerdevil to hibernate";
-        QDBusConnection dbus(QDBusConnection::sessionBus());
-        QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus);
-        iface.call("suspend", Solid::Control::PowerManager::ToDisk);
+    // Check if KDE Power Management System is running, and use its methods to hibernate if available
+    if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
+        kDebug() << "Using KDE Power Management System to hibernate";
+        QDBusMessage call = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
+                                                           "/org/kde/Solid/PowerManagement",
+                                                           "org.kde.Solid.PowerManagement",
+                                                           "suspendToDisk");
+        QDBusConnection::sessionBus().asyncCall(call);
     } else {
-        kDebug() << "Powerdevil not available, using solid to hibernate";
-        KJob * job = Solid::Control::PowerManager::suspend(Solid::Control::PowerManager::ToDisk);
-        job->start();
+        kDebug() << "KDE Power Management System not available, hibernate failed";
     }
 }
 
