@@ -37,13 +37,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QPaintEvent>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusMessage>
+#include <QtDBus/QDBusPendingCall>
 
 #include <KApplication>
 #include <kdialog.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kuser.h>
-#include <solid/control/powermanager.h>
+#include <Solid/PowerManagement>
 #include <kwindowsystem.h>
 #include <netwm.h>
 
@@ -352,7 +355,7 @@ bool KSMPushButton::event( QEvent *e )
 
 //////
 
-Q_DECLARE_METATYPE(Solid::Control::PowerManager::SuspendMethod)
+Q_DECLARE_METATYPE(Solid::PowerManagement::SleepState)
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                                 bool maysd, bool choose, KWorkSpace::ShutdownType sdtype )
@@ -436,18 +439,18 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
             QActionGroup* spdActionGroup = new QActionGroup(shutdownMenu);
             connect( spdActionGroup, SIGNAL(triggered(QAction*)), SLOT(slotSuspend(QAction*)) );
             m_btnHalt->setPopupMenu( shutdownMenu );
-            Solid::Control::PowerManager::SuspendMethods spdMethods = Solid::Control::PowerManager::supportedSuspendMethods();
-            if( spdMethods & Solid::Control::PowerManager::Standby ) {
+            QSet< Solid::PowerManagement::SleepState > spdMethods = Solid::PowerManagement::supportedSleepStates();
+            if( spdMethods.contains(Solid::PowerManagement::StandbyState) ) {
                 QAction* action = new QAction(i18n("&Standby"), spdActionGroup);
-                action->setData(QVariant::fromValue(Solid::Control::PowerManager::Standby));
+                action->setData(QVariant::fromValue(Solid::PowerManagement::StandbyState));
             }
-            if( spdMethods & Solid::Control::PowerManager::ToRam ) {
+            if( spdMethods.contains(Solid::PowerManagement::SuspendState) ) {
                 QAction* action = new QAction(i18n("Suspend to &RAM"), spdActionGroup);
-                action->setData(QVariant::fromValue(Solid::Control::PowerManager::ToRam));
+                action->setData(QVariant::fromValue(Solid::PowerManagement::SuspendState));
             }
-            if( spdMethods & Solid::Control::PowerManager::ToDisk ) {
+            if( spdMethods.contains(Solid::PowerManagement::HibernateState) ) {
                 QAction* action = new QAction(i18n("Suspend to &Disk"), spdActionGroup);
-                action->setData(QVariant::fromValue(Solid::Control::PowerManager::ToDisk));
+                action->setData(QVariant::fromValue(Solid::PowerManagement::HibernateState));
             }
             shutdownMenu->addActions(spdActionGroup->actions());
         }
@@ -665,10 +668,24 @@ void KSMShutdownDlg::slotHalt()
 void KSMShutdownDlg::slotSuspend(QAction* action)
 {
     m_bootOption.clear();
-    Solid::Control::PowerManager::SuspendMethod spdMethod = action->data().value<Solid::Control::PowerManager::SuspendMethod>();
-    KJob *job = Solid::Control::PowerManager::suspend( spdMethod );
-    if (job != 0)
-       job->start();
+    Solid::PowerManagement::SleepState spdMethod = action->data().value<Solid::PowerManagement::SleepState>();
+    QDBusMessage call;
+    switch (spdMethod) {
+        case Solid::PowerManagement::StandbyState:
+        case Solid::PowerManagement::SuspendState:
+            call = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
+                                                  "/org/kde/Solid/PowerManagement",
+                                                  "org.kde.Solid.PowerManagement",
+                                                  "suspendToRam");
+            break;
+        case Solid::PowerManagement::HibernateState:
+            call = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
+                                                  "/org/kde/Solid/PowerManagement",
+                                                  "org.kde.Solid.PowerManagement",
+                                                  "suspendToDisk");
+            break;
+    }
+    QDBusConnection::sessionBus().asyncCall(call);
     reject();
 }
 
