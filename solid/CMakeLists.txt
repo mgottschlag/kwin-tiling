@@ -4,10 +4,6 @@ macro_optional_find_package(NetworkManager)
 add_subdirectory(kcm)
 add_subdirectory(solid-actions-kcm)
 
-IF("${CMAKE_SYSTEM}" MATCHES "Linux" OR "${CMAKE_SYSTEM}" MATCHES "FreeBSD")
-  add_subdirectory(hal)
-ENDIF("${CMAKE_SYSTEM}" MATCHES "Linux" OR "${CMAKE_SYSTEM}" MATCHES "FreeBSD")
-
 IF("${CMAKE_SYSTEM}" MATCHES "Linux")
   add_subdirectory(solidshell)
 ENDIF("${CMAKE_SYSTEM}" MATCHES "Linux")

@@ -11,7 +11,6 @@ add_subdirectory( tests )
 set(solidcontrol_LIB_SRCS
    frontendobject.cpp
    managerbase.cpp
-   powermanager.cpp
    networking.cpp
    networkmanager.cpp
    networkinterface.cpp
@@ -38,11 +37,6 @@ set(solidcontrol_LIB_SRCS
    modemgsmussdinterface.cpp
 )
 
-# FIXME: this should be XRANDR_FOUND instead
-if(NOT WIN32)
-set(solidcontrol_LIB_SRCS ${solidcontrol_LIB_SRCS} powermanager_randr.cpp)
-endif(NOT WIN32)
-
 qt4_add_dbus_interface(solidcontrol_LIB_SRCS org.kde.Solid.Networking.xml org_kde_solid_networking)
 
 kde4_add_library(solidcontrol SHARED ${solidcontrol_LIB_SRCS})
@@ -52,15 +46,10 @@ target_link_libraries(solidcontrol ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} ${QT_
 set_target_properties(solidcontrol PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS solidcontrol EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
-pkg_check_modules (XRANDR_1_2   xrandr>=1.2)
-macro_bool_to_01(XRANDR_1_2_FOUND HAS_RANDR_1_2)
-
-configure_file(config-randr.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-randr.h )
-
 ########### install files ###############
 
-install( FILES solidpowermanager.desktop solidnetworkmanager.desktop solidremotecontrolmanager.desktop solidmodemmanager.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR}  )
-install( FILES powermanager.h networkmanager.h networkinterface.h remotecontrolmanager.h 
+install( FILES solidnetworkmanager.desktop solidremotecontrolmanager.desktop solidmodemmanager.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR}  )
+install( FILES networkmanager.h networkinterface.h remotecontrolmanager.h
     remotecontrol.h remotecontrolbutton.h wirednetworkinterface.h wirelessnetworkinterface.h
     wirelessaccesspoint.h singletondefs.h networking.h networkipv4config.h solid_control_export.h 
     networkcdmainterface.h networkgsminterface.h networkserialinterface.h

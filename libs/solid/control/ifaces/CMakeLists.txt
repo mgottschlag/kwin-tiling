@@ -2,8 +2,7 @@
 
 ########### next target ###############
 
-set(solidcontrolifaces_LIB_SRCS 
-   powermanager.cpp
+set(solidcontrolifaces_LIB_SRCS
    networkinterface.cpp
    networkcdmainterface.cpp
    networkgsminterface.cpp
@@ -45,5 +44,5 @@ install(TARGETS solidcontrolifaces EXPORT kdeworkspaceLibraryTargets ${INSTALL_T
 
 ########### install files ###############
 
-install( FILES powermanager.h networkmanager.h networkinterface.h networkcdmainterface.h networkgsminterface.h networkserialinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h remotecontrol.h remotecontrolmanager.h modemmanager.h modeminterface.h modemlocationinterface.h modemcdmainterface.h modemgsmcardinterface.h modemgsmcontactsinterface.h modemgsmnetworkinterface.h modemgsmsmsinterface.h modemgsmhsointerface.h modemgsmussdinterface.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/control/ifaces COMPONENT Devel)
+install( FILES networkmanager.h networkinterface.h networkcdmainterface.h networkgsminterface.h networkserialinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h remotecontrol.h remotecontrolmanager.h modemmanager.h modeminterface.h modemlocationinterface.h modemcdmainterface.h modemgsmcardinterface.h modemgsmcontactsinterface.h modemgsmnetworkinterface.h modemgsmsmsinterface.h modemgsmhsointerface.h modemgsmussdinterface.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/control/ifaces COMPONENT Devel)
 
