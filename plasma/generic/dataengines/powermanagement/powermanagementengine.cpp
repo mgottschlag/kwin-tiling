@@ -27,7 +27,6 @@
 #include <solid/deviceinterface.h>
 #include <solid/battery.h>
 #include <solid/powermanagement.h>
-#include <solid/control/powermanager.h>
 
 #include <KDebug>
 #include <KLocale>
