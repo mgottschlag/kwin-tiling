@@ -2,7 +2,7 @@
 Name=Fs Type
 Name[ar]=نوع نظام الملفات
 Name[ast]=Triba de Fs
-Name[bg]=Тип Fs
+Name[bg]=Вид файлова система
 Name[bn]=Fs ধরন
 Name[ca]=Tipus de sistema de fitxers
 Name[ca@valencia]=Tipus de sistema de fitxers
@@ -71,7 +71,7 @@ Name[zh_TW]=檔案系統型態
 Name=Ignored
 Name[ar]=متجاهَل
 Name[ast]=Inoráu
-Name[bg]=Игнориран
+Name[bg]=Пренебрегнат
 Name[bn]=উপেক্ষিত
 Name[ca]=Ignorat
 Name[ca@valencia]=Ignorat
