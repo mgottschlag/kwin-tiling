@@ -73,6 +73,7 @@ class QsMatchView::Private
         QString m_searchTerm;
         QGraphicsRectItem *m_descRect;
         QGraphicsTextItem *m_descText;
+        QTimeLine *m_timeLine;
         int m_currentItem;
         bool m_hasFocus : 1;
         bool m_itemsRemoved : 1;
@@ -91,6 +92,8 @@ QsMatchView::QsMatchView(QWidget *parent)
     d->m_itemsRemoved = false;
     d->m_listVisible = true;
     d->m_selectionMade = false; //Prevent completion box from popping up once a user chooses a match
+
+    d->m_timeLine = new QTimeLine(150, this);
 
     d->m_descRect = 0;
     d->m_descText = 0;
@@ -244,8 +247,6 @@ void QsMatchView::setItems(const QList<MatchItem*> &items, bool popup, bool appe
         //kDebug() << "A user selection was already made" << endl;
         return;
     }
-
-    scrollToItem(0);
 
     //Ensure popup is shown if desired
     if (popup) {
@@ -467,6 +468,13 @@ void QsMatchView::selectItem(int index)
     showSelected();
 }
 
+void QsMatchView::finishAnimation()
+{
+    if (d->m_timeLine->state() == QTimeLine::Running) {
+        d->m_timeLine->setCurrentTime(d->m_timeLine->duration());
+    }
+}
+
 void QsMatchView::scrollLeft()
 {
     if (d->m_currentItem > 0){
@@ -475,7 +483,7 @@ void QsMatchView::scrollLeft()
         d->m_currentItem = d->m_items.size() - 1;
     }
 
-    QTimeLine *t = new QTimeLine(150);
+    finishAnimation();
     foreach (MatchItem *item, d->m_items) {
         QGraphicsItemAnimation *anim = item->anim(true);
         int spacing = MatchItem::ITEM_SIZE/2;
@@ -496,9 +504,9 @@ void QsMatchView::scrollLeft()
             anim->setScaleAt(1, 0.5, 0.5);
         }
         anim->setPosAt(1.0, QPointF(x, y));
-        anim->setTimeLine(t);
+        anim->setTimeLine(d->m_timeLine);
     }
-    t->start();
+    d->m_timeLine->start();
     focusItem(d->m_currentItem);
 }
 
@@ -510,7 +518,7 @@ void QsMatchView::scrollRight()
         d->m_currentItem = 0;
     }
 
-    QTimeLine *t = new QTimeLine(150);
+    finishAnimation();
     foreach (MatchItem *item, d->m_items) {
         QGraphicsItemAnimation *anim = item->anim(true);
         int spacing = MatchItem::ITEM_SIZE/2;
@@ -525,9 +533,9 @@ void QsMatchView::scrollRight()
             x = item->pos().x() - spacing;
         }
         anim->setPosAt(1.0, QPointF(x, y));
-        anim->setTimeLine(t);
+        anim->setTimeLine(d->m_timeLine);
     }
-    t->start();
+    d->m_timeLine->start();
     focusItem(d->m_currentItem);
 }
 
@@ -537,32 +545,27 @@ void QsMatchView::scrollToItem(int index)
         return;
     }
 
-    qreal shift = d->m_items[index]->pos().x();
+    const int oldIndex = d->m_currentItem;
 
-    QTimeLine *t = new QTimeLine(150);
-    foreach (MatchItem *item, d->m_items) {
-        QGraphicsItemAnimation *anim = item->anim(true);
-        qreal y = SMALL_ICON_PADDING;
-        qreal x = -MatchItem::ITEM_SIZE/2;
-        int ix = d->m_items.indexOf(item);
-        if (ix == index) {
-            anim->setScaleAt(1, 1, 1);
-            y = LARGE_ICON_PADDING;
-        } else {
-            x = item->pos().x() - shift;
-            if ((shift > 0 && ix < index && ix > d->m_currentItem)
-                || (shift < 0 && !(ix <= d->m_currentItem && ix > index))) {
-                x -= MatchItem::ITEM_SIZE/2;
-            }
-            anim->setScaleAt(0, 0.5, 0.5);
-            anim->setScaleAt(1, 0.5, 0.5);
-        }
-        anim->setPosAt(1.0, QPointF(x, y));
-        anim->setTimeLine(t);
+    //already at this item, make sure that the icon has the correct size etc.
+    if (index == oldIndex) {
+        scrollRight();
+        scrollLeft();
+        return;
     }
-    t->start();
-    d->m_currentItem = index;
-    focusItem(index);
+
+    int times = index - oldIndex;
+    bool isRight = times > 0;
+    times = std::abs(times);
+
+    while (times) {
+        if (isRight) {
+            scrollRight();
+        } else {
+            scrollLeft();
+        }
+        --times;
+    }
 }
 
 void QsMatchView::showPopup()

@@ -151,6 +151,12 @@ namespace QuickSand {
             void focusOutEvent(QFocusEvent *event);
             void keyPressEvent(QKeyEvent *event);
 
+            /**
+             * If there is already an animation and a new one should start, then the old
+             * will be finished
+             */
+            void finishAnimation();
+
             class Private;
             Private* const d;
     };
