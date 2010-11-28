@@ -12,4 +12,4 @@ KEYBOARD_DAEMON_UNIT_TESTS(xkb_rules)
 KEYBOARD_DAEMON_UNIT_TESTS(iso_codes)
 
 kde4_add_unit_test(flags_test NOGUI flags_test.cpp ../flags.cpp ../utils.cpp ../x11_helper.cpp ../keyboard_config.cpp ../xkb_rules.cpp)
-target_link_libraries(flags_test ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${QT_QTTEST_LIBRARY} ${X11_Xkbfile_LIB})
+target_link_libraries(flags_test ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${QT_QTTEST_LIBRARY} ${X11_Xkbfile_LIB} ${X11_LIBRARIES})
