@@ -128,9 +128,8 @@ void Nepomuk::SearchRunner::run( const Plasma::RunnerContext&, const Plasma::Que
 
     Nepomuk::Resource res = match.data().value<Nepomuk::Resource>();
     KUrl url = res.resourceUri();
-    if (res.hasType(Nepomuk::Vocabulary::NFO::FileDataObject()) &&
-        KUrl(res.property(Nepomuk::Vocabulary::NIE::url()).toUrl()).isLocalFile()) {
-        url = res.property(Nepomuk::Vocabulary::NIE::url()).toUrl();
+    if (res.isFile() && res.toFile().url().isLocalFile()) {
+        url = res.toFile().url();
     }
 
     (void)new KRun(url, 0);

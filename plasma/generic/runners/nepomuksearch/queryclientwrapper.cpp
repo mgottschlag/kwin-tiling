@@ -21,15 +21,13 @@
 
 #include <nepomuk/nie.h>
 #include <nepomuk/nfo.h>
-#include <Nepomuk/Resource>
+#include <Nepomuk/File>
 #include <Nepomuk/Variant>
 #include <Nepomuk/Types/Class>
 #include <Nepomuk/Query/QueryServiceClient>
 #include <Nepomuk/Query/Result>
 #include <Nepomuk/Query/Query>
 #include <Nepomuk/Query/QueryParser>
-
-#include <Soprano/Vocabulary/Xesam>
 
 #include <KIcon>
 #include <KDebug>
@@ -102,9 +100,8 @@ void Nepomuk::QueryClientWrapper::slotNewEntries(const QList<Nepomuk::Query::Res
         QString type;
         QString iconName;
 
-        if (res.hasType(Nepomuk::Vocabulary::NFO::FileDataObject()) &&
-            KUrl(res.property(Nepomuk::Vocabulary::NIE::url()).toUrl()).isLocalFile()) {
-            const KUrl url = res.property(Nepomuk::Vocabulary::NIE::url()).toUrl();
+        if (res.isFile() && res.toFile().url().isLocalFile()) {
+            const KUrl url(res.toFile().url());
             KMimeType::Ptr mimetype = KMimeType::findByUrl(url);
             if (mimetype) {
                 type = mimetype->comment();
