@@ -114,6 +114,7 @@ Comment[uk]=Інструменти керування активним вікн�
 Comment[x-test]=xxControls for the active windowxx
 Comment[zh_CN]=控制活动窗口
 Comment[zh_TW]=作用中視窗控制
+Icon=preferences-system-windows
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/Applet
