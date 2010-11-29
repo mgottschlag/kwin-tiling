@@ -113,6 +113,7 @@ Comment[uk]=Панель пошуку для вказаного Керуванн
 Comment[x-test]=xxSearch Box for a given RunnerManagerxx
 Comment[zh_CN]=运行管理器的搜索框
 Comment[zh_TW]=RunnerManager 的搜尋盒
+Icon=edit-find
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/Applet
