@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Activities Engine
+Name[ca]=Motor d'activitats
 Name[da]=Aktivitetsmotor
 Name[es]=Motor de actividades
 Name[et]=Tegevuste mootor
@@ -21,6 +22,7 @@ Name[x-test]=xxActivities Enginexx
 Name[zh_CN]=活动引擎
 Name[zh_TW]=活動引擎
 Comment=Information on Plasma Activities
+Comment[ca]=Informació quant a activitats del Plasma
 Comment[da]=Information om Plasma-aktiviteter
 Comment[es]=Información sobre las actividades de Plasma
 Comment[et]=Teave Plasma tegevuste kohta.

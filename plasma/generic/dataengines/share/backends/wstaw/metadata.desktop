@@ -2,6 +2,7 @@
 Name=wstaw.org
 Name[ast]=wstaw.org
 Name[bg]=wstaw.org
+Name[ca]=wstaw.org
 Name[cs]=wstaw.org
 Name[da]=wstaw.org
 Name[de]=wstaw.org
@@ -34,6 +35,7 @@ Name[zh_CN]=wstaw.org
 Name[zh_TW]=wstaw.org
 Comment=Enables the share of images using the wstaw.org service
 Comment[ast]=Permite compartir imáxenes a traviés del serviciu de wstaw.org
+Comment[ca]=Habilita la compartició d'imatges utilitzant el servei wstaw.org
 Comment[da]=Muliggør deling af billeder med tjenesten wstaw.org
 Comment[de]=Ermöglicht die Veröffentlichung von Bildern auf wstaw.org
 Comment[en_GB]=Enables the share of images using the wstaw.org service

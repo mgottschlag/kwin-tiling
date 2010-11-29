@@ -2,6 +2,7 @@
 Name=wklej.org
 Name[ast]=wklej.org
 Name[bg]=wklej.org
+Name[ca]=wklej.org
 Name[cs]=wklej.org
 Name[da]=wklej.org
 Name[de]=wklej.org
@@ -33,6 +34,7 @@ Name[zh_CN]=wklej.org
 Name[zh_TW]=wklej.org
 Comment=Enables the share of text using wklej.org service
 Comment[ast]=Permite compartir testu a traviés del serviciu de wklej.org
+Comment[ca]=Habilita la compartició de text utilitzant el servei wklej.org
 Comment[da]=Muliggør deling af tekst med tjenesten wklej.org
 Comment[de]=Ermöglicht die Veröffentlichung von Text auf wklej.org
 Comment[en_GB]=Enables the share of text using wklej.org service
