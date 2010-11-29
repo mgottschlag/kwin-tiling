@@ -28,6 +28,7 @@
 
 #include <nepomuk/nie.h>
 #include <nepomuk/nfo.h>
+#include <Nepomuk/File>
 #include <Nepomuk/Resource>
 #include <Nepomuk/Variant>
 #include <Nepomuk/ResourceManager>
