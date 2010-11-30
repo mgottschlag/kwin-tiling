@@ -24,7 +24,7 @@
 #include <Plasma/DataEngine>
 
 namespace Plasma {
-    class WebView;
+    class TextBrowser;
     class IconWidget;
 }
 
@@ -51,7 +51,7 @@ class HWInfo : public SM::Applet
     private:
         void setSources();
 
-        Plasma::WebView *m_info;
+        Plasma::TextBrowser *m_info;
         Plasma::IconWidget *m_icon;
         QString m_gpu;
         QStringList m_cpus;

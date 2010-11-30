@@ -18,11 +18,13 @@
  */
 
 #include "hwinfo.h"
-#include <Plasma/WebView>
+
+#include <Plasma/TextBrowser>
 #include <Plasma/IconWidget>
 #include <Plasma/Containment>
 #include <Plasma/ToolTipManager>
 #include <Plasma/Theme>
+#include <KTextBrowser>
 #include <KDebug>
 #include <KStandardDirs>
 #include <KIcon>
@@ -63,8 +65,8 @@ bool HWInfo::addVisualization(const QString& source)
 {
     if (mode() != SM::Applet::Panel) {
         if (!m_info) {
-            m_info = new Plasma::WebView(this);
-            m_info->setHtml(QString(START + i18n("Getting hardware information...") + END));
+            m_info = new Plasma::TextBrowser(this);
+            m_info->nativeWidget()->setHtml(QString(START + i18n("Getting hardware information...") + END));
             appendVisualization(source, m_info);
             //m_info->nativeWidget()->document()->setTextWidth(contentsRect().width());
             //setPreferredItemHeight(m_info->nativeWidget()->document()->size().height());
@@ -150,7 +152,7 @@ void HWInfo::updateHtml()
         html = QString(START START_TABLE)
                 .arg(theme->color(Plasma::Theme::BackgroundColor).name())
                 .arg(theme->color(Plasma::Theme::TextColor).name()) + html;
-        m_info->setHtml(html);
+        m_info->nativeWidget()->setHtml(html);
     } else if (m_icon) {
         html = START_BASIC START_TABLE + html;
         Plasma::ToolTipContent data(i18n("Hardware Info"), html);
