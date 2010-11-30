@@ -508,6 +508,7 @@ void TaskArea::initUnhideTool()
 
 void TaskArea::setUnhideToolIconSizes()
 {
+    d->unhider->setPreferredIconSize(QSize(16,16));
     if (d->topLayout->orientation() == Qt::Horizontal) {
         d->unhider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     } else {
