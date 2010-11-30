@@ -418,9 +418,9 @@ void Battery::brightnessChanged(const int brightness)
 {
     if (!m_ignoreBrightnessChange) {
         QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
-                                                        "/org/kde/Solid/PowerManagement",
-                                                        "org.kde.Solid.PowerManagement",
-                                                        "setBrightness");
+                                                          "/org/kde/Solid/PowerManagement",
+                                                          "org.kde.Solid.PowerManagement",
+                                                          "setBrightness");
         msg.setArguments(QList<QVariant>() << QVariant::fromValue(brightness));
         QDBusPendingReply< QString > reply = QDBusConnection::sessionBus().asyncCall(msg);
     }
@@ -429,9 +429,9 @@ void Battery::brightnessChanged(const int brightness)
 void Battery::updateSlider()
 {
     QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
-                                                        "/org/kde/Solid/PowerManagement",
-                                                        "org.kde.Solid.PowerManagement",
-                                                        "brightness");
+                                                      "/org/kde/Solid/PowerManagement",
+                                                      "org.kde.Solid.PowerManagement",
+                                                      "brightness");
     QDBusPendingReply< int > reply = QDBusConnection::sessionBus().asyncCall(msg);
     reply.waitForFinished();
     updateSlider(reply.value());
@@ -618,8 +618,8 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         setupFonts();
 
         m_brightnessOSD = new BrightnessOSDWidget();
-        QDBusConnection::sessionBus().connect("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil",
-                                              "brightnessChanged", this, SLOT(showBrightnessOSD(int,bool)));
+        QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement",
+                                              "brightnessChanged", this, SLOT(showBrightnessOSD(int)));
     }
 }
 
@@ -658,19 +658,16 @@ QString Battery::stringForState(const QHash<QString, QVariant> &batteryData, boo
 {
     if (batteryData["Plugged in"].toBool()) {
         const QString state = batteryData["State"].toString();
-        if (state == "NoCharge") {
-            if (chargeChanging) {
-                *chargeChanging = true;
-            }
-	    return i18n("%1% (charged)", batteryData["Percent"].toString());
-        } else if (state == "Discharging") {
-            if (chargeChanging) {
-                *chargeChanging = true;
-            }
-            return i18n("%1% (discharging)", batteryData["Percent"].toString());
-        }
+        if (chargeChanging)
+            *chargeChanging = true;
 
-        return i18n("%1% (charging)", batteryData["Percent"].toString());
+        if (state == "NoCharge") {
+            return i18n("%1% (charged)", batteryData["Percent"].toString());
+        } else if (state == "Discharging") {
+            return i18n("%1% (discharging)", batteryData["Percent"].toString());
+        } else  {// charging
+            return i18n("%1% (charging)", batteryData["Percent"].toString());
+        }
     }
 
     return i18nc("Battery is not plugged in", "Not present");
@@ -770,9 +767,8 @@ void Battery::setProfile(const QString &profile)
 {
     if (m_currentProfile != profile) {
         kDebug() << "Changing power profile to " << profile;
-        QDBusConnection dbus( QDBusConnection::sessionBus() );
-        QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
-        iface.call( "setProfile", profile );
+        QDBusInterface iface( "org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement" );
+        iface.call( "loadProfile", profile );
     }
 }
 
@@ -1102,24 +1098,22 @@ qreal Battery::acAlpha() const
     return m_acAlpha;
 }
 
-void Battery::showBrightnessOSD(int brightness, bool byKeyPress)
+void Battery::showBrightnessOSD(int brightness)
 {
-    if (byKeyPress) {
-        // code adapted from KMix
-        m_brightnessOSD->setCurrentBrightness(brightness);
-        m_brightnessOSD->show();
-        m_brightnessOSD->activateOSD(); //Enable the hide timer
+    // code adapted from KMix
+    m_brightnessOSD->setCurrentBrightness(brightness);
+    m_brightnessOSD->show();
+    m_brightnessOSD->activateOSD(); //Enable the hide timer
 
-        //Center the OSD
-        QRect rect = KApplication::kApplication()->desktop()->screenGeometry(QCursor::pos());
-        QSize size = m_brightnessOSD->sizeHint();
-        int posX = rect.x() + (rect.width() - size.width()) / 2;
-        int posY = rect.y() + 4 * rect.height() / 5;
-        m_brightnessOSD->setGeometry(posX, posY, size.width(), size.height());
+    //Center the OSD
+    QRect rect = KApplication::kApplication()->desktop()->screenGeometry(QCursor::pos());
+    QSize size = m_brightnessOSD->sizeHint();
+    int posX = rect.x() + (rect.width() - size.width()) / 2;
+    int posY = rect.y() + 4 * rect.height() / 5;
+    m_brightnessOSD->setGeometry(posX, posY, size.width(), size.height());
 
-        if (m_extenderVisible && m_brightnessSlider) {
-            updateSlider(brightness);
-        }
+    if (m_extenderVisible && m_brightnessSlider) {
+        updateSlider(brightness);
     }
 }
 

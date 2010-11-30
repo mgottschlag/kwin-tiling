@@ -97,7 +97,7 @@ class Battery : public Plasma::PopupApplet
         void hibernate();
         void updateBattery();
         void setupFonts();
-        void showBrightnessOSD(int brightness, bool byKeyPress);
+        void showBrightnessOSD(int brightness);
 
     private:
         void connectSources();
