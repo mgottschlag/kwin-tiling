@@ -390,7 +390,7 @@ void GroupManagerPrivate::currentActivityChanged(QString newActivity)
         return;
     }
 
-    if (!rootGroups.contains(newActivity)) {
+    if (!rootGroups.contains(newActivity) || !rootGroups.value(newActivity).contains(currentDesktop)) {
         kDebug() << "created new desk group";
         rootGroups[newActivity][currentDesktop] = new TaskGroup(q, "RootGroup", Qt::transparent);
         if (abstractSortingStrategy) {
