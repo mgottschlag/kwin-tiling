@@ -199,6 +199,8 @@ void KRunnerDialog::positionOnScreen()
 
     if (m_floating) {
         KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
+        //Turn the sliding effect off
+        Plasma::WindowEffects::slideWindow(this, Plasma::Floating);
     } else {
         KWindowSystem::setOnAllDesktops(winId(), true);
         Plasma::WindowEffects::slideWindow(this, Plasma::TopEdge);
