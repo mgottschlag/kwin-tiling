@@ -31,7 +31,6 @@
 #include <QGraphicsLinearLayout>
 
 #define START "<html><head><style type=\"text/css\">\
-body { background-color: %1; } \
 td { vertical-align: top; font-size:7pt; font-weight:normal; font-style:normal; color: %2; } \
 </style></head><body>"
 #define START_BASIC "<html><head></head><body>"
@@ -150,7 +149,6 @@ void HWInfo::updateHtml()
     if (m_info) {
         Plasma::Theme* theme = Plasma::Theme::defaultTheme();
         html = QString(START START_TABLE)
-                .arg(theme->color(Plasma::Theme::BackgroundColor).name())
                 .arg(theme->color(Plasma::Theme::TextColor).name()) + html;
         m_info->nativeWidget()->setHtml(html);
     } else if (m_icon) {
