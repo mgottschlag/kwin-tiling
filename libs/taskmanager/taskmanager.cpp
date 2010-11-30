@@ -126,6 +126,8 @@ TaskManager::TaskManager()
         connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(onAppExitCleanup()));
     }
 
+    currentActivityChanged(d->activityConsumer.currentActivity());
+
     // register existing windows
     const QList<WId> windows = KWindowSystem::windows();
     QList<WId>::ConstIterator end(windows.end());
