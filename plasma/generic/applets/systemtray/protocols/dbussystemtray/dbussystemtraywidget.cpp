@@ -126,8 +126,8 @@ void DBusSystemTrayWidget::showContextMenu(KJob *job)
         if (m_host->containment() && m_host->containment()->corona()) {
             menu->adjustSize();
             QPoint p = m_host->containment()->corona()->popupPosition(this, menu->size());
-            //kDebug() << "execing at: " << p << menu->size();
-            menu->exec(p);
+            //kDebug() << "showing at: " << p << menu->size();
+            menu->popup(p);
         } else {
             // Compute a reasonable position for the menu if we don't have a corona.
             QPoint pos(sjob->parameters()["x"].toInt(), sjob->parameters()["y"].toInt());
@@ -143,8 +143,8 @@ void DBusSystemTrayWidget::showContextMenu(KJob *job)
             } else if (menuRect.bottom() > availableRect.bottom()) {
                 menuRect.moveBottom(availableRect.bottom());
             }
-            //kDebug() << "non-corona execing at: " << menuRect.topLeft();
-            menu->exec(menuRect.topLeft());
+            //kDebug() << "non-corona showing at: " << menuRect.topLeft();
+            menu->popup(menuRect.topLeft());
         }
     }
 }
