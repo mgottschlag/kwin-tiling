@@ -102,7 +102,10 @@ QMenu *SwitchWindow::makeMenu()
     foreach (const QString &source, tasks->sources()) {
         Plasma::DataEngine::Data window = tasks->query(source);
         if (window.value("startup").toBool()) {
-            kDebug() << "skipped fake task" << source;
+            //kDebug() << "skipped fake task" << source;
+            continue;
+        }
+        if (!window.value("onCurrentActivity").toBool()) {
             continue;
         }
 
