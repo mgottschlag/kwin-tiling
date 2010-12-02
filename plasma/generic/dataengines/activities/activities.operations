@@ -8,22 +8,13 @@
         </entry>
     </group>
     <group name="setCurrent">
-        <entry name="Id" type="String">
-            <label>UID of the activity to switch to. (optional)</label>
-        </entry>
     </group>
     <group name="setName">
-        <entry name="Id" type="String">
-            <label>UID of the activity. (optional)</label>
-        </entry>
         <entry name="Name" type="String">
             <label>The name to give the activity.</label>
         </entry>
     </group>
     <group name="setIcon">
-        <entry name="Id" type="String">
-            <label>UID of the activity. (optional)</label>
-        </entry>
         <entry name="Icon" type="String">
             <label>The name of the icon to give the activity.</label>
         </entry>

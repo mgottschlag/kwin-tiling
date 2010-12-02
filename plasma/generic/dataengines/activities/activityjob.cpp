@@ -44,24 +44,23 @@ void ActivityJob::start()
         setResult(true);
         return;
     }
-    //m_id takes precendence over parameters
-    QString id = (m_id.isEmpty() ? parameters()["Id"].toString() : m_id);
     if (operation == "setCurrent") {
-        m_activityController->setCurrentActivity(id);
+        m_activityController->setCurrentActivity(m_id);
         setResult(true);
         return;
     }
     if (operation == "setName") {
-        m_activityController->setActivityName(id, parameters()["Name"].toString());
+        m_activityController->setActivityName(m_id, parameters()["Name"].toString());
         setResult(true);
         return;
     }
     if (operation == "setIcon") {
-        m_activityController->setActivityIcon(id, parameters()["Icon"].toString());
+        m_activityController->setActivityIcon(m_id, parameters()["Icon"].toString());
         setResult(true);
         return;
     }
     if (operation == "remove") {
+        QString id = parameters()["Id"].toString();
         m_activityController->removeActivity(id);
         setResult(true);
         return;
