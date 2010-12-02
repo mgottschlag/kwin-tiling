@@ -29,6 +29,7 @@
 #include <KIcon>
 #include <KBookmarkManager>
 #include <KMimeType>
+#include <KMimeTypeTrader>
 #include <KToolInvocation>
 #include <KUrl>
 #include <KStandardDirs>
@@ -443,8 +444,16 @@ void BookmarksRunner::matchFirefoxBookmarks(Plasma::RunnerContext& context, bool
 
 BookmarksRunner::Browser BookmarksRunner::whichBrowser()
 {
+    //HACK find the default browser
     KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), QLatin1String("General") );
-    const QString exec = config.readPathEntry( QLatin1String("BrowserApplication"), QString("") );
+    QString exec = config.readPathEntry(QLatin1String("BrowserApplication"), QString());
+    if (exec.isEmpty()) {
+        KService::Ptr service = KMimeTypeTrader::self()->preferredService("text/html");
+        if (service) {
+            exec = service->exec();
+        }
+    }
+
     //kDebug() << exec;
     if (exec.contains("firefox", Qt::CaseInsensitive)) {
         return Firefox;
