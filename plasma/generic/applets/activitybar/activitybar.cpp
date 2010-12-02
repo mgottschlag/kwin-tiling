@@ -61,7 +61,7 @@ void ActivityBar::init()
     //TODO 4.6 convert netbook to the activity API so we won't need this
     if (qApp->applicationName() == "plasma-desktop") {
         m_engine = dataEngine("org.kde.activities");
-        Plasma::DataEngine::Data data = m_engine->query("_Convenience");
+        Plasma::DataEngine::Data data = m_engine->query("Status");
         QStringList activities = data["Running"].toStringList();
         //kDebug() << "$$$$$$$$$$$$# sources:" << activities.size();
         foreach (const QString &id, activities) {
