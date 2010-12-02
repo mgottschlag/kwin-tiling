@@ -64,7 +64,8 @@ void SwitchActivity::makeMenu(QMenu *menu)
         if (!engine->isValid()) {
             return;
         }
-        Plasma::DataEngine::Data data = engine->query("_Convenience");
+
+        Plasma::DataEngine::Data data = engine->query("Status");
         QStringList activities = data["Running"].toStringList();
         foreach (const QString& id, activities) {
             Plasma::DataEngine::Data data = engine->query(id);
@@ -79,6 +80,7 @@ void SwitchActivity::makeMenu(QMenu *menu)
         if (!myCtmt) {
             return;
         }
+
         Plasma::Corona *c = myCtmt->corona();
         if (!c) {
             return;
@@ -100,7 +102,7 @@ void SwitchActivity::makeMenu(QMenu *menu)
             action->setData(QVariant::fromValue<QWeakPointer<Plasma::Containment> >(QWeakPointer<Plasma::Containment>(ctmt)));
 
             //WARNING this assumes the plugin will only ever be set on activities, not panels!
-            if (ctmt==myCtmt) {
+            if (ctmt == myCtmt) {
                 action->setEnabled(false);
             }
         }
@@ -163,7 +165,7 @@ void SwitchActivity::wheelEvent(QGraphicsSceneWheelEvent *event)
         if (!engine->isValid()) {
             return;
         }
-        Plasma::DataEngine::Data data = engine->query("_Convenience");
+        Plasma::DataEngine::Data data = engine->query("Status");
         QStringList list = data["Running"].toStringList();
         QString current = data["Current"].toString();
         int start = list.indexOf(current);
