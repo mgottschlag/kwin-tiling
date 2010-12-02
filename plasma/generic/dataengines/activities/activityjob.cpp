@@ -44,8 +44,30 @@ void ActivityJob::start()
         setResult(true);
         return;
     }
+    if (operation == "remove") {
+        QString id = parameters()["Id"].toString();
+        m_activityController->removeActivity(id);
+        setResult(true);
+        return;
+    }
+
+    //m_id is needed for the rest
+    if (m_id.isEmpty()) {
+        setResult(false);
+        return;
+    }
     if (operation == "setCurrent") {
         m_activityController->setCurrentActivity(m_id);
+        setResult(true);
+        return;
+    }
+    if (operation == "stop") {
+        m_activityController->stopActivity(m_id);
+        setResult(true);
+        return;
+    }
+    if (operation == "start") {
+        m_activityController->startActivity(m_id);
         setResult(true);
         return;
     }
@@ -56,12 +78,6 @@ void ActivityJob::start()
     }
     if (operation == "setIcon") {
         m_activityController->setActivityIcon(m_id, parameters()["Icon"].toString());
-        setResult(true);
-        return;
-    }
-    if (operation == "remove") {
-        QString id = parameters()["Id"].toString();
-        m_activityController->removeActivity(id);
         setResult(true);
         return;
     }

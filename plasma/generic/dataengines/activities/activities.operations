@@ -9,6 +9,10 @@
     </group>
     <group name="setCurrent">
     </group>
+    <group name="stop">
+    </group>
+    <group name="start">
+    </group>
     <group name="setName">
         <entry name="Name" type="String">
             <label>The name to give the activity.</label>
