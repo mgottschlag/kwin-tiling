@@ -70,7 +70,7 @@ FilterBar::FilterBar(Qt::Orientation orientation, QGraphicsItem *parent)
     connect(addWidgetsButton, SIGNAL(clicked()), this, SIGNAL(addWidgetsRequested()));
 
     m_newActivityButton = new Plasma::PushButton(this);
-    m_newActivityButton->setText(i18n("New Activity"));
+    m_newActivityButton->setText(i18n("Create Activity"));
     m_newActivityButton->setIcon(KIcon("list-add"));
     m_newActivityMenu = new KMenu();
     connect(m_newActivityMenu, SIGNAL(aboutToShow()), this, SLOT(populateActivityMenu()));
