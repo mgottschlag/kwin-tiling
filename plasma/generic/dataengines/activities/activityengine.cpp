@@ -52,12 +52,13 @@ void ActivityEngine::init()
         //some convenience sources for times when checking every activity source would suck
         //it starts with _ so that it can easily be filtered out of sources()
         //maybe I should just make it not included in sources() instead?
-        setData("_Convenience", "Current", m_currentActivity);
-        setData("_Convenience", "Running", m_activityController->listActivities(KActivityInfo::Running));
+        setData("Status", "Current", m_currentActivity);
+        setData("Status", "Running", m_activityController->listActivities(KActivityInfo::Running));
     }
 }
 
-void ActivityEngine::insertActivity(const QString &id) {
+void ActivityEngine::insertActivity(const QString &id)
+{
     //id -> name, icon, state
     KActivityInfo *activity = new KActivityInfo(id, this);
     setData(id, "Name", activity->name());
@@ -88,24 +89,27 @@ void ActivityEngine::insertActivity(const QString &id) {
     connect(activity, SIGNAL(stateChanged(KActivityInfo::State)), this, SLOT(activityStateChanged()));
 }
 
-void ActivityEngine::activityAdded(const QString &id) {
+void ActivityEngine::activityAdded(const QString &id)
+{
     insertActivity(id);
-    setData("_Convenience", "Running",
+    setData("Status", "Running",
             m_activityController->listActivities(KActivityInfo::Running)); //FIXME horribly inefficient
 }
 
-void ActivityEngine::activityRemoved(const QString &id) {
+void ActivityEngine::activityRemoved(const QString &id)
+{
     //FIXME delete the KActivityInfo
     removeSource(id);
-    setData("_Convenience", "Running",
+    setData("Status", "Running",
             m_activityController->listActivities(KActivityInfo::Running)); //FIXME horribly inefficient
 }
 
-void ActivityEngine::currentActivityChanged(const QString &id) {
+void ActivityEngine::currentActivityChanged(const QString &id)
+{
     setData(m_currentActivity, "Current", false);
     m_currentActivity = id;
     setData(id, "Current", true);
-    setData("_Convenience", "Current", id);
+    setData("Status", "Current", id);
 }
 
 void ActivityEngine::activityDataChanged()
@@ -145,7 +149,7 @@ void ActivityEngine::activityStateChanged()
     }
     setData(activity->id(), "State", state);
 
-    setData("_Convenience", "Running",
+    setData("Status", "Running",
             m_activityController->listActivities(KActivityInfo::Running)); //FIXME horribly inefficient
 }
 
