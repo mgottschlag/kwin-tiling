@@ -30,8 +30,20 @@
 #include <Plasma/Service>
 
 SwitchWindow::SwitchWindow(QObject *parent, const QVariantList &args)
-    : Plasma::ContainmentActions(parent, args)
+    : Plasma::ContainmentActions(parent, args),
+      m_menu(new KMenu()),
+      m_action(new QAction(this)),
+      m_mode(AllFlat)
 {
+    m_menu->setTitle(i18n("Windows"));
+    connect(m_menu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
+
+    m_action->setMenu(m_menu);
+}
+
+SwitchWindow::~SwitchWindow()
+{
+    delete m_menu;
 }
 
 void SwitchWindow::init(const KConfigGroup &config)
@@ -88,15 +100,15 @@ void SwitchWindow::contextEvent(QEvent *event)
     }
 }
 
-QMenu *SwitchWindow::makeMenu()
+void SwitchWindow::makeMenu()
 {
+    m_menu->clear();
     Plasma::DataEngine *tasks = dataEngine("tasks");
-    if (! tasks->isValid()) {
-        return 0;
+    if (!tasks->isValid()) {
+        return;
     }
 
     QMultiHash<int, QAction*> desktops;
-    KMenu *desktopMenu = new KMenu();
 
     //make all the window actions
     foreach (const QString &source, tasks->sources()) {
@@ -115,7 +127,7 @@ QMenu *SwitchWindow::makeMenu()
             continue;
         }
 
-        QAction *action = new QAction(name, desktopMenu);
+        QAction *action = new QAction(name, m_menu);
         action->setIcon(window.value("icon").value<QIcon>());
         action->setData(source);
         desktops.insert(window.value("desktop").toInt(), action);
@@ -124,9 +136,9 @@ QMenu *SwitchWindow::makeMenu()
     //sort into menu
     if (m_mode == CurrentDesktop) {
         int currentDesktop = KWindowSystem::currentDesktop();
-        desktopMenu->addTitle(i18n("Windows"));
-        desktopMenu->addActions(desktops.values(currentDesktop));
-        desktopMenu->addActions(desktops.values(-1));
+        m_menu->addTitle(i18n("Windows"));
+        m_menu->addActions(desktops.values(currentDesktop));
+        m_menu->addActions(desktops.values(-1));
     } else {
         int numDesktops = KWindowSystem::numberOfDesktops();
         if (m_mode == AllFlat) {
@@ -134,55 +146,47 @@ QMenu *SwitchWindow::makeMenu()
                 if (desktops.contains(i)) {
                     QString name = KWindowSystem::desktopName(i);
                     name = QString("%1: %2").arg(i).arg(name);
-                    desktopMenu->addTitle(name);
-                    desktopMenu->addActions(desktops.values(i));
+                    m_menu->addTitle(name);
+                    m_menu->addActions(desktops.values(i));
                 }
             }
             if (desktops.contains(-1)) {
-                desktopMenu->addTitle(i18n("All Desktops"));
-                desktopMenu->addActions(desktops.values(-1));
+                m_menu->addTitle(i18n("All Desktops"));
+                m_menu->addActions(desktops.values(-1));
             }
         } else { //submenus
             for (int i = 1; i <= numDesktops; ++i) {
                 if (desktops.contains(i)) {
                         QString name = KWindowSystem::desktopName(i);
                         name = QString("%1: %2").arg(i).arg(name);
-                        KMenu *subMenu = new KMenu(name, desktopMenu);
+                        KMenu *subMenu = new KMenu(name, m_menu);
                         subMenu->addActions(desktops.values(i));
-                        desktopMenu->addMenu(subMenu);
+                        m_menu->addMenu(subMenu);
                 }
             }
             if (desktops.contains(-1)) {
-                KMenu *subMenu = new KMenu(i18n("All Desktops"), desktopMenu);
+                KMenu *subMenu = new KMenu(i18n("All Desktops"), m_menu);
                 subMenu->addActions(desktops.values(-1));
-                desktopMenu->addMenu(subMenu);
+                m_menu->addMenu(subMenu);
             }
         }
     }
 
-    connect(desktopMenu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
-    return desktopMenu;
+    m_menu->adjustSize();
 }
 
 void SwitchWindow::contextEvent(QGraphicsSceneMouseEvent *event)
 {
-    QMenu *desktopMenu = makeMenu();
-    if (desktopMenu) {
-        desktopMenu->adjustSize();
-        desktopMenu->exec(popupPosition(desktopMenu->size(), event));
+    if (!m_menu->isEmpty()) {
+        m_menu->exec(popupPosition(m_menu->size(), event));
     }
 }
 
 QList<QAction*> SwitchWindow::contextualActions()
 {
+    makeMenu();
     QList<QAction*> list;
-    QMenu *menu = makeMenu();
-    if (menu) {
-        QAction *action = new QAction(this); //FIXME I hope this doesn't leak
-        action->setMenu(menu);
-        menu->setTitle(i18n("Windows"));
-        list << action;
-    }
+    list << m_action;
     return list;
 }
 

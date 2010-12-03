@@ -24,13 +24,14 @@
 #include <plasma/containmentactions.h>
 
 class QAction;
-class QMenu;
+class KMenu;
 
 class SwitchWindow : public Plasma::ContainmentActions
 {
     Q_OBJECT
     public:
         SwitchWindow(QObject* parent, const QVariantList& args);
+        ~SwitchWindow();
 
         void init(const KConfigGroup &config);
         QWidget* createConfigurationInterface(QWidget* parent);
@@ -41,18 +42,23 @@ class SwitchWindow : public Plasma::ContainmentActions
         void contextEvent(QGraphicsSceneMouseEvent *event);
         void wheelEvent(QGraphicsSceneWheelEvent *event);
         QList<QAction*> contextualActions();
-        QMenu *makeMenu();
 
-    public slots:
+    private:
+        void makeMenu();
+
+    private slots:
         void switchTo(QAction *action);
 
     private:
-        Ui::Config m_ui;
         enum MenuMode {
             AllFlat = 0,
             DesktopSubmenus,
             CurrentDesktop
         };
+
+        KMenu *m_menu;
+        QAction *m_action;
+        Ui::Config m_ui;
         MenuMode m_mode;
 };
 
