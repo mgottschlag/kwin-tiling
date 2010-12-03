@@ -35,12 +35,24 @@
 Q_DECLARE_METATYPE(QWeakPointer<Plasma::Containment>)
 
 SwitchActivity::SwitchActivity(QObject *parent, const QVariantList &args)
-    : Plasma::ContainmentActions(parent, args)
+    : Plasma::ContainmentActions(parent, args),
+      m_menu(new KMenu()),
+      m_action(new QAction(this))
 {
     //This is an awful hack, but I need to keep the old behaviour for plasma-netbook
     //while using the new activity API for plasma-desktop.
     //TODO 4.6 convert netbook to the activity API so we won't need this
     m_useNepomuk = (qApp->applicationName() == "plasma-desktop");
+
+    connect(m_menu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
+
+    m_action->setMenu(m_menu);
+    m_menu->setTitle(i18n("Activities"));
+}
+
+SwitchActivity::~SwitchActivity()
+{
+    delete m_menu;
 }
 
 void SwitchActivity::contextEvent(QEvent *event)
@@ -57,8 +69,11 @@ void SwitchActivity::contextEvent(QEvent *event)
     }
 }
 
-void SwitchActivity::makeMenu(QMenu *menu)
+void SwitchActivity::makeMenu()
 {
+    m_menu->clear();
+    m_menu->addTitle(i18n("Activities"));
+
     if (m_useNepomuk) {
         Plasma::DataEngine *engine = dataEngine("org.kde.activities");
         if (!engine->isValid()) {
@@ -69,7 +84,7 @@ void SwitchActivity::makeMenu(QMenu *menu)
         QStringList activities = data["Running"].toStringList();
         foreach (const QString& id, activities) {
             Plasma::DataEngine::Data data = engine->query(id);
-            QAction *action = menu->addAction(KIcon(data["Icon"].toString()), data["Name"].toString());
+            QAction *action = m_menu->addAction(KIcon(data["Icon"].toString()), data["Name"].toString());
             action->setData(QVariant(id));
             if (data["Current"].toBool()) {
                 action->setEnabled(false);
@@ -98,7 +113,7 @@ void SwitchActivity::makeMenu(QMenu *menu)
             if (name.isEmpty()) {
                 name = ctmt->name();
             }
-            QAction *action = menu->addAction(name);
+            QAction *action = m_menu->addAction(name);
             action->setData(QVariant::fromValue<QWeakPointer<Plasma::Containment> >(QWeakPointer<Plasma::Containment>(ctmt)));
 
             //WARNING this assumes the plugin will only ever be set on activities, not panels!
@@ -107,30 +122,22 @@ void SwitchActivity::makeMenu(QMenu *menu)
             }
         }
     }
-    connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
+
+    m_menu->adjustSize();
 }
 
 void SwitchActivity::contextEvent(QGraphicsSceneMouseEvent *event)
 {
-    KMenu desktopMenu;
-
-    desktopMenu.addTitle(i18n("Activities"));
-    makeMenu(&desktopMenu);
-    desktopMenu.adjustSize();
-    desktopMenu.exec(popupPosition(desktopMenu.size(), event));
+    makeMenu();
+    m_menu->exec(popupPosition(m_menu->size(), event));
 }
 
 QList<QAction*> SwitchActivity::contextualActions()
 {
+    makeMenu();
+
     QList<QAction*> list;
-    QMenu *menu = new QMenu();
-
-    makeMenu(menu);
-    QAction *action = new QAction(this); //FIXME I hope this doesn't leak
-    action->setMenu(menu);
-    menu->setTitle(i18n("Activities"));
-
-    list << action;
+    list << m_action;
     return list;
 }
 
@@ -165,6 +172,7 @@ void SwitchActivity::wheelEvent(QGraphicsSceneWheelEvent *event)
         if (!engine->isValid()) {
             return;
         }
+
         Plasma::DataEngine::Data data = engine->query("Status");
         QStringList list = data["Running"].toStringList();
         QString current = data["Current"].toString();
@@ -182,6 +190,7 @@ void SwitchActivity::wheelEvent(QGraphicsSceneWheelEvent *event)
     if (!myCtmt) {
         return;
     }
+
     Plasma::Corona *c = myCtmt->corona();
     if (!c) {
         return;
@@ -195,8 +204,8 @@ void SwitchActivity::wheelEvent(QGraphicsSceneWheelEvent *event)
     while (i != start) {
         Plasma::Containment *ctmt = containments.at(i);
         if (ctmt->containmentType() == Plasma::Containment::PanelContainment ||
-                ctmt->containmentType() == Plasma::Containment::CustomPanelContainment ||
-                c->offscreenWidgets().contains(ctmt)) {
+            ctmt->containmentType() == Plasma::Containment::CustomPanelContainment ||
+            c->offscreenWidgets().contains(ctmt)) {
             //keep looking
             i = (i + step + containments.size()) % containments.size();
         } else {

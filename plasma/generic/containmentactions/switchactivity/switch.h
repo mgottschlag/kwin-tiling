@@ -23,23 +23,27 @@
 #include <plasma/containmentactions.h>
 
 class QAction;
+class KMenu;
 
 class SwitchActivity : public Plasma::ContainmentActions
 {
     Q_OBJECT
     public:
         SwitchActivity(QObject* parent, const QVariantList& args);
+        ~SwitchActivity();
 
         void contextEvent(QEvent *event);
         void contextEvent(QGraphicsSceneMouseEvent *event);
         void wheelEvent(QGraphicsSceneWheelEvent *event);
         QList<QAction*> contextualActions();
-        void makeMenu(QMenu *menu);
 
-    public slots:
+    private slots:
         void switchTo(QAction *action);
+        void makeMenu();
 
     private:
+        KMenu *m_menu;
+        QAction *m_action;
         bool m_useNepomuk;
 };
 
