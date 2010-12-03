@@ -158,7 +158,7 @@ bool Temperature::addVisualization(const QString& source)
 
     SM::Plotter *plotter = new SM::Plotter(this);
     plotter->setTitle(temperatureTitle(source));
-    plotter->setAnalog(true);
+    plotter->setAnalog(mode() != SM::Applet::Panel);
 
     if (KGlobal::locale()->measureSystem() == KLocale::Metric) {
         plotter->setMinMax(0, 110);

@@ -237,7 +237,7 @@ void Plotter::resizeEvent(QGraphicsSceneResizeEvent* event)
         show = true;
     }
     m_plotter->setFont(font);
-    m_plotter->setShowTopBar(metrics.height() < h / 3);
+    m_plotter->setShowTopBar(metrics.height() < h / 6);
     m_plotter->setShowLabels(show);
     m_plotter->setShowHorizontalLines(show);
     if (m_overlayFrame) {
