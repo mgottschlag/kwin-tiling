@@ -23,21 +23,29 @@
 #include <plasma/containmentactions.h>
 
 class QAction;
+class KMenu;
 
 class SwitchDesktop : public Plasma::ContainmentActions
 {
     Q_OBJECT
     public:
         SwitchDesktop(QObject* parent, const QVariantList& args);
+        ~SwitchDesktop();
 
         void contextEvent(QEvent *event);
         void contextEvent(QGraphicsSceneMouseEvent *event);
         void wheelEvent(QGraphicsSceneWheelEvent *event);
         QList<QAction*> contextualActions();
-        void makeMenu(QMenu *menu);
 
-    public slots:
+    private:
+        void makeMenu();
+
+    private slots:
         void switchTo(QAction *action);
+
+    private:
+        KMenu *m_menu;
+        QAction *m_action;
 };
 
 K_EXPORT_PLASMA_CONTAINMENTACTIONS(switchdesktop, SwitchDesktop)

@@ -27,8 +27,19 @@
 #include <KWindowSystem>
 
 SwitchDesktop::SwitchDesktop(QObject *parent, const QVariantList &args)
-    : Plasma::ContainmentActions(parent, args)
+    : Plasma::ContainmentActions(parent, args),
+      m_menu(new KMenu()),
+      m_action(new QAction(this))
 {
+    m_menu->setTitle(i18n("Virtual Desktops"));
+    connect(m_menu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
+
+    m_action->setMenu(m_menu);
+}
+
+SwitchDesktop::~SwitchDesktop()
+{
+    delete m_menu;
 }
 
 void SwitchDesktop::contextEvent(QEvent *event)
@@ -45,58 +56,50 @@ void SwitchDesktop::contextEvent(QEvent *event)
     }
 }
 
-void SwitchDesktop::makeMenu(QMenu *menu)
+void SwitchDesktop::makeMenu()
 {
-    int numDesktops = KWindowSystem::numberOfDesktops();
-    int currentDesktop = KWindowSystem::currentDesktop();
+    m_menu->clear();
+    m_menu->addTitle(i18n("Virtual Desktops"));
+    const int numDesktops = KWindowSystem::numberOfDesktops();
+    const int currentDesktop = KWindowSystem::currentDesktop();
 
-    for (int i=1; i<=numDesktops; ++i) {
+    for (int i = 1; i <= numDesktops; ++i) {
         QString name = KWindowSystem::desktopName(i);
-        QAction *action = menu->addAction(QString("%1: %2").arg(i).arg(name));
+        QAction *action = m_menu->addAction(QString("%1: %2").arg(i).arg(name));
         action->setData(i);
-        if (i==currentDesktop) {
+        if (i == currentDesktop) {
             action->setEnabled(false);
         }
     }
-    connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
+
+    m_menu->adjustSize();
 }
 
 void SwitchDesktop::contextEvent(QGraphicsSceneMouseEvent *event)
 {
-    KMenu desktopMenu;
-
-    desktopMenu.addTitle(i18n("Virtual Desktops"));
-    makeMenu(&desktopMenu);
-
-    desktopMenu.adjustSize();
-    desktopMenu.exec(popupPosition(desktopMenu.size(), event));
+    makeMenu();
+    m_menu->exec(popupPosition(m_menu->size(), event));
 }
 
 QList<QAction*> SwitchDesktop::contextualActions()
 {
+    makeMenu();
     QList<QAction*> list;
-    QMenu *menu = new QMenu();
-
-    makeMenu(menu);
-    QAction *action = new QAction(this); //FIXME I hope this doesn't leak
-    action->setMenu(menu);
-    menu->setTitle(i18n("Virtual Desktops"));
-
-    list << action;
+    list << m_action;
     return list;
 }
 
 void SwitchDesktop::switchTo(QAction *action)
 {
-    int desktop = action->data().toInt();
+    const int desktop = action->data().toInt();
     KWindowSystem::setCurrentDesktop(desktop);
 }
 
 void SwitchDesktop::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
     kDebug() << event->orientation() << event->delta();
-    int numDesktops = KWindowSystem::numberOfDesktops();
-    int currentDesktop = KWindowSystem::currentDesktop();
+    const int numDesktops = KWindowSystem::numberOfDesktops();
+    const int currentDesktop = KWindowSystem::currentDesktop();
 
     if (event->delta() < 0) {
         KWindowSystem::setCurrentDesktop(currentDesktop % numDesktops + 1);
