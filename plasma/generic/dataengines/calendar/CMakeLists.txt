@@ -31,7 +31,8 @@ target_link_libraries(
     ${KDE4_PLASMA_LIBS}
     ${KDE4_AKONADI_LIBS}
     ${KDE4_KMIME_LIBS}
-    ${KDE4_KCAL_LIBS}
+    ${KDE4_KCALCORE_LIBS}
+    ${KDE4_KCALUTILS_LIBS}
     ${KDEPIMLIBS_AKONADI_KCAL_LIBS}
 )
 

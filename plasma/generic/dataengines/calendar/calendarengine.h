@@ -24,7 +24,7 @@
 
 #include <Plasma/DataEngine>
 
-namespace Akonadi {
+namespace CalendarSupport {
     class Calendar;
 }
 
@@ -167,7 +167,7 @@ class CalendarEngine : public Plasma::DataEngine
         void initAkonadiCalendar();
 
         /// this is the representation of the root calendar itself. it contains everything (calendars, incidences)
-        Akonadi::Calendar *m_calendar;
+        CalendarSupport::Calendar *m_calendar;
 
         /// holiday calendar
         QHash<QString, KHolidays::HolidayRegion *> m_regions;

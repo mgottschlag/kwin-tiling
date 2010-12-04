@@ -22,11 +22,11 @@
 
 #include <KDateTime>
 
-#include <KCal/Incidence>
+#include <KCalCore/Incidence>
 
 #include <plasma/datacontainer.h>
 
-namespace Akonadi {
+namespace CalendarSupport {
     class Calendar;
 }
 
@@ -34,7 +34,7 @@ class EventDataContainer :public Plasma::DataContainer
 {
     Q_OBJECT
 public:
-    EventDataContainer(Akonadi::Calendar* calendar, const QString& name, const KDateTime& start, const KDateTime& end, QObject* parent = 0);
+    EventDataContainer(CalendarSupport::Calendar* calendar, const QString& name, const KDateTime& start, const KDateTime& end, QObject* parent = 0);
 
 public Q_SLOTS:
     // update the list of incidents
@@ -44,9 +44,9 @@ private:
     void updateEventData();
     void updateTodoData();
     void updateJournalData();
-    void populateIncidenceData(KCal::Incidence::Ptr incidence, Plasma::DataEngine::Data &incidenceData);
+    void populateIncidenceData(KCalCore::Incidence::Ptr incidence, Plasma::DataEngine::Data &incidenceData);
 
-    Akonadi::Calendar *m_calendar;
+    CalendarSupport::Calendar *m_calendar;
     QString m_name;
     KDateTime m_startDate;
     KDateTime m_endDate;

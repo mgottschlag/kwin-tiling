@@ -28,12 +28,15 @@
 #include <KSystemTimeZones>
 #include <KHolidays/HolidayRegion>
 
+#include <KCalCore/Event>
+#include <KCalCore/Todo>
+#include <KCalCore/Journal>
+
 #include <Akonadi/ChangeRecorder>
 #include <Akonadi/Session>
 #include <Akonadi/Collection>
 #include <Akonadi/ItemFetchScope>
 #include <Akonadi/EntityDisplayAttribute>
-#include <Akonadi/KCal/IncidenceMimeTypeVisitor>
 
 #include "akonadi/calendar.h"
 #include "akonadi/calendarmodel.h"
@@ -327,14 +330,14 @@ void CalendarEngine::initAkonadiCalendar()
     monitor->setCollectionMonitored(Akonadi::Collection::root());
     monitor->fetchCollection(true);
     monitor->setItemFetchScope(scope);
-    monitor->setMimeTypeMonitored(Akonadi::IncidenceMimeTypeVisitor::eventMimeType(), true);
-    monitor->setMimeTypeMonitored(Akonadi::IncidenceMimeTypeVisitor::todoMimeType(), true);
-    monitor->setMimeTypeMonitored(Akonadi::IncidenceMimeTypeVisitor::journalMimeType(), true);
+    monitor->setMimeTypeMonitored(KCalCore::Event::eventMimeType(), true);
+    monitor->setMimeTypeMonitored(KCalCore::Todo::todoMimeType(), true);
+    monitor->setMimeTypeMonitored(KCalCore::Journal::journalMimeType(), true);
 
     // create the models that contain the data. they will be updated automatically from akonadi.
-    Akonadi::CalendarModel *calendarModel = new Akonadi::CalendarModel(monitor, this);
+    CalendarSupport::CalendarModel *calendarModel = new CalendarSupport::CalendarModel(monitor, this);
     calendarModel->setCollectionFetchStrategy(Akonadi::EntityTreeModel::InvisibleCollectionFetch);
-    m_calendar = new Akonadi::Calendar(calendarModel, calendarModel, KSystemTimeZones::local());
+    m_calendar = new CalendarSupport::Calendar(calendarModel, calendarModel, KSystemTimeZones::local());
 }
 
 #include "calendarengine.moc"

@@ -21,17 +21,19 @@
 
 #include <KSystemTimeZones>
 
-#include <KCal/Calendar>
-#include <KCal/Event>
-#include <KCal/Todo>
-#include <KCal/Journal>
+#include <KCalCore/Calendar>
+#include <KCalCore/Event>
+#include <KCalCore/Todo>
+#include <KCalCore/Journal>
+#include <KCalUtils/Stringify>
 
 #include "akonadi/calendar.h"
 #include "akonadi/calendarmodel.h"
 
 using namespace Akonadi;
+using namespace CalendarSupport;
 
-EventDataContainer::EventDataContainer(Akonadi::Calendar* calendar, const QString& name, const KDateTime& start, const KDateTime& end, QObject* parent)
+EventDataContainer::EventDataContainer(CalendarSupport::Calendar* calendar, const QString& name, const KDateTime& start, const KDateTime& end, QObject* parent)
                   : Plasma::DataContainer(parent),
                     m_calendar(calendar),
                     m_name(name),
@@ -62,8 +64,8 @@ void EventDataContainer::updateEventData()
     Akonadi::Item::List events = m_calendar->events(m_startDate.date(), m_endDate.date(), m_calendar->timeSpec());
 
     foreach (const Akonadi::Item &item, events) {
-        Q_ASSERT(item.hasPayload<KCal::Event::Ptr>());
-        const KCal::Event::Ptr event = item.payload<KCal::Event::Ptr>();
+        Q_ASSERT(item.hasPayload<KCalCore::Event::Ptr>());
+        const KCalCore::Event::Ptr event = item.payload<KCalCore::Event::Ptr>();
 
         Plasma::DataEngine::Data eventData;
 
@@ -72,9 +74,9 @@ void EventDataContainer::updateEventData()
         // Event specific fields
         eventData["EventMultiDay"] = event->allDay();
         eventData["EventHasEndDate"] = event->hasEndDate();
-        if (event->transparency() == KCal::Event::Opaque) {
+        if (event->transparency() == KCalCore::Event::Opaque) {
             eventData["EventTransparency"] = "Opaque";
-        } else if (event->transparency() == KCal::Event::Transparent) {
+        } else if (event->transparency() == KCalCore::Event::Transparent) {
             eventData["EventTransparency"] = "Transparent";
         } else {
             eventData["EventTransparency"] = "Unknown";
@@ -91,8 +93,8 @@ void EventDataContainer::updateTodoData()
         Akonadi::Item::List todos = m_calendar->todos(todoDate);
 
         foreach (const Akonadi::Item &item, todos) {
-            Q_ASSERT(item.hasPayload<KCal::Todo::Ptr>());
-            const KCal::Todo::Ptr todo = item.payload<KCal::Todo::Ptr>();
+            Q_ASSERT(item.hasPayload<KCalCore::Todo::Ptr>());
+            const KCalCore::Todo::Ptr todo = item.payload<KCalCore::Todo::Ptr>();
 
             Plasma::DataEngine::Data todoData;
 
@@ -127,8 +129,8 @@ void EventDataContainer::updateJournalData()
         Akonadi::Item::List journals = m_calendar->journals(journalDate);
 
         foreach (const Akonadi::Item &item, journals) {
-            Q_ASSERT(item.hasPayload<KCal::Journal::Ptr>());
-            const KCal::Journal::Ptr journal = item.payload<KCal::Journal::Ptr>();
+            Q_ASSERT(item.hasPayload<KCalCore::Journal::Ptr>());
+            const KCalCore::Journal::Ptr journal = item.payload<KCalCore::Journal::Ptr>();
 
             Plasma::DataEngine::Data journalData;
 
@@ -143,7 +145,7 @@ void EventDataContainer::updateJournalData()
     }
 }
 
-void EventDataContainer::populateIncidenceData(KCal::Incidence::Ptr incidence, Plasma::DataEngine::Data &incidenceData)
+void EventDataContainer::populateIncidenceData(KCalCore::Incidence::Ptr incidence, Plasma::DataEngine::Data &incidenceData)
 {
     QVariant var;
     incidenceData["UID"] = incidence->uid();
@@ -152,13 +154,17 @@ void EventDataContainer::populateIncidenceData(KCal::Incidence::Ptr incidence, P
     incidenceData["Description"] = incidence->description();
     incidenceData["Comments"] = incidence->comments();
     incidenceData["Location"] = incidence->location();
-    incidenceData["OrganizerName"] = incidence->organizer().name();
-    incidenceData["OrganizerEmail"] = incidence->organizer().email();
+    incidenceData["OrganizerName"] = incidence->organizer()->name();
+    incidenceData["OrganizerEmail"] = incidence->organizer()->email();
     incidenceData["Priority"] = incidence->priority();
     var.setValue(incidence->dtStart());
     incidenceData["StartDate"] = var;
-    var.setValue(incidence->dtEnd());
-    incidenceData["EndDate"] = var;
+
+    KCalCore::Event* event = dynamic_cast<KCalCore::Event*>(incidence.data());
+    if (event) {
+        var.setValue(event->dtEnd());
+        incidenceData["EndDate"] = var;
+    }
     // Build the Occurance Index, this lists all occurences of the Incidence in the required range
     // Single occurance events just repeat the standard start/end dates
     // Recurring Events use each recurrence start/end date
@@ -167,7 +173,7 @@ void EventDataContainer::populateIncidenceData(KCal::Incidence::Ptr incidence, P
     // Build the recurrence list of start dates only for recurring incidences only
     QList<QVariant> recurrences;
     if (incidence->recurs()) {
-        KCal::DateTimeList recurList = incidence->recurrence()->timesInInterval(m_startDate, m_endDate);
+        KCalCore::DateTimeList recurList = incidence->recurrence()->timesInInterval(m_startDate, m_endDate);
         foreach(const KDateTime &recurDateTime, recurList) {
             var.setValue(recurDateTime);
             recurrences.append(var);
@@ -183,47 +189,49 @@ void EventDataContainer::populateIncidenceData(KCal::Incidence::Ptr incidence, P
         occurence.insert("OccurrenceUid", incidence->uid());
         var.setValue(incidence->dtStart());
         occurence.insert("OccurrenceStartDate", var);
-        var.setValue(incidence->dtEnd());
-        occurence.insert("OccurrenceEndDate", var);
+	if (event) {
+            var.setValue(event->dtEnd());
+            occurence.insert("OccurrenceEndDate", var);
+        }
         occurences.append(QVariant(occurence));
     }
     incidenceData["RecurrenceDates"] = QVariant(recurrences);
     incidenceData["Occurrences"] = QVariant(occurences);
-    if (incidence->status() == KCal::Incidence::StatusNone) {
+    if (incidence->status() == KCalCore::Incidence::StatusNone) {
         incidenceData["Status"] = "None";
-    } else if (incidence->status() == KCal::Incidence::StatusTentative) {
+    } else if (incidence->status() == KCalCore::Incidence::StatusTentative) {
         incidenceData["Status"] = "Tentative";
-    } else if (incidence->status() == KCal::Incidence::StatusConfirmed) {
+    } else if (incidence->status() == KCalCore::Incidence::StatusConfirmed) {
         incidenceData["Status"] = "Confirmed";
-    } else if (incidence->status() == KCal::Incidence::StatusDraft) {
+    } else if (incidence->status() == KCalCore::Incidence::StatusDraft) {
         incidenceData["Status"] = "Draft";
-    } else if (incidence->status() == KCal::Incidence::StatusFinal) {
+    } else if (incidence->status() == KCalCore::Incidence::StatusFinal) {
         incidenceData["Status"] = "Final";
-    } else if (incidence->status() == KCal::Incidence::StatusCompleted) {
+    } else if (incidence->status() == KCalCore::Incidence::StatusCompleted) {
         incidenceData["Status"] = "Completed";
-    } else if (incidence->status() == KCal::Incidence::StatusInProcess) {
+    } else if (incidence->status() == KCalCore::Incidence::StatusInProcess) {
         incidenceData["Status"] = "InProcess";
-    } else if (incidence->status() == KCal::Incidence::StatusCanceled) {
+    } else if (incidence->status() == KCalCore::Incidence::StatusCanceled) {
         incidenceData["Status"] = "Cancelled";
-    } else if (incidence->status() == KCal::Incidence::StatusNeedsAction) {
+    } else if (incidence->status() == KCalCore::Incidence::StatusNeedsAction) {
         incidenceData["Status"] = "NeedsAction";
-    } else if (incidence->status() == KCal::Incidence::StatusX) {
+    } else if (incidence->status() == KCalCore::Incidence::StatusX) {
         incidenceData["Status"] = "NonStandard";
     } else {
         incidenceData["Status"] = "Unknown";
     }
-    incidenceData["StatusName"] = incidence->statusStr();
+    incidenceData["StatusName"] = KCalUtils::Stringify::incidenceStatus( incidence->status() );
 
-    if (incidence->secrecy() == KCal::Incidence::SecrecyPublic) {
+    if (incidence->secrecy() == KCalCore::Incidence::SecrecyPublic) {
         incidenceData["Secrecy"] = "Public";
-    } else if (incidence->secrecy() == KCal::Incidence::SecrecyPrivate) {
+    } else if (incidence->secrecy() == KCalCore::Incidence::SecrecyPrivate) {
         incidenceData["Secrecy"] = "Private";
-    } else if (incidence->secrecy() == KCal::Incidence::SecrecyConfidential) {
+    } else if (incidence->secrecy() == KCalCore::Incidence::SecrecyConfidential) {
         incidenceData["Secrecy"] = "Confidential";
     } else {
         incidenceData["Secrecy"] = "Unknown";
     }
-    incidenceData["SecrecyName"] = incidence->secrecyStr();
+    incidenceData["SecrecyName"] = KCalUtils::Stringify::secrecyName( incidence->secrecy() );
     incidenceData["Recurs"] = incidence->recurs();
     incidenceData["AllDay"] = incidence->allDay();
     incidenceData["Categories"] = incidence->categories();
