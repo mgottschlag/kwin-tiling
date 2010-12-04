@@ -2,6 +2,7 @@
 Name=Activities Engine
 Name[ca]=Motor d'activitats
 Name[da]=Aktivitetsmotor
+Name[en_GB]=Activities Engine
 Name[es]=Motor de actividades
 Name[et]=Tegevuste mootor
 Name[ia]=Motor de Activitate
@@ -24,6 +25,7 @@ Name[zh_TW]=活動引擎
 Comment=Information on Plasma Activities
 Comment[ca]=Informació quant a activitats del Plasma
 Comment[da]=Information om Plasma-aktiviteter
+Comment[en_GB]=Information on Plasma Activities
 Comment[es]=Información sobre las actividades de Plasma
 Comment[et]=Teave Plasma tegevuste kohta.
 Comment[ia]=Information re Activitates de Plasma
