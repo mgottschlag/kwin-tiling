@@ -224,6 +224,7 @@ void StackDialog::hideEvent(QHideEvent *event)
     m_hideTimer->stop();
 
     adjustWindowToTilePos();
+    savePosition(pos());
     Plasma::Dialog::hideEvent(event);
 }
 
@@ -326,6 +327,12 @@ void StackDialog::savePosition(const QPoint& pos)
     kDebug() << "Affinity-h" << horizSide;
     kDebug() << "Y: " << pixelsToSave.ry();
     kDebug() << "X: " << pixelsToSave.rx();
+
+    const QPoint popupPosition = m_applet->containment()->corona()->popupPosition(m_applet, size());
+
+    if (QPoint(popupPosition - QWidget::pos()).manhattanLength() < 128) {
+        pixelsToSave = QPoint(-1, -1);
+    }
 
     m_applet->config().writeEntry("customPosition", pixelsToSave);
     m_applet->config().writeEntry("customPositionAffinityHoriz", horizSide);
