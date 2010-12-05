@@ -204,6 +204,11 @@ void RssEngine::processRss(Syndication::Loader* loader,
         foreach (const Syndication::ItemPtr& item, feed->items()) {
             QMap<QString, QVariant> dataItem;
 
+            //some malformed rss feeds can have empty entries
+            if (item->title().isNull() && item->description().isNull() && dataItem["content"].isNull()) {
+                continue;
+            }
+
             dataItem["title"]       = item->title();
             dataItem["feed_title"]  = feed->title();
             dataItem["link"]        = item->link();
