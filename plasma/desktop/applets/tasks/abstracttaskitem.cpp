@@ -94,8 +94,7 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
     setFlag(QGraphicsItem::ItemIsFocusable);
 
     checkSettings();
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(syncActiveRect()));
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(queueUpdate()));
+    connect(applet->itemBackground(), SIGNAL(repaintNeeded()), this, SLOT(syncActiveRect()));
     connect(applet, SIGNAL(settingsChanged()), this, SLOT(checkSettings()));
 }
 
@@ -546,6 +545,7 @@ void AbstractTaskItem::syncActiveRect()
     QFontMetrics fm(font());
     const int minimumWidth = left + 8 + IconTextSpacing + right;
     m_showText = (size().width() >= fm.width("M") * 6 + minimumWidth);
+    queueUpdate();
 }
 
 void AbstractTaskItem::resizeEvent(QGraphicsSceneResizeEvent *event)
