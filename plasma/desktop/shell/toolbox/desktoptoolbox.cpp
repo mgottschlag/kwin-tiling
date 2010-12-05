@@ -326,6 +326,7 @@ void DesktopToolBox::updateTheming()
 {
     d->bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
     d->fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    update();
 }
 
 void DesktopToolBox::toolTriggered(bool)
