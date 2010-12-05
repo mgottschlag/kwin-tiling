@@ -51,6 +51,9 @@ macro_optional_find_package(Googlegadgets)
 macro_log_feature(GOOGLEGADGETS_FOUND "GoogleGadgets" "Google Gadgets library" "http://code.google.com/p/google-gadgets-for-linux/" FALSE "0.11.0" "Needed to build plasma scriptengine for google gadgets")
 
 macro_optional_find_package(OpenGL)
+macro_optional_find_package(OpenGLES)
+macro_log_feature(OPENGLES_FOUND "OpenGL ES" "OpenGL ES 2.0" "http://www.khronos.org/opengles/" FALSE "" "Needed to build KWin for mobile devices")
+OPTION(KWIN_BUILD_WITH_OPENGLES "Enable OpenGL ES backend. Disables OpenGL desktop." OFF)
 
 #### Python support ####
 macro_optional_find_package(PythonLibrary)
