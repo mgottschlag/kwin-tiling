@@ -467,7 +467,29 @@ BookmarksRunner::Browser BookmarksRunner::whichBrowser()
 void BookmarksRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action)
 {
     Q_UNUSED(context);
-    KUrl url = (KUrl)action.data().toString();
+    const QString term = action.data().toString();
+    KUrl url = KUrl(term);
+
+    //support urls like "kde.org" by transforming them to http://kde.org
+    if (url.protocol().isEmpty()) {
+        const int idx = term.indexOf('/');
+
+        url.clear();
+        url.setHost(term.left(idx));
+        if (idx != -1) {
+            //allow queries
+            const int queryStart = term.indexOf('?', idx);
+            int pathLength = -1;
+            if ((queryStart > -1) && (idx < queryStart)) {
+                pathLength = queryStart - idx;
+                url.setQuery(term.mid(queryStart));
+            }
+
+            url.setPath(term.mid(idx, pathLength));
+        }
+        url.setProtocol("http");
+    }
+
     //kDebug() << "BookmarksRunner::run opening: " << url.url();
     KToolInvocation::invokeBrowser(url.url());
 }
