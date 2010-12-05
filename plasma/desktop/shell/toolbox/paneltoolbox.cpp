@@ -109,6 +109,7 @@ void PanelToolBox::assignColors()
 {
     d->bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
     d->fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    update();
 }
 
 QRectF PanelToolBox::boundingRect() const
