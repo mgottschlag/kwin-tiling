@@ -24,6 +24,7 @@
 #include <KDebug>
 #include <KRun>
 #include <KLocale>
+#include <KMimeType>
 #include <KShell>
 #include <KUrl>
 #include <KIcon>
@@ -112,7 +113,13 @@ void LocationsRunner::match(Plasma::RunnerContext &context)
         Plasma::QueryMatch match(this);
         match.setType(Plasma::QueryMatch::ExactMatch);
         match.setText(i18n("Open %1", term));
-        match.setIcon(KIcon("system-file-manager"));
+
+        if (type == Plasma::RunnerContext::File) {
+            match.setIcon(KIcon(KMimeType::iconNameForUrl(KUrl(term))));
+        } else {
+            match.setIcon(KIcon("system-file-manager"));
+        }
+
         match.setRelevance(1);
         match.setData(term);
         match.setType(Plasma::QueryMatch::ExactMatch);
