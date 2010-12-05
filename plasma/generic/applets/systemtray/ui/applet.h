@@ -75,6 +75,7 @@ protected:
 private slots:
     void configAccepted();
     void propogateSizeHintChange(Qt::SizeHint which);
+    void themeChanged();
     void checkSizes();
     void checkDefaultApplets();
 

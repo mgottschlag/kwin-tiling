@@ -152,7 +152,7 @@ void Applet::init()
             this, SLOT(propogateSizeHintChange(Qt::SizeHint)));
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
-            this, SLOT(checkSizes()));
+            this, SLOT(themeChanged()));
 
     QTimer::singleShot(0, this, SLOT(checkDefaultApplets()));
     configChanged();
@@ -256,6 +256,12 @@ SystemTray::Manager *Applet::manager() const
 QSet<Task::Category> Applet::shownCategories() const
 {
     return m_shownCategories;
+}
+
+void Applet::themeChanged()
+{
+    checkSizes();
+    update();
 }
 
 void Applet::checkSizes()
