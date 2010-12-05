@@ -79,8 +79,16 @@ void LockOut::configChanged()
         m_showSleepButton = cg.readEntry("showSleepButton", false);
         m_showHibernateButton = cg.readEntry("showHibernateButton", false);
     #endif
-
     countButtons();
+
+    if (m_visibleButtons == 0 ) {
+        m_showLockButton = true;
+        m_showSwitchUserButton = false;
+        m_showLogoutButton = true;
+        m_showSleepButton =  false;
+        m_showHibernateButton =  false;
+        countButtons();
+    }
     showButtons();
 }
 
