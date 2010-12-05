@@ -50,11 +50,20 @@ LocationsRunner::~LocationsRunner()
 static void processUrl(KUrl &url, const QString &term)
 {
     if (url.protocol().isEmpty()) {
-        int idx = term.indexOf('/');
+        const int idx = term.indexOf('/');
+
         url.clear();
         url.setHost(term.left(idx));
         if (idx != -1) {
-            url.setPath(term.mid(idx));
+            //allow queries
+            const int queryStart = term.indexOf('?', idx);
+            int pathLength = -1;
+            if ((queryStart > -1) && (idx < queryStart)) {
+                pathLength = queryStart - idx;
+                url.setQuery(term.mid(queryStart));
+            }
+
+            url.setPath(term.mid(idx, pathLength));
         }
         if (term.startsWith("ftp")) {
             url.setProtocol("ftp");
@@ -78,8 +87,23 @@ QString manInfoLookup(QString term)
     return term;
 }
 
+//Any url that has a protocol or that looks like a url is accepted
+bool couldBeUrl(const QString &term)
+{
+    //Does not support a port, as then everything that is before the colon would be interpreted as protocol
+    static const QString ip4vPart("(25[0-5]|2[0-4]\\d|1?\\d\\d?)");//0-255 is allowed
+    static const QString ipv4('(' + ip4vPart + "\\." + ip4vPart + "\\." + ip4vPart + "\\." + ip4vPart + ')');
+    static const QString fqnd("([^/]+\\.[a-zA-Z]{2,})");
+    static const QString host("^(" + ipv4 + '|' + fqnd + ")");
+    static QRegExp rx(host + "(/.*)?$", Qt::CaseSensitive, QRegExp::RegExp2);
+
+    const KUrl url(term);
+    return (!url.protocol().isEmpty() || rx.exactMatch(term));
+}
+
 void LocationsRunner::match(Plasma::RunnerContext &context)
 {
+
     QString term = context.query();
     Plasma::RunnerContext::Type type = context.type();
 
@@ -111,8 +135,7 @@ void LocationsRunner::match(Plasma::RunnerContext &context)
         context.addMatch(term, match);
     } else if (type == Plasma::RunnerContext::NetworkLocation ||
                (type == Plasma::RunnerContext::UnknownType &&
-                (term.startsWith('#') ||
-                term.contains(QRegExp("^[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,6}"))))) {
+                (term.startsWith('#') || couldBeUrl(term)))) {
 
         KUrl url(manInfoLookup(term));
         processUrl(url, term);
@@ -173,7 +196,8 @@ void LocationsRunner::run(const Plasma::RunnerContext &context, const Plasma::Qu
     } else if (type != Plasma::RunnerContext::NetworkLocation) {
         QString path = QDir::cleanPath(KShell::tildeExpand(location));
 
-        if (path[0] != '/') {
+        //no protocol defined, might be a local folder
+        if (urlToRun.protocol().isEmpty() && (path[0] != '/')) {
             path.prepend('/').prepend(QDir::currentPath());
         }
 
