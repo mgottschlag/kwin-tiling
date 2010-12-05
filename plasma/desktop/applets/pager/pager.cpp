@@ -1323,6 +1323,7 @@ void Pager::themeRefresh()
 {
     delete m_colorScheme;
     m_colorScheme = 0;
+    update();
 }
 
 void Pager::updateToolTip()
