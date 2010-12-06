@@ -178,6 +178,8 @@ void CalculatorRunner::userFriendlySubstitutions(QString& cmd)
          cmd=cmd.replace(KGlobal::locale()->decimalSymbol(), ".", Qt::CaseInsensitive);
     }
 
+    // the following substitutions are not needed with libqalculate
+    #ifndef ENABLE_QALCULATE
     hexSubstitutions(cmd);
     powSubstitutions(cmd);
 
@@ -190,6 +192,7 @@ void CalculatorRunner::userFriendlySubstitutions(QString& cmd)
     if (cmd.contains(QRegExp("\\d+xor\\d+"))) {
          cmd = cmd.replace(QRegExp("(\\d+)xor(\\d+)"), "\\1^\\2");
     }
+    #endif
 }
 
 
@@ -230,9 +233,8 @@ void CalculatorRunner::match(Plasma::RunnerContext &context)
         return;
     }
 
-    // substitutions not needed with libqalculate
-    #ifndef ENABLE_QALCULATE
     userFriendlySubstitutions(cmd);
+    #ifndef ENABLE_QALCULATE
     cmd.replace(QRegExp("([a-zA-Z]+)"), "Math.\\1"); //needed for accessing math funktions like sin(),....
     #endif
 
@@ -264,7 +266,7 @@ QString CalculatorRunner::calculate(const QString& term)
         kDebug() << "qalculate error: " << e.what();
     }
 
-    return result;
+    return result.replace(".", KGlobal::locale()->decimalSymbol(), Qt::CaseInsensitive);
     #else
     //kDebug() << "calculating" << term;
     QScriptEngine eng;
