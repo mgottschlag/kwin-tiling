@@ -850,9 +850,9 @@ void CalendarTable::createConfigurationInterface(KConfigDialog *parent)
     while (it.hasNext()) {
         it.next();
         if (it.value().value("UseForDaysOff").toBool()) {
-            d->calendarConfigUi.holidayRegionWidget->setHolidayRegionStatus(it.key(), KHolidays::HolidayRegionSelector::RegionSelectedSecondary);
+            d->calendarConfigUi.holidayRegionWidget->setRegionUseFlags(it.key(), KHolidays::HolidayRegionSelector::UseDaysOff);
         } else {
-            d->calendarConfigUi.holidayRegionWidget->setHolidayRegionStatus(it.key(), KHolidays::HolidayRegionSelector::RegionSelected);
+            d->calendarConfigUi.holidayRegionWidget->setRegionUseFlags(it.key(), KHolidays::HolidayRegionSelector::UseInformationOnly);
         }
     }
     d->calendarConfigUi.holidayRegionWidget->setDescriptionHidden(true);
@@ -865,15 +865,15 @@ void CalendarTable::applyConfigurationInterface()
 
 #ifdef HAVE_KDEPIMLIBS
     clearHolidaysRegions();
-    QHash<QString, KHolidays::HolidayRegionSelector::SelectionStatus> regions = d->calendarConfigUi.holidayRegionWidget->holidayRegionsStatus();
-    QHashIterator<QString, KHolidays::HolidayRegionSelector::SelectionStatus> it(regions);
+    QHash<QString, KHolidays::HolidayRegionSelector::RegionUseFlags> regions = d->calendarConfigUi.holidayRegionWidget->regionUseFlags();
+    QHashIterator<QString, KHolidays::HolidayRegionSelector::RegionUseFlags> it(regions);
     bool displayHolidays = false;
     while (it.hasNext()) {
         it.next();
-        if (it.value() == KHolidays::HolidayRegionSelector::RegionSelectedSecondary) {
+        if (it.value() == KHolidays::HolidayRegionSelector::UseDaysOff) {
             addHolidaysRegion(it.key(), true);
             displayHolidays = true;
-        } else if (it.value() == KHolidays::HolidayRegionSelector::RegionSelected) {
+        } else if (it.value() == KHolidays::HolidayRegionSelector::UseInformationOnly) {
             addHolidaysRegion(it.key(), false);
             displayHolidays = true;
         }
