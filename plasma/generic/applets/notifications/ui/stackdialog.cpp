@@ -224,7 +224,6 @@ void StackDialog::hideEvent(QHideEvent *event)
     m_hideTimer->stop();
 
     adjustWindowToTilePos();
-    savePosition(pos());
     Plasma::Dialog::hideEvent(event);
 }
 
