@@ -244,6 +244,10 @@ bool Hdd::addVisualization(const QString& source)
 
 void Hdd::applyTheme(Plasma::Meter *w)
 {
+    if (!w) {
+        return;
+    }
+
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     QColor text = theme->color(Plasma::Theme::TextColor);
     QColor bg = theme->color(Plasma::Theme::BackgroundColor);

@@ -342,18 +342,34 @@ void Applet::toolTipAboutToShow()
     }
 }
 
-void Applet::appendVisualization(const QString& source, QGraphicsWidget * visualization)
+void Applet::appendVisualization(const QString& source, QGraphicsWidget *visualization)
 {
     if (m_visualizations.contains(source)) {
         delete(m_visualizations[source]);
     }
     m_visualizations[source] = visualization;
     mainLayout()->addItem(visualization);
+    connect(visualization, SIGNAL(destroyed(QObject *)), this, SLOT(visualizationDestroied(QObject *)));
 }
 
 QGraphicsWidget * Applet::visualization(const QString& source)
 {
     return m_visualizations[source];
+}
+
+void Applet::visualizationDestroied(QObject *visualization)
+{
+    QString key;
+    QHash<QString, QGraphicsWidget *>::const_iterator i;
+    for (i = m_visualizations.constBegin(); i != m_visualizations.constEnd(); ++i) {
+        if (i.value() == static_cast<QGraphicsWidget *>(visualization)) {
+            key = i.key();
+            break;
+        }
+    }
+    if (!key.isEmpty()) {
+        m_visualizations.remove(key);
+    }
 }
 
 uint Applet::interval()

@@ -53,8 +53,9 @@ class SM_EXPORT Applet : public Plasma::Applet
 
     public Q_SLOTS:
         void toolTipAboutToShow();
+        void visualizationDestroied(QObject *visualization);
 
-    signals:
+    Q_SIGNALS:
         void geometryChecked();
 
     protected:
