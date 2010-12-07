@@ -339,6 +339,7 @@ void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
     if (w && this != m_applet->rootGroupItem()) {
         if (m_hoverEffectTimerId) {
             killTimer(m_hoverEffectTimerId);
+            m_hoverEffectTimerId = 0;
         }
 
         m_hoverEffectTimerId = startTimer(HOVER_EFFECT_TIMEOUT);
@@ -902,6 +903,7 @@ void AbstractTaskItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 
     if (m_activateTimerId) {
         killTimer(m_activateTimerId);
+        m_activateTimerId = 0;
     }
 }
 
@@ -971,6 +973,7 @@ void AbstractTaskItem::setGeometry(const QRectF& geometry)
     if (m_lastGeometryUpdate.elapsed() < 500) {
         if (m_updateGeometryTimerId) {
             killTimer(m_updateGeometryTimerId);
+            m_updateGeometryTimerId = 0;
         }
 
         m_updateGeometryTimerId = startTimer(500 - m_lastGeometryUpdate.elapsed());
@@ -979,16 +982,19 @@ void AbstractTaskItem::setGeometry(const QRectF& geometry)
         m_lastGeometryUpdate.restart();
     }
 
-    QGraphicsWidget::setGeometry(geometry);
     //TODO:remove when we will have proper animated layouts
     if (m_firstGeometryUpdate && !m_layoutAnimationLock) {
+        QRectF animStartGeom(oldPos, geometry.size());
+        QGraphicsWidget::setGeometry(animStartGeom);
+
         if (m_layoutAnimation->state() == QAbstractAnimation::Running) {
             m_layoutAnimation->stop();
         }
 
-        setPos(oldPos);
         m_layoutAnimation->setEndValue(geometry.topLeft());
         m_layoutAnimation->start();
+    } else {
+        QGraphicsWidget::setGeometry(geometry);
     }
 }
 
