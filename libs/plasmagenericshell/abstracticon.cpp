@@ -145,6 +145,8 @@ void AbstractIcon::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 
     m_backgroundPrefix = "hover";
     m_oldBackgroundPrefix = m_selected ? "focus" : "normal";
+    m_background->setElementPrefix(m_backgroundPrefix);
+    m_background->resizeFrame(size());
 
     emit hoverEnter(this);
 
@@ -158,6 +160,8 @@ void AbstractIcon::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 
     m_backgroundPrefix = m_selected ? "focus" : "normal";
     m_oldBackgroundPrefix = "hover";
+    m_background->setElementPrefix(m_backgroundPrefix);
+    m_background->resizeFrame(size());
 
     fadeBackground(250);
 }
