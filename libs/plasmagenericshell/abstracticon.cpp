@@ -53,24 +53,34 @@ AbstractIcon::AbstractIcon(QGraphicsItem *parent)
       m_selected(false),
       m_hovered(false)
 {
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     setCacheMode(DeviceCoordinateCache);
     setAcceptHoverEvents(true);
     m_background->setCacheAllRenderedFrames(true);
     m_background->setImagePath("widgets/tasks");
+    connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(syncTheme()));
+    syncTheme();
 }
 
 AbstractIcon::~AbstractIcon()
 {
 }
 
-void AbstractIcon::resizeEvent(QGraphicsSceneResizeEvent *)
+void AbstractIcon::syncTheme()
 {
+    m_background->setElementPrefix("normal");
     m_background->resizeFrame(size());
     qreal ml, mt, mr, mb;
     m_background->getMargins(ml, mt, mr, mb);
-    qreal l, t, r, b;
-    getContentsMargins(&l, &t, &r, &b);
-    setContentsMargins(qMax(l, ml), qMax(t, mt), qMax(r, mr), qMax(b, mb));
+
+    setContentsMargins(ml, mt, mr, mb);
+    updateGeometry();
+    update();
+}
+
+void AbstractIcon::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    m_background->resizeFrame(event->newSize());
 }
 
 QSizeF AbstractIcon::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const

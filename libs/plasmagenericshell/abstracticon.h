@@ -76,6 +76,9 @@ class PLASMAGENERICSHELL_EXPORT AbstractIcon : public QGraphicsWidget
     public Q_SLOTS:
         void setName(const QString &name);
 
+    protected Q_SLOTS:
+        void syncTheme();
+
     protected:
         //listen to events and emit signals
         void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
