@@ -35,7 +35,7 @@ class ActivityManager : public QGraphicsWidget
     Q_OBJECT
 public:
     //FIXME must learn about 'explicit'
-    ActivityManager(Qt::Orientation orientation, QGraphicsItem *parent=0);
+    ActivityManager(Plasma::Location loc, QGraphicsItem *parent=0);
     ActivityManager(QGraphicsItem *parent=0);
     ~ActivityManager();
 
@@ -47,14 +47,14 @@ public:
     void setContainment(Plasma::Containment *containment);
 
     /**
-     * set orientation
+     * set location
      */
-    void setOrientation(Qt::Orientation orientation);
+    void setLocation(Plasma::Location loc);
 
     /**
-     * @return the orientation
+     * @return the location
      */
-    Qt::Orientation orientation();
+    Plasma::Location location();
 
     //FIXME what logic does this iconsize thing follow?
     /**
@@ -68,7 +68,7 @@ public:
     int iconSize() const;
 
 Q_SIGNALS:
-    void orientationChanged(Qt::Orientation orientation);
+    void locationChanged(Plasma::Location loc);
     void closeClicked();
     void addWidgetsRequested();
 

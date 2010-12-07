@@ -336,7 +336,7 @@ void ControllerWindow::setLocation(const Plasma::Location &loc)
         if (m_watchedWidget == (QGraphicsWidget*)m_widgetExplorer) {
             m_widgetExplorer->setLocation(location());
         } else {
-            m_activityManager->setOrientation(orientation());
+            m_activityManager->setLocation(location());
         }
     }
 }
@@ -426,7 +426,7 @@ void ControllerWindow::showWidgetExplorer()
 void ControllerWindow::showActivityManager()
 {
     if (!m_activityManager) {
-        m_activityManager = new ActivityManager(orientation());
+        m_activityManager = new ActivityManager(location());
         m_watchedWidget = m_activityManager;
 
         m_corona->addOffscreenWidget(m_activityManager);
@@ -445,7 +445,7 @@ void ControllerWindow::showActivityManager()
         connect(m_activityManager, SIGNAL(addWidgetsRequested()), this, SLOT(showWidgetExplorer()));
         connect(m_activityManager, SIGNAL(closeClicked()), this, SLOT(close()));
     } else {
-        m_activityManager->setOrientation(orientation());
+        m_activityManager->setLocation(location());
         m_watchedWidget = m_activityManager;
         m_activityManager->show();
         setGraphicsWidget(m_activityManager);

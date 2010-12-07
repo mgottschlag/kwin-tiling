@@ -50,11 +50,12 @@ public:
     {
     }
 
-    void init(Qt::Orientation orientation);
+    void init(Plasma::Location location);
     void containmentDestroyed();
-    void setOrientation(Qt::Orientation orientation);
+    void setLocation(Plasma::Location location);
 
     Qt::Orientation orientation;
+    Plasma::Location location;
     ActivityManager *q;
     Plasma::ToolButton *close;
     Plasma::Containment *containment;
@@ -73,15 +74,22 @@ public:
     int iconSize;
 };
 
-void ActivityManagerPrivate::init(Qt::Orientation orient)
+void ActivityManagerPrivate::init(Plasma::Location loc)
 {
+    location = loc;
     //init widgets
-    orientation = orient;
+    if (loc == Plasma::LeftEdge || loc == Plasma::RightEdge) {
+        orientation = Qt::Vertical;
+    } else {
+        orientation = Qt::Horizontal;
+    }
+
     mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
     mainLayout->setSpacing(0);
     filteringLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     filteringWidget = new FilterBar(orientation, q);
-    activityList = new ActivityList(Plasma::BottomEdge);
+
+    activityList = new ActivityList(loc);
     close = new Plasma::ToolButton;
     close->setIcon(KIcon("dialog-close"));
 
@@ -119,11 +127,20 @@ void ActivityManagerPrivate::init(Qt::Orientation orient)
     q->setLayout(mainLayout);
 }
 
-void ActivityManagerPrivate::setOrientation(Qt::Orientation orient)
+void ActivityManagerPrivate::setLocation(Plasma::Location loc)
 {
+    Qt::Orientation orient;
+    if (loc == Plasma::LeftEdge || loc == Plasma::RightEdge) {
+        orient = Qt::Vertical;
+    } else {
+        orient = Qt::Horizontal;
+    }
+
     if (orientation == orient) {
         return;
     }
+
+    location = loc;
 //FIXME bet I could make this more efficient
     orientation = orient;
     filteringWidget->setOrientation(orientation);
@@ -151,18 +168,18 @@ void ActivityManagerPrivate::containmentDestroyed()
 
 //ActivityBar
 
-ActivityManager::ActivityManager(Qt::Orientation orientation, QGraphicsItem *parent)
+ActivityManager::ActivityManager(Plasma::Location loc, QGraphicsItem *parent)
         :QGraphicsWidget(parent),
         d(new ActivityManagerPrivate(this))
 {
-    d->init(orientation);
+    d->init(loc);
 }
 
 ActivityManager::ActivityManager(QGraphicsItem *parent)
         :QGraphicsWidget(parent),
         d(new ActivityManagerPrivate(this))
 {
-    d->init(Qt::Horizontal);
+    d->init(Plasma::BottomEdge);
 }
 
 ActivityManager::~ActivityManager()
@@ -170,15 +187,15 @@ ActivityManager::~ActivityManager()
      delete d;
 }
 
-void ActivityManager::setOrientation(Qt::Orientation orientation)
+void ActivityManager::setLocation(Plasma::Location loc)
 {
-    d->setOrientation(orientation);
-    emit(orientationChanged(orientation));
+    d->setLocation(loc);
+    emit(locationChanged(loc));
 }
 
-Qt::Orientation ActivityManager::orientation()
+Plasma::Location ActivityManager::location()
 {
-    return d->orientation;
+    return d->location;
 }
 
 void ActivityManager::setIconSize(int size)
