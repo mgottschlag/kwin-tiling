@@ -39,7 +39,9 @@ Solid::Control::NetworkingPrivate::NetworkingPrivate() : iface(
 
 Solid::Control::NetworkingPrivate::~NetworkingPrivate()
 {
-}uint Solid::Control::NetworkingPrivate::requestConnection( QObject * receiver, const char * member )
+}
+
+uint Solid::Control::NetworkingPrivate::requestConnection( QObject * receiver, const char * member )
 {
     connect( this, SIGNAL( connectionResult( bool ) ), receiver, member );
     return iface->requestConnection();
