@@ -474,9 +474,9 @@ KConfigGroup BackgroundDialog::wallpaperConfig(const QString &plugin)
 
 void BackgroundDialog::saveConfig()
 {
-    QString wallpaperPlugin = d->backgroundDialogUi.wallpaperMode->itemData(d->backgroundDialogUi.wallpaperMode->currentIndex()).value<WallpaperInfo>().first;
-    QString wallpaperMode = d->backgroundDialogUi.wallpaperMode->itemData(d->backgroundDialogUi.wallpaperMode->currentIndex()).value<WallpaperInfo>().second;
-    QString containment = d->backgroundDialogUi.containmentComboBox->itemData(d->backgroundDialogUi.containmentComboBox->currentIndex(),
+    const QString wallpaperPlugin = d->backgroundDialogUi.wallpaperMode->itemData(d->backgroundDialogUi.wallpaperMode->currentIndex()).value<WallpaperInfo>().first;
+    const QString wallpaperMode = d->backgroundDialogUi.wallpaperMode->itemData(d->backgroundDialogUi.wallpaperMode->currentIndex()).value<WallpaperInfo>().second;
+    const QString containment = d->backgroundDialogUi.containmentComboBox->itemData(d->backgroundDialogUi.containmentComboBox->currentIndex(),
                                                           AppletDelegate::PluginNameRole).toString();
 
     // Containment
@@ -502,8 +502,8 @@ void BackgroundDialog::saveConfig()
 
                     KPageWidgetItem *item = m->item(idx);
 
-                    if (item && item != d->appearanceItem && item != d->mouseItem
-                      && item != d->activityItem) {
+                    if (item && item != d->appearanceItem &&
+                        item != d->mouseItem && item != d->activityItem) {
                         itemsToRemove.append(item);
                     }
                 }
