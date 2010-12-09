@@ -405,7 +405,7 @@ void GroupManagerPrivate::currentActivityChanged(QString newActivity)
 
     currentActivity = newActivity;
 
-    foreach (AbstractGroupableItem *item, launcherAssociations.values()) {
+    foreach (AbstractGroupableItem *item, launcherAssociations) {
         if (item->itemType() == LauncherItemType) {
             rootGroups[currentActivity][currentDesktop]->add(item);
         }
@@ -445,7 +445,7 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
 
     currentDesktop = newDesktop;
 
-    foreach (AbstractGroupableItem *item, launcherAssociations.values()) {
+    foreach (AbstractGroupableItem *item, launcherAssociations) {
         if (item->itemType() == LauncherItemType) {
             rootGroups[currentActivity][currentDesktop]->add(item);
         }
