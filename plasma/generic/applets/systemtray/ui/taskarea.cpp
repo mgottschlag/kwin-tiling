@@ -389,6 +389,9 @@ void TaskArea::removeTask(Task *task)
             }
         }
         d->hiddenTasks.remove(task);
+        d->hiddenTasksLayout->invalidate();
+        d->hiddenTasksLayout->updateGeometry();
+        d->hiddenTasksWidget->resize(d->hiddenTasksWidget->effectiveSizeHint(Qt::MinimumSize));
     }
     d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
 
@@ -406,6 +409,7 @@ void TaskArea::removeTask(Task *task)
         d->taskForWidget.remove(widget);
         d->taskCategories.remove(task);
     }
+
     relayout();
 }
 
