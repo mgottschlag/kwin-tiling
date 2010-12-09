@@ -30,19 +30,24 @@
 
 #include <KDebug>
 #include <KLocale>
-#include <KDirWatch>
 #include <KStandardDirs>
 
+#include <QtDBus/QDBusConnectionInterface>
 #include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusMetaType>
 #include <QtDBus/QDBusReply>
 
 #include <Plasma/DataContainer>
+
+typedef QMap< QString, QString > StringStringMap;
+Q_DECLARE_METATYPE(StringStringMap)
 
 PowermanagementEngine::PowermanagementEngine(QObject* parent, const QVariantList& args)
         : Plasma::DataEngine(parent, args)
         , m_sources(basicSourceNames())
 {
     Q_UNUSED(args)
+    qDBusRegisterMetaType< StringStringMap >();
 }
 
 PowermanagementEngine::~PowermanagementEngine()
@@ -55,17 +60,7 @@ void PowermanagementEngine::init()
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)),
             this,                              SLOT(deviceAdded(QString)));
 
-    QStringList modules;
-    QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
-    QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
-
-    if (!reply.isValid()) {
-        return;
-    }
-
-    modules = reply.value();
-
-    if (modules.contains("powerdevil")) {
+    if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
         if (!QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement",
                                                    "/org/kde/Solid/PowerManagement",
                                                    "org.kde.Solid.PowerManagement",
@@ -80,13 +75,14 @@ void PowermanagementEngine::init()
                                                    SLOT(batteryRemainingTimeChanged(qulonglong)))) {
             kDebug() << "error connecting to remaining time changes";
         }
-
         // Listen to profile changes
-        KDirWatch *profilesWatch = new KDirWatch(this);
-        profilesWatch->addFile(KStandardDirs::locate("config", "powerdevil2profilesrc"));
-        connect(profilesWatch,SIGNAL(dirty(QString)),this,SLOT(availableProfilesChanged()));
-        connect(profilesWatch,SIGNAL(created(QString)),this,SLOT(availableProfilesChanged()));
-        connect(profilesWatch,SIGNAL(deleted(QString)),this,SLOT(availableProfilesChanged()));
+        if (!QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement",
+                                                   "/org/kde/Solid/PowerManagement",
+                                                   "org.kde.Solid.PowerManagement",
+                                                   "configurationReloaded", this,
+                                                   SLOT(availableProfilesChanged()))) {
+            kDebug() << "error connecting to configuration changes";
+        }
 
         setData("PowerDevil", DataEngine::Data());
 
@@ -292,9 +288,25 @@ void PowermanagementEngine::batteryRemainingTimeChanged(qulonglong time)
 
 void PowermanagementEngine::availableProfilesChanged()
 {
-    KConfig *profilesConfig = new KConfig("powerdevil2profilesrc", KConfig::SimpleConfig);
-    setData("PowerDevil", "Available profiles", profilesConfig->groupList());
-    delete profilesConfig;
+    // Request profiles to the daemon
+    QDBusMessage call = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement",
+                                                       "org.kde.Solid.PowerManagement", "availableProfiles");
+    QDBusPendingReply< StringStringMap > reply = QDBusConnection::sessionBus().asyncCall(call);
+    reply.waitForFinished();
+
+    if (!reply.isValid()) {
+        kDebug() << "Error contacting the daemon!";
+        return;
+    }
+
+    StringStringMap profiles = reply.value();
+
+    if (profiles.isEmpty()) {
+        kDebug() << "No available profiles!";
+        return;
+    }
+
+    setData("PowerDevil", "Available profiles", QVariant::fromValue(profiles));
 }
 
 void PowermanagementEngine::reloadPowerDevilData()

@@ -30,6 +30,8 @@
 #include <Plasma/PopupApplet>
 #include "ui_batteryConfig.h"
 
+typedef QMap< QString, QString > StringStringMap;
+
 namespace Plasma
 {
     class Svg;
@@ -156,7 +158,7 @@ class Battery : public Plasma::PopupApplet
         int m_pixelSize;
         Plasma::Svg* m_theme;
 
-        QStringList m_availableProfiles;
+        StringStringMap m_availableProfiles;
         QString m_currentProfile;
         QStringList m_suspendMethods;
 
@@ -189,6 +191,7 @@ class Battery : public Plasma::PopupApplet
         BrightnessOSDWidget* m_brightnessOSD;
 };
 
+Q_DECLARE_METATYPE(StringStringMap)
 K_EXPORT_PLASMA_APPLET(battery, Battery)
 
 #endif

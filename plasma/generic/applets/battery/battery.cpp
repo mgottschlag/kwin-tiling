@@ -88,7 +88,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_minutes(0),
       m_hours(0),
       m_theme(0),
-      m_availableProfiles(QStringList()),
+      m_availableProfiles(StringStringMap()),
       m_numOfBattery(0),
       m_acAdapterPlugged(false),
       m_remainingMSecs(0),
@@ -319,7 +319,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
         m_acAdapterPlugged = data["Plugged in"].toBool();
         showAcAdapter(m_acAdapterPlugged);
     } else if (source == "PowerDevil") {
-        m_availableProfiles = data["Available profiles"].toStringList();
+        m_availableProfiles = data["Available profiles"].value< StringStringMap >();
         m_currentProfile = data["Current profile"].toString();
         kDebug() << "PowerDevil profiles:" << m_availableProfiles << "[" << m_currentProfile << "]";
     } else {
@@ -732,12 +732,10 @@ void Battery::updateStatus()
 
     if (!m_availableProfiles.empty() && m_profileCombo) {
         m_profileCombo->clear();
-        m_profileCombo->addItem(m_currentProfile);
-        foreach (const QString &p, m_availableProfiles) {
-            if (m_currentProfile != p) {
-                m_profileCombo->addItem(p);
-            }
+        for (StringStringMap::const_iterator i = m_availableProfiles.constBegin(); i != m_availableProfiles.constEnd(); ++i) {
+            m_profileCombo->addItem(i.value());
         }
+        m_profileCombo->setCurrentIndex(m_profileCombo->nativeWidget()->findText(m_availableProfiles[m_currentProfile]));
     }
 
     if (m_profileLabel && m_profileCombo) {
@@ -768,7 +766,7 @@ void Battery::setProfile(const QString &profile)
     if (m_currentProfile != profile) {
         kDebug() << "Changing power profile to " << profile;
         QDBusInterface iface( "org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement" );
-        iface.call( "loadProfile", profile );
+        iface.call( "loadProfile", m_availableProfiles.key(profile) );
     }
 }
 

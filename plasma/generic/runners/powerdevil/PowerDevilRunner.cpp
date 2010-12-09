@@ -23,11 +23,11 @@
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QtDBus/QDBusConnectionInterface>
+#include <QtDBus/QDBusMetaType>
 
 #include <KIcon>
 #include <KLocale>
 #include <KDebug>
-#include <KDirWatch>
 #include <KStandardDirs>
 #include <KRun>
 
@@ -39,6 +39,7 @@ PowerDevilRunner::PowerDevilRunner(QObject *parent, const QVariantList &args)
           m_shortestCommand(1000)
 {
     Q_UNUSED(args)
+    qDBusRegisterMetaType< StringStringMap >();
 
     setObjectName( QLatin1String("PowerDevil" ));
     setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File |
@@ -129,13 +130,30 @@ void PowerDevilRunner::updateStatus()
     // Profiles and their icons
     {
         KSharedConfigPtr profilesConfig = KSharedConfig::openConfig("powerdevil2profilesrc", KConfig::SimpleConfig);
-        m_availableProfiles = profilesConfig->groupList();
-        foreach(const QString &profile, m_availableProfiles) {
-            KConfigGroup settings(profilesConfig, profile);
+        // Request profiles to the daemon
+        QDBusMessage call = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement",
+                                                           "org.kde.Solid.PowerManagement", "availableProfiles");
+        QDBusPendingReply< StringStringMap > reply = QDBusConnection::sessionBus().asyncCall(call);
+        reply.waitForFinished();
+
+        if (!reply.isValid()) {
+            kDebug() << "Error contacting the daemon!";
+            return;
+        }
+
+        m_availableProfiles = reply.value();
+
+        if (m_availableProfiles.isEmpty()) {
+            kDebug() << "No available profiles!";
+            return;
+        }
+
+        for (StringStringMap::const_iterator i = m_availableProfiles.constBegin(); i != m_availableProfiles.constEnd(); ++i) {
+            KConfigGroup settings(profilesConfig, i.key());
             if (settings.readEntry< QString >("icon", QString()).isEmpty()) {
-                m_profileIcon[profile] = "preferences-system-power-management";
+                m_profileIcon[i.key()] = "preferences-system-power-management";
             } else {
-                m_profileIcon[profile] = settings.readEntry< QString >("icon", QString());
+                m_profileIcon[i.key()] = settings.readEntry< QString >("icon", QString());
             }
         }
     }
@@ -170,19 +188,19 @@ void PowerDevilRunner::match(Plasma::RunnerContext &context)
                    QList<QRegExp>() << QRegExp(i18nc("Note this is a KRunner keyword; %1 is a parameter", "power profile %1", "(.*)"), Qt::CaseInsensitive)
                                     << QRegExp(i18nc("Note this is a KRunner keyword", "power profile"), Qt::CaseInsensitive),
                    parameter)) {
-        foreach(const QString &profile, m_availableProfiles) {
+        for (StringStringMap::const_iterator i = m_availableProfiles.constBegin(); i != m_availableProfiles.constEnd(); ++i) {
             if (!parameter.isEmpty()) {
-                if (!profile.startsWith(parameter, Qt::CaseInsensitive)) {
+                if (!i.value().startsWith(parameter, Qt::CaseInsensitive)) {
                     continue;
                 }
             }
             Plasma::QueryMatch match(this);
             match.setType(Plasma::QueryMatch::ExactMatch);
-            match.setIcon(KIcon(m_profileIcon[profile]));
-            match.setText(i18n("Set Profile to '%1'", profile));
-            match.setData(profile);
+            match.setIcon(KIcon(m_profileIcon[i.key()]));
+            match.setText(i18n("Set Profile to '%1'", i.value()));
+            match.setData(i.key());
             match.setRelevance(1);
-            match.setId("ProfileChange "+profile);
+            match.setId("ProfileChange "+ i.key());
             matches.append(match);
         }
     } else if (parseQuery(term,

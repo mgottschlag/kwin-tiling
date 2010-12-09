@@ -23,6 +23,8 @@
 #include <Plasma/AbstractRunner>
 #include <QDBusConnection>
 
+typedef QMap< QString, QString > StringStringMap;
+
 class PowerDevilRunner : public Plasma::AbstractRunner
 {
         Q_OBJECT
@@ -45,7 +47,7 @@ class PowerDevilRunner : public Plasma::AbstractRunner
 
         QDBusConnection m_dbus;
 
-        QStringList m_availableProfiles;
+        StringStringMap m_availableProfiles;
         QHash<QString, QString> m_profileIcon;
         QHash<int, QString> m_suspendMethods;
         QHash<QString, int> m_synonyms;
@@ -53,6 +55,7 @@ class PowerDevilRunner : public Plasma::AbstractRunner
         int m_shortestCommand;
 };
 
+Q_DECLARE_METATYPE(StringStringMap)
 K_EXPORT_PLASMA_RUNNER( powerdevil, PowerDevilRunner )
 
 #endif
