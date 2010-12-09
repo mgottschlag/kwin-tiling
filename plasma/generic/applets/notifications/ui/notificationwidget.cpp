@@ -147,7 +147,7 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     d->messageLabel->nativeWidget()->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
     d->messageLabel->nativeWidget()->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
     d->messageLabel->nativeWidget()->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
-    d->messageLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    d->messageLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     connect(d->messageLabel->nativeWidget(), SIGNAL(urlClick(QString)),
             notification, SLOT(linkActivated(const QString &)));
 
