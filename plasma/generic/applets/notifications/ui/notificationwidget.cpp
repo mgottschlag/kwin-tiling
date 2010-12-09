@@ -148,7 +148,7 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     d->messageLabel->nativeWidget()->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
     d->messageLabel->nativeWidget()->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     d->messageLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    connect(d->messageLabel, SIGNAL(linkActivated(const QString &)),
+    connect(d->messageLabel->nativeWidget(), SIGNAL(urlClick(QString)),
             notification, SLOT(linkActivated(const QString &)));
 
     d->iconPlaceBig = new QGraphicsWidget(this);
