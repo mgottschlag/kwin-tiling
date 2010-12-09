@@ -91,6 +91,7 @@ ActivityIcon::ActivityIcon(const QString &id)
       m_buttonRemove(0),
       m_buttonStart(0),
       m_buttonConfigure(0),
+      m_closable(false),
       m_inlineWidgetAnim(0)
 {
     DesktopCorona *c = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
