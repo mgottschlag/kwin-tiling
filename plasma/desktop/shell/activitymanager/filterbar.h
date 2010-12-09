@@ -56,6 +56,7 @@ protected Q_SLOTS:
     void setMenuPos();
     void populateActivityMenu();
     void createActivity(QAction *action);
+    void registerToCoronaChanges();
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
@@ -66,6 +67,7 @@ private:
     //Plasma::TabBar *m_categoriesTabs;
     Plasma::LineEdit *m_textSearch;
     Qt::Orientation m_orientation;
+    Plasma::PushButton *m_addWidgetsButton;
     Plasma::PushButton *m_newActivityButton;
     KMenu *m_newActivityMenu;
 };

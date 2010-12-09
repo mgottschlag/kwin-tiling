@@ -64,10 +64,10 @@ FilterBar::FilterBar(Qt::Orientation orientation, QGraphicsItem *parent)
     m_categoriesTabs->addTab(i18n("Stopped"));
     */
 
-    Plasma::PushButton *addWidgetsButton = new Plasma::PushButton(this);
-    addWidgetsButton->setText(i18n("Add Widgets"));
-    addWidgetsButton->setIcon(KIcon("plasma"));
-    connect(addWidgetsButton, SIGNAL(clicked()), this, SIGNAL(addWidgetsRequested()));
+    m_addWidgetsButton = new Plasma::PushButton(this);
+    m_addWidgetsButton->setText(i18n("Add Widgets"));
+    m_addWidgetsButton->setIcon(KIcon("plasma"));
+    connect(m_addWidgetsButton, SIGNAL(clicked()), this, SIGNAL(addWidgetsRequested()));
 
     m_newActivityButton = new Plasma::PushButton(this);
     m_newActivityButton->setText(i18n("Create Activity"));
@@ -84,8 +84,9 @@ FilterBar::FilterBar(Qt::Orientation orientation, QGraphicsItem *parent)
     //m_linearLayout->addItem(m_categoriesTabs);
     m_linearLayout->addStretch(10);
     m_linearLayout->addItem(m_newActivityButton);
-    m_linearLayout->addItem(addWidgetsButton);
+    m_linearLayout->addItem(m_addWidgetsButton);
 
+    QTimer::singleShot(0, this, SLOT(registerToCoronaChanges()));
     setOrientation(orientation);
 }
 
@@ -229,9 +230,19 @@ void FilterBar::createActivity(QAction *action)
     }
 }
 
+void FilterBar::registerToCoronaChanges()
+{
+    Plasma::Corona *corona = qobject_cast<Plasma::Corona*>(scene());
+    if (corona) {
+        connect(corona, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)), this, SLOT(coronaImmutabilityChanged(Plasma::ImmutabilityType)));
+        coronaImmutabilityChanged(corona->immutability());
+    }
+}
+
 void FilterBar::coronaImmutabilityChanged(Plasma::ImmutabilityType immutability)
 {
     m_newActivityButton->setVisible(immutability == Plasma::Mutable);
+    m_addWidgetsButton->setVisible(immutability == Plasma::Mutable);
 }
 
 #include "filterbar.moc"
