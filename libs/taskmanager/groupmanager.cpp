@@ -654,9 +654,9 @@ void GroupManager::updateLauncher(AbstractGroupableItem* item)
         } else {
             name = item->name().toLower();
         }
-        if (d->currentRootGroup()->members().contains(item) && d->launcherAssociations.contains(name) && !d->launcherAssociations.values(name).contains(item) ) { //Item was just created and has set a launcher
+        if (d->currentRootGroup()->hasMember(item) && d->launcherAssociations.contains(name) && !d->launcherAssociations.values(name).contains(item) ) { //Item was just created and has set a launcher
             d->launcherAssociations.insertMulti(name, item);
-        } else if (!d->currentRootGroup()->members().contains(item) && !d->launcherAssociations.key(item).isEmpty()) { //Item was just removed and has set a launcher
+        } else if (!d->currentRootGroup()->hasMember(item) && !d->launcherAssociations.key(item).isEmpty()) { //Item was just removed and has set a launcher
             if (name.isEmpty()) { // Happens if the window has already been removed
                 name = d->launcherAssociations.key(item);
             }
