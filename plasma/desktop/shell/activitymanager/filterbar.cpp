@@ -43,7 +43,8 @@
 #include "scripting/desktopscriptengine.h"
 
 FilterBar::FilterBar(Qt::Orientation orientation, QGraphicsItem *parent)
-    : QGraphicsWidget(parent)
+    : QGraphicsWidget(parent),
+      m_unlockButton(0)
 {
     setFocusPolicy(Qt::StrongFocus);
 
@@ -243,6 +244,17 @@ void FilterBar::coronaImmutabilityChanged(Plasma::ImmutabilityType immutability)
 {
     m_newActivityButton->setVisible(immutability == Plasma::Mutable);
     m_addWidgetsButton->setVisible(immutability == Plasma::Mutable);
+    if (immutability == Plasma::UserImmutable) {
+        Plasma::Corona *corona = qobject_cast<Plasma::Corona*>(scene());
+        if (corona) {
+            m_unlockButton = new Plasma::PushButton(this);
+            m_unlockButton->setAction(corona->action("lock widgets"));
+            m_linearLayout->addItem(m_unlockButton);
+        }
+    } else if (m_unlockButton) {
+        m_unlockButton->deleteLater();
+        m_unlockButton = 0;
+    }
 }
 
 #include "filterbar.moc"

@@ -69,6 +69,7 @@ private:
     Qt::Orientation m_orientation;
     Plasma::PushButton *m_addWidgetsButton;
     Plasma::PushButton *m_newActivityButton;
+    Plasma::PushButton *m_unlockButton;
     KMenu *m_newActivityMenu;
 };
 
