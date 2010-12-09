@@ -106,8 +106,8 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
       d(new NotificationWidgetPrivate(this))
 {
     setFlag(QGraphicsItem::ItemHasNoContents, true);
-    setMinimumWidth(380);
-    setPreferredWidth(450);
+    setMinimumWidth(290);
+
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
 
