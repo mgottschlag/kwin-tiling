@@ -323,7 +323,7 @@ void ActivityBar::contextChanged(Plasma::Context *context)
 void ActivityBar::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
 {
     //kDebug() << "$$$$$$$$$$$$$$$$$$$" << source;
-    if (source.startsWith('_')) {
+    if (source == "Status") {
         //special source, not used yet
         return;
     }
