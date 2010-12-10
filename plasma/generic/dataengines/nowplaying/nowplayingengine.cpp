@@ -104,6 +104,7 @@ bool NowPlayingEngine::sourceRequestEvent(const QString& source)
         setData(source, "Volume",          "float   - the volume, given as a float\n"
                                            "          between 0 and 1, or -1 if unknown");
         setData(source, "Artwork",         "QPixmap - the album artwork, if available");
+        setData(source, "Lyrics",          "QString - song lyrics, if available");
         return true;
     }
 
@@ -112,11 +113,11 @@ bool NowPlayingEngine::sourceRequestEvent(const QString& source)
 
 bool NowPlayingEngine::updateSourceEvent(const QString& source)
 {
-    QString lowerSource = source.toLower();
-    if (lowerSource == "help" || lowerSource == "properties") {
+    if (source == "help" || source == "properties") {
         // help text doesn't change
         return true;
     }
+
     return false;
 }
 
