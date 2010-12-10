@@ -251,7 +251,11 @@ void Applet::deleteVisualizations()
     if (!m_mainLayout) {
         return;
     }
-    qDeleteAll(m_visualizations);
+    foreach (QWeakPointer<QGraphicsWidget> visualization, m_visualizations) {
+        if (visualization) {
+            delete visualization.data();
+        }
+    }
 
     m_visualizations.clear();
     m_toolTips.clear();
@@ -344,8 +348,8 @@ void Applet::toolTipAboutToShow()
 
 void Applet::appendVisualization(const QString& source, QGraphicsWidget *visualization)
 {
-    if (m_visualizations.contains(source)) {
-        delete(m_visualizations[source]);
+    if (m_visualizations.contains(source) && m_visualizations.value(source)) {
+        delete(m_visualizations[source].data());
     }
     m_visualizations[source] = visualization;
     mainLayout()->addItem(visualization);
@@ -354,15 +358,15 @@ void Applet::appendVisualization(const QString& source, QGraphicsWidget *visuali
 
 QGraphicsWidget * Applet::visualization(const QString& source)
 {
-    return m_visualizations[source];
+    return m_visualizations[source].data();
 }
 
 void Applet::visualizationDestroied(QObject *visualization)
 {
     QString key;
-    QHash<QString, QGraphicsWidget *>::const_iterator i;
+    QHash<QString, QWeakPointer<QGraphicsWidget> >::const_iterator i;
     for (i = m_visualizations.constBegin(); i != m_visualizations.constEnd(); ++i) {
-        if (i.value() == static_cast<QGraphicsWidget *>(visualization)) {
+        if (i.value().data() == static_cast<QGraphicsWidget *>(visualization)) {
             key = i.key();
             break;
         }

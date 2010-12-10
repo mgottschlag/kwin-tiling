@@ -102,7 +102,7 @@ class SM_EXPORT Applet : public Plasma::Applet
         QStringList m_sources;
         QStringList m_connectedSources;
         Plasma::DataEngine *m_engine;
-        QHash<QString, QGraphicsWidget*> m_visualizations;
+        QHash<QString, QWeakPointer<QGraphicsWidget> > m_visualizations;
         QHash<QString, QString> m_toolTips;
         Qt::Orientation m_orientation;
         Plasma::IconWidget *m_noSourcesIcon;
