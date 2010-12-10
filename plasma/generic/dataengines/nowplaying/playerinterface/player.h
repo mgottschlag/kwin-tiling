@@ -84,6 +84,8 @@ public:
     virtual QString comment();
     /** Genre of current track.  May be empty */
     virtual QString genre();
+    /** Lyrics of current track. May be empty */
+    virtual QString lyrics();
     /**
      * Length of current track in seconds.
      *

@@ -69,6 +69,11 @@ QString Player::genre()
     return QString();
 }
 
+QString Player::lyrics()
+{
+    return QString();
+}
+
 int Player::length()
 {
     return 0;
