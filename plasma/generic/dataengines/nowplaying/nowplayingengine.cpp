@@ -76,13 +76,12 @@ Plasma::Service* NowPlayingEngine::serviceForSource(const QString& source)
 bool NowPlayingEngine::sourceRequestEvent(const QString& source)
 {
     kDebug() << "Source" << source << "was requested";
-    QString lowerSource = source.toLower();
-    if (lowerSource == "help") {
+    if (source == "help") {
         setData(source, "Use 'players' to get a list of players.\n"
                         "Use 'properties' to get a list of all properties that may be returned."
                         );
         return true;
-    } else if (lowerSource == "properties") {
+    } else if (source == "properties") {
         setData(source, "State",           "QString - playing|paused|stopped");
         setData(source, "Artist",          "QString - the artist metadata for the\n"
                                            "          current track, if available");
@@ -104,7 +103,7 @@ bool NowPlayingEngine::sourceRequestEvent(const QString& source)
                                            "          between 0 and 1, or -1 if unknown");
         setData(source, "Artwork",         "QPixmap - the album artwork, if available");
         return true;
-    } else if (lowerSource == "players") {
+    } else if (source == "players") {
         setData(source, sources());
         return true;
     }
@@ -125,12 +124,26 @@ bool NowPlayingEngine::updateSourceEvent(const QString& source)
 void NowPlayingEngine::addPlayer(Player::Ptr player)
 {
     kDebug() << "Adding player" << player->name();
+    Plasma::DataContainer *container = containerForSource("players");
+    if (container) {
+        QStringList players = container->data()["players"].toStringList();
+    } else {
+        setData("players", QStringList() << player->name());
+    }
+
     addSource(new PlayerContainer(player, this));
 }
 
 void NowPlayingEngine::removePlayer(Player::Ptr player)
 {
     kDebug() << "Player" << player->name() << "disappeared";
+    Plasma::DataContainer *container = containerForSource("players");
+    if (container) {
+        QStringList players = container->data()["players"].toStringList();
+        players.removeAll(player->name());
+        setData("players", players);
+    }
+
     removeSource(player->name());
 }
 
