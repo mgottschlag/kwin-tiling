@@ -172,9 +172,21 @@ Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
             // this allows the corona to either grab one for us that already exists matching
             // screen and desktop, or create a new one. this also works regardless of immutability
             containment = PlasmaApp::self()->corona()->containmentForScreen(screen, desktop, m_plugin);
-            if (!containment) {
+            if (!containment || !containment->context()->currentActivityId().isEmpty()) {
                 // possibly a plugin failure, let's go for the default
                 containment = PlasmaApp::self()->corona()->containmentForScreen(screen, desktop, "default");
+            }
+            //we don't want to steal contaiments from other activities
+            if (!containment || !containment->context()->currentActivityId().isEmpty()) {
+                // possibly a plugin failure, let's go for the default
+                containment = PlasmaApp::self()->corona()->addContainment(m_plugin);
+                containment->setScreen(screen, desktop);
+            }
+            //last hope, create a new one
+            if (!containment) {
+                // possibly a plugin failure, let's go for the default
+                containment = PlasmaApp::self()->corona()->addContainment("default");
+                containment->setScreen(screen, desktop);
             }
         }
 
