@@ -72,6 +72,7 @@ void PlayerContainer::updateInfo()
     setData("Track number", m_player->trackNumber());
     setData("Comment", m_player->comment());
     setData("Genre", m_player->genre());
+    setData("Lyrics", m_player->lyrics());
     setData("Length", m_player->length());
     setData("Position", m_player->position());
     setData("Volume", m_player->volume());
