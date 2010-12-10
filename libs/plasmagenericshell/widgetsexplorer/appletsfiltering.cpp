@@ -261,6 +261,7 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
         newLayout->addItem(m_newWidgetsButton);
         newLayout->addItem(m_closeButton);
         setLayout(newLayout);
+        newLayout->setContentsMargins(4, 0, 0, 4);
     } else {
         m_textSearch->setPreferredHeight(30);
         m_textSearch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -272,10 +273,10 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
         newLayout->addItem(m_categories, 1, 0, 1, 2);
         newLayout->addItem(m_newWidgetsButton, 2, 0, 1, 2);
         setLayout(newLayout);
+        newLayout->setContentsMargins(0, 4, 4, 0);
     }
 
     m_categories->setVisible(true);
-    layout()->setContentsMargins(0, 0, 0, 0);
 }
 
 void FilteringWidget::setMenuPos()

@@ -52,6 +52,7 @@ AbstractIconList::AbstractIconList(Plasma::Location loc, QGraphicsItem *parent)
       m_searchDelayTimer(new QTimer(this)),
       m_iconSize(16)
 {
+    setOverflowBordersVisible(false);
     m_searchDelayTimer->setSingleShot(true);
     m_searchDelayTimer->setInterval(SEARCH_DELAY);
     connect(m_searchDelayTimer, SIGNAL(timeout()), this, SLOT(setSearch()));

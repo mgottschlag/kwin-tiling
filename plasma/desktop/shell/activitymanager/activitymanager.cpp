@@ -85,6 +85,7 @@ void ActivityManagerPrivate::init(Plasma::Location loc)
     }
 
     mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
     filteringLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     filteringWidget = new FilterBar(orientation, q);

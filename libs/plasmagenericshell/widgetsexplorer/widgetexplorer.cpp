@@ -150,6 +150,7 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
     location = loc;
     orientation = ((location == Plasma::LeftEdge || location == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
     mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
     filteringWidget = new FilteringWidget(orientation, q);
     appletsListWidget = new AppletsListWidget(location);
