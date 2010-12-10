@@ -108,7 +108,7 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     setFlag(QGraphicsItem::ItemHasNoContents, true);
     setMinimumWidth(300);
 
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
 
 
     d->iconPlaceSmall = new QGraphicsWidget(this);
