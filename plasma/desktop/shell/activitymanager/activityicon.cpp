@@ -104,6 +104,7 @@ ActivityIcon::ActivityIcon(const QString &id)
     connect(m_activity, SIGNAL(infoChanged()), this, SLOT(updateContents()));
     connect(m_activity, SIGNAL(currentStatusChanged()), this, SLOT(currentStatusChanged()));
     setName(m_activity->name());
+    currentStatusChanged();
 
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 }
