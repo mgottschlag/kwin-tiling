@@ -82,7 +82,8 @@ Mpris::~Mpris()
     delete m_player;
 }
 
-void Mpris::setup() {
+void Mpris::setup()
+{
     delete m_player;
     m_player = new MprisPlayer(
             m_playerName,
@@ -185,6 +186,14 @@ QString Mpris::genre()
 {
     if (m_metadata.contains("genre")) {
         return m_metadata["genre"].toString();
+    }
+    return QString();
+}
+
+QString Mpris::lyrics()
+{
+    if (m_metadata.contains("lyrics")) {
+        return m_metadata["lyrics"].toString();
     }
     return QString();
 }

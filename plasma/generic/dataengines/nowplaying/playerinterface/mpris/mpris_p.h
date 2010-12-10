@@ -45,6 +45,7 @@ public:
     int trackNumber();
     QString comment();
     QString genre();
+    QString lyrics();
     int length();
     int position();
     float volume();
