@@ -60,6 +60,8 @@ NowPlayingEngine::NowPlayingEngine(QObject* parent,
 #ifdef XMMS_FOUND
     pollingWatcher->addFactory(new XmmsFactory(pollingWatcher));
 #endif
+
+    setData("players", QStringList());
 }
 
 Plasma::Service* NowPlayingEngine::serviceForSource(const QString& source)
@@ -102,9 +104,6 @@ bool NowPlayingEngine::sourceRequestEvent(const QString& source)
         setData(source, "Volume",          "float   - the volume, given as a float\n"
                                            "          between 0 and 1, or -1 if unknown");
         setData(source, "Artwork",         "QPixmap - the album artwork, if available");
-        return true;
-    } else if (source == "players") {
-        setData(source, sources());
         return true;
     }
 
