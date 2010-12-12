@@ -95,8 +95,7 @@ public:
     Plasma::Label *label;
     Plasma::Calendar *calendarWidget;
     int announceInterval;
-    int prevHour;
-    int prevMinute;
+    QTime lastTimeSeen;
     bool forceTzDisplay : 1;
 
     void addTzToTipText(QString &subText, const QString& tz)
@@ -185,10 +184,7 @@ void ClockApplet::speakTime(const QTime &time)
         return;
     }
 
-    if (time.minute() != d->prevMinute && (time.minute() % d->announceInterval) == 0) {
-        d->prevHour = time.hour();
-        d->prevMinute = time.minute();
-
+    if ((time.minute() % d->announceInterval) == 0) {
         // If KTTSD not running, start it.
         if (!QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.kttsd")) {
             QString error;
@@ -330,7 +326,21 @@ void ClockApplet::updateClockApplet(const Plasma::DataEngine::Data &data)
         d->calendarWidget->setDate(d->calendarWidget->currentDate());
     }
 
-    speakTime(data["Time"].toTime());
+    const QTime t = d->lastTimeSeen;
+    d->lastTimeSeen = data["Time"].toTime();
+    if (d->lastTimeSeen.minute() != t.minute() || d->lastTimeSeen.hour() != t.hour()) {
+        speakTime(d->lastTimeSeen);
+    }
+}
+
+QTime ClockApplet::lastTimeSeen() const
+{
+    return d->lastTimeSeen;
+}
+
+void ClockApplet::resetLastTimeSeen()
+{
+    d->lastTimeSeen = QTime();
 }
 
 Plasma::ToolTipContent ClockApplet::toolTipContent()

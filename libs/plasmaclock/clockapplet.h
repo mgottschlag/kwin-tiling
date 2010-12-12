@@ -80,6 +80,8 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
 	void updateClockApplet(const Plasma::DataEngine::Data &data);
         void popupEvent(bool show);
         void constraintsEvent(Plasma::Constraints constraints);
+        QTime lastTimeSeen() const;
+        void resetLastTimeSeen();
 
     protected Q_SLOTS:
         void setCurrentTimezone(const QString &tz);
