@@ -208,10 +208,9 @@ void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &d
         if (Plasma::ToolTipManager::self()->isVisible(this)) {
             updateTipContent();
         }
-        updateClockApplet();
 
+        updateClockApplet(data);
         update();
-        speakTime(m_time);
     }
 }
 
