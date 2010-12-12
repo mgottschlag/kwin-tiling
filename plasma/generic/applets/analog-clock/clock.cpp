@@ -85,7 +85,7 @@ void Clock::init()
 
 void Clock::connectToEngine()
 {
-    m_lastTimeSeen = QTime();
+    resetLastTimeSeen();
 
     Plasma::DataEngine* timeEngine = dataEngine("time");
     timeEngine->disconnectSource(m_oldTimezone, this);
@@ -153,13 +153,13 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
     Q_UNUSED(source);
     m_time = data["Time"].toTime();
 
-    if (m_time.minute() == m_lastTimeSeen.minute() &&
-        m_time.second() == m_lastTimeSeen.second()) {
+    if (m_time.minute() == lastTimeSeen().minute() &&
+        (!m_showSecondHand || m_time.second() == lastTimeSeen().second())) {
         // avoid unnecessary repaints
         return;
     }
 
-    if (m_time.minute() != m_lastTimeSeen.minute()) {
+    if (m_time.minute() != lastTimeSeen().minute()) {
         m_repaintCache = RepaintHands;
     }
 
@@ -172,7 +172,6 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
     }
 
     m_animateSeconds = true;
-    m_lastTimeSeen = m_time;
 
     updateClockApplet(data);
     update();

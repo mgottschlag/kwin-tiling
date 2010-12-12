@@ -82,7 +82,6 @@ class Clock : public ClockApplet
         Plasma::FrameSvg *m_tzFrame;
         Plasma::Svg *m_theme;
         QTime m_time;
-        QTime m_lastTimeSeen;
         enum RepaintCache {
             RepaintNone,
             RepaintAll,
