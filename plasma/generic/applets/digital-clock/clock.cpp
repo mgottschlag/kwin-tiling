@@ -201,9 +201,8 @@ void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &d
     m_date = data["Date"].toDate();
 
     // avoid unnecessary repaints
-    if ((m_showSeconds && m_time.second() != m_lastTimeSeen.second()) ||
-        m_time.minute() != m_lastTimeSeen.minute()) {
-        m_lastTimeSeen = m_time;
+    if ((m_showSeconds && m_time.second() != lastTimeSeen().second()) ||
+        m_time.minute() != lastTimeSeen().minute()) {
 
         if (Plasma::ToolTipManager::self()->isVisible(this)) {
             updateTipContent();
@@ -312,7 +311,7 @@ void Clock::clockConfigAccepted()
 
 void Clock::changeEngineTimezone(const QString &oldTimezone, const QString &newTimezone)
 {
-    m_lastTimeSeen = QTime();
+    resetLastTimeSeen();
     dataEngine("time")->disconnectSource(oldTimezone, this);
     dataEngine("time")->connectSource(newTimezone, this, updateInterval(), intervalAlignment());
 }
