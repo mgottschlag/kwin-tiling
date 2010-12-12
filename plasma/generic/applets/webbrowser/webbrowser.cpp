@@ -62,6 +62,26 @@
 
 using Plasma::MessageButton;
 
+class BrowserBorder: public QGraphicsWidget
+{
+public:
+    BrowserBorder(QGraphicsItem *parent)
+        : QGraphicsWidget(parent)
+    {}
+
+    void paint(QPainter *painter,
+               const QStyleOptionGraphicsItem *option,
+               QWidget *widget)
+    {
+        painter->save();
+        painter->setBrush(QApplication::palette().window());
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setPen(Qt::NoPen);
+        painter->drawRoundedRect(boundingRect(), 2, 2);
+        painter->restore();
+    }
+};
+
 WebBrowser::WebBrowser(QObject *parent, const QVariantList &args)
         : Plasma::PopupApplet(parent, args),
           m_browser(0),
@@ -123,7 +143,12 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 
     m_browser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    m_layout->addItem(m_browser);
+    //luckily this horror will easily die with qml
+    BrowserBorder *border = new BrowserBorder(this);
+    QGraphicsLinearLayout *borderLayout = new QGraphicsLinearLayout(border);
+    borderLayout->addItem(m_browser);
+
+    m_layout->addItem(border);
 
     //bookmarks
     m_bookmarkManager = KBookmarkManager::userBookmarksManager();
@@ -589,23 +614,6 @@ void WebBrowser::updateOverlaysGeometry()
     if (m_webOverlay){
       m_webOverlay->setGeometry(overlayGeometry);
     }
-}
-
-void WebBrowser::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
-{
-    Q_UNUSED(option)
-    Q_UNUSED(contentsRect)
-  
-    p->save();
-    p->setBrush(QApplication::palette().window());
-    p->setRenderHint(QPainter::Antialiasing);
-    p->setPen(Qt::NoPen);
-    p->drawRoundedRect(m_browser->pos().x() + contentsRect.x() - 2,
-                       m_browser->pos().y() + contentsRect.y() - 2,
-                       m_browser->geometry().width() + 4,
-                       m_browser->geometry().height() + 4,
-                       2, 2);
-    p->restore();
 }
 
 void WebBrowser::closeWebViewOverlay()
