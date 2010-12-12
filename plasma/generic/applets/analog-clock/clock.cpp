@@ -166,7 +166,6 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
     if (Plasma::ToolTipManager::self()->isVisible(this)) {
         updateTipContent();
     }
-    updateClockApplet();
 
     if (m_secondHandUpdateTimer) {
         m_secondHandUpdateTimer->stop();
@@ -174,9 +173,9 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
 
     m_animateSeconds = true;
     m_lastTimeSeen = m_time;
-    update();
 
-    speakTime(m_time);
+    updateClockApplet(data);
+    update();
 }
 
 void Clock::createClockConfigurationInterface(KConfigDialog *parent)
