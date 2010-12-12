@@ -317,14 +317,20 @@ void ClockApplet::updateTipContent()
 
 void ClockApplet::updateClockApplet()
 {
-    bool updateSelectedDate = (d->calendarWidget->currentDate() == d->calendarWidget->date());
-
     Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
+    updateClockApplet(data);
+}
+
+void ClockApplet::updateClockApplet(const Plasma::DataEngine::Data &data)
+{
+    bool updateSelectedDate = (d->calendarWidget->currentDate() == d->calendarWidget->date());
     d->calendarWidget->setCurrentDate(data["Date"].toDate());
 
     if (updateSelectedDate){
         d->calendarWidget->setDate(d->calendarWidget->currentDate());
     }
+
+    speakTime(data["Time"].toTime());
 }
 
 Plasma::ToolTipContent ClockApplet::toolTipContent()
@@ -589,6 +595,7 @@ void ClockApplet::popupEvent(bool show)
 
 void ClockApplet::constraintsEvent(Plasma::Constraints constraints)
 {
+    Q_UNUSED(constraints)
 }
 
 void ClockApplet::setCurrentTimezone(const QString &tz)

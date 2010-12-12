@@ -77,6 +77,7 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         void initExtenderItem(Plasma::ExtenderItem *item);
         void updateTipContent();
 	void updateClockApplet();
+	void updateClockApplet(const Plasma::DataEngine::Data &data);
         void popupEvent(bool show);
         void constraintsEvent(Plasma::Constraints constraints);
 
