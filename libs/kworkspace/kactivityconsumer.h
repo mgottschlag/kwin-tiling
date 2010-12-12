@@ -76,7 +76,7 @@ public:
     enum ServiceStatus {
         NotRunning,        ///< Service is not running
         BareFunctionality, ///< Service is running without nepomuk backend
-        FullFunctionality, ///< Service is running, and nepomuk is available
+        FullFunctionality  ///< Service is running, and nepomuk is available
     };
 
     explicit KActivityConsumer(QObject * parent = 0);

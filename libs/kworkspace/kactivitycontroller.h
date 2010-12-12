@@ -135,10 +135,10 @@ private:
     class Private;
     Private * const d;
 
-    Q_PRIVATE_SLOT(d, void resourceAccessed(const QString &, const QString &));
-    Q_PRIVATE_SLOT(d, void resourceOpened(const QString &, uint, const QString &));
-    Q_PRIVATE_SLOT(d, void resourceModified(uint, const QString &));
-    Q_PRIVATE_SLOT(d, void resourceClosed(uint, const QString &));
+    Q_PRIVATE_SLOT(d, void resourceAccessed(const QString &, const QString &))
+    Q_PRIVATE_SLOT(d, void resourceOpened(const QString &, uint, const QString &))
+    Q_PRIVATE_SLOT(d, void resourceModified(uint, const QString &))
+    Q_PRIVATE_SLOT(d, void resourceClosed(uint, const QString &))
 };
 
 #endif // ACTIVITY_CONTROLLER_H
