@@ -291,7 +291,6 @@ void Quicklaunch::configChanged()
         QStringList launchersOnPopup;
 
         for (int i = 0; i < iconUrls.size(); i++) {
-
             if (visibleIcons == -1 || i < visibleIcons) {
                 launchers.append(iconUrls.at(i));
             } else {
@@ -398,8 +397,7 @@ void Quicklaunch::configChanged()
     // Make sure the popup is in a proper state for the new configuration
     if (m_popup == 0 && (popupEnabled || !newLaunchersOnPopup.empty())) {
         initPopup();
-    }
-    else if (m_popup != 0 && (!popupEnabled && newLaunchersOnPopup.empty())) {
+    } else if (m_popup != 0 && (!popupEnabled && newLaunchersOnPopup.empty())) {
         deletePopup();
     }
 
