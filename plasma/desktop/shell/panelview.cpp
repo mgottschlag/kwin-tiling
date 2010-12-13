@@ -831,8 +831,8 @@ void PanelView::pinchContainment(const QRect &screenGeom)
     disconnect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
     bool horizontal = isHorizontal();
 
-    int sw = screenGeom.width();
-    int sh = screenGeom.height();
+    const int sw = screenGeom.width();
+    const int sh = screenGeom.height();
 
     Plasma::Containment *c = containment();
     QSizeF min = c->minimumSize();
@@ -957,10 +957,12 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         c->resize(max);
     }
 
-    if (m_lastHorizontal != horizontal ||
-        m_lastSeenSize != (horizontal ? sw : sh)) {
-        m_lastHorizontal = horizontal;
-        m_lastSeenSize = (horizontal ? sw : sh);
+    // write to the config file if the size has changed, or if we haven't recorded the lastsize
+    // previously which ensures we'll always have a value even after first run
+    const bool writeConfig = m_lastSeenSize != (horizontal ? sw : sh) || !sizes.hasKey("lastsize");
+    m_lastHorizontal = horizontal;
+    m_lastSeenSize = (horizontal ? sw : sh);
+    if (writeConfig) {
         sizes.writeEntry("lastsize", m_lastSeenSize);
         configNeedsSaving();
     }
