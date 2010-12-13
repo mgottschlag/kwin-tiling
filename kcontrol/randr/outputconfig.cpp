@@ -383,9 +383,19 @@ void OutputConfig::updateSizeList(void)
 		sizeCombo->addItem( sizeDesc, s );
 	}
 	
-	int index = sizeCombo->findData( m_output->rect().size() );
+	int index = -1;
+
+    // if output is rotated 90 or 270 degrees, swap width and height before searching in combobox data
+    // otherwise 90 or 270 degrees rotated outputs will be set as "Disabled" in GUI
+	if (m_output->rotation() == RandR::Rotate90 || m_output->rotation() == RandR::Rotate270)
+		index = sizeCombo->findData( QSize(m_output->rect().height(), m_output->rect().width()) );
+	else
+		index = sizeCombo->findData( m_output->rect().size() );
+
 	if (index != -1)
 		sizeCombo->setCurrentIndex( index );
+    else
+        kDebug() << "Output size cannot be matched!";
 
 	index = refreshCombo->findData(m_output->refreshRate());
 	if (index != -1)
