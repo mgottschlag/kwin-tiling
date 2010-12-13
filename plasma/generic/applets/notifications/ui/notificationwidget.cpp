@@ -141,9 +141,11 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     d->body->setContentsMargins(0,0,0,0);
     d->body->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     d->bodyLayout = new QGraphicsGridLayout(d->body);
+    d->bodyLayout->setSpacing(0);
     d->bodyLayout->setContentsMargins(0,0,0,0);
 
     d->messageLabel = new Plasma::TextBrowser(d->body);
+    d->messageLabel->setPreferredWidth(0);
     d->messageLabel->nativeWidget()->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
     d->messageLabel->nativeWidget()->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
     d->messageLabel->nativeWidget()->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
@@ -162,7 +164,6 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     d->mainLayout->setSpacing(0);
     d->mainLayout->addItem(d->titleLayout);
     d->mainLayout->addItem(d->body);
-
 
     d->notification = notification;
 
@@ -310,10 +311,7 @@ void NotificationWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 
 QRectF NotificationWidgetPrivate::bigIconRect() const
 {
-
-    QRectF rect = q->mapFromScene(iconPlaceSmall->mapToScene(iconPlaceSmall->boundingRect())).boundingRect();
-
-    return rect.united(q->mapFromScene(iconPlaceBig->mapToScene(iconPlaceBig->boundingRect())).boundingRect());
+    return q->mapFromScene(iconPlaceBig->mapToScene(iconPlaceBig->boundingRect())).boundingRect();
 }
 
 void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
