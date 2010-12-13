@@ -334,7 +334,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
     processed = processed.replace(QRegExp("<([^>]*($|<))"), "&lt;\\1");
 
     QFontMetricsF fm(messageLabel->font());
-    int totalWidth = qMax((qreal)200, messageLabel->boundingRect().width()) * 8;
+    int totalWidth = qMax((qreal)200, messageLabel->boundingRect().width()) * 3;
     if (fm.width(processed) > totalWidth) {
         processed = processed.replace(QRegExp("<.*>(.*)<\\/.*>"), "\\1");
         processed = fm.elidedText(processed, Qt::ElideRight, totalWidth);
@@ -342,11 +342,11 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
 
     QString parsed;
 
-    QString::const_iterator i = message.begin();
+    QString::const_iterator i = processed.begin();
     bool inTag = false;
     QString word;
 
-    while (i != message.end()) {
+    while (i != processed.end()) {
         QChar c = *i;
         word.append(c);
 
