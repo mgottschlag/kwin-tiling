@@ -50,13 +50,6 @@ public:
     int signalStrength() const;
 public Q_SLOTS:
     void propertiesChanged(const QVariantMap &properties);
-Q_SIGNALS:
-    void signalStrengthChanged(int strength);
-    void wpaFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags);
-    void rsnFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags);
-    void ssidChanged(const QString &ssid);
-    void frequencyChanged(uint frequency);
-    void bitRateChanged(int);
 private:
     static Solid::Control::AccessPoint::Capabilities convertCapabilities(int);
     static Solid::Control::AccessPoint::WpaFlags convertWpaFlags(uint);

@@ -57,12 +57,7 @@ public Q_SLOTS:
     void setWirelessEnabled(bool enabled);
 
 Q_SIGNALS:
-    void statusChanged(Solid::Networking::Status status);
-    void networkInterfaceAdded(const QString & uni);
-    void networkInterfaceRemoved(const QString & uni);
-    void wirelessEnabledChanged(bool);
     void networkingEnabledChanged(bool);
-    void activeConnectionsChanged();
 
 protected Q_SLOTS:
     void deviceAdded(const QDBusObjectPath &state);

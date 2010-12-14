@@ -52,19 +52,6 @@ public Q_SLOTS:
 private Q_SLOTS:
     void refreshStatus();
 
-Q_SIGNALS:
-    void statusChanged(Solid::Networking::Status status);
-
-    void networkInterfaceAdded(const QString  & uni);
-
-    void networkInterfaceRemoved(const QString  & uni);
-
-    void wirelessEnabledChanged(bool enabled);
-
-    void wirelessHardwareEnabledChanged(bool enabled);
-
-    void activeConnectionsChanged();
-
 private:
     WicdNetworkManagerPrivate * d;
 };
