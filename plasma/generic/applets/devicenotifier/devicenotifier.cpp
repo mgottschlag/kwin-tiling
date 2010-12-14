@@ -47,15 +47,114 @@
 #include "deviceitem.h"
 #include <Plasma/Containment>
 using namespace Plasma;
-using namespace Notifier;
 
 static const char DEFAULT_ICON_NAME[] = "device-notifier";
 
-K_EXPORT_PLASMA_APPLET(devicenotifier, DeviceNotifier)
+K_EXPORT_PLASMA_APPLET(devicenotifier, Notifier::DeviceNotifier)
+
+namespace Notifier
+{
+
+HotplugDataConsumer::HotplugDataConsumer(NotifierDialog *parent)
+    : QObject(parent),
+      m_dialog(parent)
+{
+    Q_ASSERT(parent);
+}
+
+void HotplugDataConsumer::dataUpdated(const QString &udi, Plasma::DataEngine::Data data)
+{
+    if (data.isEmpty()) {
+        return;
+    }
+
+    //data from hotplug engine
+    //kDebug() << "adding" << data["udi"];
+    int numActions = 0;
+    QString lastActionLabel;
+    QStringList currentActions = m_dialog->deviceActions(udi);
+    QStringList newActions = data["predicateFiles"].toStringList();
+
+    foreach (const QString &desktop, newActions) {
+        QString filePath = KStandardDirs::locate("data", "solid/actions/" + desktop);
+        QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
+        numActions += services.size();
+
+        if (!currentActions.contains(desktop)) {
+            m_dialog->insertAction(udi, desktop);
+        }
+
+        if (services.size() > 0) {
+            lastActionLabel = QString(services[0].text());
+        }
+    }
+
+    foreach (const QString &action, currentActions) {
+        if (!newActions.contains(action)) {
+            m_dialog->removeAction(udi, action);
+        }
+    }
+
+    m_dialog->setDeviceData(udi, data["text"], Qt::DisplayRole);
+    m_dialog->setDeviceData(udi, data["isEncryptedContainer"], NotifierDialog::IsEncryptedContainer);
+
+    if (numActions > 1) {
+        QString s = i18np("1 action for this device",
+                          "%1 actions for this device",
+                          numActions);
+        m_dialog->setDeviceData(udi, s, NotifierDialog::DescriptionRole);
+    } else {
+        m_dialog->setDeviceData(udi, lastActionLabel, NotifierDialog::DescriptionRole);
+    }
+}
+
+DeviceDataConsumer::DeviceDataConsumer(NotifierDialog *parent)
+    : QObject(parent),
+      m_dialog(parent)
+{
+    Q_ASSERT(parent);
+}
+
+void DeviceDataConsumer::dataUpdated(const QString &udi, Plasma::DataEngine::Data data)
+{
+    m_dialog->setDeviceData(udi, data["Icon"], NotifierDialog::IconNameRole);
+    m_dialog->setDeviceData(udi, KIcon(data["Icon"].toString(), NULL, data["Emblems"].toStringList()), Qt::DecorationRole);
+
+    const bool isOpticalMedia = data["Device Types"].toStringList().contains("OpticalDisc");
+
+    m_dialog->setDeviceData(udi, isOpticalMedia, NotifierDialog::IsOpticalMedia);
+
+    if (data["Device Types"].toStringList().contains("Storage Access")) {
+        //kDebug() << "DeviceNotifier::solidDeviceEngine updated" << udi;
+        if (data["Accessible"].toBool()) {
+            m_dialog->setMounted(true, udi);
+        } else {
+            m_dialog->setMounted(false, udi);
+        }
+
+        if (data["Ignored"].toBool()) {
+            m_dialog->setDeviceData(udi, data["File Path"], Qt::DisplayRole);
+
+            const QString desktop("test-predicate-openinwindow.desktop");
+            QString filePath = KStandardDirs::locate("data", "solid/actions/" + desktop);
+            QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
+            if (services.size() > 0) { //in case there is no action at all
+                m_dialog->insertAction(udi, desktop);
+                m_dialog->setDeviceData(udi, services[0].text(), NotifierDialog::DescriptionRole);
+            }
+
+            m_dialog->setDeviceLeftAction(udi, DeviceItem::Nothing);
+        }
+    } else if (data["Device Types"].toStringList().contains("Storage Volume")) {
+        if (isOpticalMedia) {
+            m_dialog->setMounted(true, udi);
+        }
+    }
+}
 
 DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
-      m_solidEngine(0),
+      m_hotplugEngine(0),
       m_solidDeviceEngine(0),
       m_deviceNotificationsEngine(0),
       m_dialog(0),
@@ -73,6 +172,8 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
 
     // let's initialize the widget
     resize(graphicsWidget()->minimumSize());
+    m_hotplugDataConsumer = new HotplugDataConsumer(m_dialog);
+    m_deviceDataConsumer = new DeviceDataConsumer(m_dialog);
 }
 
 DeviceNotifier::~DeviceNotifier()
@@ -84,7 +185,7 @@ void DeviceNotifier::init()
 {
     configChanged();
 
-    m_solidEngine = dataEngine("hotplug");
+    m_hotplugEngine = dataEngine("hotplug");
     m_solidDeviceEngine = dataEngine("soliddevice");
     m_deviceNotificationsEngine = dataEngine("devicenotifications");
 
@@ -96,9 +197,9 @@ void DeviceNotifier::init()
     setPopupIcon(DEFAULT_ICON_NAME);
 
     //connect to engine when a device is plugged in
-    connect(m_solidEngine, SIGNAL(sourceAdded(const QString&)),
+    connect(m_hotplugEngine, SIGNAL(sourceAdded(const QString&)),
             this, SLOT(onSourceAdded(const QString&)));
-    connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
+    connect(m_hotplugEngine, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(onSourceRemoved(const QString&)));
     connect(m_deviceNotificationsEngine, SIGNAL(sourceAdded(const QString&)),
             this, SLOT(newNotification(const QString&)));
@@ -155,7 +256,7 @@ void DeviceNotifier::fillPreviousDevices()
         }
     }
 
-    foreach (const QString &udi, m_solidEngine->sources()) {
+    foreach (const QString &udi, m_hotplugEngine->sources()) {
         onSourceAdded(udi);
     }
 
@@ -190,93 +291,6 @@ void DeviceNotifier::popupEvent(bool show)
 
     if (!m_triggeringPopupinternally) {
         changeNotifierIcon();
-    }
-}
-
-void DeviceNotifier::dataUpdated(const QString &udi, Plasma::DataEngine::Data data)
-{
-    if (data.isEmpty()) {
-        return;
-    }
-
-    //data from hotplug engine
-    //kDebug() << data["udi"] << data["predicateFiles"].toStringList() << data["Device Types"].toStringList();
-
-    //FIXME: here we rely on the fact that the hotplug engine gives a "text" field (and the soliddevice one does not)
-    // to distinguish between data from the two engines. This is really not nice
-    if (data["text"].isValid()) {
-        //kDebug() << "adding" << data["udi"];
-        int nb_actions = 0;
-        QString lastActionLabel;
-        QStringList currentActions = m_dialog->deviceActions(udi);
-        QStringList newActions = data["predicateFiles"].toStringList();
-        foreach (const QString &desktop, newActions) {
-            QString filePath = KStandardDirs::locate("data", "solid/actions/" + desktop);
-            QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
-            nb_actions += services.size();
-
-            if (!currentActions.contains(desktop)) {
-                m_dialog->insertAction(udi, desktop);
-            }
-            if (services.size() > 0) {
-                lastActionLabel = QString(services[0].text());
-            }
-        }
-        foreach (const QString &action, currentActions) {
-            if (!newActions.contains(action)) {
-                m_dialog->removeAction(udi, action);
-            }
-        }
-
-        m_dialog->setDeviceData(udi, data["text"], Qt::DisplayRole);
-        m_dialog->setDeviceData(udi, data["isEncryptedContainer"], NotifierDialog::IsEncryptedContainer);
-
-        if (nb_actions > 1) {
-            QString s = i18np("1 action for this device",
-                    "%1 actions for this device",
-                    nb_actions);
-            m_dialog->setDeviceData(udi, s, NotifierDialog::DescriptionRole);
-        } else {
-            m_dialog->setDeviceData(udi, lastActionLabel, NotifierDialog::DescriptionRole);
-        }
-
-    //data from soliddevice engine
-    } else {
-
-        //icon name
-        m_dialog->setDeviceData(udi, data["Icon"], NotifierDialog::IconNameRole);
-        m_dialog->setDeviceData(udi, KIcon(data["Icon"].toString(), NULL, data["Emblems"].toStringList()), Qt::DecorationRole);
-
-        bool isOpticalMedia = data["Device Types"].toStringList().contains("OpticalDisc");
-
-        m_dialog->setDeviceData(udi, isOpticalMedia, NotifierDialog::IsOpticalMedia);
-
-        if (data["Device Types"].toStringList().contains("Storage Access")) {
-            //kDebug() << "DeviceNotifier::solidDeviceEngine updated" << udi;
-            if (data["Accessible"].toBool()) {
-                m_dialog->setMounted(true, udi);
-            } else {
-                m_dialog->setMounted(false, udi);
-            }
-
-            if (data["Ignored"].toBool()) {
-                m_dialog->setDeviceData(udi, data["File Path"], Qt::DisplayRole);
-
-                const QString desktop("test-predicate-openinwindow.desktop");
-                QString filePath = KStandardDirs::locate("data", "solid/actions/" + desktop);
-                QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
-                if (services.size() > 0) { //in case there is no action at all
-                    m_dialog->insertAction(udi, desktop);
-                    m_dialog->setDeviceData(udi, services[0].text(), NotifierDialog::DescriptionRole);
-                }
-
-                m_dialog->setDeviceLeftAction(udi, DeviceItem::Nothing);
-            }
-        } else if (data["Device Types"].toStringList().contains("Storage Volume")) {
-            if (isOpticalMedia) {
-                m_dialog->setMounted(true, udi);
-            }
-        }
     }
 }
 
@@ -325,7 +339,7 @@ void DeviceNotifier::removeLastDeviceNotification(const QString &udi)
 
 void DeviceNotifier::onSourceAdded(const QString &udi)
 {
-    DataEngine::Data data = m_solidEngine->query(udi);
+    DataEngine::Data data = m_hotplugEngine->query(udi);
     Solid::Device device = Solid::Device(udi);
     deviceAdded(device, data["added"].toBool());
 }
@@ -369,7 +383,12 @@ void DeviceNotifier::deviceAdded(const Solid::Device &device, bool hotplugged)
         //
         // TODO: Handling of fixed devices needs to be rethought for 4.6
 
-        if (!m_lastPlugged.contains(udi)) {
+        if (m_lastPlugged.contains(udi)) {
+            // Reconnect to both engines since now we can possibly
+            // correctly connect to the updates.
+            m_hotplugEngine->disconnectSource(udi, m_hotplugDataConsumer);
+            m_solidDeviceEngine->disconnectSource(udi, m_deviceNotificationsEngine);
+        } else {
             m_dialog->insertDevice(udi);
 
             if (hotplugged) {
@@ -377,17 +396,11 @@ void DeviceNotifier::deviceAdded(const Solid::Device &device, bool hotplugged)
             }
 
             m_dialog->setDeviceData(udi, visibility, NotifierDialog::VisibilityRole);
-
             m_lastPlugged << udi;
-        } else {
-            // Reconnect to both engines since now we can possibly
-            // correctly connect to the updates.
-            m_solidEngine->disconnectSource(udi, this);
-            m_solidDeviceEngine->disconnectSource(udi, this);
         }
 
-        m_solidEngine->connectSource(udi, this);
-        m_solidDeviceEngine->connectSource(udi, this);
+        m_hotplugEngine->connectSource(udi, m_hotplugDataConsumer);
+        m_solidDeviceEngine->connectSource(udi, m_deviceDataConsumer);
     }
 
     if (!visibility && !m_hiddenDevices.contains(udi)) {
@@ -401,8 +414,8 @@ void DeviceNotifier::deviceAdded(const Solid::Device &device, bool hotplugged)
 
 void DeviceNotifier::onSourceRemoved(const QString &udi)
 {
-    m_solidEngine->disconnectSource(udi, this);
-    m_solidDeviceEngine->disconnectSource(udi, this);
+    m_hotplugEngine->disconnectSource(udi, m_hotplugDataConsumer);
+    m_solidDeviceEngine->disconnectSource(udi, m_deviceDataConsumer);
 
     m_dialog->removeDevice(udi);
     removeLastDeviceNotification(udi);
@@ -532,6 +545,8 @@ void DeviceNotifier::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 QList<QAction *> DeviceNotifier::contextualActions()
 {
     return m_dialog->contextualActions();
+}
+
 }
 
 #include "devicenotifier.moc"

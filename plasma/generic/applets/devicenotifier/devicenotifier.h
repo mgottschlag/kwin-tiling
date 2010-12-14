@@ -32,17 +32,53 @@
 ///Ui includes
 #include "ui_configurationpage.h"
 
-namespace Notifier
-{
-    class NotifierDialog;
-}
-
 class KCModuleProxy;
 
+namespace Notifier
+{
+
+class NotifierDialog;
+
+class HotplugDataConsumer : public QObject
+{
+    Q_OBJECT
+public:
+    HotplugDataConsumer(NotifierDialog *parent);
+
+protected Q_SLOTS:
+        /**
+     * slot called when a source of the hotplug engine is updated
+     * @param udi the udi of the source
+     * @param data the data of the source
+     **/
+    void dataUpdated(const QString &udi, Plasma::DataEngine::Data data);
+
+private:
+    NotifierDialog * const m_dialog;
+};
+
+class DeviceDataConsumer : public QObject
+{
+    Q_OBJECT
+public:
+    DeviceDataConsumer(NotifierDialog *parent);
+
+protected Q_SLOTS:
+        /**
+     * slot called when a source of the hotplug engine is updated
+     * @param udi the udi of the source
+     * @param data the data of the source
+     **/
+    void dataUpdated(const QString &udi, Plasma::DataEngine::Data data);
+
+private:
+    NotifierDialog * const m_dialog;
+};
+
 /**
-* @short Applet used to display devices
-*
-*/
+ * @short Applet used to display devices
+ *
+ */
 class DeviceNotifier : public Plasma::PopupApplet
 {
     Q_OBJECT
@@ -55,37 +91,37 @@ class DeviceNotifier : public Plasma::PopupApplet
         };
 
         /**
-        * Constructor of the applet
-        * @param parent the parent of this object
-        **/
+         * Constructor of the applet
+         * @param parent the parent of this object
+         **/
         DeviceNotifier(QObject *parent, const QVariantList &args);
 
         /**
-        * Default destructor
-        **/
+         * Default destructor
+         **/
         ~DeviceNotifier();
 
         /**
-        * initialize the applet (called by plasma automatically)
-        **/
+         * initialize the applet (called by plasma automatically)
+         **/
         void init();
 
         /**
-        * Used to know it there are hidden devices
-        * @return true if there are hidden device
-        **/	
+         * Used to know it there are hidden devices
+         * @return true if there are hidden device
+         **/	
         bool areThereHiddenDevices();
 
         /**
-        *  allow to change the icon of the notifier if this applet is in icon mode
-        *  @param name icon name
-        *  @param timeout if not 0, time to wait before resetting the icon (in msecs)
-        **/
+         *  allow to change the icon of the notifier if this applet is in icon mode
+         *  @param name icon name
+         *  @param timeout if not 0, time to wait before resetting the icon (in msecs)
+         **/
         void changeNotifierIcon(const QString &name = QString(), uint timeout = 0);
 
         /**
-        * The graphics widget that displays the list of devices.
-        */
+         * The graphics widget that displays the list of devices.
+         */
         QGraphicsWidget *graphicsWidget();
 
         QList<QAction *> contextualActions();
@@ -95,13 +131,13 @@ class DeviceNotifier : public Plasma::PopupApplet
 
     protected:
         /**
-        * Reimplemented from Plasma::Applet
-        **/
+         * Reimplemented from Plasma::Applet
+         **/
         void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
         /**
-        * Reimplemented from Plasma::Applet
-        **/
+         * Reimplemented from Plasma::Applet
+         **/
         void createConfigurationInterface(KConfigDialog *parent);
 
         /**
@@ -160,13 +196,6 @@ class DeviceNotifier : public Plasma::PopupApplet
         void onSourceRemoved(const QString &udi);
 
         /**
-        * slot called when a source of the hotplug engine is updated
-        * @param udi the udi of the source
-        * @param data the data of the source
-        **/
-        void dataUpdated(const QString &udi, Plasma::DataEngine::Data data);
-
-        /**
         * Reimplemented from Plasma::Applet
         **/
         void configAccepted();
@@ -205,8 +234,12 @@ class DeviceNotifier : public Plasma::PopupApplet
          */
         void removeLastDeviceNotification(const QString &udi);
 
+        // Data consumers that relay information to the main applet
+        HotplugDataConsumer *m_hotplugDataConsumer;
+        DeviceDataConsumer *m_deviceDataConsumer;
+
         ///the engine used to get hot plug devices
-        Plasma::DataEngine *m_solidEngine;
+        Plasma::DataEngine *m_hotplugEngine;
 
         ///The engine used to manage devices in the applet (unmount,...)
         Plasma::DataEngine *m_solidDeviceEngine;
@@ -264,4 +297,5 @@ class DeviceNotifier : public Plasma::PopupApplet
         KCModuleProxy *m_deviceActionsWidget;
 };
 
+}
 #endif
