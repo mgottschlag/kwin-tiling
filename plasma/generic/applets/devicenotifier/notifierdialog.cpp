@@ -52,7 +52,8 @@
 #include "devicenotifier.h"
 #include "deviceitem.h"
 
-using namespace Notifier;
+namespace Notifier
+{
 
 NotifierDialog::NotifierDialog(DeviceNotifier * notifier, QObject *parent)
     : QObject(parent),
@@ -1025,5 +1026,7 @@ void NotifierDialog::updateMainLabelText()
         m_mainLabel->setText(i18n("No Devices Available"));
     }
 }
+
+} // namespace Notifier
 
 #include "notifierdialog.moc"

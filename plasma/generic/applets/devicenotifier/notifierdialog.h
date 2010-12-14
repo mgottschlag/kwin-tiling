@@ -36,7 +36,6 @@
 #include "deviceitem.h"
 
 class QGraphicsLinearLayout;
-class DeviceNotifier;
 
 //desktop view
 namespace Plasma
@@ -53,6 +52,8 @@ namespace Solid
 
 namespace Notifier
 {
+class DeviceNotifier;
+
   /**
   * @short The panel used to display devices in a popup
   *
