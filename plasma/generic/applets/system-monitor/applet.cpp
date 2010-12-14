@@ -251,10 +251,9 @@ void Applet::deleteVisualizations()
     if (!m_mainLayout) {
         return;
     }
+
     foreach (QWeakPointer<QGraphicsWidget> visualization, m_visualizations) {
-        if (visualization) {
-            delete visualization.data();
-        }
+        delete visualization.data();
     }
 
     m_visualizations.clear();
