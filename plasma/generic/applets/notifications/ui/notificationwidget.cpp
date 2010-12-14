@@ -324,8 +324,6 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
     }
 
 
-    //Don't show more than 8 lines
-    //in the end it could be more than 8 lines depending on how much \n characters will be there
     QString processed = message.trimmed();
 
     /*if there is a < that is not closed as a tag, replace it with an entity*/
@@ -366,6 +364,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
 
         ++i;
     }
+    parsed.append(fm.elidedText(sentence, Qt::ElideMiddle, 300));
     parsed.append(fm.elidedText(word, Qt::ElideMiddle, 250));
 
 
