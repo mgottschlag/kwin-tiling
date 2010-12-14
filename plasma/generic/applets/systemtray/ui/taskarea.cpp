@@ -106,7 +106,7 @@ public:
     Plasma::Location location;
     Plasma::ItemBackground *itemBackground;
     QTimer *hiddenRelayoutTimer;
-    QList<Task*> delayedRepositionTasks;
+    QList<QWeakPointer<Task> > delayedRepositionTasks;
     QTimer *repositionTimer;
 
     QSet<QString> hiddenTypes;
@@ -197,9 +197,11 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 
 void TaskArea::delayedReposition()
 {
-    foreach (Task *task, d->delayedRepositionTasks) {
+    foreach (const QWeakPointer<Task> &task, d->delayedRepositionTasks) {
         //kDebug() << "checking" << task->name() << task->typeId() << d->alwaysShownTypes;
-        addWidgetForTask(task);
+        if (task) {
+            addWidgetForTask(task.data());
+        }
     }
     d->delayedRepositionTasks.clear();
 
