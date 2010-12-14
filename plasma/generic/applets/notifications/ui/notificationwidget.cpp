@@ -332,17 +332,13 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
     processed = processed.replace(QRegExp("<([^>]*($|<))"), "&lt;\\1");
 
     QFontMetricsF fm(messageLabel->font());
-    int totalWidth = qMax((qreal)200, messageLabel->boundingRect().width()) * 3;
-    if (fm.width(processed) > totalWidth) {
-        processed = processed.replace(QRegExp("<.*>(.*)<\\/.*>"), "\\1");
-        processed = fm.elidedText(processed, Qt::ElideRight, totalWidth);
-    }
 
     QString parsed;
 
     QString::const_iterator i = processed.begin();
     bool inTag = false;
     QString word;
+    QString sentence;
 
     while (i != processed.end()) {
         QChar c = *i;
@@ -350,17 +346,20 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
 
         if (c == '<') {
             inTag = true;
+            parsed.append(fm.elidedText(sentence, Qt::ElideMiddle, 250));
             parsed.append(fm.elidedText(word, Qt::ElideMiddle, 250));
+            sentence = QString();
             word = QString();
         } else if (c == '>') {
             inTag = false;
             parsed.append(word);
             word = QString();
+            sentence = QString();
         } else if (c == ' ') {
             if (inTag) {
                 parsed.append(word);
             } else {
-                parsed.append(fm.elidedText(word, Qt::ElideMiddle, 250));
+                sentence.append(fm.elidedText(word, Qt::ElideMiddle, 250));
             }
             word = QString();
         }
