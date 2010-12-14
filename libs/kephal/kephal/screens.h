@@ -36,7 +36,7 @@ namespace Kephal {
      * displaying windows. or panels.
      * Every activated Output belongs to exactly one
      * Screen and is completely contained within that
-     * Screen. No 2 Screens overlap each other.
+     * Screen. No two Screens overlap each other.
      *
      * Hence:
      * 1 Output -> 1 Screen
@@ -85,8 +85,8 @@ namespace Kephal {
             virtual void setPrivacyMode(bool b) = 0;
 
             /**
-             * Return a list of Outputs currently
-             * being part of this Screen.
+             * Return a list of Outputs that are
+             * currently part of this Screen.
              */
             virtual QList<Output *> outputs() = 0;
 
@@ -95,7 +95,7 @@ namespace Kephal {
              * current primary screen.
              * This is just a convenience method,
              * since the real value is determined
-             * the configuration used.
+             * by the configuration used.
              */
             bool isPrimary() const;
 

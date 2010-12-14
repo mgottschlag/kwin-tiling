@@ -46,6 +46,7 @@ namespace Kephal {
 
             /**
              * Returns the id of the Output.
+             *
              * In case of XRandR 1.2 these will
              * be the names such as: VGA, LVDS,
              * TMDS-1.
