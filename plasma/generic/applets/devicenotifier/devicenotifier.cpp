@@ -162,7 +162,7 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
       m_itemsValidity(0),
       m_globalVisibility(false),
       m_checkHiddenDevices(true),
-      m_triggeringPopupinternally(false),
+      m_triggeringPopupInternally(false),
       m_autoMountingWidget(0),
       m_deviceActionsWidget(0)
 {
@@ -289,7 +289,7 @@ void DeviceNotifier::popupEvent(bool show)
         m_dialog->collapseDevices();
     }
 
-    if (!m_triggeringPopupinternally) {
+    if (!m_triggeringPopupInternally) {
         changeNotifierIcon();
     }
 }
@@ -301,9 +301,9 @@ void DeviceNotifier::notifyDevice(const QString &udi)
     if (!m_fillingPreviousDevices) {
         emit activate();
         changeNotifierIcon("preferences-desktop-notification", LONG_NOTIFICATION_TIMEOUT);
-        m_triggeringPopupinternally = true;
+        m_triggeringPopupInternally = true;
         showPopup(LONG_NOTIFICATION_TIMEOUT);
-        m_triggeringPopupinternally = false;
+        m_triggeringPopupInternally = false;
         update();
         setStatus(Plasma::NeedsAttentionStatus);
     } else {
@@ -520,9 +520,9 @@ void DeviceNotifier::setGlobalVisibility(bool visibility)
 void DeviceNotifier::showNotification(const QString &message, const QString &details, const QString &udi)
 {
     if (!isPopupShowing()) {
-        m_triggeringPopupinternally = true;
+        m_triggeringPopupInternally = true;
         showPopup(LONG_NOTIFICATION_TIMEOUT);
-        m_triggeringPopupinternally = false;
+        m_triggeringPopupInternally = false;
     }
 
     m_dialog->showStatusBarMessage(message, details, udi);

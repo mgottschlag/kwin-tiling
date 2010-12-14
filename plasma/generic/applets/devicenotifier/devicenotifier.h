@@ -290,7 +290,7 @@ class DeviceNotifier : public Plasma::PopupApplet
         bool m_checkHiddenDevices : 1;
 
         ///if true we are triggering the popup internally 
-        bool m_triggeringPopupinternally : 1;
+        bool m_triggeringPopupInternally : 1;
 
         ///embedded KCM modules in the configuration dialog
         KCModuleProxy *m_autoMountingWidget;

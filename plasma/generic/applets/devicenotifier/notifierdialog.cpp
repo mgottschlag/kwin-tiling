@@ -329,6 +329,7 @@ void NotifierDialog::selectNextItem()
     if (item) {
         itemHoverLeave(item);
     }
+
     if (nextDevice) {
         itemHoverEnter(nextDevice);
         m_devicesScrollWidget->ensureItemVisible(nextDevice);
@@ -374,6 +375,7 @@ void NotifierDialog::selectPreviousItem()
     if (item) {
         itemHoverLeave(item);
     }
+
     if (previousDevice) {
         itemHoverEnter(previousDevice);
         m_devicesScrollWidget->ensureItemVisible(previousDevice);
@@ -381,7 +383,6 @@ void NotifierDialog::selectPreviousItem()
             previousDevice->selectPreviousAction(0, true);
         }
     }
-
 }
 
 
