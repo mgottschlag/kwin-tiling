@@ -53,7 +53,6 @@
 #include <Plasma/LineEdit>
 #include <Plasma/IconWidget>
 #include <Plasma/RunnerManager>
-#include <Plasma/QueryMatch>
 #include <Plasma/ScrollWidget>
 #include <Plasma/ToolButton>
 

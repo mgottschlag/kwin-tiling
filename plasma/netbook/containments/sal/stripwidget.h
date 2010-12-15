@@ -37,7 +37,6 @@ namespace Plasma
 {
     class IconWidget;
     class ToolButton;
-    class QueryMatch;
 }
 
 class QTimer;
