@@ -311,7 +311,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_glowBar(0),
       m_mousePollTimer(0),
       m_strutsTimer(new QTimer(this)),
-      m_delayedUnhideTimer(new QTimer(this)),
       m_spacer(0),
       m_spacerIndex(-1),
       m_shadowWindow(0),
@@ -327,10 +326,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     KWindowSystem::setOnAllDesktops(winId(), true);
     KWindowSystem::setType(winId(), NET::Dock);
     setWindowRole(QString("panel_%1").arg(id));
-
-    m_delayedUnhideTimer->setSingleShot(true);
-    m_delayedUnhideTimer->setInterval(200);
-    connect(m_delayedUnhideTimer, SIGNAL(timeout()), this, SLOT(delayedUnhide()));
 
     m_strutsTimer->setSingleShot(true);
     connect(m_strutsTimer, SIGNAL(timeout()), this, SLOT(updateStruts()));
@@ -1275,19 +1270,6 @@ void PanelView::migrateTo(int screenId)
     setScreen(screenId);
 }
 
-void PanelView::enterEvent(QEvent *event)
-{
-    // allow unhiding to happen again even if we were delay-unhidden
-    m_delayedUnhideTs = QTime();
-/*
-// handy for debugging :)
-    if (containment()) {
-        kDebug() << sceneRect() << containment()->geometry();
-    }
-*/
-    Plasma::View::enterEvent(event);
-}
-
 void PanelView::showWidgetExplorer()
 {
     if (!containment()) {
@@ -1437,7 +1419,6 @@ bool PanelView::hasPopup()
 void PanelView::unhide(bool destroyTrigger)
 {
     //kill the unhide stuff
-    m_delayedUnhideTimer->stop();
     hideHinter();
     if (destroyTrigger) {
         destroyUnhideTrigger();
@@ -1447,7 +1428,6 @@ void PanelView::unhide(bool destroyTrigger)
     if (!isVisible()) {
         Plasma::WindowEffects::slideWindow(this, location());
         show();
-        KWindowSystem::setOnAllDesktops(winId(), true);
 
         if (m_shadowWindow && m_shadowWindow->isValid()) {
             Plasma::WindowEffects::slideWindow(m_shadowWindow, location());
@@ -1456,6 +1436,8 @@ void PanelView::unhide(bool destroyTrigger)
             KWindowSystem::setOnAllDesktops(m_shadowWindow->winId(), true);
         }
     }
+
+    KWindowSystem::setOnAllDesktops(winId(), true);
 
     //non-hiding panels stop here
     if (m_visibilityMode == NormalPanel || m_visibilityMode == WindowsGoBelow) {
@@ -1467,8 +1449,8 @@ void PanelView::unhide(bool destroyTrigger)
         m_mousePollTimer = new QTimer(this);
     }
 
-    connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()), Qt::UniqueConnection);
-    m_mousePollTimer->start(200);
+    connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(startAutoHide()), Qt::UniqueConnection);
+    m_mousePollTimer->start(500);
 
     //avoid hide-show loops
     if (m_visibilityMode == LetWindowsCover) {
@@ -1491,14 +1473,9 @@ void PanelView::checkUnhide(Plasma::ItemStatus newStatus)
     //kDebug() << "================= got a new status: " << newStatus << Plasma::ActiveStatus;
     if (newStatus > Plasma::ActiveStatus) {
         unhide();
+    } else {
+        startAutoHide();
     }
-}
-
-void PanelView::delayedUnhide()
-{
-    m_delayedUnhideTs.start();
-    //kDebug() << "starting at:" << m_delayedUnhideTs << m_delayedUnhideTs.elapsed();
-    unhide(true);
 }
 
 void PanelView::unhide()
@@ -1513,10 +1490,8 @@ void PanelView::resetTriggerEnteredSuppression()
 
 void PanelView::startAutoHide()
 {
-    //kDebug() << m_delayedUnhideTs.elapsed() << geometry().contains(QCursor::pos()) << hasPopup();
     //TODO: is 5s too long? not long enough?
-    if ((!m_delayedUnhideTs.isNull() && m_delayedUnhideTs.elapsed() < 5000) ||
-        m_editing ||
+    if (m_editing || (containment() && containment()->status() > Plasma::ActiveStatus) ||
         geometry().adjusted(-10, -10, 10, 10).contains(QCursor::pos()) ||
         hasPopup()) {
         if (!m_mousePollTimer) {
@@ -1560,7 +1535,7 @@ void PanelView::leaveEvent(QEvent *event)
         }
 
         connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(startAutoHide()), Qt::UniqueConnection);
-        m_mousePollTimer->start(200);
+        m_mousePollTimer->start(500);
     }
 
     if (event) {
