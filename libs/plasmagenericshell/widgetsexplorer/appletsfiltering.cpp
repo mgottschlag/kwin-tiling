@@ -301,6 +301,7 @@ void FilteringWidget::populateWidgetsMenu()
         // already populated.
         return;
     }
+
     QSignalMapper *mapper = new QSignalMapper(this);
     QObject::connect(mapper, SIGNAL(mapped(QString)), this, SLOT(downloadWidgets(QString)));
 
@@ -357,6 +358,7 @@ void FilteringWidget::downloadWidgets(const QString &type)
         }
     }
 
+    emit closeClicked();
     if (installer) {
         installer->createNewWidgetBrowser();
     } else {
@@ -368,6 +370,8 @@ void FilteringWidget::downloadWidgets(const QString &type)
 
 void FilteringWidget::openWidgetFile()
 {
+    emit closeClicked();
+
     Plasma::OpenWidgetAssistant *assistant = m_openAssistant.data();
     if (!assistant) {
         assistant = new Plasma::OpenWidgetAssistant(0);
