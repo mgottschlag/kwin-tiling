@@ -88,7 +88,6 @@ private:
     Plasma::ToolButton *m_rightArrow;
     QGraphicsLinearLayout *m_arrowsLayout;
 
-    QHash<Plasma::IconWidget*, Plasma::QueryMatch*> m_favouritesIcons;
     QHash<Plasma::IconWidget*, KService::Ptr> m_services;
     ItemView *m_itemView;
     Plasma::RunnerContext *m_context;
