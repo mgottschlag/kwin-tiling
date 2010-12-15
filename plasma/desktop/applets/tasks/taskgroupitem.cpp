@@ -1403,6 +1403,9 @@ AbstractTaskItem* TaskGroupItem::abstractTaskItem(AbstractGroupableItem * item)
             TaskGroupItem *group = qobject_cast<TaskGroupItem*>(taskItem);
             if (group) {
                 abstractTaskItem = group->abstractTaskItem(item);
+                if (abstractTaskItem) {
+                    break;
+                }
             }
         }
     }
