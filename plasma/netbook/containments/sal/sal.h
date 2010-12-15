@@ -43,7 +43,6 @@ namespace Plasma
 {
     class IconWidget;
     class LineEdit;
-    class QueryMatch;
     class Frame;
     class FrameSvg;
 }
@@ -108,7 +107,6 @@ private:
     int m_maxColumnWidth;
 
     QTimer *m_searchTimer;
-    QHash<Plasma::IconWidget*, Plasma::QueryMatch> m_matches;
 
     Plasma::LineEdit *m_searchField;
 
@@ -120,8 +118,6 @@ private:
     Plasma::IconWidget *m_firstItem;
 
     KSharedPtr<KService> m_packageManagerService;
-
-    QList<Plasma::QueryMatch> m_defaultMatches;
 
     QGraphicsLinearLayout *m_mainLayout;
     QGraphicsLinearLayout *m_resultsLayout;
