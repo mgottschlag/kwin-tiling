@@ -115,11 +115,11 @@ void WorkspaceOptionsModule::save()
     KConfigGroup kwinPresentWindowsCg(m_kwinConfig, "Effect-PresentWindows");
 
 
-    QString desktopTitleBarButtonsLeft("MS");
-    QString desktopTitleBarButtonsRight("HIA__X");
+    QString desktopTitleBarButtonsLeft = ownButtonsCg.readEntry("DesktopLeft", "MS");
+    QString desktopTitleBarButtonsRight = ownButtonsCg.readEntry("DesktopRight", "HIA__X");
 
-    QString netbookTitleBarButtonsLeft("MS");
-    QString netbookTitleBarButtonsRight("HA__X");
+    QString netbookTitleBarButtonsLeft = ownButtonsCg.readEntry("NetbookLeft", "MS");
+    QString netbookTitleBarButtonsRight = ownButtonsCg.readEntry("NetbookRight", "HA__X");
 
 
     bool desktopPresentWindowsTabbox = false;
