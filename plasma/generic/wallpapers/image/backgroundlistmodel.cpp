@@ -145,7 +145,7 @@ QModelIndex BackgroundListModel::indexOf(const QString &path) const
         if (path.startsWith(package)) {
             // FIXME: ugly hack to make a difference between local files in the same dir
             // package->path does not contain the actual file name
-            if ((!m_packages[i]->structure()->contentsPrefix().isEmpty()) ||
+            if ((!m_packages[i]->structure()->contentsPrefixPaths().isEmpty()) ||
                 (path == m_packages[i]->filePath("preferred"))) {
                 return index(i, 0);
             }
