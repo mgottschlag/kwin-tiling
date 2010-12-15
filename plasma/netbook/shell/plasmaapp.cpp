@@ -833,10 +833,13 @@ void PlasmaApp::setAutoHideControlBar(bool autoHide)
         return;
     }
 
-    if (autoHide && !m_unHideTimer) {
-        m_unHideTimer = new QTimer(this);
-        m_unHideTimer->setSingleShot(true);
-        connect(m_unHideTimer, SIGNAL(timeout()), this, SLOT(controlBarVisibilityUpdate()));
+    if (autoHide) {
+        if (!m_unHideTimer) {
+            m_unHideTimer = new QTimer(this);
+            m_unHideTimer->setSingleShot(true);
+            connect(m_unHideTimer, SIGNAL(timeout()), this, SLOT(controlBarVisibilityUpdate()));
+        }
+
         m_controlBar->installEventFilter(this);
         controlBarVisibilityUpdate();
     } else {
