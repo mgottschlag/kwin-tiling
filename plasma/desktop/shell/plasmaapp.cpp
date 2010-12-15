@@ -294,7 +294,6 @@ void PlasmaApp::setupDesktop()
     // intialize the default theme and set the font
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
     theme->setFont(AppSettings::desktopFont());
-    connect(theme, SIGNAL(themeChanged()), this, SLOT(compositingChanged()));
 
     // this line initializes the corona.
     corona();
@@ -542,15 +541,6 @@ void PlasmaApp::hideController(int screen)
     if (controller) {
         controller.data()->hide();
     }
-}
-
-void PlasmaApp::compositingChanged()
-{
-#ifdef Q_WS_X11
-    foreach (PanelView *panel, m_panels) {
-        panel->recreateUnhideTrigger();
-    }
-#endif
 }
 
 #ifdef Q_WS_X11

@@ -145,7 +145,6 @@ private Q_SLOTS:
     void panelRemoved(QObject* panel);
     void screenRemoved(int id);
     void screenAdded(Kephal::Screen *screen);
-    void compositingChanged();
     void configureContainment(Plasma::Containment*);
     void checkVirtualDesktopViews(int numDesktops);
     void setWmClass(WId id);
