@@ -1154,10 +1154,10 @@ void PlasmaApp::setControlBarVisible(bool visible)
     if (visible) {
         destroyUnHideTrigger();
         Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
-        KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), m_isDesktop);
         m_controlBar->setWindowFlags(m_mainView->windowFlags() | Qt::FramelessWindowHint);
         m_controlBar->setFrameShape(QFrame::NoFrame);
         m_controlBar->show();
+        KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), m_isDesktop);
         unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
         KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
         KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
