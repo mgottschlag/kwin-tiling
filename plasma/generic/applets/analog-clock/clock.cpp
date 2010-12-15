@@ -456,11 +456,11 @@ void Clock::invalidateCache()
 
     if (m_showingTimezone) {
         QRect tzArea = tzRect(prettyTimezone());
-        pixmapSize.setHeight(qMax(10, pixmapSize.height() - tzArea.height()));
+        pixmapSize.setHeight(qMax(10, squareEdge - tzArea.height()));
         tzFrame()->resizeFrame(tzArea.size());
     }
 
-    pixmapSize = QSize(squareEdge, qMin(squareEdge, pixmapSize.height()));
+    pixmapSize.setWidth(pixmapSize.height());
     m_faceCache = QPixmap(pixmapSize);
     m_handsCache = QPixmap(pixmapSize);
     m_glassCache = QPixmap(pixmapSize);
