@@ -153,6 +153,7 @@ ResultWidget *ItemContainer::createItem(QModelIndex index)
         m_usedItems.remove(key, item);
     } else {
         item = new ResultWidget(this);
+        item->setCacheMode(QGraphicsItem::ItemCoordinateCache);
         item->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         item->hide();
         item->setPos(boundingRect().center().x(), size().height());
