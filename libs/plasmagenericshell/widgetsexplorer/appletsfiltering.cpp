@@ -21,20 +21,21 @@
 
 #include <QMenu>
 
-#include <kglobalsettings.h>
-#include <klineedit.h>
-#include <kmenu.h>
-#include <kservicetypetrader.h>
-#include <kpushbutton.h>
+#include <KGlobalSettings>
+#include <KLineEdit>
+#include <KMenu>
+#include <KPushButton>
+#include <KServiceTypeTrader>
+#include <KWindowSystem>
 
-#include <plasma/theme.h>
-#include <plasma/corona.h>
-#include <plasma/packagestructure.h>
-#include <plasma/framesvg.h>
-#include <plasma/widgets/label.h>
-#include <plasma/widgets/lineedit.h>
-#include <plasma/widgets/pushbutton.h>
-#include <plasma/widgets/toolbutton.h>
+#include <Plasma/Theme>
+#include <Plasma/Corona>
+#include <Plasma/PackageStructure>
+#include <Plasma/FrameSvg>
+#include <Plasma/Label>
+#include <Plasma/LineEdit>
+#include <Plasma/PushButton>
+#include <Plasma/ToolButton>
 
 #include <kephal/kephal/screens.h>
 
@@ -367,10 +368,16 @@ void FilteringWidget::downloadWidgets(const QString &type)
 
 void FilteringWidget::openWidgetFile()
 {
-    // TODO: if we already have one of these showing and the user clicks to
-    // add it again, show the same window?
-    Plasma::OpenWidgetAssistant *assistant = new Plasma::OpenWidgetAssistant(0);
+    Plasma::OpenWidgetAssistant *assistant = m_openAssistant.data();
+    if (!assistant) {
+        assistant = new Plasma::OpenWidgetAssistant(0);
+        m_openAssistant = assistant;
+    }
+
+    KWindowSystem::setOnDesktop(assistant->winId(), KWindowSystem::currentDesktop());
     assistant->setAttribute(Qt::WA_DeleteOnClose, true);
     assistant->show();
+    assistant->raise();
+    assistant->setFocus();
 }
 

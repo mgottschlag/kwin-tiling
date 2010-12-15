@@ -28,6 +28,7 @@
 class KMenu;
 namespace Plasma {
     class LineEdit;
+    class OpenWidgetAssistant;
     class PushButton;
     class ToolButton;
     class WidgetExplorer;
@@ -117,6 +118,7 @@ private:
     Plasma::WidgetExplorer *m_widgetExplorer;
     QList<QWeakPointer<Plasma::PushButton> > m_actionButtons;
     Plasma::ToolButton *m_closeButton;
+    QWeakPointer<Plasma::OpenWidgetAssistant> m_openAssistant;
 };
 
 #endif // APPLETSFILTERING_H
