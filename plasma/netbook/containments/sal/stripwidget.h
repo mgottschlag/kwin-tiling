@@ -88,8 +88,6 @@ private:
     Plasma::ToolButton *m_rightArrow;
     QGraphicsLinearLayout *m_arrowsLayout;
 
-    QList<Plasma::QueryMatch*> m_favouritesMatches;
-    QHash<Plasma::QueryMatch*, QString> m_favouritesQueries;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch*> m_favouritesIcons;
     QHash<Plasma::IconWidget*, KService::Ptr> m_services;
     ItemView *m_itemView;

@@ -462,7 +462,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_serviceModel = new KServiceModel(config(), this);
             m_resultsView->setModel(m_serviceModel);
         }
-        
+
         resize(corona()->screenGeometry(screen()).size());
     }
 

@@ -36,7 +36,6 @@
 #include <Plasma/Frame>
 #include <Plasma/ToolButton>
 #include <Plasma/IconWidget>
-#include <Plasma/QueryMatch>
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
 #include <Plasma/ScrollWidget>
@@ -111,9 +110,6 @@ StripWidget::StripWidget(QGraphicsWidget *parent)
 
 StripWidget::~StripWidget()
 {
-    foreach(Plasma::QueryMatch *match, m_favouritesMatches) {
-        delete match;
-    }
 }
 
 void StripWidget::showDeleteTarget()
