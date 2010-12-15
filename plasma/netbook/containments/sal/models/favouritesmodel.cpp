@@ -95,7 +95,6 @@ void FavouritesModel::restore(KConfigGroup &cg)
         numIcons = stripGroup.groupList().size();
     }
 
-    QString currentQuery;
     for (int i = 0; i < numIcons; ++i ) {
         if (!urls[i].isNull()) {
             add(urls[i]);
