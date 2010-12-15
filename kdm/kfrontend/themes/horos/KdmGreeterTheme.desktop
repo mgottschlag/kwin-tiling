@@ -4,6 +4,15 @@
 [KdmGreeterTheme]
 Greeter=horos.xml
 Name=Horos
+Name[da]=Horos
+Name[en_GB]=Horos
+Name[ia]=Horos
+Name[nl]=Horos
+Name[pt]=Horos
+Name[sv]=Horos
+Name[uk]=Хорос
+Name[x-test]=xxHorosxx
+Name[zh_TW]=Horos
 
 Author=Roman Shtylman
 Copyright=GPL 2010 Roman Shtylman | shtylman@gmail.com
