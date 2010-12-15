@@ -259,6 +259,7 @@ private Q_SLOTS:
      */
     void checkShadow();
 
+    void themeChanged();
     void setPanelDragPosition(const QPoint &point);
 
 private:

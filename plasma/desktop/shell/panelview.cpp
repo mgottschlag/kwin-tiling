@@ -214,7 +214,6 @@ public:
 #endif
 
         m_shadow = new Plasma::FrameSvg(this);
-        connect(m_shadow, SIGNAL(repaintNeeded()), m_panel, SLOT(checkShadow()), Qt::QueuedConnection);
     }
 
     void setSvg(const QString &path)
@@ -229,7 +228,6 @@ public:
         }
 
         m_shadow->setElementPrefix("shadow");
-
         adjustMargins(geometry());
     }
 
@@ -374,6 +372,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
             this, SLOT(updatePanelGeometry()));
     connect(screens, SIGNAL(screenAdded(Kephal::Screen *)),
             this, SLOT(updateStruts()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()), Qt::QueuedConnection);
 }
 
 PanelView::~PanelView()
@@ -438,8 +437,13 @@ void PanelView::setContainment(Plasma::Containment *containment)
     kDebug() << "about to set the containment" << (QObject*)containment;
 
     updateStruts();
-
     checkShadow();
+}
+
+void PanelView::themeChanged()
+{
+    checkShadow();
+    recreateUnhideTrigger();
 }
 
 void PanelView::checkShadow()
