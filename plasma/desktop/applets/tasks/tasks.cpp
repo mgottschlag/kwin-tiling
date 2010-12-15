@@ -507,6 +507,11 @@ QWidget *Tasks::popupDialog() const
     return m_popupDialog.data();
 }
 
+bool Tasks::isPopupShowing() const
+{
+    return m_popupDialog;
+}
+
 void Tasks::setPopupDialog(bool status)
 {
     Q_UNUSED(status)

@@ -106,6 +106,8 @@ public:
         void needsVisualFocus(bool focus);
         QWidget *popupDialog() const;
 
+        bool isPopupShowing() const;
+
 signals:
         /**
          * emitted whenever we receive a constraintsEvent
