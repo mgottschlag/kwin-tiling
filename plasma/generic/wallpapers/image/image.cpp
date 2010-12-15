@@ -39,6 +39,7 @@ K_EXPORT_PLASMA_WALLPAPER(image, Image)
 
 Image::Image(QObject *parent, const QVariantList &args)
     : Plasma::Wallpaper(parent, args),
+      m_fileWatch(new KDirWatch(this)),
       m_configWidget(0),
       m_wallpaperPackage(0),
       m_currentSlide(-1),
@@ -53,6 +54,8 @@ Image::Image(QObject *parent, const QVariantList &args)
     connect(this, SIGNAL(renderCompleted(QImage)), this, SLOT(updateBackground(QImage)));
     connect(this, SIGNAL(urlDropped(KUrl)), this, SLOT(setWallpaper(KUrl)));
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(nextSlide()));
+    connect(m_fileWatch, SIGNAL(dirty(QString)), this, SLOT(imageFileAltered(QString)));
+    connect(m_fileWatch, SIGNAL(created(QString)), this, SLOT(imageFileAltered(QString)));
 }
 
 Image::~Image()
@@ -420,8 +423,8 @@ void Image::setSingleImage()
         if (img.isEmpty()) {
             img = m_wallpaper;
         }
-    //if it's not an absolute path, check if it's just a wallpaper name
     } else {
+        //if it's not an absolute path, check if it's just a wallpaper name
         const QString path = KStandardDirs::locate("wallpaper", m_wallpaper + "/metadata.desktop");
 
         if (!path.isEmpty()) {
@@ -432,7 +435,6 @@ void Image::setSingleImage()
             img = b.filePath("preferred");
         }
     }
-
 
     if (!m_size.isEmpty()) {
         renderWallpaper(img);
@@ -544,7 +546,7 @@ void Image::pictureChanged(const QModelIndex &index)
         return;
     }
 
-    if (b->structure()->contentsPrefix().isEmpty()) {
+    if (b->structure()->contentsPrefixPaths().isEmpty()) {
         // it's not a full package, but a single paper
         m_wallpaper = b->filePath("preferred");
     } else {
@@ -699,6 +701,10 @@ void Image::openSlide()
 
 void Image::renderWallpaper(const QString& image)
 {
+    if (!m_img.isEmpty()) {
+        m_fileWatch->removeFile(m_img);
+    }
+
     if (!image.isEmpty()) {
         m_img = image;
     }
@@ -707,9 +713,19 @@ void Image::renderWallpaper(const QString& image)
         return;
     }
 
+    m_fileWatch->addFile(m_img);
     render(m_img, m_size, m_resizeMethod, m_color);
 }
 
+void Image::imageFileAltered(const QString &path)
+{
+    if (path == m_img) {
+        renderWallpaper(path);
+    } else {
+        // somehow this got added to the dirwatch, but we don't care about it anymore
+        m_fileWatch->removeFile(path);
+    }
+}
 void Image::updateBackground(const QImage &img)
 {
     m_oldPixmap = m_pixmap;

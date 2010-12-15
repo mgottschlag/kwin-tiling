@@ -23,6 +23,7 @@
 
 class QPropertyAnimation;
 
+class KDirWatch;
 class KFileDialog;
 class KJob;
 
@@ -81,6 +82,7 @@ class Image : public Plasma::Wallpaper
         void addDirFromSelectionDialog();
         void systemCheckBoxToggled(bool);
         void downloadedCheckBoxToggled(bool);
+        void imageFileAltered(const QString &path);
 
     protected:
         void init(const KConfigGroup &config);
@@ -100,6 +102,7 @@ class Image : public Plasma::Wallpaper
         QString m_wallpaper;
         QColor m_color;
         QStringList m_usersWallpapers;
+        KDirWatch *m_fileWatch;
 
         QWidget* m_configWidget;
         Ui::ImageConfig m_uiImage;
