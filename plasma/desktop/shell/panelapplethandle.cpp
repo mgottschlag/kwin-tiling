@@ -126,10 +126,14 @@ void PanelAppletHandle::moveToApplet()
     if (!applet) {
         return;
     }
+    Plasma::Containment *containment = applet->containment();
+    if (!containment || !containment->corona()) {
+        return;
+    }
 
     if (isVisible()) {
         m_moveAnimation->setStartValue(pos());
-        m_moveAnimation->setEndValue(applet->containment()->corona()->popupPosition(applet, size(), Qt::AlignCenter));
+        m_moveAnimation->setEndValue(containment->corona()->popupPosition(applet, size(), Qt::AlignCenter));
         m_moveAnimation->setDuration(250);
         m_moveAnimation->start();
     } else {
