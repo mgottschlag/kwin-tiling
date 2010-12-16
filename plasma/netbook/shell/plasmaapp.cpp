@@ -1049,7 +1049,9 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
         QTimer::singleShot(100, this, SLOT(lowerMainView()));
     } else if (m_controlBar && m_autoHideControlBar && m_controlBar->isVisible() &&
         (event->xany.send_event != True && event->type == LeaveNotify)) {
-        m_unHideTimer->start(200);
+        if (m_unHideTimer) {
+            m_unHideTimer->start(200);
+        }
     }
 
     return KUniqueApplication::x11EventFilter(event);
