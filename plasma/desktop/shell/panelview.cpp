@@ -762,10 +762,6 @@ void PanelView::updatePanelGeometry()
         } else {
             setGeometry(geom);
         }
-
-        if (m_shadowWindow) {
-            m_shadowWindow->adjustGeometry();
-        }
     }
 
     m_lastMin = c->minimumSize();
@@ -1246,6 +1242,10 @@ void PanelView::resizeEvent(QResizeEvent *event)
 #ifdef Q_WS_WIN
     appBarPosChanged();
 #endif
+
+    if (m_shadowWindow) {
+        m_shadowWindow->adjustGeometry();
+    }
 
     if (containment()) {
         foreach (Plasma::Applet *applet, containment()->applets()) {
