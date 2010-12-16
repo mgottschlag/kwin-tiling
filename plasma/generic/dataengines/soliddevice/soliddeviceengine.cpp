@@ -111,7 +111,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 
     if (device.is<Solid::Processor>()) {
         Solid::Processor *processor = device.as<Solid::Processor>();
-        if (processor == 0) {
+        if (!processor) {
             return false;
         }
 
@@ -122,7 +122,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::Block>()) {
         Solid::Block *block = device.as<Solid::Block>();
-        if (block == 0) {
+        if (!block) {
             return false;
         }
 
@@ -133,7 +133,9 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::StorageAccess>()) {
         Solid::StorageAccess *storageaccess = device.as<Solid::StorageAccess>();
-        if (storageaccess == 0) return false;
+        if (!storageaccess) {
+            return false;
+        }
 
         devicetypes << I18N_NOOP("Storage Access");
         setData(name, I18N_NOOP("Accessible"), storageaccess->isAccessible());
@@ -154,7 +156,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::StorageDrive>()) {
         Solid::StorageDrive *storagedrive = device.as<Solid::StorageDrive>();
-        if (storagedrive == 0) {
+        if (!storagedrive) {
             return false;
         }
 
@@ -174,7 +176,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::OpticalDrive>()) {
         Solid::OpticalDrive *opticaldrive = device.as<Solid::OpticalDrive>();
-        if (opticaldrive == 0) {
+        if (!opticaldrive) {
             return false;
         }
 
@@ -246,7 +248,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::StorageVolume>()) {
         Solid::StorageVolume *storagevolume = device.as<Solid::StorageVolume>();
-        if (storagevolume == 0) {
+        if (!storagevolume) {
             return false;
         }
 
@@ -283,7 +285,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::OpticalDisc>()) {
         Solid::OpticalDisc *opticaldisc = device.as<Solid::OpticalDisc>();
-        if (opticaldisc == 0) {
+        if (!opticaldisc) {
             return false;
         }
 
@@ -326,7 +328,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::Camera>()) {
         Solid::Camera *camera = device.as<Solid::Camera>();
-        if (camera == 0) {
+        if (!camera) {
             return false;
         }
 
@@ -337,7 +339,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::PortableMediaPlayer>()) {
         Solid::PortableMediaPlayer *mediaplayer = device.as<Solid::PortableMediaPlayer>();
-        if (mediaplayer == 0) {
+        if (!mediaplayer) {
             return false;
         }
 
@@ -348,7 +350,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::NetworkInterface>()) {
         Solid::NetworkInterface *networkinterface = device.as<Solid::NetworkInterface>();
-        if (networkinterface == 0) {
+        if (!networkinterface) {
             return false;
         }
 
@@ -361,7 +363,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::AcAdapter>()) {
         Solid::AcAdapter *ac = device.as<Solid::AcAdapter>();
-        if (ac == 0) {
+        if (!ac) {
             return false;
         }
 
@@ -372,7 +374,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::Battery>()) {
         Solid::Battery *battery = device.as<Solid::Battery>();
-        if (battery == 0) {
+        if (!battery) {
             return false;
         }
 
@@ -396,7 +398,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::Button>()) {
         Solid::Button *button = device.as<Solid::Button>();
-        if (button == 0) {
+        if (!button) {
             return false;
         }
 
@@ -415,7 +417,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::AudioInterface>()) {
         Solid::AudioInterface *audiointerface = device.as<Solid::AudioInterface>();
-        if (audiointerface == 0) {
+        if (!audiointerface) {
             return false;
         }
 
@@ -453,7 +455,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::DvbInterface>()) {
         Solid::DvbInterface *dvbinterface = device.as<Solid::DvbInterface>();
-        if (dvbinterface == 0) {
+        if (!dvbinterface) {
             return false;
         }
 
@@ -473,7 +475,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     }
     if (device.is<Solid::Video>()) {
         Solid::Video *video = device.as<Solid::Video>();
-        if (video == 0) {
+        if (!video) {
             return false;
         }
 
@@ -525,11 +527,13 @@ bool SolidDeviceEngine::updateFreeSpace(const QString &udi)
     }
 
     Solid::StorageAccess *storageaccess = device.as<Solid::StorageAccess>();
-    if (storageaccess == 0) return false;
+    if (!storageaccess) {
+        return false;
+    }
 
     QVariant freeSpaceVar;
     qlonglong freeSpace = freeDiskSpace(storageaccess->filePath());
-    if ( freeSpace != -1 ) {
+    if (freeSpace != -1) {
         freeSpaceVar.setValue( freeSpace );
     }
     setData(udi, I18N_NOOP("Free Space"), freeSpaceVar );
