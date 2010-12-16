@@ -305,6 +305,11 @@ void BookmarksRunner::matchKonquerorBookmarks(Plasma::RunnerContext& context, bo
             return;
         }
 
+        if (bookmark.isSeparator()) {
+            bookmark = bookmarkGroup.next(bookmark);
+            continue;
+        }
+
         if (bookmark.isGroup()) { // descend
             //kDebug () << "descending into" << bookmark.text();
             groups.push(bookmarkGroup);
