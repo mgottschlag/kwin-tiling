@@ -679,7 +679,7 @@ void Task::refreshActivities()
     unsigned long properties[] = { 0, NET::WM2Activities };
     NETWinInfo info(QX11Info::display(), d->win, QX11Info::appRootWindow(), properties, 2);
     QString result(info.activities());
-    if (result.isEmpty()) {
+    if (result.isEmpty() || result == "ALL") {
         d->activities.clear();
     } else {
         d->activities = result.split(',');
