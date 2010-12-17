@@ -140,13 +140,13 @@ void DesktopView::checkDesktopAffiliation()
 
 void DesktopView::toggleDashboard()
 {
-    //kDebug() << "toggling dashboard for screen" << screen() << "and destop" << desktop() <<
-    //    (m_dashboard ? (m_dashboard->isVisible() ? "visible" : "hidden") : "non-existent");
+    kDebug() << "toggling dashboard for screen" << screen() << "and destop" << desktop() <<
+        (m_dashboard ? (m_dashboard->isVisible() ? "visible" : "hidden") : "non-existent");
     prepDashboard();
     if (m_dashboard) {
         m_dashboard->toggleVisibility();
     }
-    //kDebug() << "toggling dashboard for screen" << screen() << "and destop" << desktop() << m_dashboard->isVisible();
+    kDebug() << "toggling dashboard for screen" << screen() << "and destop" << desktop() << m_dashboard->isVisible();
 }
 
 void DesktopView::showDashboard(bool show)
@@ -215,13 +215,18 @@ void DesktopView::setDashboardContainment(Plasma::Containment *containment)
             m_dashboard->setContainment(containment);
         }
     } else {
+        Plasma::Containment *dc = 0;
         if (dashboardContainment()) {
-            dashboardContainment()->destroy(false);
+            dc = dashboardContainment();
         }
 
         config().deleteEntry("DashboardContainment");
         if (m_dashboard) {
             m_dashboard->setContainment(View::containment());
+        }
+        //destroy this after changing the containment, makes sure the view won't receive the destroyed signal
+        if (dc) {
+            dc->destroy(false);
         }
     }
 
