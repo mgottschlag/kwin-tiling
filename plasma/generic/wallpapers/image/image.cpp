@@ -281,18 +281,13 @@ void Image::downloadedCheckBoxToggled(bool checked)
 
 void Image::setConfigurationInterfaceModel()
 {
-    QTime t;
-    t.start();
     m_uiImage.m_view->setModel(m_model);
-    kDebug() << t.restart();
     connect(m_uiImage.m_view->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(pictureChanged(const QModelIndex &)));
 
     QModelIndex index = m_model->indexOf(m_wallpaper);
-    kDebug() << t.restart();
     if (index.isValid()) {
         m_uiImage.m_view->setCurrentIndex(index);
     }
-    kDebug() << m_wallpaper << index << t.restart();
 }
 
 void Image::modified()
@@ -469,9 +464,7 @@ void Image::setWallpaper(const QString &path)
     if (m_wallpaper.isEmpty()) {
         m_slideshowBackgrounds.append(path);
         m_currentSlide = m_slideshowBackgrounds.size() - 2;
-        bool random = m_randomize;
         nextSlide();
-        m_randomize = random;
         updateWallpaperActions();
     } else {
         m_wallpaper = path;
