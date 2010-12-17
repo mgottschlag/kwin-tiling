@@ -99,7 +99,7 @@ void NotificationStack::addNotification(Notification *notification)
     m_mainLayout->insertItem(0, notificationWidget);
     m_mainLayout->activate();
     updateGeometry();
-    resize(effectiveSizeHint(Qt::MinimumSize));
+    resize(size().width(), effectiveSizeHint(Qt::MinimumSize).height());
     emit updateRequested();
 }
 
@@ -131,7 +131,7 @@ void NotificationStack::removeNotification(Notification *notification)
     }
 
     updateGeometry();
-    resize(sizeHint(Qt::MinimumSize, QSizeF()));
+    resize(size().width(), sizeHint(Qt::MinimumSize, QSizeF()).height());
     emit updateRequested();
 }
 
