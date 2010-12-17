@@ -32,14 +32,15 @@ PreferencesDialog::PreferencesDialog( QWidget *parent )
     setButtons( Ok | Cancel );
     setDefaultButton( Ok );
 
-    m_pageSpellChecking = new SpellCheckingPage( this );
-    KPageWidgetItem *page = new KPageWidgetItem( m_pageSpellChecking , i18n( "Spell Checking" ) );
-    page->setHeader( i18n( "Spell checking Options" ) );
-    page->setIcon( KIcon( "tools-check-spelling" ) );
+    m_pageMisc = new MiscPage( this );
+    KPageWidgetItem *page = new KPageWidgetItem( m_pageMisc , i18n( "General" ) );
+    page->setIcon( KIcon( "kmenuedit" ) );
     addPage(page);
 
-    m_pageMisc = new MiscPage( this );
-    page = new KPageWidgetItem( m_pageMisc , i18n( "Misc" ) );
+    m_pageSpellChecking = new SpellCheckingPage( this );
+    page = new KPageWidgetItem( m_pageSpellChecking , i18n( "Spell Checking" ) );
+    page->setHeader( i18n( "Spell checking Options" ) );
+    page->setIcon( KIcon( "tools-check-spelling" ) );
     addPage(page);
 
     connect( this, SIGNAL( okClicked() ), this, SLOT( slotSave() ) );
@@ -68,16 +69,14 @@ void SpellCheckingPage::saveOptions()
 MiscPage::MiscPage( QWidget *parent )
     : QWidget( parent )
 {
-    QHBoxLayout *lay = new QHBoxLayout( this );
-    QGroupBox *group = new QGroupBox(i18n( "General" ) ) ;
-    lay->addWidget( group );
-    QVBoxLayout *vbox = new QVBoxLayout;
-    m_showHiddenEntries = new QCheckBox( i18n( "Show hidden entries" ) );
-    vbox->addWidget( m_showHiddenEntries );
-    group->setLayout( vbox );
+    QVBoxLayout *lay = new QVBoxLayout( this );
+    m_showHiddenEntries = new QCheckBox( i18n( "Show hidden entries" ), this );
+    lay->addWidget( m_showHiddenEntries );
+    lay->addStretch();
+    setLayout( lay );
+
     KConfigGroup grp( KGlobal::config(), "General" );
     m_showHiddenEntries->setChecked(  grp.readEntry( "ShowHidden", false ) );
-    setLayout( lay );
 }
 
 void MiscPage::saveOptions()
