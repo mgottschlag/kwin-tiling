@@ -222,8 +222,7 @@ void DesktopToolBox::init()
     d->background = new Plasma::FrameSvg(this);
     d->background->setImagePath("widgets/toolbox");
 
-    
-    setZValue(10000000);
+    setZValue(INT_MAX);
 
     setIsMovable(true);
     updateTheming();
@@ -549,6 +548,7 @@ void DesktopToolBox::showToolBox()
     fadeAnim->setProperty("startOpacity", 0);
     fadeAnim->setProperty("targetOpacity", 1);
     fadeAnim->start(QAbstractAnimation::DeleteWhenStopped);
+    highlight(true);
 }
 
 void DesktopToolBox::addTool(QAction *action)
