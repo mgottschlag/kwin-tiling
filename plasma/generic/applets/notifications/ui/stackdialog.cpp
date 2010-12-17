@@ -270,13 +270,10 @@ void StackDialog::adjustPosition(const QPoint &pos)
 
     const QPoint popupPosition = m_applet->containment()->corona()->popupPosition(m_applet, size());
 
-    if ((customPosition == QPoint(-1, -1)) ||
-        QPoint(popupPosition - customPosition).manhattanLength() < 128) {
-
+    if ((customPosition == QPoint(-1, -1))) {
         move(popupPosition);
         Plasma::WindowEffects::slideWindow(this, m_applet->location());
         m_hasCustomPosition = false;
-
     } else {
         if (m_applet->containment() &&
             m_applet->containment()->corona() &&
@@ -288,7 +285,6 @@ void StackDialog::adjustPosition(const QPoint &pos)
             customPosition.rx() = qMin(customPosition.x() + size().width(), screenRect.right()) - size().width();
             customPosition.ry() = qMin(customPosition.y() + size().height(), screenRect.bottom()) - size().height();
         }
-
         move(customPosition);
         Plasma::WindowEffects::slideWindow(this, Plasma::Desktop);
         m_hasCustomPosition = true;
