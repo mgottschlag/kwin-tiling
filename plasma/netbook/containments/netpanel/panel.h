@@ -60,7 +60,6 @@ protected:
 
 private Q_SLOTS:
     void toggleImmutability();
-    void themeUpdated();
     void backgroundChanged();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void appletRemoved(Plasma::Applet* applet);

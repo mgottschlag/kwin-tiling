@@ -65,8 +65,6 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     DummyToolBox *toolBox = new DummyToolBox(this);
     setToolBox(toolBox);
 
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
-
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
             this, SLOT(appletRemoved(Plasma::Applet*)));
     connect(this, SIGNAL(toolBoxVisibilityChanged(bool)),
@@ -403,39 +401,6 @@ void Panel::saveState(KConfigGroup &config) const
 {
     config.writeEntry("minimumSize", minimumSize());
     config.writeEntry("maximumSize", maximumSize());
-}
-
-void Panel::themeUpdated()
-{
-    //if the theme is changed all the calculations needs to be done again
-    //and resize based on the change in the theme bordersize
-
-    qreal oldLeftWidth;
-    qreal newLeftWidth;
-    qreal oldTopHeight;
-    qreal newTopHeight;
-    qreal oldRightWidth;
-    qreal newRightWidth;
-    qreal oldBottomHeight;
-    qreal newBottomHeight;
-
-    layout()->getContentsMargins(&oldLeftWidth, &oldTopHeight, &oldRightWidth, &oldBottomHeight);
-    m_background->getMargins(newLeftWidth, newTopHeight, newRightWidth, newBottomHeight);
-
-    QSize newSize(size().width()-(oldLeftWidth - newLeftWidth)-(oldRightWidth - newRightWidth),
-           size().height()-(oldTopHeight - newTopHeight)-(oldBottomHeight - newBottomHeight));
-
-    resize(newSize);
-
-    if (formFactor() == Plasma::Vertical) {
-        setMaximumWidth(newSize.width());
-        setMinimumWidth(newSize.width());
-    } else {
-        setMaximumHeight(newSize.height());
-        setMinimumHeight(newSize.height());
-    }
-
-    updateBorders();
 }
 
 void Panel::paintInterface(QPainter *painter,
