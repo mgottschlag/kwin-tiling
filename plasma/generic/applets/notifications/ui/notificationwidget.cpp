@@ -154,8 +154,10 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
             notification, SLOT(linkActivated(const QString &)));
 
     d->iconPlaceBig = new QGraphicsWidget(this);
-    d->iconPlaceBig->setMaximumWidth(KIconLoader::SizeHuge);
-    d->iconPlaceBig->setMinimumWidth(KIconLoader::SizeHuge);
+    d->iconPlaceBig->setMaximumHeight(KIconLoader::SizeLarge);
+    d->iconPlaceBig->setMinimumHeight(KIconLoader::SizeLarge);
+    d->iconPlaceBig->setMaximumWidth(KIconLoader::SizeLarge);
+    d->iconPlaceBig->setMinimumWidth(KIconLoader::SizeLarge);
     d->iconPlaceBig->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     d->bodyLayout->addItem(d->iconPlaceBig, 0, 0, Qt::AlignCenter);
     d->bodyLayout->addItem(d->messageLabel, 0, 1, Qt::AlignCenter);
@@ -449,12 +451,12 @@ void NotificationWidgetPrivate::updateNotification()
 
         QSize imageSize = notification.data()->image().size();
 
-        if (imageSize.width() > KIconLoader::SizeHuge || imageSize.height() > KIconLoader::SizeHuge) {
-            imageSize.scale(KIconLoader::SizeHuge, KIconLoader::SizeHuge, Qt::KeepAspectRatio);
+        if (imageSize.width() > KIconLoader::SizeLarge || imageSize.height() > KIconLoader::SizeLarge) {
+            imageSize.scale(KIconLoader::SizeLarge, KIconLoader::SizeLarge, Qt::KeepAspectRatio);
         }
 
-        icon->setMaximumIconSize(QSizeF(qMin((int)KIconLoader::SizeHuge, imageSize.width()),
-                                  qMin((int)KIconLoader::SizeHuge, imageSize.height())));
+        icon->setMaximumIconSize(QSizeF(qMin((int)KIconLoader::SizeLarge, imageSize.width()),
+                                  qMin((int)KIconLoader::SizeLarge, imageSize.height())));
     }
 
 
