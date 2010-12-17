@@ -330,6 +330,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
 
     /*if there is a < that is not closed as a tag, replace it with an entity*/
     processed = processed.replace(QRegExp("<([^>]*($|<))"), "&lt;\\1");
+    processed.replace('\n', "<br>");
 
     QFontMetricsF fm(messageLabel->font());
 
@@ -346,8 +347,8 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
 
         if (c == '<') {
             inTag = true;
-            parsed.append(fm.elidedText(sentence, Qt::ElideMiddle, 250));
-            parsed.append(fm.elidedText(word, Qt::ElideMiddle, 250));
+            parsed.append(fm.elidedText(sentence, Qt::ElideRight, 250));
+            parsed.append(fm.elidedText(word, Qt::ElideRight, 250));
             sentence = QString();
             word = QString();
         } else if (c == '>') {
@@ -359,18 +360,16 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
             if (inTag) {
                 parsed.append(word);
             } else {
-                sentence.append(fm.elidedText(word, Qt::ElideMiddle, 250));
+                sentence.append(fm.elidedText(word, Qt::ElideRight, 250));
             }
             word = QString();
         }
 
         ++i;
     }
-    parsed.append(fm.elidedText(sentence, Qt::ElideMiddle, 300));
-    parsed.append(fm.elidedText(word, Qt::ElideMiddle, 250));
+    parsed.append(fm.elidedText(sentence, Qt::ElideRight, 300));
+    parsed.append(fm.elidedText(word, Qt::ElideRight, 250));
 
-
-    parsed.replace('\n', "<br>");
     messageLabel->setText(parsed);
 
     if (!collapsed) {
