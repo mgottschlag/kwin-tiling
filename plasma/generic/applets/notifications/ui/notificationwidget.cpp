@@ -414,8 +414,14 @@ void NotificationWidgetPrivate::updateActions()
         layout->addItem(button);
     }
     layout->addStretch();
+    layout->activate();
 
-    bodyLayout->addItem(actionsWidget, 0, 2, Qt::AlignCenter);
+    if (actionsWidget->size().width() > q->size().width() * 0.4) {
+        layout->setOrientation(Qt::Horizontal);
+        bodyLayout->addItem(actionsWidget, 1, 0, 1, 2, Qt::AlignCenter);
+    } else {
+        bodyLayout->addItem(actionsWidget, 0, 2, Qt::AlignCenter);
+    }
 }
 
 void NotificationWidgetPrivate::buttonClicked()
