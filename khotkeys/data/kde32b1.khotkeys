@@ -1381,6 +1381,12 @@ Comment[zh_CN]=通过按下 Alt+Ctrl+W，将会执行一个 D-Bus 调用显示 m
 Comment[zh_TW]=按下 Alt+Ctrl+W 時，會產生一個 D-Bus 呼叫來顯示 minicli。您可以使用任何種類的 D-Bus 呼叫，就如同在命令列中使用 qdbus 一樣。
 Enabled=false
 Name=Perform D-Bus call 'qdbus org.kde.krunner /App display'
+Name[ca]=Executa la invocació «qdbus org.kde.krunner /App display» del D-Bus
+Name[ia]=Exeque appello de D-Bus 'qdbus org.kde.krunner /App display'
+Name[it]=Effettua chiamata D-Bus 'qdbus org.kde.krunner /App display'
+Name[sv]=Utför D-Bus-anropet 'qdbus org.kde.krunner /App display'
+Name[uk]=Виконання виклику D-Bus «qdbus org.kde.krunner /App display»
+Name[x-test]=xxPerform D-Bus call 'qdbus org.kde.krunner /App display'xx
 Type=DCOP_SHORTCUT_ACTION_DATA
 
 [Data_1_5Actions]
