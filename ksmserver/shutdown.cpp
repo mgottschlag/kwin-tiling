@@ -308,7 +308,7 @@ void KSMServer::saveYourselfDone( KSMClient* client, bool success )
 
 void KSMServer::interactRequest( KSMClient* client, int /*dialogType*/ )
 {
-    if ( state == Shutdown )
+    if ( state == Shutdown || state == ClosingSubSession )
         client->pendingInteraction = true;
     else
         SmsInteract( client->connection() );
