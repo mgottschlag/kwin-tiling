@@ -131,9 +131,15 @@ bool PlasmaAppletItem::isLocal() const
     return m_local;
 }
 
-bool PlasmaAppletItem::passesFiltering(const KCategorizedItemsViewModels::Filter &) const
+bool PlasmaAppletItem::passesFiltering(const KCategorizedItemsViewModels::Filter &filter) const
 {
-    return false;//m_attrs[filter.first] == filter.second;
+    if (filter.first == "running") {
+        return running();
+    } else if (filter.first == "category") {
+        return m_info.category().toLower() == filter.second;
+    } else {
+        return false;
+    }
 }
 
 QMimeData *PlasmaAppletItem::mimeData() const
