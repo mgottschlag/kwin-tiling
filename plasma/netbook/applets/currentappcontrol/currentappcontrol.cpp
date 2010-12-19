@@ -334,7 +334,9 @@ void CurrentAppControl::listWindows()
 
         foreach(WId window, KWindowSystem::stackingOrder()) {
             KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMName|NET::WMState|NET::WMWindowType);
-            if (!(info.state() & NET::SkipTaskbar) && info.windowType(NET::NormalMask) == NET::Normal) {
+            NET::WindowType type = info.windowType(NET::AllTypesMask);
+            if (!(info.state() & NET::SkipTaskbar) &&
+                ((type == NET::Normal) || (type == NET::Unknown))) {
                 Plasma::IconWidget *icon;
                 if (m_oldIcons.isEmpty()) {
                     icon = new Plasma::IconWidget(m_listWidget);
