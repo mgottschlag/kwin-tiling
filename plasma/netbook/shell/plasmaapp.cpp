@@ -499,7 +499,9 @@ void PlasmaApp::checkShadow()
 
 void PlasmaApp::mainContainmentActivated()
 {
-    m_mainView->setWindowTitle(m_mainView->containment()->activity());
+    if (m_mainView->containment()) {
+        m_mainView->setWindowTitle(m_mainView->containment()->activity());
+    }
 
 
     const WId id = m_mainView->effectiveWinId();
