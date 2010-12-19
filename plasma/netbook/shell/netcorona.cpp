@@ -118,6 +118,10 @@ void NetCorona::addPage()
     }
 
     Plasma::Containment *cont = addContainment("newspaper");
+    //it may fail, for instance widgets locked
+    if (!cont) {
+        return;
+    }
     cont->setActivity(i18nc("Page number", "Page %1", numPages));
     cont->setScreen(0);
     cont->setToolBoxOpen(true);
