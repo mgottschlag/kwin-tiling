@@ -72,8 +72,9 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
 
-private slots:
+private Q_SLOTS:
     void configAccepted();
+    void unlockContainment();
     void propogateSizeHintChange(Qt::SizeHint which);
     void themeChanged();
     void checkSizes();

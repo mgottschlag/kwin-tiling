@@ -427,8 +427,11 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
             unlockAction = containment()->corona()->action("lock widgets");
         }
         if (unlockAction) {
+            disconnect(m_visibleItemsUi.unlockButton, SIGNAL(clicked()), this, SLOT(unlockContainment()));
+            connect(m_visibleItemsUi.unlockButton, SIGNAL(clicked()), unlockAction, SLOT(trigger()), Qt::UniqueConnection);
+        } else {
             disconnect(m_visibleItemsUi.unlockButton, SIGNAL(clicked()), unlockAction, SLOT(trigger()));
-            connect(m_visibleItemsUi.unlockButton, SIGNAL(clicked()), unlockAction, SLOT(trigger()));
+            connect(m_visibleItemsUi.unlockButton, SIGNAL(clicked()), this, SLOT(unlockContainment()), Qt::UniqueConnection);
         }
 
 
@@ -602,6 +605,14 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
             item->setData(info.pluginName(), Qt::UserRole+2);
             m_visibleItemsSourceModel.data()->appendRow(item);
         }
+    }
+}
+
+//not always the corona lock action is available: netbook locks per-containment
+void Applet::unlockContainment()
+{
+    if (containment() && containment()->immutability() == Plasma::UserImmutable) {
+        containment()->setImmutability(Plasma::Mutable);
     }
 }
 
