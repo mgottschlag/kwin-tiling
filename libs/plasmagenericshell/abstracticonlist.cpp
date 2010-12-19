@@ -99,6 +99,7 @@ void AbstractIconList::setLocation(Plasma::Location location)
 
 void AbstractIconList::adjustFromOrientation()
 {
+    m_appletListLinearLayout->setOrientation(m_orientation);
     if (m_orientation == Qt::Horizontal) {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
