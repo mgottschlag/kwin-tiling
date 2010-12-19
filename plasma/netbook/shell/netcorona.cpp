@@ -66,12 +66,16 @@ void NetCorona::init()
     setContainmentActionsDefaults(Plasma::Containment::PanelContainment, panelPlugins);
     setContainmentActionsDefaults(Plasma::Containment::CustomPanelContainment, panelPlugins);
 
-    enableAction("lock widgets", false);
     setDialogManager(new NetDialogManager(this));
 
     QAction *a = new QAction(KIcon("view-pim-news"), i18n("Add page"), this);
     addAction("add page", a);
     connect(a, SIGNAL(triggered()), this, SLOT(addPage()));
+
+    //we have a page-level lock action
+    a = action("lock widgets");
+    delete a;
+    setImmutability(Plasma::Mutable);
 }
 
 void NetCorona::loadDefaultLayout()
