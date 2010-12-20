@@ -478,7 +478,7 @@ void CKCmFontInst::addFonts()
                    "application/x-font-type1 "
                    "application/x-font-pcf "
                    "application/x-font-bdf "
-                   "fonts/package");
+                   "application/vnd.kde.fontspackage");
 
     KUrl::List list=KFileDialog::getOpenUrls(KUrl(), filter, this, i18n("Add Fonts"));
 

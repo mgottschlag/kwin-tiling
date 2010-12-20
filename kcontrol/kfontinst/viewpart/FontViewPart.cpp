@@ -275,7 +275,7 @@ void CFontViewPart::timeout()
     {
         QString path(url().path());
 
-        // Is this a fonts/package file? If so, extract 1 scalable font...
+        // Is this a application/vnd.kde.fontspackage file? If so, extract 1 scalable font...
         if((package=Misc::isPackage(path)))
         {
             KZip zip(path);

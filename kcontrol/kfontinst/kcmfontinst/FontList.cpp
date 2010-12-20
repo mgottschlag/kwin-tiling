@@ -1960,7 +1960,7 @@ void CFontListView::dropEvent(QDropEvent *event)
             if(mime->is("application/x-font-ttf") ||
                mime->is("application/x-font-otf") ||
                mime->is("application/x-font-type1") ||
-               mime->is("fonts/package") ||
+               mime->is("application/vnd.kde.fontspackage") ||
                mime->is("application/x-font-pcf") ||
                mime->is("application/x-font-bdf"))
                 kurls.insert(*it);
