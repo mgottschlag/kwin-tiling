@@ -537,12 +537,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         m_profileCombo = new Plasma::ComboBox(m_controls);
         // Workaround for bug 219873
-#if (QT_VERSION >= QT_VERSION_CHECK(4, 7, 0))
         m_profileCombo->nativeWidget()->setMaxVisibleItems(4);
-#else
-        // Value passed needs to be one less than intended on Qt < 4.7.0
-        m_profileCombo->nativeWidget()->setMaxVisibleItems(3);
-#endif
         // This is necessary until QTBUG-2368 is fixed
         m_profileCombo->setZValue(110);
         connect(m_profileCombo, SIGNAL(activated(QString)),
