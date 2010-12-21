@@ -31,7 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QTimer>
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QtGui/QX11Info>
 
 // KDE
 #include <KDebug>
@@ -672,18 +671,6 @@ bool Task::isOnAllActivities() const
 QStringList Task::activities() const
 {
     return d->activities;
-}
-
-void Task::refreshActivities()
-{
-    unsigned long properties[] = { 0, NET::WM2Activities };
-    NETWinInfo info(QX11Info::display(), d->win, QX11Info::appRootWindow(), properties, 2);
-    QString result(info.activities());
-    if (result.isEmpty() || result == "ALL") {
-        d->activities.clear();
-    } else {
-        d->activities = result.split(',');
-    }
 }
 
 /*

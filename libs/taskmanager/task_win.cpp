@@ -167,4 +167,9 @@ void Task::publishIconGeometry(QRect rect)
     d->iconGeometry = rect;
 }
 
+void Task::refreshActivities()
+{
+    return;
+}
+
 } // TaskManager namespace
