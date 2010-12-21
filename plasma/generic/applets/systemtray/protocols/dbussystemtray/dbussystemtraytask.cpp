@@ -313,6 +313,11 @@ void DBusSystemTrayTask::blinkAttention()
 
 void DBusSystemTrayTask::syncMovie(const QString &m_movieName)
 {
+    bool wasRunning = false;
+    if (m_movie) {
+        wasRunning = m_movie->state() == QMovie::Running;
+    }
+
     delete m_movie;
     if (m_movieName.isEmpty()) {
         m_movie = 0;
@@ -325,6 +330,10 @@ void DBusSystemTrayTask::syncMovie(const QString &m_movieName)
     }
     if (m_movie) {
         connect(m_movie, SIGNAL(frameChanged(int)), this, SLOT(updateMovieFrame()));
+
+        if (wasRunning) {
+            m_movie->start();
+        }
     }
 }
 
