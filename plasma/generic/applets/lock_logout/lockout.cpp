@@ -28,6 +28,7 @@
 #include <QtGui/QWidget> // QWIDGETSIZE_MAX
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
+#include <QtDBus/QDBusConnectionInterface>
 #include <QGraphicsLinearLayout>
 
 // KDE
