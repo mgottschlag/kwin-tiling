@@ -522,6 +522,12 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         QFont f = p->font();
         p->setFont(smallFont);
 
+        QPen datePen = p->pen();
+        QColor dateColor = m_plainClockColor;
+        dateColor.setAlphaF(0.7);
+        datePen.setColor(dateColor);
+        p->setPen(datePen);
+
         if (formFactor() == Plasma::Horizontal && (contentsRect.height() < smallFont.pointSize()*6)) {
             p->drawText(dateRect, Qt::TextSingleLine | Qt::AlignHCenter, m_dateString);
         } else {
