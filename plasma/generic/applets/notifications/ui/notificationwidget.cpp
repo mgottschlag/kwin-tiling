@@ -333,6 +333,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
     processed.replace('\n', "<br>");
 
     QFontMetricsF fm(messageLabel->font());
+    qreal maxLine = messageLabel->rect().width();
 
     QString parsed;
 
@@ -347,8 +348,8 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
 
         if (c == '<') {
             inTag = true;
-            parsed.append(fm.elidedText(sentence, Qt::ElideRight, 250));
-            parsed.append(fm.elidedText(word, Qt::ElideRight, 250));
+            sentence.append(word);
+            parsed.append(fm.elidedText(sentence, Qt::ElideRight, maxLine*2.6));
             sentence = QString();
             word = QString();
         } else if (c == '>') {
@@ -360,15 +361,15 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
             if (inTag) {
                 parsed.append(word);
             } else {
-                sentence.append(fm.elidedText(word, Qt::ElideRight, 250));
+                sentence.append(word);
             }
             word = QString();
         }
 
         ++i;
     }
-    parsed.append(fm.elidedText(sentence, Qt::ElideRight, 300));
-    parsed.append(fm.elidedText(word, Qt::ElideRight, 250));
+    sentence.append(word);
+    parsed.append(fm.elidedText(sentence, Qt::ElideRight, maxLine*2.6));
 
     messageLabel->setText(parsed);
 
