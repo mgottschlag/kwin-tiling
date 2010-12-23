@@ -53,7 +53,13 @@ static const int MINBUTTONSIZE = 16;
 static const int MARGINSIZE = 1;
 
 LockOut::LockOut(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent, args), m_iconLock(0), m_iconSwitchUser(0), m_iconLogout(0), m_iconSleep(0), m_iconHibernate(0)
+    : Plasma::Applet(parent, args), 
+      m_iconLock(0), 
+      m_iconSwitchUser(0), 
+      m_iconLogout(0), 
+      m_iconSleep(0), 
+      m_iconHibernate(0),
+      m_changed(false)
 {
 #ifndef Q_OS_WIN
     setHasConfigurationInterface(true);
@@ -91,6 +97,64 @@ void LockOut::configChanged()
         countButtons();
     }
     showButtons();
+}
+void LockOut::buttonChanged()
+{
+    if (m_showLockButton != ui.checkBox_lock->isChecked()) {
+       m_showLockButton = !m_showLockButton;
+       m_changed = true;
+    }
+
+    if (m_showSwitchUserButton != ui.checkBox_switchUser->isChecked()) {
+        m_showSwitchUserButton = !m_showSwitchUserButton;
+        m_changed = true;
+    }
+
+    if (m_showLogoutButton != ui.checkBox_logout->isChecked()) {
+        m_showLogoutButton = !m_showLogoutButton;
+        m_changed = true;
+    }
+
+    if (m_showSleepButton != ui.checkBox_sleep->isChecked()) {
+        m_showSleepButton = !m_showSleepButton;
+        m_changed = true;
+    }
+
+    if (m_showHibernateButton != ui.checkBox_hibernate->isChecked()) {
+        m_showHibernateButton = !m_showHibernateButton;
+        m_changed = true;
+    }
+    
+    setCheckable();
+}
+void LockOut::setCheckable()
+{
+    countButtons();
+    if (m_visibleButtons == 1) {
+        if (ui.checkBox_lock->isChecked()) {
+            ui.checkBox_lock->setEnabled(false);
+        }
+        if (ui.checkBox_switchUser->isChecked()) {
+            ui.checkBox_switchUser->setEnabled(false);
+        }
+        if (ui.checkBox_logout->isChecked()) {
+            ui.checkBox_logout->setEnabled(false);
+        }
+        if (ui.checkBox_sleep->isChecked()) {
+            ui.checkBox_sleep->setEnabled(false);
+        }
+        if(ui.checkBox_hibernate->isChecked()) {
+            ui.checkBox_hibernate->setEnabled(false);
+        }
+    }
+
+    if (m_visibleButtons > 1) {
+        ui.checkBox_lock->setEnabled(true);
+        ui.checkBox_switchUser->setEnabled(true);
+        ui.checkBox_logout->setEnabled(true);
+        ui.checkBox_sleep->setEnabled(true);
+        ui.checkBox_hibernate->setEnabled(true);
+    }
 }
 
 void LockOut::countButtons()
@@ -270,35 +334,8 @@ void LockOut::clickHibernate()
 void LockOut::configAccepted()
 {
 #ifndef Q_OS_WIN
-    bool changed = false;
     KConfigGroup cg = config();
-
-    if (m_showLockButton != ui.checkBox_lock->isChecked()) {
-        m_showLockButton = !m_showLockButton;
-        changed = true;
-    }
-
-    if (m_showSwitchUserButton != ui.checkBox_switchUser->isChecked()) {
-        m_showSwitchUserButton = !m_showSwitchUserButton;
-        changed = true;
-    }
-
-    if (m_showLogoutButton != ui.checkBox_logout->isChecked()) {
-        m_showLogoutButton = !m_showLogoutButton;
-        changed = true;
-    }
-
-    if (m_showSleepButton != ui.checkBox_sleep->isChecked()) {
-        m_showSleepButton = !m_showSleepButton;
-        changed = true;
-    }
-
-    if (m_showHibernateButton != ui.checkBox_hibernate->isChecked()) {
-        m_showHibernateButton = !m_showHibernateButton;     
-        changed = true;
-    }
-
-    if (changed) {
+    if (m_changed) {
         int oldButtonCount = m_visibleButtons;
         countButtons();
 	if(m_visibleButtons == 0) {
@@ -326,15 +363,29 @@ void LockOut::createConfigurationInterface(KConfigDialog *parent)
 #ifndef Q_OS_WIN
     QWidget *widget = new QWidget(parent);
     ui.setupUi(widget);
-    parent->addPage(widget, i18n("Entries"), Applet::icon());
+    parent->addPage(widget, i18n("Please select one or more items on the list below"), Applet::icon());
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    
+    countButtons();
+    if (m_visibleButtons == 1) {
+        ui.checkBox_lock->setEnabled(!m_showLockButton);
+        ui.checkBox_switchUser->setEnabled(!m_showSwitchUserButton);
+        ui.checkBox_logout->setEnabled(!m_showLogoutButton);
+        ui.checkBox_sleep->setEnabled(!m_showSleepButton);
+        ui.checkBox_hibernate->setEnabled(!m_showHibernateButton);
+    } 
 
     ui.checkBox_lock->setChecked(m_showLockButton);
+    connect(ui.checkBox_lock, SIGNAL(toggled(bool)), this, SLOT(buttonChanged()));
     ui.checkBox_switchUser->setChecked(m_showSwitchUserButton);
+    connect(ui.checkBox_switchUser, SIGNAL(toggled(bool)), this, SLOT(buttonChanged()));
     ui.checkBox_logout->setChecked(m_showLogoutButton);
+    connect(ui.checkBox_logout, SIGNAL(toggled(bool)), this, SLOT(buttonChanged()));
     ui.checkBox_sleep->setChecked(m_showSleepButton);
+    connect(ui.checkBox_sleep, SIGNAL(toggled(bool)), this, SLOT(buttonChanged()));
     ui.checkBox_hibernate->setChecked(m_showHibernateButton);
+    connect(ui.checkBox_hibernate, SIGNAL(toggled(bool)), this, SLOT(buttonChanged()));
 #endif
 }
 

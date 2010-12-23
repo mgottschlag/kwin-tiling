@@ -51,6 +51,7 @@ class LockOut : public Plasma::Applet
         void clickLock();
         void clickSleep();
         void clickHibernate();
+        void buttonChanged();
 
     protected Q_SLOTS:
         void configAccepted();
@@ -58,6 +59,7 @@ class LockOut : public Plasma::Applet
     protected:
         void createConfigurationInterface(KConfigDialog *parent);
         void countButtons();
+        void setCheckable();
 
     private:
 #ifndef Q_OS_WIN
@@ -79,6 +81,7 @@ class LockOut : public Plasma::Applet
         void showButtons();
 
         int m_visibleButtons;
+        bool m_changed;
 };
 
 K_EXPORT_PLASMA_APPLET(lockout, LockOut)
