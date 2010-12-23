@@ -124,7 +124,7 @@ void LockOut::buttonChanged()
         m_showHibernateButton = !m_showHibernateButton;
         m_changed = true;
     }
-    
+
     setCheckable();
 }
 void LockOut::setCheckable()
@@ -146,9 +146,7 @@ void LockOut::setCheckable()
         if(ui.checkBox_hibernate->isChecked()) {
             ui.checkBox_hibernate->setEnabled(false);
         }
-    }
-
-    if (m_visibleButtons > 1) {
+    } else {
         ui.checkBox_lock->setEnabled(true);
         ui.checkBox_switchUser->setEnabled(true);
         ui.checkBox_logout->setEnabled(true);
@@ -161,7 +159,7 @@ void LockOut::countButtons()
 {
     m_visibleButtons = 0;
 
-    if (m_showLockButton){
+    if (m_showLockButton) {
         m_visibleButtons++;
     }
 
@@ -169,15 +167,15 @@ void LockOut::countButtons()
         m_visibleButtons++;
     }
 
-    if ( m_showLogoutButton){
+    if (m_showLogoutButton) {
         m_visibleButtons++;
     }
 
-    if (m_showSleepButton){
+    if (m_showSleepButton) {
         m_visibleButtons++;
     }
 
-    if (m_showHibernateButton){
+    if (m_showHibernateButton) {
         m_visibleButtons++;
     }
 }
