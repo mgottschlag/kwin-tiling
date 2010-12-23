@@ -786,6 +786,7 @@ void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine:
     d->todos.clear();
     d->journals.clear();
     d->pimEvents.clear();
+
     foreach (const QVariant &v, data) {
         Plasma::DataEngine::Data pimData = v.toHash();
         QString type = pimData.value("Type").toString();
@@ -831,6 +832,7 @@ void CalendarTable::writeConfiguration(KConfigGroup cg)
     cg.writeEntry("holidaysRegions", holidaysRegions());
     cg.writeEntry("holidaysRegionsDaysOff", holidaysRegionsDaysOff());
     cg.writeEntry("displayHolidays", d->displayHolidays);
+    cg.writeEntry("displayEvents", d->displayEvents);
 }
 
 void CalendarTable::createConfigurationInterface(KConfigDialog *parent)
@@ -845,6 +847,8 @@ void CalendarTable::createConfigurationInterface(KConfigDialog *parent)
         d->calendarConfigUi.calendarComboBox->addItem( KCalendarSystem::calendarLabel( cal ), QVariant( cal ) );
     }
     d->calendarConfigUi.calendarComboBox->setCurrentIndex( d->calendarConfigUi.calendarComboBox->findData( QVariant( d->calendarType ) ) );
+
+    d->calendarConfigUi.displayEvents->setChecked(d->displayEvents);
 
 #ifdef HAVE_KDEPIMLIBS
     QHashIterator<QString, Plasma::DataEngine::Data> it(d->holidaysRegions);
@@ -863,6 +867,7 @@ void CalendarTable::createConfigurationInterface(KConfigDialog *parent)
 void CalendarTable::applyConfigurationInterface()
 {
     setCalendar(d->calendarConfigUi.calendarComboBox->itemData(d->calendarConfigUi.calendarComboBox->currentIndex()).toString());
+    setDisplayEvents(d->calendarConfigUi.displayEvents->isChecked());
 
 #ifdef HAVE_KDEPIMLIBS
     clearHolidaysRegions();
