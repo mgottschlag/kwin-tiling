@@ -1,7 +1,4 @@
-add_subdirectory(imagebinca)
-add_subdirectory(imageshack)
 add_subdirectory(imgur)
-add_subdirectory(pastebinca)
 add_subdirectory(pastebincom)
 add_subdirectory(pasteubuntucom)
 add_subdirectory(simplestimagehosting)
