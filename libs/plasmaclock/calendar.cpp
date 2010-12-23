@@ -253,12 +253,22 @@ const Plasma::DataEngine *Calendar::dataEngine() const
     return calendarTable()->dataEngine();
 }
 
+void Calendar::setDisplayEvents(bool showEvents)
+{
+    calendarTable()->setDisplayEvents(showEvents);
+}
+
+bool Calendar::displayEvents() const
+{
+    return calendarTable()->displayEvents();
+}
+
 void Calendar::setDisplayHolidays(bool showHolidays)
 {
     calendarTable()->setDisplayHolidays(showHolidays);
 }
 
-bool Calendar::displayHolidays()
+bool Calendar::displayHolidays() const
 {
     return calendarTable()->displayHolidays();
 }
