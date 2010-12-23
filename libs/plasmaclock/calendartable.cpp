@@ -822,6 +822,7 @@ void CalendarTable::applyConfiguration(KConfigGroup cg)
         addHolidaysRegion(region, daysOff.contains(region));
     }
     setDisplayHolidays(cg.readEntry("displayHolidays", true));
+    setDisplayEvents(cg.readEntry("displayEvents", true));
 }
 
 void CalendarTable::writeConfiguration(KConfigGroup cg)
