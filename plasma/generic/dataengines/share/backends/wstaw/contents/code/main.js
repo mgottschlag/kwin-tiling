@@ -34,5 +34,5 @@ function handleResultData(data) {
         provider.error(data);
         return;
     }
-    provider.success(res[0].replace("value=", "").replace("\"", ""));
+    provider.success(res[0].replace("value=", "").replace("\"", "").replace("\"", ""));
 }
