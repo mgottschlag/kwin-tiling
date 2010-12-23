@@ -83,7 +83,7 @@ public:
     {}
 
     ClockApplet *q;
-    Ui::timezonesConfig ui;
+    Ui::timezonesConfig timezonesUi;
     Ui::generalConfig generalUi;
     QString timezone;
     QString defaultTimezone;
@@ -360,24 +360,24 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     d->calendarWidget->createConfigurationInterface(parent);
 
     QWidget *widget = new QWidget();
-    d->ui.setupUi(widget);
-    d->ui.searchLine->addTreeWidget(d->ui.timeZones);
+    d->timezonesUi.setupUi(widget);
+    d->timezonesUi.searchLine->addTreeWidget(d->timezonesUi.timeZones);
 
     parent->addPage(widget, i18n("Time Zones"), "preferences-desktop-locale");
 
     foreach (const QString &tz, d->selectedTimezones) {
-        d->ui.timeZones->setSelected(tz, true);
+        d->timezonesUi.timeZones->setSelected(tz, true);
     }
 
     updateClockDefaultsTo();
-    int defaultSelection = d->ui.clockDefaultsTo->findData(d->defaultTimezone);
+    int defaultSelection = d->timezonesUi.clockDefaultsTo->findData(d->defaultTimezone);
     if (defaultSelection < 0) {
         defaultSelection = 0; //if it's something unexpected default to local
         kDebug() << d->defaultTimezone << "not in list!?";
     }
-    d->ui.clockDefaultsTo->setCurrentIndex(defaultSelection);
+    d->timezonesUi.clockDefaultsTo->setCurrentIndex(defaultSelection);
 
-    connect(d->ui.timeZones, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(updateClockDefaultsTo()));
+    connect(d->timezonesUi.timeZones, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(updateClockDefaultsTo()));
 }
 
 void ClockApplet::createClockConfigurationInterface(KConfigDialog *parent)
@@ -429,13 +429,13 @@ void ClockApplet::configAccepted()
 {
     KConfigGroup cg = config();
 
-    cg.writeEntry("timeZones", d->ui.timeZones->selection());
+    cg.writeEntry("timeZones", d->timezonesUi.timeZones->selection());
 
-    if (d->ui.clockDefaultsTo->currentIndex() == 0) {
-        //The first position in ui.clockDefaultsTo is "Local"
+    if (d->timezonesUi.clockDefaultsTo->currentIndex() == 0) {
+        //The first position in timezonesUi.clockDefaultsTo is "Local"
         d->defaultTimezone = localTimezoneUntranslated();
     } else {
-        d->defaultTimezone = d->ui.clockDefaultsTo->itemData(d->ui.clockDefaultsTo->currentIndex()).toString();
+        d->defaultTimezone = d->timezonesUi.clockDefaultsTo->itemData(d->timezonesUi.clockDefaultsTo->currentIndex()).toString();
     }
 
     cg.writeEntry("defaultTimezone", d->defaultTimezone);
@@ -454,21 +454,21 @@ void ClockApplet::configAccepted()
 
 void ClockApplet::updateClockDefaultsTo()
 {
-    QString oldSelection = d->ui.clockDefaultsTo->currentText();
-    d->ui.clockDefaultsTo->clear();
-    d->ui.clockDefaultsTo->addItem(localTimezone(), localTimezone());
-    foreach(const QString &tz, d->ui.timeZones->selection()) {
-        d->ui.clockDefaultsTo->addItem(KTimeZoneWidget::displayName(KTimeZone(tz)), tz);
+    QString oldSelection = d->timezonesUi.clockDefaultsTo->currentText();
+    d->timezonesUi.clockDefaultsTo->clear();
+    d->timezonesUi.clockDefaultsTo->addItem(localTimezone(), localTimezone());
+    foreach(const QString &tz, d->timezonesUi.timeZones->selection()) {
+        d->timezonesUi.clockDefaultsTo->addItem(KTimeZoneWidget::displayName(KTimeZone(tz)), tz);
     }
-    int newPosition = d->ui.clockDefaultsTo->findText(oldSelection);
+    int newPosition = d->timezonesUi.clockDefaultsTo->findText(oldSelection);
     if (newPosition >= 0) {
-        d->ui.clockDefaultsTo->setCurrentIndex(newPosition);
+        d->timezonesUi.clockDefaultsTo->setCurrentIndex(newPosition);
     }
-    if (d->ui.clockDefaultsTo->count() > 1) {
-        d->ui.clockDefaultsTo->setEnabled(true);
+    if (d->timezonesUi.clockDefaultsTo->count() > 1) {
+        d->timezonesUi.clockDefaultsTo->setEnabled(true);
     } else {
-        // Only "Local" in ui.clockDefaultsTo
-        d->ui.clockDefaultsTo->setEnabled(false);
+        // Only "Local" in timezonesUi.clockDefaultsTo
+        d->timezonesUi.clockDefaultsTo->setEnabled(false);
     }
 }
 
