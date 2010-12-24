@@ -695,7 +695,12 @@ void Battery::updateStatus()
             ++batteryCount;
         }
 
-        m_acLabelLabel->setText(i18n("AC Adapter: "));
+    #if KDE_IS_VERSION(4, 6, 60)
+        m_acLabelLabel->setText(i18n("AC Adapter:"));
+    #else
+        // Avoid breaking string freeze
+        m_acLabelLabel->setText(i18n("AC Adapter: ").trimmed());
+    #endif
         if (m_acAdapterPlugged) {
             m_acInfoLabel->setText(i18n("<b>Plugged in</b>"));
         } else {
