@@ -207,7 +207,10 @@ void StackDialog::paintEvent(QPaintEvent *e)
 void StackDialog::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
+
     adjustPosition(adjustedSavedPos());
+
+    adjustWindowToTilePos();
 
     if (m_autoHide) {
         m_hideTimer->start(hideTimeout);
@@ -232,7 +235,9 @@ void StackDialog::resizeEvent(QResizeEvent *event)
     Q_UNUSED(event)
     adjustWindowToTilePos();
     Plasma::Dialog::resizeEvent(event);
-    adjustPosition(pos());
+    if (!m_hasCustomPosition) {
+        move(m_applet->containment()->corona()->popupPosition(m_applet, size()));
+    }
 }
 
 void StackDialog::moveEvent(QMoveEvent *event)
