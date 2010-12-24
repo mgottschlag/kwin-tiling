@@ -518,7 +518,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_controlsLayout->addItem(m_remainingInfoLabel, row, 1);
         row++;
 
-        Battery *m_extenderApplet = static_cast<Battery*>(Plasma::Applet::load("battery"));
+        Battery *m_extenderApplet = new Battery(0, QVariantList());
         m_extenderApplet->setParent(m_controls);
         m_extenderApplet->setAcceptsHoverEvents(false);
         m_extenderApplet->setParentItem(m_controls);
