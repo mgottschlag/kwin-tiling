@@ -554,6 +554,7 @@ void Launcher::init()
     layout->addWidget(d->contentSwitcher);
 
     setLayout(layout);
+    setAttribute(Qt::WA_TranslucentBackground);
     //setBackgroundRole(QPalette::AlternateBase);
     //setAutoFillBackground(true);
 
