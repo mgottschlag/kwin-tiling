@@ -426,6 +426,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         if (containment() && containment()->corona()) {
             unlockAction = containment()->corona()->action("lock widgets");
         }
+
         if (unlockAction) {
             disconnect(m_visibleItemsUi.unlockButton, SIGNAL(clicked()), this, SLOT(unlockContainment()));
             connect(m_visibleItemsUi.unlockButton, SIGNAL(clicked()), unlockAction, SLOT(trigger()), Qt::UniqueConnection);
@@ -629,11 +630,11 @@ void Applet::configAccepted()
         KComboBox *itemCombo = static_cast<KComboBox *>(hiddenList->itemWidget(item, 1));
         //kDebug() << (item->checkState() == Qt::Checked) << item->data(Qt::UserRole).toString();
         const QString taskTypeId = item->data(0, Qt::UserRole).toString();
-        //Always hidden
         if (itemCombo->currentIndex() == 1) {
+            //Always hidden
             hiddenTypes << taskTypeId;
-        //Always visible
         } else if (itemCombo->currentIndex() == 2) {
+            //Always visible
             alwaysShownTypes << taskTypeId;
         }
 
