@@ -49,6 +49,7 @@ SessionRunner::SessionRunner(QObject *parent, const QVariantList &args)
     rebootSyntax.addExampleQuery(i18nc("restart computer command", "reboot"));
     addSyntax(rebootSyntax);
 
+    m_triggerWord = i18nc("switch user command", "switch");
     addSyntax(Plasma::RunnerSyntax(i18nc("switch user command", "switch :q:"),
                      i18n("Switches to the active session for the user :q:, "
                           "or lists all active sessions if :q: is not provided")));
@@ -117,23 +118,17 @@ void SessionRunner::match(Plasma::RunnerContext &context)
     if (term.size() < 3) {
         return;
     }
+
     // first compare with SESSIONS. this must *NOT* be translated (i18n)
     // as it is used as an internal command trigger (e.g. via d-bus),
     // not as a user supplied query. and yes, "Ugh, magic strings"
-    bool listAll = (term == "SESSIONS");
+    bool listAll = term.compare("SESSIONS", Qt::CaseInsensitive) == 0 ||
+                   term.compare(i18nc("User sessions", "sessions"), Qt::CaseInsensitive) == 0;
 
     if (!listAll) {
-        //no luck, try switch user command
-        if (term.startsWith(i18nc("switch user command", "switch"), Qt::CaseInsensitive)) {
-            // interestingly, this means that if one wants to switch to a
-            // session named "switch", they'd have to enter
-            // switch switch. ha!
-
-            // we don't know the size of 'switch' translated to your language, do we?
-            QStringList words = term.split(' ');
-            int switchCmdSize = words.at(0).size();
-
-            user = term.right(term.size() - switchCmdSize).trimmed();
+        //no luck, try the "switch" user command
+        if (term.startsWith(m_triggerWord, Qt::CaseInsensitive)) {
+            user = term.right(term.size() - m_triggerWord.length()).trimmed();
             listAll = user.isEmpty();
             matchUser = !listAll;
         } else {

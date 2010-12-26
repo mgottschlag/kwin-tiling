@@ -44,6 +44,7 @@ class SessionRunner : public Plasma::AbstractRunner
         void lock();
         void matchCommands(QList<Plasma::QueryMatch> &matches, const QString& term);
 
+        QString m_triggerWord;
         KDisplayManager dm;
 };
 
