@@ -6,11 +6,11 @@ install(FILES
     login_active.png
     login_normal.png
     pw_icon.png
-    ethais.xml
+    horos.xml
     rectangle.png
     rectangle_overlay.png
     screenshot.png
     session_normal.png
     system_normal.png
     user_icon.png
-    DESTINATION ${DATA_INSTALL_DIR}/kdm/themes/ethais)
+    DESTINATION ${DATA_INSTALL_DIR}/kdm/themes/horos)
