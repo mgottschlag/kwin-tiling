@@ -134,11 +134,8 @@ void SessionRunner::match(Plasma::RunnerContext &context)
             int switchCmdSize = words.at(0).size();
 
             user = term.right(term.size() - switchCmdSize).trimmed();
-            matchUser = true;
-            // can't match anything below, since it's just "switch"
-           if (matchUser && user.isEmpty()) {       
-                return;
-           }
+            listAll = user.isEmpty();
+            matchUser = !listAll;
         } else {
             // we know it's not SESSION or "switch <something>", so let's
             // try some other possibilities
