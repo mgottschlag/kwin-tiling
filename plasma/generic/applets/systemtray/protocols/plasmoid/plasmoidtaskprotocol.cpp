@@ -58,14 +58,14 @@ void PlasmoidProtocol::forwardConstraintsEvent(Plasma::Constraints constraints, 
 
 void PlasmoidProtocol::loadFromConfig(Plasma::Applet *parent)
 {
-    KConfigGroup cg = parent->config();
     QHash<QString, PlasmoidTask*> existingTasks = m_tasks.value(parent);
 
     if (m_tasks.contains(parent)) {
         m_tasks[parent].clear();
     }
 
-    KConfigGroup appletGroup(&cg, "Applets");
+    KConfigGroup appletGroup = parent->config();
+    appletGroup = KConfigGroup(&appletGroup, "Applets");
     foreach (const QString &groupName, appletGroup.groupList()) {
         KConfigGroup childGroup(&appletGroup, groupName);
         QString appletName = childGroup.readEntry("plugin", QString());
@@ -81,7 +81,6 @@ void PlasmoidProtocol::loadFromConfig(Plasma::Applet *parent)
         }
 
         addApplet(appletName, groupName.toInt(), parent);
-
         existingTasks.remove(appletName);
     }
 
@@ -109,7 +108,6 @@ void PlasmoidProtocol::addApplet(const QString appletName, const int id, Plasma:
 
 
     m_tasks[parent].insert(appletName, task);
-
     connect(task, SIGNAL(taskDeleted(Plasma::Applet *, const QString &)), this, SLOT(cleanupTask(Plasma::Applet *, const QString &)));
     emit taskCreated(task);
 }
