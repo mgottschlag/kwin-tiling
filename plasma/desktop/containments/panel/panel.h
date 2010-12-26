@@ -94,7 +94,7 @@ private:
     Spacer *m_lastSpace;
     QTimer *m_lastSpaceTimer;
     QGraphicsLinearLayout *m_layout;
-    QWeakPointer<Plasma::Applet>m_lastResizedApplet;
+    QList<QWeakPointer<Plasma::Applet> > m_resizedApplets;
 
     friend class Spacer;
 };

@@ -214,6 +214,9 @@ void Panel::adjustLastSpace()
 void Panel::enableUpdateSize()
 {
     m_canResize = true;
+    if (!m_resizedApplets.isEmpty()) {
+        updateSize();
+    }
 }
 
 void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
@@ -293,7 +296,12 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
 void Panel::delayedUpdateSize()
 {
-    m_lastResizedApplet = qobject_cast<Plasma::Applet *>(sender());
+    Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(sender());
+    if (!applet || m_resizedApplets.contains(applet)) {
+        return;
+    }
+
+    m_resizedApplets.append(applet);
     QTimer::singleShot(0, this, SLOT(updateSize()));
 }
 
@@ -320,29 +328,35 @@ void Panel::appletWasRemoved(Plasma::Applet* applet)
 
 void Panel::updateSize()
 {
-    Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(sender());
-    applet = m_lastResizedApplet.data();
+    if (!m_canResize) {
+        return;
+    }
 
-    if (m_canResize && applet) {
-        if (formFactor() == Plasma::Horizontal) {
-            const int delta = applet->preferredWidth() - applet->size().width();
-            //setting the preferred width when delta = 0 and preferredWidth() < minimumWidth()
-            // leads to the same thing as setPreferredWidth(minimumWidth())
-            if (delta != 0) {
-                setPreferredWidth(preferredWidth() + delta);
-            }
-        } else if (formFactor() == Plasma::Vertical) {
-            const int delta = applet->preferredHeight() - applet->size().height();
-            if (delta != 0) {
-                setPreferredHeight(preferredHeight() + delta);
-            }
+    int delta = 0;
+    foreach (QWeakPointer<Plasma::Applet> appletPtr, m_resizedApplets) {
+        Plasma::Applet *applet = appletPtr.data();
+        if (!applet) {
+            continue;
         }
 
-        resize(preferredSize());
-        //for a while we won't execute updateSize() again
-        m_canResize = false;
-        QTimer::singleShot(400, this, SLOT(enableUpdateSize()));
+        if (formFactor() == Plasma::Horizontal) {
+            delta += applet->preferredWidth() - applet->size().width();
+        } else if (formFactor() == Plasma::Vertical) {
+            delta += applet->preferredHeight() - applet->size().height();
+        }
     }
+    m_resizedApplets.clear();
+
+    //setting the preferred width when delta = 0 and preferredWidth() < minimumWidth()
+    // leads to the same thing as setPreferredWidth(minimumWidth())
+    if (delta != 0) {
+        setPreferredWidth(preferredWidth() + delta);
+    }
+
+    resize(preferredSize());
+    //for a while we won't execute updateSize() again
+    m_canResize = false;
+    QTimer::singleShot(400, this, SLOT(enableUpdateSize()));
 }
 
 void Panel::updateBorders(const QRect &geom, bool inPaintEvent)
