@@ -469,7 +469,7 @@ void Calendar::goToWeek(int newWeek)
 
 void Calendar::showYearSpinBox()
 {
-    QGraphicsLinearLayout *hLayout = (QGraphicsLinearLayout*)d->year->parentLayoutItem();
+    QGraphicsLinearLayout *hLayout = static_cast<QGraphicsLinearLayout *>(d->year->parentLayoutItem());
 
     d->year->hide();
     hLayout->removeItem(d->year);
@@ -483,7 +483,7 @@ void Calendar::showYearSpinBox()
 
 void Calendar::hideYearSpinBox()
 {
-    QGraphicsLinearLayout *hLayout = (QGraphicsLinearLayout*)d->yearSpinBox->parentLayoutItem();
+    QGraphicsLinearLayout *hLayout = static_cast<QGraphicsLinearLayout *>(d->yearSpinBox->parentLayoutItem());
     hLayout->removeItem(d->yearSpinBox);
     hLayout->insertItem(s_yearWidgetIndex, d->year);
     d->yearSpinBox->hide();
