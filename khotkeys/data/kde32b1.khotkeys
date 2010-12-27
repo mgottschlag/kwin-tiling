@@ -1391,6 +1391,7 @@ Name[ia]=Exeque appello de D-Bus 'qdbus org.kde.krunner /App display'
 Name[it]=Effettua chiamata D-Bus 'qdbus org.kde.krunner /App display'
 Name[kk]=D-Bus 'qdbus org.kde.krunner /App display' шақыруын орындау
 Name[km]=អនុវត្ត​ការ​ហៅ D-Bus 'qdbus org.kde.krunner /App display'
+Name[nb]=Kjør D-Bus-kallet «qdbus org.kde.krunner /App display»
 Name[nl]=Voer de D-Bus oproep 'qdbus org.kde.krunner /App display' uit
 Name[pt]=Efectuar a chamada de D-Bus 'qdbus org.kde.krunner /App display'
 Name[pt_BR]=Executar chamada do D-Bus 'qdbus org.kde.krunner /App display'
