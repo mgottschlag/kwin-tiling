@@ -68,18 +68,7 @@ void BrandingButton::checkBranding()
 
 void BrandingButton::openHomepage()
 {
-    //FIXME: 4.3 .. add a brandingConfig to Theme
-    KUrl home("http://www.kde.org");
-    QString themePath = KStandardDirs::locate("data", "desktoptheme/" +
-                                              Plasma::Theme::defaultTheme()->themeName() +
-                                              "/metadata.desktop");
-    if (!themePath.isEmpty()) {
-        KConfig c(themePath);
-        KConfigGroup brandConfig(&c, "Branding");
-        home = brandConfig.readEntry("homepage", home);
-    }
-
-    new KRun(home, topLevelWidget(), false, false);
+    new KRun(Plasma::Theme::defaultTheme()->homepage(), topLevelWidget(), false, false);
 }
 
 void BrandingButton::paintEvent(QPaintEvent *event)
