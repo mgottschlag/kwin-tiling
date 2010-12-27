@@ -171,8 +171,8 @@ void LauncherApplet::popupEvent(bool show)
 {
     if (show) {
         Plasma::ToolTipManager::self()->clearContent(this);
-        d->launcher->setLauncherOrigin(popupPlacement(), location());
         d->createLauncher();
+        d->launcher->setLauncherOrigin(popupPlacement(), location());
     }
 }
 
