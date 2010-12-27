@@ -283,6 +283,9 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
         } else {
             setMinimumSize(minWidth, minHeight);
         }
+        if (parentLayoutItem() && parentLayoutItem()->isLayout()) {
+            static_cast<QGraphicsLayout *>(parentLayoutItem())->invalidate();
+        }
 
         if (showToolTips) {
             Plasma::ToolTipManager::self()->registerWidget(this);
