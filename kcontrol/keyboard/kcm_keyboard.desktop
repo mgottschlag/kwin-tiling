@@ -7,7 +7,6 @@ X-DocPath=kcontrol/keyboard/index.html
 Categories=Qt;KDE;X-KDE-settings-hardware;
 
 X-KDE-Library=kcm_keyboard
-X-KDE-PluginKeyword=keyboard
 X-KDE-Init-Symbol=keyboard
 X-KDE-ParentApp=kcontrol
 
