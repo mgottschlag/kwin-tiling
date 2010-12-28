@@ -57,7 +57,7 @@ KeyboardDaemon::KeyboardDaemon(QObject *parent, const QList<QVariant>&)
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
 	dbus.registerService(KEYBOARD_DBUS_SERVICE_NAME);
-	dbus.registerObject(KEYBOARD_DBUS_OBJECT_PATH, this, QDBusConnection::ExportScriptableSlots);
+	dbus.registerObject(KEYBOARD_DBUS_OBJECT_PATH, this, QDBusConnection::ExportScriptableSlots | QDBusConnection::ExportScriptableSignals);
     dbus.connect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT( configureKeyboard() ));
 
 	configureKeyboard();
@@ -149,6 +149,7 @@ void KeyboardDaemon::registerListeners()
 	connect(xEventNotifier, SIGNAL(newKeyboardDevice()), this, SLOT(configureKeyboard()));
 	connect(xEventNotifier, SIGNAL(layoutChanged()), &layoutMemory, SLOT(layoutChanged()));
 	connect(xEventNotifier, SIGNAL(layoutMapChanged()), &layoutMemory, SLOT(layoutMapChanged()));
+	connect(xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));
 	xEventNotifier->start();
 }
 
@@ -163,6 +164,7 @@ void KeyboardDaemon::unregisterListeners()
 		disconnect(xEventNotifier, SIGNAL(newKeyboardDevice()), this, SLOT(configureKeyboard()));
 		disconnect(xEventNotifier, SIGNAL(layoutChanged()), &layoutMemory, SLOT(layoutChanged()));
 		disconnect(xEventNotifier, SIGNAL(layoutMapChanged()), &layoutMemory, SLOT(layoutMapChanged()));
+		disconnect(xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));
 	}
 }
 
@@ -172,6 +174,15 @@ void KeyboardDaemon::globalSettingsChanged(int category)
 		// TODO: can we do it more efficient or recreating action collection is the only way?
 		unregisterShortcut();
 		registerShortcut();
+	}
+}
+
+void KeyboardDaemon::layoutChanged()
+{
+	LayoutUnit newLayout = X11Helper::getCurrentLayout();
+	if( newLayout != currentLayout ) {
+		currentLayout = newLayout;
+		emit currentLayoutChanged(newLayout.toString());
 	}
 }
 
