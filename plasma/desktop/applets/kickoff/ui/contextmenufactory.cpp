@@ -278,6 +278,10 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
                 if (corona) {
                     int vdesk = KWindowSystem::currentDesktop();
                     Plasma::Containment *desktop = corona->containmentForScreen(containment->screen(), vdesk);
+                    //PVDA disabled?
+                    if (!desktop) {
+                        desktop = corona->containmentForScreen(containment->screen(), -1);
+                    }
                     if (desktop) {
                         QVariantList args;
                         args << kurl.url() << index.data(Kickoff::IconNameRole);
