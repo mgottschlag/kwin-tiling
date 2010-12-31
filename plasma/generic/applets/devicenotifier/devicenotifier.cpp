@@ -216,8 +216,9 @@ void DeviceNotifier::init()
 void DeviceNotifier::newNotification(const QString &source)
 {
     DataEngine::Data data = m_deviceNotificationsEngine->query(source);
-    //TODO Check if we are actually displaying the device in question
-    showNotification(data["error"].toString(), data["errorDetails"].toString(), data["udi"].toString());
+    if (m_lastPlugged.contains(data["udi"].toString()) && !m_hiddenDevices.contains(data["udi"].toString())) {
+        showNotification(data["error"].toString(), data["errorDetails"].toString(), data["udi"].toString());
+    }
 }
 
 void DeviceNotifier::configChanged()
