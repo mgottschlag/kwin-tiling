@@ -1392,6 +1392,7 @@ Name[ia]=Exeque appello de D-Bus 'qdbus org.kde.krunner /App display'
 Name[it]=Effettua chiamata D-Bus 'qdbus org.kde.krunner /App display'
 Name[kk]=D-Bus 'qdbus org.kde.krunner /App display' шақыруын орындау
 Name[km]=អនុវត្ត​ការ​ហៅ D-Bus 'qdbus org.kde.krunner /App display'
+Name[ko]=D-Bus 호출 'qdbus org.kde.krunner /App display'를 실행함
 Name[lt]=Vykdyti D-Bus kvietimą 'qdbus org.kde.krunner /App display'
 Name[nb]=Kjør D-Bus-kallet «qdbus org.kde.krunner /App display»
 Name[nds]=D-Bus- Oproop "qdbus org.kde.krunner /App display" utföhren
