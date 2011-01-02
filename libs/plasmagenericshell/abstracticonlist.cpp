@@ -93,6 +93,7 @@ void AbstractIconList::setLocation(Plasma::Location location)
         return;
     }
 
+    m_location = location;
     m_orientation = ((location == Plasma::LeftEdge || location == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
     adjustFromOrientation();
 }
