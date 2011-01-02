@@ -25,13 +25,9 @@
 
 AppletIconWidget::AppletIconWidget(PlasmaAppletItem *appletItem)
     : AbstractIcon(0),
-      m_appletItem(appletItem),
       m_runningIcon("dialog-ok")
 {
-    if (appletItem) {
-        setName(appletItem->name());
-        setDraggable(true);
-    }
+    setAppletItem(appletItem);
 }
 
 AppletIconWidget::~AppletIconWidget()
@@ -45,11 +41,32 @@ PlasmaAppletItem *AppletIconWidget::appletItem()
 
 void AppletIconWidget::setAppletItem(PlasmaAppletItem *appletItem)
 {
+    if (m_appletItem) {
+        QStandardItemModel *model = m_appletItem.data()->model();
+        if (model) {
+            disconnect(model, 0, this, 0);
+        }
+    }
+
     m_appletItem = appletItem;
     if (appletItem) {
+        kDebug() << "Applet item!" << appletItem << appletItem->name() << appletItem->model();
         setName(appletItem->name());
+        QStandardItemModel *model = appletItem->model();
+        if (model) {
+            connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
+        }
     }
+
+    setDraggable(appletItem);
     update();
+}
+
+void AppletIconWidget::itemChanged(QStandardItem *item)
+{
+    if (item == m_appletItem.data()) {
+        update();
+    }
 }
 
 QPixmap AppletIconWidget::pixmap(const QSize &size)
@@ -90,4 +107,6 @@ void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 }
 
+
+#include "appleticon.moc"
 

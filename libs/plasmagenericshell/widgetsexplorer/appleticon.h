@@ -40,6 +40,9 @@ class AppletIconWidget : public Plasma::AbstractIcon
         QMimeData* mimeData();
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
+    protected Q_SLOTS:
+        void itemChanged(QStandardItem *item);
+
     private:
         QWeakPointer<PlasmaAppletItem> m_appletItem;
         KIcon m_runningIcon;
