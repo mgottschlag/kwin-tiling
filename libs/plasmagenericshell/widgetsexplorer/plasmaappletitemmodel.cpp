@@ -99,6 +99,7 @@ int PlasmaAppletItem::running() const
 void PlasmaAppletItem::setRunning(int count)
 {
     m_runningCount = count;
+    emitDataChanged();
 }
 
 bool PlasmaAppletItem::matches(const QString &pattern) const
@@ -122,8 +123,11 @@ bool PlasmaAppletItem::isFavorite() const
 
 void PlasmaAppletItem::setFavorite(bool favorite)
 {
-    m_favorite = favorite;
-    m_model->setFavorite(m_info.pluginName(), favorite);
+    if (m_favorite != favorite) {
+        m_favorite = favorite;
+        m_model->setFavorite(m_info.pluginName(), favorite);
+        emitDataChanged();
+    }
 }
 
 bool PlasmaAppletItem::isLocal() const
@@ -291,7 +295,7 @@ void PlasmaAppletItemModel::setFavorite(const QString &plugin, bool favorite)
         if (!m_favorites.contains(plugin)) {
             m_favorites.append(plugin);
         }
-    } else if (m_favorites.contains(plugin)) {
+    } else {
         m_favorites.removeAll(plugin);
     }
 
