@@ -330,7 +330,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
 
     /*if there is a < that is not closed as a tag, replace it with an entity*/
     processed = processed.replace(QRegExp("<([^>]*($|<))"), "&lt;\\1");
-    processed.replace('\n', "</br>");
+    processed.replace('\n', "<br>");
 
     QFontMetricsF fm(messageLabel->font());
     qreal maxLine = messageLabel->rect().width();
