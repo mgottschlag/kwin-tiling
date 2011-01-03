@@ -68,6 +68,7 @@ public:
     void setScreen(int screen);
 
 public Q_SLOTS:
+    void activate();
     void showWidgetExplorer();
     void showActivityManager();
     void closeIfNotFocussed();
