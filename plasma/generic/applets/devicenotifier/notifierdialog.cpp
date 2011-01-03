@@ -810,7 +810,7 @@ void NotifierDialog::leftActionActivated(DeviceItem *item)
             if (drive) {
                 drive->eject();
             }
-        } else if (device.is<Solid::StorageVolume>()) {
+        } else if (device.is<Solid::StorageAccess>()) {
             Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
             if (access && access->isAccessible()) {
                 access->teardown();
