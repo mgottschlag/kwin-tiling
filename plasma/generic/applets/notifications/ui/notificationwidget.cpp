@@ -330,7 +330,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
 
     /*if there is a < that is not closed as a tag, replace it with an entity*/
     processed = processed.replace(QRegExp("<([^>]*($|<))"), "&lt;\\1");
-    processed.replace('\n', "<br>");
+    processed.replace('\n', "</br>");
 
     QFontMetricsF fm(messageLabel->font());
     qreal maxLine = messageLabel->rect().width();
@@ -344,7 +344,6 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
 
     while (i != processed.end()) {
         QChar c = *i;
-        word.append(c);
 
         if (c == '<') {
             inTag = true;
@@ -352,22 +351,28 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
             parsed.append(fm.elidedText(sentence, Qt::ElideRight, maxLine*2.6));
             sentence = QString();
             word = QString();
+            word.append(c);
         } else if (c == '>') {
+            word.append(c);
             inTag = false;
             parsed.append(word);
             word = QString();
             sentence = QString();
         } else if (c == ' ') {
+            word.append(c);
             if (inTag) {
                 parsed.append(word);
             } else {
                 sentence.append(word);
             }
             word = QString();
+        } else {
+            word.append(c);
         }
 
         ++i;
     }
+
     sentence.append(word);
     parsed.append(fm.elidedText(sentence, Qt::ElideRight, maxLine*2.6));
 
