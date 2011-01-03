@@ -124,12 +124,11 @@ void HotplugEngine::updatePredicates(const QString &path)
         Solid::Device device(it.value());
         QString udi(it.key());
 
-        QStringList predicates = predicatesForDevice(device);
+        const QStringList predicates = predicatesForDevice(device);
         if (!predicates.isEmpty()) {
             if (sources().contains(udi)) {
                 Plasma::DataEngine::Data data;
                 data.insert("predicateFiles", predicates);
-
                 setData(udi, data);
             } else {
                 onDeviceAdded(device, false);
@@ -200,9 +199,8 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device, bool added)
         findPredicates();
     }
 
-    QStringList interestingDesktopFiles = predicatesForDevice(device);
-
-    bool isEncryptedContainer =  m_encryptedPredicate.matches(device);
+    const QStringList interestingDesktopFiles = predicatesForDevice(device);
+    const bool isEncryptedContainer = m_encryptedPredicate.matches(device);
 
     if (!interestingDesktopFiles.isEmpty() || isEncryptedContainer) {
         //kDebug() << device.product();
