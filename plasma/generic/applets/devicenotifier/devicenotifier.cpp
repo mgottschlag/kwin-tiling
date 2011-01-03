@@ -361,6 +361,12 @@ void DeviceNotifier::deviceAdded(const Solid::Device &device, bool hotplugged)
         if (drive && (!drive->isHotpluggable() && !drive->isRemovable())) {
             return;
         }
+        //HACK for 4.6: Treat remote shares as non-removable devices
+        //              for 4.7 we do need more configuration options
+        //              and better detection of remote shares
+        if (device.parentUdi().startsWith("/org/kde/fstab")) {
+            return;
+        }
     }
 
     kDebug() << "DeviceNotifier:: source added" << udi;
