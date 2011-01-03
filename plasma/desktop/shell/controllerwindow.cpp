@@ -114,6 +114,10 @@ ControllerWindow::~ControllerWindow()
     delete m_view;
 }
 
+void ControllerWindow::activate()
+{
+    KWindowSystem::activateWindow(winId());
+}
 
 void ControllerWindow::adjustAndSetMaxSize()
 {
