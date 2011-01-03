@@ -180,7 +180,9 @@ Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
             if (!containment || !containment->context()->currentActivityId().isEmpty()) {
                 // possibly a plugin failure, let's go for the default
                 containment = PlasmaApp::self()->corona()->addContainment(m_plugin);
-                containment->setScreen(screen, desktop);
+                if (containment) {
+                    containment->setScreen(screen, desktop);
+                }
             }
             //last hope, create a new one
             if (!containment) {
