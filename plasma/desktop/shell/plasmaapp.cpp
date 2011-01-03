@@ -1256,6 +1256,10 @@ void PlasmaApp::setFixedDashboard(bool fixedDashboard)
             c = m_corona->addContainment("desktopDashboard");
         }
 
+        //everything failed? probably a badly packaged plasma
+        if (!c) {
+            return;
+        }
         m_corona->addOffscreenWidget(c);
     }
 
