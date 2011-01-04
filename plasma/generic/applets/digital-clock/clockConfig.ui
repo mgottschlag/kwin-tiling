@@ -6,11 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>522</width>
-    <height>356</height>
+    <width>469</width>
+    <height>341</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0" rowminimumheight="0,0,0,0,0,0,0,0,0,0,0,0,0">
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="label_6">
      <property name="font">
@@ -344,33 +347,76 @@
    <item row="10" column="1">
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>Show date:</string>
+      <string>Date format:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
-     <property name="buddy">
-      <cstring>showDate</cstring>
-     </property>
     </widget>
+   </item>
+   <item row="12" column="2">
+    <spacer>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::MinimumExpanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>2</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item row="10" column="2">
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
-      <widget class="QCheckBox" name="showDate">
-       <property name="toolTip">
-        <string>Display the date of the day</string>
-       </property>
-       <property name="whatsThis">
-        <string/>
-       </property>
-       <property name="text">
-        <string/>
+      <widget class="KComboBox" name="dateStyle">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
       </widget>
      </item>
      <item>
       <spacer name="horizontalSpacer_7">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::MinimumExpanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="11" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QPushButton" name="configureDateFormats">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>&amp;Configure KDE date formats</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -383,117 +429,6 @@
       </spacer>
      </item>
     </layout>
-   </item>
-   <item row="11" column="1">
-    <widget class="QLabel" name="label_8">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>Include the day of the week:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>showDay</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="2">
-    <layout class="QHBoxLayout" name="horizontalLayout_7">
-     <item>
-      <widget class="QCheckBox" name="showDay">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Display day of the week</string>
-       </property>
-       <property name="whatsThis">
-        <string>Add the day of the week to the date display.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_8">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>37</width>
-         <height>18</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item row="12" column="1">
-    <widget class="QLabel" name="label_10">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>Include the year:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>showYear</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="2">
-    <layout class="QHBoxLayout" name="horizontalLayout_8">
-     <item>
-      <widget class="QCheckBox" name="showYear">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Display the current year</string>
-       </property>
-       <property name="whatsThis">
-        <string>Add the year to the date string.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_10">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>37</width>
-         <height>18</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item row="13" column="2">
-    <spacer>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
@@ -517,45 +452,13 @@
  <resources/>
  <connections>
   <connection>
-   <sender>showDate</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>showDay</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>210</x>
-     <y>308</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>200</x>
-     <y>335</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>showDate</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>showYear</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>210</x>
-     <y>308</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>360</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>useCustomColor</sender>
    <signal>toggled(bool)</signal>
    <receiver>plainClockColor</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>182</x>
+     <x>168</x>
      <y>124</y>
     </hint>
     <hint type="destinationlabel">
@@ -571,44 +474,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>181</x>
-     <y>183</y>
+     <x>168</x>
+     <y>185</y>
     </hint>
     <hint type="destinationlabel">
      <x>209</x>
      <y>182</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>showDate</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>label_8</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>191</x>
-     <y>300</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>45</x>
-     <y>330</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>showDate</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>label_10</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>191</x>
-     <y>295</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>70</x>
-     <y>359</y>
     </hint>
    </hints>
   </connection>

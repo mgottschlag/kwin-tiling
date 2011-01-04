@@ -57,6 +57,7 @@ class Clock : public ClockApplet
 
     private slots:
         void configDrawShadowToggled(bool value);
+        void launchDateKcm();
 
     private:
         void updateSize();
@@ -74,9 +75,7 @@ class Clock : public ClockApplet
         QRect m_timeRect;
         QRect m_dateRect;
 
-        bool m_showDate;
-        bool m_showYear;
-        bool m_showDay;
+        int m_dateStyle; //0 = don't show a date
         bool m_showSeconds;
         bool m_showTimezone;
         bool m_dateTimezoneBesides;

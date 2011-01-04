@@ -1,6 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2007-2008 by Riccardo Iaconelli <riccardo@kde.org>      *
  *   Copyright (C) 2007-2010 by Sebastian Kügler <sebas@kde.org>           *
+ *   Copyright (C) 2011      by Teo Mrnjavac <teo@kde.org>                 *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -38,6 +39,8 @@
 #include <KGlobalSettings>
 #include <KConfigDialog>
 #include <KCalendarSystem>
+#include <KServiceTypeTrader>
+#include <KRun>
 #include <Plasma/Theme>
 #include <Plasma/Dialog>
 #include <Plasma/ToolTipManager>
@@ -51,9 +54,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_useCustomShadowColor(false),
       m_plainClockShadowColor(),
       m_drawShadow(true),
-      m_showDate(false),
-      m_showYear(false),
-      m_showDay(false),
+      m_dateStyle(0),
       m_showSeconds(false),
       m_showTimezone(false),
       m_dateTimezoneBesides(false),
@@ -115,7 +116,7 @@ void Clock::updateSize()
     }
 
     int w, h;
-    if (m_showDate || showTimezone()) {
+    if (m_dateStyle || showTimezone()) {
         const QFont f(KGlobalSettings::smallestReadableFont());
         const QFontMetrics metrics(f);
         // if there's enough vertical space, wrap the words
@@ -164,9 +165,20 @@ void Clock::clockConfigChanged()
 
     kDebug() << "showTimezone:" << m_showTimezone;
 
-    m_showDate = cg.readEntry("showDate", false);
-    m_showYear = cg.readEntry("showYear", false);
-    m_showDay = cg.readEntry("showDay", true);
+    if (cg.hasKey("showDate")) {    //legacy config entry as of 2011-1-4
+        m_dateStyle = cg.readEntry("showDate", false) ? 2 : 0; //short date : no date
+        cg.deleteEntry("showDate");
+    }
+    else {
+        m_dateStyle = cg.readEntry("dateStyle", 0);
+    }
+
+    if (cg.hasKey("showYear")) {   //legacy config entry as of 2011-1-4
+        if( m_dateStyle ) {
+            m_dateStyle = cg.readEntry("showYear", false) ? 2 : 1; //short date : compact date
+        }
+        cg.deleteEntry("showYear");
+    }
 
     m_showSeconds = cg.readEntry("showSeconds", false);
     if (m_showSeconds) {
@@ -220,9 +232,6 @@ void Clock::createClockConfigurationInterface(KConfigDialog *parent)
     ui.setupUi(widget);
     parent->addPage(widget, i18n("Appearance"), "view-media-visualization");
 
-    ui.showDate->setChecked(m_showDate);
-    ui.showYear->setChecked(m_showYear);
-    ui.showDay->setChecked(m_showDay);
     ui.secondsCheckbox->setChecked(m_showSeconds);
     ui.showTimeZone->setChecked(m_showTimezone);
     ui.plainClockFontBold->setChecked(m_plainClockFont.bold());
@@ -233,9 +242,22 @@ void Clock::createClockConfigurationInterface(KConfigDialog *parent)
     ui.drawShadow->setChecked(m_drawShadow);
     ui.useCustomShadowColor->setChecked(m_useCustomShadowColor);
     ui.plainClockShadowColor->setColor(m_plainClockShadowColor);
+    ui.configureDateFormats->setIcon( KIcon( "configure" ) );
+
+    QStringList dateStyles;
+    dateStyles << i18nc("A kind of date representation", "No date")
+               << i18nc("A kind of date representation", "Compact date")
+               << i18nc("A kind of date representation", "Short date")
+               << i18nc("A kind of date representation", "Long date")
+               << i18nc("A kind of date representation", "ISO date");
+
+    ui.dateStyle->addItems(dateStyles);
+    ui.dateStyle->setCurrentIndex(m_dateStyle);
 
     connect(ui.drawShadow, SIGNAL(toggled(bool)),
             this, SLOT(configDrawShadowToggled(bool)));
+    connect(ui.configureDateFormats, SIGNAL(clicked()),
+            this, SLOT(launchDateKcm()));
     configDrawShadowToggled(m_drawShadow);
 }
 
@@ -270,12 +292,9 @@ void Clock::clockConfigAccepted()
         changeEngineTimezone(currentTimezone(), currentTimezone());
     }
 
-    m_showDate = ui.showDate->checkState() == Qt::Checked;
-    cg.writeEntry("showDate", m_showDate);
-    m_showYear = ui.showYear->checkState() == Qt::Checked;
-    cg.writeEntry("showYear", m_showYear);
-    m_showDay = ui.showDay->checkState() == Qt::Checked;
-    cg.writeEntry("showDay", m_showDay);
+    m_dateStyle = ui.dateStyle->currentIndex();
+    cg.writeEntry("dateStyle", m_dateStyle);
+
     m_showSeconds = ui.secondsCheckbox->checkState() == Qt::Checked;
     cg.writeEntry("showSeconds", m_showSeconds);
 
@@ -381,37 +400,31 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     QFont smallFont = KGlobalSettings::smallestReadableFont();
 
     //create the string for the date and/or the timezone
-    if (m_showDate || showTimezone()) {
+    if (m_dateStyle || showTimezone()) {
         QString dateString;
 
         //Create the localized date string if needed
-        if (m_showDate) {
+        if (m_dateStyle) {
             // JPL This needs a complete rewrite for l10n issues
             KLocale tmpLocale(*KGlobal::locale());
             tmpLocale.setCalendar(calendar()->calendarType()); 
             tmpLocale.setDateFormat("%e"); // day number of the month
             QString day = tmpLocale.formatDate(m_date);
-            tmpLocale.setDateFormat("%b"); // short form of the month
+            tmpLocale.setDateFormat("%m"); // short form of the month
             QString month = tmpLocale.formatDate(m_date);
 
-            if (m_showYear) {
-                tmpLocale.setDateFormat("%Y"); // whole year
-                QString year = tmpLocale.formatDate(m_date);
-                dateString = i18nc("@label Short date: "
-                        "%1 day in the month, %2 short month name, %3 year",
-                        "%1 %2 %3", day, month, year);
-            } else {
-                dateString = i18nc("@label Short date: "
-                        "%1 day in the month, %2 short month name",
-                        "%1 %2", day, month);
-            }
-
-            if (m_showDay) {
-                tmpLocale.setDateFormat("%a"); // short weekday
-                QString weekday = tmpLocale.formatDate(m_date);
-                dateString = i18nc("@label Day of the week with date: "
-                        "%1 short day name, %2 short date",
-                        "%1, %2", weekday, dateString);
+            if (m_dateStyle == 1) {         //compact date
+                dateString = i18nc("@label Compact date: "
+                        "%1 day in the month, %2 month number",
+                        "%1/%2", day, month);
+            } else if (m_dateStyle == 2) {    //short date
+                dateString = KGlobal::locale()->formatDate(m_date, KLocale::ShortDate);
+            } else if (m_dateStyle == 3) {    //long date
+                dateString = KGlobal::locale()->formatDate(m_date, KLocale::LongDate);
+            } else if (m_dateStyle == 4) {    //ISO date
+                dateString = KGlobal::locale()->formatDate(m_date, KLocale::IsoDate);
+            } else {                          //shouldn't happen
+                dateString = KGlobal::locale()->formatDate(m_date, KLocale::ShortDate);
             }
 
             if (showTimezone()) {
@@ -628,4 +641,15 @@ void Clock::updateColors()
         update();
     }
 }
+
+void Clock::launchDateKcm() //SLOT
+{
+    KService::List offers = KServiceTypeTrader::self()->query("KCModule", "Library == 'kcm_locale'");
+    if (!offers.isEmpty()) {
+        KService::Ptr service = offers.first();
+        KRun::run(*service, KUrl::List(), 0);
+    }
+    update();
+}
+
 #include "clock.moc"
