@@ -448,6 +448,7 @@ void PanelView::themeChanged()
 
 void PanelView::checkShadow()
 {
+#ifndef Q_WS_WIN
     if (KWindowSystem::compositingActive() && containment()->property("shadowPath").isValid()) {
         if (!m_shadowWindow) {
             m_shadowWindow = new ShadowWindow(this);
@@ -466,6 +467,7 @@ void PanelView::checkShadow()
         m_shadowWindow->deleteLater();
         m_shadowWindow = 0;
     }
+#endif
 }
 
 void PanelView::setPanelDragPosition(const QPoint &point)
