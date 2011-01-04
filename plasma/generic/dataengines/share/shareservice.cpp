@@ -79,7 +79,7 @@ void ShareJob::start()
     m_package = new Plasma::Package(path, ShareProvider::packageStructure());
     if (m_package->isValid()) {
         const QString mainscript =
-            m_package->path() + m_package->structure()->contentsPrefix() +
+            m_package->path() + m_package->structure()->contentsPrefixPaths().at(0) +
             m_package->structure()->path("mainscript");
 
         if (!QFile::exists(mainscript)) {
