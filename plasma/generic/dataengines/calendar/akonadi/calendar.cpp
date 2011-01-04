@@ -165,7 +165,10 @@ void Calendar::Private::dataChanged( const QModelIndex &topLeft, const QModelInd
 Calendar::Private::~Private()
 {
   Q_FOREACH ( const Akonadi::Item &item, m_itemMap ) {
-    CalendarSupport::incidence( item )->unRegisterObserver( q );
+    KCalCore::Incidence::Ptr incidence = CalendarSupport::incidence( item );
+    if (incidence) {
+      incidence->unRegisterObserver( q );
+    }
   }
 
   delete mTimeZones;
@@ -417,8 +420,11 @@ void Calendar::Private::removeItemFromMaps( const Akonadi::Item &item )
 
   unseen_item.collection = unseen_parent.collection = item.storageCollectionId();
 
-  unseen_item.uid   = CalendarSupport::incidence( item )->uid();
-  unseen_parent.uid = CalendarSupport::incidence( item )->relatedTo();
+  KCalCore::Incidence::Ptr incidence = CalendarSupport::incidence( item );
+  if (incidence) {
+      unseen_item.uid   = incidence->uid();
+      unseen_parent.uid = incidence->relatedTo();
+  } 
 
   if ( m_childToParent.contains( item.id() ) ) {
     Akonadi::Item::Id parentId = m_childToParent.take( item.id() );
