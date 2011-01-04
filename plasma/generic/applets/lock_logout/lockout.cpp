@@ -100,6 +100,7 @@ void LockOut::configChanged()
 }
 void LockOut::buttonChanged()
 {
+#ifndef Q_WS_WIN
     if (m_showLockButton != ui.checkBox_lock->isChecked()) {
        m_showLockButton = !m_showLockButton;
        m_changed = true;
@@ -126,9 +127,11 @@ void LockOut::buttonChanged()
     }
 
     setCheckable();
+#endif
 }
 void LockOut::setCheckable()
 {
+#ifndef Q_WS_WIN
     countButtons();
     if (m_visibleButtons == 1) {
         if (ui.checkBox_lock->isChecked()) {
@@ -153,6 +156,7 @@ void LockOut::setCheckable()
         ui.checkBox_sleep->setEnabled(true);
         ui.checkBox_hibernate->setEnabled(true);
     }
+#endif
 }
 
 void LockOut::countButtons()
