@@ -1,3 +1,4 @@
+add_subdirectory(kde)
 add_subdirectory(imgur)
 add_subdirectory(pastebincom)
 add_subdirectory(pasteubuntucom)

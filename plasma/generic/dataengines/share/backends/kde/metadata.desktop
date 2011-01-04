@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=kde.org
+Comment=Enables the share of text using kde.org service
+Type=Service
+
+X-KDE-ServiceTypes=Plasma/ShareProvider
+X-KDE-Library=plasma_engine_share
+X-KDE-PlasmaShareProvider-MimeType=text/*
+
+X-KDE-PluginInfo-Name=kde
+X-KDE-PluginInfo-Author=Artur de Souza
+X-KDE-PluginInfo-Email=asouza@kde.org
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+
