@@ -2,6 +2,7 @@
 Name=Search and Launch
 Name[ast]=Guetar y executar
 Name[ca]=Cerca i llançament
+Name[ca@valencia]=Cerca i llançament
 Name[da]=Søg og start
 Name[de]=Suchen und ausführen
 Name[en_GB]=Search and Launch
@@ -40,6 +41,7 @@ Name[zh_TW]=搜尋並啟動
 Comment=Full screen application launcher with search interface
 Comment[ast]=Llanzador d'aplicaciones a pantalla completa con una interface de gueta
 Comment[ca]=Llançador d'aplicacions de pantalla completa amb interfície de cerca
+Comment[ca@valencia]=Llançador d'aplicacions de pantalla completa amb interfície de cerca
 Comment[da]=Startmenu i fuldskærm med søgefunktion
 Comment[de]=Anwendungsstarter im Vollbildmodus mit Suchfeld
 Comment[en_GB]=Full screen application launcher with search interface

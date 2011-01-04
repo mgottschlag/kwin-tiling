@@ -2,6 +2,7 @@
 Comment=Default desktop toolbox for the Plasma desktop shell
 Comment[ast]=Barra de ferramientes pal escritoriu por defeutu pal shell Plasma
 Comment[ca]=Caixa d'eines per defecte de l'escriptori per l'entorn de treball de l'escriptori Plasma
+Comment[ca@valencia]=Caixa d'eines per defecte de l'escriptori per l'entorn de treball de l'escriptori Plasma
 Comment[da]=Standard skrivebordsværktøjskasse til Plasma desktop-skal
 Comment[de]=Standard-Werkzeugkasten für die Plasma-Arbeitsflächen-Umgebung
 Comment[en_GB]=Default desktop toolbox for the Plasma desktop shell
@@ -36,6 +37,7 @@ Name=Desktop toolbox
 Name[ast]=Caxa de ferramientes del escritoriu
 Name[bg]=Настолна кутия с инструменти
 Name[ca]=Caixa d'eines d'escriptori
+Name[ca@valencia]=Caixa d'eines d'escriptori
 Name[da]=Skrivebordsværktøjskasse
 Name[de]=Werkzeugkasten für die Arbeitsfläche
 Name[el]=Εργαλεία επιφάνειας εργασίας

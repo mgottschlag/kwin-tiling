@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Activities Engine
 Name[ca]=Motor d'activitats
+Name[ca@valencia]=Motor d'activitats
 Name[da]=Aktivitetsmotor
 Name[en_GB]=Activities Engine
 Name[es]=Motor de actividades
@@ -33,6 +34,7 @@ Name[zh_CN]=活动引擎
 Name[zh_TW]=活動引擎
 Comment=Information on Plasma Activities
 Comment[ca]=Informació quant a activitats del Plasma
+Comment[ca@valencia]=Informació quant a activitats del Plasma
 Comment[da]=Information om Plasma-aktiviteter
 Comment[de]=Informationen über Plasma-Aktivitäten
 Comment[en_GB]=Information on Plasma Activities

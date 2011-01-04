@@ -2,6 +2,7 @@
 Name=Share Services
 Name[ast]=Compartir Servicios
 Name[ca]=Serveis de compartició
+Name[ca@valencia]=Serveis de compartició
 Name[da]=Delingstjenester
 Name[de]=Veröffentlichungsdienste
 Name[en_GB]=Share Services
@@ -38,6 +39,7 @@ Name[zh_TW]=分享服務
 Comment=Engine to share content using different services
 Comment[ast]=Motor pa compartir conteníos a traviés d'estremaos servicios
 Comment[ca]=Motor per compartir contingut utilitzant diferents serveis
+Comment[ca@valencia]=Motor per compartir contingut utilitzant diferents serveis
 Comment[da]=Motor til at dele indhold ved brug af forskellige tjenester
 Comment[de]=Treiber für die Veröffentlichung von Inhalten über verschiedene Dienste
 Comment[en_GB]=Engine to share content using different services

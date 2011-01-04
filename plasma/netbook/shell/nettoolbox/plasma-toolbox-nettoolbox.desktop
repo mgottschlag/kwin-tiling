@@ -2,6 +2,7 @@
 Comment=Default toolbox for the netbook shell
 Comment[ast]=Caxa de ferramientes predeterminada de la shell pa netbooks
 Comment[ca]=Caixa d'eines per defecte per a l'àrea pels ordinadors ultraportàtils
+Comment[ca@valencia]=Caixa d'eines per defecte per a l'àrea pels ordinadors ultraportàtils
 Comment[da]=Standard værktøjskasse til netbook-skallen
 Comment[de]=Standard-Werkzeugkasten für die Plasma-Netbook-Oberfläche
 Comment[en_GB]=Default toolbox for the netbook shell
@@ -35,6 +36,7 @@ Icon=plasma
 Name=Net toolbox
 Name[ast]=Caxa de ferramientes netbook
 Name[ca]=Caixa d'eines de xarxa
+Name[ca@valencia]=Caixa d'eines de xarxa
 Name[da]=Netværktøjskasse
 Name[de]=Werkzeugkasten für Netbooks
 Name[en_GB]=Net toolbox

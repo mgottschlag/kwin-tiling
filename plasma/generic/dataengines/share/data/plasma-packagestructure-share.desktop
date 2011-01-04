@@ -2,6 +2,7 @@
 Name=ShareProvider
 Name[ast]=Fornidor de Servicios
 Name[ca]=ShareProvider
+Name[ca@valencia]=ShareProvider
 Name[da]=Delingsudbyder
 Name[en_GB]=ShareProvider
 Name[et]=ShareProvider
@@ -32,6 +33,7 @@ Name[zh_TW]=分享服務提供者
 Comment=Share Package Structure
 Comment[ast]=Estructura Paquete Compartir
 Comment[ca]=Estructura de paquet de compartició
+Comment[ca@valencia]=Estructura de paquet de compartició
 Comment[da]=Pakkestruktur for deling
 Comment[de]=Paketstruktur bereitstellen
 Comment[en_GB]=Share Package Structure
