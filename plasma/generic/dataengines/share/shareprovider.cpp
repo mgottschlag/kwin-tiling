@@ -32,12 +32,29 @@ Plasma::PackageStructure::Ptr ShareProvider::m_packageStructure(0);
 
 
 ShareProvider::ShareProvider(QObject *parent)
-    : QObject(parent), m_isBlob(false)
+    : QObject(parent), m_isBlob(false), m_isPost(true)
 {
     // Just make the boundary random part long enough to be sure
     // it's not inside one of the arguments that we are sending
     m_boundary  = "----------";
     m_boundary += KRandom::randomString(55).toAscii();
+}
+
+QString ShareProvider::method() const
+{
+    if (!m_isPost) {
+        return QString("GET");
+    }
+    return QString("POST");
+}
+
+void ShareProvider::setMethod(const QString &method)
+{
+    if (method == "GET") {
+        m_isPost = false;
+    } else {
+        m_isPost = true;
+    }
 }
 
 KUrl ShareProvider::url() const
@@ -76,6 +93,9 @@ QString ShareProvider::parseXML(const QString &key, const QString &data)
 void ShareProvider::addPostItem(const QString &key, const QString &value,
                                 const QString &contentType)
 {
+    if (!m_isPost)
+        return;
+
     // add a pair <item,value> in a post form
     QByteArray str;
     QString length = QString("%1").arg(value.length());
@@ -259,9 +279,14 @@ void ShareProvider::publish()
         tf = KIO::http_post(m_service, m_buffer, KIO::HideProgressInfo);
         tf->addMetaData("content-type","Content-Type: multipart/form-data; boundary=" + m_boundary);
     } else {
-        tf = KIO::http_post(m_service,
-                            m_url.encodedQuery(), KIO::HideProgressInfo);
-        tf->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
+        if (m_isPost) {
+            tf = KIO::http_post(m_service,
+                                m_url.encodedQuery(), KIO::HideProgressInfo);
+            tf->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
+        } else {
+            QString url = QString("%1?%2").arg(m_service.url(), QString(m_url.encodedQuery()));
+            tf = KIO::get(url);
+        }
     }
 
     connect(tf, SIGNAL(data(KIO::Job*, const QByteArray&)),

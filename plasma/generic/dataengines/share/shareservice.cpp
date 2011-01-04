@@ -129,8 +129,20 @@ void ShareJob::start()
             // call the methods from the plugin
             const QString url =
                 m_action->callFunction("url", QVariantList()).toString();
-
             m_provider->setUrl(url);
+
+            // setup the method (get/post)
+            QVariant vmethod;
+            if (functions.contains("method")) {
+                vmethod =
+                    m_action->callFunction("method", QVariantList()).toString();
+            }
+
+            // default is POST (if the plugin does not specify one method)
+            const QString method = vmethod.isValid() ? vmethod.toString() : "POST";
+            m_provider->setMethod(method);
+
+            // setup the provider
             QVariant setup = m_action->callFunction("setup", QVariantList());
 
             // get the content from the parameters, set the url and add the file

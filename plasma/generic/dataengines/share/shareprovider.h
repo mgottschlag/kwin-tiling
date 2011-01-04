@@ -35,8 +35,12 @@ public:
     ShareProvider(QObject *parent =0);
     static Plasma::PackageStructure::Ptr packageStructure();
 
+    QString method() const;
+    void setMethod(const QString &method);
+
     KUrl url() const;
     void setUrl(const QString &url);
+
     void addPostFile(const QString &contentKey, const QString &content);
 
 Q_SIGNALS:
@@ -78,6 +82,8 @@ private:
     QString m_mimetype;
 
     bool m_isBlob;
+    bool m_isPost;
+
     KUrl m_url;
     KUrl m_service;
 
