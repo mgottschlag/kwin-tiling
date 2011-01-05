@@ -16,6 +16,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include <QDBusConnection>
+
 #include <KDebug>
 
 #include "kactivityinfo.h"
@@ -107,6 +109,13 @@ KActivityInfo::KActivityInfo(const QString &activityId, QObject *parent)
 
     connect(KActivityManager::self(), SIGNAL(ActivityStopped(const QString &)),
             this, SLOT(stopped(const QString &)));
+
+    //when nepomuk comes up, the icon becomes available, so give things a kick
+    QDBusConnection::sessionBus().connect(QLatin1String("org.kde.NepomukStorage"),
+                                          QLatin1String("/servicecontrol"),
+                                          QLatin1String("org.kde.nepomuk.ServiceControl"),
+                                          QLatin1String("serviceInitialized"),
+                                          this, SIGNAL(infoChanged()));
 }
 
 KActivityInfo::~KActivityInfo()
