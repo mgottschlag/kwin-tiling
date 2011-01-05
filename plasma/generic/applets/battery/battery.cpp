@@ -688,8 +688,8 @@ void Battery::updateStatus()
             } else {
                 //kDebug() << "More batteries ...";
                 if (!batteriesInfo.isEmpty()) {
-                    batteriesLabel.append("<br />");
-                    batteriesInfo.append("<br />");
+                    batteriesLabel.append('\n');
+                    batteriesInfo.append('\n');
                 }
                 batteriesLabel.append(i18nc("Placeholder is the battery ID", "Battery %1:", batteryCount));
             }
