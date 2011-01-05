@@ -62,21 +62,7 @@ JobWidget::JobWidget(Job *job, Plasma::ExtenderItem *parent)
     m_plotter = new Plasma::SignalPlotter(this);
     m_plotter->setUseAutoRange(true);
     m_plotter->setShowVerticalLines(false);
-    switch (KGlobal::locale()->binaryUnitDialect())
-    {
-        case KLocale::IECBinaryDialect:
-            m_plotter->setUnit(i18n("KiB/s"));
-        break;
-
-        case KLocale::JEDECBinaryDialect:
-        case KLocale::MetricBinaryDialect:
-            m_plotter->setUnit(i18n("KB/s"));
-        break;
-
-        case KLocale::DefaultBinaryDialect:
-            Q_ASSERT(false);
-        break;
-    }
+    m_plotter->setUnit(i18n("KiB/s"));
     m_plotter->addPlot(Plasma::Theme::defaultTheme()->color(Plasma::Theme::HighlightColor));
 
     m_fromNameLabel = new Plasma::Label(this);
