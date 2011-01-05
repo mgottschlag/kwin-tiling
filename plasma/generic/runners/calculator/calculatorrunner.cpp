@@ -175,7 +175,7 @@ void CalculatorRunner::hexSubstitutions(QString& cmd)
 void CalculatorRunner::userFriendlySubstitutions(QString& cmd)
 {
     if (cmd.contains(KGlobal::locale()->decimalSymbol(), Qt::CaseInsensitive)) {
-         cmd=cmd.replace(KGlobal::locale()->decimalSymbol(), ".", Qt::CaseInsensitive);
+         cmd=cmd.replace(KGlobal::locale()->decimalSymbol(), QChar('.'), Qt::CaseInsensitive);
     }
 
     // the following substitutions are not needed with libqalculate
@@ -202,7 +202,7 @@ void CalculatorRunner::match(Plasma::RunnerContext &context)
     QString cmd = term;
 
     //no meanless space between friendly guys: helps simplify code
-    cmd = cmd.trimmed().replace(' ', "");
+    cmd = cmd.trimmed().remove(' ');
 
     if (cmd.length() < 4) {
         return;
@@ -217,7 +217,7 @@ void CalculatorRunner::match(Plasma::RunnerContext &context)
         return;
     }
 
-    bool toHex = cmd.startsWith("hex=");
+    bool toHex = cmd.startsWith(QLatin1String("hex="));
     bool startsWithEquals = !toHex && cmd[0] == '=';
 
     if (toHex || startsWithEquals) {
@@ -266,7 +266,7 @@ QString CalculatorRunner::calculate(const QString& term)
         kDebug() << "qalculate error: " << e.what();
     }
 
-    return result.replace(".", KGlobal::locale()->decimalSymbol(), Qt::CaseInsensitive);
+    return result.replace('.', KGlobal::locale()->decimalSymbol(), Qt::CaseInsensitive);
     #else
     //kDebug() << "calculating" << term;
     QScriptEngine eng;
@@ -291,7 +291,7 @@ QString CalculatorRunner::calculate(const QString& term)
                                                 var order=Math.pow(10,exponent);\
                                                 (order > 0? Math.round(result*order)/order : 0)").toString();
 
-    roundedResultString.replace(".", KGlobal::locale()->decimalSymbol(), Qt::CaseInsensitive);
+    roundedResultString.replace('.', KGlobal::locale()->decimalSymbol(), Qt::CaseInsensitive);
 
     return roundedResultString;
     #endif
