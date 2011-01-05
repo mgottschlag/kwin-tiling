@@ -27,11 +27,11 @@
 
 DictEngine::DictEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent, args)
-    , tcpSocket(0)
+    , m_tcpSocket(0)
 {
     Q_UNUSED(args)
-    serverName="dict.org"; //In case we need to switch it later
-    dictName="wn"; //Default, good dictionary
+    m_serverName="dict.org"; //In case we need to switch it later
+    m_dictName="wn"; //Default, good dictionary
 }
 
 DictEngine::~DictEngine()
@@ -40,12 +40,12 @@ DictEngine::~DictEngine()
 
 void DictEngine::setDict(const QString &dict)
 {
-    dictName = dict;
+    m_dictName = dict;
 }
 
 void DictEngine::setServer(const QString &server)
 {
-    serverName = server;
+    m_serverName = server;
 }
 
 static QString wnToHtml(const QString &word, QByteArray &text)
@@ -102,41 +102,41 @@ static QString wnToHtml(const QString &word, QByteArray &text)
 
 void DictEngine::getDefinition()
 {
-    tcpSocket->readAll();
+    m_tcpSocket->readAll();
     QByteArray ret;
 
-    tcpSocket->write(QByteArray("DEFINE "));
-    tcpSocket->write(dictName.toAscii());
-    tcpSocket->write(QByteArray(" \""));
-    tcpSocket->write(currentWord.toUtf8());
-    tcpSocket->write(QByteArray("\"\n"));
-    tcpSocket->flush();
+    m_tcpSocket->write(QByteArray("DEFINE "));
+    m_tcpSocket->write(m_dictName.toAscii());
+    m_tcpSocket->write(QByteArray(" \""));
+    m_tcpSocket->write(m_currentWord.toUtf8());
+    m_tcpSocket->write(QByteArray("\"\n"));
+    m_tcpSocket->flush();
 
     while (!ret.contains("250") && !ret.contains("552")) {
-        tcpSocket->waitForReadyRead();
-        ret += tcpSocket->readAll();
+        m_tcpSocket->waitForReadyRead();
+        ret += m_tcpSocket->readAll();
     }
 
-    connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
-    tcpSocket->disconnectFromHost();
-    //       setData(currentWord, dictName, ret);
+    connect(m_tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
+    m_tcpSocket->disconnectFromHost();
+    //       setData(m_currentWord, m_dictName, ret);
     //       qWarning()<<ret;
-    setData(currentWord, "text", wnToHtml(currentWord,ret));
+    setData(m_currentWord, "text", wnToHtml(m_currentWord,ret));
 }
 
 void DictEngine::getDicts()
 {
     QMap<QString, QString> theHash;
-    tcpSocket->readAll();
+    m_tcpSocket->readAll();
     QByteArray ret;
 
-    tcpSocket->write(QByteArray("SHOW DB\n"));;
-    tcpSocket->flush();
+    m_tcpSocket->write(QByteArray("SHOW DB\n"));;
+    m_tcpSocket->flush();
 
-    tcpSocket->waitForReadyRead();
+    m_tcpSocket->waitForReadyRead();
     while (!ret.contains("250")) {
-        tcpSocket->waitForReadyRead();
-        ret += tcpSocket->readAll();
+        m_tcpSocket->waitForReadyRead();
+        ret += m_tcpSocket->readAll();
     }
 
     QList<QByteArray> retLines = ret.split('\n');
@@ -167,7 +167,7 @@ void DictEngine::getDicts()
         }
     }
 
-    tcpSocket->disconnectFromHost();
+    m_tcpSocket->disconnectFromHost();
 //    setData("list-dictionaries", "dictionaries", QByteArray(theHash);
 }
 
@@ -175,41 +175,41 @@ void DictEngine::getDicts()
 
 void DictEngine::socketClosed()
 {
-    tcpSocket->deleteLater();
-    tcpSocket = 0;
+    m_tcpSocket->deleteLater();
+    m_tcpSocket = 0;
 }
 
 bool DictEngine::sourceRequestEvent(const QString &word)
 {
     // FIXME: this is COMPLETELY broken .. it can only look up one word at a time!
     //        a DataContainer subclass that does the look up should probably be made
-    if (currentWord == word) {
+    if (m_currentWord == word) {
         return false;
     }
 
-    if (tcpSocket) {
-        tcpSocket->abort(); //stop if lookup is in progress and new word is requested
-        tcpSocket->deleteLater();
-        tcpSocket = 0;
+    if (m_tcpSocket) {
+        m_tcpSocket->abort(); //stop if lookup is in progress and new word is requested
+        m_tcpSocket->deleteLater();
+        m_tcpSocket = 0;
     }
 
-    currentWord = word;
+    m_currentWord = word;
 
-    if (currentWord.simplified().isEmpty()) {
-        setData(currentWord, dictName, QString());
+    if (m_currentWord.simplified().isEmpty()) {
+        setData(m_currentWord, m_dictName, QString());
     } else {
-        setData(currentWord, dictName, QString());
-        tcpSocket = new KTcpSocket(this);
-        tcpSocket->abort();
-        connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
+        setData(m_currentWord, m_dictName, QString());
+        m_tcpSocket = new KTcpSocket(this);
+        m_tcpSocket->abort();
+        connect(m_tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
 
-        if (currentWord == "list-dictionaries") {
-            connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(getDicts()));
+        if (m_currentWord == "list-dictionaries") {
+            connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(getDicts()));
         } else {
-            connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(getDefinition()));
+            connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(getDefinition()));
         }
 
-        tcpSocket->connectToHost(serverName, 2628);
+        m_tcpSocket->connectToHost(m_serverName, 2628);
     }
 
     return true;

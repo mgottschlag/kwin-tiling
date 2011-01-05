@@ -47,11 +47,11 @@ class DictEngine: public Plasma::DataEngine
         void setDict(const QString &dict);
         void setServer(const QString &server);
 
-        QHash<QString, QString> dictNameToDictCode;
-        KTcpSocket *tcpSocket;
-	QString currentWord;
-	QString dictName;
-        QString serverName;
+        QHash<QString, QString> m_dictNameToDictCode;
+        KTcpSocket *m_tcpSocket;
+        QString m_currentWord;
+        QString m_dictName;
+        QString m_serverName;
 
 };
 
