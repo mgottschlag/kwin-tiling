@@ -491,9 +491,18 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         int row = 0;
 
         m_controls = new QGraphicsWidget(item);
-        m_controls->setMinimumWidth(360);
         m_controlsLayout = new QGraphicsGridLayout(m_controls);
         m_controlsLayout->setColumnStretchFactor(1, 3);
+        // Do not call QGraphicsWidget::setMinimumWidth() here: for some reason
+        // it prevents the widget from getting wide enough if needed (for
+        // example because of wide translations, see bug #258044)
+        //
+        // Setting the minimum width of a column does not cause such problems,
+        // so use that solution as a workaround.
+        //
+        // This is reproducible with Qt 4.7
+        //m_controls->setMinimumWidth(360);
+        m_controlsLayout->setColumnMinimumWidth(1, 200);
 
         Plasma::Label *spacer0 = new Plasma::Label(m_controls);
         spacer0->setMinimumHeight(8);
