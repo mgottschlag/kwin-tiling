@@ -62,6 +62,8 @@ public:
     void setVisibilityMode(PanelView::VisibilityMode);
     PanelView::VisibilityMode panelVisibilityMode() const;
 
+    void switchToController();
+
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
     void focusOutEvent(QFocusEvent *event);
@@ -84,6 +86,7 @@ private:
     ToolButton *addTool(const QString iconName, const QString iconText, QWidget *parent, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon, bool checkButton = false);
     void syncRuler();
     void resizeFrameHeight(const int newHeight);
+    void syncToLocation();
 
 private Q_SLOTS:
     void themeChanged();
@@ -135,6 +138,7 @@ private:
     bool m_drawMoveHint;
 
     QPoint m_lastPos;
+    QRect m_controllerRect;
 
     ToolButton *m_expandTool;
 };

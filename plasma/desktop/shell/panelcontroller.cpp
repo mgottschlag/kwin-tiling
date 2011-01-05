@@ -313,7 +313,12 @@ void PanelController::setLocation(const Plasma::Location &loc)
     }
 
     ControllerWindow::setLocation(loc);
+    syncToLocation();
+}
 
+void PanelController::syncToLocation()
+{
+    const Plasma::Location loc = location();
     m_ruler->setLocation(loc);
 
     //The external layout gwts auto flipped when QApplication::layoutDirection() changes
@@ -399,6 +404,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
     m_ruler->show();
     updateGeometry();
 
+    setMinimumSize(QSize(0, 0));
+    setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
     resize(sizeHint());
 }
 
@@ -488,6 +495,13 @@ void PanelController::switchToWidgetExplorer()
 {
     m_configWidget->hide();
     showWidgetExplorer();
+}
+
+void PanelController::switchToController()
+{
+    setGraphicsWidget(0);
+    m_configWidget->show();
+    syncToLocation();
 }
 
 bool PanelController::eventFilter(QObject *watched, QEvent *event)
@@ -709,16 +723,16 @@ void PanelController::resizeFrameHeight(const int newHeight)
     switch (location()) {
         case Plasma::LeftEdge:
         case Plasma::RightEdge:
-            containment()->resize(QSize(newHeight, (int)containment()->size().height()));
             containment()->setMinimumSize(QSize(newHeight, (int)containment()->minimumSize().height()));
             containment()->setMaximumSize(QSize(newHeight, (int)containment()->maximumSize().height()));
+            containment()->resize(QSize(newHeight, (int)containment()->size().height()));
             break;
         case Plasma::TopEdge:
         case Plasma::BottomEdge:
         default:
-            containment()->resize(QSize((int)containment()->size().width(), newHeight));
             containment()->setMinimumSize(QSize((int)containment()->minimumSize().width(), newHeight));
             containment()->setMaximumSize(QSize((int)containment()->maximumSize().width(), newHeight));
+            containment()->resize(QSize((int)containment()->size().width(), newHeight));
             break;
     }
 }

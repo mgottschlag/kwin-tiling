@@ -996,17 +996,23 @@ void PanelView::togglePanelController()
         }
     }
 
-    if (!m_panelController->isVisible()) {
+    if (m_panelController->isVisible()) {
+        if (m_panelController->showingWidgetExplorer() ||
+            m_panelController->showingActivityManager()) {
+            m_panelController->switchToController();
+            m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
+        } else {
+            Plasma::WindowEffects::slideWindow(m_panelController, location());
+            m_panelController->close();
+            updateStruts();
+        }
+    } else {
         m_editing = true;
         m_panelController->resize(m_panelController->sizeHint());
         m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
         Plasma::WindowEffects::slideWindow(m_panelController, location());
         kDebug() << "showing panel controller!" << m_panelController->geometry();
         m_panelController->show();
-    } else {
-        Plasma::WindowEffects::slideWindow(m_panelController, location());
-        m_panelController->close();
-        updateStruts();
     }
 }
 
