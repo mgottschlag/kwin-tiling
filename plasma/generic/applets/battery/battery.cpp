@@ -166,11 +166,8 @@ void Battery::init()
 
     dataUpdated("AC Adapter", dataEngine("powermanagement")->query("AC Adapter"));
 
-    if (!m_isEmbedded && extender() && !extender()->hasItem("powermanagement")) {
-        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-        eItem->setName("powermanagement");
-        initExtenderItem(eItem);
-        extender()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    if (!m_isEmbedded) {
+        initPopupWidget();
     }
 
     if (m_acAdapterPlugged) {
@@ -481,16 +478,17 @@ static Plasma::IconWidget *createButton(QGraphicsWidget *parent)
     return button;
 }
 
-void Battery::initExtenderItem(Plasma::ExtenderItem *item)
+void Battery::initPopupWidget()
 {
-    // We only show the extender for applets that are not embedded, as
-    // that would create infinitve loops, you really don't want an applet
-    // extender when the applet is embedded into another applet, such
-    // as the battery applet is also embedded into the battery's extender.
-    if (!m_isEmbedded && item->name() == "powermanagement") {
+    // We only show the popup widget for applets that are not embedded, as that
+    // would create infinitve loops, you really don't want a popup widget when
+    // the applet is embedded into another applet, such as the battery applet
+    // is also embedded into the battery's popup widget.
+    if (!m_isEmbedded) {
         int row = 0;
 
-        m_controls = new QGraphicsWidget(item);
+        m_controls = new QGraphicsWidget(this);
+        setGraphicsWidget(m_controls);
         m_controlsLayout = new QGraphicsGridLayout(m_controls);
         m_controlsLayout->setColumnStretchFactor(1, 3);
         // Do not call QGraphicsWidget::setMinimumWidth() here: for some reason
@@ -540,6 +538,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_extenderApplet->init();
         m_extenderApplet->setShowBatteryLabel(false);
         m_extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
+        m_extenderApplet->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         m_controlsLayout->addItem(m_extenderApplet, 1, 2, 2, 1);
 
         m_profileLabel = createBuddyLabel(m_controls);
@@ -619,8 +618,6 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         m_controlsLayout->addItem(buttonLayout, row, 0, 1, 3);
         m_controls->setLayout(m_controlsLayout);
-        item->setWidget(m_controls);
-        item->setTitle(i18n("Power Management"));
 
         setupFonts();
 
@@ -638,6 +635,7 @@ void Battery::popupEvent(bool show)
         m_extenderApplet->setGeometry(QRectF(QPoint(m_controls->geometry().width()-s, 0), QSizeF(s, s)));
     }
     updateStatus();
+    PopupApplet::popupEvent(show);
 }
 
 void Battery::setupFonts()

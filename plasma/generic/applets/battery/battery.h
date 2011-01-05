@@ -103,7 +103,7 @@ class Battery : public Plasma::PopupApplet
 
     private:
         void connectSources();
-        void initExtenderItem(Plasma::ExtenderItem *item);
+        void initPopupWidget();
         void updateStatus();
         bool isConstrained();
         QString stringForState(const QHash<QString, QVariant> &batteryData, bool *chargeChanging = 0);
