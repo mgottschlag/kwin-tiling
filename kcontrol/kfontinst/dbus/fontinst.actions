@@ -155,6 +155,7 @@ Description[ar]=تعديل الخطوط على مستوى النظام يحتا�
 Description[ast]=Necesítense privilexos pa camudar la configuración global del sistema de tribes de lletra.
 Description[ca]=La modificació de la configuració dels tipus de lletra del sistema requereix privilegis.
 Description[ca@valencia]=La modificació de la configuració dels tipus de lletra del sistema requereix privilegis.
+Description[cs]=Změna konfigurace systémových písem vyžaduje oprávnění.
 Description[csb]=Do sprôwianiô sytemòwą szérzą fòntów nót je ekstra pawów.
 Description[da]=Ændring af systemomfattende konfiguration af skrifttyper kræver privilegier.
 Description[de]=Zum Ändern der systemweiten Schrift-Einstellungen sind besondere Berechtigungen nötig.

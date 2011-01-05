@@ -71,6 +71,7 @@ Comment[ar]=تتابع الأجهزة المركبة عندما تظهر أو ت
 Comment[ast]=Rexistra los preseos estrayibles cuando apaecen y desapaecen.
 Comment[ca]=Segueix els dispositius de connexió en calent quan apareixen i desapareixen.
 Comment[ca@valencia]=Segueix els dispositius de connexió en calent quan apareixen i desapareixen.
+Comment[cs]=Oznamovat připojení a odpojení za běhu připojitelných zařízení
 Comment[da]=Holder styr på flytbare enheder efterhånden som de dukker op og forsvinder.
 Comment[de]=Überwacht Hotplug-Geräte auf Aktivierung und Deaktivierung
 Comment[el]=Ανίχνευση συσκευών hot-plug καθώς εμφανίζονται και εξαφανίζονται.
