@@ -112,7 +112,7 @@ void DictEngine::getDefinition()
     m_tcpSocket->write(QByteArray("\"\n"));
     m_tcpSocket->flush();
 
-    while (!ret.contains("250") && !ret.contains("552")) {
+    while (!ret.contains("250") && !ret.contains("552") && !ret.contains("550")) {
         m_tcpSocket->waitForReadyRead();
         ret += m_tcpSocket->readAll();
     }
