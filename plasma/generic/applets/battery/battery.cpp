@@ -698,7 +698,8 @@ void Battery::updateStatus()
             ++batteryCount;
         }
 
-        m_acLabelLabel->setText(i18n("AC Adapter: "));
+        // Avoid breaking string freeze (fixed correctly in trunk)
+        m_acLabelLabel->setText(i18n("AC Adapter: ").trimmed());
         if (m_acAdapterPlugged) {
             m_acInfoLabel->setText(i18n("<b>Plugged in</b>"));
         } else {
