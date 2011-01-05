@@ -30,8 +30,8 @@ DictEngine::DictEngine(QObject* parent, const QVariantList& args)
     , m_tcpSocket(0)
 {
     Q_UNUSED(args)
-    m_serverName="dict.org"; //In case we need to switch it later
-    m_dictName="wn"; //Default, good dictionary
+    m_serverName = "dict.org"; //In case we need to switch it later
+    m_dictName = "wn"; //Default, good dictionary
 }
 
 DictEngine::~DictEngine()
@@ -179,21 +179,43 @@ void DictEngine::socketClosed()
     m_tcpSocket = 0;
 }
 
-bool DictEngine::sourceRequestEvent(const QString &word)
+bool DictEngine::sourceRequestEvent(const QString &query)
 {
-    // FIXME: this is COMPLETELY broken .. it can only look up one word at a time!
+    // FIXME: this is COMPLETELY broken .. it can only look up one query at a time!
     //        a DataContainer subclass that does the look up should probably be made
-    if (m_currentWord == word) {
+    if (m_currentQuery == query) {
         return false;
     }
 
     if (m_tcpSocket) {
-        m_tcpSocket->abort(); //stop if lookup is in progress and new word is requested
+        m_tcpSocket->abort(); //stop if lookup is in progress and new query is requested
         m_tcpSocket->deleteLater();
         m_tcpSocket = 0;
     }
 
-    m_currentWord = word;
+    QStringList queryParts = query.split(':', QString::SkipEmptyParts);
+    if (queryParts.isEmpty()) {
+        return false;
+    }
+
+    m_currentWord = queryParts.last();
+    m_currentQuery = query;
+
+    //asked for a dictionary?
+    if (queryParts.count() > 1) {
+        setDict(queryParts[queryParts.count()-2]);
+    //default to wordnet
+    } else {
+        setDict("wn");
+    }
+
+    //asked for a server?
+    if (queryParts.count() > 2) {
+        setServer(queryParts[queryParts.count()-3]);
+    //default to wordnet
+    } else {
+        setServer("dict.org");
+    }
 
     if (m_currentWord.simplified().isEmpty()) {
         setData(m_currentWord, m_dictName, QString());

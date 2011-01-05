@@ -50,6 +50,7 @@ class DictEngine: public Plasma::DataEngine
         QHash<QString, QString> m_dictNameToDictCode;
         KTcpSocket *m_tcpSocket;
         QString m_currentWord;
+        QString m_currentQuery;
         QString m_dictName;
         QString m_serverName;
 
