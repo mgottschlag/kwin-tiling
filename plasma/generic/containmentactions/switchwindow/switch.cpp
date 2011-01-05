@@ -177,6 +177,7 @@ void SwitchWindow::makeMenu()
 
 void SwitchWindow::contextEvent(QGraphicsSceneMouseEvent *event)
 {
+    makeMenu();
     if (!m_menu->isEmpty()) {
         m_menu->exec(popupPosition(m_menu->size(), event));
     }
