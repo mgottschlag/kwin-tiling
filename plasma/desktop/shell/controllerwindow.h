@@ -67,6 +67,9 @@ public:
     int screen() const;
     void setScreen(int screen);
 
+    bool showingWidgetExplorer() const;
+    bool showingActivityManager() const;
+
 public Q_SLOTS:
     void activate();
     void showWidgetExplorer();

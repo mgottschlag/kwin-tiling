@@ -228,7 +228,7 @@ void ControllerWindow::setGraphicsWidget(QGraphicsWidget *widget)
         }
 
         if (!moved) {
-            // set it to the bottom of the screen as we have no better hints to go by
+            // set it to ehe bottom of the screen as we have no better hints to go by
             QRect geom = QApplication::desktop()->availableGeometry(screen());
             setGeometry(geom.x(), geom.bottom() - height(), geom.width(), height());
         }
@@ -267,10 +267,8 @@ void ControllerWindow::syncToGraphicsWidget()
             m_graphicsWidget->resize(windowSize.width(), m_graphicsWidget->size().height());
         }
 
-        resize(windowSize);
-
         setMinimumSize(windowSize);
-
+        resize(windowSize);
 
         updateGeometry();
 
@@ -427,6 +425,11 @@ void ControllerWindow::showWidgetExplorer()
     }
 }
 
+bool ControllerWindow::showingWidgetExplorer() const
+{
+    return m_widgetExplorer;
+}
+
 void ControllerWindow::showActivityManager()
 {
     if (!m_activityManager) {
@@ -454,6 +457,11 @@ void ControllerWindow::showActivityManager()
         m_activityManager->show();
         setGraphicsWidget(m_activityManager);
     }
+}
+
+bool ControllerWindow::showingActivityManager() const
+{
+    return m_activityManager;
 }
 
 bool ControllerWindow::isControllerViewVisible() const
