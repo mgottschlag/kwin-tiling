@@ -221,6 +221,11 @@ void Battery::toolTipAboutToShow()
     Plasma::ToolTipManager::self()->setContent(this, c);
 }
 
+void Battery::toolTipHidden()
+{
+  Plasma::ToolTipManager::self()->clearContent(this);
+}
+
 void Battery::updateBattery()
 {
     update();

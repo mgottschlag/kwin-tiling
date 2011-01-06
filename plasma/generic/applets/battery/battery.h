@@ -73,6 +73,7 @@ class Battery : public Plasma::PopupApplet
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
         void configChanged();
         void toolTipAboutToShow();
+        void toolTipHidden();
 
     protected Q_SLOTS:
         virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
