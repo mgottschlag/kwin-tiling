@@ -99,8 +99,8 @@ void NotificationGroup::addNotification(Notification *notification)
     m_appForNotification[notification] = notification->applicationName();
 
     if (!m_currentFilter.isNull() && m_currentFilter != notification->applicationName()) {
-        notificationWidget->setMaximumHeight(0);
-        notificationWidget->setVisible(false);
+        extenderItem->setMaximumHeight(0);
+        extenderItem->setVisible(false);
     }
 
     //adjust tabbar
