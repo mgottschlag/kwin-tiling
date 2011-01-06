@@ -169,11 +169,6 @@ void NotificationGroup::removeNotification(Notification *notification)
         }
     }
 
-    if (m_notifications.count() == 0) {
-        emit scrollerEmpty();
-        return;
-    }
-
     //clear tabbar
     for (int i = 1; i < m_notificationBar->count(); ++i) {
         if (!m_notificationsForApp.contains(m_notificationBar->tabText(i))) {
@@ -187,6 +182,11 @@ void NotificationGroup::removeNotification(Notification *notification)
                 setAutoCollapse(false);
             }
         }
+    }
+
+    if (m_notifications.count() == 0) {
+        emit scrollerEmpty();
+        return;
     }
 }
 
