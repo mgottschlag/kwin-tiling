@@ -96,7 +96,7 @@ bool couldBeUrl(const QString &term)
     static const QString ipv4('(' + ip4vPart + "\\." + ip4vPart + "\\." + ip4vPart + "\\." + ip4vPart + ')');
     static const QString fqnd("([^/]+\\.[a-zA-Z]{2,})");
     static const QString host("^(" + ipv4 + '|' + fqnd + ")");
-    static QRegExp rx(host + "(/.*)?$", Qt::CaseSensitive, QRegExp::RegExp2);
+    QRegExp rx(host + "(/.*)?$", Qt::CaseSensitive, QRegExp::RegExp2);
 
     const KUrl url(term);
     return (!url.protocol().isEmpty() || rx.exactMatch(term));
