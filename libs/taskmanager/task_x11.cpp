@@ -52,7 +52,7 @@ void Task::addTransient( WId w, const NETWinInfo& info )
     d->transients.insert(w);
     if (info.state() & NET::DemandsAttention) {
         d->transientsDemandingAttention.insert(w);
-        emit changed(TransientsChanged | StateChanged);
+        emit changed(TransientsChanged | StateChanged | AttentionChanged);
     }
 }
 

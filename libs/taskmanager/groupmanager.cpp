@@ -129,7 +129,7 @@ GroupManager::GroupManager(QObject *parent)
 
     d->currentDesktop = TaskManager::self()->currentDesktop();
     d->currentActivity = TaskManager::self()->currentActivity();
-    
+
     d->rootGroups[d->currentActivity][d->currentDesktop] = new TaskGroup(this, "RootGroup", Qt::transparent);
 
     d->reloadTimer.setSingleShot(true);
@@ -309,9 +309,9 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
     } else {
         currentRootGroup()->add(item);
     }
-    geometryTasks.insert(task.data());
 
-	q->updateLauncher(item);
+    geometryTasks.insert(task.data());
+    q->updateLauncher(item);
 	
     return true;
 }
@@ -492,8 +492,9 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
         }
     }
 
-    //show tasks anyway if they demand attention
-    if (changes & ::TaskManager::StateChanged && task->demandsAttention()) {
+    if (changes & ::TaskManager::AttentionChanged) {
+        // we show tasks anyway if they demand attention
+        // so whenever our state changes ... try to re-adjust it
         takeAction = true;
         show = true;
     }

@@ -50,7 +50,8 @@ public:
        cachedChanges(0, 0),
        cachedChangesTimerId(0),
        active(false),
-       lastResize(false)
+       lastResize(false),
+       demandedAttention(false)
     {
     }
 
@@ -59,6 +60,7 @@ public:
     KWindowInfo info;
     WindowList transients;
     WindowList transientsDemandingAttention;
+    QStringList activities;
 
     int lastWidth;
     int lastHeight;
@@ -73,8 +75,7 @@ public:
     QPixmap lastIcon;
     bool active : 1;
     bool lastResize : 1;
-
-    QStringList activities;
+    bool demandedAttention : 1;
 };
 }
 

@@ -122,6 +122,10 @@ void Task::refreshIcon()
 
     if (dirty.netWindowInfoProperties & NET::WMState || dirty.netWindowInfoProperties & NET::XAWMState) {
         changes |= StateChanged;
+        if (demandsAttention() != d->demandedAttention) {
+            d->demandedAttention = !d->demandedAttention;
+            changes |= AttentionChanged;
+        }
     }
 
     if (dirty.netWindowInfoProperties & NET::WMDesktop) {
@@ -271,6 +275,10 @@ void Task::removeTransient(WId w)
 {
     d->transients.remove(w);
     d->transientsDemandingAttention.remove(w);
+    if (demandsAttention() != d->demandedAttention) {
+        d->demandedAttention = !d->demandedAttention;
+        emit changed(AttentionChanged);
+    }
 }
 
 bool Task::hasTransient(WId w) const
