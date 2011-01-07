@@ -43,7 +43,7 @@ public:
     virtual bool isActive() const { return false; }
     virtual void setAdditionalMimeData(QMimeData* mimeData);
     virtual void close() {}
-    virtual void updateTask(TaskManager::TaskChanges changes) {}
+    virtual void updateTask(TaskManager::TaskChanges) {}
 
 public slots:
     virtual void activate() {}
