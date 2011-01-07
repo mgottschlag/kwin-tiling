@@ -140,7 +140,6 @@ protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
     void dropEvent(QGraphicsSceneDragDropEvent *event);
-    bool eventFilter(QObject *watched, QEvent *event);
     bool focusNextPrevChild(bool next);
 
     void handleDroppedId(WId id, AbstractTaskItem *targetTask, QGraphicsSceneDragDropEvent *event);
@@ -158,7 +157,6 @@ protected slots:
 private Q_SLOTS:
     void checkUpdates();
     void constraintsChanged(Plasma::Constraints);
-    void clearPopupLostFocus();
     void handleActiveWindowChanged(WId id);
 
     void updateTask(::TaskManager::TaskChanges changes);
@@ -175,6 +173,7 @@ private Q_SLOTS:
     void popupMenu();
     /** force a relayout of all items */
     void relayoutItems();
+    void popupVisibilityChanged(bool visible);
 
 private:
     AbstractTaskItem* createAbstractItem(AbstractGroupableItem * groupableItem);
@@ -214,7 +213,6 @@ private:
     Plasma::Dialog *m_popupDialog;
     QTimer *m_updateTimer;
     TaskManager::TaskChanges m_changes;
-    bool m_popupLostFocus;
 };
 
 #endif

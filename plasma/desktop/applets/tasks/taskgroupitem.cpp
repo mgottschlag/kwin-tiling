@@ -70,8 +70,7 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet)
       m_mainLayout(0),
       m_popupDialog(0),
       m_updateTimer(0),
-      m_changes(TaskManager::TaskUnchanged),
-      m_popupLostFocus(false)
+      m_changes(TaskManager::TaskUnchanged)
 {
     setAcceptDrops(true);
     setFlag(ItemClipsChildrenToShape, true);
@@ -586,22 +585,22 @@ void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         return;
     }
 
-    if ((event->buttons() & Qt::LeftButton) && (event->modifiers() & Qt::ControlModifier)) {
-        QList<WId> ids;
-        foreach (AbstractGroupableItem *groupable, m_group.data()->members()) {
-            if (groupable->itemType() == TaskManager::GroupItemType) {
-                //TODO: recurse through sub-groups?
-            } else {
-                TaskItem * item = dynamic_cast<TaskItem*>(groupable);
-                if (item && item->task()) {
-                    ids << item->task()->info().win();
+    if (event->buttons() & Qt::LeftButton) {
+        if (event->modifiers() & Qt::ControlModifier) {
+            QList<WId> ids;
+            foreach (AbstractGroupableItem *groupable, m_group.data()->members()) {
+                if (groupable->itemType() == TaskManager::GroupItemType) {
+                    //TODO: recurse through sub-groups?
+                } else {
+                    TaskItem * item = dynamic_cast<TaskItem*>(groupable);
+                    if (item && item->task()) {
+                        ids << item->task()->info().win();
+                    }
                 }
             }
-        }
-        Plasma::WindowEffects::presentWindows(m_applet->view()->winId(), ids);
-    } else if ((event->buttons() & Qt::LeftButton) && !m_popupLostFocus) {
-        if (m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting ||
-            m_applet->groupManager().groupingStrategy() == TaskManager::GroupManager::ManualGrouping) {
+            Plasma::WindowEffects::presentWindows(m_applet->view()->winId(), ids);
+        } else if (m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting ||
+                   m_applet->groupManager().groupingStrategy() == TaskManager::GroupManager::ManualGrouping) {
             if (!m_popupMenuTimer) {
                 m_popupMenuTimer = new QTimer(this);
                 m_popupMenuTimer->setSingleShot(true);
@@ -680,12 +679,11 @@ void TaskGroupItem::popupMenu()
         m_popupDialog = new Plasma::Dialog();
         KWindowSystem::setType(m_popupDialog->winId(), NET::PopupMenu);
         m_popupDialog->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
+        connect(m_popupDialog, SIGNAL(dialogVisible(bool)), this, SLOT(popupVisibilityChanged(bool)));
         connect(m_popupDialog, SIGNAL(dialogVisible(bool)), m_applet, SLOT(setPopupDialog(bool)));
         connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(handleActiveWindowChanged(WId)));
         KWindowSystem::setState(m_popupDialog->winId(), NET::SkipTaskbar| NET::SkipPager);
-        m_popupDialog->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-        //TODO in the future it may be possible to use the Qt::Popup flag instead of the eventFilter, but for now the focus works better with the eventFilter
-        m_popupDialog->installEventFilter(this);
+        m_popupDialog->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 
         int left, top, right, bottom;
         m_popupDialog->getContentsMargins(&left, &top, &right, &bottom);
@@ -702,7 +700,6 @@ void TaskGroupItem::popupMenu()
         }
 
         QRect rect = iconGeometry();
-        publishIconGeometry(rect);
     } else {
         m_tasksLayout->setOrientation(Plasma::Vertical);
         m_tasksLayout->setMaximumRows(1);
@@ -724,23 +721,13 @@ void TaskGroupItem::popupMenu()
     }
 }
 
-bool TaskGroupItem::eventFilter(QObject *watched, QEvent *event)
+void TaskGroupItem::popupVisibilityChanged(bool visible)
 {
-    if (watched == m_popupDialog && event->type() == QEvent::WindowDeactivate) {
-        Q_ASSERT(m_popupDialog);
-        m_popupLostFocus = true; //avoid opening it again when clicking on the group
-        if (m_applet->location() != Plasma::Floating) {
-            m_popupDialog->animatedHide(Plasma::locationToInverseDirection(m_applet->location()));
-        } else {
-            m_popupDialog->hide();
-        }
-
+    if (!visible) {
         QRect rect = iconGeometry();
         publishIconGeometry(rect);
-        QTimer::singleShot(100, this, SLOT(clearPopupLostFocus()));
+        update();
     }
-
-    return QGraphicsWidget::eventFilter(watched, event);
 }
 
 bool TaskGroupItem::focusNextPrevChild(bool next)
@@ -795,11 +782,6 @@ bool TaskGroupItem::focusSubTask(bool next, bool activate)
     } else {
         return false;
     }
-}
-
-void TaskGroupItem::clearPopupLostFocus()
-{
-    m_popupLostFocus = false;
 }
 
 void TaskGroupItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
