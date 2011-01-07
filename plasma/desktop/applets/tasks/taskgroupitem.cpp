@@ -279,7 +279,7 @@ void TaskGroupItem::updateToolTip()
         return;
     }
 
-    QWidget * dialog = m_applet->popupDialog();
+    QWidget *dialog = m_applet->popupDialog();
 
     if (dialog && dialog->isVisible()) {
         Plasma::ToolTipManager::self()->clearContent(this);
@@ -582,7 +582,6 @@ bool TaskGroupItem::isActive() const
 
 void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    //TODO add delay so we can still drag group items
     if (!m_group) {
         return;
     }
