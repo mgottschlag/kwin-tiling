@@ -176,25 +176,25 @@ void ProgramGroupingStrategy::handleItem(AbstractGroupableItem *item)
     }
 
     if (item->itemType() == GroupItemType) {
-        //kDebug() << "item is groupitem";
+        //kDebug() << item->name() << "item is groupitem";
         root->add(item);
         return;
     } else if (d->blackList.contains((static_cast<TaskItem*>(item))->task()->classClass())) {
-        //kDebug() << "item is in blacklist";
+        //kDebug() << item->name() << "item is in blacklist";
         root->add(item);
         return;
     }
 
     TaskItem *task = dynamic_cast<TaskItem*>(item);
     if (task && !programGrouping(task, root)) {
-        //kDebug() << "joined rootGroup ";
+        //kDebug() << item->name() << "joined rootGroup ";
         root->add(item);
     }
 }
 
 bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* groupItem)
 {
-    //kDebug();
+    //kDebug() << "===== Task:" << taskItem->name() << " <=> Group:" << groupItem->name() << "=====";
     QList<AbstractGroupableItem *> list;
     QString name = taskItem->task()->classClass();
 
@@ -203,11 +203,12 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
         if (item->itemType() == GroupItemType) {
             //TODO: maybe add the condition that the subgroup was created by programGrouping?
             if (programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
-                //kDebug() << "joined subGroup";
+                //kDebug() << "    joined subGroup";
                 return true;
             }
         } else {
             TaskItem *task = static_cast<TaskItem*>(item);
+            //kDebug() << "    testing" << (task->task() ? task->task()->classClass() : "No task!") << "==" << name;
             if (task != taskItem && task->task() && task->task()->classClass() == name) { //omit startup tasks
                 list.append(item);
             }
@@ -216,7 +217,7 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
 
     if (!list.isEmpty()) {
         if (groupItem->isRootGroup()) {
-            //kDebug() << "create Group root group";
+            //kDebug() << "    create Group root group";
             QIcon icon = taskItem->icon();
             list.append(taskItem);
             TaskGroup* group = createGroup(list);
@@ -225,13 +226,14 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
             group->setIcon(icon);
             connect(group, SIGNAL(checkIcon(TaskGroup*)), this, SLOT(updateIcon(TaskGroup*)));
         } else {
-            //kDebug() << "joined this Group";
+            //kDebug() << "    joined this Group";
             groupItem->add(taskItem);
         }
 
         return true;
     }
 
+    //kDebug() << "    failed";
     return false;
 }
 
