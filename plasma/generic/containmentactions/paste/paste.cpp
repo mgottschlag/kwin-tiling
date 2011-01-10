@@ -34,6 +34,9 @@ void Paste::contextEvent(QEvent *event)
     QPointF scenePos;
     QPoint screenPos;
     switch (event->type()) {
+        case QEvent::GraphicsSceneMousePress:
+            event->accept();
+            return;
         case QEvent::GraphicsSceneMouseRelease: {
             QGraphicsSceneMouseEvent *e = static_cast<QGraphicsSceneMouseEvent*>(event);
             scenePos = e->scenePos();
