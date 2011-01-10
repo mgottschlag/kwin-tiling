@@ -398,26 +398,16 @@ void LockOut::showButtons()
     }
     
     // can this be done more beautiful?
-    if(m_iconLock){
-	delete m_iconLock;
-	m_iconLock = 0;
-    }
-    if(m_iconSwitchUser) {
-	delete m_iconSwitchUser;
-	m_iconSwitchUser = 0;
-    }
-    if(m_iconLogout) {
-	delete m_iconLogout;
-	m_iconLogout = 0;
-    }
-    if(m_iconSleep) { 
-	delete m_iconSleep;
-	m_iconSleep = 0;
-    }
-    if(m_iconHibernate) {
-	delete m_iconHibernate;
-	m_iconHibernate = 0;
-    }
+    delete m_iconLock;
+    m_iconLock = 0;
+    delete m_iconSwitchUser;
+    m_iconSwitchUser = 0;
+    delete m_iconLogout;
+    m_iconLogout = 0;
+    delete m_iconSleep;
+    m_iconSleep = 0;
+    delete m_iconHibernate;
+    m_iconHibernate = 0;
     
 #ifdef Q_OS_WIN
     //Tooltip strings maybe should be different (eg. "Leave..."->"Logout")?

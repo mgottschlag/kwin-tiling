@@ -251,9 +251,7 @@ void InteractiveConsole::scriptTextChanged()
 
 void InteractiveConsole::openScriptFile()
 {
-    if (m_fileDialog) {
-        delete m_fileDialog;
-    }
+    delete m_fileDialog;
 
     m_fileDialog = new KFileDialog(KUrl(), QString(), 0);
     m_fileDialog->setOperationMode(KFileDialog::Opening);
@@ -381,9 +379,7 @@ void InteractiveConsole::saveScript()
         return;
     }
 
-    if (m_fileDialog) {
-        delete m_fileDialog;
-    }
+    delete m_fileDialog;
 
     m_fileDialog = new KFileDialog(KUrl(), QString(), 0);
     m_fileDialog->setOperationMode(KFileDialog::Saving);

@@ -85,9 +85,7 @@ void StatusNotifierItemEngine::registerWatcher(const QString& service)
 {
     kDebug()<<"service appeared"<<service;
     if (service == s_watcherServiceName) {
-        if (m_statusNotifierWatcher) {
-            delete m_statusNotifierWatcher;
-        }
+        delete m_statusNotifierWatcher;
 
         m_statusNotifierWatcher = new org::kde::StatusNotifierWatcher(s_watcherServiceName, "/StatusNotifierWatcher",
 								      QDBusConnection::sessionBus());

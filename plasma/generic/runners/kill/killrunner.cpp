@@ -79,10 +79,8 @@ void KillRunner::cleanup()
     }
 
     if (m_prepLock.tryLockForWrite()) {
-        if (m_processes) {
-            delete m_processes;
-            m_processes = 0;
-        }
+        delete m_processes;
+        m_processes = 0;
 
         m_prepLock.unlock();
     } else {

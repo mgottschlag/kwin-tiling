@@ -53,9 +53,7 @@ QalculateEngine::QalculateEngine(QObject* parent):
 
 QalculateEngine::~QalculateEngine()
 {
-    if (CALCULATOR) {
-        delete CALCULATOR;
-    }
+    delete CALCULATOR;
 }
 
 void QalculateEngine::updateExchangeRates()
