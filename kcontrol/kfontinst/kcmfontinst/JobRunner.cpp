@@ -313,11 +313,8 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, bool destIsSystem)
     QTimer::singleShot(constInterfaceCheck, this, SLOT(checkInterface()));
     itsActionLabel->startAnimation();
     int rv=KDialog::exec();
-    if(itsTempDir)
-    {
-        delete itsTempDir;
-        itsTempDir=0L;
-    }
+    delete itsTempDir;
+    itsTempDir=0L;
     return rv;
 }
 
