@@ -39,15 +39,15 @@ class SolarSystemObject
         SolarSystemObject();
         virtual ~SolarSystemObject();
 
-        double meanLongitude() { return L; };
-        double meanAnomaly() { return M; };
+        double meanLongitude() const { return L; };
+        double meanAnomaly() const { return M; };
         double siderealTime();
-        double altitude() { return m_altitude; };
-        double azimuth() { return m_azimuth; };
+        double altitude() const { return m_altitude; };
+        double azimuth() const { return m_azimuth; };
         double calcElevation();
-        QDateTime dateTime() { return m_local; };
-        double lambda() { return m_lambda; };
-        double eclipticLongitude() { return m_eclipticLongitude; };
+        QDateTime dateTime() const { return m_local; };
+        double lambda() const { return m_lambda; };
+        double eclipticLongitude() const { return m_eclipticLongitude; };
         void setPosition(double latitude, double longitude);
 
         virtual void calcForDateTime(const QDateTime& local, int offset);
