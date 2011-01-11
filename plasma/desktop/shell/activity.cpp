@@ -176,34 +176,38 @@ Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
                 // possibly a plugin failure, let's go for the default
                 containment = PlasmaApp::self()->corona()->containmentForScreen(screen, desktop, "default");
             }
+
             //we don't want to steal contaiments from other activities
-            if (!containment || !containment->context()->currentActivityId().isEmpty()) {
-                // possibly a plugin failure, let's go for the default
-                containment = PlasmaApp::self()->corona()->addContainment(m_plugin);
-                if (containment) {
-                    containment->setScreen(screen, desktop);
-                }
-            }
-            //last hope, create a new one
             if (!containment) {
-                // possibly a plugin failure, let's go for the default
-                containment = PlasmaApp::self()->corona()->addContainment("default");
-                containment->setScreen(screen, desktop);
+                // we failed to even get the default; we're screwed.
+                Q_ASSERT(false);
+                return 0;
+            }
+
+            if (!containment->context()->currentActivityId().isEmpty() &&
+                containment->context()->currentActivityId() != m_id) {
+                // we got a containment, but it belongs to some other activity; let's unassign it
+                // from a screen and grab a new one
+                containment->setScreen(0);
+                containment = PlasmaApp::self()->corona()->containmentForScreen(screen, desktop, m_plugin);
+                if (!containment) {
+                    // possibly a plugin failure, let's go for the default
+                    containment = PlasmaApp::self()->corona()->containmentForScreen(screen, desktop, "default");
+                }
             }
         }
 
-        Q_ASSERT(containment);
-        insertContainment(containment, screen, desktop);
-        PlasmaApp::self()->corona()->requestConfigSync();
+        if (containment) {
+            insertContainment(containment, screen, desktop);
+            PlasmaApp::self()->corona()->requestConfigSync();
+        }
+    } else if (containment->screen() != screen || containment->desktop() != desktop) {
+        // ensure the containment _also_ knows which screen we think it is on;
+        // can happen when swapping between activities without stopping them first
+        containment->setScreen(screen, desktop);
     }
 
     return containment;
-}
-
-void Activity::activateContainment(int screen, int desktop)
-{
-    Plasma::Containment *c = containmentForScreen(screen, desktop);
-    c->setScreen(screen, desktop);
 }
 
 void Activity::activate()
@@ -229,10 +233,10 @@ void Activity::checkScreens()
     for (int screen = 0; screen < numScreens; ++screen) {
         if (numDesktops > 0) {
             for (int desktop = 0; desktop < numDesktops; ++desktop) {
-                activateContainment(screen, desktop);
+                containmentForScreen(screen, desktop);
             }
         } else {
-            activateContainment(screen, -1);
+            containmentForScreen(screen, -1);
         }
     }
 }
@@ -304,7 +308,7 @@ void Activity::closed()
     const QString name = "activities/" + m_id;
     KConfig external(name, KConfig::SimpleConfig, "appdata");
 
-    //apparently this magic turns a kconfig into a kconfiggroup
+    //passing an empty string for the group name turns a kconfig into a kconfiggroup
     KConfigGroup group = external.group(QString());
     PlasmaApp::self()->corona()->exportLayout(group, m_containments.values());
 
