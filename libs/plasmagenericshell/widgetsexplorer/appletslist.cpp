@@ -192,6 +192,10 @@ void AppletsListWidget::setToolTipPosition()
     toolTipMoveFrom = m_toolTip->pos();
 
     Plasma::Corona *corona = static_cast<Plasma::WidgetExplorer*>(parentItem())->corona();
+    //is the item still not in a scene?
+    if (!corona) {
+        return;
+    }
 
     QGraphicsView *v = Plasma::viewFor(item);
 
