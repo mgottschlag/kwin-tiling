@@ -117,8 +117,6 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
             this, SLOT(screenResized(Kephal::Screen *)));
     connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)),
             this, SLOT(screenMoved(Kephal::Screen *)));
-
-    connect(this, SIGNAL(lostContainment()), SLOT(lostContainment()));
 }
 
 DesktopView::~DesktopView()
@@ -387,12 +385,6 @@ void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Contai
         //kDebug() << "setting new containment";
         setContainment(newContainment);
     }
-}
-
-void DesktopView::lostContainment()
-{
-    //QTimer::singleShot(0, this, SLOT(grabContainment()));
-    kDebug() << "lost our containment, waiting for someone to rescue us";
 }
 
 #include "desktopview.moc"

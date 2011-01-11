@@ -82,11 +82,6 @@ public slots:
      */
     void setContainment(Plasma::Containment *containment);
 
-    /**
-     * make sure we've always got a containment
-     */
-    void lostContainment();
-
 Q_SIGNALS:
     void dashboardClosed();
 
