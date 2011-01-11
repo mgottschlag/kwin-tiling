@@ -59,7 +59,7 @@ CategoriesWidget::CategoriesWidget(QGraphicsWidget *parent)
 
 CategoriesWidget::~CategoriesWidget()
 {
-    delete m_menu;
+    m_menu->deleteLater();
 }
 
 void CategoriesWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
