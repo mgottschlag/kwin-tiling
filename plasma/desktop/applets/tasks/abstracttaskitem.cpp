@@ -24,6 +24,7 @@
 
 // Qt
 #include <QApplication>
+#include <QFileInfo>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsView>
@@ -38,12 +39,12 @@
 
 // KDE
 #include <KAuthorized>
+#include <KColorUtils>
 #include <KDebug>
+#include <KGlobalSettings>
 #include <KIcon>
 #include <KIconEffect>
-#include <KGlobalSettings>
 #include <KIconLoader>
-#include <KColorUtils>
 
 #include <NETWinInfo>
 
@@ -869,12 +870,41 @@ void AbstractTaskItem::setBackgroundFadeAlpha(qreal progress)
     update();
 }
 
+bool AbstractTaskItem::shouldIgnoreDragEvent(QGraphicsSceneDragDropEvent *event)
+{
+   if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
+       event->mimeData()->hasFormat(TaskManager::Task::groupMimetype())) {
+        return true;
+    }
+
+    if (event->mimeData()->hasFormat("text/uri-list")) {
+        // we want to check if we have executables; if so, then we treat it as a possible
+        // drop for a launcher
+        const KUrl::List uris = KUrl::List::fromMimeData(event->mimeData());
+        if (!uris.isEmpty()) {
+            foreach (const QUrl &uri, uris) {
+                KUrl url(uri);
+                if (url.isLocalFile()) {
+                    const QString path = url.toLocalFile();
+                    QFileInfo info(path);
+                    if (info.isDir() || !info.isExecutable()) {
+                        return false;
+                        break;
+                    }
+                }
+            }
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void AbstractTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
-    if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
-        event->mimeData()->hasFormat(TaskManager::Task::groupMimetype()) ||
-        event->mimeData()->hasFormat("text/uri-list")) {
-        event->ignore(); //ignore it so the taskbar gets the event
+    if (shouldIgnoreDragEvent(event)) {
+        event->ignore();
         return;
     }
 

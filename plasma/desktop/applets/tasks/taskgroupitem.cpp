@@ -1047,11 +1047,8 @@ void  TaskGroupItem::itemPositionChanged(AbstractGroupableItem * item)
 void TaskGroupItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     //kDebug()<<"Drag enter";
-    if (collapsed() &&
-        (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
-         event->mimeData()->hasFormat(TaskManager::Task::groupMimetype()) ||
-         event->mimeData()->hasFormat("text/uri-list"))) {
-        event->acceptProposedAction();
+    if (collapsed() && shouldIgnoreDragEvent(event)) {
+        event->ignore();
         //kDebug()<<"Drag enter accepted";
     } else {
         event->accept();

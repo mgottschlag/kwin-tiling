@@ -192,6 +192,7 @@ protected:
     virtual void updateToolTip() = 0; // pure virtual function
     QString expanderElement() const;
     void stopWindowHoverEffect();
+    bool shouldIgnoreDragEvent(QGraphicsSceneDragDropEvent *event);
 
 protected Q_SLOTS:
     /** Event compression **/
