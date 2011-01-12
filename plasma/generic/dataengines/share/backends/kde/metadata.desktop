@@ -1,6 +1,18 @@
 [Desktop Entry]
 Name=kde.org
+Name[ia]=kde.org
+Name[pt]=kde.org
+Name[pt_BR]=kde.org
+Name[sv]=kde.org
+Name[uk]=kde.org
+Name[x-test]=xxkde.orgxx
 Comment=Enables the share of text using kde.org service
+Comment[ia]=Il habilita le uso commun de texto per usar le servicio kde.org
+Comment[pt]=Activa a partilha de texto com o serviço do 'kde.org'
+Comment[pt_BR]=Habilita o compartilhamento de texto com o uso do serviço kde.org
+Comment[sv]=Aktiverar att dela text med tjänsten kde.org
+Comment[uk]=Уможливлює оприлюднення фрагментів тексту за допомогою служби kde.org
+Comment[x-test]=xxEnables the share of text using kde.org servicexx
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ShareProvider
