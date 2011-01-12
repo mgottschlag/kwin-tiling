@@ -145,8 +145,8 @@ void DesktopView::toggleDashboard()
     prepDashboard();
     if (m_dashboard) {
         m_dashboard->toggleVisibility();
+        kDebug() << "toggling dashboard for screen" << screen() << "and destop" << desktop() << m_dashboard->isVisible();
     }
-    kDebug() << "toggling dashboard for screen" << screen() << "and destop" << desktop() << m_dashboard->isVisible();
 }
 
 void DesktopView::showDashboard(bool show)
