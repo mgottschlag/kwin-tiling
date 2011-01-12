@@ -76,6 +76,7 @@ void NetCorona::init()
     a = action("lock widgets");
     delete a;
     setImmutability(Plasma::Mutable);
+    setDefaultContainmentPlugin("newspaper");
 }
 
 void NetCorona::loadDefaultLayout()
@@ -121,11 +122,12 @@ void NetCorona::addPage()
         }
     }
 
-    Plasma::Containment *cont = addContainment("newspaper");
-    //it may fail, for instance widgets locked
+    Plasma::Containment *cont = addContainment(QString());
     if (!cont) {
+        //it may fail, for instance when widgets are locked
         return;
     }
+
     cont->setActivity(i18nc("Page number", "Page %1", numPages));
     cont->setScreen(0);
     cont->setToolBoxOpen(true);
