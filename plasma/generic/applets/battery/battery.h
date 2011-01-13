@@ -125,7 +125,6 @@ class Battery : public Plasma::PopupApplet
 
         /* Prevent creating infinite loops by embedding applets inside applets */
         bool m_isEmbedded;
-        Battery *m_extenderApplet;
         bool m_extenderVisible;
 
         QGraphicsWidget *m_controls;

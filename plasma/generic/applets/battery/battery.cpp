@@ -106,7 +106,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     setAspectRatioMode(Plasma::ConstrainedSquare );
     m_textRect = QRectF();
     m_remainingMSecs = 0;
-    m_extenderApplet = 0;
     m_theme = new Plasma::Svg(this);
     m_theme->setImagePath("widgets/battery-oxygen");
     m_theme->setContainsMultipleImages(true);
@@ -533,18 +532,18 @@ void Battery::initPopupWidget()
         m_controlsLayout->addItem(m_remainingInfoLabel, row, 1);
         row++;
 
-        Battery *m_extenderApplet = new Battery(0, QVariantList());
-        m_extenderApplet->setParent(m_controls);
-        m_extenderApplet->setAcceptsHoverEvents(false);
-        m_extenderApplet->setParentItem(m_controls);
-        m_extenderApplet->setEmbedded(true);
-        m_extenderApplet->setBackgroundHints(NoBackground);
-        m_extenderApplet->setFlag(QGraphicsItem::ItemIsMovable, false);
-        m_extenderApplet->init();
-        m_extenderApplet->setShowBatteryLabel(false);
-        m_extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
-        m_extenderApplet->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        m_controlsLayout->addItem(m_extenderApplet, 1, 2, 2, 1);
+        Battery *extenderApplet = new Battery(0, QVariantList());
+        extenderApplet->setParent(m_controls);
+        extenderApplet->setAcceptsHoverEvents(false);
+        extenderApplet->setParentItem(m_controls);
+        extenderApplet->setEmbedded(true);
+        extenderApplet->setBackgroundHints(NoBackground);
+        extenderApplet->setFlag(QGraphicsItem::ItemIsMovable, false);
+        extenderApplet->init();
+        extenderApplet->setShowBatteryLabel(false);
+        extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
+        extenderApplet->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        m_controlsLayout->addItem(extenderApplet, 1, 2, 2, 1);
 
         m_profileLabel = createBuddyLabel(m_controls);
         m_profileLabel->setText(i18n("Power Profile:"));
@@ -635,10 +634,6 @@ void Battery::initPopupWidget()
 void Battery::popupEvent(bool show)
 {
     m_extenderVisible = show;
-    if (m_extenderApplet) {
-        int s = 64;
-        m_extenderApplet->setGeometry(QRectF(QPoint(m_controls->geometry().width()-s, 0), QSizeF(s, s)));
-    }
     updateStatus();
     PopupApplet::popupEvent(show);
 }
