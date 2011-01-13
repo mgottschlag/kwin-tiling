@@ -525,9 +525,7 @@ void Battery::initPopupWidget()
     row++;
 
     m_remainingTimeLabel = createBuddyLabel(controls);
-#if KDE_IS_VERSION(4, 5, 60)
     m_remainingTimeLabel->setText(i18nc("Label for remaining time", "Time Remaining:"));
-#endif
     m_remainingInfoLabel = createInfoLabel(controls);
     controlsLayout->addItem(m_remainingTimeLabel, row, 0);
     controlsLayout->addItem(m_remainingInfoLabel, row, 1);
@@ -706,12 +704,7 @@ void Battery::updateStatus()
             ++batteryCount;
         }
 
-    #if KDE_IS_VERSION(4, 6, 60)
         m_acLabelLabel->setText(i18n("AC Adapter:"));
-    #else
-        // Avoid breaking string freeze
-        m_acLabelLabel->setText(i18n("AC Adapter: ").trimmed());
-    #endif
         if (m_acAdapterPlugged) {
             m_acInfoLabel->setText(i18n("<b>Plugged in</b>"));
         } else {
