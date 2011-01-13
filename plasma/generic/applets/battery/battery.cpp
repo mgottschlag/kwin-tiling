@@ -577,7 +577,6 @@ void Battery::initPopupWidget()
     QGraphicsLinearLayout *buttonLayout = new QGraphicsLinearLayout;
     buttonLayout->setSpacing(0.0);
     buttonLayout->addStretch();
-    //buttonLayout->addItem(m_profileCombo);
 
     // Sleep and Hibernate buttons
     QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
@@ -624,10 +623,6 @@ void Battery::initPopupWidget()
     controls->setLayout(controlsLayout);
 
     setupFonts();
-
-    m_brightnessOSD = new BrightnessOSDWidget();
-    QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement",
-                                          "brightnessChanged", this, SLOT(showBrightnessOSD(int)));
 }
 
 void Battery::popupEvent(bool show)
@@ -1104,6 +1099,13 @@ qreal Battery::acAlpha() const
 void Battery::showBrightnessOSD(int brightness)
 {
     // code adapted from KMix
+    if (!m_brightnessOSD) {
+        m_brightnessOSD = new BrightnessOSDWidget();
+        QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement",
+                                              "brightnessChanged", this, SLOT(showBrightnessOSD(int)));
+
+    }
+
     m_brightnessOSD->setCurrentBrightness(brightness);
     m_brightnessOSD->show();
     m_brightnessOSD->activateOSD(); //Enable the hide timer
