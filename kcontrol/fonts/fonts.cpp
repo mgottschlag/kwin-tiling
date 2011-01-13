@@ -50,14 +50,18 @@
 #endif
 #endif
 
+#ifdef Q_WS_X11
 #include <X11/Xlib.h>
+#endif
 
 #include <KPluginFactory>
 
+#ifdef Q_WS_X11
 // X11 headers
 #undef Bool
 #undef Unsorted
 #undef None
+#endif
 
 static const char * const aa_rgb_xpm[]={
 "12 12 3 1",
