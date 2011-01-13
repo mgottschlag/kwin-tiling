@@ -488,147 +488,150 @@ void Battery::initPopupWidget()
     // would create infinitve loops, you really don't want a popup widget when
     // the applet is embedded into another applet, such as the battery applet
     // is also embedded into the battery's popup widget.
-    if (!m_isEmbedded) {
-        int row = 0;
-
-        m_controls = new QGraphicsWidget(this);
-        setGraphicsWidget(m_controls);
-        m_controlsLayout = new QGraphicsGridLayout(m_controls);
-        m_controlsLayout->setColumnStretchFactor(1, 3);
-        // Do not call QGraphicsWidget::setMinimumWidth() here: for some reason
-        // it prevents the widget from getting wide enough if needed (for
-        // example because of wide translations, see bug #258044)
-        //
-        // Setting the minimum width of a column does not cause such problems,
-        // so use that solution as a workaround.
-        //
-        // This is reproducible with Qt 4.7
-        //m_controls->setMinimumWidth(360);
-        m_controlsLayout->setColumnMinimumWidth(1, 200);
-
-        Plasma::Label *spacer0 = new Plasma::Label(m_controls);
-        spacer0->setMinimumHeight(8);
-        spacer0->setMaximumHeight(8);
-        m_controlsLayout->addItem(spacer0, row, 0);
-        row++;
-
-        m_batteryLabelLabel = createBuddyLabel(m_controls);
-        m_batteryInfoLabel = createInfoLabel(m_controls);
-        m_controlsLayout->addItem(m_batteryLabelLabel, row, 0);
-        m_controlsLayout->addItem(m_batteryInfoLabel, row, 1);
-        row++;
-        m_acLabelLabel = createBuddyLabel(m_controls);
-        m_acInfoLabel = createInfoLabel(m_controls);
-        m_controlsLayout->addItem(m_acLabelLabel, row, 0);
-        m_controlsLayout->addItem(m_acInfoLabel, row, 1);
-        row++;
-
-        m_remainingTimeLabel = createBuddyLabel(m_controls);
-#if KDE_IS_VERSION(4, 5, 60)
-        m_remainingTimeLabel->setText(i18nc("Label for remaining time", "Time Remaining:"));
-#endif
-        m_remainingInfoLabel = createInfoLabel(m_controls);
-        m_controlsLayout->addItem(m_remainingTimeLabel, row, 0);
-        m_controlsLayout->addItem(m_remainingInfoLabel, row, 1);
-        row++;
-
-        Battery *extenderApplet = new Battery(0, QVariantList());
-        extenderApplet->setParent(m_controls);
-        extenderApplet->setAcceptsHoverEvents(false);
-        extenderApplet->setParentItem(m_controls);
-        extenderApplet->setEmbedded(true);
-        extenderApplet->setBackgroundHints(NoBackground);
-        extenderApplet->setFlag(QGraphicsItem::ItemIsMovable, false);
-        extenderApplet->init();
-        extenderApplet->setShowBatteryLabel(false);
-        extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
-        extenderApplet->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        m_controlsLayout->addItem(extenderApplet, 1, 2, 2, 1);
-
-        m_profileLabel = createBuddyLabel(m_controls);
-        m_profileLabel->setText(i18n("Power Profile:"));
-        m_controlsLayout->addItem(m_profileLabel, row, 0);
-
-
-        m_profileCombo = new Plasma::ComboBox(m_controls);
-        // Workaround for bug 219873
-        m_profileCombo->nativeWidget()->setMaxVisibleItems(4);
-        // This is necessary until QTBUG-2368 is fixed
-        m_profileCombo->setZValue(110);
-        connect(m_profileCombo, SIGNAL(activated(QString)),
-                this, SLOT(setProfile(QString)));
-        m_controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
-        row++;
-
-        m_brightnessLabel = createBuddyLabel(m_controls);
-        m_brightnessLabel->setText(i18n("Screen Brightness:"));
-        m_controlsLayout->addItem(m_brightnessLabel, row, 0);
-
-        m_brightnessSlider = new Plasma::Slider(m_controls);
-        m_brightnessSlider->setRange(0, 100);
-
-        updateSlider();
-        m_brightnessSlider->nativeWidget()->setTickInterval(10);
-        m_brightnessSlider->setOrientation(Qt::Horizontal);
-        connect(m_brightnessSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(brightnessChanged(int)));
-        m_controlsLayout->addItem(m_brightnessSlider, row, 1, 1, 2);
-        row++;
-
-        QGraphicsLinearLayout *buttonLayout = new QGraphicsLinearLayout;
-        buttonLayout->setSpacing(0.0);
-        buttonLayout->addStretch();
-        //buttonLayout->addItem(m_profileCombo);
-
-        // Sleep and Hibernate buttons
-        QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
-        foreach (const Solid::PowerManagement::SleepState &sleepstate, sleepstates) {
-            if (sleepstate == Solid::PowerManagement::StandbyState) {
-                // Not interesting at this point ...
-
-            } else if (sleepstate == Solid::PowerManagement::SuspendState) {
-                Plasma::IconWidget *suspendButton = createButton(m_controls);
-                suspendButton->setIcon("system-suspend");
-                suspendButton->setText(i18nc("Suspend the computer to RAM; translation should be short", "Sleep"));
-                buttonLayout->addItem(suspendButton);
-                //row++;
-                connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
-            } else if (sleepstate == Solid::PowerManagement::HibernateState) {
-                Plasma::IconWidget *hibernateButton = createButton(m_controls);
-                hibernateButton->setIcon("system-suspend-hibernate");
-                hibernateButton->setText(i18nc("Suspend the computer to disk; translation should be short", "Hibernate"));
-                buttonLayout->addItem(hibernateButton);
-                connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
-            }
-        }
-        // Configure button
-        Plasma::IconWidget *configButton = createButton(m_controls);
-        QAction *action = new QAction(this);
-        action->setToolTip(i18nc("tooltip on the config button in the popup", "Configure Power Management..."));
-        action->setIcon(KIcon("configure"));
-        action->setText(i18n("Power save settings"));
-        connect(action, SIGNAL(triggered(bool)), this, SLOT(openConfig()));
-        connect(configButton, SIGNAL(activated()), this, SLOT(openConfig()));
-        addAction("configure_powersave", action);
-        configButton->setIcon(action->icon());
-        configButton->setToolTip(action->toolTip());
-        configButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
-        configButton->setEnabled(hasAuthorization("LaunchApp"));
-
-        buttonLayout->addItem(configButton);
-        buttonLayout->setItemSpacing(0, 0.0);
-        buttonLayout->setItemSpacing(1, 0.0);
-        buttonLayout->setAlignment(configButton, Qt::AlignRight|Qt::AlignVCenter);
-
-        m_controlsLayout->addItem(buttonLayout, row, 0, 1, 3);
-        m_controls->setLayout(m_controlsLayout);
-
-        setupFonts();
-
-        m_brightnessOSD = new BrightnessOSDWidget();
-        QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement",
-                                              "brightnessChanged", this, SLOT(showBrightnessOSD(int)));
+    if (m_isEmbedded) {
+        return;
     }
+
+    int row = 0;
+
+    m_controls = new QGraphicsWidget(this);
+    setGraphicsWidget(m_controls);
+    m_controlsLayout = new QGraphicsGridLayout(m_controls);
+    m_controlsLayout->setColumnStretchFactor(1, 3);
+    // Do not call QGraphicsWidget::setMinimumWidth() here: for some reason
+    // it prevents the widget from getting wide enough if needed (for
+    // example because of wide translations, see bug #258044)
+    //
+    // Setting the minimum width of a column does not cause such problems,
+    // so use that solution as a workaround.
+    //
+    // This is reproducible with Qt 4.7
+    //m_controls->setMinimumWidth(360);
+    m_controlsLayout->setColumnMinimumWidth(1, 200);
+
+    Plasma::Label *spacer0 = new Plasma::Label(m_controls);
+    spacer0->setMinimumHeight(8);
+    spacer0->setMaximumHeight(8);
+    m_controlsLayout->addItem(spacer0, row, 0);
+    row++;
+
+    m_batteryLabelLabel = createBuddyLabel(m_controls);
+    m_batteryInfoLabel = createInfoLabel(m_controls);
+    m_controlsLayout->addItem(m_batteryLabelLabel, row, 0);
+    m_controlsLayout->addItem(m_batteryInfoLabel, row, 1);
+    row++;
+    m_acLabelLabel = createBuddyLabel(m_controls);
+    m_acInfoLabel = createInfoLabel(m_controls);
+    m_controlsLayout->addItem(m_acLabelLabel, row, 0);
+    m_controlsLayout->addItem(m_acInfoLabel, row, 1);
+    row++;
+
+    m_remainingTimeLabel = createBuddyLabel(m_controls);
+#if KDE_IS_VERSION(4, 5, 60)
+    m_remainingTimeLabel->setText(i18nc("Label for remaining time", "Time Remaining:"));
+#endif
+    m_remainingInfoLabel = createInfoLabel(m_controls);
+    m_controlsLayout->addItem(m_remainingTimeLabel, row, 0);
+    m_controlsLayout->addItem(m_remainingInfoLabel, row, 1);
+    row++;
+
+    Battery *extenderApplet = new Battery(0, QVariantList());
+    extenderApplet->setParent(m_controls);
+    extenderApplet->setAcceptsHoverEvents(false);
+    extenderApplet->setParentItem(m_controls);
+    extenderApplet->setEmbedded(true);
+    extenderApplet->setBackgroundHints(NoBackground);
+    extenderApplet->setFlag(QGraphicsItem::ItemIsMovable, false);
+    extenderApplet->init();
+    extenderApplet->setShowBatteryLabel(false);
+    extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
+    extenderApplet->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_controlsLayout->addItem(extenderApplet, 1, 2, 2, 1);
+
+    m_profileLabel = createBuddyLabel(m_controls);
+    m_profileLabel->setText(i18n("Power Profile:"));
+    m_controlsLayout->addItem(m_profileLabel, row, 0);
+
+
+    m_profileCombo = new Plasma::ComboBox(m_controls);
+    // Workaround for bug 219873
+    m_profileCombo->nativeWidget()->setMaxVisibleItems(4);
+    // This is necessary until QTBUG-2368 is fixed
+    m_profileCombo->setZValue(110);
+    connect(m_profileCombo, SIGNAL(activated(QString)),
+            this, SLOT(setProfile(QString)));
+    m_controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
+    row++;
+
+    m_brightnessLabel = createBuddyLabel(m_controls);
+    m_brightnessLabel->setText(i18n("Screen Brightness:"));
+    m_controlsLayout->addItem(m_brightnessLabel, row, 0);
+
+    m_brightnessSlider = new Plasma::Slider(m_controls);
+    m_brightnessSlider->setRange(0, 100);
+
+    updateSlider();
+    m_brightnessSlider->nativeWidget()->setTickInterval(10);
+    m_brightnessSlider->setOrientation(Qt::Horizontal);
+    connect(m_brightnessSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(brightnessChanged(int)));
+    m_controlsLayout->addItem(m_brightnessSlider, row, 1, 1, 2);
+    row++;
+
+    QGraphicsLinearLayout *buttonLayout = new QGraphicsLinearLayout;
+    buttonLayout->setSpacing(0.0);
+    buttonLayout->addStretch();
+    //buttonLayout->addItem(m_profileCombo);
+
+    // Sleep and Hibernate buttons
+    QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
+    foreach (const Solid::PowerManagement::SleepState &sleepstate, sleepstates) {
+        if (sleepstate == Solid::PowerManagement::StandbyState) {
+            // Not interesting at this point ...
+
+        } else if (sleepstate == Solid::PowerManagement::SuspendState) {
+            Plasma::IconWidget *suspendButton = createButton(m_controls);
+            suspendButton->setIcon("system-suspend");
+            suspendButton->setText(i18nc("Suspend the computer to RAM; translation should be short", "Sleep"));
+            buttonLayout->addItem(suspendButton);
+            //row++;
+            connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
+        } else if (sleepstate == Solid::PowerManagement::HibernateState) {
+            Plasma::IconWidget *hibernateButton = createButton(m_controls);
+            hibernateButton->setIcon("system-suspend-hibernate");
+            hibernateButton->setText(i18nc("Suspend the computer to disk; translation should be short", "Hibernate"));
+            buttonLayout->addItem(hibernateButton);
+            connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
+        }
+    }
+
+    // Configure button
+    Plasma::IconWidget *configButton = createButton(m_controls);
+    QAction *action = new QAction(this);
+    action->setToolTip(i18nc("tooltip on the config button in the popup", "Configure Power Management..."));
+    action->setIcon(KIcon("configure"));
+    action->setText(i18n("Power save settings"));
+    connect(action, SIGNAL(triggered(bool)), this, SLOT(openConfig()));
+    connect(configButton, SIGNAL(activated()), this, SLOT(openConfig()));
+    addAction("configure_powersave", action);
+    configButton->setIcon(action->icon());
+    configButton->setToolTip(action->toolTip());
+    configButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
+    configButton->setEnabled(hasAuthorization("LaunchApp"));
+
+    buttonLayout->addItem(configButton);
+    buttonLayout->setItemSpacing(0, 0.0);
+    buttonLayout->setItemSpacing(1, 0.0);
+    buttonLayout->setAlignment(configButton, Qt::AlignRight|Qt::AlignVCenter);
+
+    m_controlsLayout->addItem(buttonLayout, row, 0, 1, 3);
+    m_controls->setLayout(m_controlsLayout);
+
+    setupFonts();
+
+    m_brightnessOSD = new BrightnessOSDWidget();
+    QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement",
+                                          "brightnessChanged", this, SLOT(showBrightnessOSD(int)));
 }
 
 void Battery::popupEvent(bool show)
