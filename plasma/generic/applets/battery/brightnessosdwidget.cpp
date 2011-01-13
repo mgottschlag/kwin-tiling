@@ -41,13 +41,13 @@
 
 BrightnessOSDWidget::BrightnessOSDWidget(QWidget * parent)
     : QGraphicsView(parent),
-    m_background(new Plasma::FrameSvg(this)),
-    m_scene(new QGraphicsScene(this)),
-    m_container(new QGraphicsWidget),
-    m_iconLabel(new Plasma::Label),
-    m_volumeLabel(new Plasma::Label),
-    m_meter(new Plasma::Meter),
-    m_hideTimer(new QTimer(this))
+      m_background(new Plasma::FrameSvg(this)),
+      m_scene(new QGraphicsScene(this)),
+      m_container(new QGraphicsWidget),
+      m_iconLabel(new Plasma::Label),
+      m_volumeLabel(new Plasma::Label),
+      m_meter(new Plasma::Meter),
+      m_hideTimer(new QTimer(this))
 {
     //Setup the window properties
     setWindowFlags(Qt::X11BypassWindowManagerHint);
