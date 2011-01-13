@@ -165,6 +165,9 @@ void Battery::init()
 
     if (!m_isEmbedded) {
         initPopupWidget();
+        // let's show a brightness OSD
+        QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement",
+                                              "brightnessChanged", this, SLOT(showBrightnessOSD(int)));
     }
 
     if (m_acAdapterPlugged) {
@@ -1101,9 +1104,6 @@ void Battery::showBrightnessOSD(int brightness)
     // code adapted from KMix
     if (!m_brightnessOSD) {
         m_brightnessOSD = new BrightnessOSDWidget();
-        QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement",
-                                              "brightnessChanged", this, SLOT(showBrightnessOSD(int)));
-
     }
 
     m_brightnessOSD->setCurrentBrightness(brightness);
