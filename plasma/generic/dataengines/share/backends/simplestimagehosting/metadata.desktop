@@ -41,6 +41,11 @@ Name[x-test]=xxSimplest Image Hostingxx
 Name[zh_CN]=Simplest Image Hosting
 Name[zh_TW]=Simplest Image Hosting
 Comment=Allows images to be shared using the Simplest Image Hosting service
+Comment[pt]=Permite a partilha de imagens com o serviço do Simplest Image Hosting
+Comment[pt_BR]=Permite o compartilhamento de imagens usando o serviço do Simplest Image Hosting
+Comment[sv]=Tillåter att bilder delas genom att använda Simplest Image Hosting
+Comment[uk]=Уможливлює оприлюднення зображень за допомогою служби Simplest Image Hosting
+Comment[x-test]=xxAllows images to be shared using the Simplest Image Hosting servicexx
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ShareProvider
