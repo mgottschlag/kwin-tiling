@@ -143,10 +143,6 @@ Q_SIGNALS:
     /** Signal that a Launcher has been removed*/
     void launcherRemoved(LauncherItem*);
 
-public Q_SLOTS:
-    /** updates the Launcher; if the item's not a launcher it will update the matching launcher if existing*/
-    void updateLauncher(AbstractGroupableItem *item);
-
 private:
     Q_PRIVATE_SLOT(d, void currentDesktopChanged(int))
     Q_PRIVATE_SLOT(d, void currentActivityChanged(QString))
