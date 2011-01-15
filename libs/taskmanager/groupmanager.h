@@ -129,9 +129,9 @@ public:
     void reconnect();
 
     /** Adds a Launcher for the executable/.desktop-file at url and returns a reference to the launcher*/
-    LauncherItem *addLauncher(const KUrl &url, QIcon icon=QIcon(), QString name=QString(), QString genericName=QString(), bool emitSignal = true);
+    LauncherItem *addLauncher(const KUrl &url, QIcon icon=QIcon(), QString name=QString(), QString genericName=QString());
     /** Removes the given launcher*/
-    void removeLauncher( LauncherItem* launcher, bool emitSignal = true);
+    void removeLauncher(LauncherItem* launcher);
     /** If there is a matching launcher, it returns a reference to it, else it returns NULL*/
     LauncherItem *findLauncher(const QString &name);
 

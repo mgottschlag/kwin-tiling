@@ -568,29 +568,32 @@ void GroupManager::reconnect()
     d->reloadTasks();
 }
 
-LauncherItem *GroupManager::addLauncher(const KUrl &url, QIcon icon, QString name, QString genericName, bool emitSignal)
+LauncherItem *GroupManager::addLauncher(const KUrl &url, QIcon icon, QString name, QString genericName)
 {
     LauncherItem *launcher = findLauncher(name); // Do not insert launchers twice
     if (!launcher) {
         launcher = new LauncherItem(d->currentRootGroup(), url);
+
         if (!icon.isNull()) {
             launcher->setIcon(icon);
         }
+
         if (!name.isEmpty()) {
             launcher->setName(name);
         }
+
         if (!genericName.isEmpty()) {
             launcher->setGenericName(genericName);
         }
+
         updateLauncher(launcher);
-        if (emitSignal) {
-            emit launcherAdded(launcher);
-        }
+        emit launcherAdded(launcher);
     }
+
     return launcher;
 }
 
-void GroupManager::removeLauncher(LauncherItem *launcher, bool emitSignal)
+void GroupManager::removeLauncher(LauncherItem *launcher)
 {
     typedef QHash<int,TaskGroup*> Metagroup;
     foreach (Metagroup metagroup, d->rootGroups) {
@@ -598,34 +601,38 @@ void GroupManager::removeLauncher(LauncherItem *launcher, bool emitSignal)
             rootGroup->remove(launcher);
         }
     }
+
     d->launcherAssociations.remove(launcher->name().toLower());
-    if (emitSignal) {
-        emit launcherRemoved(launcher);
-    }
+    emit launcherRemoved(launcher);
 }
 
 void GroupManager::updateLauncher(AbstractGroupableItem* item)
 {
     if (item->itemType() == LauncherItemType) {
-        LauncherItem *launcher = qobject_cast< LauncherItem* >(item);
+        LauncherItem *launcher = static_cast<LauncherItem *>(item);
         QString name = launcher->name().toLower();
         if (d->launcherAssociations.contains(name)) {
-            if (d->currentRootGroup()->members().contains(launcher) && d->launcherAssociations.values(name).length() > 1) { // Launcher is shown but the task is running
-                typedef QHash<int,TaskGroup*> Metagroup;
+            if (d->currentRootGroup()->members().contains(launcher) &&
+                d->launcherAssociations.values(name).length() > 1) {
+                // Launcher is shown but the task is running
+                typedef QHash<int, TaskGroup *> Metagroup;
                 foreach (Metagroup metagroup, d->rootGroups) {
                     foreach (TaskGroup *rootGroup, metagroup) {
                         rootGroup->remove(launcher);
                     }
                 }
-            } else if (!d->currentRootGroup()->members().contains(launcher) && d->launcherAssociations.values(name).length() == 1) { // Launcher isn't shown but the task isn't running
-                typedef QHash<int,TaskGroup*> Metagroup;
+            } else if (!d->currentRootGroup()->members().contains(launcher) &&
+                       d->launcherAssociations.values(name).length() == 1) {
+                // Launcher isn't shown but the task isn't running
+                typedef QHash<int, TaskGroup *> Metagroup;
                 foreach (Metagroup metagroup, d->rootGroups) {
                     foreach (TaskGroup *rootGroup, metagroup) {
                         rootGroup->add(launcher);
                     }
                 }
             }
-        } else { //launcher was just created
+        } else {
+            //launcher was just created
             d->launcherAssociations.insert(name, launcher);
             QString memberName;
             //check every item if it's matching to the launcher and add association for the fitting items
@@ -655,14 +662,19 @@ void GroupManager::updateLauncher(AbstractGroupableItem* item)
         } else {
             name = item->name().toLower();
         }
-        if (d->currentRootGroup()->hasMember(item) && d->launcherAssociations.contains(name) && !d->launcherAssociations.values(name).contains(item) ) { //Item was just created and has set a launcher
+
+        if (d->currentRootGroup()->hasMember(item) && d->launcherAssociations.contains(name) && !d->launcherAssociations.values(name).contains(item) ) {
+            //Item was just created and has set a launcher
             d->launcherAssociations.insertMulti(name, item);
-        } else if (!d->currentRootGroup()->hasMember(item) && !d->launcherAssociations.key(item).isEmpty()) { //Item was just removed and has set a launcher
-            if (name.isEmpty()) { // Happens if the window has already been removed
+        } else if (!d->currentRootGroup()->hasMember(item) && !d->launcherAssociations.key(item).isEmpty()) {
+            //Item was just removed and has set a launcher
+            if (name.isEmpty()) {
+                // Happens if the window has already been removed
                 name = d->launcherAssociations.key(item);
             }
             d->launcherAssociations.remove(name, item);
         }
+
         if (d->launcherAssociations.contains(name)) {
             updateLauncher(d->launcherAssociations.values(name).last());
         }
