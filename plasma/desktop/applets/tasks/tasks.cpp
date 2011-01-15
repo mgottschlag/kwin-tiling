@@ -120,8 +120,6 @@ void Tasks::init()
     setLayout(layout);
 
     configChanged();
-    connect(m_groupManager, SIGNAL(launcherAdded(LauncherItem*)), this, SLOT(launcherAdded(LauncherItem*)));
-    connect(m_groupManager, SIGNAL(launcherRemoved(LauncherItem*)), this, SLOT(launcherRemoved(LauncherItem*)));
 }
 
 void Tasks::configChanged()
@@ -203,6 +201,8 @@ void Tasks::configChanged()
         changed = true;
     }
 
+    disconnect(m_groupManager, SIGNAL(launcherAdded(LauncherItem*)), this, SLOT(launcherAdded(LauncherItem*)));
+    disconnect(m_groupManager, SIGNAL(launcherRemoved(LauncherItem*)), this, SLOT(launcherRemoved(LauncherItem*)));
     KConfigGroup launcherCg(&cg, "Launchers");
     foreach (const QString &key, launcherCg.keyList()) {
         QStringList item = launcherCg.readEntry(key, QStringList());
@@ -219,9 +219,11 @@ void Tasks::configChanged()
             }
             QString name(item[2]);
             QString genericName(item[3]);
-            m_groupManager->addLauncher(url, icon, name, genericName, false);
+            m_groupManager->addLauncher(url, icon, name, genericName);
         }
     }
+    connect(m_groupManager, SIGNAL(launcherAdded(LauncherItem*)), this, SLOT(launcherAdded(LauncherItem*)));
+    connect(m_groupManager, SIGNAL(launcherRemoved(LauncherItem*)), this, SLOT(launcherRemoved(LauncherItem*)));
 
     if (changed) {
         emit settingsChanged();
