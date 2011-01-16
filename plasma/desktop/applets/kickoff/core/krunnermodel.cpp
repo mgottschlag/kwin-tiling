@@ -141,12 +141,11 @@ bool KRunnerItemHandler::openUrl(const KUrl& url)
     // we find the local .desktop entry.
 
     KService::Ptr service = serviceForUrl(url);
-    if(!service.isNull()) {
+    if (service) {
         RecentApplications::self()->add(service);
     } else {
         qWarning() << "Failed to find service for" << url;
     }
-
 
     runnerManager()->run(id);
     return true;
