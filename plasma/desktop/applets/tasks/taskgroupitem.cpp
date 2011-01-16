@@ -1099,23 +1099,27 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 
         //kDebug() << "TaskItemLayout dropEvent done";
         event->acceptProposedAction();
-    } else if(event->mimeData()->hasFormat("text/uri-list")) {
-        KUrl url(event->mimeData()->data("text/uri-list"));
-        LauncherItem *launcher;
-
-        if (url.isLocalFile() && KDesktopFile::isDesktopFile(url.toLocalFile())) {
-            KDesktopFile f(url.toLocalFile());
-            launcher = m_applet->groupManager().findLauncher(f.readName());
-        } else {
-            launcher = m_applet->groupManager().findLauncher(url.fileName());
-        }
-
-        if (launcher && m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting) {
-            if (launcher->parentGroup() == m_group.data()) {
-                layoutTaskItem(m_groupMembers[launcher], event->pos());
+    } else if (event->mimeData()->hasFormat("text/uri-list")) {
+        KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
+        foreach (const KUrl &url, urls) {
+            const bool exists = m_applet->groupManager().launcherExists(url);
+            if (exists) {
+                // it exists; if we are doing manual sorting, make sure it is in the right location if
+                // it is in this group .. otherwise, we can do nothing.
+                if (m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting) {
+                    QHashIterator<AbstractGroupableItem *, AbstractTaskItem*> it(m_groupMembers);
+                    while (it.hasNext()) {
+                        it.next();
+                        if (it.key()->itemType() == TaskManager::LauncherItemType &&
+                            static_cast<LauncherItem *>(it.key())->url() == url) {
+                            layoutTaskItem(it.value(), event->pos());
+                            break;
+                        }
+                    }
+                }
+            } else {
+                m_applet->groupManager().addLauncher(url);
             }
-        } else if (!launcher) {
-            m_applet->groupManager().addLauncher(url);
         }
     } else {
         event->ignore();
