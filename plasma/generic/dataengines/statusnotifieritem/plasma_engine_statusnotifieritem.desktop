@@ -56,6 +56,7 @@ Comment[ca@valencia]=Motor d'informació d'estat de les aplicacions, basat en el
 Comment[cs]=Stroj pro informace o stavu aplikací, založen na protokolu Status Notifier
 Comment[da]=Motor til programmers statusinformation, baseret på protokollen til statusbekendtgørelser.
 Comment[de]=Treiber für Anwendungs-Status-Informationen, basierend auf dem Status-Informations-Protokoll.
+Comment[el]=Μηχανή για τις πληροφορίες κατάστασης της εφαρμογής, βασισμένη στο πρωτόκολλο ειδοποιήσεων κατάστασης.
 Comment[en_GB]=Engine for applications' status information, based on the Status Notifier protocol.
 Comment[es]=Motor para informar del estado de aplicaciones, basado en el protocolo Status Notifier.
 Comment[et]=Rakenduse olekuteabe mootor Status Notifieri protokolli alusel.
