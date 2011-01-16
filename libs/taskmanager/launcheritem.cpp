@@ -23,27 +23,39 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // Own
 #include "launcheritem.h"
 
+#include <KDebug>
 #include <KDesktopFile>
 #include <KMimeType>
 #include <QMimeData>
 #include <KRun>
+
+#include "taskitem.h"
 #include "taskgroup.h"
 
 namespace TaskManager
 {
 
-class LauncherItem::Private
+class LauncherItemPrivate
 {
 public:
+    LauncherItemPrivate(LauncherItem *launcher)
+        : q(launcher)
+    {
+    }
+
+    void associateDestroyed(QObject *obj);
+
+    LauncherItem *q;
     KUrl        url;
     QIcon       icon;
     QString     name;
     QString     genericName;
+    QSet<QObject *> associates;
 };
 
 LauncherItem::LauncherItem(QObject *parent, const KUrl &url)
     : AbstractGroupableItem(parent),
-    d(new Private)
+    d(new LauncherItemPrivate(this))
 {
     d->genericName = QString();
     d->name = QString();
@@ -58,6 +70,62 @@ LauncherItem::~LauncherItem()
 {
     emit destroyed(this);
     delete d;
+}
+
+void LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
+{
+    if (d->associates.contains(item)) {
+        return;
+    }
+
+    QString name;
+    if (item->itemType() == TaskItemType && !item->isStartupItem()) {
+        name = static_cast<TaskItem *>(item)->task()->classClass().toLower();
+    } else {
+        name = item->name().toLower();
+    }
+
+    if (name.isEmpty()) {
+        return;
+    }
+
+    if (name.compare(d->name, Qt::CaseInsensitive) == 0) {
+        const bool wasEmpty = d->associates.isEmpty();
+
+        d->associates.insert(item);
+        connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(associateDestroyed(QObject*)));
+
+        if (wasEmpty) {
+            emit show(true);
+        }
+    }
+}
+
+void LauncherItem::removeItemIfAssociated(AbstractGroupableItem *item)
+{
+    disconnect(item, SIGNAL(destroyed(QObect*)), this, SLOT(associateDestroyed(QObject*)));
+
+    // now let's just pretend it was destroyed
+    d->associateDestroyed(item);
+}
+
+bool LauncherItem::shouldShow() const
+{
+    return d->associates.isEmpty();
+}
+
+void LauncherItemPrivate::associateDestroyed(QObject *obj)
+{
+    kDebug() << "associate was destroyed" << associates.isEmpty();
+    if (associates.isEmpty()) {
+        return;
+    }
+
+    associates.remove(obj);
+
+    if (associates.isEmpty()) {
+        emit q->show(false);
+    }
 }
 
 KUrl LauncherItem::url() const
