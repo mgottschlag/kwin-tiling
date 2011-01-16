@@ -320,52 +320,59 @@ void LeaveGroupActionImpl::leaveGroup()
 }
 
 ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGroupableItem *item, GroupManager *strategy)
-    : QAction(parent), m_abstractItem(item), m_groupingStrategy(strategy), m_url()
+    : QAction(parent), m_abstractItem(item), m_groupingStrategy(strategy)
 {
     connect(this, SIGNAL(triggered()), this, SLOT(toggleLauncher()));
     if (item->itemType() == TaskItemType) {
-        m_name = qobject_cast< TaskItem* >(item)->task()->classClass();
+        m_name = static_cast<TaskItem *>(item)->task()->classClass();
     } else {
         m_name = item->name();
     }
 
     if (item->itemType() == LauncherItemType) {
+        m_url = static_cast<LauncherItem *>(item)->url();
         setText(i18n("Remove This Launcher"));
     } else {
         setText(i18n("&Show A Launcher For %1 When It Is Not Running", m_name));
         setCheckable(true);
-        setChecked(m_groupingStrategy->findLauncher(m_name));
-        if (!m_groupingStrategy->findLauncher(m_name)) {
-            // Search for applications which are executable and case-insensitively match the windowclass of the task and
-            // See http://techbase.kde.org/Development/Tutorials/Services/Traders#The_KTrader_Query_Language
-            // if the following is unclear to you.
-            QString query = QString("exist Exec and ('%1' =~ Name)").arg(m_name);
-            KService::List services = KServiceTypeTrader::self()->query("Application", query);
-            if(!services.empty()) {
-                m_url.setUrl(services[0]->entryPath());
-            } else { // No desktop-file was found, so try to find at least the executable
-                QString path = KStandardDirs::findExe(m_name.toLower());
-                if (!path.isEmpty()) {
-                    m_url.setUrl(path);
-                } else { //if it still can't find one, don't show the possibility to add a launcher
-                    kDebug() << "No executable found for" << m_name;
-                    setVisible(false);
-                }
+
+        // Search for applications which are executable and case-insensitively match the windowclass of the task and
+        // See http://techbase.kde.org/Development/Tutorials/Services/Traders#The_KTrader_Query_Language
+        // if the following is unclear to you.
+        QString query = QString("exist Exec and ('%1' =~ Name)").arg(m_name);
+        KService::List services = KServiceTypeTrader::self()->query("Application", query);
+        if (!services.empty()) {
+            m_url = KUrl::fromPath((services[0]->entryPath()));
+        } else { // No desktop-file was found, so try to find at least the executable
+            QString path = KStandardDirs::findExe(m_name.toLower());
+            if (!path.isEmpty()) {
+                m_url = KUrl::fromPath(path);
             }
+        }
+
+        if (m_url.isEmpty()) {
+            //don't show the possibility to add a launcher if we don't have a url for it
+            //kDebug() << "No executable found for" << m_name;
+            setVisible(false);
+            setChecked(false);
+        } else {
+            setChecked(m_groupingStrategy->launcherExists(m_url));
         }
     }
 }
 
 void ToggleLauncherActionImpl::toggleLauncher()
 {
-    if (m_groupingStrategy->findLauncher(m_name)) {
-        m_groupingStrategy->removeLauncher(m_groupingStrategy->findLauncher(m_name));
-    } else if (m_url.isValid()) {
-        if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
-            m_groupingStrategy->addLauncher(m_url);
-        } else {
-            m_groupingStrategy->addLauncher(m_url, m_abstractItem->icon(), m_name);
-        }
+    if (!m_url.isValid()) {
+        return;
+    }
+
+    if (m_groupingStrategy->launcherExists(m_url)) {
+        m_groupingStrategy->removeLauncher(m_url);
+    } else if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
+        m_groupingStrategy->addLauncher(m_url);
+    } else {
+        m_groupingStrategy->addLauncher(m_url, m_abstractItem->icon(), m_name);
     }
 }
 

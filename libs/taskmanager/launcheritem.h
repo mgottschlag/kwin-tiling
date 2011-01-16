@@ -34,6 +34,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace TaskManager
 {
 
+class LauncherItemPrivate;
+
 /** 
  * An item shown in the taskmanager, in order to use it to launch the application (or file) the launcher is linked to.
  * If the Application is running the launcher gets hidden, in order to not waste space.
@@ -64,6 +66,11 @@ public:
     void setIcon(const QIcon &icon);
     void setName(const QString &name);
     void setGenericName(const QString &genericName);
+
+    // bookkeeping methods for showing/not showing
+    void associateItemIfMatches(AbstractGroupableItem *item);
+    void removeItemIfAssociated(AbstractGroupableItem *item);
+    bool shouldShow() const;
 
     //reimplemented pure virtual methods from abstractgroupableitem
     bool isOnCurrentDesktop() const;
@@ -105,10 +112,14 @@ public Q_SLOTS:
 
     void launch();
 
-private:
-    class Private;
-    Private * const d;
+Q_SIGNALS:
+    void show(bool shouldShow);
 
+private:
+    friend class LauncherItemPrivate;
+    LauncherItemPrivate * const d;
+
+    Q_PRIVATE_SLOT(d, void associateDestroyed(QObject *obj))
 };
 
 } // TaskManager namespace

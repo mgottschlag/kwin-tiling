@@ -219,7 +219,7 @@ void Tasks::configChanged()
             }
             QString name(item[2]);
             QString genericName(item[3]);
-            m_groupManager->addLauncher(url, icon, name, genericName, false);
+            m_groupManager->addLauncher(url, icon, name, genericName);
         }
     }
 

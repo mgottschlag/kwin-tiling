@@ -129,11 +129,12 @@ public:
     void reconnect();
 
     /** Adds a Launcher for the executable/.desktop-file at url and returns a reference to the launcher*/
-    LauncherItem *addLauncher(const KUrl &url, QIcon icon=QIcon(), QString name=QString(), QString genericName=QString(), bool emitSignal = true);
+    bool addLauncher(const KUrl &url, QIcon icon = QIcon(), QString name = QString(), QString genericName = QString());
     /** Removes the given launcher*/
-    void removeLauncher( LauncherItem* launcher, bool emitSignal = true);
-    /** If there is a matching launcher, it returns a reference to it, else it returns NULL*/
-    LauncherItem *findLauncher(const QString &name);
+    void removeLauncher(const KUrl &url);
+    /** @return true if there is a matching launcher */
+    bool launcherExists(const KUrl &url) const;
+    bool launcherExistsForUrl(const KUrl &url) const;
 
 Q_SIGNALS:
     /** Signal that the rootGroup has to be reloaded in the visualization */
@@ -142,10 +143,6 @@ Q_SIGNALS:
     void launcherAdded(LauncherItem*);
     /** Signal that a Launcher has been removed*/
     void launcherRemoved(LauncherItem*);
-
-public Q_SLOTS:
-    /** updates the Launcher; if the item's not a launcher it will update the matching launcher if existing*/
-    void updateLauncher(AbstractGroupableItem *item);
 
 private:
     Q_PRIVATE_SLOT(d, void currentDesktopChanged(int))
@@ -161,6 +158,7 @@ private:
     Q_PRIVATE_SLOT(d, void removeStartup(StartupPtr))
     Q_PRIVATE_SLOT(d, void actuallyReloadTasks())
     Q_PRIVATE_SLOT(d, void taskDestroyed(QObject *))
+    Q_PRIVATE_SLOT(d, void launcherVisibilityChange())
 
     friend class GroupManagerPrivate;
     GroupManagerPrivate * const d;
