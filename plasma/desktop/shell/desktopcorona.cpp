@@ -138,7 +138,6 @@ void DesktopCorona::checkAddPanelAction(const QStringList &sycocaChanges)
     m_addPanelsMenu = 0;
 
     KPluginInfo::List panelContainmentPlugins = Plasma::Containment::listContainmentsOfType("panel");
-    //FIXME: this will have to become a dynamic choice between a menu and  simple action, i think
     const QString constraint = QString("[X-Plasma-Shell] == '%1' and 'panel' ~in [X-Plasma-ContainmentCategories]")
                                       .arg(KGlobal::mainComponent().componentName());
     KService::List templates = KServiceTypeTrader::self()->query("Plasma/LayoutTemplate", constraint);
