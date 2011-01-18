@@ -168,6 +168,7 @@ void Panel::backgroundChanged()
 {
     constraintsEvent(Plasma::LocationConstraint);
     updateBorders(geometry().toRect());
+    update();
 }
 
 void Panel::adjustLastSpace()
