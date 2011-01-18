@@ -163,6 +163,7 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
       m_globalVisibility(false),
       m_checkHiddenDevices(true),
       m_triggeringPopupInternally(false),
+      m_poppedUpInternally(false),
       m_autoMountingWidget(0),
       m_deviceActionsWidget(0)
 {
@@ -290,8 +291,24 @@ void DeviceNotifier::popupEvent(bool show)
         m_dialog->collapseDevices();
     }
 
+    if (m_triggeringPopupInternally && show) {
+        m_poppedUpInternally = true;
+    } else if (!show) {
+        m_poppedUpInternally = false;
+    }
+
     if (!m_triggeringPopupInternally) {
         changeNotifierIcon();
+    }
+    m_triggeringPopupInternally = false;
+}
+
+void DeviceNotifier::keepPopupOpen()
+{
+    if (!m_poppedUpInternally) {
+        m_poppedUpInternally = false;
+        kDebug() << "ping";
+        showPopup();
     }
 }
 
@@ -303,8 +320,8 @@ void DeviceNotifier::notifyDevice(const QString &udi)
         emit activate();
         changeNotifierIcon("preferences-desktop-notification", LONG_NOTIFICATION_TIMEOUT);
         m_triggeringPopupInternally = true;
+        kDebug() << "pong";
         showPopup(LONG_NOTIFICATION_TIMEOUT);
-        m_triggeringPopupInternally = false;
         update();
         setStatus(Plasma::NeedsAttentionStatus);
     } else {
@@ -522,8 +539,8 @@ void DeviceNotifier::showNotification(const QString &message, const QString &det
 {
     if (!isPopupShowing()) {
         m_triggeringPopupInternally = true;
+        kDebug() << "pang";
         showPopup(LONG_NOTIFICATION_TIMEOUT);
-        m_triggeringPopupInternally = false;
     }
 
     m_dialog->showStatusBarMessage(message, details, udi);
@@ -534,6 +551,11 @@ void DeviceNotifier::showNotification(const QString &message, const QString &det
 bool DeviceNotifier::areThereHiddenDevices()
 {
     return (m_hiddenDevices.count() > 0);
+}
+
+bool DeviceNotifier::poppedUpInternally()
+{
+    return m_poppedUpInternally;
 }
 
 void DeviceNotifier::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)

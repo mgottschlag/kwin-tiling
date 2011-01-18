@@ -109,7 +109,7 @@ class DeviceNotifier : public Plasma::PopupApplet
         /**
          * Used to know it there are hidden devices
          * @return true if there are hidden device
-         **/	
+         **/
         bool areThereHiddenDevices();
 
         /**
@@ -123,6 +123,17 @@ class DeviceNotifier : public Plasma::PopupApplet
          * The graphics widget that displays the list of devices.
          */
         QGraphicsWidget *graphicsWidget();
+
+	/**
+	 * Return true if the applet has been opened for internal reasons (i.e. has been shown
+	 * with no user interaction);
+	 **/
+	bool poppedUpInternally();
+
+	/**
+	 * Force to keep the applet open until the user closes it manually
+	 */
+	void keepPopupOpen();
 
         QList<QAction *> contextualActions();
 
@@ -150,7 +161,7 @@ class DeviceNotifier : public Plasma::PopupApplet
         * Reimplemented from Plasma::Applet
         **/
         void configChanged();
-        
+
         /**
         * @internal Sets the tooltip content properly before showing.
         */
@@ -289,8 +300,11 @@ class DeviceNotifier : public Plasma::PopupApplet
         ///if true the applet will check if the removed devices were hidded
         bool m_checkHiddenDevices : 1;
 
-        ///if true we are triggering the popup internally 
+        ///if true we are triggering the popup internally
         bool m_triggeringPopupInternally : 1;
+
+	///if true the applet popped up without user interaction (e.g. new device inserted)
+	bool m_poppedUpInternally : 1;
 
         ///embedded KCM modules in the configuration dialog
         KCModuleProxy *m_autoMountingWidget;
