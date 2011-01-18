@@ -61,7 +61,6 @@ protected:
     void restore(KConfigGroup &group);
 
 private slots:
-    void themeUpdated();
     void backgroundChanged();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void appletWasRemoved(Plasma::Applet* applet);
