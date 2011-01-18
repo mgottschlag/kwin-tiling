@@ -107,8 +107,6 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     setMinimumSize(m_currentSize);
     setMaximumSize(m_currentSize);
 
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
-
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
             this, SLOT(appletWasRemoved(Plasma::Applet*)));
     setContainmentType(Containment::PanelContainment);
@@ -169,6 +167,7 @@ QList<QAction*> Panel::contextualActions()
 void Panel::backgroundChanged()
 {
     constraintsEvent(Plasma::LocationConstraint);
+    updateBorders(geometry().toRect());
 }
 
 void Panel::adjustLastSpace()
@@ -545,11 +544,6 @@ void Panel::saveState(KConfigGroup &config) const
 {
     config.writeEntry("minimumSize", minimumSize());
     config.writeEntry("maximumSize", maximumSize());
-}
-
-void Panel::themeUpdated()
-{
-    updateBorders(geometry().toRect());
 }
 
 void Panel::paintInterface(QPainter *painter,
