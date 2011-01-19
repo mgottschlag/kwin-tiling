@@ -220,27 +220,31 @@ void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
 void TaskGroupItem::checkUpdates()
 {
     bool needsUpdate = false;
-    // task flags
     TaskFlags flags = m_flags;
-    if (m_group.data()->isActive()) {
-        flags |= TaskHasFocus;
-        if (!(m_flags & TaskHasFocus)) {
-            emit activated(this);
+
+    if (m_changes & TaskManager::StateChanged) {
+        if (m_group.data()->isActive()) {
+            flags |= TaskHasFocus;
+            if (!(m_flags & TaskHasFocus)) {
+                emit activated(this);
+            }
+        } else {
+            flags &= ~TaskHasFocus;
         }
-    } else {
-        flags &= ~TaskHasFocus;
+
+        if (m_group.data()->isMinimized()) {
+            flags |= TaskIsMinimized;
+        } else {
+            flags &= ~TaskIsMinimized;
+        }
     }
 
-    if (m_group.data()->demandsAttention()) {
-        flags |= TaskWantsAttention;
-    } else {
-        flags &= ~TaskWantsAttention;
-    }
-
-    if (m_group.data()->isMinimized()) {
-        flags |= TaskIsMinimized;
-    } else {
-        flags &= ~TaskIsMinimized;
+    if (m_changes & TaskManager::AttentionChanged) {
+        if (m_group.data()->demandsAttention()) {
+            flags |= TaskWantsAttention;
+        } else {
+            flags &= ~TaskWantsAttention;
+        }
     }
 
     if (flags != m_flags) {

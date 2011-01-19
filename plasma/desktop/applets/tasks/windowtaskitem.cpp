@@ -144,7 +144,7 @@ void WindowTaskItem::updateTask(::TaskManager::TaskChanges changes)
     if (changes & TaskManager::StateChanged) {
         if (m_task->isActive()) {
             flags |= TaskHasFocus;
-            if (!m_flags & TaskHasFocus) {
+            if (!(m_flags & TaskHasFocus)) {
                 emit activated(this);
             }
         } else {
