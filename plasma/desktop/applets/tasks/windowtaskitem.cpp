@@ -138,26 +138,33 @@ void WindowTaskItem::updateTask(::TaskManager::TaskChanges changes)
         return;
     }
 
-    // task flags
     bool needsUpdate = false;
     TaskFlags flags = m_flags;
-    if (m_task->isActive()) {
-        flags |= TaskHasFocus;
-        emit activated(this);
-    } else {
-        flags &= ~TaskHasFocus;
+
+    if (changes & TaskManager::StateChanged) {
+        if (m_task->isActive()) {
+            flags |= TaskHasFocus;
+            if (!m_flags & TaskHasFocus) {
+                emit activated(this);
+            }
+        } else {
+            flags &= ~TaskHasFocus;
+        }
+
+        if (m_task->isMinimized()) {
+            flags |= TaskIsMinimized;
+        } else {
+            flags &= ~TaskIsMinimized;
+        }
+
     }
 
-    if (m_task->demandsAttention()) {
-        flags |= TaskWantsAttention;
-    } else {
-        flags &= ~TaskWantsAttention;
-    }
-
-    if (m_task->isMinimized()) {
-        flags |= TaskIsMinimized;
-    } else {
-        flags &= ~TaskIsMinimized;
+    if (changes & TaskManager::AttentionChanged) {
+        if (m_task->demandsAttention()) {
+            flags |= TaskWantsAttention;
+        } else {
+            flags &= ~TaskWantsAttention;
+        }
     }
 
     if (m_flags != flags) {
