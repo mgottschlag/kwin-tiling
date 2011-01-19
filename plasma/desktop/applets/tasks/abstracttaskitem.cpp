@@ -314,10 +314,7 @@ void AbstractTaskItem::focusInEvent(QFocusEvent *event)
 {
     Q_UNUSED(event)
 
-    m_flags |= TaskHasFocus;
-
-    setTaskFlags(m_flags);
-
+    setTaskFlags(m_flags | TaskHasFocus);
     update();
 }
 
@@ -325,10 +322,7 @@ void AbstractTaskItem::focusOutEvent(QFocusEvent *event)
 {
     Q_UNUSED(event)
 
-    m_flags &= ~TaskHasFocus;
-
-    setTaskFlags(m_flags);
-
+    setTaskFlags(m_flags & ~TaskHasFocus);
     update();
 }
 
