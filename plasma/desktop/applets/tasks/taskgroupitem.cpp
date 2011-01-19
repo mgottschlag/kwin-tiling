@@ -198,10 +198,14 @@ void TaskGroupItem::close()
     }
 }
 
+bool TaskGroupItem::isRootGroup() const
+{
+    return m_applet == parentWidget();
+}
 
 void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
 {
-    if (!m_group) {
+    if (!m_group || isRootGroup()) {
         return;
     }
 
@@ -405,7 +409,7 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
 
     Q_ASSERT(m_applet);
     //we are the master group item
-    if (m_applet == parentWidget()) {
+    if (isRootGroup()) {
         e->ignore();
         return;
     }

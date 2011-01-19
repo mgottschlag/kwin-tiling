@@ -155,6 +155,7 @@ protected slots:
     virtual void wheelEvent(QGraphicsSceneWheelEvent *event);
 
 private Q_SLOTS:
+    bool isRootGroup() const;
     void checkUpdates();
     void constraintsChanged(Plasma::Constraints);
     void handleActiveWindowChanged(WId id);
