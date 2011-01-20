@@ -167,7 +167,6 @@ QList<QAction*> Panel::contextualActions()
 void Panel::backgroundChanged()
 {
     constraintsEvent(Plasma::LocationConstraint);
-    updateBorders(geometry().toRect());
     update();
 }
 
