@@ -171,6 +171,7 @@ void AbstractIcon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (event->button() != Qt::LeftButton &&
         (event->pos() - event->buttonDownPos(Qt::LeftButton)).toPoint().manhattanLength() > QApplication::startDragDistance()) {
         event->accept();
+        setCursor(Qt::OpenHandCursor);
         QMimeData *data = mimeData();
         if (data && !data->formats().isEmpty()) {
             qDebug() << "Start Dragging";
@@ -181,8 +182,6 @@ void AbstractIcon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
             drag->setMimeData(mimeData());
             drag->exec();
-
-            setCursor(Qt::OpenHandCursor);
         } else {
             delete data;
         }
