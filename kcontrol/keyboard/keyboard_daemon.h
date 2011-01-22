@@ -32,6 +32,7 @@ class XInputEventNotifier;
 class LayoutTrayIcon;
 class KeyboardConfig;
 
+
 class KDE_EXPORT KeyboardDaemon : public KDEDModule
 {
     Q_OBJECT
@@ -43,6 +44,7 @@ class KDE_EXPORT KeyboardDaemon : public KDEDModule
     LayoutTrayIcon* layoutTrayIcon;
     LayoutMemory layoutMemory;
     LayoutUnit currentLayout;
+    QObject* oldDbusApiObject;
 
     void registerListeners();
     void registerShortcut();
@@ -68,6 +70,27 @@ Q_SIGNALS:
 public:
     KeyboardDaemon(QObject *parent, const QList<QVariant>&);
     virtual ~KeyboardDaemon();
+};
+
+// to support old org.kde.kxkb dbus API (will be removed in 4.7)
+class QDBusConnection;
+class KDE_EXPORT OldDbusKeyboardDaemon : public QObject
+{
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.kde.KXKB")
+    KeyboardDaemon& actor;
+
+    void warn();
+public:
+    OldDbusKeyboardDaemon(KeyboardDaemon& daemon):
+    	actor(daemon) {}
+    void registerApi(QDBusConnection& dbus);
+    void unregisterApi(QDBusConnection& dbus);
+
+public Q_SLOTS:
+	Q_SCRIPTABLE bool setLayout(const QString& layout) { warn(); return actor.setLayout(layout); }
+	Q_SCRIPTABLE QString getCurrentLayout() { warn(); return actor.getCurrentLayout(); }
+	Q_SCRIPTABLE QStringList getLayoutsList() { warn(); return actor.getLayoutsList(); }
 };
 
 #endif /* KEYBOARD_DAEMON_H_ */

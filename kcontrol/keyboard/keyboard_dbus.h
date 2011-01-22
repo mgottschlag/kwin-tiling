@@ -24,4 +24,7 @@
 #define KEYBOARD_DBUS_OBJECT_PATH "/Layouts"
 #define KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE "reloadConfig"
 
+#define OLD_KEYBOARD_DBUS_SERVICE_NAME "org.kde.kxkb"
+#define OLD_KEYBOARD_DBUS_OBJECT_PATH "/kxkb"
+
 #endif /* KEYBOARD_DBUS_H_ */

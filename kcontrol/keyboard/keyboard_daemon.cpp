@@ -50,12 +50,16 @@ KeyboardDaemon::KeyboardDaemon(QObject *parent, const QList<QVariant>&)
 	  actionCollection(NULL),
 	  xEventNotifier(NULL),
 	  layoutTrayIcon(NULL),
-	  layoutMemory(*keyboardConfig)
+	  layoutMemory(*keyboardConfig),
+	  oldDbusApiObject(new OldDbusKeyboardDaemon(*this))
 {
 	if( ! X11Helper::xkbSupported(NULL) )
 		return;		//TODO: shut down the daemon?
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
+
+    dynamic_cast<OldDbusKeyboardDaemon*>(oldDbusApiObject)->registerApi(dbus);
+
 	dbus.registerService(KEYBOARD_DBUS_SERVICE_NAME);
 	dbus.registerObject(KEYBOARD_DBUS_OBJECT_PATH, this, QDBusConnection::ExportScriptableSlots | QDBusConnection::ExportScriptableSignals);
     dbus.connect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT( configureKeyboard() ));
@@ -72,9 +76,12 @@ KeyboardDaemon::~KeyboardDaemon()
 	dbus.unregisterObject(KEYBOARD_DBUS_OBJECT_PATH);
 	dbus.unregisterService(KEYBOARD_DBUS_SERVICE_NAME);
 
+    dynamic_cast<OldDbusKeyboardDaemon*>(oldDbusApiObject)->unregisterApi(dbus);
+
 	unregisterListeners();
 	unregisterShortcut();
 
+	delete oldDbusApiObject;
 	delete xEventNotifier;
 	delete layoutTrayIcon;
 	delete keyboardConfig;
@@ -204,4 +211,21 @@ QString KeyboardDaemon::getCurrentLayout()
 QStringList KeyboardDaemon::getLayoutsList()
 {
 	return X11Helper::getLayoutsListAsString( X11Helper::getLayoutsList() );
+}
+
+void OldDbusKeyboardDaemon::warn()
+{
+	kWarning() << "Deprecated D-Bus API 'org.kde.kxkb' is used, please switch to 'org.kde.keyboard'";
+}
+
+void OldDbusKeyboardDaemon::registerApi(QDBusConnection& dbus)
+{
+    dbus.registerService(OLD_KEYBOARD_DBUS_SERVICE_NAME);
+	dbus.registerObject(OLD_KEYBOARD_DBUS_OBJECT_PATH, this, QDBusConnection::ExportScriptableSlots);
+}
+
+void OldDbusKeyboardDaemon::unregisterApi(QDBusConnection& dbus)
+{
+	dbus.unregisterObject(OLD_KEYBOARD_DBUS_OBJECT_PATH);
+	dbus.unregisterService(OLD_KEYBOARD_DBUS_SERVICE_NAME);
 }
