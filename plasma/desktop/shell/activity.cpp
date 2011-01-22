@@ -151,6 +151,7 @@ void Activity::removed()
 Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
 {
     Plasma::Containment *containment = m_containments.value(QPair<int,int>(screen, desktop));
+
     if (!containment) {
         kDebug() << "adding containment for" << screen << desktop;
         // first look to see if there are any unnasigned containments that are candidates for
@@ -172,6 +173,7 @@ Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
             // this allows the corona to either grab one for us that already exists matching
             // screen and desktop, or create a new one. this also works regardless of immutability
             containment = PlasmaApp::self()->corona()->containmentForScreen(screen, desktop, m_plugin);
+
             if (!containment || !containment->context()->currentActivityId().isEmpty()) {
                 // possibly a plugin failure, let's go for the default
                 containment = PlasmaApp::self()->corona()->containmentForScreen(screen, desktop, "default");
@@ -189,10 +191,15 @@ Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
                 // we got a containment, but it belongs to some other activity; let's unassign it
                 // from a screen and grab a new one
                 containment->setScreen(0);
-                containment = PlasmaApp::self()->corona()->containmentForScreen(screen, desktop, m_plugin);
+                containment = PlasmaApp::self()->corona()->addContainment(m_plugin);
+
                 if (!containment) {
                     // possibly a plugin failure, let's go for the default
-                    containment = PlasmaApp::self()->corona()->containmentForScreen(screen, desktop, "default");
+                    containment = PlasmaApp::self()->corona()->addContainment("default");
+                }
+
+                if (containment) {
+                    containment->setScreen(screen, desktop);
                 }
             }
         }
