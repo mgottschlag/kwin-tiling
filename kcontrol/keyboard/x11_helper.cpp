@@ -27,6 +27,7 @@
 #include <X11/Xatom.h>
 #include <X11/XKBlib.h>
 #include <X11/extensions/XKBrules.h>
+#include <fixx11h.h>
 
 
 // more information about the limit https://bugs.freedesktop.org/show_bug.cgi?id=19501

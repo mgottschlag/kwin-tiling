@@ -31,6 +31,8 @@
 #include <X11/extensions/XInput.h>
 #endif
 
+#include <fixx11h.h>
+
 #include "x11_helper.h"
 
 
