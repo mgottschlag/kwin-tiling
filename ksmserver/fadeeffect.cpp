@@ -497,6 +497,8 @@ FadeEffect::FadeEffect(QWidget *parent, QPixmap *pixmap)
 FadeEffect::~FadeEffect()
 {
     blender->wait();
+    _mm_free(image->data);
+    image->data = NULL;
     XDestroyImage(image);
     XFreeGC(QX11Info::display(), gc);
 }
