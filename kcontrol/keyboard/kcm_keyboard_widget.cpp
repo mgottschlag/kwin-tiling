@@ -56,7 +56,8 @@ static const int TAB_ADVANCED = 2;
 static const int MIN_LOOPING_COUNT = 2;
 
 
-KCMKeyboardWidget::KCMKeyboardWidget(Rules* rules_, KeyboardConfig* keyboardConfig_, const KComponentData componentData_, QWidget* /*parent*/):
+KCMKeyboardWidget::KCMKeyboardWidget(Rules* rules_, KeyboardConfig* keyboardConfig_,
+		const KComponentData componentData_, const QVariantList &args, QWidget* /*parent*/):
 	rules(rules_),
 	componentData(componentData_),
 	actionCollection(NULL),
@@ -83,6 +84,20 @@ KCMKeyboardWidget::KCMKeyboardWidget(Rules* rules_, KeyboardConfig* keyboardConf
 		uiWidget->tabAdvanced->setEnabled(false);
 		uiWidget->keyboardModelComboBox->setEnabled(false);
     }
+
+    // TODO: improve parameter handling
+    foreach(const QVariant& arg, args) {
+  	  if( arg.type() == QVariant::String ) {
+  		  QString str = arg.toString();
+  		  if( str == "--tab=layouts" ) {
+  			  setCurrentIndex(1);
+  		  }
+  		  else if( str == "--tab=advanced" ) {
+  	  		  setCurrentIndex(2);
+  	  	  }
+  	  }
+    }
+
 }
 
 KCMKeyboardWidget::~KCMKeyboardWidget()

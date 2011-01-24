@@ -48,12 +48,12 @@ const QIcon LayoutsMenu::getFlag(const QString& layout) const
 	return keyboardConfig.showFlag ? flags.getIcon(layout) : QIcon();
 }
 
-// TODO: next 3 methods duplicated in keyboard_applet.cpp
 void LayoutsMenu::actionTriggered(QAction* action)
 {
 	QString data = action->data().toString();
 	if( data == "config" ) {
 		QStringList args;
+		args << "--args=--tab=layouts";
 		args << "kcm_keyboard";
 		KToolInvocation::kdeinitExec("kcmshell4", args);
 	}

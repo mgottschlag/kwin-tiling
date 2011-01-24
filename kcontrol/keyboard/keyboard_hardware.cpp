@@ -28,37 +28,10 @@
 #include <math.h>
 
 #include "x11_helper.h"
+#include "kcmmisc.h"
 
 // from numlockx.c
 extern "C" void numlockx_change_numlock_state(Display* dpy, int state);
-
-/*
- Originally comes from NumLockX http://dforce.sh.cvut.cz/~seli/en/numlockx
-
- NumLockX
-
- Copyright (C) 2000-2001 Lubos Lunak        <l.lunak@kde.org>
- Copyright (C) 2001      Oswald Buddenhagen <ossi@kde.org>
-
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-
-****************************************************************************/
 
 #include <X11/XKBlib.h>
 #include <X11/keysym.h>
@@ -86,41 +59,53 @@ void set_repeatrate(int delay, double rate)
 }
 
 static
-void set_volume(int click_percent, bool auto_repeat_mode)
+int set_volume(int clickVolumePercent, TriState keyboardRepeatMode)
 {
 	XKeyboardState   kbd;
 	XKeyboardControl kbdc;
 
 	XGetKeyboardControl(QX11Info::display(), &kbd);
 
-	if( click_percent != -1 ) {
-		kbdc.key_click_percent = click_percent;
+	int flags = 0;
+	if( clickVolumePercent != -1 ) {
+		flags |= KBKeyClickPercent;
+		kbdc.key_click_percent = clickVolumePercent;
 	}
-	kbdc.auto_repeat_mode = (auto_repeat_mode ? AutoRepeatModeOn : AutoRepeatModeOff);
+	if( keyboardRepeatMode != STATE_UNCHANGED ) {
+		flags |= KBAutoRepeatMode;
+		kbdc.auto_repeat_mode = (keyboardRepeatMode==STATE_ON ? AutoRepeatModeOn : AutoRepeatModeOff);
+	}
 
-	XChangeKeyboardControl(QX11Info::display(),
-						   KBKeyClickPercent | KBAutoRepeatMode,
-						   &kbdc);
+	return XChangeKeyboardControl(QX11Info::display(), flags, &kbdc);
 }
 
 void init_keyboard_hardware()
 {
     KConfigGroup config(KSharedConfig::openConfig( "kcminputrc" ), "Keyboard");
 
-	bool key_repeat = config.readEntry("KeyboardRepeating", true);
-	int click_percent = config.readEntry("ClickVolume", -1);
+	QString keyRepeatStr = config.readEntry("KeyboardRepeating", TriStateHelper::getString(STATE_ON));
+	TriState keyRepeat = STATE_UNCHANGED;
+	if( keyRepeatStr == "true" || keyRepeatStr == TriStateHelper::getString(STATE_ON) ) {
+		keyRepeat = STATE_ON;
+	}
+	else if( keyRepeatStr == "false" || keyRepeatStr == TriStateHelper::getString(STATE_OFF) ) {
+		keyRepeat = STATE_OFF;
+	}
 
-	set_volume(click_percent, key_repeat);
+	int clickVolumePercent = config.readEntry("ClickVolume", -1);
+	if( clickVolumePercent != -1 && keyRepeat != STATE_UNCHANGED ) {
+		set_volume(clickVolumePercent, keyRepeat);
+	}
 
-	if( key_repeat ) {
+	if( keyRepeat == STATE_ON ) {
 		int delay_ = config.readEntry("RepeatDelay", 250);
 		double rate_ = config.readEntry("RepeatRate", 30.);
 		set_repeatrate(delay_, rate_);
 	}
 
 
-	int numlockState = config.readEntry( "NumLock", 2 );
-	if( numlockState != 2 ) {
-		numlockx_change_numlock_state(QX11Info::display(), numlockState == 0 );
+	TriState numlockState = TriStateHelper::getTriState( config.readEntry( "NumLock", TriStateHelper::getInt(STATE_UNCHANGED) ) );
+	if( numlockState != STATE_UNCHANGED ) {
+		numlockx_change_numlock_state(QX11Info::display(), numlockState == STATE_ON );
 	}
 }

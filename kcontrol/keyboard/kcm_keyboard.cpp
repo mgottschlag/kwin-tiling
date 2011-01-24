@@ -43,7 +43,7 @@
 K_PLUGIN_FACTORY(KeyboardModuleFactory, registerPlugin<KCMKeyboard>();)
 K_EXPORT_PLUGIN(KeyboardModuleFactory("kcmkeyboard"))
 
-KCMKeyboard::KCMKeyboard(QWidget *parent, const QVariantList &/*args*/)
+KCMKeyboard::KCMKeyboard(QWidget *parent, const QVariantList &args)
   : KCModule(KeyboardModuleFactory::componentData(), parent/*, name*/)
 {
   KGlobal::locale()->insertCatalog("kxkb");
@@ -67,14 +67,10 @@ KCMKeyboard::KCMKeyboard(QWidget *parent, const QVariantList &/*args*/)
   layout->setMargin(0);
   layout->setSpacing(KDialog::spacingHint());
 
-  widget = new KCMKeyboardWidget(rules, keyboardConfig, componentData(), parent);
+  widget = new KCMKeyboardWidget(rules, keyboardConfig, componentData(), args, parent);
   layout->addWidget(widget);
 
   connect(widget, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
-
-#ifdef DEFAULT_TAB
-  widget->setCurrentIndex(DEFAULT_TAB);
-#endif
 
   setButtons(Help|Default|Apply);
 }

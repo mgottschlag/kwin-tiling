@@ -40,7 +40,8 @@ class KCMKeyboardWidget: public QTabWidget
 	Q_OBJECT
 
 public:
-	KCMKeyboardWidget(Rules* rules, KeyboardConfig* keyboardConfig, const KComponentData componentData, QWidget* parent=0);
+	KCMKeyboardWidget(Rules* rules, KeyboardConfig* keyboardConfig,
+			const KComponentData componentData, const QVariantList &args, QWidget* parent=0);
 	virtual ~KCMKeyboardWidget();
 
 	void updateUI();

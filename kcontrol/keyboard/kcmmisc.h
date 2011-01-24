@@ -29,6 +29,23 @@
 
 class Ui_KeyboardConfigWidget;
 
+enum TriState {
+	STATE_ON = 0,  STATE_OFF = 1, STATE_UNCHANGED = 2
+};
+
+class KButtonGroup;
+class TriStateHelper {
+public:
+	static void setTriState(KButtonGroup* group, TriState state);
+	static TriState getTriState(const KButtonGroup* group);
+
+	static TriState getTriState(int state) { return static_cast<TriState>(state); }
+	static int getInt(TriState state) { return static_cast<int>(state); }
+	static const char* getString(TriState state) {
+		return state == STATE_ON ? "0" : state == STATE_OFF ? "1" : "2";
+	}
+};
+
 class KCMiscKeyboardWidget : public QWidget
 {
   Q_OBJECT
@@ -49,23 +66,24 @@ private slots:
   void delaySpinboxChanged (int value);
   void rateSliderChanged (int value);
   void rateSpinboxChanged (double value);
+  void keyboardRepeatStateChanged(int selection);
 
 Q_SIGNALS:
 	void changed(bool state);
 
 private:
-  void setClick( int );
-  void setRepeat( int flag, int delay, double rate);
+  void setClickVolume( int );
+  void setRepeat( TriState flag, int delay, double rate);
   void setRepeatRate( int );
-  void setNumLockState( int );
 
   int getClick();
   int getRepeatRate();
-  int getNumLockState();
 
   int sliderMax;
-  int clickVolume, keyboardRepeat;
-  int numlockState; // 0 = on, 1 = off, 2 = don't change
+  int clickVolume;
+  enum TriState keyboardRepeat;
+  enum TriState numlockState;
+
   Ui_KeyboardConfigWidget& ui;
 };
 

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="currentIndex">
-   <number>1</number>
+   <number>0</number>
   </property>
   <widget class="QWidget" name="tabHardware">
    <attribute name="title">
@@ -307,7 +307,7 @@
             <bool>false</bool>
            </property>
            <property name="text">
-            <string/>
+            <string>Move Up</string>
            </property>
           </widget>
          </item>
@@ -317,7 +317,7 @@
             <bool>false</bool>
            </property>
            <property name="text">
-            <string/>
+            <string>Move Down</string>
            </property>
           </widget>
          </item>
