@@ -190,12 +190,12 @@ Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
                 containment->context()->currentActivityId() != m_id) {
                 // we got a containment, but it belongs to some other activity; let's unassign it
                 // from a screen and grab a new one
-                containment->setScreen(0);
-                containment = PlasmaApp::self()->corona()->addContainment(m_plugin);
+                containment->setScreen(-1);
+                containment = PlasmaApp::self()->corona()->containmentForScreen(screen, desktop, m_plugin);
 
                 if (!containment) {
                     // possibly a plugin failure, let's go for the default
-                    containment = PlasmaApp::self()->corona()->addContainment("default");
+                    containment = PlasmaApp::self()->corona()->containmentForScreen(screen, desktop, "default");
                 }
 
                 if (containment) {
