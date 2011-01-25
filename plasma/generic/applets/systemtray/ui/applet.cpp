@@ -114,6 +114,20 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     setPopupAlignment(Qt::AlignRight);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
     setHasConfigurationInterface(true);
+
+    connect(s_manager, SIGNAL(taskAdded(SystemTray::Task*)),
+            m_taskArea, SLOT(addTask(SystemTray::Task*)));
+    //TODO: we re-add the task when it changed: slightly silly!
+    connect(s_manager, SIGNAL(taskChanged(SystemTray::Task*)),
+            m_taskArea, SLOT(addTask(SystemTray::Task*)));
+    connect(s_manager, SIGNAL(taskRemoved(SystemTray::Task*)),
+            m_taskArea, SLOT(removeTask(SystemTray::Task*)));
+
+    connect(m_taskArea, SIGNAL(sizeHintChanged(Qt::SizeHint)),
+            this, SLOT(propogateSizeHintChange(Qt::SizeHint)));
+
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SLOT(themeChanged()));
 }
 
 Applet::~Applet()
@@ -144,22 +158,6 @@ Applet::~Applet()
 
 void Applet::init()
 {
-    connect(s_manager, SIGNAL(taskAdded(SystemTray::Task*)),
-            m_taskArea, SLOT(addTask(SystemTray::Task*)));
-    //TODO: we re-add the task when it changed: slightly silly!
-    connect(s_manager, SIGNAL(taskChanged(SystemTray::Task*)),
-            m_taskArea, SLOT(addTask(SystemTray::Task*)));
-    connect(s_manager, SIGNAL(taskRemoved(SystemTray::Task*)),
-            m_taskArea, SLOT(removeTask(SystemTray::Task*)));
-
-    connect(m_taskArea, SIGNAL(sizeHintChanged(Qt::SizeHint)),
-            this, SLOT(propogateSizeHintChange(Qt::SizeHint)));
-
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
-            this, SLOT(themeChanged()));
-
-    QTimer::singleShot(0, this, SLOT(checkDefaultApplets()));
-    configChanged();
 }
 
 bool Applet::isFirstRun()
@@ -247,6 +245,11 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
             m_visibleItemsUi.unlockLabel->setVisible(visible);
             m_visibleItemsUi.unlockButton->setVisible(visible);
         }
+    }
+
+    if (constraints & Plasma::StartupCompletedConstraint) {
+        QTimer::singleShot(0, this, SLOT(checkDefaultApplets()));
+        configChanged();
     }
 
     s_manager->forwardConstraintsEvent(constraints, this);
