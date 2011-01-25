@@ -1395,6 +1395,7 @@ Name[ca@valencia]=Executa la invocació «qdbus org.kde.krunner /App display» d
 Name[cs]=Provést D-Bus příkaz 'qdbus org.kde.krunner /App display'
 Name[da]=Udfør D-Bus-kaldet "qdbus org.kde.krunner /App display"
 Name[de]=D-Bus-Aufruf 'qdbus org.kde.krunner /App display' ausführen
+Name[el]=Εκτελείται κλήση D-Bus qdbus 'org.kde.krunner /App display'
 Name[en_GB]=Perform D-Bus call 'qdbus org.kde.krunner /App display'
 Name[es]=Ejecuta una llamada D-Bus 'qdbus org.kde.krunner /App display'
 Name[et]=D-Busi väljakutse 'qdbus org.kde.krunner /App display' sooritamine
