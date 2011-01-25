@@ -71,13 +71,15 @@ public:
         //existence of widget has already been checked
         Q_ASSERT(widget);
 
+        //kDebug() << "========" << task->name() << "==========";
+        //kDebug() << "      " << task->hidden() << Task::NotHidden << task->category() << host->shownCategories().contains(task->category());
         if (task->hidden() == Task::NotHidden &&
             host->shownCategories().contains(task->category())) {
 
+            //kDebug() << "    " << task->order() << firstTasksLayout->containsItem(widget) << lastTasksLayout->containsItem(widget) << normalTasksLayout->containsItem(widget);
             if ((firstTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::First) ||
                 (lastTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::Last)) {
                 return true;
-
             } else if (task->order() == SystemTray::Task::Normal &&
                        normalTasksLayout->containsItem(widget) ) {
                 if (!taskCategories.contains(task)) {
@@ -275,12 +277,10 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
         return true;
     }
 
-    if (!d->taskForWidget.contains(widget)) {
-        d->taskForWidget[widget] = task;
-    }
+    d->taskForWidget.insert(widget, task);
 
     // keep track of the hidden tasks
-    // needs to be done because if a tasks is added multiple times (like when coming out of sleep)
+    // needs to be done because if a task is added multiple times (like when coming out of sleep)
     // it may be autohidden for a while until the final one which will not be hidden
     // therefore we need a way to track the hidden tasks
     // if the task appears in the hidden list, then we know there are hidden tasks
