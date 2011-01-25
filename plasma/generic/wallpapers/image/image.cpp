@@ -137,10 +137,9 @@ void Image::configWidgetDestroyed()
 
 void Image::addUrls(const KUrl::List &urls)
 {
-  foreach(const KUrl& url, urls) {
-    setWallpaper(url);
-  }
-     
+    foreach (const KUrl& url, urls) {
+        setWallpaper(url);
+    }
 }
 
 QWidget* Image::createConfigurationInterface(QWidget* parent)
