@@ -52,7 +52,6 @@ Image::Image(QObject *parent, const QVariantList &args)
       m_openImageAction(0)
 {
     connect(this, SIGNAL(renderCompleted(QImage)), this, SLOT(updateBackground(QImage)));
-    connect(this, SIGNAL(urlDropped(KUrl)), this, SLOT(addUrl(KUrl)));
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(nextSlide()));
     connect(m_fileWatch, SIGNAL(dirty(QString)), this, SLOT(imageFileAltered(QString)));
     connect(m_fileWatch, SIGNAL(created(QString)), this, SLOT(imageFileAltered(QString)));
@@ -444,11 +443,6 @@ void Image::addUrls(const KUrl::List &urls)
         addUrl(url, first);
         first = false;
     }
-}
-
-void Image::addUrl(const KUrl &url)
-{
-    addUrl(url, true);
 }
 
 void Image::addUrl(const KUrl &url, bool setAsCurrent)

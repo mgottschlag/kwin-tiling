@@ -73,7 +73,6 @@ class Image : public Plasma::Wallpaper
         void startSlideshow();
         void modified();
         void fileDialogFinished();
-        void addUrl(const KUrl &url);
         void addUrl(const KUrl &url, bool setAsCurrent);
         void addUrls(const KUrl::List &urls);
         void setWallpaper(const QString &path);
