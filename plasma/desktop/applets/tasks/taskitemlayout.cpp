@@ -89,7 +89,7 @@ void TaskItemLayout::addTaskItem(AbstractTaskItem * item)
     }
 
     if (m_itemPositions.contains(item)) {
-        kDebug() << "already in this layout";
+        //kDebug() << "already in this layout";
         return;
     }
 
