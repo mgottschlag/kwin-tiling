@@ -323,41 +323,45 @@ ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGrou
     : QAction(parent), m_abstractItem(item), m_groupingStrategy(strategy)
 {
     connect(this, SIGNAL(triggered()), this, SLOT(toggleLauncher()));
-    if (item->itemType() == TaskItemType) {
-        m_name = static_cast<TaskItem *>(item)->task()->classClass();
-    } else {
-        m_name = item->name();
+
+    switch (item->itemType()) {
+        case LauncherItemType:
+            m_name = item->name();
+            setText(i18n("Remove This Launcher"));
+            break;
+
+        case GroupItemType: {
+            TaskGroup *group = static_cast<TaskGroup *>(item);
+            foreach (AbstractGroupableItem *i, group->members()) {
+                if (i->itemType() != GroupItemType) {
+                    item = i;
+                    break;
+                }
+            }
+
+            if (item->itemType() == GroupItemType) {
+                setVisible(false);
+                setChecked(false);
+                break;
+            }
+
+        } // fallthrough to TaskItemType below
+
+        case TaskItemType:
+            m_name = static_cast<TaskItem *>(item)->task()->classClass();
+            setText(i18n("&Show A Launcher For %1 When It Is Not Running", m_name));
+            setCheckable(true);
+            break;
     }
 
-    if (item->itemType() == LauncherItemType) {
-        m_url = static_cast<LauncherItem *>(item)->url();
-        setText(i18n("Remove This Launcher"));
+    m_url = item->launcherUrl();
+    if (m_url.isEmpty()) {
+        //don't show the possibility to add a launcher if we don't have a url for it
+        //kDebug() << "No executable found for" << m_name;
+        setVisible(false);
+        setChecked(false);
     } else {
-        setText(i18n("&Show A Launcher For %1 When It Is Not Running", m_name));
-        setCheckable(true);
-
-        // Search for applications which are executable and case-insensitively match the windowclass of the task and
-        // See http://techbase.kde.org/Development/Tutorials/Services/Traders#The_KTrader_Query_Language
-        // if the following is unclear to you.
-        QString query = QString("exist Exec and ('%1' =~ Name)").arg(m_name);
-        KService::List services = KServiceTypeTrader::self()->query("Application", query);
-        if (!services.empty()) {
-            m_url = KUrl::fromPath((services[0]->entryPath()));
-        } else { // No desktop-file was found, so try to find at least the executable
-            QString path = KStandardDirs::findExe(m_name.toLower());
-            if (!path.isEmpty()) {
-                m_url = KUrl::fromPath(path);
-            }
-        }
-
-        if (m_url.isEmpty()) {
-            //don't show the possibility to add a launcher if we don't have a url for it
-            //kDebug() << "No executable found for" << m_name;
-            setVisible(false);
-            setChecked(false);
-        } else {
-            setChecked(m_groupingStrategy->launcherExists(m_url));
-        }
+        setChecked(m_groupingStrategy->launcherExists(m_url));
     }
 }
 
