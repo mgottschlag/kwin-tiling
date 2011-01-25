@@ -1119,7 +1119,7 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
                     while (it.hasNext()) {
                         it.next();
                         if (it.key()->itemType() == TaskManager::LauncherItemType &&
-                            static_cast<LauncherItem *>(it.key())->url() == url) {
+                            it.key()->launcherUrl() == url) {
                             layoutTaskItem(it.value(), event->pos());
                             break;
                         }
