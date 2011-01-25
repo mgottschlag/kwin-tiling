@@ -135,6 +135,14 @@ void Image::configWidgetDestroyed()
     m_model = 0;
 }
 
+void Image::addUrls(const KUrl::List &urls)
+{
+  foreach(const KUrl& url, urls) {
+    setWallpaper(url);
+  }
+     
+}
+
 QWidget* Image::createConfigurationInterface(QWidget* parent)
 {
     m_configWidget = new QWidget(parent);

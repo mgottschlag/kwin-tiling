@@ -51,6 +51,9 @@ class Image : public Plasma::Wallpaper
     signals:
         void settingsChanged(bool);
 
+    protected Q_SLOTS:
+        void addUrls(const KUrl::List &urls);
+
     protected slots:
         void removeWallpaper(QString name);
         void timeChanged(const QTime& time);
