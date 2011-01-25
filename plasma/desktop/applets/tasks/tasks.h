@@ -48,17 +48,22 @@ namespace Plasma
     class FrameSvg;
 } // namespace Plasma
 
-class TaskGroupItem;
+namespace TaskManager
+{
+    class GroupManager;
+} // namespace TaskManager
 
 using TaskManager::StartupPtr;
 using TaskManager::TaskPtr;
 using TaskManager::StartupPtr;
 using TaskManager::GroupPtr;
 using TaskManager::AbstractGroupableItem;
-using TaskManager::GroupManager;
 using TaskManager::TaskItem;
 using TaskManager::TaskGroup;
 using TaskManager::LauncherItem;
+
+class TaskGroupItem;
+class GroupManager;
 
 /**
  * An applet which provides a visual representation of running
@@ -94,8 +99,7 @@ public:
         qreal offscreenBottomMargin() { return m_offscreenBottomMargin; }
         void resizeItemBackground(const QSizeF &newSize);
 
-        TaskGroupItem*  rootGroupItem();
-
+        TaskGroupItem *rootGroupItem();
         TaskManager::GroupManager &groupManager() const;
 
         Qt::KeyboardModifiers groupModifierKey() const;
@@ -135,8 +139,6 @@ private slots:
         void reload();
         void changeSizeHint(Qt::SizeHint which);
         void dialogGroupingChanged(int index);
-        void launcherAdded(LauncherItem *launcher);
-        void launcherRemoved(LauncherItem *launcher);
 
 private:
         bool m_showTooltip;

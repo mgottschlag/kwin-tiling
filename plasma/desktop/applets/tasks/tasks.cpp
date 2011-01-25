@@ -25,6 +25,7 @@
 #include "ui_tasksConfig.h"
 
 //Taskmanager
+#include <taskmanager/groupmanager.h>
 #include <taskmanager/taskgroup.h>
 #include <taskmanager/taskitem.h>
 
@@ -43,6 +44,25 @@
 #include <Plasma/Containment>
 #include <Plasma/FrameSvg>
 #include <Plasma/Theme>
+
+class GroupManager : public TaskManager::GroupManager
+{
+public:
+    GroupManager(Plasma::Applet *applet)
+        : TaskManager::GroupManager(applet),
+          m_applet(applet)
+    {
+    }
+
+protected:
+    KConfigGroup config() const
+    {
+        return m_applet->config();
+    }
+
+private:
+    Plasma::Applet *m_applet;
+};
 
 Tasks::Tasks(QObject* parent, const QVariantList &arguments)
      : Plasma::Applet(parent, arguments),
@@ -79,18 +99,14 @@ Tasks::~Tasks()
 
 void Tasks::init()
 {
-    m_groupManager = new TaskManager::GroupManager(this);
+    m_groupManager = new GroupManager(this);
     Plasma::Containment* appletContainment = containment();
     if (appletContainment) {
         m_groupManager->setScreen(appletContainment->screen());
     }
 
-    //FIXME: the order of creation and setting of items in this method is both fragile (from
-    // personal experience tinking with it) and convoluted. It should be possible to
-    // set up the GroupManager firt, and *then* create the root TaskGroupItem.
-
     connect(m_groupManager, SIGNAL(reload()), this, SLOT(reload()));
-    //connect(this, SIGNAL(settingsChanged()), m_groupManager, SLOT(reconnect()));
+    connect(m_groupManager, SIGNAL(configChanged()), this, SIGNAL(configNeedsSaving()));
 
     m_rootGroupItem = new TaskGroupItem(this, this);
     m_rootGroupItem->expand();
@@ -104,19 +120,15 @@ void Tasks::init()
 
     connect(m_rootGroupItem, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(changeSizeHint(Qt::SizeHint)));
 
-    setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-    //like in Qt's designer
-    //TODO : Qt's bug??
-    setMaximumSize(INT_MAX,INT_MAX);
+    setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+    setMaximumSize(INT_MAX, INT_MAX);
 
     layout = new QGraphicsLinearLayout(this);
     layout->setContentsMargins(0,0,0,0);
-    layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-    //TODO : Qt's bug??
-    layout->setMaximumSize(INT_MAX,INT_MAX);
+    layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+    layout->setMaximumSize(INT_MAX, INT_MAX);
     layout->setOrientation(Qt::Vertical);
     layout->addItem(m_rootGroupItem);
-
     setLayout(layout);
 
     configChanged();
@@ -201,43 +213,12 @@ void Tasks::configChanged()
         changed = true;
     }
 
-    KConfigGroup launcherCg(&cg, "Launchers");
-    m_groupManager->readLauncherConfig(launcherCg);
+    m_groupManager->readLauncherConfig();
 
     if (changed) {
         emit settingsChanged();
         update();
     }
-}
-
-void Tasks::launcherAdded(LauncherItem *launcher)
-{
-    KConfigGroup cg = config();
-    KConfigGroup launcherCg(&cg, "Launchers");
-
-    QVariantList launcherProperties;
-    launcherProperties.append(launcher->launcherUrl().url());
-    launcherProperties.append(launcher->icon().name());
-    launcherProperties.append(launcher->name());
-    launcherProperties.append(launcher->genericName());
-
-    if (launcher->icon().name().isEmpty()) {
-        QPixmap pixmap = launcher->icon().pixmap(QSize(64,64));
-        QByteArray bytes;
-        QBuffer buffer(&bytes);
-        buffer.open(QIODevice::WriteOnly);
-        pixmap.save(&buffer, "PNG");
-        launcherProperties.append(bytes.toBase64());
-    }
-
-    launcherCg.writeEntry(launcher->name(), launcherProperties);
-}
-
-void Tasks::launcherRemoved(LauncherItem *launcher )
-{
-    KConfigGroup cg = config();
-    KConfigGroup launcherCg(&cg, "Launchers");
-    launcherCg.deleteEntry(launcher->name());
 }
 
 void Tasks::reload()

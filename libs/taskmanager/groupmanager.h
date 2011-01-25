@@ -132,20 +132,31 @@ public:
 
     /** Adds a Launcher for the executable/.desktop-file at url and returns a reference to the launcher*/
     bool addLauncher(const KUrl &url, QIcon icon = QIcon(), QString name = QString(), QString genericName = QString());
+
     /** Removes the given launcher*/
     void removeLauncher(const KUrl &url);
+
     /** @return true if there is a matching launcher */
     bool launcherExists(const KUrl &url) const;
     bool launcherExistsForUrl(const KUrl &url) const;
-    void readLauncherConfig(const KConfigGroup &config);
+
+    /** call when the launcher config should be read or re-read */
+    void readLauncherConfig(const KConfigGroup &config = KConfigGroup());
+
+    /** exports the launcher config to a given config group; usually not needed
+        if config() is reimplemented to provide a valid config group */
+    void exportLauncherConfig(const KConfigGroup &config);
+
+protected:
+    // reimplement to provide a config group to read/write settings to
+    virtual KConfigGroup config() const;
 
 Q_SIGNALS:
     /** Signal that the rootGroup has to be reloaded in the visualization */
     void reload();
-    /** Signal that a Launcher has been added*/
-    void launcherAdded(LauncherItem*);
-    /** Signal that a Launcher has been removed*/
-    void launcherRemoved(LauncherItem*);
+
+    /** Signal that the configuration writen to the config file has changed */
+    void configChanged();
 
 private:
     Q_PRIVATE_SLOT(d, void currentDesktopChanged(int))

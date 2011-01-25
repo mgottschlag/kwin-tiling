@@ -23,6 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "groupmanager.h"
 
+#include <QBuffer>
 #include <QList>
 #include <QStack>
 #include <QTimer>
@@ -64,7 +65,8 @@ public:
           showOnlyCurrentScreen(false),
           showOnlyMinimized(false),
           onlyGroupWhenFull(false),
-          changingGroupingStrategy(false)
+          changingGroupingStrategy(false),
+          readingLauncherConfig(false)
     {
     }
 
@@ -89,6 +91,10 @@ public:
     void removeStartup(StartupPtr);
     void launcherVisibilityChange();
     void checkLauncherVisibility(LauncherItem *launcher);
+    void saveLauncher(LauncherItem *launcher);
+    void saveLauncher(LauncherItem *launcher, KConfigGroup &group);
+    void unsaveLauncher(LauncherItem *launcher);
+    KConfigGroup launcherConfig(const KConfigGroup &config = KConfigGroup());
 
     TaskGroup *currentRootGroup();
 
@@ -105,18 +111,20 @@ public:
     QTimer checkIfFullTimer;
     QSet<Task *> geometryTasks;
     int groupIsFullLimit;
-    bool showOnlyCurrentDesktop : 1;
-    bool showOnlyCurrentActivity : 1;
-    bool showOnlyCurrentScreen : 1;
-    bool showOnlyMinimized : 1;
-    bool onlyGroupWhenFull : 1;
-    bool changingGroupingStrategy : 1;
     QUuid configToken;
 
     QHash<QString, QHash<int, TaskGroup*> > rootGroups; //container for groups
     QHash<KUrl, LauncherItem *> launchers;
     int currentDesktop;
     QString currentActivity;
+
+    bool showOnlyCurrentDesktop : 1;
+    bool showOnlyCurrentActivity : 1;
+    bool showOnlyCurrentScreen : 1;
+    bool showOnlyMinimized : 1;
+    bool onlyGroupWhenFull : 1;
+    bool changingGroupingStrategy : 1;
+    bool readingLauncherConfig : 1;
 };
 
 
@@ -145,7 +153,6 @@ GroupManager::GroupManager(QObject *parent)
     d->checkIfFullTimer.setSingleShot(true);
     d->checkIfFullTimer.setInterval(0);
     connect(&d->checkIfFullTimer, SIGNAL(timeout()), this, SLOT(actuallyCheckIfFull()));
-
 }
 
 GroupManager::~GroupManager()
@@ -535,7 +542,7 @@ void GroupManagerPrivate::checkScreenChange()
 
 void GroupManager::reconnect()
 {
-    kDebug();
+    //kDebug();
     disconnect(TaskManager::self(), SIGNAL(desktopChanged(int)),
                this, SLOT(currentDesktopChanged(int)));
     disconnect(TaskManager::self(), SIGNAL(activityChanged(QString)),
@@ -564,6 +571,11 @@ void GroupManager::reconnect()
         d->geometryTasks.clear();
     }
     d->reloadTasks();
+}
+
+KConfigGroup GroupManager::config() const
+{
+    return KConfigGroup();
 }
 
 bool GroupManager::addLauncher(const KUrl &url, QIcon icon, QString name, QString genericName)
@@ -605,7 +617,7 @@ bool GroupManager::addLauncher(const KUrl &url, QIcon icon, QString name, QStrin
         d->launchers.insert(url, launcher);
         connect(launcher, SIGNAL(show(bool)), this, SLOT(launcherVisibilityChange()));
         d->checkLauncherVisibility(launcher);
-        emit launcherAdded(launcher);
+        d->saveLauncher(launcher);
     }
 
     return launcher;
@@ -627,7 +639,7 @@ void GroupManager::removeLauncher(const KUrl &url)
         }
     }
 
-    emit launcherRemoved(launcher);
+    d->unsaveLauncher(launcher);
     launcher->deleteLater();
 }
 
@@ -638,7 +650,6 @@ void GroupManagerPrivate::launcherVisibilityChange()
 
 void GroupManagerPrivate::checkLauncherVisibility(LauncherItem *launcher)
 {
-    kDebug() << "booyah, bitches!" << launcher;
     if (!launcher) {
         return;
     }
@@ -660,10 +671,18 @@ bool GroupManager::launcherExists(const KUrl &url) const
     return d->launchers.value(url);
 }
 
-void GroupManager::readLauncherConfig(const KConfigGroup &config)
+void GroupManager::readLauncherConfig(const KConfigGroup &cg)
 {
-    foreach (const QString &key, config.keyList()) {
-        QStringList item = config.readEntry(key, QStringList());
+    KConfigGroup conf = d->launcherConfig(cg);
+    if (!conf.isValid()) {
+        return;
+    }
+
+    // prevents re-writing the results out
+    d->readingLauncherConfig = true;
+    QSet<KUrl> urls;
+    foreach (const QString &key, conf.keyList()) {
+        QStringList item = conf.readEntry(key, QStringList());
         if (item.length() >= 4) {
             KUrl url(item.at(0));
             KIcon icon;
@@ -677,9 +696,99 @@ void GroupManager::readLauncherConfig(const KConfigGroup &config)
             }
             QString name(item.at(2));
             QString genericName(item.at(3));
-            addLauncher(url, icon, name, genericName);
+
+            if (addLauncher(url, icon, name, genericName)) {
+                urls << url;
+            }
         }
     }
+
+    d->readingLauncherConfig = false;
+
+    // a bit paranoiac, perhaps, but we check the removals first and then
+    // remove the launchers after that scan because Qt's iterators operate
+    // on a copy of the list and/or don't like multiple iterators messing
+    // with the same list. we might get away with just calling removeLauncher
+    // immediately without the removals KUrl::List, but this is known safe
+    // and not a performance bottleneck
+    KUrl::List removals;
+    foreach (LauncherItem *launcher, d->launchers) {
+        if (!urls.contains(launcher->launcherUrl())) {
+            removals << launcher->launcherUrl();
+        }
+    }
+
+    foreach (const KUrl &url, removals) {
+        removeLauncher(url);
+    }
+}
+
+void GroupManager::exportLauncherConfig(const KConfigGroup &cg)
+{
+    KConfigGroup conf = d->launcherConfig(cg);
+    if (!conf.isValid()) {
+        return;
+    }
+
+    foreach (LauncherItem *launcher, d->launchers) {
+        d->saveLauncher(launcher, conf);
+    }
+}
+
+KConfigGroup GroupManagerPrivate::launcherConfig(const KConfigGroup &config)
+{
+    KConfigGroup cg = config.isValid() ? config : q->config();
+    if (!cg.isValid()) {
+        return cg;
+    }
+
+    return KConfigGroup(&cg, "Launchers");
+}
+
+void GroupManagerPrivate::saveLauncher(LauncherItem *launcher)
+{
+    if (readingLauncherConfig) {
+        return;
+    }
+
+    KConfigGroup cg = launcherConfig();
+    if (!cg.isValid()) {
+        return;
+    }
+
+    saveLauncher(launcher, cg);
+    emit q->configChanged();
+}
+
+void GroupManagerPrivate::saveLauncher(LauncherItem *launcher, KConfigGroup &cg)
+{
+    QVariantList launcherProperties;
+    launcherProperties.append(launcher->launcherUrl().url());
+    launcherProperties.append(launcher->icon().name());
+    launcherProperties.append(launcher->name());
+    launcherProperties.append(launcher->genericName());
+
+    if (launcher->icon().name().isEmpty()) {
+        QPixmap pixmap = launcher->icon().pixmap(QSize(64,64));
+        QByteArray bytes;
+        QBuffer buffer(&bytes);
+        buffer.open(QIODevice::WriteOnly);
+        pixmap.save(&buffer, "PNG");
+        launcherProperties.append(bytes.toBase64());
+    }
+
+    cg.writeEntry(launcher->name(), launcherProperties);
+}
+
+void GroupManagerPrivate::unsaveLauncher(LauncherItem *launcher)
+{
+    KConfigGroup cg = launcherConfig();
+    if (!cg.isValid()) {
+        return;
+    }
+
+    cg.deleteEntry(launcher->name());
+    emit q->configChanged();
 }
 
 bool GroupManager::onlyGroupWhenFull() const
