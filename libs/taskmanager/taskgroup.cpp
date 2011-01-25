@@ -448,6 +448,24 @@ void TaskGroup::addMimeData(QMimeData *mimeData) const
     mimeData->setData(Task::groupMimetype(), data);
 }
 
+KUrl TaskGroup::launcherUrl() const
+{
+    // Strategy: try to return the first non-group item's launcherUrl,
+    // failing that, try to return the  launcherUrl of the first group
+    // if any
+    foreach (AbstractGroupableItem *item, d->members) {
+        if (item->itemType() != GroupItemType) {
+            return item->launcherUrl();
+        }
+    }
+
+    if (d->members.isEmpty()) {
+        return KUrl();
+    }
+
+    return d->members.first()->launcherUrl();
+}
+
 bool TaskGroup::isOnAllDesktops() const
 {
     foreach (AbstractGroupableItem *item, d->members) {

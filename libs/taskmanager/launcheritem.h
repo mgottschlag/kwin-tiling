@@ -57,12 +57,10 @@ public:
     KDE_DEPRECATED bool isGroupItem() const;
     ItemType itemType() const;
 
-    KUrl url() const;
     QIcon icon() const;
     QString name() const;
     QString genericName() const;
 
-    void setUrl(const KUrl &url);
     void setIcon(const QIcon &icon);
     void setName(const QString &name);
     void setGenericName(const QString &genericName);
@@ -86,6 +84,8 @@ public:
     bool isActive() const;
     bool demandsAttention() const;
     void addMimeData(QMimeData *mimeData) const;
+    KUrl launcherUrl() const;
+    void setLauncherUrl(const KUrl &url);
 
 public Q_SLOTS:
     void toDesktop(int);

@@ -59,10 +59,10 @@ LauncherItem::LauncherItem(QObject *parent, const KUrl &url)
 {
     d->genericName = QString();
     d->name = QString();
-    if (!url.isEmpty()) {
-        setUrl(url);
-    } else {
+    if (url.isEmpty()) {
         d->icon = KIcon("unknown");
+    } else {
+        setLauncherUrl(url);
     }
 }
 
@@ -128,11 +128,6 @@ void LauncherItemPrivate::associateDestroyed(QObject *obj)
     }
 }
 
-KUrl LauncherItem::url() const
-{
-    return d->url;
-}
-
 QIcon LauncherItem::icon() const
 {
     return d->icon;
@@ -148,7 +143,42 @@ QString LauncherItem::genericName() const
     return d->genericName;
 }
 
-void LauncherItem::setUrl(const KUrl &url)
+void LauncherItem::setName(const QString& name)
+{
+    d->name = name;
+}
+
+void LauncherItem::setGenericName(const QString& genericName)
+{
+    d->genericName = genericName;
+}
+
+ItemType LauncherItem::itemType() const
+{
+    return LauncherItemType;
+}
+
+bool LauncherItem::isGroupItem() const
+{
+    return false;
+}
+
+void LauncherItem::launch()
+{
+    new KRun(d->url, 0);
+}
+
+void LauncherItem::addMimeData(QMimeData* mimeData ) const
+{
+    mimeData->setData("text/uri-list", d->url.url().toAscii());
+}
+
+KUrl LauncherItem::launcherUrl() const
+{
+    return d->url;
+}
+
+void LauncherItem::setLauncherUrl(const KUrl &url)
 {
     // Takes care of improperly escaped characters and resolves paths
     // into file:/// URLs
@@ -184,37 +214,6 @@ void LauncherItem::setIcon(const QIcon& icon)
     d->icon = icon;
 }
 
-void LauncherItem::setName(const QString& name)
-{
-    d->name = name;
-}
-
-void LauncherItem::setGenericName(const QString& genericName)
-{
-    d->genericName = genericName;
-}
-
-ItemType LauncherItem::itemType() const
-{
-    return LauncherItemType;
-}
-
-bool LauncherItem::isGroupItem() const
-{
-    return false;
-}
-
-void LauncherItem::launch()
-{
-    new KRun(d->url, 0);
-}
-
-void LauncherItem::addMimeData(QMimeData* mimeData ) const
-{
-    mimeData->setData("text/uri-list", d->url.url().toAscii());
-}
-
-//BEGIN reimplemented pure virtual methods from abstractgroupableitem
 bool LauncherItem::demandsAttention() const
 {
     return false;

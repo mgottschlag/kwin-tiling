@@ -25,6 +25,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskitem.h"
 
 #include <KDebug>
+#include <KService>
+#include <KServiceTypeTrader>
+#include <KStandardDirs>
 
 namespace TaskManager
 {
@@ -350,6 +353,34 @@ void TaskItem::addMimeData(QMimeData *mimeData) const
     }
 
     d->task.data()->addMimeData(mimeData);
+}
+
+KUrl TaskItem::launcherUrl() const
+{
+    if (!d->task) {
+        return KUrl();
+    }
+
+    // Search for applications which are executable and case-insensitively match the windowclass of the task and
+    // See http://techbase.kde.org/Development/Tutorials/Services/Traders#The_KTrader_Query_Language
+    QString query = QString("exist Exec and ('%1' =~ Name)").arg(d->task.data()->classClass());
+    KService::List services = KServiceTypeTrader::self()->query("Application", query);
+    if (!services.empty()) {
+        return KUrl::fromPath((services[0]->entryPath()));
+    } else {
+        // No desktop-file was found, so try to find at least the executable
+        // usually it's the lower cased window class class, but if that fails let's trust it
+        QString path = KStandardDirs::findExe(d->task.data()->classClass().toLower());
+        if (path.isEmpty()) {
+            path = KStandardDirs::findExe(d->task.data()->classClass());
+        }
+
+        if (!path.isEmpty()) {
+            return KUrl::fromPath(path);
+        }
+    }
+
+    return KUrl();
 }
 
 void TaskItem::close()

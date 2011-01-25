@@ -78,6 +78,7 @@ public:
     bool demandsAttention() const;
     bool isActionSupported(NET::Action) const;
     void addMimeData(QMimeData *mimeData) const;
+    KUrl launcherUrl() const;
 
 public Q_SLOTS:
     void toDesktop(int);
