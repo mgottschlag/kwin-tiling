@@ -52,7 +52,7 @@ Image::Image(QObject *parent, const QVariantList &args)
       m_openImageAction(0)
 {
     connect(this, SIGNAL(renderCompleted(QImage)), this, SLOT(updateBackground(QImage)));
-    connect(this, SIGNAL(urlDropped(KUrl)), this, SLOT(setWallpaper(KUrl)));
+    connect(this, SIGNAL(urlDropped(KUrl)), this, SLOT(addUrl(KUrl)));
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(nextSlide()));
     connect(m_fileWatch, SIGNAL(dirty(QString)), this, SLOT(imageFileAltered(QString)));
     connect(m_fileWatch, SIGNAL(created(QString)), this, SLOT(imageFileAltered(QString)));
@@ -133,13 +133,6 @@ void Image::configWidgetDestroyed()
 {
     m_configWidget = 0;
     m_model = 0;
-}
-
-void Image::addUrls(const KUrl::List &urls)
-{
-    foreach (const KUrl& url, urls) {
-        setWallpaper(url);
-    }
 }
 
 QWidget* Image::createConfigurationInterface(QWidget* parent)
@@ -443,26 +436,66 @@ void Image::setSingleImage()
     }
 }
 
-void Image::setWallpaper(const KUrl &url)
+void Image::addUrls(const KUrl::List &urls)
+{
+    bool first = true;
+    foreach (const KUrl &url, urls) {
+        // set the first drop as the current paper, just add the rest to the roll
+        addUrl(url, first);
+        first = false;
+    }
+}
+
+void Image::addUrl(const KUrl &url)
+{
+    addUrl(url, true);
+}
+
+void Image::addUrl(const KUrl &url, bool setAsCurrent)
 {
     ///kDebug() << "droppage!" << url << url.isLocalFile();
     if (url.isLocalFile()) {
-        setWallpaper(url.toLocalFile());
+        const QString path = url.toLocalFile();
+        if (setAsCurrent) {
+            setWallpaper(path);
+        } else {
+            if (m_wallpaper.isEmpty()) {
+                // it's a slide show, add it to the slide show
+                m_slideshowBackgrounds.append(path);
+            }
+
+            // always add it to the user papers, though
+            if (!m_usersWallpapers.contains(path)) {
+                m_usersWallpapers.append(path);
+            }
+        }
     } else {
         QString wallpaperPath = KGlobal::dirs()->locateLocal("wallpaper", url.fileName());
 
         if (!wallpaperPath.isEmpty()) {
             KIO::FileCopyJob *job = KIO::file_copy(url, KUrl(wallpaperPath));
-            connect(job, SIGNAL(result(KJob*)), this, SLOT(wallpaperRetrieved(KJob*)));
+            if (setAsCurrent) {
+                connect(job, SIGNAL(result(KJob*)), this, SLOT(setWallpaperRetrieved(KJob*)));
+            } else {
+                connect(job, SIGNAL(result(KJob*)), this, SLOT(addWallpaperRetrieved(KJob*)));
+            }
         }
     }
 }
 
-void Image::wallpaperRetrieved(KJob *job)
+void Image::setWallpaperRetrieved(KJob *job)
 {
     KIO::FileCopyJob *copyJob = qobject_cast<KIO::FileCopyJob *>(job);
-    if (copyJob) {
+    if (copyJob && !copyJob->error()) {
         setWallpaper(copyJob->destUrl().toLocalFile());
+    }
+}
+
+void Image::addWallpaperRetrieved(KJob *job)
+{
+    KIO::FileCopyJob *copyJob = qobject_cast<KIO::FileCopyJob *>(job);
+    if (copyJob && !copyJob->error()) {
+        addUrl(copyJob->destUrl(), false);
     }
 }
 
