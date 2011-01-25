@@ -26,6 +26,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtCore/QObject>
 
+#include <KConfigGroup>
+
 #include <taskmanager/abstractgroupableitem.h>
 #include <taskmanager/task.h>
 #include <taskmanager/taskitem.h>
@@ -135,6 +137,7 @@ public:
     /** @return true if there is a matching launcher */
     bool launcherExists(const KUrl &url) const;
     bool launcherExistsForUrl(const KUrl &url) const;
+    void readLauncherConfig(const KConfigGroup &config);
 
 Q_SIGNALS:
     /** Signal that the rootGroup has to be reloaded in the visualization */

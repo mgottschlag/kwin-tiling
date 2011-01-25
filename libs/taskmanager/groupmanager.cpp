@@ -660,6 +660,28 @@ bool GroupManager::launcherExists(const KUrl &url) const
     return d->launchers.value(url);
 }
 
+void GroupManager::readLauncherConfig(const KConfigGroup &config)
+{
+    foreach (const QString &key, config.keyList()) {
+        QStringList item = config.readEntry(key, QStringList());
+        if (item.length() >= 4) {
+            KUrl url(item.at(0));
+            KIcon icon;
+            if (!item.at(1).isEmpty()) {
+                icon = KIcon(item.at(1));
+            } else if (item.length() >= 5) {
+                QPixmap pixmap;
+                QByteArray bytes = QByteArray::fromBase64(item.at(4).toAscii());
+                pixmap.loadFromData(bytes);
+                icon.addPixmap(pixmap);
+            }
+            QString name(item.at(2));
+            QString genericName(item.at(3));
+            addLauncher(url, icon, name, genericName);
+        }
+    }
+}
+
 bool GroupManager::onlyGroupWhenFull() const
 {
     return d->onlyGroupWhenFull;
