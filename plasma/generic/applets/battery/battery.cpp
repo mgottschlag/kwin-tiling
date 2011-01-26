@@ -608,7 +608,7 @@ void Battery::initPopupWidget()
     QAction *action = new QAction(this);
     action->setToolTip(i18nc("tooltip on the config button in the popup", "Configure Power Management..."));
     action->setIcon(KIcon("configure"));
-    action->setText(i18n("Power save settings"));
+    action->setText(i18n("Power Settings"));
     connect(action, SIGNAL(triggered(bool)), this, SLOT(openConfig()));
     connect(configButton, SIGNAL(activated()), this, SLOT(openConfig()));
     addAction("configure_powersave", action);
