@@ -605,7 +605,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         action->setIcon(KIcon("configure"));
         action->setText(i18n("Power save settings"));
         connect(action, SIGNAL(triggered(bool)), this, SLOT(openConfig()));
-        connect(configButton, SIGNAL(activated()), this, SLOT(openConfig()));
+        connect(configButton, SIGNAL(clicked()), this, SLOT(openConfig()));
         addAction("configure_powersave", action);
         configButton->setIcon(action->icon());
         configButton->setToolTip(action->toolTip());
