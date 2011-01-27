@@ -78,11 +78,7 @@ void Image::init(const KConfigGroup &config)
     m_resizeMethod = (ResizeMethod)config.readEntry("wallpaperposition", (int)ScaledResize);
     m_wallpaper = config.readEntry("wallpaper", QString());
     if (m_wallpaper.isEmpty()) {
-        m_wallpaper = Plasma::Theme::defaultTheme()->wallpaperPath();
-        int index = m_wallpaper.indexOf("/contents/images/");
-        if (index > -1) { // We have file from package -> get path to package
-            m_wallpaper = m_wallpaper.left(index);
-        }
+        useSingleImageDefaults();
     }
 
     m_color = config.readEntry("wallpapercolor", QColor(Qt::black));
@@ -116,6 +112,15 @@ void Image::init(const KConfigGroup &config)
     m_animation->setProperty("duration", 500);
     m_animation->setProperty("startValue", 0.0);
     m_animation->setProperty("endValue", 1.0);
+}
+
+void Image::useSingleImageDefaults()
+{
+    m_wallpaper = Plasma::Theme::defaultTheme()->wallpaperPath();
+    int index = m_wallpaper.indexOf("/contents/images/");
+    if (index > -1) { // We have file from package -> get path to package
+        m_wallpaper = m_wallpaper.left(index);
+    }
 }
 
 void Image::save(KConfigGroup &config)
@@ -404,7 +409,7 @@ void Image::updateDirs()
 void Image::setSingleImage()
 {
     if (m_wallpaper.isEmpty()) {
-        return;
+        useSingleImageDefaults();
     }
 
     QString img;
@@ -412,9 +417,9 @@ void Image::setSingleImage()
     if (QDir::isAbsolutePath(m_wallpaper)) {
         Plasma::Package b(m_wallpaper, packageStructure(this));
         img = b.filePath("preferred");
-        kDebug() << img << m_wallpaper;
+        //kDebug() << img << m_wallpaper;
 
-        if (img.isEmpty()) {
+        if (img.isEmpty() && QFile::exists(m_wallpaper)) {
             img = m_wallpaper;
         }
     } else {
@@ -427,6 +432,16 @@ void Image::setSingleImage()
 
             Plasma::Package b(dir.path(), packageStructure(this));
             img = b.filePath("preferred");
+        }
+    }
+
+    if (img.isEmpty()) {
+        // ok, so the package we have failed to work out; let's try the default
+        // if we have already
+        const QString wallpaper = m_wallpaper;
+        useSingleImageDefaults();
+        if (wallpaper != m_wallpaper) {
+            setSingleImage();
         }
     }
 
