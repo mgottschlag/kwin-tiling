@@ -91,6 +91,7 @@ class Image : public Plasma::Wallpaper
         void calculateGeometry();
         void setSingleImage();
         void updateWallpaperActions();
+        void useSingleImageDefaults();
 
     private:
         static bool s_startupResumed;
