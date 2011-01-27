@@ -244,7 +244,7 @@ int TaskItemLayout::preferredColumns()
             qreal horizontalSpace = m_groupItem->geometry().width();
             int numberOflaunchers = 0;
             foreach (AbstractTaskItem *item, m_itemPositions) {
-                if (item->abstractItem()->itemType() == TaskManager::LauncherItemType) {
+                if (item->abstractItem() && item->abstractItem()->itemType() == TaskManager::LauncherItemType) {
                     horizontalSpace -= item->preferredHeight(); //The icon is a square so we can use the height as width
                     numberOflaunchers++;
                 }
