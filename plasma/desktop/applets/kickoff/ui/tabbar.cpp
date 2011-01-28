@@ -384,10 +384,10 @@ void TabBar::startAnimation()
         animation->pause();
     } else {
         animation = new QPropertyAnimation(this, "animValue");
-        animation->setProperty("easingCurve", QEasingCurve::InOutQuad);
-        animation->setProperty("duration", 150);
-        animation->setProperty("startValue", 0.0);
-        animation->setProperty("endValue", 1.0);
+        animation->setEasingCurve(QEasingCurve::OutQuad);
+        animation->setDuration(150);
+        animation->setStartValue(0.0);
+        animation->setEndValue(1.0);
     }
 
     animation->start(QAbstractAnimation::DeleteWhenStopped);
