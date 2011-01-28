@@ -151,6 +151,8 @@ private Q_SLOTS:
     void actionTriggered(QAction *action);
     /// Icon size setting changed
     void iconSizeChanged(int group);
+    /// Menu is hidden, reset the UI
+    void menuHiding();
 
 private:
     class Private;

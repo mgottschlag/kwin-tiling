@@ -596,7 +596,7 @@ void MenuLauncherApplet::showMenu(bool pressed)
         menuview->setFormatType( (Kickoff::MenuView::FormatType) d->formattype );
         menuview->setContextMenuPolicy(Qt::CustomContextMenu);
         connect(menuview, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
-        connect(menuview, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
+        connect(menuview, SIGNAL(aboutToHide()), this, SLOT(menuHiding()));
         connect(menuview, SIGNAL(customContextMenuRequested(QMenu*, const QPoint&)),
                 this, SLOT(customContextMenuRequested(QMenu*, const QPoint&)));
         //connect(menuview, SIGNAL(afterBeingHidden()), menuview, SLOT(deleteLater()));
@@ -756,6 +756,12 @@ void MenuLauncherApplet::showMenu(bool pressed)
     Plasma::ToolTipManager::self()->hide(this);
     setStatus(Plasma::NeedsAttentionStatus);
     d->menuview.data()->popup(popupPosition(d->menuview.data()->sizeHint()));
+}
+
+void MenuLauncherApplet::menuHiding()
+{
+    d->icon->setUnpressed();
+    setStatus(Plasma::PassiveStatus);
 }
 
 void MenuLauncherApplet::actionTriggered(QAction *action)
