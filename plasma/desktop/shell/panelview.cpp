@@ -423,9 +423,6 @@ void PanelView::setContainment(Plasma::Containment *containment)
     // ensure we aren't overlapping other panels
     const QRect screenRect = PlasmaApp::self()->corona()->screenGeometry(containment->screen());
     const QRegion availGeom = PlasmaApp::self()->corona()->availableScreenRegion(containment->screen());
-    const int w = containment->size().width();
-    const int h = containment->size().height();
-    const int length = containment->formFactor() == Plasma::Horizontal ? w : h;
 
     View::setContainment(containment);
 
@@ -1432,6 +1429,16 @@ void PanelView::resetTriggerEnteredSuppression()
 void PanelView::startAutoHide()
 {
     //TODO: is 5s too long? not long enough?
+    /*
+    kDebug() << m_editing << (containment() ? containment()->status() : 0) << Plasma::ActiveStatus
+             << geometry().adjusted(-10, -10, 10, 10).contains(QCursor::pos()) << hasPopup();
+    if (containment() && containment()->status() > Plasma::ActiveStatus) {
+        foreach (Plasma::Applet *applet, containment()->applets()) {
+            kDebug() << "     " << applet->name() << applet->status();
+        }
+    }
+    */
+
     if (m_editing || (containment() && containment()->status() > Plasma::ActiveStatus) ||
         geometry().adjusted(-10, -10, 10, 10).contains(QCursor::pos()) ||
         hasPopup()) {
