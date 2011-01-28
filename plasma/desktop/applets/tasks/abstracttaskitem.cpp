@@ -227,7 +227,7 @@ void AbstractTaskItem::setTaskFlags(const TaskFlags flags)
     }
 
     if (newBackground != m_backgroundPrefix) {
-        fadeBackground(newBackground, 100);
+        fadeBackground(newBackground, 250);
     }
 }
 
@@ -329,7 +329,7 @@ void AbstractTaskItem::focusOutEvent(QFocusEvent *event)
 void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event)
-    fadeBackground("hover", 175);
+    fadeBackground("hover", 250);
     QGraphicsWidget *w = parentWidget();
     if (w && this != m_applet->rootGroupItem()) {
         if (m_hoverEffectTimerId) {
@@ -442,9 +442,9 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
         }
 
         if (m_attentionTicks % 2 == 0) {
-            fadeBackground("attention", 100);
+            fadeBackground("attention", 200);
         } else {
-            fadeBackground("normal", 150);
+            fadeBackground("normal", 250);
         }
     } else if (event->timerId() == m_hoverEffectTimerId) {
         killTimer(m_hoverEffectTimerId);
