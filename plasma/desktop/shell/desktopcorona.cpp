@@ -296,7 +296,12 @@ QRegion DesktopCorona::availableScreenRegion(int id) const
 
 QRect DesktopCorona::availableScreenRect(int id) const
 {
+    if (id < 0) {
+        id = Kephal::ScreenUtils::primaryScreenId();
+    }
+
     QRect r(screenGeometry(id));
+
     foreach (PanelView *view, PlasmaApp::self()->panelViews()) {
         if (view->screen() == id && view->visibilityMode() == PanelView::NormalPanel) {
             QRect v = view->geometry();
