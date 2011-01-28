@@ -229,7 +229,7 @@ void ControllerWindow::setGraphicsWidget(QGraphicsWidget *widget)
 
         if (!moved) {
             // set it to the bottom of the screen as we have no better hints to go by
-            QRect geom = QApplication::desktop()->availableGeometry(screen());
+            QRect geom = PlasmaApp::self()->corona()->availableScreenRect(m_screen);
             setGeometry(geom.x(), geom.bottom() - height(), geom.width(), height());
         }
     } else {
