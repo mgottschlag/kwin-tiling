@@ -59,6 +59,7 @@ Comment[pt_BR]=Permite o compartilhamento de texto usando o serviço do pastebin
 Comment[sv]=Tillåter att text delas genom att använda tjänsten pastebin.com
 Comment[uk]=Уможливлює оприлюднення фрагментів тексту за допомогою служби pastebin.com
 Comment[x-test]=xxAllows text to be shared using the pastebin.com servicexx
+Comment[zh_TW]=允許使用 pastebin.com 服務分享文字
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ShareProvider

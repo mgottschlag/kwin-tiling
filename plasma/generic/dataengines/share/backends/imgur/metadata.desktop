@@ -57,6 +57,7 @@ Comment[pt_BR]=Permite o compartilhamento de imagens usando o serviço do imgur
 Comment[sv]=Tillåter att bilder delas genom att använda tjänsten imgur
 Comment[uk]=Уможливлює оприлюднення зображень за допомогою служби imgur
 Comment[x-test]=xxAllows images to be shared using the imgur servicexx
+Comment[zh_TW]=允許使用 imgur 服務分享影像
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ShareProvider

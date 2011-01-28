@@ -16,6 +16,7 @@ Name[pt_BR]=kde.org
 Name[sv]=kde.org
 Name[uk]=kde.org
 Name[x-test]=xxkde.orgxx
+Name[zh_TW]=kde.org
 Comment=Allows text to be shared using the kde.org service
 Comment[el]=Επιτρέπει στο κείμενο να γίνει κοινόχρηστο χρησιμοποιώντας την υπηρεσία kde.org
 Comment[en_GB]=Allows text to be shared using the kde.org service
@@ -29,6 +30,7 @@ Comment[pt_BR]=Permite o compartilhamento de texto usando o serviço do kde.org
 Comment[sv]=Tillåter att text delas genom att använda tjänsten kde.org
 Comment[uk]=Уможливлює оприлюднення фрагментів тексту за допомогою служби kde.org
 Comment[x-test]=xxAllows text to be shared using the kde.org servicexx
+Comment[zh_TW]=允許使用 kde.org 服務分享文字
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ShareProvider
