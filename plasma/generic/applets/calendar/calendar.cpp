@@ -51,8 +51,13 @@ void CalendarApplet::init()
     m_calendarWidget = new Plasma::Calendar(this);
     m_calendarWidget->setPreferredSize(220, 250);
     m_calendarWidget->setDataEngine(dataEngine("calendar"));
-    m_calendarWidget->applyConfiguration(config());
     updateDate();
+    configChanged();
+}
+
+void CalendarApplet::configChanged()
+{
+    m_calendarWidget->applyConfiguration(config());
 }
 
 QGraphicsWidget *CalendarApplet::graphicsWidget()
