@@ -1669,11 +1669,11 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
         }
 
         if (m_weatherData[source].forecasts[i]->forecastPeriod.contains("Tonight")) {
-            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Tonight", i18n("nite"));
+            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Tonight", i18nc("Short for tonight", "nite"));
         }
 
         if (m_weatherData[source].forecasts[i]->forecastPeriod.contains("night")) {
-            m_weatherData[source].forecasts[i]->forecastPeriod.replace("night", i18n("nt"));
+            m_weatherData[source].forecasts[i]->forecastPeriod.replace("night", i18nc("Short for night, appended to the end of the weekday", "nt"));
         }
 
         if (m_weatherData[source].forecasts[i]->forecastPeriod.contains("Saturday")) {
