@@ -140,7 +140,7 @@ void HotplugEngine::updatePredicates(const QString &path)
     }
 }
 
-QStringList HotplugEngine::predicatesForDevice(Solid::Device &device)
+QStringList HotplugEngine::predicatesForDevice(Solid::Device &device) const
 {
     QStringList interestingDesktopFiles;
     //search in all desktop configuration file if the device inserted is a correct device
