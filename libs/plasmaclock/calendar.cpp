@@ -243,16 +243,6 @@ const QDate& Calendar::date() const
     return calendarTable()->date();
 }
 
-void Calendar::setDataEngine(Plasma::DataEngine *dataEngine)
-{
-    calendarTable()->setDataEngine(dataEngine);
-}
-
-const Plasma::DataEngine *Calendar::dataEngine() const
-{
-    return calendarTable()->dataEngine();
-}
-
 void Calendar::setDisplayHolidays(bool showHolidays)
 {
     calendarTable()->setDisplayHolidays(showHolidays);

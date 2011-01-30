@@ -57,9 +57,6 @@ public:
     void setDate(const QDate &date);
     const QDate& date() const;
 
-    void setDataEngine(Plasma::DataEngine *dataEngine);
-    const Plasma::DataEngine *dataEngine() const;
-
     void setDisplayHolidays(bool showHolidays);
     bool displayHolidays();
 
