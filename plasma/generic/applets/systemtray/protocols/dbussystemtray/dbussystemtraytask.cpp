@@ -87,25 +87,24 @@ DBusSystemTrayTask::~DBusSystemTrayTask()
 QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
 {
     kDebug();
-    DBusSystemTrayWidget *m_iconWidget = new DBusSystemTrayWidget(host, m_service);
-    if (isUsed()) {
-        // we already have an icon, so this isn't the first time we've been created and 
-        // the data likely already exists in the DataEngine. we can't wait for an update
-        // from the status notifier item since it may never come or only after a while
-        // when the item actually changes.
-        // the call also needs to be delayed, since createWidget is called before the widget is added
-        // to the widgetsByHost() collection, and so an immediate call won't atually work here
-        QTimer::singleShot(0, this, SLOT(updateWidgets()));
-    }
+    DBusSystemTrayWidget *iconWidget = new DBusSystemTrayWidget(host, m_service);
+    // we may already have an icon, so this isn't the first time we've been created,
+    // or the request will come delayed after the creation of this widget and
+    // the data likely already exists in the DataEngine. we can't wait for an update
+    // from the status notifier item since it may never come or only after a while
+    // when the item actually changes.
+    // the call also needs to be delayed, since createWidget is called before the widget is added
+    // to the widgetsByHost() collection, and so an immediate call won't atually work here
+    QTimer::singleShot(0, this, SLOT(updateWidgets()));
 
-    m_iconWidget->show();
+    iconWidget->show();
 
-    m_iconWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    m_iconWidget->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+    iconWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    iconWidget->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
     //standard fdo icon sizes is 24x24, opposed to the 22x22 SizeSmallMedium
-    m_iconWidget->setPreferredSize(24, 24);
+    iconWidget->setPreferredSize(24, 24);
 
-    return m_iconWidget;
+    return iconWidget;
 }
 
 void DBusSystemTrayTask::updateWidgets()
@@ -270,7 +269,7 @@ void DBusSystemTrayTask::syncIcons(const Plasma::DataEngine::Data &properties)
 
             iconWidget->setIcon(m_iconName, m_icon);
 
-            //This hardcoded number is needed to support pixel perfection of m_icons coming from other environments, in kde actualsize will jusrt return our usual 22x22
+            //This hardcoded number is needed to support pixel perfection of m_icons coming from other environments, in kde actualsize will just return our usual 22x22
             if (iconWidget->svg().isEmpty()) {
                 QSize size = m_icon.actualSize(QSize(24, 24));
                 iconWidget->setPreferredSize(iconWidget->sizeFromIconSize(qMax(size.width(), size.height())));
