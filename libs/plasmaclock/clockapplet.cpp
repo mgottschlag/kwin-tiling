@@ -584,7 +584,6 @@ void ClockApplet::init()
     d->calendarWidget = new Plasma::Calendar();
     d->calendarWidget->setAutomaticUpdateEnabled(false);
     d->calendarWidget->setMinimumSize(QSize(230, 220));
-    d->calendarWidget->setDataEngine(dataEngine("calendar"));
     d->createCalendarExtender();
 
     extender();

@@ -24,6 +24,7 @@
 //Qt
 #include <QtCore/QDate>
 #include <QtCore/QListIterator>
+#include <QtCore/QTimer>
 #include <QtGui/QPainter>
 #include <QtGui/QWidget>
 #include <QtGui/QGraphicsSceneWheelEvent>
@@ -40,6 +41,7 @@
 #include <Plasma/Svg>
 #include <Plasma/Theme>
 #include <Plasma/DataEngine>
+#include <Plasma/DataEngineManager>
 
 #ifdef HAVE_KDEPIMLIBS
 #include "ui_calendarHolidaysConfig.h"
@@ -76,20 +78,27 @@ public:
 class CalendarTablePrivate
 {
     public:
+        enum Populations { NoPendingPopulation = 0, PopulateHolidays = 1, PopulateEvents = 2 };
 
         CalendarTablePrivate(CalendarTable *calTable, const QDate &initialDate = QDate::currentDate())
             : q(calTable),
               calendarType("locale"),
               calendar(KGlobal::locale()->calendar()),
-              displayEvents(true),
-              displayHolidays(true),
-              dataEngine(0),
+              displayEvents(false),
+              displayHolidays(false),
+              calendarDataEngine(0),
               automaticUpdates(true),
-              opacity(0.5)
+              opacity(0.5),
+              pendingPopulations(NoPendingPopulation),
+              delayedPopulationTimer(new QTimer())
         {
             svg = new Svg();
             svg->setImagePath("widgets/calendar");
             svg->setContainsMultipleImages(true);
+
+            delayedPopulationTimer->setInterval(0);
+            delayedPopulationTimer->setSingleShot(true);
+            QObject::connect(delayedPopulationTimer, SIGNAL(timeout()), q, SLOT(populateCalendar()));
 
             setDate(initialDate);
         }
@@ -97,11 +106,16 @@ class CalendarTablePrivate
         ~CalendarTablePrivate()
         {
             // Delete the old calendar first if it's not the global calendar
-            if ( calendar != KGlobal::locale()->calendar() ) {
+            if (calendar != KGlobal::locale()->calendar()) {
                 delete calendar;
             }
 
+            if (calendarDataEngine) {
+                Plasma::DataEngineManager::self()->unloadEngine("calendar");
+            }
+
             delete svg;
+            delete delayedPopulationTimer;
         }
 
         void setCalendar(const KCalendarSystem *newCalendar)
@@ -122,8 +136,8 @@ class CalendarTablePrivate
             // Force date update to refresh cached date componants then update display
             setDate(selectedDate);
             updateHoveredPainting(QPointF());
-            q->populateHolidays();
-            q->populateEvents();
+            populateHolidays();
+            populateEvents();
             q->update();
         }
 
@@ -289,43 +303,42 @@ class CalendarTablePrivate
 
         QString defaultHolidaysRegion()
         {
-            if (!dataEngine) {
-                return QString();
-            }
-
-            return dataEngine->query("holidaysDefaultRegion").value("holidaysDefaultRegion").toString();
+            //FIXME: get rid of the query; turn it into a proper async request
+            return calendarEngine()->query("holidaysDefaultRegion").value("holidaysDefaultRegion").toString();
         }
 
         bool isValidHolidaysRegion(const QString &holidayRegion)
         {
-            if (holidaysRegions.contains(holidayRegion)) {
-                return true;
-            } else {
-                QString queryString = "holidaysIsValidRegion" + QString(':') + holidayRegion;
-                return (dataEngine && dataEngine->query(queryString).value(queryString).toBool());
-            }
+            //FIXME: get rid of the query; turn it into a proper async request
+            QString queryString = "holidaysIsValidRegion" + QString(':') + holidayRegion;
+            return calendarEngine()->query(queryString).value(queryString).toBool();
         }
 
-        void addHolidaysRegion(const QString &holidayRegion, bool daysOff)
+        bool addHolidaysRegion(const QString &holidayRegion, bool daysOff)
         {
-            if (!holidaysRegions.contains(holidayRegion) && dataEngine) {
-                Plasma::DataEngine::Data regions;
+            kDebug() << "**********8ADDING" << holidayRegion <<
+                holidaysRegions.contains(holidayRegion) << isValidHolidaysRegion(holidayRegion);
+            if (!holidaysRegions.contains(holidayRegion) && isValidHolidaysRegion(holidayRegion)) {
                 QString queryString = "holidaysRegion" + QString(':') + holidayRegion;
-                regions = dataEngine->query(queryString);
-                Plasma::DataEngine::DataIterator i(regions);
-                while (i.hasNext()) {
-                    i.next();
-                    Plasma::DataEngine::Data region = i.value().toHash();
+                Plasma::DataEngine::Data regions = calendarEngine()->query(queryString);
+                Plasma::DataEngine::DataIterator it(regions);
+                while (it.hasNext()) {
+                    it.next();
+                    Plasma::DataEngine::Data region = it.value().toHash();
                     region.insert("UseForDaysOff", daysOff);
-                    holidaysRegions.insert(i.key(), region);
+                    holidaysRegions.insert(it.key(), region);
                 }
+
+                return true;
             }
+
+            return false;
         }
 
         bool holidayIsDayOff(Plasma::DataEngine::Data holidayData)
         {
-            return ( holidayData.value("ObservanceType").toString() == "PublicHoliday" &&
-                     holidaysRegions.value(holidayData.value("RegionCode").toString()).value("UseForDaysOff").toBool() );
+            return (holidayData.value("ObservanceType").toString() == "PublicHoliday" &&
+                    holidaysRegions.value(holidayData.value("RegionCode").toString()).value("UseForDaysOff").toBool());
         }
 
 
@@ -342,6 +355,12 @@ class CalendarTablePrivate
                 }
             }
         }
+
+        Plasma::DataEngine *calendarEngine();
+        void checkIfCalendarEngineNeeded();
+        void populateHolidays();
+        void populateEvents();
+        void populateCalendar();
 
         CalendarTable *q;
         QString calendarType;
@@ -360,7 +379,7 @@ class CalendarTablePrivate
 
         bool displayEvents;
         bool displayHolidays;
-        Plasma::DataEngine *dataEngine;
+        Plasma::DataEngine *calendarDataEngine;
         // List of Holiday Regions to display
         // Hash key: QString = Holiday Region Code, Data = details of Holiday Region
         QHash<QString, Plasma::DataEngine::Data> holidaysRegions;
@@ -403,6 +422,9 @@ class CalendarTablePrivate
         int headerSpace;
         int weekBarSpace;
         int glowRadius;
+
+        int pendingPopulations;
+        QTimer *delayedPopulationTimer;
 };
 
 CalendarTable::CalendarTable(const QDate &date, QGraphicsWidget *parent)
@@ -482,9 +504,8 @@ void CalendarTable::setDate(const QDate &newDate)
     update(); //FIXME: we shouldn't need this update here, but something in Qt is broken (but with plasmoidviewer everything work)
 
     if (oldYear != d->selectedYear || oldMonth != d->selectedMonth) {
-        populateHolidays();
-        populateEvents();
-        update();
+        d->populateHolidays();
+        d->populateEvents();
     } else {
         // only update the old and the new areas
         int row, column;
@@ -506,48 +527,34 @@ const QDate& CalendarTable::date() const
     return d->selectedDate;
 }
 
-void CalendarTable::setDataEngine(Plasma::DataEngine *dataEngine)
-{
-    if (d->dataEngine != dataEngine) {
-        d->dataEngine = dataEngine;
-        populateHolidays();
-        populateEvents();
-    }
-}
-
-const Plasma::DataEngine *CalendarTable::dataEngine() const
-{
-    return d->dataEngine;
-}
-
 void CalendarTable::setDisplayHolidays(bool showHolidays)
 {
     if (showHolidays) {
-        if (!d->dataEngine) {
-            clearHolidays();
-            return;
-        }
-
         if (d->holidaysRegions.isEmpty()) {
-            addHolidaysRegion(d->defaultHolidaysRegion(), true);
+            d->addHolidaysRegion(d->defaultHolidaysRegion(), true);
         }
 
-        foreach ( const QString &holidayRegion, holidaysRegions() ) {
-            if (!d->isValidHolidaysRegion(holidayRegion)) {
-                return;
+        QMutableHashIterator<QString, Plasma::DataEngine::Data> it(d->holidaysRegions);
+        while (it.hasNext()) {
+            it.next();
+            if (!d->isValidHolidaysRegion(it.key())) {
+                it.remove();
             }
         }
+    } else {
+        clearHolidays();
+        d->checkIfCalendarEngineNeeded();
     }
 
     if (d->displayHolidays != showHolidays) {
         d->displayHolidays = showHolidays;
-        populateHolidays();
+        d->populateHolidays();
     }
 }
 
 bool CalendarTable::displayHolidays()
 {
-    return d->displayHolidays && !holidaysRegions().isEmpty();
+    return d->displayHolidays && !d->holidaysRegions.isEmpty();
 }
 
 bool CalendarTable::displayEvents()
@@ -563,36 +570,35 @@ void CalendarTable::setDisplayEvents(bool display)
 
     d->displayEvents = display;
     if (display) {
-        populateEvents();
+        d->populateEvents();
     } else {
-        if (d->dataEngine) {
-            d->dataEngine->disconnectSource(d->eventsQuery, this);
+        if (d->calendarDataEngine) {
+            d->calendarDataEngine->disconnectSource(d->eventsQuery, this);
         }
         d->events.clear();
         d->todos.clear();
         d->journals.clear();
         d->pimEvents.clear();
+        d->checkIfCalendarEngineNeeded();
     }
 }
 
 void CalendarTable::clearHolidaysRegions()
 {
-    clearHolidays();
     d->holidaysRegions.clear();
-    populateHolidays();
+    clearHolidays();
 }
 
 void CalendarTable::addHolidaysRegion(const QString &region, bool daysOff)
 {
-    if (d->isValidHolidaysRegion(region)) {
-        d->addHolidaysRegion(region, daysOff);
-        populateHolidays();
+    if (d->displayHolidays && d->addHolidaysRegion(region, daysOff)) {
+        d->populateHolidays();
     }
 }
 
 QStringList CalendarTable::holidaysRegions() const
 {
-    return QStringList(d->holidaysRegions.keys());
+    return d->holidaysRegions.keys();
 }
 
 QStringList CalendarTable::holidaysRegionsDaysOff() const
@@ -612,6 +618,7 @@ void CalendarTable::clearHolidays()
 {
     d->holidayEvents.clear();
     d->holidays.clear();
+    update();
 }
 
 void CalendarTable::addHoliday(Plasma::DataEngine::Data holidayData)
@@ -741,42 +748,84 @@ const QDate& CalendarTable::currentDate() const
     return d->currentDate;
 }
 
-void CalendarTable::populateHolidays()
+Plasma::DataEngine *CalendarTablePrivate::calendarEngine()
 {
-    clearHolidays();
-
-    if (!displayHolidays() || !d->dataEngine || holidaysRegions().isEmpty()) {
-        return;
+    if (!calendarDataEngine) {
+        calendarDataEngine = Plasma::DataEngineManager::self()->loadEngine("calendar");
     }
 
-    // Just fetch the days displayed in the grid
-    QString queryString = "holidays" + QString(':') + holidaysRegions().join(QString(','))
-                                     + QString(':') + d->viewStartDate.toString(Qt::ISODate)
-                                     + QString(':') + d->viewEndDate.toString(Qt::ISODate);
-    QList<QVariant> holidays = d->dataEngine->query(queryString).value(queryString).toList();
+    return calendarDataEngine;
+}
 
-    QMutableListIterator<QVariant> i(holidays);
-    while (i.hasNext()) {
-        addHoliday(i.next().toHash());
+void CalendarTablePrivate::checkIfCalendarEngineNeeded()
+{
+    if (calendarDataEngine && !displayHolidays && !displayEvents) {
+        calendarDataEngine = Plasma::DataEngineManager::self()->loadEngine("calendar");
     }
 }
 
-void CalendarTable::populateEvents()
+void CalendarTablePrivate::populateHolidays()
 {
-    d->events.clear();
-    d->todos.clear();
-    d->journals.clear();
-    d->pimEvents.clear();
+    kDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+    pendingPopulations |= PopulateHolidays;
+    delayedPopulationTimer->start();
+}
 
-    if (!d->displayEvents || !d->dataEngine) {
-        return;
+void CalendarTablePrivate::populateCalendar()
+{
+    kDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << pendingPopulations;
+    if (pendingPopulations & PopulateHolidays) {
+        holidayEvents.clear();
+        holidays.clear();
+
+        if (q->displayHolidays()) {
+            // Just fetch the days displayed in the grid
+            //FIXME: queries are bad, use an async method
+            QString queryString = "holidays" + QString(':') +
+                                  q->holidaysRegions().join(QString(',')) +
+                                  QString(':') + viewStartDate.toString(Qt::ISODate) +
+                                  QString(':') + viewEndDate.toString(Qt::ISODate);
+            QList<QVariant> holidays = calendarEngine()->query(queryString).value(queryString).toList();
+
+            QMutableListIterator<QVariant> i(holidays);
+            while (i.hasNext()) {
+                q->addHoliday(i.next().toHash());
+            }
+        }
+
+        q->update();
+        kDebug() << "repainting due to holiday population";
     }
 
-    // Just fetch the days displayed in the grid
-    d->dataEngine->disconnectSource(d->eventsQuery, this);
-    d->eventsQuery = "events" + QString(':') + d->viewStartDate.toString(Qt::ISODate)
-                              + QString(':') + d->viewEndDate.toString(Qt::ISODate);
-    d->dataEngine->connectSource(d->eventsQuery, this);
+    if (pendingPopulations & PopulateEvents) {
+        events.clear();
+        todos.clear();
+        journals.clear();
+        pimEvents.clear();
+
+        if (calendarDataEngine && !eventsQuery.isEmpty()) {
+            calendarDataEngine->disconnectSource(eventsQuery, q);
+        }
+
+        if (displayEvents) {
+            // Just fetch the days displayed in the grid
+            eventsQuery = "events" + QString(':') + viewStartDate.toString(Qt::ISODate) +
+                          QString(':') + viewEndDate.toString(Qt::ISODate);
+            calendarEngine()->connectSource(eventsQuery, q);
+        } else {
+            eventsQuery.clear();
+        }
+
+        q->update();
+    }
+
+    pendingPopulations = NoPendingPopulation;
+}
+
+void CalendarTablePrivate::populateEvents()
+{
+    pendingPopulations |= PopulateHolidays;
+    delayedPopulationTimer->start();
 }
 
 void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
@@ -816,13 +865,21 @@ void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine:
 void CalendarTable::applyConfiguration(KConfigGroup cg)
 {
     setCalendar(cg.readEntry("calendarType", "locale"));
-    QStringList regions = cg.readEntry("holidaysRegions", QStringList(d->defaultHolidaysRegion()));
-    QStringList daysOff = cg.readEntry("holidaysRegionsDaysOff", QStringList(d->defaultHolidaysRegion()));
+    const bool holidays = cg.readEntry("displayHolidays", true);
     clearHolidaysRegions();
-    foreach(const QString & region, regions) {
-        addHolidaysRegion(region, daysOff.contains(region));
+    if (holidays) {
+        QStringList regions = cg.readEntry("holidaysRegions", QStringList(d->defaultHolidaysRegion()));
+        QStringList daysOff = cg.readEntry("holidaysRegionsDaysOff", QStringList(d->defaultHolidaysRegion()));
+        clearHolidaysRegions();
+        foreach (const QString &region, regions) {
+            d->addHolidaysRegion(region, daysOff.contains(region));
+        }
+
+        kDebug() << "applied" << regions << "and now we populate the holidays!!!!!!!!!";
+        d->populateHolidays();
     }
-    setDisplayHolidays(cg.readEntry("displayHolidays", true));
+    setDisplayHolidays(holidays);
+
     setDisplayEvents(cg.readEntry("displayEvents", true));
 }
 
@@ -1036,7 +1093,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
 
     QList<CalendarCellBorder> borders;
     QList<CalendarCellBorder> hovers;
-    if (d->automaticUpdates){
+    if (d->automaticUpdates) {
         d->currentDate = QDate::currentDate();
     }
 

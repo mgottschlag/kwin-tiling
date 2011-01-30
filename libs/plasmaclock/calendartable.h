@@ -64,9 +64,6 @@ public:
     void setDate(const QDate &date);
     const QDate& date() const;
 
-    void setDataEngine(Plasma::DataEngine *dataEngine);
-    const Plasma::DataEngine *dataEngine() const;
-
     void setDisplayEvents(bool display);
     bool displayEvents();
 
@@ -121,11 +118,10 @@ protected:
     virtual void paintBorder(QPainter *p, int cell, int week, int weekDay, CellTypes type, const QDate &cellDate);
 
 private:
-    void populateHolidays();
-    void populateEvents();
-
     friend class CalendarTablePrivate;
     CalendarTablePrivate* const d;
+
+    Q_PRIVATE_SLOT(d, void populateCalendar())
 };
 
 }

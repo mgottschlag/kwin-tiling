@@ -57,14 +57,8 @@ public:
     void setDate(const QDate &date);
     const QDate& date() const;
 
-    void setDataEngine(Plasma::DataEngine *dataEngine);
-    const Plasma::DataEngine *dataEngine() const;
-
-    void setDisplayEvents(bool showEvents);
-    bool displayEvents() const;
-
     void setDisplayHolidays(bool showHolidays);
-    bool displayHolidays() const;
+    bool displayHolidays();
 
     void clearHolidaysRegions();
     void addHolidaysRegion(const QString &regionCode, bool daysOff);

@@ -243,32 +243,12 @@ const QDate& Calendar::date() const
     return calendarTable()->date();
 }
 
-void Calendar::setDataEngine(Plasma::DataEngine *dataEngine)
-{
-    calendarTable()->setDataEngine(dataEngine);
-}
-
-const Plasma::DataEngine *Calendar::dataEngine() const
-{
-    return calendarTable()->dataEngine();
-}
-
-void Calendar::setDisplayEvents(bool showEvents)
-{
-    calendarTable()->setDisplayEvents(showEvents);
-}
-
-bool Calendar::displayEvents() const
-{
-    return calendarTable()->displayEvents();
-}
-
 void Calendar::setDisplayHolidays(bool showHolidays)
 {
     calendarTable()->setDisplayHolidays(showHolidays);
 }
 
-bool Calendar::displayHolidays() const
+bool Calendar::displayHolidays()
 {
     return calendarTable()->displayHolidays();
 }
@@ -469,7 +449,7 @@ void Calendar::goToWeek(int newWeek)
 
 void Calendar::showYearSpinBox()
 {
-    QGraphicsLinearLayout *hLayout = static_cast<QGraphicsLinearLayout *>(d->year->parentLayoutItem());
+    QGraphicsLinearLayout *hLayout = (QGraphicsLinearLayout*)d->year->parentLayoutItem();
 
     d->year->hide();
     hLayout->removeItem(d->year);
@@ -483,7 +463,7 @@ void Calendar::showYearSpinBox()
 
 void Calendar::hideYearSpinBox()
 {
-    QGraphicsLinearLayout *hLayout = static_cast<QGraphicsLinearLayout *>(d->yearSpinBox->parentLayoutItem());
+    QGraphicsLinearLayout *hLayout = (QGraphicsLinearLayout*)d->yearSpinBox->parentLayoutItem();
     hLayout->removeItem(d->yearSpinBox);
     hLayout->insertItem(s_yearWidgetIndex, d->year);
     d->yearSpinBox->hide();
