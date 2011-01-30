@@ -50,7 +50,6 @@ void CalendarApplet::init()
     setPopupIcon("view-pim-calendar");
     m_calendarWidget = new Plasma::Calendar(this);
     m_calendarWidget->setPreferredSize(220, 250);
-    m_calendarWidget->setDataEngine(dataEngine("calendar"));
     updateDate();
     configChanged();
 }
