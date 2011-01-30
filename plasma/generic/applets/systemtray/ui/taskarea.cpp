@@ -130,6 +130,7 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
     d->topLayout->setSpacing(5);
 
     d->repositionTimer = new QTimer(this);
+    d->repositionTimer->setInterval(1000);
     d->repositionTimer->setSingleShot(true);
     connect(d->repositionTimer, SIGNAL(timeout()), this, SLOT(delayedReposition()));
 
@@ -197,6 +198,11 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 
 void TaskArea::delayedReposition()
 {
+    if (d->host->isUnderMouse()) {
+        d->repositionTimer->start();
+        return;
+    }
+
     foreach (const QWeakPointer<Task> &task, d->delayedRepositionTasks) {
         //kDebug() << "checking" << task->name() << task->typeId() << d->alwaysShownTypes;
         if (task) {
@@ -243,7 +249,7 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
     //Delay the reposition if the applet is under the mouse cursor
     if (d->host->isUnderMouse()) {
         d->delayedRepositionTasks.append(task);
-        d->repositionTimer->start(2000);
+        d->repositionTimer->start();
         return false;
     }
 
@@ -383,17 +389,18 @@ void TaskArea::removeTask(Task *task)
             for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
                 if (d->hiddenTasksLayout->itemAt(i) == widget) {
                     d->hiddenTasksLayout->removeAt(i);
+                    --i;
                 }
+
                 if (d->hiddenTasksLayout->itemAt(i) == taskLabel) {
                     d->hiddenTasksLayout->removeAt(i);
                     taskLabel->deleteLater();
+                    --i;
                 }
             }
         }
         d->hiddenTasks.remove(task);
-        d->hiddenTasksLayout->invalidate();
-        d->hiddenTasksLayout->updateGeometry();
-        d->hiddenTasksWidget->resize(d->hiddenTasksWidget->effectiveSizeHint(Qt::MinimumSize));
+        d->hiddenRelayoutTimer->start(0);
     }
     d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
 
