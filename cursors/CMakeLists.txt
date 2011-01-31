@@ -12,7 +12,6 @@ set(cursors_folders
    )
 
 foreach(theme ${cursors_folders})
-    install(DIRECTORY ${theme} DESTINATION ${ICON_INSTALL_DIR} PATTERN .svn EXCLUDE)
+    install(DIRECTORY ${theme} DESTINATION ${ICON_INSTALL_DIR})
 endforeach(theme)
-
 
