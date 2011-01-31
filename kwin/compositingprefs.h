@@ -40,34 +40,43 @@ public:
     static bool compositingPossible();
     static QString compositingNotPossibleReason();
     bool recommendCompositing() const;
-    bool enableVSync() const  { return mEnableVSync; }
-    bool enableDirectRendering() const  { return mEnableDirectRendering; }
-    bool strictBinding() const { return mStrictBinding; }
+    bool enableVSync() const  {
+        return mEnableVSync;
+    }
+    bool enableDirectRendering() const  {
+        return mEnableDirectRendering;
+    }
+    bool strictBinding() const {
+        return mStrictBinding;
+    }
 
     void detect();
-
-    bool xgl() const { return mXgl; }
 
 protected:
 
     void detectDriverAndVersion();
     void applyDriverSpecificOptions();
-    static bool detectXgl();
 
     bool initGLXContext();
     void deleteGLXContext();
+    bool initEGLContext();
+    void deleteEGLContext();
 
 
 private:
-    bool mXgl;
-
     bool mRecommendCompositing;
     bool mEnableVSync;
     bool mEnableDirectRendering;
     bool mStrictBinding;
 
 #ifdef KWIN_HAVE_OPENGL_COMPOSITING
+#ifdef KWIN_HAVE_OPENGLES
+    EGLDisplay mEGLDisplay;
+    EGLContext mEGLContext;
+    EGLSurface mEGLSurface;
+#else
     GLXContext mGLContext;
+#endif
     Window mGLWindow;
 #endif
 };

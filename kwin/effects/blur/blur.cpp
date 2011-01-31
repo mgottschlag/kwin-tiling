@@ -22,6 +22,7 @@
 
 #include <X11/Xatom.h>
 
+#include <QMatrix4x4>
 #include <KDebug>
 
 namespace KWin
@@ -118,7 +119,7 @@ void BlurEffect::propertyNotify(EffectWindow *w, long atom)
 bool BlurEffect::supported()
 {
     bool supported = GLRenderTarget::supported() && GLTexture::NPOTTextureSupported() &&
-            (GLSLBlurShader::supported() || ARBBlurShader::supported());
+                     (GLSLBlurShader::supported() || ARBBlurShader::supported());
 
     if (supported) {
         int maxTexSize;
@@ -130,9 +131,9 @@ bool BlurEffect::supported()
 
     if (supported) {
         // check the blacklist
-        KSharedConfigPtr config = KSharedConfig::openConfig( "kwinrc" );
-        KConfigGroup blacklist = config->group( "Blacklist" ).group( "Blur" );
-        if (effects->checkDriverBlacklist( blacklist )) {
+        KSharedConfigPtr config = KSharedConfig::openConfig("kwinrc");
+        KConfigGroup blacklist = config->group("Blacklist").group("Blur");
+        if (effects->checkDriverBlacklist(blacklist)) {
             kDebug() << "Blur effect disabled by driver blacklist";
             supported = false;
         }
@@ -151,8 +152,8 @@ QRegion BlurEffect::expand(const QRegion &region) const
     QRegion expanded;
 
     if (region.rectCount() < 20) {
-        foreach (const QRect &rect, region.rects())
-            expanded += expand(rect);
+        foreach (const QRect & rect, region.rects())
+        expanded += expand(rect);
     } else
         expanded += expand(region.boundingRect());
 
@@ -171,7 +172,7 @@ QRegion BlurEffect::blurRegion(const EffectWindow *w) const
                 region = w->shape();
                 region -= w->decorationInnerRect();
                 region |= appRegion.translated(w->contentsRect().topLeft()) &
-                                        w->contentsRect();
+                          w->contentsRect();
             } else
                 region = appRegion & w->contentsRect();
         } else {
@@ -191,34 +192,23 @@ QRegion BlurEffect::blurRegion(const EffectWindow *w) const
 
 void BlurEffect::drawRegion(const QRegion &region)
 {
-    const int vertexCount = region.rectCount() * 4;
+    const int vertexCount = region.rectCount() * 6;
     if (vertices.size() < vertexCount)
         vertices.resize(vertexCount);
 
     int i = 0;
-    foreach (const QRect &r, region.rects()) {
-        vertices[i++] = QVector2D(r.x(),             r.y()); 
-        vertices[i++] = QVector2D(r.x() + r.width(), r.y()); 
-        vertices[i++] = QVector2D(r.x() + r.width(), r.y() + r.height()); 
-        vertices[i++] = QVector2D(r.x(),             r.y() + r.height()); 
+    foreach (const QRect & r, region.rects()) {
+        vertices[i++] = QVector2D(r.x() + r.width(), r.y());
+        vertices[i++] = QVector2D(r.x(),             r.y());
+        vertices[i++] = QVector2D(r.x(),             r.y() + r.height());
+        vertices[i++] = QVector2D(r.x(),             r.y() + r.height());
+        vertices[i++] = QVector2D(r.x() + r.width(), r.y() + r.height());
+        vertices[i++] = QVector2D(r.x() + r.width(), r.y());
     }
-
-    if (vertexCount > 1000) {
-        glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(2, GL_FLOAT, 0, (float*)vertices.constData());
-        glVertexPointer(2, GL_FLOAT, 0, (float*)vertices.constData());
-        glDrawArrays(GL_QUADS, 0, vertexCount);
-        glPopClientAttrib();
-    } else {
-        glBegin(GL_QUADS);
-        for (int i = 0; i < vertexCount; i++) {
-            glTexCoord2fv((const float*)&vertices[i]);
-            glVertex2fv((const float*)&vertices[i]);
-        }
-        glEnd();
-    }
+    GLVertexBuffer *vbo = GLVertexBuffer::streamingBuffer();
+    vbo->reset();
+    vbo->setData(vertexCount, 2, (float*)vertices.constData(), (float*)vertices.constData());
+    vbo->render(GL_TRIANGLES);
 }
 
 void BlurEffect::paintScreen(int mask, QRegion region, ScreenPaintData &data)
@@ -240,18 +230,13 @@ void BlurEffect::drawWindow(EffectWindow *w, int mask, QRegion region, WindowPai
     bool valid = target->valid() && shader->isValid();
 
     QRegion shape;
-    const QVariant forceBlur = w->data( WindowForceBlurRole );
-    if ((!effects->activeFullScreenEffect() || (forceBlur.isValid() && forceBlur.toBool() ))
+    const QVariant forceBlur = w->data(WindowForceBlurRole);
+    if ((!effects->activeFullScreenEffect() || (forceBlur.isValid() && forceBlur.toBool()))
             && hasAlpha && !w->isDesktop() && !transformed)
         shape = blurRegion(w).translated(w->geometry().topLeft()) & screen;
 
-    if (valid && !shape.isEmpty() && region.intersects(shape.boundingRect()))
-    {
+    if (valid && !shape.isEmpty() && region.intersects(shape.boundingRect())) {
         doBlur(shape, screen, data.opacity * data.contents_opacity);
-
-        // Rebind the shader used for drawing the window if one was set
-        if (data.shader)
-            data.shader->bind();
     }
 
     // Draw the window over the blurred area
@@ -262,7 +247,7 @@ void BlurEffect::paintEffectFrame(EffectFrame *frame, QRegion region, double opa
 {
     const QRect screen(0, 0, displayWidth(), displayHeight());
     bool valid = target->valid() && shader->isValid();
-    QRegion shape = frame->geometry().adjusted( -5, -5, 5, 5 ) & screen;
+    QRegion shape = frame->geometry().adjusted(-5, -5, 5, 5) & screen;
     if (valid && !shape.isEmpty() && region.intersects(shape.boundingRect())) {
         doBlur(shape, screen, opacity * frameOpacity);
     }
@@ -293,11 +278,15 @@ void BlurEffect::doBlur(const QRegion& shape, const QRect& screen, const float o
 
     // Set up the texture matrix to transform from screen coordinates
     // to texture coordinates.
+#ifndef KWIN_HAVE_OPENGLES
     glMatrixMode(GL_TEXTURE);
-    glPushMatrix();
-    glLoadIdentity();
-    glScalef(1.0 / scratch.width(), -1.0 / scratch.height(), 1);
-    glTranslatef(-r.x(), -scratch.height() - r.y(), 0);
+#endif
+    pushMatrix();
+    QMatrix4x4 textureMatrix;
+    textureMatrix.scale(1.0 / scratch.width(), -1.0 / scratch.height(), 1);
+    textureMatrix.translate(-r.x(), -scratch.height() - r.y(), 0);
+    loadMatrix(textureMatrix);
+    shader->setTextureMatrix(textureMatrix);
 
     drawRegion(expanded);
 
@@ -314,7 +303,9 @@ void BlurEffect::doBlur(const QRegion& shape, const QRect& screen, const float o
 
     // Modulate the blurred texture with the window opacity if the window isn't opaque
     if (opacity < 1.0) {
+#ifndef KWIN_HAVE_OPENGLES
         glPushAttrib(GL_COLOR_BUFFER_BIT);
+#endif
         glEnable(GL_BLEND);
         glBlendColor(0, 0, 0, opacity);
         glBlendFunc(GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
@@ -322,17 +313,25 @@ void BlurEffect::doBlur(const QRegion& shape, const QRect& screen, const float o
 
     // Set the up the texture matrix to transform from screen coordinates
     // to texture coordinates.
-    glLoadIdentity();
-    glScalef(1.0 / tex->width(), -1.0 / tex->height(), 1);
-    glTranslatef(0, -tex->height(), 0);
+    textureMatrix.setToIdentity();
+    textureMatrix.scale(1.0 / tex->width(), -1.0 / tex->height(), 1);
+    textureMatrix.translate(0, -tex->height(), 0);
+    loadMatrix(textureMatrix);
+    shader->setTextureMatrix(textureMatrix);
 
     drawRegion(shape);
 
-    glPopMatrix();
+    popMatrix();
+#ifndef KWIN_HAVE_OPENGLES
     glMatrixMode(GL_MODELVIEW);
+#endif
 
-    if (opacity < 1.0)
+    if (opacity < 1.0) {
+        glDisable(GL_BLEND);
+#ifndef KWIN_HAVE_OPENGLES
         glPopAttrib();
+#endif
+    }
 
     tex->unbind();
     shader->unbind();

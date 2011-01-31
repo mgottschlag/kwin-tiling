@@ -23,40 +23,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define KWIN_TRACKMOUSE_H
 
 #include <kwineffects.h>
-#include <kwinglutils.h>
 
 class KAction;
 
 namespace KWin
 {
+class GLTexture;
 
 class TrackMouseEffect
     : public QObject, public Effect
-    {
+{
     Q_OBJECT
-    public:
-        TrackMouseEffect();
-        virtual ~TrackMouseEffect();
-        virtual void prePaintScreen( ScreenPrePaintData& data, int time );
-        virtual void paintScreen( int mask, QRegion region, ScreenPaintData& data );
-        virtual void postPaintScreen();
-        virtual void mouseChanged( const QPoint& pos, const QPoint& old,
-            Qt::MouseButtons buttons, Qt::MouseButtons oldbuttons,
-            Qt::KeyboardModifiers modifiers, Qt::KeyboardModifiers oldmodifiers );
-        virtual void reconfigure( ReconfigureFlags );
-    private slots:
-        void toggle();
-    private:
-        QRect starRect( int num ) const;
-        void loadTexture();
-        bool active, mousePolling;
-        int angle;
-        GLTexture* texture;
-        QSize textureSize;
-        KActionCollection* actionCollection;
-        KAction* action;
-        Qt::KeyboardModifiers modifier;
-    };
+public:
+    TrackMouseEffect();
+    virtual ~TrackMouseEffect();
+    virtual void prePaintScreen(ScreenPrePaintData& data, int time);
+    virtual void paintScreen(int mask, QRegion region, ScreenPaintData& data);
+    virtual void postPaintScreen();
+    virtual void mouseChanged(const QPoint& pos, const QPoint& old,
+                              Qt::MouseButtons buttons, Qt::MouseButtons oldbuttons,
+                              Qt::KeyboardModifiers modifiers, Qt::KeyboardModifiers oldmodifiers);
+    virtual void reconfigure(ReconfigureFlags);
+private slots:
+    void toggle();
+private:
+    QRect starRect(int num) const;
+    void loadTexture();
+    bool active, mousePolling;
+    int angle;
+    GLTexture* texture;
+    QSize textureSize;
+    KActionCollection* actionCollection;
+    KAction* action;
+    Qt::KeyboardModifiers modifier;
+};
 
 } // namespace
 

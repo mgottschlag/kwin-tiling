@@ -6,6 +6,7 @@ set(cmakeFiles FindCkConnector.cmake
                FindDBus.cmake
                FindGooglegadgets.cmake
                FindLibXKlavier.cmake
+               FindOpenGLES.cmake
                FindPAM.cmake
                FindSensors.cmake
                PkgConfigGetVar.cmake

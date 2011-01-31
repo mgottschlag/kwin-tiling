@@ -35,7 +35,6 @@ set(kwin_EFFECTSLIB_SRCS
     kwinglutils.cpp
     kwinglutils_funcs.cpp
     kwinglplatform.cpp
-    kwinshadereffect.cpp
     kwinxrenderutils.cpp
     )
 
@@ -46,7 +45,7 @@ set_target_properties(kwineffects PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 
 install(TARGETS kwineffects EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS})
 
-if(OPENGL_FOUND)
+if(OPENGL_FOUND AND NOT KWIN_HAVE_OPENGLES_COMPOSITING)
   target_link_libraries(kwineffects ${OPENGL_gl_LIBRARY})
   target_link_libraries(kwineffects LINK_INTERFACE_LIBRARIES ${OPENGL_gl_LIBRARY})
 # -ldl used by OpenGL code
@@ -55,7 +54,12 @@ if(OPENGL_FOUND)
     target_link_libraries(kwineffects ${DL_LIBRARY})
   endif(DL_LIBRARY)
   include_directories(${OPENGL_INCLUDE_DIR})
-endif(OPENGL_FOUND)
+endif(OPENGL_FOUND AND NOT KWIN_HAVE_OPENGLES_COMPOSITING)
+if(OPENGLES_FOUND)
+  target_link_libraries(kwineffects ${OPENGLES_LIBRARIES} ${OPENGLES_EGL_LIBRARIES})
+  target_link_libraries(kwineffects LINK_INTERFACE_LIBRARIES ${OPENGLES_LIBRARIES} ${OPENGLES_EGL_LIBRARIES})
+  include_directories(${OPENGLES_INCLUDE_DIR})
+endif(OPENGLES_FOUND)
 if (X11_Xrender_FOUND)
   target_link_libraries(kwineffects ${X11_Xrender_LIB})
 endif (X11_Xrender_FOUND)
@@ -78,7 +82,6 @@ install( FILES
     kwineffects.h
     kwinglutils.h
     kwinglutils_funcs.h
-    kwinshadereffect.h
     kwinxrenderutils.h
     ${CMAKE_CURRENT_BINARY_DIR}/kwinconfig.h
     DESTINATION ${INCLUDE_INSTALL_DIR} COMPONENT Devel)

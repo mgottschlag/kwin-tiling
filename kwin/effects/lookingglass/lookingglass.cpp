@@ -28,140 +28,222 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kconfiggroup.h>
 #include <klocale.h>
 #include <kdebug.h>
+#include <KDE/KGlobal>
+#include <KDE/KStandardDirs>
+#include <QVector2D>
 
 #include <kmessagebox.h>
 
 namespace KWin
 {
 
-KWIN_EFFECT( lookingglass, LookingGlassEffect )
-KWIN_EFFECT_SUPPORTED( lookingglass, ShaderEffect::supported() )
+KWIN_EFFECT(lookingglass, LookingGlassEffect)
+KWIN_EFFECT_SUPPORTED(lookingglass, LookingGlassEffect::supported())
 
 
-LookingGlassEffect::LookingGlassEffect() : QObject(), ShaderEffect("lookingglass")
-    {
-    zoom = 1.0f;
-    target_zoom = 1.0f;
-    polling = false;
-
-    actionCollection = new KActionCollection( this );
+LookingGlassEffect::LookingGlassEffect()
+    : QObject()
+    , zoom(1.0f)
+    , target_zoom(1.0f)
+    , polling(false)
+    , m_texture(NULL)
+    , m_fbo(NULL)
+    , m_vbo(NULL)
+    , m_shader(NULL)
+    , m_enabled(false)
+    , m_valid(false)
+{
+    actionCollection = new KActionCollection(this);
     actionCollection->setConfigGlobal(true);
     actionCollection->setConfigGroup("LookingGlass");
 
     KAction* a;
-    a = static_cast< KAction* >( actionCollection->addAction( KStandardAction::ZoomIn, this, SLOT( zoomIn())));
+    a = static_cast< KAction* >(actionCollection->addAction(KStandardAction::ZoomIn, this, SLOT(zoomIn())));
     a->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_Plus));
-    a = static_cast< KAction* >( actionCollection->addAction( KStandardAction::ZoomOut, this, SLOT( zoomOut())));
+    a = static_cast< KAction* >(actionCollection->addAction(KStandardAction::ZoomOut, this, SLOT(zoomOut())));
     a->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_Minus));
-    a = static_cast< KAction* >( actionCollection->addAction( KStandardAction::ActualSize, this, SLOT( toggle())));
+    a = static_cast< KAction* >(actionCollection->addAction(KStandardAction::ActualSize, this, SLOT(toggle())));
     a->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_0));
-    reconfigure( ReconfigureAll );
-    }
+    reconfigure(ReconfigureAll);
+}
 
 LookingGlassEffect::~LookingGlassEffect()
-    {
-    }
+{
+    delete m_texture;
+    delete m_fbo;
+    delete m_shader;
+    delete m_vbo;
+}
 
-void LookingGlassEffect::reconfigure( ReconfigureFlags )
-    {
+bool LookingGlassEffect::supported()
+{
+    return GLRenderTarget::supported() &&
+           GLShader::fragmentShaderSupported() &&
+           (effects->compositingType() == OpenGLCompositing);
+}
+
+void LookingGlassEffect::reconfigure(ReconfigureFlags)
+{
     KConfigGroup conf = EffectsHandler::effectConfig("LookingGlass");
     initialradius = conf.readEntry("Radius", 200);
     radius = initialradius;
     kDebug(1212) << QString("Radius from config: %1").arg(radius) << endl;
     actionCollection->readSettings();
+    m_valid = loadData();
+}
+
+bool LookingGlassEffect::loadData()
+{
+    // If NPOT textures are not supported, use nearest power-of-two sized
+    //  texture. It wastes memory, but it's possible to support systems without
+    //  NPOT textures that way
+    int texw = displayWidth();
+    int texh = displayHeight();
+    if (!GLTexture::NPOTTextureSupported()) {
+        kWarning(1212) << "NPOT textures not supported, wasting some memory" ;
+        texw = nearestPowerOfTwo(texw);
+        texh = nearestPowerOfTwo(texh);
     }
+    // Create texture and render target
+    m_texture = new GLTexture(texw, texh);
+    m_texture->setFilter(GL_LINEAR_MIPMAP_LINEAR);
+    m_texture->setWrapMode(GL_CLAMP_TO_EDGE);
+
+    m_fbo = new GLRenderTarget(m_texture);
+    if (!m_fbo->valid()) {
+        return false;
+    }
+
+    const QString fragmentshader =  KGlobal::dirs()->findResource("data", "kwin/lookingglass.frag");
+    m_shader = ShaderManager::instance()->loadFragmentShader(ShaderManager::SimpleShader, fragmentshader);
+    if (m_shader->isValid()) {
+        ShaderManager::instance()->pushShader(m_shader);
+        m_shader->setUniform("u_textureSize", QVector2D(displayWidth(), displayHeight()));
+        ShaderManager::instance()->popShader();
+    } else {
+        kError(1212) << "The shader failed to load!" << endl;
+        return false;
+    }
+
+    m_vbo = new GLVertexBuffer(GLVertexBuffer::Static);
+    QVector<float> verts;
+    QVector<float> texcoords;
+    texcoords << displayWidth() << 0.0;
+    verts << displayWidth() << 0.0;
+    texcoords << 0.0 << 0.0;
+    verts << 0.0 << 0.0;
+    texcoords << 0.0 << displayHeight();
+    verts << 0.0 << displayHeight();
+    texcoords << 0.0 << displayHeight();
+    verts << 0.0 << displayHeight();
+    texcoords << displayWidth() << displayHeight();
+    verts << displayWidth() << displayHeight();
+    texcoords << displayWidth() << 0.0;
+    verts << displayWidth() << 0.0;
+    m_vbo->setData(6, 2, verts.constData(), texcoords.constData());
+    return true;
+}
 
 void LookingGlassEffect::toggle()
-    {
-    if( target_zoom == 1.0f )
-        {
+{
+    if (target_zoom == 1.0f) {
         target_zoom = 2.0f;
-        if( !polling )
-            {
+        if (!polling) {
             polling = true;
             effects->startMousePolling();
-            }
-        setEnabled( true );
         }
-    else
-        {
+        m_enabled = true;
+    } else {
         target_zoom = 1.0f;
-        if( polling )
-            {
+        if (polling) {
             polling = false;
             effects->stopMousePolling();
-            }
-        setEnabled( false );
         }
+        m_enabled = false;
     }
+}
 
 void LookingGlassEffect::zoomIn()
-    {
+{
     target_zoom = qMin(7.0, target_zoom + 0.5);
-    setEnabled( true );
-    if( !polling )
-        {
+    m_enabled = true;
+    if (!polling) {
         polling = true;
         effects->startMousePolling();
-        }
-    effects->addRepaint( cursorPos().x() - radius, cursorPos().y() - radius, 2*radius, 2*radius );
     }
+    effects->addRepaint(cursorPos().x() - radius, cursorPos().y() - radius, 2 * radius, 2 * radius);
+}
 
 void LookingGlassEffect::zoomOut()
-    {
+{
     target_zoom -= 0.5;
-    if( target_zoom < 1 )
-        {
+    if (target_zoom < 1) {
         target_zoom = 1;
-        setEnabled( false );
-        if( polling )
-            {
+        m_enabled = false;
+        if (polling) {
             polling = false;
             effects->stopMousePolling();
-            }
         }
-    effects->addRepaint( cursorPos().x() - radius, cursorPos().y() - radius, 2*radius, 2*radius );
     }
+    effects->addRepaint(cursorPos().x() - radius, cursorPos().y() - radius, 2 * radius, 2 * radius);
+}
 
-void LookingGlassEffect::prePaintScreen( ScreenPrePaintData& data, int time )
-    {
-    if( zoom != target_zoom )
-        {
-        double diff = time / animationTime( 500.0 );
-        if( target_zoom > zoom )
-            zoom = qMin( zoom * qMax( 1.0 + diff, 1.2 ), target_zoom );
+void LookingGlassEffect::prePaintScreen(ScreenPrePaintData& data, int time)
+{
+    if (zoom != target_zoom) {
+        double diff = time / animationTime(500.0);
+        if (target_zoom > zoom)
+            zoom = qMin(zoom * qMax(1.0 + diff, 1.2), target_zoom);
         else
-            zoom = qMax( zoom * qMin( 1.0 - diff, 0.8 ), target_zoom );
+            zoom = qMax(zoom * qMin(1.0 - diff, 0.8), target_zoom);
         kDebug(1212) << "zoom is now " << zoom;
-        radius = qBound((double)initialradius, initialradius * zoom, 3.5*initialradius);
+        radius = qBound((double)initialradius, initialradius * zoom, 3.5 * initialradius);
 
-        if( zoom > 1.0f )
-            {
-            shader()->bind();
-            shader()->setUniform("zoom", (float)zoom);
-            shader()->setUniform("radius", (float)radius);
-            shader()->unbind();
-            }
-        else
-            {
-            setEnabled( false );
-            }
-
-        effects->addRepaint( cursorPos().x() - radius, cursorPos().y() - radius, 2*radius, 2*radius );
+        if (zoom <= 1.0f) {
+            m_enabled = false;
         }
 
-    ShaderEffect::prePaintScreen( data, time );
+        effects->addRepaint(cursorPos().x() - radius, cursorPos().y() - radius, 2 * radius, 2 * radius);
+    }
+    if (m_valid && m_enabled) {
+        data.mask |= PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS;
+        // Start rendering to texture
+        effects->pushRenderTarget(m_fbo);
     }
 
-void LookingGlassEffect::mouseChanged( const QPoint& pos, const QPoint& old, Qt::MouseButtons,
-    Qt::MouseButtons, Qt::KeyboardModifiers, Qt::KeyboardModifiers )
-    {
-    if( pos != old && isEnabled() )
-        {
-        effects->addRepaint( pos.x() - radius, pos.y() - radius, 2*radius, 2*radius );
-        effects->addRepaint( old.x() - radius, old.y() - radius, 2*radius, 2*radius );
-        }
+    effects->prePaintScreen(data, time);
+}
+
+void LookingGlassEffect::mouseChanged(const QPoint& pos, const QPoint& old, Qt::MouseButtons,
+                                      Qt::MouseButtons, Qt::KeyboardModifiers, Qt::KeyboardModifiers)
+{
+    if (pos != old && m_enabled) {
+        effects->addRepaint(pos.x() - radius, pos.y() - radius, 2 * radius, 2 * radius);
+        effects->addRepaint(old.x() - radius, old.y() - radius, 2 * radius, 2 * radius);
     }
+}
+
+void LookingGlassEffect::postPaintScreen()
+{
+    // Call the next effect.
+    effects->postPaintScreen();
+    if (m_valid && m_enabled) {
+        // Disable render texture
+        GLRenderTarget* target = effects->popRenderTarget();
+        assert(target == m_fbo);
+        Q_UNUSED(target);
+        m_texture->bind();
+
+        // Use the shader
+        ShaderManager::instance()->pushShader(m_shader);
+        m_shader->setUniform("u_zoom", (float)zoom);
+        m_shader->setUniform("u_radius", (float)radius);
+        m_shader->setUniform("u_cursor", QVector2D(cursorPos().x(), cursorPos().y()));
+        m_vbo->render(GL_TRIANGLES);
+        ShaderManager::instance()->popShader();
+        m_texture->unbind();
+    }
+}
 
 } // namespace
 

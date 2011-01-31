@@ -22,6 +22,8 @@
 
 #include <kwinglutils.h>
 
+class QMatrix4x4;
+
 namespace KWin
 {
 
@@ -33,18 +35,25 @@ public:
 
     static BlurShader *create();
 
-    bool isValid() const { return mValid; }
+    bool isValid() const {
+        return mValid;
+    }
 
     // Sets the radius in pixels
     void setRadius(int radius);
-    int radius() const { return mRadius; }
+    int radius() const {
+        return mRadius;
+    }
 
     // Sets the blur direction
     void setDirection(Qt::Orientation direction);
-    Qt::Orientation direction() const { return mDirection; }
+    Qt::Orientation direction() const {
+        return mDirection;
+    }
 
     // Sets the distance between two pixels
     virtual void setPixelDistance(float val) = 0;
+    virtual void setTextureMatrix(const QMatrix4x4 &matrix) = 0;
 
     virtual void bind() = 0;
     virtual void unbind() = 0;
@@ -52,7 +61,9 @@ public:
 protected:
     float gaussian(float x, float sigma) const;
     QVector<float> gaussianKernel() const;
-    void setIsValid(bool value) { mValid = value; }
+    void setIsValid(bool value) {
+        mValid = value;
+    }
     virtual void init() = 0;
     virtual void reset() = 0;
     virtual int maxKernelSize() const = 0;
@@ -77,6 +88,7 @@ public:
     void setPixelDistance(float val);
     void bind();
     void unbind();
+    void setTextureMatrix(const QMatrix4x4 &matrix);
 
     static bool supported();
 
@@ -85,13 +97,8 @@ protected:
     void reset();
     int maxKernelSize() const;
 
-    GLuint compile(GLenum type, const QByteArray &source);
-    GLuint link(GLuint vertexShader, GLuint fragmentShader);
-
 private:
-    GLuint program;
-    int uTexUnit;
-    int uPixelSize;
+    GLShader *shader;
 };
 
 
@@ -109,6 +116,7 @@ public:
     void setPixelDistance(float val);
     void bind();
     void unbind();
+    void setTextureMatrix(const QMatrix4x4 &) {};
 
     static bool supported();
 

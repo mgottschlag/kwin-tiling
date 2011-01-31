@@ -22,43 +22,58 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KWIN_LOOKINGGLASS_H
 #define KWIN_LOOKINGGLASS_H
 
-#include <kwinshadereffect.h>
+#include <kwineffects.h>
 
 class KActionCollection;
 
 namespace KWin
 {
 
+class GLRenderTarget;
+class GLShader;
+class GLTexture;
+class GLVertexBuffer;
+
 /**
  * Enhanced magnifier
  **/
-class LookingGlassEffect : public QObject, public ShaderEffect
-    {
+class LookingGlassEffect : public QObject, public Effect
+{
     Q_OBJECT
-    public:
-        LookingGlassEffect();
-        virtual ~LookingGlassEffect();
+public:
+    LookingGlassEffect();
+    virtual ~LookingGlassEffect();
 
-        virtual void reconfigure( ReconfigureFlags );
-        virtual void mouseChanged( const QPoint& pos, const QPoint& old,
-            Qt::MouseButtons buttons, Qt::MouseButtons oldbuttons,
-            Qt::KeyboardModifiers modifiers, Qt::KeyboardModifiers oldmodifiers );
+    virtual void reconfigure(ReconfigureFlags);
+    virtual void mouseChanged(const QPoint& pos, const QPoint& old,
+                              Qt::MouseButtons buttons, Qt::MouseButtons oldbuttons,
+                              Qt::KeyboardModifiers modifiers, Qt::KeyboardModifiers oldmodifiers);
 
-        virtual void prePaintScreen( ScreenPrePaintData& data, int time );
+    virtual void prePaintScreen(ScreenPrePaintData& data, int time);
+    virtual void postPaintScreen();
 
-    public slots:
-        void toggle();
-        void zoomIn();
-        void zoomOut();
+    static bool supported();
 
-    private:
-        double zoom;
-        double target_zoom;
-        bool polling; // Mouse polling
-        int radius;
-        int initialradius;
-        KActionCollection* actionCollection;
-    };
+public slots:
+    void toggle();
+    void zoomIn();
+    void zoomOut();
+
+private:
+    bool loadData();
+    double zoom;
+    double target_zoom;
+    bool polling; // Mouse polling
+    int radius;
+    int initialradius;
+    KActionCollection* actionCollection;
+    GLTexture *m_texture;
+    GLRenderTarget *m_fbo;
+    GLVertexBuffer *m_vbo;
+    GLShader *m_shader;
+    bool m_enabled;
+    bool m_valid;
+};
 
 } // namespace
 
