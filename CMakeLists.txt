@@ -10,11 +10,6 @@ set(KDE4WORKSPACE_VERSION ${KDE4WORKSPACE_VERSION_MAJOR}.${KDE4WORKSPACE_VERSION
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} )
 
-if(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
-  set(BUILDING_WORKSPACE_SEPARATELY true)
-endif(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
-
-
 #search packages used by KDE
 set (QT_MIN_VERSION "4.7.0")
 set(KDE_MIN_VERSION "4.6.40")
@@ -166,9 +161,7 @@ if(NOT WIN32)
   install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/startkde DESTINATION ${BIN_INSTALL_DIR})
 endif(NOT WIN32)
 
-if(BUILDING_WORKSPACE_SEPARATELY)
-  macro_display_feature_log()
-endif(BUILDING_WORKSPACE_SEPARATELY)
+macro_display_feature_log()
 
 # make the libraries installed from kdebase/workspace available to other projects
 # by creating and installing a KDE4WorkspaceConfig.cmake file, which will
