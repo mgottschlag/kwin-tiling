@@ -54,11 +54,9 @@ NotificationStack::~NotificationStack()
 void NotificationStack::addNotification(Notification *notification)
 {
     m_canDismissTimer->start(1000);
-    connect(notification, SIGNAL(notificationDestroyed(Notification *)), this, SLOT(removeNotification(Notification *)));
-    connect(notification, SIGNAL(expired(Notification *)), this, SLOT(delayedRemoveNotification(Notification *)));
-
-    disconnect(notification, SIGNAL(changed(Notification *)), this, SLOT(notificationChanged(Notification *)));
-    connect(notification, SIGNAL(changed(Notification *)), this, SLOT(notificationChanged(Notification *)));
+    connect(notification, SIGNAL(notificationDestroyed(Notification *)), this, SLOT(removeNotification(Notification *)), Qt::UniqueConnection);
+    connect(notification, SIGNAL(expired(Notification *)), this, SLOT(delayedRemoveNotification(Notification *)),  Qt::UniqueConnection);
+    connect(notification, SIGNAL(changed(Notification *)), this, SLOT(notificationChanged(Notification *)), Qt::UniqueConnection);
 
     NotificationWidget *notificationWidget = new NotificationWidget(notification, this);
     notificationWidget->installEventFilter(this);
