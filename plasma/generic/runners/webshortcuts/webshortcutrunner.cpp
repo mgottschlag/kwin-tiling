@@ -66,8 +66,9 @@ void WebshortcutRunner::loadSyntaxes()
 {
     KUriFilterData filterData (QLatin1String(":q"));
     filterData.setSearchFilteringOptions(KUriFilterData::RetrieveAvailableSearchProvidersOnly);
-    if (KUriFilter::self()->filterSearchUri(filterData, KUriFilter::NormalTextFilter))
+    if (KUriFilter::self()->filterSearchUri(filterData, KUriFilter::NormalTextFilter)) {
         m_delimiter = filterData.searchTermSeparator();
+    }
 
     //kDebug() << "keyword delimiter:" << m_delimiter;
     //kDebug() << "search providers:" << filterData.preferredSearchProviders();
@@ -106,8 +107,9 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
 
     const QString key = term.left(delimIndex);
 
-    if (key == m_lastFailedKey)
+    if (key == m_lastFailedKey) {
         return;    // we already know it's going to suck ;)
+    }
 
     if (!context.isValid()) {
         kDebug() << "invalid context";
@@ -158,8 +160,9 @@ void WebshortcutRunner::run(const Plasma::RunnerContext &context, const Plasma::
     }
 
     //kDebug() << location;
-    if (!location.isEmpty())
+    if (!location.isEmpty()) {
         KToolInvocation::invokeBrowser(location);
+    }
 }
 
 #include "webshortcutrunner.moc"
