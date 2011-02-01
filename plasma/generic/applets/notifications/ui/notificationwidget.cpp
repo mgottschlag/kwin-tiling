@@ -43,7 +43,6 @@
 
 #include <Plasma/Animation>
 #include <Plasma/Animator>
-#include <Plasma/Extender>
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
@@ -170,7 +169,7 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     d->notification = notification;
 
     connect(d->signalMapper, SIGNAL(mapped(const QString &)),
-            d->notification.data(), SLOT(triggerAction(const QString &)));
+            notification, SLOT(triggerAction(const QString &)));
     connect(notification, SIGNAL(changed()),
             this, SLOT(updateNotification()));
     connect(notification, SIGNAL(destroyed()),
