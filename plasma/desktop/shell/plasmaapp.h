@@ -75,7 +75,6 @@ public:
     QList<PanelView*> panelViews() const;
 
     ControllerWindow *showWidgetExplorer(int screen, Plasma::Containment *c);
-    ControllerWindow *showActivityManager(int screen, Plasma::Containment *c);
     void hideController(int screen);
 
     /**
@@ -120,7 +119,7 @@ public Q_SLOTS:
     void createWaitingDesktops();
     void createView(Plasma::Containment *containment);
 
-    ControllerWindow *showActivityManager();
+    void toggleActivityManager();
 
 protected:
 #ifdef Q_WS_X11
