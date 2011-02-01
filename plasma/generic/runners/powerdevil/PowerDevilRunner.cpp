@@ -248,7 +248,7 @@ void PowerDevilRunner::match(Plasma::RunnerContext &context)
             match3.setId("TurnOffScreen");
             matches.append(match3);
         }
-    } else if (term.startsWith(i18nc("Note this is a KRunner keyword", "suspend"))) {
+    } else if (term.compare(i18nc("Note this is a KRunner keyword", "suspend"), Qt::CaseInsensitive) == 0) {
         QSet< Solid::PowerManagement::SleepState > states = Solid::PowerManagement::supportedSleepStates();
 
         if (states.contains(Solid::PowerManagement::SuspendState)) {
@@ -258,11 +258,11 @@ void PowerDevilRunner::match(Plasma::RunnerContext &context)
         if (states.contains(Solid::PowerManagement::HibernateState)) {
             addSuspendMatch(Solid::PowerManagement::HibernateState, matches);
         }
-    } else if (term.startsWith(i18nc("Note this is a KRunner keyword", "sleep")) ||
-               term.startsWith(i18nc("Note this is a KRunner keyword", "to ram"))) {
+    } else if (term.compare(i18nc("Note this is a KRunner keyword", "sleep"), Qt::CaseInsensitive) == 0 ||
+               term.compare(i18nc("Note this is a KRunner keyword", "to ram"), Qt::CaseInsensitive) == 0) {
         addSuspendMatch(Solid::PowerManagement::SuspendState, matches);
-    } else if (term.startsWith(i18nc("Note this is a KRunner keyword", "hibernate")) ||
-               term.startsWith(i18nc("Note this is a KRunner keyword", "to disk"))) {
+    } else if (term.compare(i18nc("Note this is a KRunner keyword", "hibernate"), Qt::CaseInsensitive) == 0 ||
+               term.compare(i18nc("Note this is a KRunner keyword", "to disk"), Qt::CaseInsensitive) == 0) {
         addSuspendMatch(Solid::PowerManagement::HibernateState, matches);
     }
 
