@@ -66,6 +66,8 @@ NotificationGroup::NotificationGroup(Extender *parent, uint groupId)
 
 NotificationGroup::~NotificationGroup()
 {
+    m_extenderItemsForNotification.clear();
+    m_notificationForExtenderItems.clear();
     qDeleteAll(m_notifications);
 }
 
@@ -137,6 +139,11 @@ void NotificationGroup::addNotification(Notification *notification)
 
 void NotificationGroup::extenderItemDestroyed(Plasma::ExtenderItem *object)
 {
+    if (m_extenderItemsForNotification.isEmpty()) {
+        // either we aren't tracking this notification or else we're being deleted
+        return;
+    }
+
     Notification *n = m_notificationForExtenderItems.value(object);
 
     if (n) {
@@ -148,10 +155,16 @@ void NotificationGroup::extenderItemDestroyed(Plasma::ExtenderItem *object)
 
 void NotificationGroup::removeNotification(Notification *notification)
 {
+    if (m_extenderItemsForNotification.isEmpty()) {
+        // either we aren't tracking this notification or else we're being deleted
+        return;
+    }
+
     Plasma::ExtenderItem *item = m_extenderItemsForNotification.value(notification);
     if (item) {
         m_notificationForExtenderItems.remove(item);
     }
+
     m_extenderItemsForNotification.remove(notification);
     m_notifications.removeAll(notification);
     QString applicationName = m_appForNotification.value(notification);

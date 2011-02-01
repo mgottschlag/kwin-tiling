@@ -106,6 +106,9 @@ Notifications::~Notifications()
 {
     // stop listening to the manager
     disconnect(m_manager, 0, this, 0);
+    if (m_notificationStackDialog) {
+        disconnect(m_notificationStackDialog, 0, this, 0);
+    }
 
     foreach (Notification *notification, m_manager->notifications()) {
         // we don't want a destroyed managed after the destruction of manager
@@ -342,10 +345,10 @@ void Notifications::initExtenderItem(Plasma::ExtenderItem *extenderItem)
         return;
     }
 
-    if (extenderItem->config().readEntry("type", "") == "job") {
+    if (extenderItem->config().readEntry("type", QString()) == "job") {
         extenderItem->setWidget(new JobWidget(0, extenderItem));
-    //unknown type, this should never happen
     } else {
+        //unknown type, this should never happen
         extenderItem->destroy();
     }
 
