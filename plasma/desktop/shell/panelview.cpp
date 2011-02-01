@@ -422,7 +422,6 @@ void PanelView::setContainment(Plasma::Containment *containment)
 
     // ensure we aren't overlapping other panels
     const QRect screenRect = PlasmaApp::self()->corona()->screenGeometry(containment->screen());
-    const QRegion availGeom = PlasmaApp::self()->corona()->availableScreenRegion(containment->screen());
 
     View::setContainment(containment);
 
