@@ -389,7 +389,7 @@ void Activity::open()
 
 void Activity::opened()
 {
-    if (! m_containments.isEmpty()) {
+    if (!m_containments.isEmpty()) {
         kDebug() << "already open!";
         return;
     }
