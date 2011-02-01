@@ -479,23 +479,26 @@ ControllerWindow *PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment 
     return showController(screen, containment, true);
 }
 
-//FIXME it'd be easier if we knew which containment triggered this action
-ControllerWindow *PlasmaApp::showActivityManager()
+void PlasmaApp::toggleActivityManager()
 {
+    const int currentScreen = m_corona->screenId(QCursor::pos());
+
+    QWeakPointer<ControllerWindow> controllerPtr = m_widgetExplorers.value(currentScreen);
+    ControllerWindow *controller = controllerPtr.data();
+    if (controller) {
+        controller->deleteLater();
+        return;
+    }
+
     //try to find the "active" containment
-    int currentScreen = m_corona->screenId(QCursor::pos());
     int currentDesktop = -1;
     if (AppSettings::perVirtualDesktopViews()) {
-        currentDesktop = KWindowSystem::currentDesktop()-1;
+        currentDesktop = KWindowSystem::currentDesktop() - 1;
     }
+
     Plasma::Containment *containment = m_corona->containmentForScreen(currentScreen, currentDesktop);
 
-    return showController(currentScreen, containment, false);
-}
-
-ControllerWindow *PlasmaApp::showActivityManager(int screen, Plasma::Containment *containment)
-{
-    return showController(screen, containment, false);
+    showController(currentScreen, containment, false);
 }
 
 ControllerWindow *PlasmaApp::showController(int screen, Plasma::Containment *containment, bool widgetExplorerMode)
@@ -779,7 +782,7 @@ DesktopCorona* PlasmaApp::corona()
 
         //actions!
         KAction *activityAction = c->addAction("manage activities");
-        connect(activityAction, SIGNAL(triggered()), this, SLOT(showActivityManager()));
+        connect(activityAction, SIGNAL(triggered()), this, SLOT(toggleActivityManager()));
         activityAction->setText(i18n("Activities..."));
         activityAction->setIcon(KIcon("preferences-activities"));
         activityAction->setData(Plasma::AbstractToolBox::ConfigureTool);

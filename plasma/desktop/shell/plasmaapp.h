@@ -75,7 +75,6 @@ public:
     QList<PanelView*> panelViews() const;
 
     ControllerWindow *showWidgetExplorer(int screen, Plasma::Containment *c);
-    ControllerWindow *showActivityManager(int screen, Plasma::Containment *c);
     void hideController(int screen);
 
     static bool isPanelContainment(Plasma::Containment *containment);
@@ -108,7 +107,8 @@ public Q_SLOTS:
     void createWaitingDesktops();
     void createView(Plasma::Containment *containment);
 
-    ControllerWindow *showActivityManager();
+    void toggleActivityManager();
+
     /**
      * create a new activity based on the active one
      */
