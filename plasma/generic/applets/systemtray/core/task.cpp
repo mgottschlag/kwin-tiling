@@ -58,7 +58,11 @@ Task::~Task()
     emit destroyed(this);
     foreach (QGraphicsWidget * widget, d->widgetsByHost) {
         disconnect(widget, 0, this, 0);
-        delete widget;
+        // sometimes it appears that the widget will get scheduled for a repaint
+        // then it gets deleted here and QGraphicsScene doesn't get that straight
+        // in its bookkeeping and crashes occur; work around this by giving it a
+        // chance to schedule after the next paintfun
+        widget->deleteLater();
     }
     delete d;
 }
