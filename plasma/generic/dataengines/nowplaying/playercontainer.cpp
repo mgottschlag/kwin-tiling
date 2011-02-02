@@ -26,7 +26,6 @@
 PlayerContainer::PlayerContainer(Player::Ptr player, QObject* parent)
     : DataContainer(parent)
     , m_player(player)
-    , m_controller(0)
 {
     Q_ASSERT(m_player);
 
@@ -38,13 +37,11 @@ PlayerContainer::PlayerContainer(Player::Ptr player, QObject* parent)
 
 Plasma::Service* PlayerContainer::service(QObject* parent)
 {
-    if (!m_controller) {
-        kDebug() << "Creating controller";
-        m_controller = new PlayerControl(parent, m_player);
-        connect(this, SIGNAL(updateRequested(DataContainer*)),
-                m_controller, SLOT(updateEnabledOperations()));
-    }
-    return m_controller;
+    kDebug() << "Creating controller";
+    Plasma::Service *controller = new PlayerControl(parent, m_player);
+    connect(this, SIGNAL(updateRequested(DataContainer*)),
+            controller, SLOT(updateEnabledOperations()));
+    return controller;
 }
 
 void PlayerContainer::updateInfo()

@@ -40,7 +40,6 @@ public slots:
 
 private:
     Player::Ptr m_player;
-    PlayerControl* m_controller;
 };
 
 #endif // PLAYERCONTAINER_H
