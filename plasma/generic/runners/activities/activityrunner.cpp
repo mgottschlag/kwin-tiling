@@ -56,7 +56,6 @@ void ActivityRunner::down()
 
 void ActivityRunner::serviceStatusChanged(KActivityConsumer::ServiceStatus status)
 {
-    kDebug() << status;
     const bool active = status != KActivityConsumer::NotRunning;
     if (m_enabled == active) {
         return;
@@ -78,7 +77,6 @@ ActivityRunner::~ActivityRunner()
 void ActivityRunner::match(Plasma::RunnerContext &context)
 {
     if (!m_enabled) {
-        kDebug() << "not enabled, buh bye!";
         return;
     }
 
@@ -101,14 +99,13 @@ void ActivityRunner::match(Plasma::RunnerContext &context)
             list = name.isEmpty();
         }
     } else {
-        kDebug() << "failed";
         return;
     }
 
     QList<Plasma::QueryMatch> matches;
     QStringList activities = m_activities->listActivities();
     qSort(activities);
-    kDebug() << "matches are" << activities << list << name << context.isValid();
+
     if (!context.isValid()) {
         return;
     }
