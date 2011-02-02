@@ -39,9 +39,8 @@
 #include <KFileItemListProperties>
 #include <KIO/NetAccess>
 
-#include <KMimeType.h>
-#include <KMimeTypeRader.h>
-#include <KService.h>
+#include <KMimeTypeTrader>
+#include <KService>
 
 namespace {
     /**
