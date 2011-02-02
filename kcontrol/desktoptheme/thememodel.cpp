@@ -73,6 +73,11 @@ void ThemeModel::reload()
         QString packageName = themeRoot.right(themeRoot.length() - themeNameSepIndex - 1);
 
         KDesktopFile df(theme);
+
+        if (df.noDisplay()) {
+            continue;
+        }
+
         QString name = df.readName();
         if (name.isEmpty()) {
             name = packageName;
