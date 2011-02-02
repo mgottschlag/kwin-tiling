@@ -52,6 +52,7 @@ void ActivityRunner::prep()
 void ActivityRunner::down()
 {
     delete m_activities;
+    m_activities = 0;
 }
 
 void ActivityRunner::serviceStatusChanged(KActivityConsumer::ServiceStatus status)
@@ -135,6 +136,10 @@ void ActivityRunner::match(Plasma::RunnerContext &context)
 
 void ActivityRunner::addMatch(const QString &activity, QList<Plasma::QueryMatch> &matches)
 {
+    if (m_activities->currentActivity() == activity) {
+        return;
+    }
+
     Plasma::QueryMatch match(this);
     KActivityInfo info(activity);
     match.setData(activity);
