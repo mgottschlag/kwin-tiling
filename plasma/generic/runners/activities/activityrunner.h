@@ -40,7 +40,7 @@ class ActivityRunner : public Plasma::AbstractRunner
         void serviceStatusChanged(KActivityConsumer::ServiceStatus status);
 
     private:
-        void addMatch(const QString &activity, QList<Plasma::QueryMatch> &matches);
+        void addMatch(const KActivityInfo &activity, QList<Plasma::QueryMatch> &matches);
 
         KActivityController *m_activities;
         const QString m_keywordi18n;

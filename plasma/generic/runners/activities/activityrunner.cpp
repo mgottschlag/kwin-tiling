@@ -107,13 +107,20 @@ void ActivityRunner::match(Plasma::RunnerContext &context)
     QStringList activities = m_activities->listActivities();
     qSort(activities);
 
+    const QString current = m_activities->currentActivity();
+
     if (!context.isValid()) {
         return;
     }
 
     if (list) {
         foreach (const QString &activity, activities) {
-            addMatch(activity, matches);
+            if (current == activity) {
+                continue;
+            }
+
+            KActivityInfo info(activity);
+            addMatch(info, matches);
 
             if (!context.isValid()) {
                 return;
@@ -121,8 +128,13 @@ void ActivityRunner::match(Plasma::RunnerContext &context)
         }
     } else {
         foreach (const QString &activity, activities) {
-            if (activity.startsWith(name, Qt::CaseInsensitive)) {
-                addMatch(activity, matches);
+            if (current == activity) {
+                continue;
+            }
+
+            KActivityInfo info(activity);
+            if (info.name().startsWith(name, Qt::CaseInsensitive)) {
+                addMatch(info, matches);
             }
 
             if (!context.isValid()) {
@@ -134,20 +146,15 @@ void ActivityRunner::match(Plasma::RunnerContext &context)
     context.addMatches(context.query(), matches);
 }
 
-void ActivityRunner::addMatch(const QString &activity, QList<Plasma::QueryMatch> &matches)
+void ActivityRunner::addMatch(const KActivityInfo &activity, QList<Plasma::QueryMatch> &matches)
 {
-    if (m_activities->currentActivity() == activity) {
-        return;
-    }
-
     Plasma::QueryMatch match(this);
-    KActivityInfo info(activity);
-    match.setData(activity);
+    match.setData(activity.id());
     match.setType(Plasma::QueryMatch::ExactMatch);
-    match.setIcon(info.icon().isEmpty() ? KIcon("preferences-activities") : KIcon(info.icon()));
-    match.setText(i18n("Switch to \"%1\"", info.name()));
-    match.setRelevance(0.7 + ((info.state() == KActivityInfo::Running ||
-                               info.state() == KActivityInfo::Starting) ? 0.1 : 0));
+    match.setIcon(activity.icon().isEmpty() ? KIcon("preferences-activities") : KIcon(activity.icon()));
+    match.setText(i18n("Switch to \"%1\"", activity.name()));
+    match.setRelevance(0.7 + ((activity.state() == KActivityInfo::Running ||
+                               activity.state() == KActivityInfo::Starting) ? 0.1 : 0));
     matches << match;
 }
 
