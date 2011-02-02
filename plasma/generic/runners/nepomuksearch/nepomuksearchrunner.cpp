@@ -39,6 +39,8 @@
 #include <KFileItemListProperties>
 #include <KIO/NetAccess>
 
+#include <KMimeTypeTrader>
+#include <KService>
 
 namespace {
     /**
@@ -133,7 +135,15 @@ void Nepomuk::SearchRunner::run( const Plasma::RunnerContext&, const Plasma::Que
         url = res.toFile().url();
     }
 
-    (void)new KRun(url, 0);
+    KService::Ptr preferredServicePtr;
+    if (res.hasProperty(Nepomuk::Vocabulary::NIE::mimeType()) &&
+         KUrl(res.property(Nepomuk::Vocabulary::NIE::url()).toUrl()).isLocalFile()) {
+        preferredServicePtr = KMimeTypeTrader::self()->preferredService(res.property(Nepomuk::Vocabulary::NIE::mimeType()).toString());
+    }
+
+    if (preferredServicePtr.isNull() || !KRun::run(*preferredServicePtr.constData(), KUrl::List(url), 0)) {
+        (void)new KRun(url, 0);
+    }
 }
 
 QList<QAction*> Nepomuk::SearchRunner::actionsForMatch(const Plasma::QueryMatch &match)
