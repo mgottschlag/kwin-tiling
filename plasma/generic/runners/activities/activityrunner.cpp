@@ -153,6 +153,8 @@ void ActivityRunner::addMatch(const QString &activity, QList<Plasma::QueryMatch>
 
 void ActivityRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
+    Q_UNUSED(context)
+
     if (!m_enabled || !m_activities) {
         return;
     }
