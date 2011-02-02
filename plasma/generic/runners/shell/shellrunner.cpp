@@ -33,7 +33,7 @@
 #include <KStandardDirs>
 #include <KToolInvocation>
 
-#include <plasma/theme.h>
+#include <Plasma/Theme>
 
 #include "shell_config.h"
 
