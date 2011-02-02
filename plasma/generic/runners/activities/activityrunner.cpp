@@ -42,7 +42,7 @@ ActivityRunner::ActivityRunner(QObject *parent, const QVariantList &args)
 void ActivityRunner::prep()
 {
     if (!m_activities) {
-        m_activities = new KActivityConsumer(this);
+        m_activities = new KActivityController(this);
         connect(m_activities, SIGNAL(serviceStatusChanged(KActivityConsumer::ServiceStatus)),
                 this, SLOT(serviceStatusChanged(KActivityConsumer::ServiceStatus)));
         serviceStatusChanged(m_activities->serviceStatus());
@@ -137,7 +137,7 @@ void ActivityRunner::addMatch(const QString &activity, QList<Plasma::QueryMatch>
 {
     Plasma::QueryMatch match(this);
     KActivityInfo info(activity);
-    match.setId("activity:" + activity);
+    match.setData(activity);
     match.setType(Plasma::QueryMatch::ExactMatch);
     match.setIcon(info.icon().isEmpty() ? KIcon("preferences-activities") : KIcon(info.icon()));
     match.setText(i18n("Switch to \"%1\"", info.name()));
@@ -148,9 +148,11 @@ void ActivityRunner::addMatch(const QString &activity, QList<Plasma::QueryMatch>
 
 void ActivityRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
-    if (!m_enabled) {
+    if (!m_enabled || !m_activities) {
         return;
     }
+
+    m_activities->setCurrentActivity(match.data().toString());
 }
 
 #include "activityrunner.moc"

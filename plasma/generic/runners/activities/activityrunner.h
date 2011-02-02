@@ -19,7 +19,7 @@
 #ifndef ACTIVITYRUNNER_H
 #define ACTIVITYRUNNER_H
 
-#include <kworkspace/kactivityconsumer.h>
+#include <kworkspace/kactivitycontroller.h>
 
 #include <Plasma/AbstractRunner>
 
@@ -42,7 +42,7 @@ class ActivityRunner : public Plasma::AbstractRunner
     private:
         void addMatch(const QString &activity, QList<Plasma::QueryMatch> &matches);
 
-        KActivityConsumer *m_activities;
+        KActivityController *m_activities;
         const QString m_keywordi18n;
         const QString m_keyword;
         bool m_enabled;
