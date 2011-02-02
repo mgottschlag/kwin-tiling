@@ -100,13 +100,16 @@ void Nepomuk::QueryClientWrapper::slotNewEntries(const QList<Nepomuk::Query::Res
         QString type;
         QString iconName;
 
-        if (res.isFile() && res.toFile().url().isLocalFile()) {
+        KMimeType::Ptr mimetype;
+        if (res.hasProperty(Nepomuk::Vocabulary::NIE::mimeType())) {
+                mimetype = KMimeType::mimeType(res.property(Nepomuk::Vocabulary::NIE::mimeType()).toString());
+        } else if (res.isFile() && res.toFile().url().isLocalFile()) {
             const KUrl url(res.toFile().url());
-            KMimeType::Ptr mimetype = KMimeType::findByUrl(url);
-            if (mimetype) {
-                type = mimetype->comment();
-                iconName = mimetype->iconName(url);
-            }
+            mimetype = KMimeType::findByUrl(url);
+        }
+        if (mimetype) {
+            type = mimetype->comment();
+            iconName = mimetype->iconName();
         }
 
         if (type.isEmpty() ) {
