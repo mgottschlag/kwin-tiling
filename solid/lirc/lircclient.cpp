@@ -109,9 +109,7 @@ bool LircClient::connectToLirc()
 LircClient::~LircClient()
 {
     kDebug() << "deleting theSocket";
-    if (theSocket) {
-        delete theSocket;
-    }
+    delete theSocket;
 }
 
 void LircClient::slotClosed()

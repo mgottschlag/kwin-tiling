@@ -39,7 +39,7 @@ public:
 
     QList<QString> interfaceList();
     QList<Solid::DeviceInterface::Type> interfaceTypeList();
-    Solid::DeviceInterface::Type interfaceFromName( QString name );
+    Solid::DeviceInterface::Type interfaceFromName( const QString& name );
     QString nameFromInterface( Solid::DeviceInterface::Type devInterface );
     int interfacePosition( Solid::DeviceInterface::Type devInterface );
 

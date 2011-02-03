@@ -24,7 +24,6 @@
 #include <QMouseEvent>
 #include <QToolButton>
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QToolTip>
 
 #include <KIcon>
