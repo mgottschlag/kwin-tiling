@@ -20,7 +20,6 @@
 #include "panelview.h"
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QGraphicsLinearLayout>
 #include <QPropertyAnimation>
 #include <QTimer>

@@ -23,7 +23,6 @@
 #include <QApplication>
 #include <QBoxLayout>
 #include <QVBoxLayout>
-#include <QDesktopWidget>
 #include <QFrame>
 #include <QLabel>
 #include <QMouseEvent>
