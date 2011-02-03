@@ -23,7 +23,6 @@
 
 #include <QApplication>
 #include <QBoxLayout>
-#include <QDesktopWidget>
 #include <QPainter>
 
 #include <kwindowsystem.h>
