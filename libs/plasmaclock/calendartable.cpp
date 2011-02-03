@@ -92,6 +92,8 @@ class CalendarTablePrivate
               pendingPopulations(NoPendingPopulation),
               delayedPopulationTimer(new QTimer())
         {
+            KGlobal::locale()->insertCatalog("libkholidays");
+
             svg = new Svg();
             svg->setImagePath("widgets/calendar");
             svg->setContainsMultipleImages(true);
@@ -739,7 +741,7 @@ bool CalendarTable::isAutomaticUpdateEnabled() const
 
 void CalendarTable::setCurrentDate(const QDate &date)
 {
-    d->currentDate = date; 
+    d->currentDate = date;
 }
 
 const QDate& CalendarTable::currentDate() const
