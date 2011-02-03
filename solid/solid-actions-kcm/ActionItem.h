@@ -35,7 +35,7 @@ class ActionItem: public QObject
     Q_OBJECT
 
 public:
-    ActionItem(QString pathToDesktop, QString action, QObject *parent = 0);
+    ActionItem(const QString& pathToDesktop, const QString& action, QObject *parent = 0);
     ~ActionItem();
 
     bool isUserSupplied();
@@ -43,12 +43,12 @@ public:
     QString icon();
     QString exec();
     QString name();
-    Solid::Predicate predicate();
-    QString involvedTypes();
-    void setIcon( QString nameOfIcon );
-    void setName( QString nameOfAction );
-    void setExec( QString execUrl );
-    void setPredicate( QString newPredicate );
+    Solid::Predicate predicate() const;
+    QString involvedTypes() const;
+    void setIcon( const QString& nameOfIcon );
+    void setName( const QString& nameOfAction );
+    void setExec( const QString& execUrl );
+    void setPredicate( const QString& newPredicate );
 
     QString desktopMasterPath;
     QString desktopWritePath;
@@ -58,10 +58,10 @@ private:
     enum DesktopAction { DesktopRead = 0, DesktopWrite = 1 };
     enum GroupType { GroupDesktop = 0, GroupAction = 1 };
 
-    QString readKey(GroupType keyGroup, QString keyName, QString defaultValue);
-    void setKey(GroupType keyGroup, QString keyName, QString keyContents);
-    bool hasKey(GroupType keyGroup, QString keyName);
-    KConfigGroup * configItem(DesktopAction actionType, GroupType keyGroup, QString keyName = QString());
+    QString readKey(GroupType keyGroup, const QString& keyName, const QString& defaultValue);
+    void setKey(GroupType keyGroup, const QString& keyName, const QString& keyContents);
+    bool hasKey(GroupType keyGroup, const QString& keyName);
+    KConfigGroup * configItem(DesktopAction actionType, GroupType keyGroup, const QString& keyName = QString());
 
     KDesktopFile * desktopFileMaster;
     KDesktopFile * desktopFileWrite;
