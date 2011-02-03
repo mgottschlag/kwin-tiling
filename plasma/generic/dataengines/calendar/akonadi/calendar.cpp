@@ -193,7 +193,9 @@ void Calendar::Private::updateItem( const Akonadi::Item &item, UpdateMode mode )
   Q_ASSERT( mode == DontCare || alreadyExisted == ( mode == AssertExists ) );
 
   const KCalCore::Incidence::Ptr incidence = CalendarSupport::incidence( item );
-  Q_ASSERT( incidence );
+  if (!incidence) {
+      return;
+  }
 
   if ( alreadyExisted ) {
 
