@@ -65,6 +65,7 @@ PredicateItem::PredicateItem( Solid::Predicate item, PredicateItem * itsParent )
 PredicateItem::~PredicateItem()
 {
     qDeleteAll( d->children );
+    d->children.clear();
     delete d;
 }
 

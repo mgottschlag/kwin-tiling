@@ -28,7 +28,7 @@
 
 #include <Solid/DeviceInterface>
 
-ActionItem::ActionItem(QString pathToDesktop, QString action, QObject *parent)
+ActionItem::ActionItem(const QString& pathToDesktop, const QString& action, QObject *parent)
 {
     Q_UNUSED(parent);
 
@@ -70,7 +70,7 @@ QString ActionItem::icon()
     return readKey(ActionItem::GroupAction, "Icon", "");
 }
 
-QString ActionItem::exec()
+QString ActionItem::exec() 
 {
     return readKey(ActionItem::GroupAction, "Exec", "");
 }
@@ -80,12 +80,12 @@ QString ActionItem::name()
     return readKey(ActionItem::GroupAction, "Name", "");
 }
 
-Solid::Predicate ActionItem::predicate()
+Solid::Predicate ActionItem::predicate() const
 {
     return predicateItem;
 }
 
-QString ActionItem::involvedTypes()
+QString ActionItem::involvedTypes() const
 {
     SolidActionData * actData = SolidActionData::instance();
     QSet<Solid::DeviceInterface::Type> devTypeList = predicateItem.usedTypes();
@@ -97,22 +97,22 @@ QString ActionItem::involvedTypes()
     return deviceTypes.join(", ");
 }
 
-void ActionItem::setIcon(QString nameOfIcon)
+void ActionItem::setIcon(const QString& nameOfIcon)
 {
     setKey(ActionItem::GroupAction, "Icon", nameOfIcon);
 }
 
-void ActionItem::setName(QString nameOfAction)
+void ActionItem::setName(const QString& nameOfAction)
 {
     setKey(ActionItem::GroupAction, "Name", nameOfAction);
 }
 
-void ActionItem::setExec(QString execUrl)
+void ActionItem::setExec(const QString& execUrl)
 {
     setKey(ActionItem::GroupAction, "Exec", execUrl);
 }
 
-void ActionItem::setPredicate( QString newPredicate )
+void ActionItem::setPredicate( const QString& newPredicate )
 {
     setKey(ActionItem::GroupDesktop, "X-KDE-Solid-Predicate", newPredicate);
     predicateItem = Solid::Predicate::fromString( newPredicate );
@@ -120,22 +120,22 @@ void ActionItem::setPredicate( QString newPredicate )
 
 /// Private functions below
 
-QString ActionItem::readKey(GroupType keyGroup, QString keyName, QString defaultValue)
+QString ActionItem::readKey(GroupType keyGroup, const QString& keyName, const QString& defaultValue)
 {
     return configItem(ActionItem::DesktopRead, keyGroup, keyName)->readEntry(keyName, defaultValue);
 }
 
-void ActionItem::setKey(GroupType keyGroup, QString keyName, QString keyContents)
+void ActionItem::setKey(GroupType keyGroup, const QString& keyName, const QString& keyContents)
 {
     configItem(ActionItem::DesktopWrite, keyGroup)->writeEntry(keyName, keyContents);
 }
 
-bool ActionItem::hasKey(GroupType keyGroup, QString keyName)
+bool ActionItem::hasKey(GroupType keyGroup, const QString& keyName)
 {
     return configItem(ActionItem::DesktopRead, keyGroup, keyName)->hasKey(keyName);
 }
 
-KConfigGroup * ActionItem::configItem(DesktopAction actionType, GroupType keyGroup, QString keyName)
+KConfigGroup * ActionItem::configItem(DesktopAction actionType, GroupType keyGroup, const QString& keyName)
 {
     int countAccess = 0;
 

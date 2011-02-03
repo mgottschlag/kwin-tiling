@@ -131,7 +131,7 @@ QList<Solid::DeviceInterface::Type> SolidActionData::interfaceTypeList()
     return types.keys();
 }
 
-Solid::DeviceInterface::Type SolidActionData::interfaceFromName( QString name )
+Solid::DeviceInterface::Type SolidActionData::interfaceFromName( const QString& name )
 {
     return types.key( name );
 }
