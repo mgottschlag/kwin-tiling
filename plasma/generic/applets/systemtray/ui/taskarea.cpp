@@ -328,17 +328,26 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
         if (removeFromHiddenArea(task)) {
             widget->setParentItem(this);
         }
-    } else if (!d->hiddenTasks.contains(task)) {
-        HiddenTaskLabel *hiddenLabel = new HiddenTaskLabel(widget, task->name(), d->itemBackground, d->host, d->hiddenTasksWidget);
-        connect(task, SIGNAL(changed(SystemTray::Task*)), hiddenLabel, SLOT(taskChanged(SystemTray::Task*)));
-        d->hiddenTasks.insert(task, hiddenLabel);
+    } else {
+        // hiddent task, so make sure it's handled
+        if (!d->hiddenTasks.contains(task)) {
+            HiddenTaskLabel *hiddenLabel = new HiddenTaskLabel(widget, task->name(), d->itemBackground, d->host, d->hiddenTasksWidget);
+            connect(task, SIGNAL(changed(SystemTray::Task*)), hiddenLabel, SLOT(taskChanged(SystemTray::Task*)));
+            d->hiddenTasks.insert(task, hiddenLabel);
 
-        const int row = d->hiddenTasksLayout->rowCount();
-        widget->setParentItem(d->hiddenTasksWidget);
-        //kDebug() << "putting" << task->name() << "into" << row;
-        d->hiddenTasksLayout->setRowFixedHeight(row, 24);
-        d->hiddenTasksLayout->addItem(widget, row, 0);
-        d->hiddenTasksLayout->addItem(hiddenLabel, row, 1);
+            const int row = d->hiddenTasksLayout->rowCount();
+            widget->setParentItem(d->hiddenTasksWidget);
+            //kDebug() << "putting" << task->name() << "into" << row;
+            d->hiddenTasksLayout->setRowFixedHeight(row, 24);
+            d->hiddenTasksLayout->addItem(widget, row, 0);
+            d->hiddenTasksLayout->addItem(hiddenLabel, row, 1);
+            d->hiddenTasksLayout->invalidate();
+            d->hiddenTasksWidget->resize(d->hiddenTasksWidget->effectiveSizeHint(Qt::PreferredSize));
+        }
+
+        widget->show();
+        d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
+        return false;
     }
 
     d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
