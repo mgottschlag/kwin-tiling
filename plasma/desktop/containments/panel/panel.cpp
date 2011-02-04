@@ -96,20 +96,32 @@ Panel::Panel(QObject *parent, const QVariantList &args)
       m_spacerIndex(-1),
       m_spacer(0),
       m_lastSpace(0),
-      m_layout(0)
+      m_layout(0),
+      m_resizedApplets(0)
 {
+    setContainmentType(Containment::PanelContainment);
+    setDrawWallpaper(false);
+
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/panel-background");
     m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(backgroundChanged()));
-    setZValue(150);
-    resize(m_currentSize);
-    setMinimumSize(m_currentSize);
-    setMaximumSize(m_currentSize);
 
-    connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
-            this, SLOT(appletWasRemoved(Plasma::Applet*)));
-    setContainmentType(Containment::PanelContainment);
+    m_lastSpaceTimer = new QTimer(this);
+    m_lastSpaceTimer->setSingleShot(true);
+    connect(m_lastSpaceTimer, SIGNAL(timeout()), this, SLOT(adjustLastSpace()));
+
+    m_enableUpdateResizeTimer = new QTimer(this);
+    m_enableUpdateResizeTimer->setSingleShot(true);
+    m_enableUpdateResizeTimer->setInterval(400);
+    connect(m_enableUpdateResizeTimer, SIGNAL(timeout()), this, SLOT(enableUpdateSize()));
+
+    m_updateSizeTimer = new QTimer(this);
+    m_updateSizeTimer->setSingleShot(true);
+    m_updateSizeTimer->setInterval(10);
+    connect(m_updateSizeTimer, SIGNAL(timeout()), this, SLOT(updateSize()));
+
+    connect(this, SIGNAL(appletRemoved(Plasma::Applet*)), this, SLOT(appletWasRemoved(Plasma::Applet*)));
 }
 
 Panel::~Panel()
@@ -140,11 +152,6 @@ void Panel::init()
 
     setMinimumSize(cg.readEntry("minimumSize", m_currentSize));
     setMaximumSize(cg.readEntry("maximumSize", m_currentSize));
-    setDrawWallpaper(false);
-
-    m_lastSpaceTimer = new QTimer(this);
-    m_lastSpaceTimer->setSingleShot(true);
-    connect(m_lastSpaceTimer, SIGNAL(timeout()), this, SLOT(adjustLastSpace()));
 }
 
 QList<QAction*> Panel::contextualActions()
@@ -213,12 +220,14 @@ void Panel::adjustLastSpace()
 void Panel::enableUpdateSize()
 {
     m_canResize = true;
+    if (m_resizedApplets > 0) {
+        updateSize();
+    }
 }
 
 void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 {
     // this gets called whenever an applet is added, and we add it to our layout
-
     if (!m_layout) {
         return;
     }
@@ -228,7 +237,7 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
     //Enlarge the panel if possible and needed
     QSizeF appletHint = applet->preferredSize();
-    QSizeF panelHint = layout()->preferredSize();
+    QSizeF panelHint = m_layout->preferredSize();
     if (f == Plasma::Horizontal) {
         if (panelHint.width() + appletHint.width() > size().width()) {
             resize(panelHint.width() + appletHint.width(), size().height());
@@ -238,6 +247,8 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
             resize(size().width(), panelHint.height() + appletHint.height());
         }
     }
+
+    m_layout->setMinimumSize(size());
     m_layout->setMaximumSize(size());
 
     //if pos is (-1,-1) insert at the end of the panel
@@ -292,8 +303,11 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
 void Panel::delayedUpdateSize()
 {
-    m_lastResizedApplet = qobject_cast<Plasma::Applet *>(sender());
-    QTimer::singleShot(0, this, SLOT(updateSize()));
+    ++m_resizedApplets;
+
+    if (!m_updateSizeTimer->isActive()) {
+        m_updateSizeTimer->start();
+    }
 }
 
 void Panel::appletWasRemoved(Plasma::Applet* applet)
@@ -319,29 +333,45 @@ void Panel::appletWasRemoved(Plasma::Applet* applet)
 
 void Panel::updateSize()
 {
-    Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(sender());
-    applet = m_lastResizedApplet.data();
-
-    if (m_canResize && applet) {
-        if (formFactor() == Plasma::Horizontal) {
-            const int delta = applet->preferredWidth() - applet->size().width();
-            //setting the preferred width when delta = 0 and preferredWidth() < minimumWidth()
-            // leads to the same thing as setPreferredWidth(minimumWidth())
-            if (delta != 0) {
-                setPreferredWidth(preferredWidth() + delta);
-            }
-        } else if (formFactor() == Plasma::Vertical) {
-            const int delta = applet->preferredHeight() - applet->size().height();
-            if (delta != 0) {
-                setPreferredHeight(preferredHeight() + delta);
-            }
-        }
-
-        resize(preferredSize());
-        //for a while we won't execute updateSize() again
-        m_canResize = false;
-        QTimer::singleShot(400, this, SLOT(enableUpdateSize()));
+    if (!m_canResize || m_resizedApplets < 1) {
+        m_resizedApplets = 0;
+        return;
     }
+
+    m_resizedApplets = 0;
+    m_canResize = false;
+
+    const bool horizontal = formFactor() != Plasma::Vertical;
+    int delta = horizontal ? size().width() : size().height();
+    foreach (Applet *applet, applets()) {
+        if (horizontal) {
+            delta -= applet->preferredSize().width();
+        } else {
+            delta -= applet->preferredSize().height();
+        }
+    }
+    delta *= -1;
+
+    //setting the preferred width when delta = 0 and preferredWidth() < minimumWidth()
+    // leads to the same thing as setPreferredWidth(minimumWidth())
+
+    if (delta != 0) {
+        // amazing but true: preferedSize doesn't take into consideration margins.
+        qreal l, t, r, b;
+        m_layout->getContentsMargins(&l, &t, &r, &b);
+
+        if (horizontal) {
+            setPreferredWidth(preferredWidth() + delta + l + r);
+        } else {
+            setPreferredHeight(preferredHeight() + delta + t + b);
+        }
+    }
+
+    //kDebug() << "resize to" << preferredSize() << delta << ", was" << size();
+    resize(preferredSize());
+
+    //for a while we won't execute updateSize() again
+    m_enableUpdateResizeTimer->start();
 }
 
 void Panel::updateBorders(const QRect &geom, bool inPaintEvent)
