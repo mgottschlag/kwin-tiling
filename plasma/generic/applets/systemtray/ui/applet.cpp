@@ -482,10 +482,15 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     QMultiMap<QString, Task *> sortedTasks;
     foreach (Task *task, s_manager->tasks()) {
         if (!m_shownCategories.contains(task->category())) {
-             continue;
+            continue;
         }
 
         if (!task->isHideable()) {
+            continue;
+        }
+
+        if (!task->widget(this, false)) {
+            // it is not being used by this widget
             continue;
         }
 
