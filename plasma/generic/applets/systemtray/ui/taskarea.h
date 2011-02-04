@@ -74,7 +74,6 @@ private:
     void setUnhideToolIconSizes();
     bool addWidgetForTask(SystemTray::Task *task);
     QGraphicsWidget* findWidget(Task *task);
-    void initUnhideTool();
     bool checkUnhideTool();
     void checkVisibility(Task *task);
     bool removeFromHiddenArea(SystemTray::Task *task);
