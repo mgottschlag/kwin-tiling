@@ -545,6 +545,7 @@ void Pager::updateSizes(bool allowResize)
         setMinimumSize(qMin(preferred.width(),  minimumSize().width()),
                        qMin(preferred.height(), minimumSize().height()));
         setPreferredSize(preferred);
+        emit sizeHintChanged(Qt::PreferredSize);
     }
 
     m_size = contentsRect().size();
