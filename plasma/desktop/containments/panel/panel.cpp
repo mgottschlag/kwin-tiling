@@ -447,10 +447,10 @@ void Panel::updateBorders(const QRect &geom, bool inPaintEvent)
         QSizeF s = box->boundingRect().size();
         if (formFactor() == Vertical) {
             //hardcoded extra margin for the toolbox right now
-            bottomHeight += s.height();
+            bottomHeight += s.height() + 2;
             //Default to horizontal for now
         } else {
-            rightWidth += s.width();
+            rightWidth += s.width() + 2;
         }
     }
 
