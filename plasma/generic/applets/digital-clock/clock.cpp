@@ -86,7 +86,8 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
 {
     ClockApplet::constraintsEvent(constraints);
 
-    if (constraints & Plasma::SizeConstraint) {
+    if (constraints & Plasma::SizeConstraint ||
+        constraints & Plasma::FormFactorConstraint) {
         updateSize();
     }
 }
@@ -146,16 +147,16 @@ void Clock::updateSize()
 
     if (f == Plasma::Horizontal) {
         // We have a fixed height, set some sensible width
-        setMinimumWidth(w);
-        setMinimumHeight(0);
+        setMinimumSize(QSize(w, 0));
         //kDebug() << "DR" << m_dateRect.width() << "CR" << contentsRect().height() * aspect;
         // kDebug(96669) << contentsRect();
     } else {
         // We have a fixed width, set some sensible height
-        setMinimumHeight(h);
-        setMinimumWidth(0);
+        setMinimumSize(QSize(0, h));
     }
-    // kDebug(96669) << "minZize: " << minimumSize();
+    setPreferredSize(QSize(w, h));
+    emit sizeHintChanged(Qt::PreferredSize);
+     kDebug(96669) << "minZize: " << minimumSize() << preferredSize();
 }
 
 void Clock::clockConfigChanged()
