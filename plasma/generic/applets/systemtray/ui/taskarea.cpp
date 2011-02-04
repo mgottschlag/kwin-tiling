@@ -139,6 +139,7 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
     d->hiddenTasksWidget = new QGraphicsWidget(this);
     d->hiddenTasksLayout = new QGraphicsGridLayout(d->hiddenTasksWidget);
     d->hiddenTasksLayout->setHorizontalSpacing(0);
+
     d->hiddenRelayoutTimer = new QTimer(this);
     d->hiddenRelayoutTimer->setSingleShot(true);
     connect(d->hiddenRelayoutTimer, SIGNAL(timeout()), this, SLOT(relayoutHiddenTasks()));
