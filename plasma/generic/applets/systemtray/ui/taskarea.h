@@ -54,7 +54,6 @@ public:
     int leftEasement() const;
     int rightEasement() const;
     void setOrientation(Qt::Orientation);
-    void setShowHiddenItems(bool show);
     void setLocation(Plasma::Location location);
 
 public slots:
@@ -62,6 +61,7 @@ public slots:
     void removeTask(SystemTray::Task *task);
     void delayedAppletUpdate();
     void delayedReposition();
+    void updateUnhideToolIcon();
 
 signals:
     void sizeHintChanged(Qt::SizeHint which);
@@ -74,7 +74,6 @@ private:
     void setUnhideToolIconSizes();
     bool addWidgetForTask(SystemTray::Task *task);
     QGraphicsWidget* findWidget(Task *task);
-    void updateUnhideToolIcon();
     void initUnhideTool();
     bool checkUnhideTool();
     void checkVisibility(Task *task);

@@ -59,8 +59,7 @@ public:
           firstTasksLayout(new CompactLayout()),
           normalTasksLayout(new CompactLayout()),
           lastTasksLayout(new CompactLayout()),
-          location(Plasma::BottomEdge),
-          showingHidden(false)
+          location(Plasma::BottomEdge)
     {
     }
 
@@ -106,7 +105,6 @@ public:
     QSet<QString> hiddenTypes;
     QSet<QString> alwaysShownTypes;
     QHash<SystemTray::Task*, HiddenTaskLabel *> hiddenTasks;
-    bool showingHidden : 1;
 };
 
 
@@ -528,8 +526,9 @@ void TaskArea::updateUnhideToolIcon()
         return;
     }
 
+    const bool showing = d->host->isPopupShowing();
     Plasma::ToolTipContent data;
-    if (d->showingHidden) {
+    if (showing) {
         data.setSubText(i18n("Hide icons"));
     } else {
         data.setSubText(i18n("Show hidden icons"));
@@ -538,21 +537,21 @@ void TaskArea::updateUnhideToolIcon()
 
     switch(d->location) {
     case Plasma::LeftEdge:
-        if (d->showingHidden) {
+        if (showing) {
             d->unhider->setSvg("widgets/arrows", "left-arrow");
         } else {
             d->unhider->setSvg("widgets/arrows", "right-arrow");
         }
         break;
     case Plasma::RightEdge:
-        if (d->showingHidden) {
+        if (showing) {
             d->unhider->setSvg("widgets/arrows", "right-arrow");
         } else {
             d->unhider->setSvg("widgets/arrows", "left-arrow");
         }
         break;
     case Plasma::TopEdge:
-        if (d->showingHidden) {
+        if (showing) {
             d->unhider->setSvg("widgets/arrows", "up-arrow");
         } else {
             d->unhider->setSvg("widgets/arrows", "down-arrow");
@@ -560,7 +559,7 @@ void TaskArea::updateUnhideToolIcon()
         break;
     case Plasma::BottomEdge:
     default:
-        if (d->showingHidden) {
+        if (showing) {
             d->unhider->setSvg("widgets/arrows", "down-arrow");
         } else {
             d->unhider->setSvg("widgets/arrows", "up-arrow");
@@ -584,12 +583,6 @@ bool TaskArea::checkUnhideTool()
     }
 
     return false;
-}
-
-void TaskArea::setShowHiddenItems(bool show)
-{
-    d->showingHidden = show;
-    updateUnhideToolIcon();
 }
 
 void TaskArea::setLocation(Plasma::Location location)

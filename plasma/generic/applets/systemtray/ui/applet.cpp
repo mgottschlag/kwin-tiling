@@ -209,7 +209,7 @@ void Applet::configChanged()
 
 void Applet::popupEvent(bool show)
 {
-    m_taskArea->setShowHiddenItems(show);
+    m_taskArea->updateUnhideToolIcon();
 }
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)
