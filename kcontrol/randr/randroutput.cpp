@@ -429,6 +429,8 @@ QStringList RandROutput::startupCommands() const
 {
 	if (!m_connected)
 		return QStringList();
+	if (!isActive())
+		return QStringList() << QString( "xrandr --output \"%1\" --off" ).arg( KShell::quoteArg( m_name ));
 	if (m_crtc->id() == None)
 	     return QStringList();	
 	QString command = QString( "xrandr --output \"%1\"" ).arg( KShell::quoteArg( m_name ));
