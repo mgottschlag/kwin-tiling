@@ -236,7 +236,7 @@ void TaskArea::checkVisibility(Task *task)
 
 bool TaskArea::removeFromHiddenArea(SystemTray::Task *task)
 {
-    if (d->hiddenTasks.contains(task)) {
+    if (!d->hiddenTasks.contains(task)) {
         return false;
     }
 
@@ -399,7 +399,7 @@ void TaskArea::delayedAppletUpdate()
 
 void TaskArea::removeTask(Task *task)
 {
-    removeFromHiddenArea(task);
+    bool sizeChanged = removeFromHiddenArea(task);
 
     QGraphicsWidget *widget = task->widget(d->host, false);
     if (widget) {
@@ -417,7 +417,12 @@ void TaskArea::removeTask(Task *task)
         d->taskCategories.remove(task);
 
         d->topLayout->invalidate();
+        sizeChanged = true;
+    }
+
+    if (sizeChanged) {
         emit sizeHintChanged(Qt::PreferredSize);
+
     }
 }
 
@@ -501,14 +506,6 @@ void TaskArea::initUnhideTool()
         return;
     }
 
-    d->unhider = new Plasma::IconWidget(this);
-    updateUnhideToolIcon();
-    setUnhideToolIconSizes();
-
-    d->topLayout->addItem(d->unhider);
-    connect(d->unhider, SIGNAL(clicked()), this, SIGNAL(toggleHiddenItems()));
-
-    emit sizeHintChanged(Qt::PreferredSize);
 }
 
 void TaskArea::setUnhideToolIconSizes()
@@ -579,7 +576,12 @@ bool TaskArea::checkUnhideTool()
             return true;
         }
     } else if (!d->unhider) {
-        initUnhideTool();
+        d->unhider = new Plasma::IconWidget(this);
+        updateUnhideToolIcon();
+        setUnhideToolIconSizes();
+
+        d->topLayout->addItem(d->unhider);
+        connect(d->unhider, SIGNAL(clicked()), this, SIGNAL(toggleHiddenItems()));
         return true;
     }
 
