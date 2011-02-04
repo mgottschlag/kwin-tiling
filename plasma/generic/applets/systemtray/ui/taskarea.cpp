@@ -500,14 +500,6 @@ void TaskArea::setOrientation(Qt::Orientation o)
     syncTasks(d->host->manager()->tasks());
 }
 
-void TaskArea::initUnhideTool()
-{
-    if (d->unhider) {
-        return;
-    }
-
-}
-
 void TaskArea::setUnhideToolIconSizes()
 {
     d->unhider->setPreferredIconSize(QSize(16,16));
