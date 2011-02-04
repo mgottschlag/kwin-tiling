@@ -32,6 +32,7 @@
 #include <KCalCore/Todo>
 #include <KCalCore/Journal>
 
+#ifdef AKONADI_FOUND
 #include <Akonadi/ChangeRecorder>
 #include <Akonadi/Session>
 #include <Akonadi/Collection>
@@ -41,6 +42,7 @@
 #include "akonadi/calendar.h"
 #include "akonadi/calendarmodel.h"
 #include "eventdatacontainer.h"
+#endif
 
 CalendarEngine::CalendarEngine(QObject* parent, const QVariantList& args)
               : Plasma::DataEngine(parent),
@@ -74,9 +76,11 @@ bool CalendarEngine::sourceRequestEvent(const QString &request)
         return holidayCalendarSourceRequest(requestKey, requestTokens, request);
     }
 
+#ifdef AKONADI_FOUND
     if (requestKey == "events" || requestKey == "eventsInMonth") {
         return akonadiCalendarSourceRequest(requestKey, requestTokens, request);
     }
+#endif
 
     return false;
 }
@@ -272,6 +276,7 @@ bool CalendarEngine::holidayCalendarSourceRequest(const QString& key, const QStr
     return false;
 }
 
+#ifdef AKONADI_FOUND
 bool CalendarEngine::akonadiCalendarSourceRequest(const QString& key, const QStringList& args, const QString& request)
 {
     // figure out what time range was requested from the source string
@@ -339,5 +344,6 @@ void CalendarEngine::initAkonadiCalendar()
     calendarModel->setCollectionFetchStrategy(Akonadi::EntityTreeModel::InvisibleCollectionFetch);
     m_calendar = new CalendarSupport::Calendar(calendarModel, calendarModel, KSystemTimeZones::local());
 }
+#endif
 
 #include "calendarengine.moc"
