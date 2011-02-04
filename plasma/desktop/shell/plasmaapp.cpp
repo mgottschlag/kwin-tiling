@@ -1341,7 +1341,7 @@ void PlasmaApp::plasmoidAccessFinished(Plasma::AccessAppletJob *job)
 void PlasmaApp::createActivity(const QString &plugin)
 {
     KActivityController controller;
-    QString id = controller.addActivity(i18n("New Activity"));
+    QString id = controller.addActivity(i18nc("Action used to create a new activity", "New Activity"));
 
     Activity *a = m_corona->activity(id);
     Q_ASSERT(a);
