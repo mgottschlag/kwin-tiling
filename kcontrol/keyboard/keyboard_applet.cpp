@@ -55,6 +55,7 @@ KeyboardApplet::KeyboardApplet(QObject *parent, const QVariantList &args):
 
     m_svg = new Plasma::Svg(this);
 	m_svg->setImagePath("widgets/textbackground");
+	m_svg->setContainsMultipleImages(true);
 	resize(48,48);
 
 	setHasConfigurationInterface(false);
