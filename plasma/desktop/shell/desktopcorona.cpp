@@ -614,7 +614,7 @@ void DesktopCorona::checkActivities()
             }
             //discourage blank names
             if (context->currentActivity().isEmpty()) {
-                context->setCurrentActivity(i18n("New Activity"));
+                context->setCurrentActivity(i18nc("Default name for a new activity", "New Activity"));
             }
             //create a new activity for the containment
             QString id = m_activityController->addActivity(context->currentActivity());
@@ -644,7 +644,7 @@ void DesktopCorona::checkActivities()
             if (newCurrentActivity.isEmpty()) {
                 if (newActivities.isEmpty()) {
                     kDebug() << "no activities!?! Bad activitymanager, no cookie!";
-                    QString id = m_activityController->addActivity(i18n("New Activity"));
+                    QString id = m_activityController->addActivity(i18nc("Default name for a new activity", "New Activity"));
                     activityAdded(id);
                     m_activityController->setCurrentActivity(id);
                     kDebug() << "created emergency activity" << id;
