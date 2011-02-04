@@ -699,8 +699,6 @@ void PanelView::updatePanelGeometry()
             geom.moveTopLeft(QPoint(screenGeom.center().x() - geom.width()/2 + 1 - geom.width()%2 + m_offset, screenGeom.top()));
         }
 
-        //enable borders if needed
-        //c->setGeometry(QRect(geom.left(), c->geometry().top(), geom.width(), geom.height()));
         break;
 
     case Plasma::LeftEdge:
@@ -712,8 +710,6 @@ void PanelView::updatePanelGeometry()
             geom.moveTopLeft(QPoint(screenGeom.left(), screenGeom.center().y() - geom.height()/2 + 1 - geom.height()%2 + m_offset));
         }
 
-        //enable borders if needed
-        //c->setGeometry(QRect(c->geometry().left(), geom.top(), geom.width(), geom.height()));
         break;
 
     case Plasma::RightEdge:
@@ -725,8 +721,6 @@ void PanelView::updatePanelGeometry()
             geom.moveTopRight(QPoint(screenGeom.right(), screenGeom.center().y() - geom.height()/2 + 1 - geom.height()%2 + m_offset));
         }
 
-        //enable borders if needed
-        //c->setGeometry(QRect(c->geometry().left(), geom.top(), geom.width(), geom.height()));
         break;
 
     case Plasma::BottomEdge:
@@ -739,8 +733,6 @@ void PanelView::updatePanelGeometry()
             geom.moveBottomLeft(QPoint(screenGeom.center().x() - geom.width()/2 + 1 - geom.width()%2 + m_offset, screenGeom.bottom()));
         }
 
-        //enable borders if needed
-        //c->setGeometry(QRect(geom.left(), c->geometry().top(), geom.width(), geom.height()));
         break;
     }
 
