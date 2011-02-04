@@ -118,6 +118,7 @@ void KeyboardApplet::destroy()
 
 void KeyboardApplet::layoutChanged()
 {
+	generatePixmap();
 	updateTooltip();
 	update();
 }
@@ -154,50 +155,7 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 		p->restore();
 	}
 	else {
-		QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
-		kDebug() << "applet: LayoutChanged" << layoutUnit.toString() << shortText;
-
-		QPixmap pixmap(contentsRect.size());
-		pixmap.fill(Qt::transparent);
-
-		QPainter buffPainter(&pixmap);
-		buffPainter.setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-		QFont font = Plasma::Theme::defaultTheme()->font(Plasma::Theme::DesktopFont);
-		int height = qMin(contentsRect.height(), contentsRect.width());
-		int fontSize = shortText.length() == 2
-				? height * 13 / 15
-				: height * 5 / 15;
-
-		int smallestReadableSize = KGlobalSettings::smallestReadableFont().pixelSize();
-		if( fontSize < smallestReadableSize ) {
-			fontSize = smallestReadableSize;
-		}
-		font.setPixelSize(fontSize);
-		buffPainter.setFont(font);
-		buffPainter.drawText(contentsRect, Qt::AlignCenter, shortText);
-		buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-		m_svg->paint(&buffPainter, contentsRect);
-		buffPainter.end();
-
-		//do the shadow
-		QImage image(pixmap.size(), QImage::Format_ARGB32_Premultiplied);
-		image.fill(Qt::transparent);
-		buffPainter.begin(&image);
-		buffPainter.setFont(font);
-		buffPainter.drawText(contentsRect, Qt::AlignCenter, shortText);
-		buffPainter.end();
-
-		Plasma::PaintUtils::shadowBlur(image, 1, Qt::black);
-		//hole in the shadow
-		buffPainter.begin(&image);
-		buffPainter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
-		buffPainter.setFont(font);
-		buffPainter.drawText(contentsRect, Qt::AlignCenter, shortText);
-		buffPainter.end();
-
-//		QPixmap pixmap = Utils::shadowText(shortText, font, Qt::black, Qt::white, QPoint(), 4);
-		p->drawImage(contentsRect, image);
-		p->drawPixmap(contentsRect, pixmap);
+		p->drawPixmap(contentsRect, m_pixmap);
 	}
 }
 
@@ -222,8 +180,60 @@ void KeyboardApplet::constraintsEvent(Plasma::Constraints constraints)
 	setMinimumSize(iconSize, iconSize);
     }
     if (constraints & Plasma::SizeConstraint) {
-		m_svg->resize(size());
+		generatePixmap();
 	}
+}
+
+void KeyboardApplet::generatePixmap()
+{
+	LayoutUnit layoutUnit = X11Helper::getCurrentLayout();
+	QRect contentsRect = KeyboardApplet::contentsRect().toRect();
+	QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
+	kDebug() << "applet: LayoutChanged" << layoutUnit.toString() << shortText;
+
+	QPixmap pixmap(contentsRect.size());
+	pixmap.fill(Qt::transparent);
+
+	QPainter buffPainter(&pixmap);
+	buffPainter.setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+	QFont font = Plasma::Theme::defaultTheme()->font(Plasma::Theme::DesktopFont);
+	int height = qMin(contentsRect.height(), contentsRect.width());
+	int fontSize = shortText.length() == 2
+			? height * 13 / 15
+			: height * 5 / 15;
+
+	int smallestReadableSize = KGlobalSettings::smallestReadableFont().pixelSize();
+	if( fontSize < smallestReadableSize ) {
+		fontSize = smallestReadableSize;
+	}
+	font.setPixelSize(fontSize);
+	buffPainter.setFont(font);
+	buffPainter.drawText(contentsRect, Qt::AlignCenter, shortText);
+	buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+	m_svg->paint(&buffPainter, contentsRect);
+	buffPainter.end();
+
+	//do the shadow
+	QImage image(pixmap.size(), QImage::Format_ARGB32_Premultiplied);
+	image.fill(Qt::transparent);
+	buffPainter.begin(&image);
+	buffPainter.setFont(font);
+	buffPainter.drawText(contentsRect, Qt::AlignCenter, shortText);
+	buffPainter.end();
+
+	Plasma::PaintUtils::shadowBlur(image, 1, Qt::black);
+	//hole in the shadow
+	buffPainter.begin(&image);
+	buffPainter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
+	buffPainter.setFont(font);
+	buffPainter.drawText(contentsRect, Qt::AlignCenter, shortText);
+	buffPainter.end();
+
+	m_pixmap = QPixmap(contentsRect.size());
+	m_pixmap.fill(Qt::transparent);
+	buffPainter.begin(&m_pixmap);
+	buffPainter.drawImage(contentsRect, image);
+	buffPainter.drawPixmap(contentsRect, pixmap);
 }
 
 QList<QAction*> KeyboardApplet::contextualActions()
