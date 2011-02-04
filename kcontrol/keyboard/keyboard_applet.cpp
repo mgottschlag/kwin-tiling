@@ -165,7 +165,7 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 		QFont font = Plasma::Theme::defaultTheme()->font(Plasma::Theme::DesktopFont);
 		int height = qMin(contentsRect.height(), contentsRect.width());
 		int fontSize = shortText.length() == 2
-				? height * 12 / 15
+				? height * 13 / 15
 				: height * 5 / 15;
 
 		int smallestReadableSize = KGlobalSettings::smallestReadableFont().pixelSize();
@@ -179,7 +179,24 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 		m_svg->paint(&buffPainter, contentsRect);
 		buffPainter.end();
 
+		//do the shadow
+		QImage image(pixmap.size(), QImage::Format_ARGB32_Premultiplied);
+		image.fill(Qt::transparent);
+		buffPainter.begin(&image);
+		buffPainter.setFont(font);
+		buffPainter.drawText(contentsRect, Qt::AlignCenter, shortText);
+		buffPainter.end();
+
+		Plasma::PaintUtils::shadowBlur(image, 1, Qt::black);
+		//hole in the shadow
+		buffPainter.begin(&image);
+		buffPainter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
+		buffPainter.setFont(font);
+		buffPainter.drawText(contentsRect, Qt::AlignCenter, shortText);
+		buffPainter.end();
+
 //		QPixmap pixmap = Utils::shadowText(shortText, font, Qt::black, Qt::white, QPoint(), 4);
+		p->drawImage(contentsRect, image);
 		p->drawPixmap(contentsRect, pixmap);
 	}
 }
