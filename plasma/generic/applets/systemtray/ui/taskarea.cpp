@@ -65,33 +65,26 @@ public:
     {
     }
 
-    bool isTaskProperlyPlaced(Task *task)
+    bool isTaskProperlyPlaced(Task *task, QGraphicsWidget *widget)
     {
-        QGraphicsWidget *widget = task->widget(host);
-        //existence of widget has already been checked
-        Q_ASSERT(widget);
-
         //kDebug() << "========" << task->name() << "==========";
         //kDebug() << "      " << task->hidden() << Task::NotHidden << task->category() << host->shownCategories().contains(task->category());
-        if (task->hidden() == Task::NotHidden &&
-            host->shownCategories().contains(task->category())) {
-
+        if (task->hidden() == Task::NotHidden && host->shownCategories().contains(task->category())) {
             //kDebug() << "    " << task->order() << firstTasksLayout->containsItem(widget) << lastTasksLayout->containsItem(widget) << normalTasksLayout->containsItem(widget);
-            if ((firstTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::First) ||
-                (lastTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::Last)) {
+            if (task->order() == SystemTray::Task::First && firstTasksLayout->containsItem(widget)) {
                 return true;
-            } else if (task->order() == SystemTray::Task::Normal &&
-                       normalTasksLayout->containsItem(widget) ) {
-                if (!taskCategories.contains(task)) {
-                    taskCategories[task] = task->category();
-                    return false;
-                } else if (taskCategories.value(task) == task->category()) {
+            } else if (task->order() == SystemTray::Task::Last && lastTasksLayout->containsItem(widget)) {
+                return true;
+            } else if (task->order() == SystemTray::Task::Normal && normalTasksLayout->containsItem(widget) ) {
+                if (taskCategories.contains(task) && taskCategories.value(task) == task->category()) {
                     return true;
                 } else {
                     taskCategories[task] = task->category();
+                    return false;
                 }
             }
         }
+
         return false;
     }
 
@@ -246,6 +239,40 @@ void TaskArea::checkVisibility(Task *task)
     }
 }
 
+bool TaskArea::removeFromHiddenArea(SystemTray::Task *task)
+{
+    if (d->hiddenTasks.contains(task)) {
+        return false;
+    }
+
+    QGraphicsWidget *widget = task->widget(d->host, false);
+    QGraphicsWidget *taskLabel = d->hiddenTasks.value(task);
+
+    if (widget) {
+        for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
+            if (d->hiddenTasksLayout->itemAt(i) == widget) {
+                d->hiddenTasksLayout->removeAt(i);
+                break;
+            }
+        }
+    }
+
+    if (taskLabel) {
+        disconnect(task, 0, taskLabel, 0);
+        for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
+            if (d->hiddenTasksLayout->itemAt(i) == taskLabel) {
+                d->hiddenTasksLayout->removeAt(i);
+                break;
+            }
+        }
+        taskLabel->deleteLater();
+    }
+
+    d->hiddenTasks.remove(task);
+    d->hiddenRelayoutTimer->start(250);
+    return true;
+}
+
 bool TaskArea::addWidgetForTask(SystemTray::Task *task)
 {
     if (!task->isEmbeddable(d->host)) {
@@ -269,7 +296,7 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
     }
 
     //check if it's not necessary to move the icon
-    if (d->isTaskProperlyPlaced(task)) {
+    if (d->isTaskProperlyPlaced(task, widget)) {
         return false;
     }
 
@@ -284,6 +311,8 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
     //If the applet doesn't want to show FDO tasks, remove (not just hide) any of them
     //if the dbus icon has a category that the applet doesn't want to show remove it
     if (!d->host->shownCategories().contains(task->category()) && !qobject_cast<Plasma::Applet *>(widget)) {
+        removeFromHiddenArea(task);
+        d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
         widget->deleteLater();
         return true;
     }
@@ -296,43 +325,25 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
     // therefore we need a way to track the hidden tasks
     // if the task appears in the hidden list, then we know there are hidden tasks
     if (task->hidden() == Task::NotHidden) {
-        if (d->hiddenTasks.contains(task)) {
+        if (removeFromHiddenArea(task)) {
             widget->setParentItem(this);
-            for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
-                if (d->hiddenTasksLayout->itemAt(i) == d->hiddenTasks.value(task)) {
-                    d->hiddenTasksLayout->removeAt(i);
-                    break;
-                }
-            }
-            disconnect(task, 0, d->hiddenTasks.value(task), 0);
-            d->hiddenTasks.value(task)->deleteLater();
-            d->hiddenTasks.remove(task);
-            d->hiddenRelayoutTimer->start(250);
         }
     } else if (!d->hiddenTasks.contains(task)) {
-        HiddenTaskLabel *hiddenWidget = new HiddenTaskLabel(widget, task->name(), d->itemBackground, d->host, d->hiddenTasksWidget);
-        connect(task, SIGNAL(changed(SystemTray::Task*)), hiddenWidget, SLOT(taskChanged(SystemTray::Task*)));
-        d->hiddenTasks.insert(task, hiddenWidget);
+        HiddenTaskLabel *hiddenLabel = new HiddenTaskLabel(widget, task->name(), d->itemBackground, d->host, d->hiddenTasksWidget);
+        connect(task, SIGNAL(changed(SystemTray::Task*)), hiddenLabel, SLOT(taskChanged(SystemTray::Task*)));
+        d->hiddenTasks.insert(task, hiddenLabel);
 
         const int row = d->hiddenTasksLayout->rowCount();
         widget->setParentItem(d->hiddenTasksWidget);
         //kDebug() << "putting" << task->name() << "into" << row;
         d->hiddenTasksLayout->setRowFixedHeight(row, 24);
         d->hiddenTasksLayout->addItem(widget, row, 0);
-        d->hiddenTasksLayout->addItem(d->hiddenTasks.value(task), row, 1);
+        d->hiddenTasksLayout->addItem(hiddenLabel, row, 1);
     }
 
     d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
 
     if (task->hidden() == Task::NotHidden) {
-        for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
-            if (d->hiddenTasksLayout->itemAt(i) == widget) {
-                d->hiddenTasksLayout->removeAt(i);
-                d->hiddenRelayoutTimer->start(250);
-                break;
-            }
-        }
-
         widget->setParentItem(this);
         //not really pretty, but for consistency attempts to put the notifications applet always in the same position
         if (task->typeId() == "notifications") {
@@ -386,29 +397,10 @@ void TaskArea::delayedAppletUpdate()
 
 void TaskArea::removeTask(Task *task)
 {
-    QGraphicsWidget *widget = task->widget(d->host, false);
-
-    if (d->hiddenTasks.contains(task)) {
-        QGraphicsWidget *taskLabel = d->hiddenTasks[task];
-        if (widget || taskLabel) {
-            for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
-                if (d->hiddenTasksLayout->itemAt(i) == widget) {
-                    d->hiddenTasksLayout->removeAt(i);
-                    --i;
-                }
-
-                if (d->hiddenTasksLayout->itemAt(i) == taskLabel) {
-                    d->hiddenTasksLayout->removeAt(i);
-                    taskLabel->deleteLater();
-                    --i;
-                }
-            }
-        }
-        d->hiddenTasks.remove(task);
-        d->hiddenRelayoutTimer->start(0);
-    }
+    removeFromHiddenArea(task);
     d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
 
+    QGraphicsWidget *widget = task->widget(d->host, false);
     if (widget) {
         //try to remove from all three layouts, one will succeed
         d->firstTasksLayout->removeItem(widget);
@@ -430,14 +422,13 @@ void TaskArea::removeTask(Task *task)
 
 void TaskArea::relayoutHiddenTasks()
 {
-    for (int i = 0; i < (d->hiddenTasksLayout->count()/2) + 1; ++i) {
-        d->hiddenTasksLayout->setRowFixedHeight(i, 0);
-    }
-
     for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
          d->hiddenTasksLayout->removeAt(i);
     }
 
+    for (int i = 0; i < d->hiddenTasksLayout->rowCount(); ++i) {
+        d->hiddenTasksLayout->setRowFixedHeight(i, 0);
+    }
 
     QHash<SystemTray::Task*, HiddenTaskLabel *>::const_iterator i = d->hiddenTasks.constBegin();
     int row = 0;

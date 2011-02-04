@@ -78,6 +78,7 @@ private:
     void initUnhideTool();
     bool checkUnhideTool();
     void checkVisibility(Task *task);
+    bool removeFromHiddenArea(SystemTray::Task *task);
 
     class Private;
     Private* const d;
