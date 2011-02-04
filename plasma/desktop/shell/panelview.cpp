@@ -351,10 +351,20 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     const bool onScreen = panel->screen() < PlasmaApp::self()->corona()->numScreens();
     const QRect screenRect = onScreen ?  PlasmaApp::self()->corona()->screenGeometry(panel->screen()) : QRect();
-    if (!onScreen) {
+    const int sw = screenRect.width();
+    const int sh = screenRect.height();
+    m_lastSeenSize = sizes.readEntry("lastsize", m_lastHorizontal ? sw : sh);
+
+    if (onScreen) {
+        const QString last = m_lastHorizontal ? "Horizontal" + QString::number(sw) :
+                                                "Vertical" + QString::number(sh);
+        if (sizes.hasGroup(last)) {
+            KConfigGroup thisSize(&sizes, last);
+            resize(thisSize.readEntry("size", m_lastHorizontal ? QSize(sw, 27) : QSize(27, sh)));
+        }
+    } else {
         resize(panel->size().toSize());
     }
-    m_lastSeenSize = sizes.readEntry("lastsize", m_lastHorizontal ? screenRect.width() : screenRect.height());
 
     m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
     KConfigGroup sizeConfig(&viewConfig, (m_lastHorizontal ? "Horizontal" : "Vertical") +
@@ -806,8 +816,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
     KConfigGroup sizes = config();
     sizes = KConfigGroup(&sizes, "Sizes");
 
-    if (m_lastHorizontal != horizontal ||
-        m_lastSeenSize != (horizontal ? sw : sh)) {
+    if (m_lastHorizontal != horizontal || m_lastSeenSize != (horizontal ? sw : sh)) {
         // we're adjusting size. store the current size now
         KConfigGroup lastSize(&sizes, (m_lastHorizontal ? "Horizontal" : "Vertical") +
                                       QString::number(m_lastSeenSize));
@@ -817,8 +826,8 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         lastSize.writeEntry("max", m_lastMax);
         configNeedsSaving();
 
-        QString last = (horizontal ? "Horizontal" : "Vertical") +
-                       QString::number(horizontal ? sw : sh);
+        const QString last = horizontal ? "Horizontal" + QString::number(sw) :
+                                          "Vertical" + QString::number(sh);
         if (sizes.hasGroup(last)) {
             KConfigGroup thisSize(&sizes, last);
 
