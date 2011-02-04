@@ -60,8 +60,7 @@ public:
           normalTasksLayout(new CompactLayout()),
           lastTasksLayout(new CompactLayout()),
           location(Plasma::BottomEdge),
-          showingHidden(false),
-          hasTasksThatCanHide(false)
+          showingHidden(false)
     {
     }
 
@@ -108,7 +107,6 @@ public:
     QSet<QString> alwaysShownTypes;
     QHash<SystemTray::Task*, HiddenTaskLabel *> hiddenTasks;
     bool showingHidden : 1;
-    bool hasTasksThatCanHide : 1;
 };
 
 
@@ -181,7 +179,6 @@ QStringList TaskArea::alwaysShownTypes() const
 
 void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 {
-    d->hasTasksThatCanHide = false;
     bool changedPositioning = false;
     foreach (Task *task, tasks) {
         //kDebug() << "checking" << task->name() << task->typeId() << d->alwaysShownTypes;
@@ -312,7 +309,6 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
     //if the dbus icon has a category that the applet doesn't want to show remove it
     if (!d->host->shownCategories().contains(task->category()) && !qobject_cast<Plasma::Applet *>(widget)) {
         removeFromHiddenArea(task);
-        d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
         widget->deleteLater();
         return true;
     }
@@ -346,11 +342,9 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
         }
 
         widget->show();
-        d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
         return false;
     }
 
-    d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
 
     if (task->hidden() == Task::NotHidden) {
         widget->setParentItem(this);
@@ -407,7 +401,6 @@ void TaskArea::delayedAppletUpdate()
 void TaskArea::removeTask(Task *task)
 {
     removeFromHiddenArea(task);
-    d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
 
     QGraphicsWidget *widget = task->widget(d->host, false);
     if (widget) {
@@ -577,16 +570,16 @@ void TaskArea::updateUnhideToolIcon()
 
 bool TaskArea::checkUnhideTool()
 {
-    if (d->hasTasksThatCanHide) {
-        if (!d->unhider) {
-            initUnhideTool();
+    if (d->hiddenTasks.isEmpty()) {
+        if (d->unhider) {
+            // hide the show tool
+            d->topLayout->removeItem(d->unhider);
+            d->unhider->deleteLater();
+            d->unhider = 0;
             return true;
         }
-    } else if (d->unhider) {
-        // hide the show tool
-        d->topLayout->removeItem(d->unhider);
-        d->unhider->deleteLater();
-        d->unhider = 0;
+    } else if (!d->unhider) {
+        initUnhideTool();
         return true;
     }
 
