@@ -155,7 +155,9 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 		p->restore();
 	}
 	else {
-		p->drawPixmap(contentsRect, m_pixmap);
+		QRect finalRect(m_pixmap.rect());
+		finalRect.moveCenter(contentsRect.center());
+		p->drawPixmap(finalRect, m_pixmap);
 	}
 }
 
@@ -194,8 +196,6 @@ void KeyboardApplet::generatePixmap()
 	QPixmap pixmap(contentsRect.size());
 	pixmap.fill(Qt::transparent);
 
-	QPainter buffPainter(&pixmap);
-	buffPainter.setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
 	QFont font = Plasma::Theme::defaultTheme()->font(Plasma::Theme::DesktopFont);
 	int height = qMin(contentsRect.height(), contentsRect.width());
 	int fontSize = shortText.length() == 2
@@ -207,33 +207,8 @@ void KeyboardApplet::generatePixmap()
 		fontSize = smallestReadableSize;
 	}
 	font.setPixelSize(fontSize);
-	buffPainter.setFont(font);
-	buffPainter.drawText(contentsRect, Qt::AlignCenter, shortText);
-	buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-	m_svg->paint(&buffPainter, contentsRect);
-	buffPainter.end();
 
-	//do the shadow
-	QImage image(pixmap.size(), QImage::Format_ARGB32_Premultiplied);
-	image.fill(Qt::transparent);
-	buffPainter.begin(&image);
-	buffPainter.setFont(font);
-	buffPainter.drawText(contentsRect, Qt::AlignCenter, shortText);
-	buffPainter.end();
-
-	Plasma::PaintUtils::shadowBlur(image, 1, Qt::black);
-	//hole in the shadow
-	buffPainter.begin(&image);
-	buffPainter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
-	buffPainter.setFont(font);
-	buffPainter.drawText(contentsRect, Qt::AlignCenter, shortText);
-	buffPainter.end();
-
-	m_pixmap = QPixmap(contentsRect.size());
-	m_pixmap.fill(Qt::transparent);
-	buffPainter.begin(&m_pixmap);
-	buffPainter.drawImage(contentsRect, image);
-	buffPainter.drawPixmap(contentsRect, pixmap);
+	m_pixmap = Plasma::PaintUtils::texturedText(shortText, font, m_svg);
 }
 
 QList<QAction*> KeyboardApplet::contextualActions()
