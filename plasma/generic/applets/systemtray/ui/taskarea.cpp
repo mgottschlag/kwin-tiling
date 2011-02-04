@@ -188,14 +188,16 @@ QStringList TaskArea::alwaysShownTypes() const
 void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 {
     d->hasTasksThatCanHide = false;
+    bool changedPositioning = false;
     foreach (Task *task, tasks) {
         //kDebug() << "checking" << task->name() << task->typeId() << d->alwaysShownTypes;
-        addWidgetForTask(task);
+        changedPositioning = addWidgetForTask(task) || changedPositioning;
     }
 
-    checkUnhideTool();
-    d->topLayout->invalidate();
-    emit sizeHintChanged(Qt::PreferredSize);
+    if (checkUnhideTool() || changedPositioning) {
+        d->topLayout->invalidate();
+        emit sizeHintChanged(Qt::PreferredSize);
+    }
 }
 
 void TaskArea::delayedReposition()
@@ -205,24 +207,26 @@ void TaskArea::delayedReposition()
         return;
     }
 
+    bool changedPositioning = false;
     foreach (const QWeakPointer<Task> &task, d->delayedRepositionTasks) {
         //kDebug() << "checking" << task->name() << task->typeId() << d->alwaysShownTypes;
         if (task) {
-            addWidgetForTask(task.data());
+            changedPositioning = addWidgetForTask(task.data()) || changedPositioning;
         }
     }
     d->delayedRepositionTasks.clear();
 
-    checkUnhideTool();
-    d->topLayout->invalidate();
-    emit sizeHintChanged(Qt::PreferredSize);
+    if (checkUnhideTool() || changedPositioning) {
+        d->topLayout->invalidate();
+        emit sizeHintChanged(Qt::PreferredSize);
+    }
 }
 
 void TaskArea::addTask(Task *task)
 {
     bool changedPositioning = addWidgetForTask(task);
-    changedPositioning = checkUnhideTool() || changedPositioning;
-    if (changedPositioning) {
+    if (checkUnhideTool() || changedPositioning) {
+        d->topLayout->invalidate();
         emit sizeHintChanged(Qt::PreferredSize);
     }
 }
@@ -417,15 +421,10 @@ void TaskArea::removeTask(Task *task)
         }
         d->taskForWidget.remove(widget);
         d->taskCategories.remove(task);
+
+        d->topLayout->invalidate();
+        emit sizeHintChanged(Qt::PreferredSize);
     }
-
-    relayout();
-}
-
-void TaskArea::relayout()
-{
-    d->topLayout->invalidate();
-    emit sizeHintChanged(Qt::PreferredSize);
 }
 
 void TaskArea::relayoutHiddenTasks()

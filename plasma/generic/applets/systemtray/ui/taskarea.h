@@ -68,7 +68,6 @@ signals:
     void toggleHiddenItems();
 
 private slots:
-    void relayout();
     void relayoutHiddenTasks();
 
 private:
