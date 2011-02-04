@@ -73,6 +73,7 @@ private:
 	const Rules* rules;
 	KeyboardConfig* keyboardConfig;
 	LayoutsMenu* layoutsMenu;
+	Plasma::Svg *m_svg;
 };
 
 #endif /* KEYBOARD_APPLET_H_ */
