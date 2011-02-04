@@ -263,6 +263,7 @@ bool TaskArea::removeFromHiddenArea(SystemTray::Task *task)
         taskLabel->deleteLater();
     }
 
+    checkUnhideTool();
     d->hiddenTasks.remove(task);
     d->hiddenRelayoutTimer->start(250);
     return true;
