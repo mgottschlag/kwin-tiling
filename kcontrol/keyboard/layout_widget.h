@@ -31,14 +31,14 @@ class KeyboardConfig;
 class LayoutsMenu;
 
 /**
- * Note: does not listen to configuraton changes as currently we only use it in screen lock dialog
+ * Note: does not listen to configuration changes as currently we only use it in screen lock dialog
  */
 class LayoutWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	LayoutWidget(QWidget* parent = 0, const QList<QVariant>& args = QList<QVariant>());
+	explicit LayoutWidget(QWidget* parent = 0, const QList<QVariant>& args = QList<QVariant>());
 	virtual ~LayoutWidget();
 
 private Q_SLOTS:

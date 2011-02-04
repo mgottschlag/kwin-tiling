@@ -39,7 +39,7 @@
 
 static const int FLAG_MAX_WIDTH = 21;
 static const int FLAG_MAX_HEIGHT = 14;
-static const QString flagTemplate("l10n/%1/flag.png");
+static const char flagTemplate[] = "l10n/%1/flag.png";
 
 Flags::Flags()
 {
@@ -62,7 +62,7 @@ const QIcon Flags::getIcon(const QString& layout)
 	if( ! layout.isEmpty() ) {
 		QString countryCode = getCountryFromLayoutName( layout );
 		if( ! countryCode.isEmpty() ) {
-			QString file = KStandardDirs::locate("locale", flagTemplate.arg(countryCode));
+			QString file = KStandardDirs::locate("locale", QString(flagTemplate).arg(countryCode));
 //			kDebug() << "Creating icon for" << layout << "with" << file;
 			icon.addFile(file);
 		}

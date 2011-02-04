@@ -16,6 +16,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "layouts_menu.h"
+
 #include <kmenu.h>
 #include <ktoolinvocation.h>
 #include <klocalizedstring.h>
@@ -27,7 +29,6 @@
 #include "x11_helper.h"
 #include "xkb_helper.h"
 #include "flags.h"
-#include "layouts_menu.h"
 
 
 LayoutsMenu::LayoutsMenu(const KeyboardConfig& keyboardConfig_, const Rules& rules_, Flags& flags_):

@@ -130,7 +130,9 @@ int XInputEventNotifier::registerForNewDeviceEvent(Display* display)
 
 #else
 
+#ifdef __GNUC__
 #warning "Keyboard daemon is compiled without XInput, keyboard settings will be reset when new keyboard device is plugged in!"
+#endif
 
 int XInputEventNotifier::registerForNewDeviceEvent(Display* /*display*/)
 {
