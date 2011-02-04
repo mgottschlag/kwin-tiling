@@ -23,6 +23,7 @@
 #include <kiconloader.h>
 #include <plasma/theme.h>
 #include <plasma/tooltipmanager.h>
+#include <plasma/paintutils.h>
 
 #include <QtGui/QPainter>
 #include <QtGui/QPixmap>
@@ -52,6 +53,9 @@ KeyboardApplet::KeyboardApplet(QObject *parent, const QVariantList &args):
 		return;
 	}
 
+    m_svg = new Plasma::Svg(this);
+	m_svg->setImagePath("widgets/labeltexture");
+	m_svg->setContainsMultipleImages(true);
 	resize(48,48);
 
 	setHasConfigurationInterface(false);
@@ -115,6 +119,7 @@ void KeyboardApplet::destroy()
 
 void KeyboardApplet::layoutChanged()
 {
+	generatePixmap();
 	updateTooltip();
 	update();
 }
@@ -137,43 +142,23 @@ const QIcon KeyboardApplet::getFlag(const QString& layout)
 
 void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem */*option*/, const QRect &contentsRect)
 {
-	p->setRenderHint(QPainter::SmoothPixmapTransform);
-	p->setRenderHint(QPainter::Antialiasing);
-	//p->setBrush(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-
 	LayoutUnit layoutUnit = X11Helper::getCurrentLayout();
 	if( layoutUnit.isEmpty() )
 		return;
 
 	const QIcon icon(getFlag(layoutUnit.layout));
 	if( ! icon.isNull() ) {
+		p->save();
+		p->setRenderHint(QPainter::SmoothPixmapTransform);
+		p->setRenderHint(QPainter::Antialiasing);
 		QPixmap pixmap = icon.pixmap(contentsRect.size());
 		p->drawPixmap(contentsRect, pixmap);
+		p->restore();
 	}
 	else {
-		QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
-		kDebug() << "applet: LayoutChanged" << layoutUnit.toString() << shortText;
-
-		p->save();
-		p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-		QFont font = Plasma::Theme::defaultTheme()->font(Plasma::Theme::DesktopFont);
-		int height = qMin(contentsRect.height(), contentsRect.width());
-		int fontSize = shortText.length() == 2
-				? height * 7 / 15
-				: height * 5 / 15;
-
-		int smallestReadableSize = KGlobalSettings::smallestReadableFont().pixelSize();
-		if( fontSize < smallestReadableSize ) {
-			fontSize = smallestReadableSize;
-		}
-		font.setPixelSize(fontSize);
-		p->setFont(font);
-		p->drawText(contentsRect, Qt::AlignCenter, shortText);
-
-//		QPixmap pixmap = Utils::shadowText(shortText, font, Qt::black, Qt::white, QPoint(), 4);
-//		p->drawPixmap(contentsRect, pixmap);
-
-		p->restore();
+		QRect finalRect(m_pixmap.rect());
+		finalRect.moveCenter(contentsRect.center());
+		p->drawPixmap(finalRect, m_pixmap);
 	}
 }
 
@@ -197,6 +182,34 @@ void KeyboardApplet::constraintsEvent(Plasma::Constraints constraints)
         }
 	setMinimumSize(iconSize, iconSize);
     }
+    if (constraints & Plasma::SizeConstraint) {
+		generatePixmap();
+	}
+}
+
+void KeyboardApplet::generatePixmap()
+{
+	LayoutUnit layoutUnit = X11Helper::getCurrentLayout();
+	QRect contentsRect = KeyboardApplet::contentsRect().toRect();
+	QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
+	kDebug() << "applet: LayoutChanged" << layoutUnit.toString() << shortText;
+
+	QPixmap pixmap(contentsRect.size());
+	pixmap.fill(Qt::transparent);
+
+	QFont font = Plasma::Theme::defaultTheme()->font(Plasma::Theme::DesktopFont);
+	int height = qMin(contentsRect.height(), contentsRect.width());
+	int fontSize = shortText.length() == 2
+			? height * 13 / 15
+			: height * 5 / 15;
+
+	int smallestReadableSize = KGlobalSettings::smallestReadableFont().pixelSize();
+	if( fontSize < smallestReadableSize ) {
+		fontSize = smallestReadableSize;
+	}
+	font.setPixelSize(fontSize);
+
+	m_pixmap = Plasma::PaintUtils::texturedText(shortText, font, m_svg);
 }
 
 QList<QAction*> KeyboardApplet::contextualActions()

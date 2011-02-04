@@ -57,6 +57,7 @@ public:
 protected:
 	void mousePressEvent ( QGraphicsSceneMouseEvent *event );
 	QList<QAction*> contextualActions();
+	void generatePixmap();
 //	void createConfigurationInterface(KConfigDialog *parent);
 
 private Q_SLOTS:
@@ -73,6 +74,8 @@ private:
 	const Rules* rules;
 	KeyboardConfig* keyboardConfig;
 	LayoutsMenu* layoutsMenu;
+	Plasma::Svg *m_svg;
+	QPixmap m_pixmap;
 };
 
 #endif /* KEYBOARD_APPLET_H_ */
