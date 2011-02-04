@@ -322,6 +322,9 @@ RateList RandROutput::refreshRates(const QSize &s) const
 
 float RandROutput::refreshRate() const
 {
+	if (!m_crtc->isValid())
+		return 0;
+
 	return m_crtc->mode().refreshRate();
 }
 
@@ -406,13 +409,10 @@ void RandROutput::save(KConfig &config)
 	if (!m_connected)
 		return;
 
-	if (m_crtc->id() == None)
-	{
-		cg.writeEntry("Active", false);
-	     return;	
-	}
-
-	cg.writeEntry("Active", true);
+	cg.writeEntry("Active", isActive());
+	
+	if (!isActive())
+	     return;
 
 	// if the outputs are unified, do not save size and rotation
 	// this allow us to set back the size and rotation being used
@@ -507,8 +507,10 @@ void RandROutput::slotChangeRefreshRate(QAction *action)
 
 void RandROutput::slotDisable()
 {
-	proposeRect(QRect());
-	proposeRefreshRate(0);
+	m_originalRect = rect();
+	m_proposedRect = QRect();
+	m_originalRate = refreshRate();
+	m_proposedRate = 0;
 	setCrtc(m_screen->crtc(None));
 }
 
@@ -595,6 +597,13 @@ bool RandROutput::tryCrtc(RandRCrtc *crtc, int changes)
 
 bool RandROutput::applyProposed(int changes, bool confirm)
 {
+	// If disabled, save anyway to ensure it's saved
+	if (!isActive())
+	{
+		KConfig cfg("krandrrc");
+		save(cfg);
+		return true;
+	}
 	// Don't try to disable an already disabled output.
 	if (!m_proposedRect.isValid() && !m_crtc->isValid()) {
 		return true;
