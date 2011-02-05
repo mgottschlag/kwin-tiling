@@ -71,7 +71,6 @@ private slots:
     void relayoutHiddenTasks();
 
 private:
-    void setUnhideToolIconSizes();
     bool addWidgetForTask(SystemTray::Task *task);
     QGraphicsWidget* findWidget(Task *task);
     bool checkUnhideTool();
