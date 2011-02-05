@@ -86,49 +86,6 @@ inline bool KWIN_EXPORT isPowerOfTwo(int x)
 int KWIN_EXPORT nearestPowerOfTwo(int x);
 
 /**
- * Renders quads using given vertices.
- * If texture is not 0, each texture coordinate much have two components (st).
- * If color is not 0, each color much have four components (rgba).
- * Note that texture coordinates must match texture type (normalized/unnormalized
- * for GL_TEXTURE_2D/GL_TEXTURE_ARB).
- *
- * In OpenGL ES this method is a no-op.
- *
- * @param count number of vertices to use.
- * @param dim number of components per vertex coordinate in vertices array.
- * @param stride byte offset of consecutive elements in arrays. If 0, then
- *  arrays must be tighly packed. Stride must be a multiple of sizeof(float)!
- * @deprecated  Use GLVertexBuffer
- * @see GLVertexBuffer
- **/
-KWIN_EXPORT void renderGLGeometry(const QRegion& region, int count,
-                                  const float* vertices, const float* texture = 0, const float* color = 0,
-                                  int dim = 2, int stride = 0);
-/**
- * Same as above, renders without specified region
- * @deprecated  Use GLVertexBuffer
- * @see GLVertexBuffer
- **/
-KWIN_EXPORT void renderGLGeometry(int count,
-                                  const float* vertices, const float* texture = 0, const float* color = 0,
-                                  int dim = 2, int stride = 0);
-
-/**
- * In OpenGL ES this method is a no-op.
- *
- * @deprecated Use GLVertexBuffer
- * @see GLVertexBuffer
- **/
-KWIN_EXPORT void renderGLGeometryImmediate(int count,
-        const float* vertices, const float* texture = 0, const float* color = 0,
-        int dim = 2, int stride = 0);
-
-/**
- * @deprecated Quads are not available in OpenGL ES
- **/
-KWIN_EXPORT void addQuadVertices(QVector<float>& verts, float x1, float y1, float x2, float y2);
-
-/**
  * Push a new matrix on the GL matrix stack.
  * In GLES this method is a noop. This method should be preferred over glPushMatrix
  * as it also handles GLES.
@@ -249,13 +206,13 @@ public:
 
     static void initStatic();
     static bool NPOTTextureSupported()  {
-        return mNPOTTextureSupported;
+        return sNPOTTextureSupported;
     }
     static bool framebufferObjectSupported()  {
-        return mFramebufferObjectSupported;
+        return sFramebufferObjectSupported;
     }
     static bool saturationSupported()  {
-        return mSaturationSupported;
+        return sSaturationSupported;
     }
 
 protected:
@@ -278,9 +235,9 @@ private:
     GLVertexBuffer* m_vbo;
     QSize m_cachedSize;
 
-    static bool mNPOTTextureSupported;
-    static bool mFramebufferObjectSupported;
-    static bool mSaturationSupported;
+    static bool sNPOTTextureSupported;
+    static bool sFramebufferObjectSupported;
+    static bool sSaturationSupported;
     Q_DISABLE_COPY(GLTexture)
 };
 
@@ -295,6 +252,7 @@ public:
     }
 
     int uniformLocation(const char* name);
+
     bool setUniform(const char* name, float value);
     bool setUniform(const char* name, int value);
     bool setUniform(const char* name, const QVector2D& value);
@@ -302,6 +260,15 @@ public:
     bool setUniform(const char* name, const QVector4D& value);
     bool setUniform(const char* name, const QMatrix4x4& value);
     bool setUniform(const char* name, const QColor& color);
+
+    bool setUniform(int location, float value);
+    bool setUniform(int location, int value);
+    bool setUniform(int location, const QVector2D &value);
+    bool setUniform(int location, const QVector3D &value);
+    bool setUniform(int location, const QVector4D &value);
+    bool setUniform(int location, const QMatrix4x4 &value);
+    bool setUniform(int location, const QColor &value);
+
     int attributeLocation(const char* name);
     bool setAttribute(const char* name, float value);
     /**
@@ -317,17 +284,18 @@ public:
 
     static void initStatic();
     static bool fragmentShaderSupported()  {
-        return mFragmentShaderSupported;
+        return sFragmentShaderSupported;
     }
     static bool vertexShaderSupported()  {
-        return mVertexShaderSupported;
+        return sVertexShaderSupported;
     }
 
 
 protected:
     GLShader();
     bool loadFromFiles(const QString& vertexfile, const QString& fragmentfile);
-    bool load(const QString& vertexsource, const QString& fragmentsource);
+    bool load(const QByteArray &vertexSource, const QByteArray &fragmentSource);
+    bool compile(GLuint program, GLenum shaderType, const QByteArray &sourceCode) const;
     void bind();
     void unbind();
 
@@ -335,8 +303,8 @@ protected:
 private:
     unsigned int mProgram;
     bool mValid;
-    static bool mFragmentShaderSupported;
-    static bool mVertexShaderSupported;
+    static bool sFragmentShaderSupported;
+    static bool sVertexShaderSupported;
     float mTextureWidth;
     float mTextureHeight;
     friend class ShaderManager;
@@ -455,7 +423,7 @@ public:
      * @param fragmentSource The source code of the fragment shader.
      * @return The created shader
      **/
-    GLShader *loadShaderFromCode(const QString &vertexSource, const QString &fragmentSource);
+    GLShader *loadShaderFromCode(const QByteArray &vertexSource, const QByteArray &fragmentSource);
 
     /**
      * @return a pointer to the ShaderManager instance
@@ -519,7 +487,7 @@ public:
 
     static void initStatic();
     static bool supported()  {
-        return mSupported;
+        return sSupported;
     }
 
 
@@ -528,7 +496,7 @@ protected:
 
 
 private:
-    static bool mSupported;
+    static bool sSupported;
 
     GLTexture* mTexture;
     bool mValid;

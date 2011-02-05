@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef KWIN_HAVE_OPENGL
 #include "kwinglobals.h"
 #include "kwineffects.h"
+#include "kwinglplatform.h"
 
 #include "kdebug.h"
 #include <kstandarddirs.h>
@@ -170,133 +171,6 @@ int nearestPowerOfTwo(int x)
     return 1 << last;
 }
 
-void renderGLGeometry(int count, const float* vertices, const float* texture, const float* color,
-                      int dim, int stride)
-{
-    return renderGLGeometry(infiniteRegion(), count, vertices, texture, color, dim, stride);
-}
-
-void renderGLGeometry(const QRegion& region, int count,
-                      const float* vertices, const float* texture, const float* color,
-                      int dim, int stride)
-{
-#ifdef KWIN_HAVE_OPENGLES
-    Q_UNUSED(region)
-    Q_UNUSED(count)
-    Q_UNUSED(vertices)
-    Q_UNUSED(texture)
-    Q_UNUSED(color)
-    Q_UNUSED(dim)
-    Q_UNUSED(stride)
-#else
-    // Using arrays only makes sense if we have larger number of vertices.
-    //  Otherwise overhead of enabling/disabling them is too big.
-    bool use_arrays = (count > 5);
-
-    if (use_arrays) {
-        glPushAttrib(GL_ENABLE_BIT);
-        glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
-        // Enable arrays
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(dim, GL_FLOAT, stride, vertices);
-        if (texture != NULL) {
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-            glTexCoordPointer(2, GL_FLOAT, stride, texture);
-        }
-        if (color != NULL) {
-            glEnableClientState(GL_COLOR_ARRAY);
-            glColorPointer(4, GL_FLOAT, stride, color);
-        }
-    }
-
-    // Clip using scissoring
-    if (!effects->isRenderTargetBound()) {
-        PaintClipper pc(region);
-        for (PaintClipper::Iterator iterator;
-                !iterator.isDone();
-                iterator.next()) {
-            if (use_arrays)
-                glDrawArrays(GL_QUADS, 0, count);
-            else
-                renderGLGeometryImmediate(count, vertices, texture, color, dim, stride);
-        }
-    } else {
-        if (use_arrays)
-            glDrawArrays(GL_QUADS, 0, count);
-        else
-            renderGLGeometryImmediate(count, vertices, texture, color, dim, stride);
-    }
-
-    if (use_arrays) {
-        glPopClientAttrib();
-        glPopAttrib();
-    }
-#endif
-}
-
-void renderGLGeometryImmediate(int count, const float* vertices, const float* texture, const float* color,
-                               int dim, int stride)
-{
-#ifdef KWIN_HAVE_OPENGLES
-    Q_UNUSED(count)
-    Q_UNUSED(vertices)
-    Q_UNUSED(texture)
-    Q_UNUSED(color)
-    Q_UNUSED(dim)
-    Q_UNUSED(stride)
-#else
-    // Find out correct glVertex*fv function according to dim parameter.
-    void (*glVertexFunc)(const float*) = glVertex2fv;
-    if (dim == 3)
-        glVertexFunc = glVertex3fv;
-    else if (dim == 4)
-        glVertexFunc = glVertex4fv;
-
-    // These are number of _floats_ per item, not _bytes_ per item as opengl uses.
-    int vsize, tsize, csize;
-    vsize = tsize = csize = stride / sizeof(float);
-    if (!stride) {
-        // 0 means that arrays are tightly packed. This gives us different
-        //  strides for different arrays
-        vsize = dim;
-        tsize = 2;
-        csize = 4;
-    }
-
-    glBegin(GL_QUADS);
-    // This sucks. But makes it faster.
-    if (texture && color) {
-        for (int i = 0; i < count; i++) {
-            glTexCoord2fv(texture + i * tsize);
-            glColor4fv(color + i * csize);
-            glVertexFunc(vertices + i * vsize);
-        }
-    } else if (texture) {
-        for (int i = 0; i < count; i++) {
-            glTexCoord2fv(texture + i * tsize);
-            glVertexFunc(vertices + i * vsize);
-        }
-    } else if (color) {
-        for (int i = 0; i < count; i++) {
-            glColor4fv(color + i * csize);
-            glVertexFunc(vertices + i * vsize);
-        }
-    } else {
-        for (int i = 0; i < count; i++)
-            glVertexFunc(vertices + i * vsize);
-    }
-    glEnd();
-#endif
-}
-
-void addQuadVertices(QVector<float>& verts, float x1, float y1, float x2, float y2)
-{
-    verts << x1 << y1;
-    verts << x1 << y2;
-    verts << x2 << y2;
-    verts << x2 << y1;
-}
-
 void pushMatrix()
 {
 #ifndef KWIN_HAVE_OPENGLES
@@ -357,9 +231,9 @@ void popMatrix()
 // GLTexture
 //****************************************
 
-bool GLTexture::mNPOTTextureSupported = false;
-bool GLTexture::mFramebufferObjectSupported = false;
-bool GLTexture::mSaturationSupported = false;
+bool GLTexture::sNPOTTextureSupported = false;
+bool GLTexture::sFramebufferObjectSupported = false;
+bool GLTexture::sSaturationSupported = false;
 
 GLTexture::GLTexture()
 {
@@ -432,13 +306,13 @@ void GLTexture::init()
 void GLTexture::initStatic()
 {
 #ifdef KWIN_HAVE_OPENGLES
-    mNPOTTextureSupported = true;
-    mFramebufferObjectSupported = true;
-    mSaturationSupported = true;
+    sNPOTTextureSupported = true;
+    sFramebufferObjectSupported = true;
+    sSaturationSupported = true;
 #else
-    mNPOTTextureSupported = hasGLExtension("GL_ARB_texture_non_power_of_two");
-    mFramebufferObjectSupported = hasGLExtension("GL_EXT_framebuffer_object");
-    mSaturationSupported = ((hasGLExtension("GL_ARB_texture_env_crossbar")
+    sNPOTTextureSupported = hasGLExtension("GL_ARB_texture_non_power_of_two");
+    sFramebufferObjectSupported = hasGLExtension("GL_EXT_framebuffer_object");
+    sSaturationSupported = ((hasGLExtension("GL_ARB_texture_env_crossbar")
                              && hasGLExtension("GL_ARB_texture_env_dot3")) || hasGLVersion(1, 4))
                            && (glTextureUnitsCount >= 4) && glActiveTexture != NULL;
 #endif
@@ -813,24 +687,24 @@ QImage GLTexture::convertToGLFormat(const QImage& img) const
 // GLShader
 //****************************************
 
-bool GLShader::mFragmentShaderSupported = false;
-bool GLShader::mVertexShaderSupported = false;
+bool GLShader::sFragmentShaderSupported = false;
+bool GLShader::sVertexShaderSupported = false;
 
 void GLShader::initStatic()
 {
 #ifdef KWIN_HAVE_OPENGLES
-    mFragmentShaderSupported = mVertexShaderSupported = true;
+    sFragmentShaderSupported = sVertexShaderSupported = true;
 #else
-    mFragmentShaderSupported = mVertexShaderSupported =
+    sFragmentShaderSupported = sVertexShaderSupported =
                                    hasGLExtension("GL_ARB_shader_objects") && hasGLExtension("GL_ARB_shading_language_100");
-    mVertexShaderSupported &= hasGLExtension("GL_ARB_vertex_shader");
-    mFragmentShaderSupported &= hasGLExtension("GL_ARB_fragment_shader");
+    sVertexShaderSupported &= hasGLExtension("GL_ARB_vertex_shader");
+    sFragmentShaderSupported &= hasGLExtension("GL_ARB_fragment_shader");
 #endif
 }
 
 GLShader::GLShader()
-    : mValid(false)
-    , mProgram(0)
+    : mProgram(0)
+    , mValid(false)
     , mTextureWidth(-1.0f)
     , mTextureHeight(-1.0f)
 {
@@ -853,126 +727,119 @@ GLShader::~GLShader()
     }
 }
 
-bool GLShader::loadFromFiles(const QString& vertexfile, const QString& fragmentfile)
+bool GLShader::loadFromFiles(const QString &vertexFile, const QString &fragmentFile)
 {
-    QFile vf(vertexfile);
+    QFile vf(vertexFile);
     if (!vf.open(QIODevice::ReadOnly)) {
-        kError(1212) << "Couldn't open '" << vertexfile << "' for reading!" << endl;
+        kError(1212) << "Couldn't open" << vertexFile << "for reading!" << endl;
         return false;
     }
-    QString vertexsource(vf.readAll());
+    const QByteArray vertexSource = vf.readAll();
 
-    QFile ff(fragmentfile);
+    QFile ff(fragmentFile);
     if (!ff.open(QIODevice::ReadOnly)) {
-        kError(1212) << "Couldn't open '" << fragmentfile << "' for reading!" << endl;
+        kError(1212) << "Couldn't open" << fragmentFile << "for reading!" << endl;
         return false;
     }
-    QString fragsource(ff.readAll());
+    const QByteArray fragmentSource = ff.readAll();
 
-    return load(vertexsource, fragsource);
+    return load(vertexSource, fragmentSource);
 }
 
-bool GLShader::load(const QString& vertexsource, const QString& fragmentsource)
+bool GLShader::compile(GLuint program, GLenum shaderType, const QByteArray &source) const
+{
+    GLuint shader = glCreateShader(shaderType);
+
+    // Prepare the source code
+    QByteArray ba;
+#ifdef KWIN_HAVE_OPENGLES
+    ba.append("#ifdef GL_ES\nprecision highp float;\n#endif\n");
+#endif
+    ba.append(source);
+
+    const char* src = ba.constData();
+    glShaderSource(shader, 1, &src, NULL);
+
+    // Compile the shader
+    glCompileShader(shader);
+
+    // Get the shader info log
+    int maxLength, length;
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+    QByteArray log(maxLength, 0);
+    glGetShaderInfoLog(shader, maxLength, &length, log.data());
+
+    // Check the status
+    int status;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+
+    if (status == 0) {
+        const char *typeName = (shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment");
+        kError(1212) << "Failed to compile" << typeName << "shader:" << endl << log << endl;
+    } else if (length > 0)
+        kDebug(1212) << "Shader compile log:" << log;
+
+    if (status != 0)
+        glAttachShader(program, shader);
+
+    glDeleteShader(shader);
+    return status != 0;
+}
+
+bool GLShader::load(const QByteArray &vertexSource, const QByteArray &fragmentSource)
 {
     // Make sure shaders are actually supported
-    if ((!vertexsource.isEmpty() && !vertexShaderSupported()) ||
-            (!fragmentsource.isEmpty() && !fragmentShaderSupported())) {
-        kDebug(1212) << "Shaders not supported";
+    if (!vertexShaderSupported() || !fragmentShaderSupported()) {
+        kError(1212) << "Shaders are not supported";
         return false;
     }
 
-    GLuint vertexshader;
-    GLuint fragmentshader;
-
-    GLsizei logsize, logarraysize;
-    char* log = 0;
-
-    // Create program object
+    // Create the shader program
     mProgram = glCreateProgram();
-    if (!vertexsource.isEmpty()) {
-        // Create shader object
-        vertexshader = glCreateShader(GL_VERTEX_SHADER);
-        // Load it
-        QByteArray srcba;
-#ifdef KWIN_HAVE_OPENGLES
-        srcba.append("#ifdef GL_ES\nprecision highp float;\n#endif\n");
-#endif
-        srcba.append(vertexsource.toLatin1());
-        const char* src = srcba.data();
-        glShaderSource(vertexshader, 1, &src, NULL);
-        // Compile the shader
-        glCompileShader(vertexshader);
-        // Make sure it compiled correctly
-        int compiled;
-        glGetShaderiv(vertexshader, GL_COMPILE_STATUS, &compiled);
-        // Get info log
-        glGetShaderiv(vertexshader, GL_INFO_LOG_LENGTH, &logarraysize);
-        log = new char[logarraysize];
-        glGetShaderInfoLog(vertexshader, logarraysize, &logsize, log);
-        if (!compiled) {
-            kError(1212) << "Couldn't compile vertex shader! Log:" << endl << log << endl;
-            delete[] log;
+
+    // Compile the vertex shader
+    if (!vertexSource.isEmpty()) {
+        bool success = compile(mProgram, GL_VERTEX_SHADER, vertexSource);
+
+        if (!success) {
+            glDeleteProgram(mProgram);
+            mProgram = 0;
             return false;
-        } else if (logsize > 0)
-            kDebug(1212) << "Vertex shader compilation log:" << log;
-        // Attach the shader to the program
-        glAttachShader(mProgram, vertexshader);
-        // Delete shader
-        glDeleteShader(vertexshader);
-        delete[] log;
+        }
     }
 
+    // Compile the fragment shader
+    if (!fragmentSource.isEmpty()) {
+        bool success = compile(mProgram, GL_FRAGMENT_SHADER, fragmentSource);
 
-    if (!fragmentsource.isEmpty()) {
-        fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
-        // Load it
-        QByteArray srcba;
-#ifdef KWIN_HAVE_OPENGLES
-        srcba.append("#ifdef GL_ES\nprecision highp float;\n#endif\n");
-#endif
-        srcba.append(fragmentsource.toLatin1());
-        const char* src = srcba.data();
-        glShaderSource(fragmentshader, 1, &src, NULL);
-        //glShaderSource(fragmentshader, 1, &fragmentsrc.latin1(), NULL);
-        // Compile the shader
-        glCompileShader(fragmentshader);
-        // Make sure it compiled correctly
-        int compiled;
-        glGetShaderiv(fragmentshader, GL_COMPILE_STATUS, &compiled);
-        // Get info log
-        glGetShaderiv(fragmentshader, GL_INFO_LOG_LENGTH, &logarraysize);
-        log = new char[logarraysize];
-        glGetShaderInfoLog(fragmentshader, logarraysize, &logsize, log);
-        if (!compiled) {
-            kError(1212) << "Couldn't compile fragment shader! Log:" << endl << log << endl;
-            delete[] log;
+        if (!success) {
+            glDeleteProgram(mProgram);
+            mProgram = 0;
             return false;
-        } else if (logsize > 0)
-            kDebug(1212) << "Fragment shader compilation log:" << log;
-        // Attach the shader to the program
-        glAttachShader(mProgram, fragmentshader);
-        // Delete shader
-        glDeleteShader(fragmentshader);
-        delete[] log;
+        }
     }
 
-
-    // Link the program
     glLinkProgram(mProgram);
-    // Make sure it linked correctly
-    int linked;
-    glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
-    // Get info log
-    glGetProgramiv(mProgram, GL_INFO_LOG_LENGTH, &logarraysize);
-    log = new char[logarraysize];
-    glGetProgramInfoLog(mProgram, logarraysize, &logsize, log);
-    if (!linked) {
-        kError(1212) << "Couldn't link the program! Log" << endl << log << endl;
-        delete[] log;
+
+    // Get the program info log
+    int maxLength, length;
+    glGetProgramiv(mProgram, GL_INFO_LOG_LENGTH, &maxLength);
+
+    QByteArray log(maxLength, 0);
+    glGetProgramInfoLog(mProgram, maxLength, &length, log.data());
+
+    // Make sure the program linked successfully
+    int status;
+    glGetProgramiv(mProgram, GL_LINK_STATUS, &status);
+
+    if (status == 0) {
+        kError(1212) << "Failed to link shader:" << endl << log << endl;
+        glDeleteProgram(mProgram);
+        mProgram = 0;
         return false;
-    } else if (logsize > 0)
-        kDebug(1212) << "Shader linking log:" << log;
-    delete[] log;
+    } else if (length > 0)
+        kDebug(1212) << "Shader link log:" << log;
 
     mValid = true;
     return true;
@@ -988,60 +855,96 @@ void GLShader::unbind()
     glUseProgram(0);
 }
 
-int GLShader::uniformLocation(const char* name)
+int GLShader::uniformLocation(const char *name)
 {
     int location = glGetUniformLocation(mProgram, name);
     return location;
 }
 
-bool GLShader::setUniform(const char* name, float value)
+bool GLShader::setUniform(const char *name, float value)
 {
-    int location = uniformLocation(name);
+    const int location = uniformLocation(name);
+    return setUniform(location, value);
+}
+
+bool GLShader::setUniform(const char *name, int value)
+{
+    const int location = uniformLocation(name);
+    return setUniform(location, value);
+}
+
+bool GLShader::setUniform(const char *name, const QVector2D& value)
+{
+    const int location = uniformLocation(name);
+    return setUniform(location, value);
+}
+
+bool GLShader::setUniform(const char *name, const QVector3D& value)
+{
+    const int location = uniformLocation(name);
+    return setUniform(location, value);
+}
+
+bool GLShader::setUniform(const char *name, const QVector4D& value)
+{
+    const int location = uniformLocation(name);
+    return setUniform(location, value);
+}
+
+bool GLShader::setUniform(const char *name, const QMatrix4x4& value)
+{
+    const int location = uniformLocation(name);
+    return setUniform(location, value);
+}
+
+bool GLShader::setUniform(const char *name, const QColor& color)
+{
+    const int location = uniformLocation(name);
+    return setUniform(location, color);
+}
+
+bool GLShader::setUniform(int location, float value)
+{
     if (location >= 0) {
         glUniform1f(location, value);
     }
     return (location >= 0);
 }
 
-bool GLShader::setUniform(const char* name, int value)
+bool GLShader::setUniform(int location, int value)
 {
-    int location = uniformLocation(name);
     if (location >= 0) {
         glUniform1i(location, value);
     }
     return (location >= 0);
 }
 
-bool GLShader::setUniform(const char* name, const QVector2D& value)
+bool GLShader::setUniform(int location, const QVector2D &value)
 {
-    const int location = uniformLocation(name);
     if (location >= 0) {
-        glUniform2f(location, value.x(), value.y());
+        glUniform2fv(location, 1, (const GLfloat*)&value);
     }
     return (location >= 0);
 }
 
-bool GLShader::setUniform(const char* name, const QVector3D& value)
+bool GLShader::setUniform(int location, const QVector3D &value)
 {
-    const int location = uniformLocation(name);
     if (location >= 0) {
-        glUniform3f(location, value.x(), value.y(), value.z());
+        glUniform3fv(location, 1, (const GLfloat*)&value);
     }
     return (location >= 0);
 }
 
-bool GLShader::setUniform(const char* name, const QVector4D& value)
+bool GLShader::setUniform(int location, const QVector4D &value)
 {
-    const int location = uniformLocation(name);
     if (location >= 0) {
-        glUniform4f(location, value.x(), value.y(), value.z(), value.w());
+        glUniform4fv(location, 1, (const GLfloat*)&value);
     }
     return (location >= 0);
 }
 
-bool GLShader::setUniform(const char* name, const QMatrix4x4& value)
+bool GLShader::setUniform(int location, const QMatrix4x4 &value)
 {
-    const int location = uniformLocation(name);
     if (location >= 0) {
         GLfloat m[16];
         const qreal *data = value.constData();
@@ -1056,9 +959,8 @@ bool GLShader::setUniform(const char* name, const QMatrix4x4& value)
     return (location >= 0);
 }
 
-bool GLShader::setUniform(const char* name, const QColor& color)
+bool GLShader::setUniform(int location, const QColor &color)
 {
-    const int location = uniformLocation(name);
     if (location >= 0) {
         glUniform4f(location, color.redF(), color.greenF(), color.blueF(), color.alphaF());
     }
@@ -1272,7 +1174,7 @@ GLShader *ShaderManager::loadVertexShader(ShaderType fragment, const QString &ve
     return shader;
 }
 
-GLShader *ShaderManager::loadShaderFromCode(const QString &vertexSource, const QString &fragmentSource)
+GLShader *ShaderManager::loadShaderFromCode(const QByteArray &vertexSource, const QByteArray &fragmentSource)
 {
     GLShader *shader = new GLShader();
     shader->load(vertexSource, fragmentSource);
@@ -1281,6 +1183,11 @@ GLShader *ShaderManager::loadShaderFromCode(const QString &vertexSource, const Q
 
 void ShaderManager::initShaders()
 {
+    // HACK: the generic shaders fail with NVIDIA's blob
+    // temporarily disable them to force kwin on GL 1.x profile
+    if (GLPlatform::instance()->driver() == Driver_NVidia) {
+        return;
+    }
     m_orthoShader = new GLShader(":/resources/scene-vertex.glsl", ":/resources/scene-fragment.glsl");
     if (m_orthoShader->isValid()) {
         pushShader(SimpleShader, true);
@@ -1389,14 +1296,14 @@ void ShaderManager::resetShader(ShaderType type)
 }
 
 /***  GLRenderTarget  ***/
-bool GLRenderTarget::mSupported = false;
+bool GLRenderTarget::sSupported = false;
 
 void GLRenderTarget::initStatic()
 {
 #ifdef KWIN_HAVE_OPENGLES
-    mSupported = true;
+    sSupported = true;
 #else
-    mSupported = hasGLExtension("GL_EXT_framebuffer_object") && glFramebufferTexture2D;
+    sSupported = hasGLExtension("GL_EXT_framebuffer_object") && glFramebufferTexture2D;
 #endif
 }
 
@@ -1408,7 +1315,7 @@ GLRenderTarget::GLRenderTarget(GLTexture* color)
     mTexture = color;
 
     // Make sure FBO is supported
-    if (mSupported && mTexture && !mTexture->isNull()) {
+    if (sSupported && mTexture && !mTexture->isNull()) {
         initFBO();
     } else
         kError(1212) << "Render targets aren't supported!" << endl;

@@ -120,11 +120,6 @@ public:
     virtual QIcon icon() const = 0;
 
     /**
-     * Returns whether the task is currently hideable by the user or not
-     */
-    virtual bool isHideable() const;
-
-    /**
      * Make the task ask to be hidden. The systemtray may or may not fullfill that requirement
      */
     void setHidden(HideStates state);

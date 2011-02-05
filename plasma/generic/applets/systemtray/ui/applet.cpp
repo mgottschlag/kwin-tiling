@@ -207,9 +207,9 @@ void Applet::configChanged()
     checkSizes();
 }
 
-void Applet::popupEvent(bool show)
+void Applet::popupEvent(bool)
 {
-    m_taskArea->setShowHiddenItems(show);
+    m_taskArea->updateUnhideToolIcon();
 }
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)
@@ -482,10 +482,11 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     QMultiMap<QString, Task *> sortedTasks;
     foreach (Task *task, s_manager->tasks()) {
         if (!m_shownCategories.contains(task->category())) {
-             continue;
+            continue;
         }
 
-        if (!task->isHideable()) {
+        if (!task->widget(this, false)) {
+            // it is not being used by this widget
             continue;
         }
 
