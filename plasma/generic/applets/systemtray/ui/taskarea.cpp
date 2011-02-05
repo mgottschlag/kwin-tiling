@@ -492,28 +492,22 @@ void TaskArea::setOrientation(Qt::Orientation o)
 {
     d->topLayout->setOrientation(o);
 
-    if (d->unhider) {
-        setUnhideToolIconSizes();
-    }
     updateUnhideToolIcon();
 
     syncTasks(d->host->manager()->tasks());
-}
-
-void TaskArea::setUnhideToolIconSizes()
-{
-    d->unhider->setPreferredIconSize(QSize(16,16));
-    if (d->topLayout->orientation() == Qt::Horizontal) {
-        d->unhider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-    } else {
-        d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    }
 }
 
 void TaskArea::updateUnhideToolIcon()
 {
     if (!d->unhider) {
         return;
+    }
+
+    d->unhider->setPreferredIconSize(QSize(16,16));
+    if (d->topLayout->orientation() == Qt::Horizontal) {
+        d->unhider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    } else {
+        d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     }
 
     const bool showing = d->host->isPopupShowing();
@@ -570,7 +564,6 @@ bool TaskArea::checkUnhideTool()
     } else if (!d->unhider) {
         d->unhider = new Plasma::IconWidget(this);
         updateUnhideToolIcon();
-        setUnhideToolIconSizes();
 
         d->topLayout->addItem(d->unhider);
         connect(d->unhider, SIGNAL(clicked()), this, SIGNAL(toggleHiddenItems()));
