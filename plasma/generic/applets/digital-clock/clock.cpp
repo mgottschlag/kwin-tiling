@@ -60,15 +60,13 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_showSeconds(false),
       m_showTimezone(false),
       m_dateTimezoneBesides(false),
-      m_layout(0)
+      m_layout(0),
+      m_svg(0)
 {
     KGlobal::locale()->insertCatalog("libplasmaclock");
     // this catalog is only used once on the first start of the clock to translate the timezone in the configuration file
     KGlobal::locale()->insertCatalog("timezones4");
     setHasConfigurationInterface(true);
-    m_svg = new Plasma::Svg(this);
-    m_svg->setImagePath("widgets/labeltexture");
-    m_svg->setContainsMultipleImages(true);
     resize(150, 75);
 }
 
@@ -612,6 +610,16 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
 void Clock::generatePixmap()
 {
+    if (m_useCustomColor) {
+        return;
+    }
+
+    if (!m_svg) {
+        m_svg = new Plasma::Svg(this);
+        m_svg->setImagePath("widgets/labeltexture");
+        m_svg->setContainsMultipleImages(true);
+    }
+
     const QString fakeTimeString = KGlobal::locale()->formatTime(QTime(23,59,59), m_showSeconds);
     const QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
 
