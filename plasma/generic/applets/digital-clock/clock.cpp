@@ -562,48 +562,52 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         p->setFont(f);
     }
 
-    QFontMetrics fm(p->font());
+    if (m_useCustomColor) {
+        QFontMetrics fm(p->font());
 
-    QPointF timeTextOrigin(QPointF(qMax(0, (m_timeRect.center().x() - fm.width(fakeTimeString) / 2)),
-                        (m_timeRect.center().y() + fm.height() / 3)));
-    p->translate(-0.5, -0.5);
+        QPointF timeTextOrigin(QPointF(qMax(0, (m_timeRect.center().x() - fm.width(fakeTimeString) / 2)),
+                            (m_timeRect.center().y() + fm.height() / 3)));
+        p->translate(-0.5, -0.5);
 
-   /* if (m_drawShadow) {
-        QPen tmpPen = p->pen();
+        if (m_drawShadow) {
+            QPen tmpPen = p->pen();
 
-        // Paint a backdrop behind the time's text
-        qreal shadowOffset = 1.0;
-        QPen shadowPen;
-        QColor shadowColor = m_plainClockShadowColor;
-        shadowColor.setAlphaF(.4);
-        shadowPen.setColor(shadowColor);
-        p->setPen(shadowPen);
-        QPointF shadowTimeTextOrigin = QPointF(timeTextOrigin.x() + shadowOffset,
-                                               timeTextOrigin.y() + shadowOffset);
-        p->drawText(shadowTimeTextOrigin, timeString);
+            // Paint a backdrop behind the time's text
+            qreal shadowOffset = 1.0;
+            QPen shadowPen;
+            QColor shadowColor = m_plainClockShadowColor;
+            shadowColor.setAlphaF(.4);
+            shadowPen.setColor(shadowColor);
+            p->setPen(shadowPen);
+            QPointF shadowTimeTextOrigin = QPointF(timeTextOrigin.x() + shadowOffset,
+                                                timeTextOrigin.y() + shadowOffset);
+            p->drawText(shadowTimeTextOrigin, timeString);
 
-        p->setPen(tmpPen);
+            p->setPen(tmpPen);
 
-        // Paint the time itself with a linear translucency gradient
-        QLinearGradient gradient = QLinearGradient(QPointF(0, 0), QPointF(0, fm.height()));
+            // Paint the time itself with a linear translucency gradient
+            QLinearGradient gradient = QLinearGradient(QPointF(0, 0), QPointF(0, fm.height()));
 
-        QColor startColor = m_plainClockColor;
-        startColor.setAlphaF(.95);
-        QColor stopColor = m_plainClockColor;
-        stopColor.setAlphaF(.7);
+            QColor startColor = m_plainClockColor;
+            startColor.setAlphaF(.95);
+            QColor stopColor = m_plainClockColor;
+            stopColor.setAlphaF(.7);
 
-        gradient.setColorAt(0.0, startColor);
-        gradient.setColorAt(0.5, stopColor);
-        gradient.setColorAt(1.0, startColor);
-        QBrush gradientBrush(gradient);
+            gradient.setColorAt(0.0, startColor);
+            gradient.setColorAt(0.5, stopColor);
+            gradient.setColorAt(1.0, startColor);
+            QBrush gradientBrush(gradient);
 
-        QPen gradientPen(gradientBrush, tmpPen.width());
-        p->setPen(gradientPen);
+            QPen gradientPen(gradientBrush, tmpPen.width());
+            p->setPen(gradientPen);
+        }
+        p->drawText(timeTextOrigin, timeString);
+    //when use the custom theme colors, draw the time textured
+    } else {
+        QRect adjustedTimeRect = m_pixmap.rect();
+        adjustedTimeRect.moveCenter(m_timeRect.center());
+        p->drawPixmap(adjustedTimeRect, m_pixmap);
     }
-    p->drawText(timeTextOrigin, timeString);*/
-    QRect adjustedTimeRect = m_pixmap.rect();
-    adjustedTimeRect.moveCenter(m_timeRect.center());
-    p->drawPixmap(adjustedTimeRect, m_pixmap);
 }
 
 void Clock::generatePixmap()
