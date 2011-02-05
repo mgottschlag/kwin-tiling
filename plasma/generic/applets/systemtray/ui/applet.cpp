@@ -207,7 +207,7 @@ void Applet::configChanged()
     checkSizes();
 }
 
-void Applet::popupEvent(bool show)
+void Applet::popupEvent(bool)
 {
     m_taskArea->updateUnhideToolIcon();
 }
@@ -482,10 +482,6 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     QMultiMap<QString, Task *> sortedTasks;
     foreach (Task *task, s_manager->tasks()) {
         if (!m_shownCategories.contains(task->category())) {
-            continue;
-        }
-
-        if (!task->isHideable()) {
             continue;
         }
 

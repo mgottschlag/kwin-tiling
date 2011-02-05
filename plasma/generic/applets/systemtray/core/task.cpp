@@ -118,11 +118,6 @@ void Task::widgetDeleted()
     }
 }
 
-bool Task::isHideable() const
-{
-    return true;
-}
-
 void Task::setHidden(HideStates state)
 {
     d->hiddenState = state;
