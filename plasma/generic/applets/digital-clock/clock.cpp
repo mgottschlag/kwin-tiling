@@ -43,6 +43,8 @@
 #include <KRun>
 #include <Plasma/Theme>
 #include <Plasma/Dialog>
+#include <Plasma/Svg>
+#include <Plasma/PaintUtils>
 #include <Plasma/ToolTipManager>
 
 
@@ -64,6 +66,9 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     // this catalog is only used once on the first start of the clock to translate the timezone in the configuration file
     KGlobal::locale()->insertCatalog("timezones4");
     setHasConfigurationInterface(true);
+    m_svg = new Plasma::Svg(this);
+    m_svg->setImagePath("widgets/labeltexture");
+    m_svg->setContainsMultipleImages(true);
     resize(150, 75);
 }
 
@@ -89,6 +94,7 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::SizeConstraint ||
         constraints & Plasma::FormFactorConstraint) {
         updateSize();
+        generatePixmap();
     }
 }
 
@@ -222,6 +228,7 @@ void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &d
         }
 
         updateClockApplet(data);
+        generatePixmap();
         update();
     }
 }
@@ -557,7 +564,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                         (m_timeRect.center().y() + fm.height() / 3)));
     p->translate(-0.5, -0.5);
 
-    if (m_drawShadow) {
+   /* if (m_drawShadow) {
         QPen tmpPen = p->pen();
 
         // Paint a backdrop behind the time's text
@@ -589,7 +596,11 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         QPen gradientPen(gradientBrush, tmpPen.width());
         p->setPen(gradientPen);
     }
-    p->drawText(timeTextOrigin, timeString);
+    p->drawText(timeTextOrigin, timeString);*/
+    QPixmap pixmap = Plasma::PaintUtils::texturedText(timeString, p->font(), m_svg);
+    QRect adjustedTimeRect = pixmap.rect();
+    adjustedTimeRect.moveCenter(m_timeRect.center());
+    p->drawPixmap(adjustedTimeRect, pixmap);
 }
 
 QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text, bool singleline)

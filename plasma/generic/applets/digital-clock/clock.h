@@ -31,6 +31,11 @@
 #include "ui_clockConfig.h"
 #include <plasmaclock/clockapplet.h>
 
+namespace Plasma
+{
+    class Svg;
+}
+
 class Clock : public ClockApplet
 {
     Q_OBJECT
@@ -90,6 +95,7 @@ class Clock : public ClockApplet
         QPixmap m_toolTipIcon;
         /// Designer Config files
         Ui::clockConfig ui;
+        Plasma::Svg *m_svg;
 };
 
 K_EXPORT_PLASMA_APPLET(dig_clock, Clock)
