@@ -159,12 +159,13 @@ void LayoutMemory::setCurrentLayoutFromMap()
 	if( layoutMapKey.isEmpty() )
 		return;
 
-	LayoutSet currentLayouts = X11Helper::getCurrentLayouts();
 	if( ! layoutMap.contains(layoutMapKey) ) {
 		//TODO: cycle: default
 		if( ! X11Helper::isDefaultLayout() ) {
 //			kDebug() << "setting default layout for container key" << layoutMapKey;
-			XkbHelper::initializeKeyboardLayouts(keyboardConfig.getDefaultLayouts());
+			if( keyboardConfig.configureLayouts ) {
+				XkbHelper::initializeKeyboardLayouts(keyboardConfig.getDefaultLayouts());
+			}
 			X11Helper::setDefaultLayout();
 		}
 	}
@@ -173,9 +174,12 @@ void LayoutMemory::setCurrentLayoutFromMap()
 		kDebug() << "layout map item" /*<< layoutFromMap.layouts*/ << layoutFromMap.currentLayout.toString()
 				<< "for container key" << layoutMapKey;
 
+		LayoutSet currentLayouts = X11Helper::getCurrentLayouts();
 		if( layoutFromMap.layouts != currentLayouts.layouts ) {
 			//		kDebug() << "setting layout map" <<  layoutFromMap << "for container key" << layoutMapKey;
-			XkbHelper::initializeKeyboardLayouts(layoutFromMap.layouts);
+			if( keyboardConfig.configureLayouts ) {
+				XkbHelper::initializeKeyboardLayouts(layoutFromMap.layouts);
+			}
 			X11Helper::setLayout( layoutFromMap.currentLayout );
 		}
 		else if( layoutFromMap.currentLayout != currentLayouts.currentLayout ) {
