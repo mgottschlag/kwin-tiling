@@ -16,10 +16,10 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "layout_tray_icon.h"
 
 //#include <kdebug.h>
 
-// for sys tray icon
 #include <kstatusnotifieritem.h>
 #include <klocalizedstring.h>
 #include <kmenu.h>
@@ -31,7 +31,6 @@
 #include "flags.h"
 #include "layouts_menu.h"
 
-#include "layout_tray_icon.h"
 
 //
 // Layout Tray Icon
