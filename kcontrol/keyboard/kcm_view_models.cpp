@@ -97,7 +97,7 @@ QMimeData *LayoutsTableModel::mimeData(const QModelIndexList &indexes) const
      QDataStream stream(&encodedData, QIODevice::WriteOnly);
 
      QSet<int> rows;
-     foreach (QModelIndex index, indexes) {
+     foreach (const QModelIndex& index, indexes) {
     	 if (index.isValid()) {
     		 rows << index.row();
     	 }

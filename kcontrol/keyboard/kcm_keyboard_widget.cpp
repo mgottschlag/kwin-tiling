@@ -244,7 +244,7 @@ void KCMKeyboardWidget::updateLoopCount()
 			layoutsConfigured && uiWidget->layoutLoopingCheckBox->isChecked());
 
 	if( uiWidget->layoutLoopingCheckBox->isChecked() ) {
-		if( uiWidget->layoutLoopCountSpinBox->text() == "" ) {
+		if( uiWidget->layoutLoopCountSpinBox->text().isEmpty() ) {
 			uiWidget->layoutLoopCountSpinBox->setValue(maxLoop);
 //			keyboardConfig->layoutLoopCount = maxLoop;
 		}
