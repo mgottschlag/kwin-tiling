@@ -230,7 +230,9 @@ void numlock_set_off()
 void numlockx_change_numlock_state(Display* dpy_, int state)
 {
 #ifndef HAVE_XTEST
+#ifdef __GNUC__
 	#warning "XTEST extension not found - numlock setting may not work reliably"
+#endif
 #endif
 
 	dpy = dpy_;

@@ -16,9 +16,9 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "layout_widget.h"
 
 //#include <kdebug.h>
-
 #include <kpluginfactory.h>
 
 #include <QtGui/QPushButton>
@@ -28,7 +28,6 @@
 #include "xkb_helper.h"
 #include "keyboard_config.h"
 #include "flags.h"
-#include "layout_widget.h"
 
 
 K_PLUGIN_FACTORY(LayoutWidgetFactory, registerPlugin<LayoutWidget>();)
