@@ -203,6 +203,12 @@ void Clock::clockConfigChanged()
     m_drawShadow = cg.readEntry("plainClockDrawShadow", m_drawShadow);
     updateColors();
 
+    if (m_useCustomColor) {
+        m_pixmap = QPixmap();
+        delete m_svg;
+        m_svg = 0;
+    }
+
     const QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
     const QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
     setMinimumSize(metrics.size(Qt::TextSingleLine, timeString));
@@ -312,6 +318,9 @@ void Clock::clockConfigAccepted()
     if (m_useCustomColor) {
         m_plainClockColor = ui.plainClockColor->color();
         cg.writeEntry("plainClockColor", m_plainClockColor);
+        m_pixmap = QPixmap();
+        delete m_svg;
+        m_svg = 0;
     } else {
         m_plainClockColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     }
