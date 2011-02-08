@@ -67,8 +67,7 @@ Task::~Task()
     delete d;
 }
 
-
-QGraphicsWidget* Task::widget(Plasma::Applet *host, bool createIfNecessary)
+QGraphicsWidget *Task::widget(Plasma::Applet *host, bool createIfNecessary)
 {
     Q_ASSERT(host);
 

@@ -31,6 +31,11 @@
 #include "ui_clockConfig.h"
 #include <plasmaclock/clockapplet.h>
 
+namespace Plasma
+{
+    class Svg;
+}
+
 class Clock : public ClockApplet
 {
     Q_OBJECT
@@ -62,7 +67,9 @@ class Clock : public ClockApplet
     private:
         void updateSize();
         bool showTimezone() const;
+        void generatePixmap();
         QRect preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text, bool singleline = false);
+        void prepareFont(QFont &font, QRect &rect, const QString &text, bool singleline);
         QRectF normalLayout (int subtitleWidth, int subtitleHeight, const QRect &contentsRect);
         QRectF sideBySideLayout (int subtitleWidth, int subtitleHeight, const QRect &contentsRect);
 
@@ -90,6 +97,8 @@ class Clock : public ClockApplet
         QPixmap m_toolTipIcon;
         /// Designer Config files
         Ui::clockConfig ui;
+        Plasma::Svg *m_svg;
+        QPixmap m_pixmap;
 };
 
 K_EXPORT_PLASMA_APPLET(dig_clock, Clock)
