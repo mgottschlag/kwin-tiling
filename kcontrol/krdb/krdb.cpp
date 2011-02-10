@@ -170,70 +170,8 @@ static void applyQtColors( KSharedConfigPtr kglobalcfg, QSettings& settings, QPa
 
 static void applyQtSettings( KSharedConfigPtr kglobalcfg, QSettings& settings )
 {
-    // export KDE's plugin library path to Trolltech.conf
-    // This is only needed for Qt applications that run outside of a KDE session but still should
-    // use a KDE style. In order to load the style (or any KDE code in that regard) Qt needs to
-    // know the plugin path of KDE.
-
-  QString qversion = qVersion();
-  if ( qversion.count( '.' ) > 1 )
-     qversion.truncate( qversion.lastIndexOf( '.' ) );
-  if ( qversion.contains( '-' ) )
-     qversion.truncate( qversion.lastIndexOf( '-' ) );
-
-    // paths that KDE added
-    QStringList kdeAdded = settings.value("/qt/KDE/kdeAddedLibraryPaths").toStringList();
-
-    const QString &libPathKey = QString("/qt/%1/libraryPath").arg(qversion);
-    // paths that Qt currently adds. Don't use toStringList! That's a different storage format
-    QStringList libraryPath = settings.value(libPathKey, QString()).toString().split(QLatin1Char(':'), QString::SkipEmptyParts);
-
-    // only keep entries that are not from KDE
-    foreach (const QString &path, const_cast<const QStringList &>(kdeAdded)) {
-        libraryPath.removeAll(path);
-    }
-
-    kdeAdded.clear();
-
-    // paths that need to be in the list
-    const QStringList &plugins = KGlobal::dirs()->resourceDirs("qtplugins");
-    foreach (const QString &_path, plugins) {
-        QString path = QDir(_path).canonicalPath();
-        if (path.isEmpty() || kdeAdded.contains(path)) {
-            continue;
-        }
-        kdeAdded.prepend(path);
-        if (path.contains("/lib64/")) {
-            path.replace("/lib64/", "/lib/");
-            if (!kdeAdded.contains(path)) {
-                kdeAdded.prepend(path);
-            }
-        }
-    }
-    foreach (const QString &path, const_cast<const QStringList &>(kdeAdded)) {
-        libraryPath.append(path);
-    }
-
-    // Write the list out..
-    settings.setValue("/qt/KDE/kdeAddedLibraryPaths", kdeAdded);
-    settings.setValue(libPathKey, libraryPath.join(QLatin1String(":")));
-
-#if (QT_VERSION < QT_VERSION_CHECK(4, 5, 0))    //Qt 4.5 will read kde config files if running on kde
-  /* export widget style */
-  KConfigGroup generalCfgGroup(kglobalcfg, "General");
-  QString style = generalCfgGroup.readEntry("widgetStyle", KStyle::defaultStyle());
-  if (!style.isEmpty())
-    settings.setValue("/qt/style", style);
-#endif
-
   /* export font settings */
   settings.setValue("/qt/font", KGlobalSettings::generalFont().toString());
-
-  /* ##### looks like kcmfonts skips this, so we don't do this here */
-/*bool usexft = generalCfgGroup.readEntry("AntiAliasing", false);
-  kconfig.setGroup("General");
-  settings.writeEntry("/qt/enableXft", usexft);
-  settings.writeEntry("/qt/useXft", usexft); */
 
   /* export effects settings */
   KConfigGroup kdeCfgGroup(kglobalcfg, "General");
