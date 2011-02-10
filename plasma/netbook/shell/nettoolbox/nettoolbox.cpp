@@ -124,10 +124,10 @@ protected:
     {
         QSizeF hint = QGraphicsWidget::sizeHint(which, constraint);
 
-        qreal left, top, right, bottom;
-        m_itemBackground->getContentsMargins(&left, &top, &right, &bottom);
-
         if (which == Qt::PreferredSize) {
+            qreal left, top, right, bottom;
+            m_itemBackground->getContentsMargins(&left, &top, &right, &bottom);
+
             if (m_location == Plasma::TopEdge) {
                 hint.setHeight(KIconLoader::SizeSmallMedium + m_background->marginSize(Plasma::BottomMargin) + top + bottom);
             } else if (m_location == Plasma::BottomEdge) {
@@ -141,19 +141,21 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event)
     {
         Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
-        if (icon && event->type() == QEvent::GraphicsSceneHoverEnter) {
-            m_itemBackground->setTargetItem(icon);
-        } else if (icon && event->type() == QEvent::Show) {
-            //force the newly shown icon to have a sensible size
-            icon->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-            layout()->invalidate();
-        } else if (icon && event->type() == QEvent::Hide) {
-            if (m_location == Plasma::TopEdge || m_location == Plasma::BottomEdge) {
-                icon->setMaximumWidth(0);
-            } else {
-                icon->setMaximumHeight(0);
-            }
-            layout()->invalidate();
+        if (icon) {
+           if (event->type() == QEvent::GraphicsSceneHoverEnter) {
+               m_itemBackground->setTargetItem(icon);
+           } else if (event->type() == QEvent::Show) {
+               //force the newly shown icon to have a sensible size
+               icon->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+               layout()->invalidate();
+           } else if (event->type() == QEvent::Hide) {
+               if (m_location == Plasma::TopEdge || m_location == Plasma::BottomEdge) {
+                   icon->setMaximumWidth(0);
+               } else {
+                   icon->setMaximumHeight(0);
+               }
+               layout()->invalidate();
+           }
         }
         return false;
     }
