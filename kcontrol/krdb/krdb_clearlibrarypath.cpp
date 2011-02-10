@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2008 Matthias Kretz <kretz@kde.org>
+    Copyright (C) 2011 David Faure <faure@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -57,13 +58,17 @@ int main(int argc, char **argv)
             }
         }
     }
-    QStringList libraryPath;
+
+    // Don't use toStringList! That's a different storage format
+    QStringList libraryPath = settings.value(libPathKey, QString())
+        .toString().split(QLatin1Char(':'), QString::SkipEmptyParts);
+
+    // Remove all KDE paths, not needed anymore, done by $QT_PLUGIN_PATH
     foreach (const QString &path, const_cast<const QStringList &>(kdeAdded)) {
-        libraryPath.append(path);
+        libraryPath.removeAll(path);
     }
 
-    // Write the list out..
-    settings.setValue("/qt/KDE/kdeAddedLibraryPaths", kdeAdded);
+    settings.remove("/qt/KDE/kdeAddedLibraryPaths");
     settings.setValue(libPathKey, libraryPath.join(QLatin1String(":")));
 
     return 0;
