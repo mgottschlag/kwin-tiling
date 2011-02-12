@@ -186,6 +186,8 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
                 this, SLOT(positioningChanged(int)));
 
         m_uiImage.m_color->setColor(m_color);
+        //Color button is useless with some resize methods
+        m_uiImage.m_color->setEnabled(m_resizeMethod == MaxpectResize || m_resizeMethod == CenteredResize);
         connect(m_uiImage.m_color, SIGNAL(changed(const QColor&)), this, SLOT(colorChanged(const QColor&)));
 
         m_uiImage.m_newStuff->setIcon(KIcon("get-hot-new-stuff"));
@@ -244,6 +246,8 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
                 this, SLOT(positioningChanged(int)));
 
         m_uiSlideshow.m_color->setColor(m_color);
+        //Color button is useless with some resize methods
+        m_uiSlideshow.m_color->setEnabled(m_resizeMethod == MaxpectResize || m_resizeMethod == CenteredResize);
         connect(m_uiSlideshow.m_color, SIGNAL(changed(const QColor&)), this, SLOT(colorChanged(const QColor&)));
         connect(m_uiSlideshow.m_newStuff, SIGNAL(clicked()), this, SLOT(getNewWallpaper()));
 
@@ -603,9 +607,16 @@ void Image::positioningChanged(int index)
     if (m_mode == "SingleImage") {
         m_resizeMethod = (ResizeMethod)m_uiImage.m_resizeMethod->itemData(index).value<int>();
         setSingleImage();
+
+        //Color button is useless with some resize methods
+        m_uiImage.m_color->setEnabled(m_resizeMethod == MaxpectResize || m_resizeMethod == CenteredResize);
+
     } else {
         m_resizeMethod = (ResizeMethod)m_uiSlideshow.m_resizeMethod->itemData(index).value<int>();
         startSlideshow();
+
+        //Color button is useless with some resize methods
+        m_uiSlideshow.m_color->setEnabled(m_resizeMethod == MaxpectResize || m_resizeMethod == CenteredResize);
     }
 
     setResizeMethodHint(m_resizeMethod);
