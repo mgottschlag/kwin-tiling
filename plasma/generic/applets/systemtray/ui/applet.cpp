@@ -559,6 +559,9 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
             totalWidth += m_autoHideUi.icons->columnWidth(i);
         }
         m_autoHideUi.icons->setMinimumWidth(totalWidth + style()->pixelMetric(QStyle::PM_ScrollBarExtent));
+
+        connect(itemCombo, SIGNAL(currentIndexChanged(int)), parent, SLOT(settingsModified()));
+        connect(button, SIGNAL(keySequenceChanged(QKeySequence)), parent, SLOT(settingsModified()));
     }
 
 
@@ -629,6 +632,8 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
             m_visibleItemsSourceModel.data()->appendRow(item);
         }
     }
+
+    connect(m_visibleItemsSourceModel.data(), SIGNAL(itemChanged(QStandardItem*)), parent, SLOT(settingsModified()));
 }
 
 //not always the corona lock action is available: netbook locks per-containment

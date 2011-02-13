@@ -214,6 +214,10 @@ void Notifications::createConfigurationInterface(KConfigDialog *parent)
         parent->addPage(m_notificationInterface.data(), i18n("Information"),
                         "preferences-desktop-notification",
                         i18n("Choose which information to show"));
+
+        connect(m_notificationUi.showNotifications, SIGNAL(stateChanged(int)), parent, SLOT(settingsModified()));
+        connect(m_notificationUi.showJobs, SIGNAL(stateChanged(int)), parent, SLOT(settingsModified()));
+        connect(m_notificationUi.autoHide, SIGNAL(stateChanged(int)), parent, SLOT(settingsModified()));
     }
 }
 
