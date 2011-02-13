@@ -124,6 +124,7 @@ private:
     //bool night(const QString& source);
     int periodHour(const QString& source) const;
     QString condition(const QString& source);
+    QString conditionI18n(const QString& source);
     QMap<QString, QString> temperature(const QString& source) const;
     QString dewpoint(const QString& source) const;
     QMap<QString, QString> humidity(const QString& source) const;

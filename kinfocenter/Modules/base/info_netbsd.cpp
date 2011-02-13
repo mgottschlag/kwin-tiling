@@ -40,46 +40,6 @@ typedef struct {
 	const char *title;
 } hw_info_mib_list_t;
 
-bool GetInfo_CPU(QTreeWidget* tree) {
-	static hw_info_mib_list_t hw_info_mib_list[]= { { 1, HW_MODEL, "Model" }, { 1, HW_MACHINE, "Machine" }, { 1, HW_MACHINE_ARCH, "Architecture" }, { 0, HW_NCPU, "Number of CPUs" }, { 0, HW_PAGESIZE, "Pagesize" }, { 0, 0, 0 } };
-	hw_info_mib_list_t *hw_info_mib;
-
-	int mib[2], num;
-	char *buf;
-	size_t len;
-	QString value;
-
-	QStringList list;
-	list << i18n("Information") << i18n("Value");
-	tree->setHeaderLabels(list);
-
-	for (hw_info_mib = hw_info_mib_list; hw_info_mib->title; ++hw_info_mib) {
-		mib[0] = CTL_HW;
-		mib[1] = hw_info_mib->name;
-		if (hw_info_mib->string) {
-			sysctl(mib, 2, NULL, &len, NULL, 0);
-			if ( (buf = (char*)malloc(len))) {
-				sysctl(mib, 2, buf, &len, NULL, 0);
-				value = QString::fromLocal8Bit(buf);
-				free(buf);
-			} else {
-				value = QString("Unknown");
-			}
-		} else {
-			len = sizeof(num);
-			sysctl(mib, 2, &num, &len, NULL, 0);
-			value = QString::number(num);
-		}
-
-		QStringList list;
-		list << hw_info_mib->title << value;
-
-		new QTreeWidgetItem(tree, list);
-	}
-
-	return true;
-}
-
 // this is used to find out which devices are currently
 // on system
 static bool GetDmesgInfo(QTreeWidget* tree, const char *filter, void func(QTreeWidget* tree, QString s)) {
@@ -191,46 +151,6 @@ bool GetInfo_IO_Ports(QTreeWidget* tree) {
 	return true;
 }
 
-bool GetInfo_Sound(QTreeWidget* tree) {
-	tree->setSortingEnabled(false);
-
-	if (!GetDmesgInfo(tree, "audio", NULL)) {
-		QStringList list;
-		list << i18n("No audio devices found.");
-		new QTreeWidgetItem(tree, list);
-	}
-
-	// append information for each audio devices found
-
-	QTreeWidgetItemIterator it(tree, QTreeWidgetItemIterator::All);
-	while ( *it != NULL) {
-		QString s, s2;
-		int pos;
-		char *dev;
-
-		s = (*it)->text(0);
-		// The autoconf message is in form 'audio0 at auvia0: ...'
-		if (s.indexOf("audio") == 0 && (pos = s.indexOf(" at ")) > 0) {
-			s2 = s.mid(pos+4); // skip " at "
-			s2.remove(QRegExp("[:\n\t ].*"));
-			dev = strdup(s2.toAscii().data());
-
-			GetDmesgInfo(tree, dev, NULL);
-
-			free(dev);
-		}
-
-		++it;
-	}
-
-	return true;
-}
-
-bool GetInfo_Devices(QTreeWidget* tree) {
-	(void) GetDmesgInfo(tree, NULL, NULL);
-	return true;
-}
-
 bool GetInfo_SCSI(QTreeWidget* tree) {
 	if (!GetDmesgInfo(tree, "scsibus", NULL)) {
 		QStringList list;
@@ -251,95 +171,6 @@ bool GetInfo_SCSI(QTreeWidget* tree) {
 		++it;
 	}
 
-	return true;
-}
-
-bool GetInfo_Partitions(QTreeWidget* tree) {
-	int num; // number of mounts
-#ifdef HAVE_STATVFS
-	struct statvfs *mnt; // mount data pointer
-#else
-	struct statfs *mnt; // mount data pointer
-#endif
-
-	// get mount info
-	if (!(num=getmntinfo(&mnt, MNT_WAIT))) {
-		kError() << "getmntinfo failed" << endl;
-		return false;
-	}
-
-	// table headers
-	QStringList headers;
-	headers << i18n("Device") << i18n("Mount Point") << i18n("FS Type") << i18n("Total Size") << i18n("Free Size") << i18n("Total Nodes") << i18n("Free Nodes") << i18n("Flags");
-	tree->setHeaderLabels(headers);
-
-	// mnt points into a static array (no need to free it)
-	for (; num--; ++mnt) {
-		unsigned long long big[2];
-		QString vv[5];
-
-#ifdef HAVE_STATVFS
-		big[0] = big[1] = mnt->f_frsize; // coerce the product
-#else
-		big[0] = big[1] = mnt->f_bsize; // coerce the product
-#endif
-		big[0] *= mnt->f_blocks;
-		big[1] *= mnt->f_bavail; // FIXME: use f_bfree if root?
-
-		// convert to strings
-		vv[0] = KIO::convertSize(big[0]);
-		vv[1] = QString("%1 (%2%)")
-		.arg(KIO::convertSize(big[1]))
-		.arg(mnt->f_blocks ? mnt->f_bavail*100/mnt->f_blocks : 0);
-
-		vv[2] = QString("%L1").arg(mnt->f_files);
-		vv[3] = QString("%L1 (%2%) ")
-		.arg(mnt->f_ffree)
-		.arg(mnt->f_files ? mnt->f_ffree*100/mnt->f_files : 0);
-
-		vv[4].clear();
-#ifdef HAVE_STATVFS
-#define MNTF(x) if (mnt->f_flag & ST_##x) vv[4] += QLatin1String(#x " ");
-#else
-#define MNTF(x) if (mnt->f_flags & MNT_##x) vv[4] += QLatin1String(#x " ");
-#endif
-		MNTF(ASYNC)
-		MNTF(DEFEXPORTED)
-		MNTF(EXKERB)
-		MNTF(EXNORESPORT)
-		MNTF(EXPORTANON)
-		MNTF(EXPORTED)
-		MNTF(EXPUBLIC)
-		MNTF(EXRDONLY)
-#ifndef HAVE_STATVFS
-		MNTF(IGNORE)
-#endif
-		MNTF(LOCAL)
-		MNTF(NOATIME)
-		MNTF(NOCOREDUMP)
-		MNTF(NODEV)
-		MNTF(NODEVMTIME)
-		MNTF(NOEXEC)
-		MNTF(NOSUID)
-		MNTF(QUOTA)
-		MNTF(RDONLY)
-		MNTF(ROOTFS)
-		MNTF(SOFTDEP)
-		MNTF(SYMPERM)
-		MNTF(SYNCHRONOUS)
-		MNTF(UNION)
-#undef MNTF
-
-		// put it in the table
-
-		QStringList list;
-		// FIXME: there're more data but we have limited args (this is wrong! just add!)
-		// FIXME: names need pad space
-		list << mnt->f_mntfromname << mnt->f_mntonname << mnt->f_fstypename << vv[0] << vv[1] << vv[2] << vv[3] << vv[4];
-		new QTreeWidgetItem(tree, list);
-	}
-
-	// job well done
 	return true;
 }
 

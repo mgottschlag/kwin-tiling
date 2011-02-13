@@ -459,8 +459,8 @@ void NOAAIon::updateWeather(const QString& source)
 
     // Real weather - Current conditions
     data.insert("Observation Period", observationTime(source));
-    data.insert("Current Conditions", condition(source));
-    kDebug() << "i18n condition string: " << qPrintable(condition(source));
+    data.insert("Current Conditions", conditionI18n(source));
+    kDebug() << "i18n condition string: " << qPrintable(conditionI18n(source));
 
     // Determine the weather icon based on the current time and computed sunrise/sunset time.
     const Plasma::DataEngine::Data timeData = m_timeEngine->query(
@@ -544,9 +544,10 @@ void NOAAIon::updateWeather(const QString& source)
         }
 
         // Get the short day name for the forecast
-        data.insert(QString("Short Forecast Day %1").arg(dayIndex), QString("%1|%2|%3|%4|%5|%6") \
-                .arg(forecast.day).arg(iconName).arg(forecast.summary).arg(forecast.high) \
-                .arg(forecast.low).arg("N/U"));
+        data.insert(QString("Short Forecast Day %1").arg(dayIndex), QString("%1|%2|%3|%4|%5|%6")
+                .arg(forecast.day).arg(iconName)
+                .arg(i18nc("weather forecast", forecast.summary.toUtf8()))
+                .arg(forecast.high).arg(forecast.low).arg("N/U"));
         dayIndex++;
     }
 
@@ -597,9 +598,18 @@ int NOAAIon::periodHour(const QString& source) const
 QString NOAAIon::condition(const QString& source)
 {
     if (m_weatherData[source].weather.isEmpty() || m_weatherData[source].weather == "NA") {
-        m_weatherData[source].weather = i18n("N/A");
+        m_weatherData[source].weather = "N/A";
     }
-    return i18nc("weather condition", m_weatherData[source].weather.toUtf8());
+    return m_weatherData[source].weather;
+}
+
+QString NOAAIon::conditionI18n(const QString& source)
+{
+    if (condition(source) == "N/A") {
+        return i18n("N/A");
+    } else {
+        return i18nc("weather condition", condition(source).toUtf8());
+    }
 }
 
 QString NOAAIon::dewpoint(const QString& source) const
@@ -941,9 +951,10 @@ void NOAAIon::readForecast(const QString& source, QXmlStreamReader& xml)
 
                     if (xml.name() == "weather-conditions" && xml.isStartElement()) {
                         QString summary = xml.attributes().value("weather-summary").toString();
-                        forecasts[i].summary = i18nc("weather forecast", summary.toUtf8());
+                        forecasts[i].summary = summary;
                         //kDebug() << forecasts[i].summary;
-			kDebug() << "i18n summary string: " << qPrintable(i18n(forecasts[i].summary.toUtf8()));
+			kDebug() << "i18n summary string: "
+                                 << qPrintable(i18nc("weather forecast", forecasts[i].summary.toUtf8()));
                         i++;
                     }
                 }

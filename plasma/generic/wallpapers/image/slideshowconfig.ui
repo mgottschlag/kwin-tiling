@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>587</width>
+    <width>593</width>
     <height>470</height>
    </rect>
   </property>
@@ -68,6 +68,12 @@
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="KColorButton" name="m_color">
+       <property name="toolTip">
+        <string>Change wallpaper frame color</string>
+       </property>
+       <property name="whatsThis">
+        <string>Change the color of the frame that it may be visible when the wallpaper is centered or scaled with the same proportions.</string>
+       </property>
        <property name="color">
         <color>
          <red>70</red>
@@ -130,18 +136,18 @@
        <day>1</day>
       </datetime>
      </property>
-     <property name="currentSection">
-      <enum>QDateTimeEdit::HourSection</enum>
-     </property>
-     <property name="displayFormat">
-      <string comment="(qtdt-format) Please do not change the quotes (') and translate only the content of the quotes.">hh 'Hours' mm 'Mins' ss 'Secs'</string>
-     </property>
      <property name="time">
       <time>
        <hour>0</hour>
        <minute>0</minute>
        <second>0</second>
       </time>
+     </property>
+     <property name="currentSection">
+      <enum>QDateTimeEdit::HourSection</enum>
+     </property>
+     <property name="displayFormat">
+      <string comment="(qtdt-format) Please do not change the quotes (') and translate only the content of the quotes.">hh 'Hours' mm 'Mins' ss 'Secs'</string>
      </property>
     </widget>
    </item>

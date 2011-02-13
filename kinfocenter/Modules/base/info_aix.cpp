@@ -38,7 +38,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sys/statvfs.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <fstab.h>
 
 #include <errno.h>
 #include <sys/utsname.h>
@@ -172,67 +171,6 @@ bool GetInfo_XServer_and_Video(QListView *lBox) {
 	return GetInfo_XServer_Generic(lBox);
 }
 
-/* 
- * Written using information from:
- *
- * http://service.software.ibm.com/cgi-bin/support/rs6000.support/techbrowse/tbgaus?gaus_mode=8&documents=B93576892313352&database=task
- *
- * Not fully implemented.  In particular there are ways to resolve the 
- * "(unknown)" clock speeds of many of these models.  See page for details.
- * 
- */
-bool GetInfo_CPU(QListView *lBox) {
-	struct utsname info;
-	struct model *table = _models; /* table of model information */
-	char model_ID[21] = ""; /* information for table lookup */
-	char cpu_ID[7] = ""; /* unique CPU ID */
-	int i;
-	QListViewItem *lastitem= NULL;
-
-	lBox->addColumn(i18n("Information"));
-	lBox->addColumn(i18n("Value"));
-
-	if (uname(&info) == -1) {
-		kError(0) << "uname() failed: errno = " << errno << endl;
-		return false;
-	}
-
-	strncat(model_ID, info.machine+8, 2); /* we want the ninth and tenth digits */
-	strncat(cpu_ID, info.machine+2, 6);
-
-	if (strcmp(model_ID, "4C") == 0) /* need to use a different model_ID and model table */
-	{
-		if (odm_initialize() == -1)
-			kError(0) << "odm_initialize() failed: odmerrno = " << odmerrno << endl;
-		else {
-			struct CuAt cuat; /* Customized Device attribute */
-
-			/* equivalent to uname -M */
-			if (odm_get_first(CuAt_CLASS, (char *)"name='sys0' and attribute='modelname'", &cuat) ) {
-				strcpy(model_ID, cuat.value);
-				table = _4C_models;
-			}
-
-			odm_terminate();
-		}
-	}
-
-	lastitem = new QListViewItem(lBox, lastitem, QString("CPU ID"), QString(cpu_ID));
-	lastitem = new QListViewItem(lBox, lastitem, QString("Node"), QString(info.nodename));
-	lastitem = new QListViewItem(lBox, lastitem, QString("OS"), QString(info.sysname) +
-			QString(" ") + QString(info.version) + QString(".") + QString(info.release));
-
-	for (i=0; *(table[i].model_ID); i++)
-		if (strcmp(model_ID, table[i].model_ID) == 0) {
-			lastitem = new QListViewItem(lBox, lastitem, QString("Machine Type"), QString(table[i].machine_type));
-			lastitem = new QListViewItem(lBox, lastitem, QString("Architecture"), QString(chip_name[table[i].architecture]));
-			lastitem = new QListViewItem(lBox, lastitem, QString("Speed"), QString(table[i].processor_speed) + QString(" Mhz"));
-			break;
-		}
-
-	return (true);
-}
-
 bool GetInfo_IRQ(QListView *) {
 	return false;
 }
@@ -247,14 +185,6 @@ bool GetInfo_PCI(QTreeWidget* tree) {
 
 bool GetInfo_IO_Ports(QListView *) {
 	return false;
-}
-
-bool GetInfo_Sound(QListView *) {
-	return false;
-}
-
-bool GetInfo_Devices(QListView *lBox) {
-	return list_devices(lBox, (char *)"PdDvLn like '*'");
 }
 
 bool GetInfo_SCSI(QListView *lBox) {
@@ -306,57 +236,4 @@ static int get_fs_usage(char *path, long *l_total, long *l_avail) {
 	*l_total = fsu_blocks/2;
 
 	return 0;
-}
-
-// Some Ideas taken from garbazo from his source in info_fbsd.cpp
-
-bool GetInfo_Partitions(QListView *lbox) {
-#define NUMCOLS 5
-	QString Title[NUMCOLS];
-	int n;
-
-	struct fstab *fstab_ent;
-	struct statvfs svfs;
-	long total, avail;
-	QString str;
-	QString MB(i18nc("Mebibyte", "MiB "));
-
-	if (setfsent() != 1) // Try to open fstab 
-		return false;
-
-	Title[0] = i18n("Device");
-	Title[1] = i18n("Mount Point");
-	Title[2] = i18n("FS Type");
-	Title[3] = i18n("Total Size");
-	Title[4] = i18n("Free Size");
-
-	for (n=0; n<NUMCOLS; ++n) {
-		lbox->addColumn(Title[n]);
-	}
-
-	while ((fstab_ent=getfsent())!=NULL) {
-		/* fstab_ent->fs_type holds only "rw","xx","ro"... */
-		memset(&svfs, 0, sizeof(svfs));
-		statvfs(fstab_ent->fs_file, &svfs);
-		get_fs_usage(fstab_ent->fs_file, &total, &avail);
-
-		if (!strcmp(fstab_ent->fs_type, FSTAB_XX)) // valid drive ?
-			svfs.f_basetype[0] = 0;
-
-		if (svfs.f_basetype[0]) {
-			new QListViewItem(lbox, QString(fstab_ent->fs_spec),
-					QString(fstab_ent->fs_file) + QString("  "),
-					(svfs.f_basetype[0] ? QString(svfs.f_basetype) : i18n("n/a")),
-					Value((total+512)/1024,6) + MB,
-					Value((avail+512)/1024,6) + MB);
-		} else {
-			new QListViewItem(lbox, QString(fstab_ent->fs_spec),
-					QString(fstab_ent->fs_file) + QString("  "),
-					(svfs.f_basetype[0] ? QString(svfs.f_basetype) : i18n("n/a")));
-		}
-
-	}
-	endfsent();
-
-	return true;
 }

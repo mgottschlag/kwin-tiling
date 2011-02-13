@@ -10,16 +10,6 @@
 
 #include <sys/systeminfo.h>
 
-bool GetInfo_CPU(QListView *lBox) {
-	QString str;
-	char buf[256];
-
-	sysinfo(SI_ARCHITECTURE, buf, sizeof(buf));
-	str = QString::fromLocal8Bit(buf);
-	new QListViewItem(lBox, str);
-	return true;
-}
-
 bool GetInfo_IRQ(QListView *) {
 	return false;
 }
@@ -36,19 +26,7 @@ bool GetInfo_IO_Ports(QListView *) {
 	return false;
 }
 
-bool GetInfo_Sound(QListView *) {
-	return false;
-}
-
-bool GetInfo_Devices(QListView *) {
-	return false;
-}
-
 bool GetInfo_SCSI(QListView *) {
-	return false;
-}
-
-bool GetInfo_Partitions(QListView *) {
 	return false;
 }
 

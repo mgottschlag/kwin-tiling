@@ -44,37 +44,7 @@
 #include <mach/mach.h>
 #include <mach-o/arch.h>
 
-#ifdef HAVE_COREAUDIO
-#include <CoreAudio/CoreAudio.h>
-#endif
-
 #include <machine/limits.h>
-
-bool GetInfo_CPU(QTreeWidget* tree) {
-
-	QString cpustring;
-
-	kern_return_t ret;
-	struct host_basic_info basic_info;
-	unsigned int count=HOST_BASIC_INFO_COUNT;
-
-	ret=host_info(mach_host_self(), HOST_BASIC_INFO, (host_info_t)&basic_info, &count);
-	if (ret != KERN_SUCCESS) {
-		kDebug() << "unable to get host information from mach";
-	} else {
-		kDebug() << "got Host Info: (" << basic_info.avail_cpus << ") CPUs available";
-		const NXArchInfo *archinfo;
-		archinfo=NXGetArchInfoFromCpuType(basic_info.cpu_type, basic_info.cpu_subtype);
-
-		for (int i = 1; i <= basic_info.avail_cpus; i++) {
-			QStringList list;
-			list << QString(i) << archinfo->description;
-			new QTreeWidgetItem(tree, list);
-		}
-		return true;
-	}
-	return false;
-}
 
 bool GetInfo_IRQ(QTreeWidget*) {
 	return false;
@@ -92,58 +62,7 @@ bool GetInfo_IO_Ports(QTreeWidget*) {
 	return false;
 }
 
-bool GetInfo_Sound(QTreeWidget *tree) {
-#ifdef HAVE_COREAUDIO
-#define qMaxStringSize 1024
-	OSStatus status;
-	AudioDeviceID gOutputDeviceID;
-	unsigned long propertySize;
-	char deviceName[qMaxStringSize];
-	char manufacturer[qMaxStringSize];
-	propertySize = sizeof(gOutputDeviceID);
-	status = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice, &propertySize, &gOutputDeviceID);
-	if (status) {
-		kDebug() << "get default output device failed, status = " << (int)status;
-		return false;
-	}
-
-	if (gOutputDeviceID != kAudioDeviceUnknown) {
-
-		propertySize = qMaxStringSize;
-
-		/* Device Name */
-		status = AudioDeviceGetProperty(gOutputDeviceID, 1, 0, kAudioDevicePropertyDeviceName, &propertySize, deviceName);
-		if (status) {
-			kDebug() << "get device name failed, status = " << (int)status;
-			return false;
-		}
-		QStringList deviceList;
-		deviceList << i18n("Device Name") << deviceName;
-		new QTreeWidgetItem(tree, deviceList);
-
-		/* Manufacturer */
-		status = AudioDeviceGetProperty(gOutputDeviceID, 1, 0, kAudioDevicePropertyDeviceManufacturer, &propertySize, manufacturer);
-		if (status) {
-			kDebug() << "get manufacturer failed, status = " << (int)status;
-			return false;
-		}
-		QStringList manufacturerList;
-		manufacturerList << i18n("Manufacturer") << manufacturer;
-		new QTreeWidgetItem(tree, manufacturerList);
-		return true;
-	} else {
-		return false;
-	}
-#else
-	return false;
-#endif
-}
-
 bool GetInfo_SCSI(QTreeWidget*) {
-	return false;
-}
-
-bool GetInfo_Partitions(QTreeWidget*) {
 	return false;
 }
 
@@ -153,8 +72,4 @@ bool GetInfo_XServer_and_Video(QTreeWidget* tree) {
 #else
 	return false;
 #endif
-}
-
-bool GetInfo_Devices(QTreeWidget* tree) {
-	return false;
 }

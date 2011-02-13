@@ -24,10 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  returning false indicates, that information was not available.
  */
 
-bool GetInfo_CPU(QTreeWidget*) {
-	return false;
-}
-
 bool GetInfo_IRQ(QTreeWidget*) {
 	return false;
 }
@@ -44,19 +40,7 @@ bool GetInfo_IO_Ports(QTreeWidget*) {
 	return false;
 }
 
-bool GetInfo_Sound(QTreeWidget*) {
-	return false;
-}
-
-bool GetInfo_Devices(QTreeWidget*) {
-	return false;
-}
-
 bool GetInfo_SCSI(QTreeWidget*) {
-	return false;
-}
-
-bool GetInfo_Partitions(QTreeWidget*) {
 	return false;
 }
 

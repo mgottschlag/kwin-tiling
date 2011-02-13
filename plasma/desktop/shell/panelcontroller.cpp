@@ -188,11 +188,13 @@ PanelController::PanelController(QWidget* parent)
     m_moveTool->setIcon(m_iconSvg->pixmap("move"));
     m_moveTool->installEventFilter(this);
     m_moveTool->setCursor(Qt::SizeAllCursor);
+    m_sizeTool->setToolTip(i18n("Press left mouse button and drag to a screen edge to change panel edge"));
     m_layout->addWidget(m_moveTool);
 
     m_sizeTool = addTool(QString(), i18n("Height"), m_configWidget);
     m_sizeTool->installEventFilter(this);
     m_sizeTool->setCursor(Qt::SizeVerCursor);
+    m_sizeTool->setToolTip(i18n("Press left mouse button and drag vertically to change panel height"));
     m_layout->addWidget(m_sizeTool);
     m_layout->addStretch();
 
@@ -201,6 +203,7 @@ PanelController::PanelController(QWidget* parent)
 
     //Settings popup menu
     m_settingsTool = addTool("configure", i18n("More Settings"), m_configWidget);
+    m_settingsTool->setToolTip(i18n("Show more options about panel alignment, visibility and other settings"));
     m_layout->addWidget(m_settingsTool);
     connect(m_settingsTool, SIGNAL(pressed()), this, SLOT(settingsPopup()));
     m_optionsDialog = new Plasma::Dialog(0); // don't pass in a parent; breaks with some lesser WMs
@@ -269,6 +272,7 @@ void PanelController::setContainment(Plasma::Containment *c)
 
     action = new QAction(i18n("Add Spacer"), this);
     ToolButton *addSpaceTool = addTool(action, this);
+    addSpaceTool->setToolTip(i18n("Add a spacer to the panel useful to add some space between two widgets"));
     m_layout->insertWidget(insertIndex, addSpaceTool);
     ++insertIndex;
     connect(action, SIGNAL(triggered()), this, SLOT(addSpace()));

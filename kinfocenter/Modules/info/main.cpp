@@ -26,7 +26,7 @@
 #include <KPluginLoader>
  
 /* we have to include the info.cpp-file, to get the DEFINES about possible properties.
-   example: we need the "define INFO_CPU_AVAILABLE" */
+   example: we need the "define INFO_DMA_AVAILABLE" */
 #include "info.h"
 
 #include "os_current.h"
@@ -53,26 +53,17 @@ class K##type##InfoWidget : public KInfoListWidget \
         } \
 }; \
 
-#ifdef INFO_CPU_AVAILABLE
-CREATE_FACTORY(CPU, i18n("Processor(s)"))
-#endif
 #ifdef INFO_IRQ_AVAILABLE
 CREATE_FACTORY(IRQ, i18n("Interrupt"))
 #endif
 #ifdef INFO_IOPORTS_AVAILABLE
 CREATE_FACTORY(IO_Ports, i18n("I/O-Port"))
 #endif
-#ifdef INFO_SOUND_AVAILABLE
-CREATE_FACTORY(Sound, i18n("Soundcard"))
-#endif
 #ifdef INFO_SCSI_AVAILABLE
 CREATE_FACTORY(SCSI, i18n("SCSI"))
 #endif
 #ifdef INFO_DMA_AVAILABLE
 CREATE_FACTORY(DMA, i18n("DMA-Channel"))
-#endif
-#ifdef INFO_DEVICES_AVAILABLE
-CREATE_FACTORY(Devices, i18n("Devices"))
 #endif
 #ifdef INFO_XSERVER_AVAILABLE
 CREATE_FACTORY(XServer_and_Video, i18n("X-Server"))
@@ -83,26 +74,17 @@ KInfoModulesFactory::KInfoModulesFactory(const char *componentName)
 {
     s_instance = this;
 
-#ifdef INFO_CPU_AVAILABLE
-    registerPlugin<KCPUInfoWidget>("cpu");
-#endif
 #ifdef INFO_IRQ_AVAILABLE
     registerPlugin<KIRQInfoWidget>("irq");
 #endif
 #ifdef INFO_IOPORTS_AVAILABLE
     registerPlugin<KIO_PortsInfoWidget>("ioports");
 #endif
-#ifdef INFO_SOUND_AVAILABLE
-    registerPlugin<KSoundInfoWidget>("sound");
-#endif
 #ifdef INFO_SCSI_AVAILABLE
     registerPlugin<KSCSIInfoWidget>("scsi");
 #endif
 #ifdef INFO_DMA_AVAILABLE
     registerPlugin<KDMAInfoWidget>("dma");
-#endif
-#ifdef INFO_DEVICES_AVAILABLE
-    registerPlugin<KDevicesInfoWidget>("devices");
 #endif
 #ifdef INFO_XSERVER_AVAILABLE
     registerPlugin<KXServer_and_VideoInfoWidget>("xserver");

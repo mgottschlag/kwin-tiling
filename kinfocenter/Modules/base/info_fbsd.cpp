@@ -24,27 +24,14 @@ extern "C" {
 }
 #endif
 
-#include <errno.h>
-#include <fstab.h>
 #include <string.h>
 
 #include <QMap>
-#include <QFile>
+#include <QFileInfo>
 
 #include <QTextStream>
 
-class Device {
-public:
-	Device(QString n=QString(), QString d=QString()) {
-		name=n;
-		description=d;
-	}
-	QString name, description;
-};
-
 void ProcessChildren(QString name);
-QString GetController(const QString &line);
-Device *GetDevice(const QString &line);
 
 #ifdef HAVE_DEVINFO_H
 extern "C" {
@@ -54,46 +41,6 @@ extern "C" {
 	int print_resource(struct devinfo_res *res, void *arg);
 }
 #endif
-
-bool GetInfo_CPU(QTreeWidget* tree) {
-	// Modified 13 July 2000 for SMP by Brad Hughes - bhughes@trolltech.com
-
-	int ncpu;
-	size_t len;
-
-	len = sizeof(ncpu);
-	sysctlbyname("hw.ncpu", &ncpu, &len, NULL, 0);
-
-	QString cpustring;
-	for (int i = ncpu; i > 0; i--) {
-		/* Stuff for sysctl */
-		char *buf;
-		int i_buf;
-
-		// get the processor model
-		sysctlbyname("hw.model", NULL, &len, NULL, 0);
-		buf = new char[len];
-		sysctlbyname("hw.model", buf, &len, NULL, 0);
-
-		// get the TSC speed if we can
-		len = sizeof(i_buf);
-		if (sysctlbyname("machdep.tsc_freq", &i_buf, &len, NULL, 0) != -1) {
-			cpustring = i18n("CPU %1: %2, %3 MHz", i, buf, i_buf/1000000);
-		} else {
-			cpustring = i18n("CPU %1: %2, unknown speed", i, buf);
-		}
-
-		/* Put everything in the listbox */
-		QStringList list;
-		list << cpustring;
-		new QTreeWidgetItem(tree, list);
-
-		/* Clean up after ourselves, this time I mean it ;-) */
-		delete[] buf;
-	}
-
-	return true;
-}
 
 bool GetInfo_IRQ(QTreeWidget* tree) {
 #ifdef HAVE_DEVINFO_H
@@ -135,41 +82,12 @@ bool GetInfo_IO_Ports(QTreeWidget* tree) {
 #endif
 }
 
-bool GetInfo_Sound(QTreeWidget* tree) {
-	QFile *sndstat = new QFile("/dev/sndstat");
-	QTextStream *t;
-	QString s;
-
-	if (!sndstat->exists() || !sndstat->open(QIODevice::ReadOnly)) {
-
-		s = i18n("Your sound system could not be queried.  /dev/sndstat does not exist or is not readable.");
-		QStringList list;
-		list << s;
-		new QTreeWidgetItem(tree, list);
-	} else {
-		t = new QTextStream(sndstat);
-		while (!(s=t->readLine()).isNull()) {
-			QStringList list;
-			list << s;
-
-			new QTreeWidgetItem(tree, list);
-		}
-
-		delete t;
-		sndstat->close();
-	}
-
-	delete sndstat;
-	return true;
-}
-
 bool GetInfo_SCSI(QTreeWidget* tree) {
 	FILE *pipe;
-	QFile *camcontrol = new QFile("/sbin/camcontrol");
 	QTextStream *t;
 	QString s;
 
-	if (!camcontrol->exists()) {
+	if (!QFileInfo(QLatin1String("/sbin/camcontrol")).exists()) {
 		s = i18n("SCSI subsystem could not be queried: /sbin/camcontrol could not be found");
 		QStringList list;
 		list << s;
@@ -199,8 +117,6 @@ bool GetInfo_SCSI(QTreeWidget* tree) {
 		pclose(pipe);
 	}
 
-	delete camcontrol;
-
 	if (!tree->topLevelItemCount())
 		return false;
 
@@ -209,166 +125,55 @@ bool GetInfo_SCSI(QTreeWidget* tree) {
 
 bool GetInfo_PCI(QTreeWidget* tree) {
 	FILE *pipe;
-	QFile *pcicontrol;
 	QString s, cmd;
 	QTreeWidgetItem *olditem= NULL;
 
-	pcicontrol = new QFile("/usr/sbin/pciconf");
+	const QStringList headers(i18nc("@title:column Column name for PCI information", "Information"));
+	tree->setHeaderLabels(headers);
 
-	if (!pcicontrol->exists()) {
-		delete pcicontrol;
-		pcicontrol = new QFile("/usr/X11R6/bin/scanpci");
-		if (!pcicontrol->exists()) {
-			delete pcicontrol;
-			pcicontrol = new QFile("/usr/X11R6/bin/pcitweak");
-			if (!pcicontrol->exists()) {
-				QStringList list;
-				list << i18n("Could not find any programs with which to query your system's PCI information");
-				new QTreeWidgetItem(tree, list);
-				delete pcicontrol;
-				return true;
-			} else {
-				cmd = "/usr/X11R6/bin/pcitweak -l 2>&1";
-			}
-		} else {
-			cmd = "/usr/X11R6/bin/scanpci";
-		}
+	if (!QFileInfo(QLatin1String("/usr/sbin/pciconf")).exists()) {
+		QStringList list;
+		list << i18n("Could not find any programs with which to query your system's PCI information");
+		new QTreeWidgetItem(tree, list);
+		return true;
 	} else {
 		cmd = "/usr/sbin/pciconf -l -v 2>&1";
 	}
-	delete pcicontrol;
 
+	// TODO: GetInfo_ReadfromPipe should be improved so that we could pass the program name and its
+	//       arguments to it and remove most of the code below.
 	if ((pipe = popen(cmd.toLatin1(), "r")) == NULL) {
 		QStringList list;
 		list << i18n("PCI subsystem could not be queried: %1 could not be executed", cmd);
 		olditem = new QTreeWidgetItem(olditem, list);
 	} else {
-
 		/* This prints out a list of all the pci devies, perhaps eventually we could
 		 parse it as opposed to schlepping it into a listbox */
+		QTextStream outputStream(pipe, QIODevice::ReadOnly);
+
+		while (!outputStream.atEnd()) {
+			s = outputStream.readLine();
+			if (s.isEmpty() )
+				break;
+			const QStringList list(s);
+			new QTreeWidgetItem(tree, list);
+		}
 
 		pclose(pipe);
-		GetInfo_ReadfromPipe(tree, cmd.toLatin1(), true);
 	}
 
 	if (!tree->topLevelItemCount()) {
 		QString str = i18n("The PCI subsystem could not be queried, this may need root privileges.");
 		olditem = new QTreeWidgetItem(tree, olditem);
-        olditem->setText(0, str);
+		olditem->setText(0, str);
 		return true;
 	}
 
-	return true;
-}
-
-bool GetInfo_Partitions(QTreeWidget* tree) {
-	struct fstab *fstab_ent;
-
-	if (setfsent() != 1) /* Try to open fstab */{
-		int s_err= errno;
-		QString s;
-		s = i18n("Could not check file system info: ");
-		s += strerror(s_err);
-		QStringList list;
-		list << s;
-		new QTreeWidgetItem(tree, list);
-	} else {
-		QStringList headers;
-		headers << i18n("Device") << i18n("Mount Point") << i18n("FS Type") << i18n("Mount Options");
-
-		while ((fstab_ent=getfsent())!=NULL) {
-			QStringList list;
-			list << fstab_ent->fs_spec << fstab_ent->fs_file << fstab_ent->fs_vfstype << fstab_ent->fs_mntops;
-			new QTreeWidgetItem(tree, list);
-		}
-
-		tree->sortItems(0, Qt::AscendingOrder);
-
-		endfsent(); /* Close fstab */
-	}
 	return true;
 }
 
 bool GetInfo_XServer_and_Video(QTreeWidget* tree) {
 	return GetInfo_XServer_Generic(tree);
-}
-
-bool GetInfo_Devices(QTreeWidget* tree) {
-	QFile *f = new QFile("/var/run/dmesg.boot");
-	if (f->open(QIODevice::ReadOnly)) {
-		QTextStream qts(f);
-		QMap<QString, QTreeWidgetItem*> lv_items;
-		Device *dev;
-		QString line, controller;
-		tree->setRootIsDecorated(true);
-		QStringList headers;
-		headers << i18n("Device") << i18n("Description");
-		tree->setHeaderLabels(headers);
-		while ( !(line=qts.readLine()).isNull() ) {
-			controller = GetController(line);
-			if (controller.isNull())
-				continue;
-			dev=GetDevice(line);
-			if (!dev)
-				continue;
-			// Ewww assuing motherboard is the only toplevel controller is rather gross
-			if (controller == "motherboard") {
-				if (lv_items.contains(QString(dev->name))==false) {
-					QStringList list;
-					list << dev->name << dev->description;
-
-					lv_items.insert(QString(dev->name), new QTreeWidgetItem(tree, list));
-				}
-			} else {
-				QTreeWidgetItem* parent=lv_items[controller];
-				if (parent && lv_items.contains(dev->name)==false) {
-					QStringList list;
-					list << dev->name << dev->description;
-					lv_items.insert(QString(dev->name), new QTreeWidgetItem(parent, list));
-				}
-			}
-		}
-                delete f;
-		return true;
-	}
-        delete f;
-	return false;
-}
-
-QString GetController(const QString &line) {
-	if ( ( (line.startsWith("ad")) || (line.startsWith("afd")) || (line.startsWith("acd")) ) && (line.indexOf(":") < 6)) {
-		QString controller = line;
-		controller.remove(0, controller.indexOf(" at ")+4);
-		if (controller.indexOf("-slave") != -1) {
-			controller.remove(controller.indexOf("-slave"), controller.length());
-		} else if (controller.indexOf("-master") != -1) {
-			controller.remove(controller.indexOf("-master"), controller.length());
-		} else
-			controller=QString();
-		if (!controller.isNull())
-			return controller;
-	}
-	if (line.indexOf(" on ") != -1) {
-		QString controller;
-		controller = line;
-		controller.remove(0, controller.indexOf(" on ")+4);
-		if (controller.indexOf(" ") != -1)
-			controller.remove(controller.indexOf(" "), controller.length());
-		return controller;
-	}
-	return QString();
-}
-
-Device *GetDevice(const QString &line) {
-	Device *dev;
-	int colon = line.indexOf(":");
-	if (colon == -1)
-		return 0;
-	dev = new Device;
-	dev->name = line.mid(0, colon);
-	dev->description = line.mid(line.indexOf("<")+1, line.length());
-	dev->description.remove(dev->description.indexOf(">"), dev->description.length());
-	return dev;
 }
 
 #ifdef HAVE_DEVINFO_H
