@@ -307,7 +307,6 @@ void DeviceNotifier::keepPopupOpen()
 {
     if (!m_poppedUpInternally) {
         m_poppedUpInternally = false;
-        kDebug() << "ping";
         showPopup();
     }
 }
@@ -320,7 +319,6 @@ void DeviceNotifier::notifyDevice(const QString &udi)
         emit activate();
         changeNotifierIcon("preferences-desktop-notification", LONG_NOTIFICATION_TIMEOUT);
         m_triggeringPopupInternally = true;
-        kDebug() << "pong";
         showPopup(LONG_NOTIFICATION_TIMEOUT);
         update();
         setStatus(Plasma::NeedsAttentionStatus);
@@ -545,7 +543,6 @@ void DeviceNotifier::showNotification(const QString &message, const QString &det
 {
     if (!isPopupShowing()) {
         m_triggeringPopupInternally = true;
-        kDebug() << "pang";
         showPopup(LONG_NOTIFICATION_TIMEOUT);
     }
 

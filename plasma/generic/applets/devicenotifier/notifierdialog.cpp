@@ -254,12 +254,10 @@ bool NotifierDialog::eventFilter(QObject* obj, QEvent *event)
             case QEvent::GraphicsSceneHoverMove:
                 if (m_notifier->poppedUpInternally()) {
                     m_notifier->showPopup(DeviceNotifier::LONG_NOTIFICATION_TIMEOUT);
-                    kDebug() << "mouse move - keep it up";
                 }
                 break;
             case QEvent::GraphicsSceneMousePress:
                 m_notifier->keepPopupOpen();
-                kDebug() << "keeping open **************************************************";
                 break;
             default:
                 break;
@@ -669,9 +667,6 @@ void NotifierDialog::showStatusBarDetails(bool show)
         m_statusExpandButton->setIcon(QIcon(svg->pixmap("restore")));
     }
     delete svg;
-
-    kDebug() << "here";
-//    emit activated();
 }
 
 void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorData, const QString & udi)
@@ -855,7 +850,6 @@ void NotifierDialog::deviceActivated(DeviceItem *item)
 
     m_itemBackground->setTargetItem(0);
 
-    kDebug() << "there";
     emit activated();
 }
 
