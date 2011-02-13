@@ -377,6 +377,8 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     }
     d->timezonesUi.clockDefaultsTo->setCurrentIndex(defaultSelection);
 
+    connect(d->generalUi.interval, SIGNAL(valueChanged(int)), parent, SLOT(settingsModified()));
+    connect(d->timezonesUi.timeZones, SIGNAL(itemChanged(QTreeWidgetItem*,int)), parent, SLOT(settingsModified()));
     connect(d->timezonesUi.timeZones, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(updateClockDefaultsTo()));
 }
 

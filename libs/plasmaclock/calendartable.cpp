@@ -918,7 +918,12 @@ void CalendarTable::createConfigurationInterface(KConfigDialog *parent)
         }
     }
     d->calendarConfigUi.holidayRegionWidget->setDescriptionHidden(true);
+
+    connect(d->calendarConfigUi.holidayRegionWidget, SIGNAL(selectionChanged()), parent, SLOT(settingsModified()));
 #endif
+
+    connect(d->calendarConfigUi.calendarComboBox, SIGNAL(activated(int)), parent, SLOT(settingsModified()));
+    connect(d->calendarConfigUi.displayEvents, SIGNAL(stateChanged(int)), parent, SLOT(settingsModified()));
 }
 
 void CalendarTable::applyConfigurationInterface()
