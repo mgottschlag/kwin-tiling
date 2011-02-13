@@ -75,6 +75,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>Change wallpaper frame color</string>
+       </property>
+       <property name="whatsThis">
+        <string>Change the color of the frame that it may be visible when the wallpaper is centered or scaled with the same proportions.</string>
+       </property>
        <property name="color">
         <color>
          <red>70</red>
