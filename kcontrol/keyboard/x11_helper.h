@@ -102,7 +102,7 @@ struct LayoutSet {
 	QList<LayoutUnit> layouts;
 	LayoutUnit currentLayout;
 
-	LayoutSet() {};
+	LayoutSet() {}
 
 	LayoutSet(const LayoutSet& currentLayouts) {
 		this->layouts = currentLayouts.layouts;
@@ -120,6 +120,22 @@ struct LayoutSet {
 		return *this;
 	}
 
+	QString toString() const {
+		QString str(currentLayout.toString());
+		str += ": ";
+		foreach(const LayoutUnit& layoutUnit, layouts) {
+			str += layoutUnit.toString() + " ";
+		}
+		return str;
+	}
+
+	static QString toString(const QList<LayoutUnit>& layoutUnits) {
+		QString str;
+		foreach(const LayoutUnit& layoutUnit, layoutUnits) {
+			str += layoutUnit.toString() + ",";
+		}
+		return str;
+	}
 };
 
 class X11Helper
