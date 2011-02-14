@@ -490,6 +490,11 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    connect(d->iconButton, SIGNAL(iconChanged(QString)), parent, SLOT(settingsModified()));
+    connect(d->formatComboBox, SIGNAL(currentIndexChanged(QString)), parent, SLOT(settingsModified()));
+    connect(d->recentApplicationsSpinBox, SIGNAL(valueChanged(int)), parent, SLOT(settingsModified()));
+    connect(d->showMenuTitlesCheckBox, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(d->view, SIGNAL(currentTextChanged(QString)), parent, SLOT(settingsModified()));    
 }
 
 void MenuLauncherApplet::configAccepted()
