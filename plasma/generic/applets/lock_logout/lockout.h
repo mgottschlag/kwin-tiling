@@ -82,6 +82,9 @@ class LockOut : public Plasma::Applet
 
         int m_visibleButtons;
         bool m_changed;
+
+    signals:
+        void configUiChanged();
 };
 
 K_EXPORT_PLASMA_APPLET(lockout, LockOut)

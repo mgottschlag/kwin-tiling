@@ -127,6 +127,8 @@ void LockOut::buttonChanged()
     }
 
     setCheckable();
+
+    emit configUiChanged();
 #endif
 }
 void LockOut::setCheckable()
@@ -388,6 +390,8 @@ void LockOut::createConfigurationInterface(KConfigDialog *parent)
     connect(ui.checkBox_sleep, SIGNAL(toggled(bool)), this, SLOT(buttonChanged()));
     ui.checkBox_hibernate->setChecked(m_showHibernateButton);
     connect(ui.checkBox_hibernate, SIGNAL(toggled(bool)), this, SLOT(buttonChanged()));
+
+    connect(this, SIGNAL(configUiChanged()), parent, SLOT(settingsModified()));
 #endif
 }
 
