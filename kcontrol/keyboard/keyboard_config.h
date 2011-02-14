@@ -64,6 +64,9 @@ public:
 	bool showFlag;
 	bool showSingle;
 
+	bool isSpareLayoutsEnabled() const {
+		return layoutLoopCount != KeyboardConfig::NO_LOOPING;
+	}
 	QList<LayoutUnit> getDefaultLayouts() const;
 	QList<LayoutUnit> getExtraLayouts() const;
 

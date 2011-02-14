@@ -83,6 +83,17 @@ extern "C" {
     extern int _XiGetDevicePresenceNotifyEvent(Display *);
 }
 
+// This is ugly but allows to skip multiple execution of setxkbmap 
+// for all keyboard devices that don't care about layouts
+static bool isRealKeyboard(const char* deviceName)
+{
+	return strstr(deviceName, "Video Bus") == NULL
+		&& strstr(deviceName, "Sleep Button") == NULL
+		&& strstr(deviceName, "Power Button") == NULL
+		&& strstr(deviceName, "Webcam") == NULL
+		&& strstr(deviceName, "WMI hotkeys") == NULL;
+}
+
 int XInputEventNotifier::getNewDeviceEventType(XEvent* event)
 {
 	int newDeviceType = DEVICE_NONE;
@@ -98,9 +109,11 @@ int XInputEventNotifier::getNewDeviceEventType(XEvent* event)
 //					kDebug() << "id:" << devices[i].id << "name:" << devices[i].name << "used as:" << devices[i].use;
 					if( devices[i].id == xdpne->deviceid ) {
 						if( devices[i].use == IsXKeyboard || devices[i].use == IsXExtensionKeyboard ) {
-							newDeviceType = DEVICE_KEYBOARD;
-							kDebug() << "new keyboard device, id:" << devices[i].id << "name:" << devices[i].name << "used as:" << devices[i].use;
-							break;
+							if( isRealKeyboard(devices[i].name) ) {
+								newDeviceType = DEVICE_KEYBOARD;
+								kDebug() << "new keyboard device, id:" << devices[i].id << "name:" << devices[i].name << "used as:" << devices[i].use;
+								break;
+							}
 						}
 						if( devices[i].use == IsXPointer || devices[i].use == IsXExtensionPointer ) {
 							newDeviceType = DEVICE_POINTER;
