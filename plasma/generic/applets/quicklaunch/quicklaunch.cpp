@@ -176,6 +176,11 @@ void Quicklaunch::createConfigurationInterface(KConfigDialog *parent)
     uiConfig.popupEnabledCheckBox->setChecked(m_popup != 0);
 
     parent->addPage(widget, i18n("General"), icon());
+
+    connect(uiConfig.autoSectionCountEnabledCheckBox, SIGNAL(stateChanged(int)), parent, SLOT(settingsModified()));
+    connect(uiConfig.sectionCountSpinBox, SIGNAL(valueChanged(int)), parent, SLOT(settingsModified()));
+    connect(uiConfig.launcherNamesVisibleCheckBox, SIGNAL(stateChanged(int)), parent, SLOT(settingsModified()));
+    connect(uiConfig.popupEnabledCheckBox, SIGNAL(stateChanged(int)), parent, SLOT(settingsModified()));
 }
 
 bool Quicklaunch::eventFilter(QObject *watched, QEvent *event)

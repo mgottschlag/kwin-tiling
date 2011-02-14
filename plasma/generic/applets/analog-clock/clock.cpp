@@ -186,6 +186,9 @@ void Clock::createClockConfigurationInterface(KConfigDialog *parent)
 
     ui.showSecondHandCheckBox->setChecked(m_showSecondHand);
     ui.showTimezoneStringCheckBox->setChecked(m_showTimezoneString);
+
+    connect(ui.showSecondHandCheckBox, SIGNAL(stateChanged(int)), parent, SLOT(settingsModified()));
+    connect(ui.showTimezoneStringCheckBox, SIGNAL(stateChanged(int)), parent, SLOT(settingsModified()));
 }
 
 void Clock::clockConfigAccepted()

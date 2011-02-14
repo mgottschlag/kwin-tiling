@@ -274,6 +274,29 @@ void Clock::createClockConfigurationInterface(KConfigDialog *parent)
     connect(ui.configureDateFormats, SIGNAL(clicked()),
             this, SLOT(launchDateKcm()));
     configDrawShadowToggled(m_drawShadow);
+
+    connect(ui.plainClockFont, SIGNAL(currentFontChanged(QFont)),
+            parent, SLOT(settingsModified()));
+    connect(ui.plainClockFontBold, SIGNAL(stateChanged(int)),
+            parent, SLOT(settingsModified()));
+    connect(ui.plainClockFontItalic, SIGNAL(stateChanged(int)),
+            parent, SLOT(settingsModified()));
+    connect(ui.useCustomColor, SIGNAL(stateChanged(int)),
+            parent, SLOT(settingsModified()));
+    connect(ui.plainClockColor, SIGNAL(changed(QColor)),
+            parent, SLOT(settingsModified()));
+    connect(ui.drawShadow, SIGNAL(stateChanged(int)),
+            parent, SLOT(settingsModified()));
+    connect(ui.useCustomShadowColor, SIGNAL(stateChanged(int)),
+            parent, SLOT(settingsModified()));
+    connect(ui.plainClockShadowColor, SIGNAL(changed(QColor)), 
+            parent, SLOT(settingsModified()));
+    connect(ui.showTimeZone, SIGNAL(stateChanged(int)),
+            parent, SLOT(settingsModified()));
+    connect(ui.secondsCheckbox, SIGNAL(stateChanged(int)),
+            parent, SLOT(settingsModified()));
+    connect(ui.dateStyle, SIGNAL(currentIndexChanged(int)),
+            parent, SLOT(settingsModified()));
 }
 
 void Clock::configDrawShadowToggled(bool value)

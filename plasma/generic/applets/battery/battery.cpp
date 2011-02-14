@@ -354,6 +354,9 @@ void Battery::createConfigurationInterface(KConfigDialog *parent)
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     ui.showBatteryStringCheckBox->setChecked(m_showBatteryLabel ? Qt::Checked : Qt::Unchecked);
     ui.showMultipleBatteriesCheckBox->setChecked(m_showMultipleBatteries ? Qt::Checked : Qt::Unchecked);
+
+    connect(ui.showBatteryStringCheckBox, SIGNAL(stateChanged(int)), parent, SLOT(settingsModified()));
+    connect(ui.showMultipleBatteriesCheckBox, SIGNAL(stateChanged(int)), parent, SLOT(settingsModified()));
 }
 
 void Battery::configAccepted()
