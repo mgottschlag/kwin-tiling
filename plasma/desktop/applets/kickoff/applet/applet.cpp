@@ -165,6 +165,9 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     d->ui.iconButton->setIcon(popupIcon());
     d->ui.switchOnHoverCheckBox->setChecked(d->launcher->switchTabsOnHover());
     d->ui.appsByNameCheckBox->setChecked(d->launcher->showAppsByName());
+    connect(d->ui.iconButton, SIGNAL(iconChanged(QString)), parent, SLOT(settingsModified()));
+    connect(d->ui.switchOnHoverCheckBox, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(d->ui.appsByNameCheckBox, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
 }
 
 void LauncherApplet::popupEvent(bool show)
