@@ -402,6 +402,18 @@ void Tasks::createConfigurationInterface(KConfigDialog *parent)
     }
  //   kDebug() << m_groupManager->sortingStrategy();
     m_ui.maxRows->setValue(m_rootGroupItem->maxRows());
+
+    connect(m_ui.fillRows, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(m_ui.showTooltip, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(m_ui.highlightWindows, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(m_ui.maxRows, SIGNAL(valueChanged(int)), parent, SLOT(settingsModified()));
+    connect(m_ui.groupingStrategy, SIGNAL(currentIndexChanged(int)), parent, SLOT(settingsModified()));
+    connect(m_ui.groupWhenFull, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(m_ui.sortingStrategy, SIGNAL(currentIndexChanged(int)), parent, SLOT(settingsModified()));
+    connect(m_ui.showOnlyCurrentScreen, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(m_ui.showOnlyCurrentDesktop, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(m_ui.showOnlyCurrentActivity, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(m_ui.showOnlyMinimized, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
 }
 
 void Tasks::dialogGroupingChanged(int index)
