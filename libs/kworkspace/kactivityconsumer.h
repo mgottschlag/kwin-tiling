@@ -127,7 +127,7 @@ Q_SIGNALS:
      * goes online or offline
      * @param status new status of the service
      */
-    void serviceStatusChanged(ServiceStatus status);
+    void serviceStatusChanged(KActivityConsumer::ServiceStatus status);
 
 public Q_SLOTS:
     /**
