@@ -539,6 +539,9 @@ void WebBrowser::createConfigurationInterface(KConfigDialog *parent)
     ui.autoRefreshInterval->setValue(m_autoRefreshInterval);
     ui.autoRefreshInterval->setSuffix(ki18np(" minute", " minutes"));
     ui.dragToScroll->setChecked(m_browser->dragToScroll());
+    connect(ui.autoRefresh, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(ui.dragToScroll, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(ui.autoRefreshInterval, SIGNAL(valueChanged(int)), parent, SLOT(settingsModified()));
 }
 
 void WebBrowser::configAccepted()
