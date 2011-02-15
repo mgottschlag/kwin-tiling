@@ -53,7 +53,7 @@ void AkonadiEngine::initEmailMonitor()
     m_emailMonitor = new Monitor( this );
     m_emailMonitor->setMimeTypeMonitored("message/rfc822");
     //m_emailMonitor->setCollectionMonitored(Collection::root(), false);
-    m_emailMonitor->itemFetchScope().fetchPayloadPart( MessagePart::Envelope );
+    m_emailMonitor->itemFetchScope().fetchFullPayload( true );
     connect(m_emailMonitor, SIGNAL(itemAdded(Akonadi::Item, Akonadi::Collection)),
             SLOT(emailItemAdded(Akonadi::Item)) );
     connect(m_emailMonitor, SIGNAL(itemChanged(Akonadi::Item, QSet<QByteArray>)),
@@ -194,7 +194,7 @@ bool AkonadiEngine::sourceRequestEvent(const QString &name)
             initEmailMonitor();
         }
         m_emailMonitor->setItemMonitored(Item( id ), true);
-        fetch->fetchScope().fetchPayloadPart( MessagePart::Envelope );
+        fetch->fetchScope().fetchFullPayload( true );
         connect( fetch, SIGNAL(result(KJob*)), SLOT(fetchEmailCollectionDone(KJob*)) );
         connect( fetch, SIGNAL(itemsReceived(const Akonadi::Item::List&)), SLOT(emailItemsReceived(const Akonadi::Item::List&)) );
         m_jobCollections[fetch] = name;
@@ -298,7 +298,7 @@ void AkonadiEngine::emailItemAdded(const Akonadi::Item &item, const QString &col
         setData( source, "To", msg->to()->asUnicodeString() );
         setData( source, "Cc", msg->cc()->asUnicodeString() );
         setData( source, "Bcc", msg->bcc()->asUnicodeString() );
-        setData( source, "Body", msg->mainBodyPart()->body() );
+        setData( source, "Body", QString(msg->mainBodyPart()->body()));
         // Flags
         //kDebug() << item.flags();
         setData( source, "Flag-New", !item.hasFlag("\\Seen") );
@@ -314,21 +314,24 @@ void AkonadiEngine::emailItemAdded(const Akonadi::Item &item, const QString &col
         if (!collection.isEmpty()) {
             setData( collection, source, msg->subject()->asUnicodeString());
         }
-        //printMessage(msg);
+        printMessage(msg);
         scheduleSourcesUpdated();
     }
 }
 
 void AkonadiEngine::printMessage(const MessagePtr msg)
 {
-        kDebug() << "=============== New Item" << msg->from()->asUnicodeString() << msg->subject()->asUnicodeString();
-        kDebug() << "sub" << msg->subject()->asUnicodeString();
-        kDebug() << "from" << msg->from()->asUnicodeString();
-        kDebug() << "date" << msg->date()->dateTime().date();
-        kDebug() << "to" << msg->to()->asUnicodeString();
-        kDebug() << "cc" << msg->cc()->asUnicodeString();
-        kDebug() << "bcc" << msg->bcc()->asUnicodeString();
-        kDebug() << "body" << msg->mainBodyPart()->body();
+    return;
+    kDebug() << "sub" << msg->subject()->asUnicodeString();
+    return;
+    kDebug() << "=============== New Item" << msg->from()->asUnicodeString() << msg->subject()->asUnicodeString();
+    kDebug() << "sub" << msg->subject()->asUnicodeString();
+    kDebug() << "from" << msg->from()->asUnicodeString();
+    kDebug() << "date" << msg->date()->dateTime().date();
+    kDebug() << "to" << msg->to()->asUnicodeString();
+    kDebug() << "cc" << msg->cc()->asUnicodeString();
+    kDebug() << "bcc" << msg->bcc()->asUnicodeString();
+    kDebug() << "body" << msg->mainBodyPart()->body();
 }
 
 void AkonadiEngine::fetchEmailCollectionDone(KJob* job)
