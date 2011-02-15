@@ -354,6 +354,17 @@ void Pager::createConfigurationInterface(KConfigDialog *parent)
             ui.showDashboardRadioButton->setChecked(true);
             break;
     }
+
+    connect(ui.desktopNumberRadioButton, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(ui.desktopNameRadioButton, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(ui.displayNoneRadioButton, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(ui.showWindowIconsCheckBox, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(ui.spinRows, SIGNAL(valueChanged(int)), parent, SLOT(settingsModified()));
+    connect(ui.doNothingRadioButton, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(ui.showDesktopRadioButton, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(ui.showDashboardRadioButton, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+
+    connect(m_configureDesktopsWidget, SIGNAL(changed(bool)), parent, SLOT(settingsModified()));
 }
 
 void Pager::recalculateGridSizes(int rows)
