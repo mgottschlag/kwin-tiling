@@ -390,6 +390,7 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
         if (KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
             KService service(m_url.toLocalFile());
             KRun::run(service, urls, 0);
+            return;
         } else {
             //Else just exec the local executable
             commandStr = KShell::quoteArg(m_url.path());
