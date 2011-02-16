@@ -392,6 +392,11 @@ void LockOut::createConfigurationInterface(KConfigDialog *parent)
     connect(ui.checkBox_hibernate, SIGNAL(toggled(bool)), this, SLOT(buttonChanged()));
 
     connect(this, SIGNAL(configUiChanged()), parent, SLOT(settingsModified()));
+    connect(ui.checkBox_logout, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(ui.checkBox_lock, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(ui.checkBox_switchUser, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(ui.checkBox_hibernate, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
+    connect(ui.checkBox_sleep, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
 #endif
 }
 
