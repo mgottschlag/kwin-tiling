@@ -329,10 +329,15 @@ void BackgroundListModel::setResizeMethod(Plasma::Wallpaper::ResizeMethod resize
 
 BackgroundFinder::BackgroundFinder(Plasma::Wallpaper *structureParent, const QStringList &paths)
     : QThread(structureParent),
-      m_structureParent(structureParent),
+      m_structure(Plasma::Wallpaper::packageStructure(structureParent)),
       m_paths(paths),
       m_token(QUuid().toString())
 {
+}
+
+BackgroundFinder::~BackgroundFinder()
+{
+    wait();
 }
 
 QString BackgroundFinder::token() const
@@ -352,11 +357,9 @@ void BackgroundFinder::run()
 
     QDir dir;
     dir.setFilter(QDir::AllDirs | QDir::Files | QDir::Hidden | QDir::Readable);
-    Plasma::PackageStructure::Ptr structure = Plasma::Wallpaper::packageStructure(m_structureParent);
-    Plasma::Package pkg(QString(), structure);
+    Plasma::Package pkg(QString(), m_structure);
 
-    int i = 0;
-    QMutableStringListIterator it(m_paths);
+    int i;
     for (i = 0; i < m_paths.count(); ++i) {
         const QString path = m_paths.at(i);
         //kDebug() << "doing" << path;

@@ -93,6 +93,7 @@ class BackgroundFinder : public QThread
 
 public:
     BackgroundFinder(Plasma::Wallpaper *structureParent, const QStringList &p);
+    ~BackgroundFinder();
 
     QString token() const;
 
@@ -103,7 +104,7 @@ protected:
     void run();
 
 private:
-    Plasma::Wallpaper *m_structureParent;
+    Plasma::PackageStructure::Ptr m_structure;
     QStringList m_paths;
     QString m_token;
 };
