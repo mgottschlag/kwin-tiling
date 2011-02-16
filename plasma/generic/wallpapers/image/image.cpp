@@ -534,8 +534,21 @@ void Image::startSlideshow()
     // populate background list
     m_timer.stop();
     m_slideshowBackgrounds.clear();
-    m_slideshowBackgrounds = BackgroundListModel::findAllBackgrounds(this, 0, m_dirs);
+    BackgroundFinder *finder = new BackgroundFinder(this, m_dirs);
+    m_findToken = finder->token();
+    connect(finder, SIGNAL(backgroundsFound(QStringList,QString)), this, SLOT(backgroundsFound(QStringList,QString)));
+    finder->start();
+    //TODO: what would be cool: paint on the wallpaper itself a busy widget and perhaps some text
+    //about loading wallpaper slideshow while the thread runs
+}
 
+void Image::backgroundsFound(const QStringList &paths, const QString &token)
+{
+    if (token != m_findToken) {
+        return;
+    }
+
+    m_slideshowBackgrounds = paths;
     updateWallpaperActions();
     // start slideshow
     if (m_slideshowBackgrounds.isEmpty()) {

@@ -85,6 +85,7 @@ class Image : public Plasma::Wallpaper
         void systemCheckBoxToggled(bool);
         void downloadedCheckBoxToggled(bool);
         void imageFileAltered(const QString &path);
+        void backgroundsFound(const QStringList &paths, const QString &token);
 
     protected:
         void init(const KConfigGroup &config);
@@ -127,6 +128,7 @@ class Image : public Plasma::Wallpaper
         QDateTime m_previousModified;
         bool m_randomize;
         QWeakPointer<KNS3::DownloadDialog> m_newStuffDialog;
+        QString m_findToken;
 
         QAction* m_nextWallpaperAction;
         QAction* m_openImageAction;
