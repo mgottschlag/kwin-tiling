@@ -357,22 +357,17 @@ void KRunnerDialog::hideEvent(QHideEvent *)
 
 void KRunnerDialog::updateMask()
 {
-#ifdef Q_WS_X11
     // Enable the mask only when compositing is disabled;
     // As this operation is quite slow, it would be nice to find some
     // way to workaround it for no-compositing users.
 
-    if (!QX11Info::isCompositingManagerRunning()) {
-        setMask(m_background->mask());
-    } else {
+    if (KWindowSystem::compositingActive()) {
         const QRegion mask = m_background->mask();
         Plasma::WindowEffects::enableBlurBehind(winId(), true, mask);
         Plasma::WindowEffects::overrideShadow(winId(), true);
+    } else {
+        setMask(m_background->mask());
     }
-
-#else
-    setMask(m_background->mask());
-#endif
 }
 
 void KRunnerDialog::resizeEvent(QResizeEvent *e)
