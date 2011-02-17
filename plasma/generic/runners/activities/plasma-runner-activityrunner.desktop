@@ -1,6 +1,16 @@
 [Desktop Entry]
 Name=Activities
+Name[pt]=Actividades
+Name[pt_BR]=Atividades
+Name[uk]=Простори дій
+Name[x-test]=xxActivitiesxx
+Name[zh_TW]=活動
 Comment=List and switch between desktop activities
+Comment[pt]=Ver e mudar de actividades no ambiente de trabalho
+Comment[pt_BR]=Listar e alternar entre as atividades da área de trabalho
+Comment[uk]=Перегляд і перемикання між просторами дій стільниці
+Comment[x-test]=xxList and switch between desktop activitiesxx
+Comment[zh_TW]=列出並在桌面活動間切換
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 Icon=activities
