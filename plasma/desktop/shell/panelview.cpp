@@ -465,11 +465,9 @@ void PanelView::checkShadow()
         if (m_shadowWindow->isValid() && isVisible()) {
             m_shadowWindow->show();
         }
-    } else {
-        if (m_shadowWindow) {
-            m_shadowWindow->deleteLater();
-            m_shadowWindow = 0;
-        }
+    } else if (m_shadowWindow) {
+        m_shadowWindow->deleteLater();
+        m_shadowWindow = 0;
     }
 #endif
 }
