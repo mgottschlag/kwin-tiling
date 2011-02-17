@@ -316,8 +316,7 @@ class CalendarTablePrivate
 
         bool addHolidaysRegion(const QString &holidayRegion, bool daysOff)
         {
-            kDebug() << "**********8ADDING" << holidayRegion <<
-                holidaysRegions.contains(holidayRegion) << isValidHolidaysRegion(holidayRegion);
+            //kDebug() << holidayRegion << holidaysRegions.contains(holidayRegion) << isValidHolidaysRegion(holidayRegion);
             if (!holidaysRegions.contains(holidayRegion) && isValidHolidaysRegion(holidayRegion)) {
                 QString queryString = "holidaysRegion" + QString(':') + holidayRegion;
                 Plasma::DataEngine::Data regions = calendarEngine()->query(queryString);
