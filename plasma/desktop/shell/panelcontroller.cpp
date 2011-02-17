@@ -188,7 +188,7 @@ PanelController::PanelController(QWidget* parent)
     m_moveTool->setIcon(m_iconSvg->pixmap("move"));
     m_moveTool->installEventFilter(this);
     m_moveTool->setCursor(Qt::SizeAllCursor);
-    m_sizeTool->setToolTip(i18n("Press left mouse button and drag to a screen edge to change panel edge"));
+    m_moveTool->setToolTip(i18n("Press left mouse button and drag to a screen edge to change panel edge"));
     m_layout->addWidget(m_moveTool);
 
     m_sizeTool = addTool(QString(), i18n("Height"), m_configWidget);
