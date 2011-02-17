@@ -765,14 +765,12 @@ void CalendarTablePrivate::checkIfCalendarEngineNeeded()
 
 void CalendarTablePrivate::populateHolidays()
 {
-    kDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
     pendingPopulations |= PopulateHolidays;
     delayedPopulationTimer->start();
 }
 
 void CalendarTablePrivate::populateCalendar()
 {
-    kDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << pendingPopulations;
     if (pendingPopulations & PopulateHolidays) {
         holidayEvents.clear();
         holidays.clear();
@@ -874,11 +872,10 @@ void CalendarTable::applyConfiguration(KConfigGroup cg)
             d->addHolidaysRegion(region, daysOff.contains(region));
         }
 
-        kDebug() << "applied" << regions << "and now we populate the holidays!!!!!!!!!";
         d->populateHolidays();
     }
-    setDisplayHolidays(holidays);
 
+    setDisplayHolidays(holidays);
     setDisplayEvents(cg.readEntry("displayEvents", true));
 }
 

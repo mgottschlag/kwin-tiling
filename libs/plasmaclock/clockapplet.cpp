@@ -373,7 +373,7 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     int defaultSelection = d->timezonesUi.clockDefaultsTo->findData(d->defaultTimezone);
     if (defaultSelection < 0) {
         defaultSelection = 0; //if it's something unexpected default to local
-        kDebug() << d->defaultTimezone << "not in list!?";
+        //kDebug() << d->defaultTimezone << "not in list!?";
     }
     d->timezonesUi.clockDefaultsTo->setCurrentIndex(defaultSelection);
 
