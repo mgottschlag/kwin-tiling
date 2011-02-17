@@ -703,17 +703,17 @@ void Clock::prepareFont(QFont &font, QRect &rect, const QString &text, bool sing
         if (first) {
             first = false;
         } else  {
-            font.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(), font.pointSize() - 1));
+            font.setPointSize(qMax(smallest, font.pointSize() - 1));
         }
 
         const QFontMetrics fm(font);
-        int flags = (singleline || ((formFactor() == Plasma::Horizontal) &&
-                                    (contentsRect().height() < font.pointSize()*6))) ?
+        int flags = (singleline || ((formFactor() == Plasma::Horizontal) && (contentsRect().height() < font.pointSize()*6))) ?
                     Qt::TextSingleLine : Qt::TextWordWrap;
 
         tmpRect = fm.boundingRect(rect, flags, text);
-    } while (font.pointSize() > KGlobalSettings::smallestReadableFont().pointSize() &&
+    } while (font.pointSize() > smallest &&
              (tmpRect.width() > rect.width() || tmpRect.height() > rect.height()));
+
     rect = tmpRect;
 }
 
