@@ -601,7 +601,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         p->setFont(f);
     }
 
-    if (m_useCustomColor) {
+    if (m_useCustomColor || !m_svgExistsInTheme) {
         QFontMetrics fm(p->font());
 
         QPointF timeTextOrigin(QPointF(qMax(0, (m_timeRect.center().x() - fm.width(fakeTimeString) / 2)),
@@ -651,7 +651,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
 void Clock::generatePixmap()
 {
-    if (m_useCustomColor) {
+    if (m_useCustomColor || !m_svgExistsInTheme) {
         return;
     }
 
@@ -741,12 +741,16 @@ Plasma::IntervalAlignment Clock::intervalAlignment() const
 
 void Clock::updateColors()
 {
+    m_svgExistsInTheme = Plasma::Theme::defaultTheme()->currentThemeHasImage("widgets/labeltexture");
+
     if (!m_useCustomColor) {
         m_plainClockColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     }
+
     if (!m_useCustomShadowColor) {
         m_plainClockShadowColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
     }
+
     if (!m_useCustomColor || !m_useCustomShadowColor) {
         update();
     }

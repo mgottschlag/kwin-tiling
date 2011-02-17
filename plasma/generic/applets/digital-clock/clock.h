@@ -100,6 +100,7 @@ class Clock : public ClockApplet
         /// Designer Config files
         Ui::clockConfig ui;
         Plasma::Svg *m_svg;
+        bool m_svgExistsInTheme;
         QPixmap m_pixmap;
 };
 
