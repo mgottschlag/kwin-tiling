@@ -153,9 +153,15 @@ void Clock::updateSize()
         // We have a fixed width, set some sensible height
         setMinimumSize(QSize(0, h));
     }
+
     setPreferredSize(QSize(w, h));
     emit sizeHintChanged(Qt::PreferredSize);
     //kDebug(96669) << "minZize: " << minimumSize() << preferredSize();
+
+    if (m_isDefaultFont) {
+        const QString fakeTimeString = KGlobal::locale()->formatTime(QTime(23,59,59), m_showSeconds);
+        expandFontToMax(m_plainClockFont, fakeTimeString);
+    }
 
     generatePixmap();
 }
@@ -190,12 +196,16 @@ void Clock::clockConfigChanged()
         setCacheMode(QGraphicsItem::DeviceCoordinateCache);
     }
 
-    m_plainClockFont = cg.readEntry("plainClockFont", m_plainClockFont);
+    QFont f = cg.readEntry("plainClockFont", m_plainClockFont);
+    m_isDefaultFont = f == m_plainClockFont;
+    m_plainClockFont = f;
+
     m_useCustomColor = cg.readEntry("useCustomColor", m_useCustomColor);
     m_plainClockColor = cg.readEntry("plainClockColor", m_plainClockColor);
     m_useCustomShadowColor = cg.readEntry("useCustomShadowColor", m_useCustomShadowColor);
     m_plainClockShadowColor = cg.readEntry("plainClockShadowColor", m_plainClockShadowColor);
     m_drawShadow = cg.readEntry("plainClockDrawShadow", m_drawShadow);
+
     updateColors();
 
     if (m_useCustomColor) {
@@ -308,7 +318,11 @@ void Clock::clockConfigAccepted()
     m_showTimezone = ui.showTimeZone->isChecked();
     cg.writeEntry("showTimezone", m_showTimezone);
 
+    if (m_isDefaultFont && ui.plainClockFont->currentFont() != m_plainClockFont) {
+        m_isDefaultFont = false;
+    }
     m_plainClockFont = ui.plainClockFont->currentFont();
+
     //We need this to happen before we disconnect/reconnect sources to ensure
     //that the update interval is set properly.
     if (m_showSeconds != ui.secondsCheckbox->isChecked()) {
@@ -656,10 +670,32 @@ void Clock::generatePixmap()
     m_pixmap = Plasma::PaintUtils::texturedText(timeString, font, m_svg);
 }
 
+void Clock::expandFontToMax(QFont &font, const QString &text)
+{
+    bool first = true;
+    const QRect rect = contentsRect().toRect();
+
+    // Starting with the given font, increase its size until it'll fill the rect
+    do {
+        if (first) {
+            first = false;
+        } else  {
+            font.setPointSize(font.pointSize() + 1);
+        }
+
+        const QFontMetrics fm(font);
+        QRect fr = fm.boundingRect(rect, Qt::TextSingleLine, text);
+        if (fr.width() >= rect.width() || fr.height() >= rect.height()) {
+            break;
+        }
+    } while (true);
+}
+
 void Clock::prepareFont(QFont &font, QRect &rect, const QString &text, bool singleline)
 {
     QRect tmpRect;
     bool first = true;
+    const int smallest = KGlobalSettings::smallestReadableFont().pointSize();
 
     // Starting with the given font, decrease its size until it'll fit in the
     // given rect allowing wrapping where possible
