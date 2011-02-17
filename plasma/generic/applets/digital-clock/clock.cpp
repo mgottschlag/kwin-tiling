@@ -76,12 +76,9 @@ void Clock::init()
 {
     ClockApplet::init();
 
-    configChanged();
-
     dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
     connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(resetSize()));
-    generatePixmap();
 }
 
 void Clock::constraintsEvent(Plasma::Constraints constraints)
