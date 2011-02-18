@@ -493,17 +493,23 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractGroupableItem * groupableItem
     }
 
     //returns the corresponding item or creates a new one
-    bool isNew = false;
     AbstractTaskItem *item = m_groupMembers.value(groupableItem);
 
     if (!item) {
         item = createAbstractItem(groupableItem);
-        isNew = true;
-    }
 
-    if (!item) {
-        kDebug() << "invalid Item";
-        return;
+        if (item) {
+            connect(item, SIGNAL(activated(AbstractTaskItem*)),
+                    this, SLOT(updateActive(AbstractTaskItem*)));
+
+            TaskGroupItem *group = qobject_cast<TaskGroupItem*>(item);
+            if (group) {
+                connect(item, SIGNAL(changed()), this, SLOT(relayoutItems()));
+            }
+        } else {
+            kDebug() << "invalid Item";
+            return;
+        }
     }
 
     m_groupMembers[groupableItem] = item;
@@ -526,16 +532,6 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractGroupableItem * groupableItem
         m_activeTaskIndex = indexOf(item);
     } else if (!m_group || m_group.data()->members().size() == 1) {
         m_activeTaskIndex = 0;
-    }
-
-    if (isNew) {
-        connect(item, SIGNAL(activated(AbstractTaskItem*)),
-                this, SLOT(updateActive(AbstractTaskItem*)));
-
-        TaskGroupItem *group = qobject_cast<TaskGroupItem*>(item);
-        if (group) {
-            connect(item, SIGNAL(changed()), this, SLOT(relayoutItems()));
-        }
     }
 
     update();
