@@ -454,7 +454,7 @@ int TaskGroupItem::count() const
     return m_groupMembers.count();
 }
 
-AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupableItem * groupableItem)
+AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupableItem *groupableItem)
 {
     //kDebug() << "item to create" << groupableItem << endl;
     AbstractTaskItem *item = 0;
@@ -466,15 +466,11 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupab
     } else if (groupableItem->itemType() == TaskManager::LauncherItemType) {
         AppLauncherItem *launcherItem = new AppLauncherItem(this, m_applet, static_cast<TaskManager::LauncherItem*>(groupableItem));
         item = launcherItem;
-    } else { //it's a window task
+    } else {
+        //it's a window task
         WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet);
         windowItem->setTask(static_cast<TaskManager::TaskItem*>(groupableItem));
         item = windowItem;
-    }
-
-    if (!item) {
-        kDebug() << "invalid Item";
-        return 0;
     }
 
     if (m_collapsed) {
