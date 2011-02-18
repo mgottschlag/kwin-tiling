@@ -280,7 +280,7 @@ QImage splash_read_png_image(FILE* f)
 	return QImage();
     }
 
-    if (setjmp(png_ptr->jmpbuf)) {
+    if (setjmp(png_jmpbuf(png_ptr))) {
 	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 	return QImage();
     }
