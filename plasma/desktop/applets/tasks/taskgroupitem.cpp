@@ -1269,6 +1269,7 @@ int TaskGroupItem::indexOf(AbstractTaskItem *task, bool descendGroups)
             ++index;
         }
     }
+
     return -1;
 }
 
