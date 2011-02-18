@@ -662,7 +662,7 @@ QString CalendarTable::dateDetails(const QDate &date) const
             } else {
                 QString region = holidayData.value("RegionCode").toString();
                 notDaysOff += i18nc("Not day off: Holiday name (holiday region)",
-                                    "<i>Other</i>: %1 (%2)",
+                                    "%1 (%2)",
                                     holidayData.value("Name").toString(),
                                     d->holidaysRegions.value(region).value("Name").toString());
                 notDaysOff.append("<br>");
@@ -676,24 +676,7 @@ QString CalendarTable::dateDetails(const QDate &date) const
         details += "<br>";
 
         foreach (const Plasma::DataEngine::Data &occurrence, d->events.values(julian)) {
-            QString eventUid = occurrence.value("OccurrenceUid").toString();
-            KDateTime occStartDate = occurrence.value("OccurrenceStartDate").value<KDateTime>();
-            KDateTime occEndDate = occurrence.value("OccurrenceEndDate").value<KDateTime>();
-            Plasma::DataEngine::Data eventData = d->pimEvents.value(eventUid);
-
-            //TODO translate this layout once strings not frozen
-            QString description;
-            if (eventData.value("AllDay").toBool()) {
-                description = QString("<br>%1").arg(eventData.value("Summary").toString());
-            } else if (!occEndDate.isValid() || occStartDate == occEndDate) {
-                description = QString("%1<br>%2").arg(KGlobal::locale()->formatTime(occStartDate.time()))
-                                                 .arg(eventData.value("Summary").toString());
-            } else {
-                description = QString("%1 - %2<br>%3").arg(KGlobal::locale()->formatTime(occStartDate.time()))
-                                                      .arg(KGlobal::locale()->formatTime(occEndDate.time()))
-                                                      .arg(eventData.value("Summary").toString());
-            }
-            details += i18n("<i>Event</i>: %1<br>", description);
+            details += i18n("<i>Event</i>: %1<br>", buildOccurrenceDescription(occurrence));
         }
     }
 
@@ -701,29 +684,33 @@ QString CalendarTable::dateDetails(const QDate &date) const
         details += "<br>";
 
         foreach (const Plasma::DataEngine::Data &occurrence, d->todos.values(julian)) {
-            QString todoUid = occurrence.value("OccurrenceUid").toString();
-            KDateTime occStartDate = occurrence.value("OccurrenceStartDate").value<KDateTime>();
-            KDateTime occEndDate = occurrence.value("OccurrenceEndDate").value<KDateTime>();
-            Plasma::DataEngine::Data todoData = d->pimEvents.value(todoUid);
-
-            //TODO translate this layout once strings not frozen
-            QString description;
-            if (todoData.value("AllDay").toBool()) {
-                description = QString("<br>%1").arg(todoData.value("Summary").toString());
-            } else if (!occEndDate.isValid() || occStartDate == occEndDate) {
-                description = QString("%1<br>%2").arg(KGlobal::locale()->formatTime(occStartDate.time()))
-                                                 .arg(todoData.value("Summary").toString());
-            } else {
-                description = QString("%1 - %2<br>%3").arg(KGlobal::locale()->formatTime(occStartDate.time()))
-                                                      .arg(KGlobal::locale()->formatTime(occEndDate.time()))
-                                                      .arg(todoData.value("Summary").toString());
-            }
             //TODO add Status and Percentage Complete when strings not frozen
-            details += i18n("<i>Todo</i>: %1<br>", description);
+            details += i18n("<i>Todo</i>: %1<br>", buildOccurrenceDescription(occurrence));
         }
     }
 
     return details;
+}
+
+QString CalendarTable::buildOccurrenceDescription(const Plasma::DataEngine::Data &occurrence) const
+{
+    const QString uid = occurrence.value("OccurrenceUid").toString();
+    const KDateTime occStartDate = occurrence.value("OccurrenceStartDate").value<KDateTime>();
+    const KDateTime occEndDate = occurrence.value("OccurrenceEndDate").value<KDateTime>();
+    const Plasma::DataEngine::Data details = d->pimEvents.value(uid);
+
+    if (details.value("AllDay").toBool()) {
+        return i18nc("All-day calendar event summary", "<br>%1", details.value("Summary").toString());
+    } else if (!occEndDate.isValid() || occStartDate == occEndDate) {
+        return i18nc("Time and summary for a calendarevent", "%1<br>%2",
+                     KGlobal::locale()->formatTime(occStartDate.time()),
+                     details.value("Summary").toString());
+    }
+
+    return i18nc("Start and end time and summary for a calendar event", "%1 - %2<br>%3",
+                 KGlobal::locale()->formatTime(occStartDate.time()),
+                 KGlobal::locale()->formatTime(occEndDate.time()),
+                 details.value("Summary").toString());
 }
 
 void CalendarTable::setAutomaticUpdateEnabled(bool enabled)

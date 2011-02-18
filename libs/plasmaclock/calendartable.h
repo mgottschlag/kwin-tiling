@@ -118,6 +118,8 @@ protected:
     virtual void paintBorder(QPainter *p, int cell, int week, int weekDay, CellTypes type, const QDate &cellDate);
 
 private:
+    QString buildOccurrenceDescription(const Plasma::DataEngine::Data &occurrence) const;
+
     friend class CalendarTablePrivate;
     CalendarTablePrivate* const d;
 
