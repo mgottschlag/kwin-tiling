@@ -188,7 +188,7 @@ void Calendar::init(const QDate &initialDate)
     calendarLayout->addItem(d->calendarTable);
     calendarLayout->addItem(layoutTools);
     layout->addItem(calendarLayout);
-    layout->addItem(d->eventsDisplay);//, 0, 1, 3, 0, Qt::AlignTop | Qt::AlignHCenter);
+    layout->addItem(d->eventsDisplay);
 
     setDate(initialDate);
 }
