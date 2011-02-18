@@ -199,7 +199,23 @@ void TaskGroup::add(AbstractGroupableItem *item)
         }
     }
 
-    d->members.append(item);
+    bool inserted = false;
+    if (item->itemType() == LauncherItemType) {
+        // insert launchers together at the head of the list, but still
+        // in the order they appear
+        for (int i = 0; i < d->members.count(); ++i) {
+            if (d->members.at(i)->itemType() != LauncherItemType) {
+                d->members.insert(i, item);
+                inserted = true;
+                break;
+            }
+        }
+    }
+
+    if (!inserted) {
+        d->members.append(item);
+    }
+
     item->setParentGroup(this);
 
     connect(item, SIGNAL(destroyed(AbstractGroupableItem*)),
