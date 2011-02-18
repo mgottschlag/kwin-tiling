@@ -647,7 +647,8 @@ QString CalendarTable::dateDetails(const QDate &date) const
     const int julian = date.toJulianDay();
 
     if (d->holidays.contains(julian)) {
-        details += "<br>";
+        details.append("<br>");
+        QString notDaysOff;
 
         foreach (int holidayUid, d->holidays.values(julian)) {
             Plasma::DataEngine::Data holidayData = d->holidayEvents.value(holidayUid);
@@ -657,21 +658,18 @@ QString CalendarTable::dateDetails(const QDate &date) const
                                  "<i>Holiday</i>: %1 (%2)",
                                  holidayData.value("Name").toString(),
                                  d->holidaysRegions.value(region).value("Name").toString());
-                details += "<br>";
+                details.append("<br>");
+            } else {
+                QString region = holidayData.value("RegionCode").toString();
+                notDaysOff += i18nc("Not day off: Holiday name (holiday region)",
+                                    "<i>Other</i>: %1 (%2)",
+                                    holidayData.value("Name").toString(),
+                                    d->holidaysRegions.value(region).value("Name").toString());
+                notDaysOff.append("<br>");
             }
         }
 
-        foreach (int holidayUid, d->holidays.values(julian)) {
-            Plasma::DataEngine::Data holidayData = d->holidayEvents.value(holidayUid);
-            if (!d->holidayIsDayOff(holidayData)) {
-                QString region = holidayData.value("RegionCode").toString();
-                details += i18nc("Not day off: Holiday name (holiday region)",
-                                 "<i>Other</i>: %1 (%2)",
-                                 holidayData.value("Name").toString(),
-                                 d->holidaysRegions.value(region).value("Name").toString());
-                details += "<br>";
-            }
-        }
+        details.append(notDaysOff);
     }
 
     if (d->events.contains(julian)) {
