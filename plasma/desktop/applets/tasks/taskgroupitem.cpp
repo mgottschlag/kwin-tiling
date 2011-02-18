@@ -530,7 +530,9 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractGroupableItem * groupableItem
         m_activeTaskIndex = 0;
     }
 
-    update();
+    if (collapsed()) {
+        update();
+    }
 }
 
 void TaskGroupItem::itemRemoved(TaskManager::AbstractGroupableItem * groupableItem)
