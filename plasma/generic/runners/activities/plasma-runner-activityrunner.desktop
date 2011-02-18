@@ -1,11 +1,19 @@
 [Desktop Entry]
 Name=Activities
+Name[cs]=Aktivity
+Name[ia]=Activitates
+Name[nds]=Aktiviteten
+Name[nl]=Activiteiten
 Name[pt]=Actividades
 Name[pt_BR]=Atividades
 Name[uk]=Простори дій
 Name[x-test]=xxActivitiesxx
 Name[zh_TW]=活動
 Comment=List and switch between desktop activities
+Comment[cs]=Zobrazení a přepínač aktivit pracovní plochy
+Comment[ia]=Lista e commuta inter activitates de scriptorio
+Comment[nds]=Aktiv Schriefdischakschonen ankieken un wesseln
+Comment[nl]=Bureaubladactiviteiten laten zien en er tussen schakelen
 Comment[pt]=Ver e mudar de actividades no ambiente de trabalho
 Comment[pt_BR]=Listar e alternar entre as atividades da área de trabalho
 Comment[uk]=Перегляд і перемикання між просторами дій стільниці
