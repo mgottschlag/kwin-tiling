@@ -277,7 +277,7 @@ QPair<int, int> TaskItemLayout::gridLayoutSize()
         rows = ceil(static_cast<float>(groupSize) / static_cast<float>(columns)); //actually needed rows
     }
 
-    return QPair <int,int> (columns, rows);
+    return QPair<int,int>(columns, rows);
 }
 
 
@@ -375,7 +375,6 @@ void TaskItemLayout::layoutItems()
                 if ((columns - col) < groupRowWidth) {
                     //we need to split the group
                     int splitIndex = columns - col;//number of items in group that are on this row
-                    TaskGroupItem *splitChild = group->splitGroup(splitIndex);
                     if (m_layoutOrientation == Qt::Vertical) {
                         addItem(item, row, col, splitIndex, 1);
                     } else {
@@ -383,6 +382,7 @@ void TaskItemLayout::layoutItems()
                     }
 
                     //kDebug() << "add normal item: split index = column span " << splitIndex;
+                    TaskGroupItem *splitChild = group->splitGroup(splitIndex);
                     if (splitChild) {
                         //also add the second part of the group if there is one
                         if (m_layoutOrientation == Qt::Vertical) {
