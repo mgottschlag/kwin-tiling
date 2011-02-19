@@ -213,6 +213,7 @@ void KCMKeyboardWidget::addLayout()
     if( dialog.exec() == QDialog::Accepted ) {
     	keyboardConfig->layouts.append( dialog.getSelectedLayoutUnit() );
     	layoutsTableModel->refresh();
+    	uiWidget->layoutsTableView->resizeRowsToContents();
     	uiChanged();
     }
 
