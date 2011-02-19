@@ -1,3 +1,5 @@
+set ( text_paint_LIB ${KDE4_PLASMA_LIBS} )
+
 MACRO(KEYBOARD_DAEMON_UNIT_TESTS _testname)
                kde4_add_unit_test(${_testname}_test NOGUI ${_testname}_test.cpp ../${_testname}.cpp)
                target_link_libraries(${_testname}_test ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${QT_QTTEST_LIBRARY} ${X11_Xkbfile_LIB})
@@ -11,5 +13,5 @@ ENDMACRO(KEYBOARD_DAEMON_UNIT_TESTS2)
 KEYBOARD_DAEMON_UNIT_TESTS(xkb_rules)
 KEYBOARD_DAEMON_UNIT_TESTS(iso_codes)
 
-kde4_add_unit_test(flags_test NOGUI flags_test.cpp ../flags.cpp ../utils.cpp ../x11_helper.cpp ../keyboard_config.cpp ../xkb_rules.cpp)
-target_link_libraries(flags_test ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${QT_QTTEST_LIBRARY} ${X11_Xkbfile_LIB} ${X11_LIBRARIES})
+kde4_add_unit_test(flags_test NOGUI flags_test.cpp ../flags.cpp ../x11_helper.cpp ../keyboard_config.cpp ../xkb_rules.cpp)
+target_link_libraries(flags_test ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${QT_QTTEST_LIBRARY} ${X11_Xkbfile_LIB} ${X11_LIBRARIES} ${text_paint_LIB})
