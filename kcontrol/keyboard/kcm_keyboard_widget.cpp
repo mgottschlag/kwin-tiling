@@ -286,8 +286,8 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 
 	uiWidget->moveUpBtn->setIcon(KIcon("arrow-up"));
     uiWidget->moveDownBtn->setIcon(KIcon("arrow-down"));
-//    uiWidget->moveUpBtn->setArrowType(Qt::UpArrow);
-//    uiWidget->moveUpBtn->setArrowType(Qt::UpDown);
+	uiWidget->addLayoutBtn->setIcon(KIcon("list-add"));
+    uiWidget->removeLayoutBtn->setIcon(KIcon("list-remove"));
 
     KIcon clearIcon = qApp->isLeftToRight() ? KIcon("edit-clear-locationbar-rtl") : KIcon("edit-clear-locationbar-ltr");
 	uiWidget->xkbGrpClearBtn->setIcon(clearIcon);
