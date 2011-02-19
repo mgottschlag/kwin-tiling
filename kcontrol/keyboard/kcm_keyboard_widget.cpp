@@ -110,6 +110,7 @@ void KCMKeyboardWidget::updateUI()
 
 	uiWidget->layoutsTableView->setModel(uiWidget->layoutsTableView->model());
 	((LayoutsTableModel*)uiWidget->layoutsTableView->model())->refresh();
+	uiWidget->layoutsTableView->resizeRowsToContents();
 
 	uiUpdating = true;
 	updateHardwareUI();
