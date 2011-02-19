@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Activities
 Name[cs]=Aktivity
+Name[es]=Actividades
 Name[ia]=Activitates
 Name[nds]=Aktiviteten
 Name[nl]=Activiteiten
@@ -11,6 +12,7 @@ Name[x-test]=xxActivitiesxx
 Name[zh_TW]=活動
 Comment=List and switch between desktop activities
 Comment[cs]=Zobrazení a přepínač aktivit pracovní plochy
+Comment[es]=Ver y cambiar entre las actividades de escritorio
 Comment[ia]=Lista e commuta inter activitates de scriptorio
 Comment[nds]=Aktiv Schriefdischakschonen ankieken un wesseln
 Comment[nl]=Bureaubladactiviteiten laten zien en er tussen schakelen
