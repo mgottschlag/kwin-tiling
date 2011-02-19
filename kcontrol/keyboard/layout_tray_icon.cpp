@@ -75,10 +75,12 @@ void LayoutTrayIcon::init()
 	connect(&xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));
 	connect(&xEventNotifier, SIGNAL(layoutMapChanged()), this, SLOT(layoutMapChanged()));
 	xEventNotifier.start();
+	connect(flags, SIGNAL(pixmapChanged()), this, SLOT(layoutChanged()));
 }
 
 void LayoutTrayIcon::destroy()
 {
+	disconnect(flags, SIGNAL(pixmapChanged()), this, SLOT(layoutChanged()));
 	xEventNotifier.stop();
 	disconnect(&xEventNotifier, SIGNAL(layoutMapChanged()), this, SLOT(layoutMapChanged()));
 	disconnect(&xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));

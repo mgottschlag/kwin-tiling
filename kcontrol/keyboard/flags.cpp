@@ -24,6 +24,9 @@
 #include <kglobalsettings.h>
 #include <klocalizedstring.h>
 
+#include <plasma/svg.h>
+#include <plasma/paintutils.h>
+
 #include <QtCore/QStringList>
 #include <QtGui/QPixmap>
 #include <QtGui/QPainter>
@@ -34,14 +37,14 @@
 //for text handling
 #include "keyboard_config.h"
 #include "xkb_rules.h"
-#include "utils.h"
 
 
 static const int FLAG_MAX_WIDTH = 21;
 static const int FLAG_MAX_HEIGHT = 14;
 static const char flagTemplate[] = "l10n/%1/flag.png";
 
-Flags::Flags()
+Flags::Flags():
+	svg(NULL)
 {
 	transparentPixmap = new QPixmap(FLAG_MAX_WIDTH, FLAG_MAX_HEIGHT);
 	transparentPixmap->fill(Qt::transparent);
@@ -49,6 +52,10 @@ Flags::Flags()
 
 Flags::~Flags()
 {
+	if( svg != NULL ) {
+		disconnect(svg, SIGNAL(repaintNeeded()), this, SLOT(clearCache()));
+		delete svg;
+	}
 	delete transparentPixmap;
 }
 
@@ -184,14 +191,37 @@ const QIcon Flags::getIconWithText(const LayoutUnit& layoutUnit, const KeyboardC
 //	p.drawText(pm.rect(), Qt::AlignCenter | Qt::AlignHCenter, layoutText);
 //	QIcon icon(pm);
 
-	QPixmap pixmap = Utils::shadowText(layoutText, font, Qt::black, Qt::white, QPoint(), 4);
-	QIcon icon(pixmap);
+	// we init svg so that we get notification about theme change
+	Plasma::Svg* svg = getSvg();
+//    QPixmap pixmap = Plasma::PaintUtils::texturedText(layoutText, font, svg);
+    QPixmap pixmap = Plasma::PaintUtils::shadowText(layoutText, font);
+
+    QIcon icon(pixmap);
 	iconOrTextMap[ key ] = icon;
 
 	return icon;
 }
 
+Plasma::Svg* Flags::getSvg()
+{
+	if( svg == NULL ) {
+		svg = new Plasma::Svg;
+	    svg->setImagePath("widgets/labeltexture");
+	    svg->setContainsMultipleImages(true);
+	    connect(svg, SIGNAL(repaintNeeded()), this, SLOT(clearCache()));
+	}
+	return svg;
+}
+
+void Flags::themeChanged()
+{
+//	kDebug() << "Theme changed, new text color" << Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+	clearCache();
+	emit pixmapChanged();
+}
+
 void Flags::clearCache()
 {
+//	kDebug() << "Clearing flag pixmap cache";
 	iconOrTextMap.clear();
 }
