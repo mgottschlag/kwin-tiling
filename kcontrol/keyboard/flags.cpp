@@ -67,11 +67,17 @@ const QIcon Flags::getIcon(const QString& layout)
 
 	QIcon icon;
 	if( ! layout.isEmpty() ) {
-		QString countryCode = getCountryFromLayoutName( layout );
-		if( ! countryCode.isEmpty() ) {
-			QString file = KStandardDirs::locate("locale", QString(flagTemplate).arg(countryCode));
-//			kDebug() << "Creating icon for" << layout << "with" << file;
+		if( layout == "epo" ) {
+			QString file = KStandardDirs::locate("data", "kcmkeyboard/pics/epo.png");
 			icon.addFile(file);
+		}
+		else {
+			QString countryCode = getCountryFromLayoutName( layout );
+			if( ! countryCode.isEmpty() ) {
+				QString file = KStandardDirs::locate("locale", QString(flagTemplate).arg(countryCode));
+				//			kDebug() << "Creating icon for" << layout << "with" << file;
+				icon.addFile(file);
+			}
 		}
 	}
 	iconMap[ layout ] = icon;

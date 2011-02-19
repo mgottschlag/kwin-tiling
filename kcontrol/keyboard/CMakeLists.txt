@@ -127,6 +127,10 @@ install(TARGETS kcm_keyboard DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES kcm_keyboard.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
 
+# Images
+
+add_subdirectory( pics )
+
 
 # Unit tests
 
