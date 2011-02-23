@@ -168,7 +168,7 @@ void DefaultDesktop::dropEvent(QGraphicsSceneDragDropEvent *event)
 void DefaultDesktop::keyPressEvent(QKeyEvent *event)
 {
     if (focusItem() == this && !event->text().isEmpty()) {
-        QString interface("org.kde.krunner");
+        const QString interface("org.kde.krunner");
         org::kde::krunner::App krunner(interface, "/App", QDBusConnection::sessionBus());
         krunner.query(event->text());
         event->accept();
