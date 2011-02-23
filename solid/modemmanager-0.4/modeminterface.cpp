@@ -46,7 +46,7 @@ MMModemInterface::MMModemInterface(MMModemInterfacePrivate & dd, MMModemManager 
 
 MMModemInterface::~MMModemInterface()
 {
-    delete d_ptr;
+
 }
 
 void MMModemInterface::init()
