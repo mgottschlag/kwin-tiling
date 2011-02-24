@@ -84,6 +84,11 @@ Q_SIGNALS:
     void dateChanged(const QDate &newDate);
     void dateHovered(const QDate &date);
 
+protected:
+    void keyPressEvent(QKeyEvent * event);
+    void focusInEvent(QFocusEvent * event);
+    void focusOutEvent(QFocusEvent * event);
+
 private Q_SLOTS:
     void prevMonth();
     void nextMonth();

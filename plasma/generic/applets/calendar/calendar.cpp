@@ -52,6 +52,14 @@ void CalendarApplet::init()
     m_calendarWidget->setPreferredSize(220, 250);
     updateDate();
     configChanged();
+    setFocusPolicy(Qt::StrongFocus);
+}
+
+void CalendarApplet::focusInEvent(QFocusEvent* event)
+{
+    Q_UNUSED(event);
+    m_calendarWidget->setFlag(QGraphicsItem::ItemIsFocusable);
+    m_calendarWidget->setFocus();
 }
 
 void CalendarApplet::configChanged()

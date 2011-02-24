@@ -373,7 +373,7 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     int defaultSelection = d->timezonesUi.clockDefaultsTo->findData(d->defaultTimezone);
     if (defaultSelection < 0) {
         defaultSelection = 0; //if it's something unexpected default to local
-        kDebug() << d->defaultTimezone << "not in list!?";
+        //kDebug() << d->defaultTimezone << "not in list!?";
     }
     d->timezonesUi.clockDefaultsTo->setCurrentIndex(defaultSelection);
 
@@ -592,6 +592,13 @@ void ClockApplet::init()
 
     configChanged();
     QTimer::singleShot(0, this, SLOT(createToday()));
+}
+
+void ClockApplet::focusInEvent(QFocusEvent* event)
+{
+    Q_UNUSED(event);
+    d->calendarWidget->setFlag(QGraphicsItem::ItemIsFocusable);
+    d->calendarWidget->setFocus();
 }
 
 void ClockApplet::popupEvent(bool show)

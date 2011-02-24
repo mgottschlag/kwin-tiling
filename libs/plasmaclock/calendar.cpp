@@ -197,6 +197,47 @@ void Calendar::init(CalendarTable *calendarTable)
     dateUpdated(date());
 }
 
+void Calendar::focusInEvent(QFocusEvent* event)
+{
+    Q_UNUSED(event);
+    grabKeyboard();
+}
+
+void Calendar::focusOutEvent(QFocusEvent* event)
+{
+    Q_UNUSED(event);
+    ungrabKeyboard();
+}
+
+void Calendar::keyPressEvent(QKeyEvent* event)
+{
+    switch(event->key()) {
+	case Qt::Key_Right :
+	    setDate(date().addDays(1));
+	    break;
+	case Qt::Key_Left :
+	    setDate(date().addDays(-1));
+	    break;
+	case Qt::Key_Up :
+	    setDate(date().addDays(-7));
+	    break;
+	case Qt::Key_Down :
+	    setDate(date().addDays(7));
+	    break;
+	case Qt::Key_PageUp:
+	    nextMonth();
+	    break;
+	case Qt::Key_PageDown:
+	    prevMonth();
+	    break;
+	case Qt::Key_Home:
+	    goToToday();
+	    break;
+	default:
+	    break;
+    }
+}
+
 CalendarTable *Calendar::calendarTable() const
 {
     return d->calendarTable;
