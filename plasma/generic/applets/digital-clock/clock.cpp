@@ -52,9 +52,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     : ClockApplet(parent, args),
       m_plainClockFont(KGlobalSettings::generalFont()),
       m_useCustomColor(false),
-      m_plainClockColor(),
       m_useCustomShadowColor(false),
-      m_plainClockShadowColor(),
       m_drawShadow(true),
       m_dateStyle(0),
       m_showSeconds(false),
@@ -78,12 +76,9 @@ void Clock::init()
 {
     ClockApplet::init();
 
-    configChanged();
-
     dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
     connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(resetSize()));
-    generatePixmap();
 }
 
 void Clock::constraintsEvent(Plasma::Constraints constraints)
@@ -158,9 +153,15 @@ void Clock::updateSize()
         // We have a fixed width, set some sensible height
         setMinimumSize(QSize(0, h));
     }
+
     setPreferredSize(QSize(w, h));
     emit sizeHintChanged(Qt::PreferredSize);
     //kDebug(96669) << "minZize: " << minimumSize() << preferredSize();
+
+    if (m_isDefaultFont) {
+        const QString fakeTimeString = KGlobal::locale()->formatTime(QTime(23,59,59), m_showSeconds);
+        expandFontToMax(m_plainClockFont, fakeTimeString);
+    }
 
     generatePixmap();
 }
@@ -195,12 +196,16 @@ void Clock::clockConfigChanged()
         setCacheMode(QGraphicsItem::DeviceCoordinateCache);
     }
 
-    m_plainClockFont = cg.readEntry("plainClockFont", m_plainClockFont);
+    QFont f = cg.readEntry("plainClockFont", m_plainClockFont);
+    m_isDefaultFont = f == m_plainClockFont;
+    m_plainClockFont = f;
+
     m_useCustomColor = cg.readEntry("useCustomColor", m_useCustomColor);
     m_plainClockColor = cg.readEntry("plainClockColor", m_plainClockColor);
     m_useCustomShadowColor = cg.readEntry("useCustomShadowColor", m_useCustomShadowColor);
     m_plainClockShadowColor = cg.readEntry("plainClockShadowColor", m_plainClockShadowColor);
     m_drawShadow = cg.readEntry("plainClockDrawShadow", m_drawShadow);
+
     updateColors();
 
     if (m_useCustomColor) {
@@ -313,7 +318,11 @@ void Clock::clockConfigAccepted()
     m_showTimezone = ui.showTimeZone->isChecked();
     cg.writeEntry("showTimezone", m_showTimezone);
 
+    if (m_isDefaultFont && ui.plainClockFont->currentFont() != m_plainClockFont) {
+        m_isDefaultFont = false;
+    }
     m_plainClockFont = ui.plainClockFont->currentFont();
+
     //We need this to happen before we disconnect/reconnect sources to ensure
     //that the update interval is set properly.
     if (m_showSeconds != ui.secondsCheckbox->isChecked()) {
@@ -592,7 +601,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         p->setFont(f);
     }
 
-    if (m_useCustomColor) {
+    if (m_useCustomColor || !m_svgExistsInTheme) {
         QFontMetrics fm(p->font());
 
         QPointF timeTextOrigin(QPointF(qMax(0, (m_timeRect.center().x() - fm.width(fakeTimeString) / 2)),
@@ -642,7 +651,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
 void Clock::generatePixmap()
 {
-    if (m_useCustomColor) {
+    if (m_useCustomColor || !m_svgExistsInTheme) {
         return;
     }
 
@@ -661,10 +670,32 @@ void Clock::generatePixmap()
     m_pixmap = Plasma::PaintUtils::texturedText(timeString, font, m_svg);
 }
 
+void Clock::expandFontToMax(QFont &font, const QString &text)
+{
+    bool first = true;
+    const QRect rect = contentsRect().toRect();
+
+    // Starting with the given font, increase its size until it'll fill the rect
+    do {
+        if (first) {
+            first = false;
+        } else  {
+            font.setPointSize(font.pointSize() + 1);
+        }
+
+        const QFontMetrics fm(font);
+        QRect fr = fm.boundingRect(rect, Qt::TextSingleLine, text);
+        if (fr.width() >= rect.width() || fr.height() >= rect.height()) {
+            break;
+        }
+    } while (true);
+}
+
 void Clock::prepareFont(QFont &font, QRect &rect, const QString &text, bool singleline)
 {
     QRect tmpRect;
     bool first = true;
+    const int smallest = KGlobalSettings::smallestReadableFont().pointSize();
 
     // Starting with the given font, decrease its size until it'll fit in the
     // given rect allowing wrapping where possible
@@ -672,17 +703,17 @@ void Clock::prepareFont(QFont &font, QRect &rect, const QString &text, bool sing
         if (first) {
             first = false;
         } else  {
-            font.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(), font.pointSize() - 1));
+            font.setPointSize(qMax(smallest, font.pointSize() - 1));
         }
 
         const QFontMetrics fm(font);
-        int flags = (singleline || ((formFactor() == Plasma::Horizontal) &&
-                                    (contentsRect().height() < font.pointSize()*6))) ?
+        int flags = (singleline || ((formFactor() == Plasma::Horizontal) && (contentsRect().height() < font.pointSize()*6))) ?
                     Qt::TextSingleLine : Qt::TextWordWrap;
 
         tmpRect = fm.boundingRect(rect, flags, text);
-    } while (font.pointSize() > KGlobalSettings::smallestReadableFont().pointSize() &&
+    } while (font.pointSize() > smallest &&
              (tmpRect.width() > rect.width() || tmpRect.height() > rect.height()));
+
     rect = tmpRect;
 }
 
@@ -710,12 +741,16 @@ Plasma::IntervalAlignment Clock::intervalAlignment() const
 
 void Clock::updateColors()
 {
+    m_svgExistsInTheme = Plasma::Theme::defaultTheme()->currentThemeHasImage("widgets/labeltexture");
+
     if (!m_useCustomColor) {
         m_plainClockColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     }
+
     if (!m_useCustomShadowColor) {
         m_plainClockShadowColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
     }
+
     if (!m_useCustomColor || !m_useCustomShadowColor) {
         update();
     }

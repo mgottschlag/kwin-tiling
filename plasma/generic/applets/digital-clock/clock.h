@@ -70,10 +70,12 @@ class Clock : public ClockApplet
         void generatePixmap();
         QRect preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text, bool singleline = false);
         void prepareFont(QFont &font, QRect &rect, const QString &text, bool singleline);
+        void expandFontToMax(QFont &font, const QString &text);
         QRectF normalLayout (int subtitleWidth, int subtitleHeight, const QRect &contentsRect);
         QRectF sideBySideLayout (int subtitleWidth, int subtitleHeight, const QRect &contentsRect);
 
         QFont m_plainClockFont;
+        bool m_isDefaultFont;
         bool m_useCustomColor;
         QColor m_plainClockColor;
         bool m_useCustomShadowColor;
@@ -98,6 +100,7 @@ class Clock : public ClockApplet
         /// Designer Config files
         Ui::clockConfig ui;
         Plasma::Svg *m_svg;
+        bool m_svgExistsInTheme;
         QPixmap m_pixmap;
 };
 

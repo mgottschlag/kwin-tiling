@@ -29,5 +29,7 @@
     </method>
     <method name="createWaitingDesktops">
     </method>
+    <method name="toggleActivityManager">
+    </method>
   </interface>
 </node>

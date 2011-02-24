@@ -374,7 +374,14 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
                        mimetype->is("application/x-shellscript"))) ||
           KDesktopFile::isDesktopFile(m_url.toLocalFile()))) {
 
-        //Parameters
+        if (KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
+            //Extract the command from the Desktop file
+            KService service(m_url.toLocalFile());
+            KRun::run(service, urls, 0);
+            return;
+        }
+
+        // Just exec the local executable
         QString params;
         foreach (const KUrl &url, urls) {
             if (url.isLocalFile()) {
@@ -384,17 +391,7 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
             }
         }
 
-        //Command
-        QString commandStr;
-        //Extract the command from the Desktop file
-        if (KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
-            KService service(m_url.toLocalFile());
-            KRun::run(service, urls, 0);
-        } else {
-            //Else just exec the local executable
-            commandStr = KShell::quoteArg(m_url.path());
-        }
-
+        QString commandStr = KShell::quoteArg(m_url.path());
         KRun::runCommand(commandStr + ' ' + params, 0);
     } else if (mimetype && mimetype->is("inode/directory")) {
         dropUrls(urls, m_url, event->modifiers());

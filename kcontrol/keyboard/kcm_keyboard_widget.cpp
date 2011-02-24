@@ -125,6 +125,7 @@ void KCMKeyboardWidget::updateUI()
 
 	uiWidget->layoutsTableView->setModel(uiWidget->layoutsTableView->model());
 	((LayoutsTableModel*)uiWidget->layoutsTableView->model())->refresh();
+	uiWidget->layoutsTableView->resizeRowsToContents();
 
 	uiUpdating = true;
 	updateHardwareUI();
@@ -212,6 +213,7 @@ void KCMKeyboardWidget::addLayout()
     if( dialog.exec() == QDialog::Accepted ) {
     	keyboardConfig->layouts.append( dialog.getSelectedLayoutUnit() );
     	layoutsTableModel->refresh();
+    	uiWidget->layoutsTableView->resizeRowsToContents();
     	uiChanged();
     }
 
@@ -285,8 +287,8 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 
 	uiWidget->moveUpBtn->setIcon(KIcon("arrow-up"));
     uiWidget->moveDownBtn->setIcon(KIcon("arrow-down"));
-//    uiWidget->moveUpBtn->setArrowType(Qt::UpArrow);
-//    uiWidget->moveUpBtn->setArrowType(Qt::UpDown);
+	uiWidget->addLayoutBtn->setIcon(KIcon("list-add"));
+    uiWidget->removeLayoutBtn->setIcon(KIcon("list-remove"));
 
     KIcon clearIcon = qApp->isLeftToRight() ? KIcon("edit-clear-locationbar-rtl") : KIcon("edit-clear-locationbar-ltr");
 	uiWidget->xkbGrpClearBtn->setIcon(clearIcon);

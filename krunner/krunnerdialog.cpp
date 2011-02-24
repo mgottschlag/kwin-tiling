@@ -67,18 +67,17 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     setMouseTracking(true);
     //setButtons(0);
     setWindowTitle(i18n("Run Command"));
-    setWindowIcon(KIcon(QLatin1String( "system-run" )));
+    setWindowIcon(KIcon(QLatin1String("system-run")));
 
     QPalette pal = palette();
     pal.setColor(backgroundRole(), Qt::transparent);
     setPalette(pal);
 
     m_iconSvg = new Plasma::Svg(this);
-    m_iconSvg->setImagePath(QLatin1String( "widgets/configuration-icons" ));
+    m_iconSvg->setImagePath(QLatin1String("widgets/configuration-icons"));
 
     m_background = new Plasma::FrameSvg(this);
-    m_background->setImagePath(QLatin1String( "dialogs/krunner" ));
-    setFreeFloating(KRunnerSettings::freeFloating());
+    connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(themeUpdated()));
 
     connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)),
             this, SLOT(screenRemoved(int)));
@@ -88,8 +87,7 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
             this, SLOT(screenChanged(Kephal::Screen*)));
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(resetScreenPos()));
 
-    connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(themeUpdated()));
-    themeUpdated();
+    setFreeFloating(KRunnerSettings::freeFloating());
 }
 
 KRunnerDialog::~KRunnerDialog()
@@ -227,9 +225,16 @@ void KRunnerDialog::setFreeFloating(bool floating)
     unsetCursor();
 
     if (m_floating) {
+        m_background->setImagePath(QLatin1String("dialogs/krunner"));
+        m_background->setElementPrefix(QString());
         m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
         KWindowSystem::setType(winId(), NET::Normal);
+        // recalc the contents margins
+        themeUpdated();
     } else {
+        m_background->setImagePath(QLatin1String("widgets/panel-background"));
+        m_background->resizeFrame(size());
+        m_background->setElementPrefix("north-mini");
         // load the positions for each screen from our config
         const int numScreens = Kephal::ScreenUtils::numScreens();
         KConfigGroup cg(KGlobal::config(), "EdgePositions");
@@ -240,13 +245,10 @@ void KRunnerDialog::setFreeFloating(bool floating)
                 m_screenPos.insert(i, QPoint(p.x(), r.top()));
             }
         }
-        QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen > -1 ? m_oldScreen : 0);
+        QRect r = Kephal::ScreenUtils::screenGeometry(qMax(m_oldScreen, 0));
         checkBorders(r);
         KWindowSystem::setType(winId(), NET::Dock);
     }
-
-    // recalc the contents margins
-    themeUpdated();
 
     if (isVisible()) {
         positionOnScreen();
@@ -319,7 +321,7 @@ void KRunnerDialog::themeUpdated()
 void KRunnerDialog::paintEvent(QPaintEvent *e)
 {
     QPainter p(this);
-    p.setRenderHint(QPainter::Antialiasing);
+    p.setCompositionMode(QPainter::CompositionMode_Source);
     p.setClipRect(e->rect());
     //kDebug() << "clip rect set to: " << e->rect();
 
@@ -357,22 +359,17 @@ void KRunnerDialog::hideEvent(QHideEvent *)
 
 void KRunnerDialog::updateMask()
 {
-#ifdef Q_WS_X11
     // Enable the mask only when compositing is disabled;
     // As this operation is quite slow, it would be nice to find some
     // way to workaround it for no-compositing users.
 
-    if (!QX11Info::isCompositingManagerRunning()) {
-        setMask(m_background->mask());
-    } else {
+    if (KWindowSystem::compositingActive()) {
         const QRegion mask = m_background->mask();
         Plasma::WindowEffects::enableBlurBehind(winId(), true, mask);
         Plasma::WindowEffects::overrideShadow(winId(), true);
+    } else {
+        setMask(m_background->mask());
     }
-
-#else
-    setMask(m_background->mask());
-#endif
 }
 
 void KRunnerDialog::resizeEvent(QResizeEvent *e)

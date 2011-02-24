@@ -151,6 +151,8 @@ void SM::Cpu::createConfigurationInterface(KConfigDialog *parent)
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    connect(ui.treeView, SIGNAL(clicked(QModelIndex)), parent, SLOT(settingsModified()));
+    connect(ui.intervalSpinBox, SIGNAL(valueChanged(QString)), parent, SLOT(settingsModified()));
 }
 
 void SM::Cpu::configAccepted()

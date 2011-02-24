@@ -20,6 +20,8 @@
 
 #include "desktop.h"
 
+#include "krunner_interface.h"
+
 #include <KDebug>
 
 #include <Plasma/Corona>
@@ -161,6 +163,18 @@ void DefaultDesktop::dropEvent(QGraphicsSceneDragDropEvent *event)
     dropping = true;
     Containment::dropEvent(event);
     dropping = false;
+}
+
+void DefaultDesktop::keyPressEvent(QKeyEvent *event)
+{
+    if (focusItem() == this && !event->text().isEmpty()) {
+        const QString interface("org.kde.krunner");
+        org::kde::krunner::App krunner(interface, "/App", QDBusConnection::sessionBus());
+        krunner.query(event->text());
+        event->accept();
+    } else {
+        event->ignore();
+    }
 }
 
 K_EXPORT_PLASMA_APPLET(desktop, DefaultDesktop)

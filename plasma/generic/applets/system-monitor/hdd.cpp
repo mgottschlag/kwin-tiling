@@ -112,6 +112,8 @@ void Hdd::createConfigurationInterface(KConfigDialog *parent)
     parent->addPage(widget, i18n("Partitions"), "drive-harddisk");
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    connect(ui.treeView, SIGNAL(clicked(QModelIndex)), parent, SLOT(settingsModified()));
+    connect(ui.intervalSpinBox, SIGNAL(valueChanged(QString)), parent, SLOT(settingsModified()));
 }
 
 void Hdd::configAccepted()

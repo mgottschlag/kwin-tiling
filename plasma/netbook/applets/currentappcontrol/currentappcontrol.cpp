@@ -386,6 +386,7 @@ void CurrentAppControl::createConfigurationInterface(KConfigDialog *parent)
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
     m_generalUi.alwaysUseDialog->setChecked(m_alwaysUseDialog);
+    connect(m_generalUi.alwaysUseDialog, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
 }
 
 void CurrentAppControl::configAccepted()

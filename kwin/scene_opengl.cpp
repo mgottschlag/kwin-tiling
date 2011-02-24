@@ -70,8 +70,7 @@ Sources and other compositing managers:
 
 #include <kxerrorhandler.h>
 
-// TODO: use <>
-#include "lib/kwinglplatform.h"
+#include <kwinglplatform.h>
 
 #include "utils.h"
 #include "client.h"
@@ -143,55 +142,56 @@ bool SceneOpenGL::selfCheck()
     return ok;
 }
 
+QMatrix4x4 SceneOpenGL::transformation(int mask, const ScreenPaintData &data) const
+{
+    QMatrix4x4 matrix;
+
+    if (!(mask & PAINT_SCREEN_TRANSFORMED))
+        return matrix;
+
+    matrix.translate(data.xTranslate, data.yTranslate, data.zTranslate);
+    matrix.scale(data.xScale, data.yScale, data.zScale);
+
+    if (!data.rotation)
+        return matrix;
+
+    // Apply the rotation
+    const qreal xAxis = (data.rotation->axis == RotationData::XAxis ? 1.0 : 0.0);
+    const qreal yAxis = (data.rotation->axis == RotationData::YAxis ? 1.0 : 0.0);
+    const qreal zAxis = (data.rotation->axis == RotationData::ZAxis ? 1.0 : 0.0);
+
+    matrix.translate(data.rotation->xRotationPoint,
+                     data.rotation->yRotationPoint,
+                     data.rotation->zRotationPoint);
+
+    matrix.rotate(data.rotation->angle, xAxis, yAxis, zAxis);
+
+    matrix.translate(-data.rotation->xRotationPoint,
+                     -data.rotation->yRotationPoint,
+                     -data.rotation->zRotationPoint);
+
+    return matrix;
+}
+
 void SceneOpenGL::paintGenericScreen(int mask, ScreenPaintData data)
 {
-    const bool useShader = ShaderManager::instance()->isValid();
-    if (mask & PAINT_SCREEN_TRANSFORMED) {
-        // apply screen transformations
-        QMatrix4x4 screenTransformation;
-        screenTransformation.translate(data.xTranslate, data.yTranslate, data.zTranslate);
-        if (data.rotation) {
-            screenTransformation.translate(data.rotation->xRotationPoint, data.rotation->yRotationPoint, data.rotation->zRotationPoint);
-            // translate to rotation point, rotate, translate back
-            qreal xAxis = 0.0;
-            qreal yAxis = 0.0;
-            qreal zAxis = 0.0;
-            switch(data.rotation->axis) {
-            case RotationData::XAxis:
-                xAxis = 1.0;
-                break;
-            case RotationData::YAxis:
-                yAxis = 1.0;
-                break;
-            case RotationData::ZAxis:
-                zAxis = 1.0;
-                break;
-            }
-            screenTransformation.rotate(data.rotation->angle, xAxis, yAxis, zAxis);
-            screenTransformation.translate(-data.rotation->xRotationPoint, -data.rotation->yRotationPoint, -data.rotation->zRotationPoint);
-        }
-        screenTransformation.scale(data.xScale, data.yScale, data.zScale);
-        if (useShader) {
-            GLShader *shader = ShaderManager::instance()->pushShader(ShaderManager::GenericShader);
-            shader->setUniform(GLShader::ScreenTransformation, screenTransformation);
-        } else {
-            pushMatrix(screenTransformation);
-        }
-    } else if (useShader && ((mask & PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS) || (mask & PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS_WITHOUT_FULL_REPAINTS))) {
-        GLShader *shader = ShaderManager::instance()->pushShader(ShaderManager::GenericShader);
-        shader->setUniform(GLShader::ScreenTransformation, QMatrix4x4());
+    ShaderManager *shaderManager = ShaderManager::instance();
+    const bool useShader = shaderManager->isValid();
+    const QMatrix4x4 matrix = transformation(mask, data);
+
+    if (useShader) {
+        GLShader *shader = shaderManager->pushShader(ShaderManager::GenericShader);
+        shader->setUniform(GLShader::ScreenTransformation, matrix);
+    } else {
+        pushMatrix(matrix);
     }
+
     Scene::paintGenericScreen(mask, data);
-    if (mask & PAINT_SCREEN_TRANSFORMED) {
-        if (useShader) {
-            ShaderManager::instance()->popShader();
-        } else {
-            popMatrix();
-        }
-    } else if (useShader && ((mask & PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS) ||
-                            (mask & PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS_WITHOUT_FULL_REPAINTS))) {
-        ShaderManager::instance()->popShader();
-    }
+
+    if (useShader)
+        shaderManager->popShader();
+    else
+        popMatrix();
 }
 
 void SceneOpenGL::paintBackground(QRegion region)
@@ -417,6 +417,38 @@ void SceneOpenGL::Window::pixmapDiscarded()
     texture.release();
 }
 
+QMatrix4x4 SceneOpenGL::Window::transformation(int mask, const WindowPaintData &data) const
+{
+    QMatrix4x4 matrix;
+    matrix.translate(x(), y());
+
+    if (!(mask & PAINT_WINDOW_TRANSFORMED))
+        return matrix;
+
+    matrix.translate(data.xTranslate, data.yTranslate, data.zTranslate);
+    matrix.scale(data.xScale, data.yScale, data.zScale);
+
+    if (!data.rotation)
+        return matrix;
+
+    // Apply the rotation
+    const qreal xAxis = (data.rotation->axis == RotationData::XAxis ? 1.0 : 0.0);
+    const qreal yAxis = (data.rotation->axis == RotationData::YAxis ? 1.0 : 0.0);
+    const qreal zAxis = (data.rotation->axis == RotationData::ZAxis ? 1.0 : 0.0);
+
+    matrix.translate(data.rotation->xRotationPoint,
+                     data.rotation->yRotationPoint,
+                     data.rotation->zRotationPoint);
+
+    matrix.rotate(data.rotation->angle, xAxis, yAxis, zAxis);
+
+    matrix.translate(-data.rotation->xRotationPoint,
+                     -data.rotation->yRotationPoint,
+                     -data.rotation->zRotationPoint);
+
+    return matrix;
+}
+
 // paint the window
 void SceneOpenGL::Window::performPaint(int mask, QRegion region, WindowPaintData data)
 {
@@ -431,76 +463,46 @@ void SceneOpenGL::Window::performPaint(int mask, QRegion region, WindowPaintData
         if ( mask & PAINT_WINDOW_TRANSLUCENT && opaque )
             return; // Only painting translucent and window is opaque
         }*/
-    // paint only requested areas
-    if (region != infiniteRegion())  // avoid integer overflow
-        region.translate(-x(), -y());
+
+    // Intersect the clip region with the rectangle the window occupies on the screen
+    if (!(mask & (PAINT_WINDOW_TRANSFORMED | PAINT_SCREEN_TRANSFORMED)))
+        region &= toplevel->visibleRect();
+
     if (region.isEmpty())
         return;
+
     if (!bindTexture())
         return;
-    // set texture filter
-    if (options->glSmoothScale != 0) { // default to yes
-        if (mask & PAINT_WINDOW_TRANSFORMED)
-            filter = ImageFilterGood;
-        else if (mask & PAINT_SCREEN_TRANSFORMED)
-            filter = ImageFilterGood;
-        else
-            filter = ImageFilterFast;
-    } else
-        filter = ImageFilterFast;
-    if (filter == ImageFilterGood)
-        texture.setFilter(GL_LINEAR);
+
+    // Update the texture filter
+    if (options->glSmoothScale != 0 &&
+        (mask & (PAINT_WINDOW_TRANSFORMED | PAINT_SCREEN_TRANSFORMED)))
+        filter = ImageFilterGood;
     else
-        texture.setFilter(GL_NEAREST);
-    // do required transformations
-    int x = toplevel->x();
-    int y = toplevel->y();
-    double z = 0.0;
+        filter = ImageFilterFast;
+
+    texture.setFilter(filter == ImageFilterGood ? GL_LINEAR : GL_NEAREST);
+
     bool sceneShader = false;
+
     if (!data.shader && ShaderManager::instance()->isValid()) {
         // set the shader for uniform initialising in paint decoration
         if ((mask & PAINT_WINDOW_TRANSFORMED) || (mask & PAINT_SCREEN_TRANSFORMED)) {
             data.shader = ShaderManager::instance()->pushShader(ShaderManager::GenericShader);
         } else {
             data.shader = ShaderManager::instance()->pushShader(ShaderManager::SimpleShader);
-            data.shader->setUniform(GLShader::Offset, QVector2D(x, y));
+            data.shader->setUniform(GLShader::Offset, QVector2D(x(), y()));
         }
         sceneShader = true;
     }
-    QMatrix4x4 windowTransformation;
-    windowTransformation.translate(x, y);
-    if ((mask & PAINT_WINDOW_TRANSFORMED) || (mask & PAINT_SCREEN_TRANSFORMED)) {
-        windowTransformation.translate(data.xTranslate, data.yTranslate, data.zTranslate);
-        if ((mask & PAINT_WINDOW_TRANSFORMED) && (data.xScale != 1 || data.yScale != 1 || data.zScale != 1)) {
-            windowTransformation.scale(data.xScale, data.yScale, data.zScale);
-        }
-        if ((mask & PAINT_WINDOW_TRANSFORMED) && data.rotation) {
-            windowTransformation.translate(data.rotation->xRotationPoint, data.rotation->yRotationPoint, data.rotation->zRotationPoint);
-            qreal xAxis = 0.0;
-            qreal yAxis = 0.0;
-            qreal zAxis = 0.0;
-            switch(data.rotation->axis) {
-            case RotationData::XAxis:
-                xAxis = 1.0;
-                break;
-            case RotationData::YAxis:
-                yAxis = 1.0;
-                break;
-            case RotationData::ZAxis:
-                zAxis = 1.0;
-                break;
-            }
-            windowTransformation.rotate(data.rotation->angle, xAxis, yAxis, zAxis);
-            windowTransformation.translate(-data.rotation->xRotationPoint, -data.rotation->yRotationPoint, -data.rotation->zRotationPoint);
-        }
-        if (data.shader) {
-            data.shader->setUniform(GLShader::WindowTransformation, windowTransformation);
-        }
-    }
-    if (!sceneShader) {
+
+    const QMatrix4x4 windowTransformation = transformation(mask, data);
+
+    if (data.shader)
+        data.shader->setUniform(GLShader::WindowTransformation, windowTransformation);
+
+    if (!sceneShader)
         pushMatrix(windowTransformation);
-    }
-    region.translate(toplevel->x(), toplevel->y());    // Back to screen coords
 
     WindowQuadList decoration = data.quads.select(WindowQuadDecoration);
 

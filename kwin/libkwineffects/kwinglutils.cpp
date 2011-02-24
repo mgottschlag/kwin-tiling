@@ -106,7 +106,6 @@ void initGL()
     glResolveFunctions();
 
     GLTexture::initStatic();
-    GLShader::initStatic();
     GLRenderTarget::initStatic();
     GLVertexBuffer::initStatic();
 }
@@ -688,21 +687,6 @@ QImage GLTexture::convertToGLFormat(const QImage& img) const
 // GLShader
 //****************************************
 
-bool GLShader::sFragmentShaderSupported = false;
-bool GLShader::sVertexShaderSupported = false;
-
-void GLShader::initStatic()
-{
-#ifdef KWIN_HAVE_OPENGLES
-    sFragmentShaderSupported = sVertexShaderSupported = true;
-#else
-    sFragmentShaderSupported = sVertexShaderSupported =
-                                   hasGLExtension("GL_ARB_shader_objects") && hasGLExtension("GL_ARB_shading_language_100");
-    sVertexShaderSupported &= hasGLExtension("GL_ARB_vertex_shader");
-    sFragmentShaderSupported &= hasGLExtension("GL_ARB_fragment_shader");
-#endif
-}
-
 GLShader::GLShader()
     : mProgram(0)
     , mValid(false)
@@ -792,7 +776,7 @@ bool GLShader::compile(GLuint program, GLenum shaderType, const QByteArray &sour
 bool GLShader::load(const QByteArray &vertexSource, const QByteArray &fragmentSource)
 {
     // Make sure shaders are actually supported
-    if (!vertexShaderSupported() || !fragmentShaderSupported()) {
+    if (!GLPlatform::instance()->supports(GLSL)) {
         kError(1212) << "Shaders are not supported";
         return false;
     }
@@ -1239,11 +1223,6 @@ GLShader *ShaderManager::loadShaderFromCode(const QByteArray &vertexSource, cons
 
 void ShaderManager::initShaders()
 {
-    // HACK: the generic shaders fail with NVIDIA's blob
-    // temporarily disable them to force kwin on GL 1.x profile
-    if (GLPlatform::instance()->driver() == Driver_NVidia) {
-        return;
-    }
     m_orthoShader = new GLShader(":/resources/scene-vertex.glsl", ":/resources/scene-fragment.glsl");
     if (m_orthoShader->isValid()) {
         pushShader(SimpleShader, true);
@@ -1327,7 +1306,7 @@ void ShaderManager::resetShader(ShaderType type)
     }
 
     //shader->setUniform("debug", 0);
-    shader->setUniform("sample", 0);
+    shader->setUniform("sampler", 0);
 
     shader->setUniform(GLShader::ProjectionMatrix,     projection);
     shader->setUniform(GLShader::ModelViewMatrix,      modelView);
@@ -1529,8 +1508,12 @@ public:
     bool useTexCoords;
     QColor color;
 
+    //! VBO is not supported
     void legacyPainting(QRegion region, GLenum primitiveMode);
+    //! VBO and shaders are both supported
     void corePainting(const QRegion& region, GLenum primitiveMode);
+    //! VBO is supported, but shaders are not supported
+    void fallbackPainting(const QRegion& region, GLenum primitiveMode);
 };
 bool GLVertexBufferPrivate::supported = false;
 GLVertexBuffer *GLVertexBufferPrivate::streamingBuffer = NULL;
@@ -1572,14 +1555,14 @@ void GLVertexBufferPrivate::legacyPainting(QRegion region, GLenum primitiveMode)
 
 void GLVertexBufferPrivate::corePainting(const QRegion& region, GLenum primitiveMode)
 {
-    glEnableVertexAttribArray(0);
-    if (useTexCoords) {
-        glEnableVertexAttribArray(1);
-    }
-
     GLShader *shader = ShaderManager::instance()->getBoundShader();
     GLint vertexAttrib = shader->attributeLocation("vertex");
     GLint texAttrib = shader->attributeLocation("texCoord");
+
+    glEnableVertexAttribArray(vertexAttrib);
+    if (useTexCoords) {
+        glEnableVertexAttribArray(texAttrib);
+    }
 
     if (useColor) {
         shader->setUniform("geometryColor", color);
@@ -1606,9 +1589,44 @@ void GLVertexBufferPrivate::corePainting(const QRegion& region, GLenum primitive
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     if (useTexCoords) {
-        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(texAttrib);
     }
-    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(vertexAttrib);
+}
+
+void GLVertexBufferPrivate::fallbackPainting(const QRegion& region, GLenum primitiveMode)
+{
+#ifdef KWIN_HAVE_OPENGLES
+    Q_UNUSED(region)
+    Q_UNUSED(primitiveMode)
+#else
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[ 0 ]);
+    glVertexPointer(dimension, GL_FLOAT, 0, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[ 1 ]);
+    glTexCoordPointer(2, GL_FLOAT, 0, 0);
+
+    if (useColor) {
+        glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF());
+    }
+
+    // Clip using scissoring
+    if (region != infiniteRegion()) {
+        PaintClipper pc(region);
+        for (PaintClipper::Iterator iterator; !iterator.isDone(); iterator.next()) {
+            glDrawArrays(primitiveMode, 0, numberVertices);
+        }
+    } else {
+        glDrawArrays(primitiveMode, 0, numberVertices);
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif
 }
 
 //*********************************
@@ -1681,40 +1699,11 @@ void GLVertexBuffer::render(const QRegion& region, GLenum primitiveMode)
 {
     if (!GLVertexBufferPrivate::supported) {
         d->legacyPainting(region, primitiveMode);
-        return;
-    }
-    if (ShaderManager::instance()->isShaderBound()) {
+    } else if (ShaderManager::instance()->isShaderBound()) {
         d->corePainting(region, primitiveMode);
-        return;
-    }
-#ifndef KWIN_HAVE_OPENGLES
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glBindBuffer(GL_ARRAY_BUFFER, d->buffers[ 0 ]);
-    glVertexPointer(d->dimension, GL_FLOAT, 0, 0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, d->buffers[ 1 ]);
-    glTexCoordPointer(2, GL_FLOAT, 0, 0);
-
-    if (d->useColor) {
-        glColor4f(d->color.redF(), d->color.greenF(), d->color.blueF(), d->color.alphaF());
-    }
-
-    // Clip using scissoring
-    if (region != infiniteRegion()) {
-        PaintClipper pc(region);
-        for (PaintClipper::Iterator iterator; !iterator.isDone(); iterator.next()) {
-            glDrawArrays(primitiveMode, 0, d->numberVertices);
-        }
     } else {
-        glDrawArrays(primitiveMode, 0, d->numberVertices);
+        d->fallbackPainting(region, primitiveMode);
     }
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-#endif
 }
 
 bool GLVertexBuffer::isSupported()
