@@ -2,7 +2,7 @@
 Type=XSession
 Exec=startxfce4
 TryExec=startxfce4
-Name=XFce 4
+Name=Xfce 4
 Name[af]=XFce 4
 Name[ar]=XFce 4
 Name[ast]=XFce 4
