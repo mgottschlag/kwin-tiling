@@ -823,7 +823,7 @@ void CalendarTablePrivate::populateCalendar()
 
 void CalendarTablePrivate::populateEvents()
 {
-    pendingPopulations |= PopulateHolidays;
+    pendingPopulations |= PopulateEvents;
     delayedPopulationTimer->start();
 }
 
