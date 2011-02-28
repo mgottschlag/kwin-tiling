@@ -457,6 +457,8 @@ void ControllerWindow::showActivityManager()
         m_activityManager->show();
         setGraphicsWidget(m_activityManager);
     }
+    m_activityManager->setFlag(QGraphicsItem::ItemIsFocusable);
+    m_activityManager->setFocus();
 }
 
 bool ControllerWindow::showingActivityManager() const

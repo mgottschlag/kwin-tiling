@@ -227,11 +227,13 @@ void ActivityManager::setContainment(Plasma::Containment *containment)
     }
 }
 
-void ActivityManager::showEvent(QShowEvent *e)
+void ActivityManager::focusInEvent(QFocusEvent* event)
 {
-    d->filteringWidget->setFocus();
-    QGraphicsWidget::showEvent(e);
+    Q_UNUSED(event);
+    qDebug() << "ActivityManager::focusInEvent()";
+    QTimer::singleShot(300, d->filteringWidget, SLOT(setFocus())); 
 }
+
 
 void ActivityManager::immutabilityChanged(Plasma::ImmutabilityType type)
 {

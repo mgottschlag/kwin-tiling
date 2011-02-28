@@ -40,8 +40,7 @@ class FilterBar : public QGraphicsWidget
 public:
     explicit FilterBar(Qt::Orientation orientation = Qt::Horizontal, QGraphicsItem *parent = 0);
     virtual ~FilterBar();
-
-    void setFocus();
+    Plasma::LineEdit* textSearch();
     void setOrientation(Qt::Orientation orientation);
 
 Q_SIGNALS:
@@ -51,6 +50,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void coronaImmutabilityChanged(Plasma::ImmutabilityType immutability);
+    void setFocus();
 
 protected Q_SLOTS:
     void setMenuPos();
