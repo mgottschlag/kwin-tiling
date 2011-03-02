@@ -37,35 +37,35 @@ public:
 
     Q_PROPERTY(QList<QDBusObjectPath> ActiveConnections READ activeConnections)
     inline QList<QDBusObjectPath> activeConnections() const
-    { return qvariant_cast< QList<QDBusObjectPath> >(property("ActiveConnections")); }
+    { return qvariant_cast< QList<QDBusObjectPath> >(internalPropGet("ActiveConnections")); }
 
     Q_PROPERTY(bool NetworkingEnabled READ networkingEnabled)
     inline bool networkingEnabled() const
-    { return qvariant_cast< bool >(property("NetworkingEnabled")); }
+    { return qvariant_cast< bool >(internalPropGet("NetworkingEnabled")); }
 
     Q_PROPERTY(uint State READ state)
     inline uint state() const
-    { return qvariant_cast< uint >(property("State")); }
+    { return qvariant_cast< uint >(internalPropGet("State")); }
 
     Q_PROPERTY(bool WirelessEnabled READ wirelessEnabled WRITE setWirelessEnabled)
     inline bool wirelessEnabled() const
-    { return qvariant_cast< bool >(property("WirelessEnabled")); }
+    { return qvariant_cast< bool >(internalPropGet("WirelessEnabled")); }
     inline void setWirelessEnabled(bool value)
-    { setProperty("WirelessEnabled", qVariantFromValue(value)); }
+    { internalPropSet("WirelessEnabled", qVariantFromValue(value)); }
 
     Q_PROPERTY(bool WirelessHardwareEnabled READ wirelessHardwareEnabled)
     inline bool wirelessHardwareEnabled() const
-    { return qvariant_cast< bool >(property("WirelessHardwareEnabled")); }
+    { return qvariant_cast< bool >(internalPropGet("WirelessHardwareEnabled")); }
 
     Q_PROPERTY(bool WwanEnabled READ wwanEnabled WRITE setWwanEnabled)
     inline bool wwanEnabled() const
-    { return qvariant_cast< bool >(property("WwanEnabled")); }
+    { return qvariant_cast< bool >(internalPropGet("WwanEnabled")); }
     inline void setWwanEnabled(bool value)
-    { setProperty("WwanEnabled", qVariantFromValue(value)); }
+    { internalPropSet("WwanEnabled", qVariantFromValue(value)); }
 
     Q_PROPERTY(bool WwanHardwareEnabled READ wwanHardwareEnabled)
     inline bool wwanHardwareEnabled() const
-    { return qvariant_cast< bool >(property("WwanHardwareEnabled")); }
+    { return qvariant_cast< bool >(internalPropGet("WwanHardwareEnabled")); }
 
 public Q_SLOTS: // METHODS
     inline QDBusPendingReply<QDBusObjectPath> ActivateConnection(const QString &service_name, const QDBusObjectPath &connection, const QDBusObjectPath &device, const QDBusObjectPath &specific_object)
