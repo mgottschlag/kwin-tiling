@@ -56,6 +56,7 @@ public:
     void setInterfaceName(const QVariant&);
     QString driver() const;
     void setDriver(const QVariant&);
+    void disconnect();
     int ipV4Address() const;
     Solid::Control::IPv4Config ipV4Config() const;
     bool isActive() const;

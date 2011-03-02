@@ -49,6 +49,7 @@ public:
 
     virtual bool activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters);
     virtual bool deactivateConnection();
+    virtual void disconnect();
 Q_SIGNALS:
     void ipDetailsChanged();
     void connectionStateChanged(int state);

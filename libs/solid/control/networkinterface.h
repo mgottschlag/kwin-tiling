@@ -147,6 +147,12 @@ namespace Control
          */
         QString driver() const;
 
+        /**
+         * Disconnects a device and prevents the device from automatically
+         * activating further connections without user intervention.
+         */
+        void disconnect() const;
+
         Solid::Control::IPv4Config ipV4Config() const;
         /**
          * Retrieves the activation status of this network interface.

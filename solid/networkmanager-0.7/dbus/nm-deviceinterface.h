@@ -76,6 +76,12 @@ public:
     { return qvariant_cast< QString >(internalPropGet("Udi")); }
 
 public Q_SLOTS: // METHODS
+    inline QDBusPendingReply<> Disconnect()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QLatin1String("Disconnect"), argumentList);
+    }
+
 Q_SIGNALS: // SIGNALS
     void StateChanged(uint new_state, uint old_state, uint reason);
 };

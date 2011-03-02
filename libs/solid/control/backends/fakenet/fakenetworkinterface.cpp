@@ -111,6 +111,9 @@ void FakeNetworkInterface::deactivate()
     mActiveConnection = "";
 }
 
+void FakeNetworkInterface::disconnect()
+{
+}
 
 Solid::Control::IPv4Config FakeNetworkInterface::ipV4Config() const
 {
