@@ -28,16 +28,15 @@
 #include <kactioncollection.h>
 #include <kglobalsettings.h>
 #include <klocale.h>
+#include <klocalizedstring.h>
 
 #include "x11_helper.h"
 #include "xinput_helper.h"
 #include "xkb_helper.h"
 #include "keyboard_dbus.h"
+#include "xkb_rules.h"
 #include "bindings.h"
-
 #include "keyboard_hardware.h"
-
-// for sys tray icon
 #include "layout_tray_icon.h"
 
 
@@ -46,11 +45,11 @@ K_EXPORT_PLUGIN(KeyboardFactory("keyboard", "kxkb"))
 
 KeyboardDaemon::KeyboardDaemon(QObject *parent, const QList<QVariant>&)
 	: KDEDModule(parent),
-	  keyboardConfig(new KeyboardConfig()),
 	  actionCollection(NULL),
 	  xEventNotifier(NULL),
 	  layoutTrayIcon(NULL),
-	  layoutMemory(*keyboardConfig)
+	  layoutMemory(keyboardConfig),
+	  rules(Rules::readRules())
 {
 	if( ! X11Helper::xkbSupported(NULL) )
 		return;		//TODO: shut down the daemon?
@@ -62,7 +61,6 @@ KeyboardDaemon::KeyboardDaemon(QObject *parent, const QList<QVariant>&)
 
 	configureKeyboard();
 	registerListeners();
-	registerShortcut();
 }
 
 KeyboardDaemon::~KeyboardDaemon()
@@ -77,18 +75,22 @@ KeyboardDaemon::~KeyboardDaemon()
 
 	delete xEventNotifier;
 	delete layoutTrayIcon;
-	delete keyboardConfig;
+	delete rules;
 }
 
 void KeyboardDaemon::configureKeyboard()
 {
+	kDebug() << "Configuring keyboard";
 	init_keyboard_hardware();
 
-	keyboardConfig->load();
-	XkbHelper::initializeKeyboardLayouts(*keyboardConfig);
+	keyboardConfig.load();
+	XkbHelper::initializeKeyboardLayouts(keyboardConfig);
 	layoutMemory.configChanged();
 
 	setupTrayIcon();
+
+	unregisterShortcut();
+	registerShortcut();
 }
 
 void KeyboardDaemon::configureMouse()
@@ -100,11 +102,11 @@ void KeyboardDaemon::configureMouse()
 
 void KeyboardDaemon::setupTrayIcon()
 {
-	bool show = keyboardConfig->showIndicator
-			&& ( keyboardConfig->showSingle || X11Helper::getLayoutsList().size() > 1 );
+	bool show = keyboardConfig.showIndicator
+			&& ( keyboardConfig.showSingle || X11Helper::getLayoutsList().size() > 1 );
 
 	if( show && ! layoutTrayIcon ) {
-		layoutTrayIcon = new LayoutTrayIcon();
+		layoutTrayIcon = new LayoutTrayIcon(rules, keyboardConfig);
 	}
 	else if( ! show && layoutTrayIcon ) {
 		delete layoutTrayIcon;
@@ -115,11 +117,14 @@ void KeyboardDaemon::setupTrayIcon()
 void KeyboardDaemon::registerShortcut()
 {
 	if( actionCollection == NULL ) {
-		KAction* a;
-		actionCollection = createGlobalActionCollection(this, &a);
-		connect(a, SIGNAL(triggered()), this, SLOT(switchToNextLayout()));
+		actionCollection = new KeyboardLayoutActionCollection(this, false);
+
+		KAction* toggleLayoutAction = actionCollection->getToggeAction();
+		connect(toggleLayoutAction, SIGNAL(triggered()), this, SLOT(switchToNextLayout()));
+		actionCollection->loadLayoutShortcuts(keyboardConfig.layouts, rules);
+		connect(actionCollection, SIGNAL(actionTriggered(QAction*)), this, SLOT(setLayout(QAction*)));
+
 		connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), this, SLOT(globalSettingsChanged(int)));
-		kDebug() << "Keyboard layout switching KDE shortcut" << a->globalShortcut().toString();
     }
 }
 
@@ -127,10 +132,11 @@ void KeyboardDaemon::unregisterShortcut()
 {
 	// register KDE keyboard shortcut for switching layouts
     if( actionCollection != NULL ) {
-        KAction* kAction = static_cast<KAction*>(actionCollection->action(0));
-        disconnect(kAction, SIGNAL(triggered()), this, SLOT(switchToNextLayout()));
         disconnect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), this, SLOT(globalSettingsChanged(int)));
-        actionCollection->clear();
+
+		disconnect(actionCollection, SIGNAL(actionTriggered(QAction*)), this, SLOT(setLayout(QAction*)));
+        disconnect(actionCollection->getToggeAction(), SIGNAL(triggered()), this, SLOT(switchToNextLayout()));
+
         delete actionCollection;
         actionCollection = NULL;
     }
@@ -138,40 +144,31 @@ void KeyboardDaemon::unregisterShortcut()
 
 void KeyboardDaemon::registerListeners()
 {
-	//TODO: list for config changes
-	// connect(SIGNAL(configChanges), SLOT(configureKeyboard));
-
-	//TODO: use solid ???
 	if( xEventNotifier == NULL ) {
 		xEventNotifier = new XInputEventNotifier();
 	}
 	connect(xEventNotifier, SIGNAL(newPointerDevice()), this, SLOT(configureMouse()));
 	connect(xEventNotifier, SIGNAL(newKeyboardDevice()), this, SLOT(configureKeyboard()));
-	connect(xEventNotifier, SIGNAL(layoutChanged()), &layoutMemory, SLOT(layoutChanged()));
-	connect(xEventNotifier, SIGNAL(layoutMapChanged()), &layoutMemory, SLOT(layoutMapChanged()));
+	connect(xEventNotifier, SIGNAL(layoutMapChanged()), this, SLOT(layoutMapChanged()));
 	connect(xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));
 	xEventNotifier->start();
 }
 
 void KeyboardDaemon::unregisterListeners()
 {
-	//TODO: unlist for config changes
-	// disconnect(SIGNAL(configChanges), SLOT(configureKeyboard));
-
 	if( xEventNotifier != NULL ) {
 		xEventNotifier->stop();
 		disconnect(xEventNotifier, SIGNAL(newPointerDevice()), this, SLOT(configureMouse()));
 		disconnect(xEventNotifier, SIGNAL(newKeyboardDevice()), this, SLOT(configureKeyboard()));
-		disconnect(xEventNotifier, SIGNAL(layoutChanged()), &layoutMemory, SLOT(layoutChanged()));
-		disconnect(xEventNotifier, SIGNAL(layoutMapChanged()), &layoutMemory, SLOT(layoutMapChanged()));
 		disconnect(xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));
+		disconnect(xEventNotifier, SIGNAL(layoutMapChanged()), this, SLOT(layoutMapChanged()));
 	}
 }
 
 void KeyboardDaemon::globalSettingsChanged(int category)
 {
 	if ( category == KGlobalSettings::SETTINGS_SHORTCUTS) {
-		// TODO: can we do it more efficient or recreating action collection is the only way?
+//TODO: optimize this? seems like we'll get configReload and globalShortcuts from kcm so we'll reconfigure twice
 		unregisterShortcut();
 		registerShortcut();
 	}
@@ -179,16 +176,37 @@ void KeyboardDaemon::globalSettingsChanged(int category)
 
 void KeyboardDaemon::layoutChanged()
 {
+	//TODO: pass newLayout into layoutTrayIcon?
 	LayoutUnit newLayout = X11Helper::getCurrentLayout();
+
+	layoutMemory.layoutChanged();
+	if( layoutTrayIcon != NULL ) {
+		layoutTrayIcon->layoutChanged();
+	}
+
 	if( newLayout != currentLayout ) {
 		currentLayout = newLayout;
 		emit currentLayoutChanged(newLayout.toString());
 	}
 }
 
+void KeyboardDaemon::layoutMapChanged()
+{
+	keyboardConfig.load();
+	layoutMemory.layoutMapChanged();
+	if( layoutTrayIcon != NULL ) {
+		layoutTrayIcon->layoutMapChanged();
+	}
+}
+
 void KeyboardDaemon::switchToNextLayout()
 {
 	X11Helper::switchToNextLayout();
+}
+
+bool KeyboardDaemon::setLayout(QAction* action)
+{
+	return X11Helper::setLayout(LayoutUnit(action->data().toString()));
 }
 
 bool KeyboardDaemon::setLayout(const QString& layout)

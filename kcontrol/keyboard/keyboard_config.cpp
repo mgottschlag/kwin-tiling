@@ -109,6 +109,14 @@ void KeyboardConfig::load()
     	}
     }
 
+//    QString shortcutsStr = config.readEntry("LayoutShortcuts", "");
+//    QStringList shortcutsList = shortcutsStr.split(LIST_SEPARATOR, QString::KeepEmptyParts);
+//    for(int i=0; i<shortcutsList.count() && i<layouts.count(); i++) {
+//    	if( !shortcutsList[i].isEmpty() ) {
+//    		layouts[i].setShortcut(QKeySequence(shortcutsList[i]));
+//    	}
+//    }
+
 	kDebug() << "configuring layouts" << configureLayouts << "configuring options" << resetOldXkbOptions;
 }
 
@@ -129,18 +137,18 @@ void KeyboardConfig::save()
     config.writeEntry("Use", configureLayouts);
 
     QStringList layoutStrings;
+    QStringList displayNames;
+//    QStringList shortcuts;
     foreach(const LayoutUnit& layoutUnit, layouts) {
     	layoutStrings.append(layoutUnit.toString());
+    	displayNames.append(layoutUnit.getRawDisplayName());
+//    	shortcuts.append(layoutUnit.getShortcut().toString());
     }
     config.writeEntry("LayoutList", layoutStrings.join(LIST_SEPARATOR));
+    config.writeEntry("DisplayNames", displayNames.join(LIST_SEPARATOR));
+//    config.writeEntry("LayoutShortcuts", shortcuts.join(LIST_SEPARATOR));
 
     config.writeEntry("LayoutLoopCount", layoutLoopCount);
-
-    QStringList displayNames;
-    foreach(const LayoutUnit& layoutUnit, layouts) {
-    	displayNames << layoutUnit.getRawDisplayName();
-    }
-    config.writeEntry("DisplayNames", displayNames.join(LIST_SEPARATOR));
 
 	config.writeEntry("SwitchMode", SWITCHING_POLICIES[switchingPolicy]);
 

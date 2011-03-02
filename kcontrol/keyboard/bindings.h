@@ -20,10 +20,35 @@
 #ifndef BINDINGS_H_
 #define BINDINGS_H_
 
-class QObject;
-class KAction;
-class KActionCollection;
+#include <kactioncollection.h>
 
-KActionCollection* createGlobalActionCollection(QObject *parent, KAction** mainAction);
+
+//class QObject;
+class KAction;
+class Rules;
+class LayoutUnit;
+template <typename T> class QList;
+
+
+class KeyboardLayoutActionCollection : public KActionCollection {
+public:
+	KeyboardLayoutActionCollection(QObject* parent, bool configAction);
+	virtual ~KeyboardLayoutActionCollection();
+
+	KAction* getToggeAction();
+	KAction* getAction(const LayoutUnit& layoutUnit);
+	KAction* createLayoutShortcutActon(const LayoutUnit& layoutUnit, const Rules* rules, bool autoload);
+//	KAction* setShortcut(LayoutUnit& layoutUnit, const QKeySequence& keySequence, const Rules* rules);
+	void setLayoutShortcuts(QList<LayoutUnit>& layoutUnits, const Rules* rules);
+	void setToggleShortcut(const QKeySequence& keySequence);
+	void loadLayoutShortcuts(QList<LayoutUnit>& layoutUnits, const Rules* rules);
+	void resetLayoutShortcuts();
+
+private:
+	bool configAction;
+};
+
+//KActionCollection* createGlobalActionCollection(QObject *parent, KAction** mainAction);
+//KAction* createLayoutShortcutActon(KActionCollection* actionCollection, const LayoutUnit& layoutUnit, const Rules* rules);
 
 #endif /* BINDINGS_H_ */
