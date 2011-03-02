@@ -111,7 +111,7 @@ void FakeNetworkInterface::deactivate()
     mActiveConnection = "";
 }
 
-void FakeNetworkInterface::disconnect()
+void FakeNetworkInterface::disconnectInterface()
 {
 }
 

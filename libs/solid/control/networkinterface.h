@@ -151,7 +151,7 @@ namespace Control
          * Disconnects a device and prevents the device from automatically
          * activating further connections without user intervention.
          */
-        void disconnect() const;
+        void disconnectInterface() const;
 
         Solid::Control::IPv4Config ipV4Config() const;
         /**

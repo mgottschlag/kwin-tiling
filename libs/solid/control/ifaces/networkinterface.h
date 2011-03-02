@@ -73,7 +73,7 @@ namespace Ifaces
          * Disconnects a device and prevents the device from automatically
          * activating further connections without user intervention.
          */
-        virtual void disconnect() = 0;
+        virtual void disconnectInterface() = 0;
 
         /**
          * Access the network configuration for this object

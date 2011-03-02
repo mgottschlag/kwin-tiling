@@ -83,10 +83,10 @@ QString Solid::Control::NetworkInterface::driver() const
     return_SOLID_CALL(Ifaces::NetworkInterface *, d->backendObject(), QString(), driver());
 }
 
-void Solid::Control::NetworkInterface::disconnect() const
+void Solid::Control::NetworkInterface::disconnectInterface() const
 {
     Q_D(const NetworkInterface);
-    SOLID_CALL(Ifaces::NetworkInterface *, d->backendObject(), disconnect());
+    SOLID_CALL(Ifaces::NetworkInterface *, d->backendObject(), disconnectInterface());
 }
 
 Solid::Control::IPv4Config Solid::Control::NetworkInterface::ipV4Config() const
