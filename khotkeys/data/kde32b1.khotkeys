@@ -1365,6 +1365,7 @@ Name[et]=D-Busi väljakutse 'qdbus org.kde.krunner /App display' sooritamine
 Name[fi]=Suorita D-Bus-kutsu ”qdbus org.kde.krunner /App display”
 Name[fr]=Effectue des appels D-Bus « qdbus org.kde.krunner /App display »
 Name[he]=ביצוע הקריאה 'qdbus org.kde.krunner /App display' מסוג D-Bus 
+Name[hr]=Izvrši D-Bus poziv 'qdbus org.kde.krunner /App display'
 Name[ia]=Exeque appello de D-Bus 'qdbus org.kde.krunner /App display'
 Name[it]=Effettua chiamata D-Bus 'qdbus org.kde.krunner /App display'
 Name[kk]=D-Bus 'qdbus org.kde.krunner /App display' шақыруын орындау
