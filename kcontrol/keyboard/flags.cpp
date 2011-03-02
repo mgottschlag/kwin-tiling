@@ -132,17 +132,19 @@ QString Flags::getFullText(const LayoutUnit& layoutUnit, const KeyboardConfig& k
 	return i18nc("short layout label - full layout name", "%1 - %2", shortText, longText);
 }
 
-static QString getDisplayText(const QString& layout, const QString& variant)
+static QString getDisplayText(const QString& layout, const QString& variant, const Rules* rules)
 {
-	return variant.isEmpty()
-			? layout
-			: i18nc("layout - variant", "%1 - %2", layout, variant);
+	if( variant.isEmpty() )
+		return layout;
+	if( rules->version == "1.0" )
+		return i18nc("layout - variant", "%1 - %2", layout, variant);
+	return variant;
 }
 
 QString Flags::getLongText(const LayoutUnit& layoutUnit, const Rules* rules)
 {
 	if( rules == NULL ) {
-		return getDisplayText(layoutUnit.layout, layoutUnit.variant);
+		return getDisplayText(layoutUnit.layout, layoutUnit.variant, rules);
 	}
 
 	QString layoutText = layoutUnit.layout;
@@ -154,7 +156,7 @@ QString Flags::getLongText(const LayoutUnit& layoutUnit, const Rules* rules)
 			const VariantInfo* variantInfo = layoutInfo->getVariantInfo(layoutUnit.variant);
 			QString variantText = variantInfo != NULL ? variantInfo->description : layoutUnit.variant;
 
-			layoutText = getDisplayText(layoutText, variantText);
+			layoutText = getDisplayText(layoutText, variantText, rules);
 		}
 	}
 
