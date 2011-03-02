@@ -86,7 +86,7 @@ class Calendar::Private : public QObject
     void itemChanged( const Akonadi::Item &item );
 
     void assertInvariants() const;
-
+    void appendVirtualItems( Akonadi::Item::List &itemList );
     //CalendarBase begin
 
     KDateTime::Spec timeZoneIdSpec( const QString &timeZoneId, bool view );
@@ -129,6 +129,9 @@ class Calendar::Private : public QObject
 
     QHash<Akonadi::Item::Id, QString> m_itemDateForItemId;
 
+    // From search folders.
+    QHash<Akonadi::Item::Id, QList<Akonadi::Item> > m_virtualItems;
+
     void clear();
     void readFromModel();
 
@@ -148,6 +151,9 @@ class Calendar::Private : public QObject
     void layoutChanged();
     void modelReset();
     void dataChanged( const QModelIndex &topLeft, const QModelIndex &bottomRight );
+
+    void onRowsMovedInTreeModel( const QModelIndex &sourceParent, int sourceStart, int sourceEnd,
+                                 const QModelIndex &destinationParent, int destinationRow );
 };
 
 }

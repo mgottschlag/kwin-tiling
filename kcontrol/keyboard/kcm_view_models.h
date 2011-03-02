@@ -22,12 +22,14 @@
 
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QAbstractTableModel>
+#include <QtCore/QSet>
 #include <QtGui/QStyledItemDelegate>
 
 class QTreeView;
 class KeyboardConfig;
 class Rules;
 class Flags;
+class KeyboardLayoutActionCollection;
 
 class LayoutsTableModel : public QAbstractTableModel
 {
@@ -57,10 +59,11 @@ class LayoutsTableModel : public QAbstractTableModel
      static const int LAYOUT_COLUMN;
      static const int VARIANT_COLUMN;
      static const int DISPLAY_NAME_COLUMN;
+     static const int SHORTCUT_COLUMN;
 
  private:
      KeyboardConfig* keyboardConfig;
-     Rules *rules;
+     const Rules *rules;
      Flags *countryFlags;
 };
 
@@ -101,6 +104,27 @@ private:
 	const KeyboardConfig* keyboardConfig;
 	const Rules* rules;
 };
+
+class KKeySequenceWidgetDelegate : public QStyledItemDelegate
+{
+	Q_OBJECT
+
+public:
+	KKeySequenceWidgetDelegate(const KeyboardConfig* keyboardConfig_, QObject *parent = 0);
+
+	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+			const QModelIndex &index) const;
+//	void setEditorData(QWidget *editor, const QModelIndex &index) const;
+	void setModelData(QWidget *editor, QAbstractItemModel *model,
+			const QModelIndex &index) const;
+	void paint(QPainter* painter, const QStyleOptionViewItem& option,
+	                                    const QModelIndex& index) const;
+
+private:
+    const KeyboardConfig* keyboardConfig;
+    mutable QSet<QModelIndex> itemsBeingEdited;
+};
+
 
 class XkbOptionsTreeModel: public QAbstractItemModel
 {

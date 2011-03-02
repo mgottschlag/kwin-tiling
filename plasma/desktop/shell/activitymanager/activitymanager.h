@@ -76,7 +76,7 @@ public Q_SLOTS:
     void immutabilityChanged(Plasma::ImmutabilityType type);
 
 protected:
-    void showEvent(QShowEvent *e);
+    void focusInEvent(QFocusEvent *event);
 
 private:
     Q_PRIVATE_SLOT(d, void containmentDestroyed())

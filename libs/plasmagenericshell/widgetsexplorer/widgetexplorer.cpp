@@ -419,6 +419,13 @@ bool WidgetExplorer::event(QEvent *event)
     return QGraphicsWidget::event(event);
 }
 
+void WidgetExplorer::focusInEvent(QFocusEvent* event)
+{
+    Q_UNUSED(event);
+    d->filteringWidget->textSearch()->setFocus();
+}
+
+
 } // namespace Plasma
 
 #include "widgetexplorer.moc"

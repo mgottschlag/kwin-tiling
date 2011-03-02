@@ -95,6 +95,11 @@ FilterBar::~FilterBar()
 {
 }
 
+Plasma::LineEdit* FilterBar::textSearch()
+{
+    return m_textSearch;
+}
+
 void FilterBar::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     Q_UNUSED(event)
@@ -141,12 +146,10 @@ void FilterBar::setMenuPos()
     m_newActivityMenu->move(position);
 }
 
-//FIXME overzealous much?
 void FilterBar::setFocus()
 {
-    QGraphicsWidget::setFocus();
+    m_textSearch->setFlag(ItemIsFocusable);
     m_textSearch->setFocus();
-    m_textSearch->nativeWidget()->setFocus();
 }
 
 void FilterBar::populateActivityMenu()

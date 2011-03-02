@@ -19,10 +19,13 @@
 #include "kcm_view_models.h"
 
 #include <klocalizedstring.h>
+#include <kkeysequencewidget.h>
+
 #include <QtGui/QTreeView>
 #include <QtGui/QComboBox>
 #include <QtGui/QLineEdit>
 #include <QtGui/QPainter>
+#include <QtGui/QKeySequence>
 
 #ifdef DRAG_ENABLED
 #include <QtCore/QMimeData>
@@ -32,12 +35,14 @@
 #include "xkb_rules.h"
 #include "flags.h"
 #include "x11_helper.h"
-
+#include "bindings.h"
 
 const int LayoutsTableModel::MAP_COLUMN = 0;
 const int LayoutsTableModel::LAYOUT_COLUMN = 1;
 const int LayoutsTableModel::VARIANT_COLUMN = 2;
 const int LayoutsTableModel::DISPLAY_NAME_COLUMN = 3;
+const int LayoutsTableModel::SHORTCUT_COLUMN = 4;
+static const int COLUMN_COUNT = 5;
 
 LayoutsTableModel::LayoutsTableModel(Rules* rules_, Flags *flags_, KeyboardConfig* keyboardConfig_, QObject* parent):
 	QAbstractTableModel(parent),
@@ -60,7 +65,7 @@ int LayoutsTableModel::rowCount(const QModelIndex &/*parent*/) const
 
 int LayoutsTableModel::columnCount(const QModelIndex&) const
 {
-	return 4;
+	return COLUMN_COUNT;
 }
 
 Qt::ItemFlags LayoutsTableModel::flags(const QModelIndex &index) const
@@ -70,7 +75,9 @@ Qt::ItemFlags LayoutsTableModel::flags(const QModelIndex &index) const
 
 	Qt::ItemFlags flags = QAbstractTableModel::flags(index);
 
-	if( index.column() == DISPLAY_NAME_COLUMN || index.column() == VARIANT_COLUMN ) {
+	if( index.column() == DISPLAY_NAME_COLUMN
+			|| index.column() == VARIANT_COLUMN
+			|| index.column() == SHORTCUT_COLUMN ) {
 		flags |= Qt::ItemIsEditable;
 	}
 
@@ -176,6 +183,10 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
  				return layoutUnit.getDisplayName();
  			}
     	 break;
+    	 case SHORTCUT_COLUMN: {
+    		return layoutUnit.getShortcut().toString();
+    	 }
+    	 break;
     	 }
      }
      else if (role==Qt::EditRole ) {
@@ -186,6 +197,9 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
     	 case VARIANT_COLUMN:
     		 return layoutUnit.variant;
     	 break;
+    	 case SHORTCUT_COLUMN:
+    		 return layoutUnit.getShortcut().toString();
+    	 break;
     	 default:;
     	 }
      }
@@ -193,6 +207,7 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
     	 switch( index.column() ) {
     	 case MAP_COLUMN:
     	 case DISPLAY_NAME_COLUMN:
+    	 case SHORTCUT_COLUMN:
     		 return Qt::AlignCenter;
     	 break;
     	 default:;
@@ -207,7 +222,7 @@ QVariant LayoutsTableModel::headerData(int section, Qt::Orientation orientation,
          return QVariant();
 
      if (orientation == Qt::Horizontal) {
-	 const QString headers[] = {i18nc("layout map name", "Map"), i18n("Layout"), i18n("Variant"), i18n("Label")};
+    	 const QString headers[] = {i18nc("layout map name", "Map"), i18n("Layout"), i18n("Variant"), i18n("Label"), i18n("Shortcut")};
          return headers[section];
      }
 
@@ -217,7 +232,7 @@ QVariant LayoutsTableModel::headerData(int section, Qt::Orientation orientation,
 bool LayoutsTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
 	if (role != Qt::EditRole
-			|| (index.column() != DISPLAY_NAME_COLUMN && index.column() != VARIANT_COLUMN) )
+			|| (index.column() != DISPLAY_NAME_COLUMN && index.column() != VARIANT_COLUMN && index.column() != SHORTCUT_COLUMN) )
 		return false;
 
 	if (index.row() >= keyboardConfig->layouts.size())
@@ -234,6 +249,11 @@ bool LayoutsTableModel::setData(const QModelIndex &index, const QVariant &value,
 	case VARIANT_COLUMN: {
 		QString variant = value.toString();
 		layoutUnit.variant = variant;
+	}
+	break;
+	case SHORTCUT_COLUMN: {
+		QString shortcut = value.toString();
+		layoutUnit.setShortcut(QKeySequence(shortcut));
 	}
 	break;
 	}
@@ -299,7 +319,7 @@ QWidget *VariantComboDelegate::createEditor(QWidget *parent, const QStyleOptionV
 		const QModelIndex & index ) const
 {
 	QComboBox *editor = new QComboBox(parent);
-	LayoutUnit layoutUnit = keyboardConfig->layouts[index.row()];
+	const LayoutUnit& layoutUnit = keyboardConfig->layouts[index.row()];
 	populateComboWithVariants(editor, layoutUnit.layout, rules);
 	return editor;
 }
@@ -329,6 +349,59 @@ void VariantComboDelegate::updateEditorGeometry(QWidget *editor,
 	editor->setGeometry(option.rect);
 }
 
+//
+// KKeySequenceWidgetDelegate
+//
+KKeySequenceWidgetDelegate::KKeySequenceWidgetDelegate(const KeyboardConfig* keyboardConfig_, QObject *parent):
+	QStyledItemDelegate(parent),
+	keyboardConfig(keyboardConfig_)
+{}
+
+QWidget *KKeySequenceWidgetDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem & /*option*/,
+		const QModelIndex & index ) const
+{
+	itemsBeingEdited.insert(index);
+
+	KKeySequenceWidget *editor = new KKeySequenceWidget(parent);
+    editor->setFocusPolicy(Qt::StrongFocus);
+    editor->setModifierlessAllowed(false);
+
+    const LayoutUnit& layoutUnit = keyboardConfig->layouts[index.row()];
+	editor->setKeySequence(layoutUnit.getShortcut());
+
+	editor->captureKeySequence();
+
+	return editor;
+}
+
+//void KKeySequenceWidgetDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+//{
+//	KKeySequenceWidget *kkeysequencewidget = static_cast<KKeySequenceWidget*>(editor);
+//	QString shortcut = index.model()->data(index, Qt::EditRole).toString();
+//	kkeysequencewidget->setKeySequence(QKeySequence(shortcut));
+//	kkeysequencewidget->captureKeySequence();
+////	kDebug() << "set editor data";
+//}
+
+void KKeySequenceWidgetDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+		const QModelIndex &index) const
+{
+	KKeySequenceWidget *kkeysequencewidget = static_cast<KKeySequenceWidget*>(editor);
+	QString shortcut = kkeysequencewidget->keySequence().toString();
+	model->setData(index, shortcut, Qt::EditRole);
+	itemsBeingEdited.remove(index);
+}
+
+void KKeySequenceWidgetDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option,
+                                    const QModelIndex& index) const
+{
+      if (itemsBeingEdited.contains(index)) {
+//    	  StyledBackgroundPainter::drawBackground(painter,option,index);
+      }
+      else {
+    	  QStyledItemDelegate::paint(painter,option,index);
+      }
+}
 //
 // Xkb Options Tree View
 //

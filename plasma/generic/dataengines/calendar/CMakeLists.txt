@@ -24,6 +24,8 @@ if(AKONADI_FOUND)
         akonadi/calendarmodel.cpp
         akonadi/calfilterproxymodel.cpp
         akonadi/utils.cpp
+        akonadi/blockalarmsattribute.cpp
+        akonadi/collectionselection.cpp
     )
 endif(AKONADI_FOUND)
 

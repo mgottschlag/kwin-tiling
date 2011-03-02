@@ -53,7 +53,7 @@ Flags::Flags():
 Flags::~Flags()
 {
 	if( svg != NULL ) {
-		disconnect(svg, SIGNAL(repaintNeeded()), this, SLOT(clearCache()));
+		disconnect(svg, SIGNAL(repaintNeeded()), this, SLOT(themeChanged()));
 		delete svg;
 	}
 	delete transparentPixmap;
@@ -123,6 +123,13 @@ QString Flags::getShortText(const LayoutUnit& layoutUnit, const KeyboardConfig& 
 //	}
 
 	return layoutText;
+}
+
+QString Flags::getFullText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig, const Rules* rules)
+{
+	QString shortText = Flags::getShortText(layoutUnit, keyboardConfig);
+	QString longText = Flags::getLongText(layoutUnit, rules);
+	return i18nc("short layout label - full layout name", "%1 - %2", shortText, longText);
 }
 
 static QString getDisplayText(const QString& layout, const QString& variant)
@@ -198,7 +205,8 @@ const QIcon Flags::getIconWithText(const LayoutUnit& layoutUnit, const KeyboardC
 //	QIcon icon(pm);
 
 	// we init svg so that we get notification about theme change
-	Plasma::Svg* svg = getSvg();
+	//Plasma::Svg* svg =
+	getSvg();
 //    QPixmap pixmap = Plasma::PaintUtils::texturedText(layoutText, font, svg);
     QPixmap pixmap = Plasma::PaintUtils::shadowText(layoutText, font);
 
@@ -214,7 +222,7 @@ Plasma::Svg* Flags::getSvg()
 		svg = new Plasma::Svg;
 	    svg->setImagePath("widgets/labeltexture");
 	    svg->setContainsMultipleImages(true);
-	    connect(svg, SIGNAL(repaintNeeded()), this, SLOT(clearCache()));
+	    connect(svg, SIGNAL(repaintNeeded()), this, SLOT(themeChanged()));
 	}
 	return svg;
 }

@@ -72,7 +72,6 @@ KCMKeyboardWidget::KCMKeyboardWidget(Rules* rules_, KeyboardConfig* keyboardConf
 	kcmMiscWidget = new KCMiscKeyboardWidget(uiWidget->lowerHardwareWidget);
 	uiWidget->lowerHardwareWidget->layout()->addWidget( kcmMiscWidget );
 	connect(kcmMiscWidget, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
-	//TODO: connect save/load
 
     if( rules != NULL ) {
         initializeKeyboardModelUI();
@@ -85,6 +84,16 @@ KCMKeyboardWidget::KCMKeyboardWidget(Rules* rules_, KeyboardConfig* keyboardConf
 		uiWidget->keyboardModelComboBox->setEnabled(false);
     }
 
+    handleParameters(args);
+}
+
+KCMKeyboardWidget::~KCMKeyboardWidget()
+{
+	delete flags;
+}
+
+void KCMKeyboardWidget::handleParameters(const QVariantList &args)
+{
     // TODO: improve parameter handling
     foreach(const QVariant& arg, args) {
   	  if( arg.type() == QVariant::String ) {
@@ -97,12 +106,6 @@ KCMKeyboardWidget::KCMKeyboardWidget(Rules* rules_, KeyboardConfig* keyboardConf
   	  	  }
   	  }
     }
-
-}
-
-KCMKeyboardWidget::~KCMKeyboardWidget()
-{
-	delete flags;
 }
 
 void KCMKeyboardWidget::save()
@@ -110,11 +113,16 @@ void KCMKeyboardWidget::save()
 	if( rules == NULL )
 		return;
 
-	KAction* action = static_cast<KAction*>(actionCollection->action(0));
-    KShortcut shortcut(uiWidget->kdeKeySequence->keySequence());
-    action->setGlobalShortcut(shortcut, KAction::ActiveShortcut, KAction::NoAutoloading);
-    kDebug() << "Saving keyboard layout KDE shortcut" << shortcut.toString();
+	if( actionCollection != NULL ) {
+		actionCollection->resetLayoutShortcuts();
+		actionCollection->clear();
+		delete actionCollection;
+	}
+	actionCollection = new KeyboardLayoutActionCollection(this, true);
+	actionCollection->setToggleShortcut(uiWidget->kdeKeySequence->keySequence());
+	actionCollection->setLayoutShortcuts(keyboardConfig->layouts, rules);
 
+	//TODO: skip if no change in shortcuts?
     KGlobalSettings::emitChange(KGlobalSettings::SettingsChanged, KGlobalSettings::SETTINGS_SHORTCUTS);
 }
 
@@ -124,7 +132,7 @@ void KCMKeyboardWidget::updateUI()
 		return;
 
 	uiWidget->layoutsTableView->setModel(uiWidget->layoutsTableView->model());
-	((LayoutsTableModel*)uiWidget->layoutsTableView->model())->refresh();
+	layoutsTableModel->refresh();
 	uiWidget->layoutsTableView->resizeRowsToContents();
 
 	uiUpdating = true;
@@ -271,10 +279,15 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 	LabelEditDelegate* labelDelegate = new LabelEditDelegate(keyboardConfig, uiWidget->layoutsTableView);
 	uiWidget->layoutsTableView->setItemDelegateForColumn(LayoutsTableModel::DISPLAY_NAME_COLUMN, labelDelegate);
 
+	KKeySequenceWidgetDelegate* shortcutDelegate = new KKeySequenceWidgetDelegate(keyboardConfig, uiWidget->layoutsTableView);
+	uiWidget->layoutsTableView->setItemDelegateForColumn(LayoutsTableModel::SHORTCUT_COLUMN, shortcutDelegate);
+
 	//TODO: is it ok to hardcode sizes? any better approach?
 	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::MAP_COLUMN, 70);
 	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::LAYOUT_COLUMN, 200);
-	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::VARIANT_COLUMN, 250);
+	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::VARIANT_COLUMN, 200);
+	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::DISPLAY_NAME_COLUMN, 50);
+	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::SHORTCUT_COLUMN, 130);
 
 	connect(layoutsTableModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(uiChanged()));
 
@@ -576,11 +589,11 @@ void KCMKeyboardWidget::updateShortcutsUI()
 	updateXkbShortcutsButtons();
 
 	delete actionCollection;
-	KAction* a;
-	actionCollection = createGlobalActionCollection(this, &a);
-    a->setProperty("isConfigurationAction", true);
-    uiWidget->kdeKeySequence->setKeySequence(a->globalShortcut().primary());
-    kDebug() << "Keyboard layout switching KDE shortcut" << a->globalShortcut().toString();
+	actionCollection = new KeyboardLayoutActionCollection(this, true);
+	KAction* toggleAction = actionCollection->getToggeAction();
+    uiWidget->kdeKeySequence->setKeySequence(toggleAction->globalShortcut().primary());
+    actionCollection->loadLayoutShortcuts(keyboardConfig->layouts, rules);
+	layoutsTableModel->refresh();
 }
 
 void KCMKeyboardWidget::updateXkbOptionsUI()

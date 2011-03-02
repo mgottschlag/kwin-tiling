@@ -47,10 +47,11 @@ public:
 
 	static QString getLongText(const LayoutUnit& layoutUnit, const Rules* rules);
 	static QString getShortText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig);
-	void clearCache();
+	static QString getFullText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig, const Rules* rules);
 
 public Q_SLOTS:
 	void themeChanged();
+	void clearCache();
 
 Q_SIGNALS:
 	void pixmapChanged();

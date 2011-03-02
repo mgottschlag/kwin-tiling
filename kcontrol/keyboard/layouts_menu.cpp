@@ -75,11 +75,13 @@ void LayoutsMenu::actionTriggered(QAction* action)
 
 QAction* LayoutsMenu::createAction(const LayoutUnit& layoutUnit) const
 {
-	QString shortText = Flags::getShortText(layoutUnit, keyboardConfig);
-	QString longText = Flags::getLongText(layoutUnit, &rules);
-	QString menuText = i18nc("short layout label - full layout name", "%1 - %2", shortText, longText);
+	QString menuText = Flags::getFullText(layoutUnit, keyboardConfig, &rules);
 	QAction* action = new QAction(getFlag(layoutUnit.layout), menuText, actionGroup);
 	action->setData(layoutUnit.toString());
+	//FIXME: tooltips don't work on dbusmenus???
+//	if( ! layoutUnit.getShortcut().isEmpty() ) {
+//		action->setToolTip(layoutUnit.getShortcut().toString());
+//	}
 	return action;
 }
 
