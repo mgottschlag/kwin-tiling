@@ -35,6 +35,9 @@ public:
     uint nmState;
     bool isWirelessEnabled;
     bool isWirelessHardwareEnabled;
+    bool isWwanEnabled;
+    bool isWwanHardwareEnabled;
+
     bool isNetworkingEnabled;
     bool NetworkingEnabledPropertyAvailable;
     QStringList networkInterfaces;

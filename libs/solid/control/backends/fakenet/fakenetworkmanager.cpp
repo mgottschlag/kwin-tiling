@@ -35,6 +35,8 @@ FakeNetworkManager::FakeNetworkManager(QObject * parent, const QVariantList  &)
     mUserNetworkingEnabled = true;
     mUserWirelessEnabled = true;
     mRfKillEnabled = false;
+    mUserWwanEnabled = false;
+    mWwanEnabled = false;
     mXmlFile = KStandardDirs::locate("data", "solidfakebackend/fakenetworking.xml");
 
 //     QDBusConnection::sessionBus().registerObject("/org/kde/solid/fake", this, QDBusConnection::ExportNonScriptableSlots);
@@ -46,6 +48,8 @@ FakeNetworkManager::FakeNetworkManager(QObject * parent, const QStringList &, co
 {
     mUserNetworkingEnabled = true;
     mUserWirelessEnabled = true;
+    mUserWwanEnabled = true;
+    mWwanEnabled = true;
 
     mXmlFile = xmlFile;
     if (mXmlFile.isEmpty())
@@ -115,9 +119,24 @@ bool FakeNetworkManager::isWirelessHardwareEnabled() const
     return mRfKillEnabled;
 }
 
+bool FakeNetworkManager::isWwanEnabled() const
+{
+    return mUserWwanEnabled;
+}
+
+bool FakeNetworkManager::isWwanHardwareEnabled() const
+{
+    return mWwanEnabled;
+}
+
 void FakeNetworkManager::setWirelessEnabled(bool enabled)
 {
     mUserWirelessEnabled = enabled;
+}
+
+void FakeNetworkManager::setWwanEnabled(bool enabled)
+{
+    mUserWwanEnabled = enabled;
 }
 
 void FakeNetworkManager::setNetworkingEnabled(bool enabled)
@@ -177,6 +196,10 @@ void FakeNetworkManager::parseNetworkingFile()
                 mUserWirelessEnabled = propertyValue.toBool();
             } else if ( propertyKey== QLatin1String("rfkill")) {
                 mRfKillEnabled = propertyValue.toBool();
+            } else if ( propertyKey== QLatin1String("wwan")) {
+                mUserWwanEnabled = propertyValue.toBool();
+            } else if ( propertyKey== QLatin1String("wwanHardware")) {
+                mWwanEnabled = propertyValue.toBool();
             }
         }
         node = node.nextSibling();

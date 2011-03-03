@@ -49,6 +49,8 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList &)
     d->nmState = d->iface.state();
     d->isWirelessHardwareEnabled = d->iface.wirelessHardwareEnabled();
     d->isWirelessEnabled = d->iface.wirelessEnabled();
+    d->isWwanHardwareEnabled = d->iface.wwanHardwareEnabled();
+    d->isWwanEnabled = d->iface.wwanEnabled();
     QVariant netEnabled = d->iface.property("NetworkingEnabled");
     if (!netEnabled.isNull()) {
         d->isNetworkingEnabled = netEnabled.toBool();
@@ -161,6 +163,18 @@ bool NMNetworkManager::isWirelessHardwareEnabled() const
     return d->isWirelessHardwareEnabled;
 }
 
+bool NMNetworkManager::isWwanEnabled() const
+{
+    Q_D(const NMNetworkManager);
+    return d->isWwanEnabled;
+}
+
+bool NMNetworkManager::isWwanHardwareEnabled() const
+{
+    Q_D(const NMNetworkManager);
+    return d->isWwanHardwareEnabled;
+}
+
 void NMNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters)
 {
     Q_D(NMNetworkManager);
@@ -206,6 +220,12 @@ void NMNetworkManager::setWirelessEnabled(bool enabled)
     d->iface.setWirelessEnabled(enabled);
 }
 
+void NMNetworkManager::setWwanEnabled(bool enabled)
+{
+    Q_D(NMNetworkManager);
+    d->iface.setWwanEnabled(enabled);
+}
+
 void NMNetworkManager::deviceAdded(const QDBusObjectPath & objpath)
 {
     kDebug(1441);
@@ -249,6 +269,8 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
     QLatin1String netEnabledKey("NetworkingEnabled");
     QLatin1String wifiHwKey("WirelessHardwareEnabled");
     QLatin1String wifiEnabledKey("WirelessEnabled");
+    QLatin1String wwanHwKey("WwanHardwareEnabled");
+    QLatin1String wwanEnabledKey("WwanEnabled");
     QVariantMap::const_iterator it = properties.find(activeConnKey);
     if ( it != properties.end()) {
         QList<QDBusObjectPath> activePaths = qdbus_cast< QList<QDBusObjectPath> >(*it);
@@ -273,6 +295,17 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
         d->isWirelessEnabled = it->toBool();
         kDebug(1441) << wifiEnabledKey << d->isWirelessEnabled;
         emit wirelessEnabledChanged(d->isWirelessEnabled);
+    }
+    it = properties.find(wwanHwKey);
+    if ( it != properties.end()) {
+        d->isWwanHardwareEnabled = it->toBool();
+        kDebug(1441) << wwanHwKey << d->isWwanHardwareEnabled;
+    }
+    it = properties.find(wwanEnabledKey);
+    if ( it != properties.end()) {
+        d->isWwanEnabled = it->toBool();
+        kDebug(1441) << wwanEnabledKey << d->isWwanEnabled;
+        emit wwanEnabledChanged(d->isWwanEnabled);
     }
     it = properties.find(netEnabledKey);
     if ( it != properties.end()) {
