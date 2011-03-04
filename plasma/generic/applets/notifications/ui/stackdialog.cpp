@@ -227,6 +227,8 @@ void StackDialog::hideEvent(QHideEvent *event)
     m_hideTimer->stop();
 
     adjustWindowToTilePos();
+
+    m_notificationStack->adjustSize();
     Plasma::Dialog::hideEvent(event);
 }
 
