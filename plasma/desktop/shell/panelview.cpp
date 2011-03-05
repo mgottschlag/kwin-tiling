@@ -46,7 +46,7 @@
 #include "panelappletoverlay.h"
 #include "panelcontroller.h"
 #include "plasmaapp.h"
-#include <iostream>
+
 class GlowBar : public QWidget
 {
 public:
@@ -791,7 +791,6 @@ void PanelView::pinchContainmentToCurrentScreen()
 void PanelView::pinchContainment(const QRect &screenGeom)
 {
     kDebug() << "**************************** pinching" << screenGeom << m_lastSeenSize;
-    std::cout << " ******************** PINCHCONTAINMENT !!! " << std::endl;
     disconnect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
     bool horizontal = isHorizontal();
 
@@ -818,17 +817,16 @@ void PanelView::pinchContainment(const QRect &screenGeom)
 
         const QString last = horizontal ? "Horizontal" + QString::number(sw) :
                                           "Vertical" + QString::number(sh);
-        kDebug() << " ***** OFFSET IS " << m_offset << " **** \n";
         if (sizes.hasGroup(last)) {
             KConfigGroup thisSize(&sizes, last);
 
-            
+            /*
             kDebug() << "has saved properties..." << last
                      << thisSize.readEntry("min", min)
                      << thisSize.readEntry("max", max)
                      << thisSize.readEntry("size", c->geometry().size())
                      << thisSize.readEntry("offset", 0);
-            
+            */
             c->setMinimumSize(0, 0);
             c->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
             c->resize(thisSize.readEntry("size", c->geometry().size()));
