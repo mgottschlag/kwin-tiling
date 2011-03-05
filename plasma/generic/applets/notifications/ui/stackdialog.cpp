@@ -332,10 +332,6 @@ void StackDialog::savePosition(const QPoint& pos)
 
     const QPoint popupPosition = m_applet->containment()->corona()->popupPosition(m_applet, size());
 
-    if (QPoint(popupPosition - QWidget::pos()).manhattanLength() < 128) {
-        pixelsToSave = QPoint(-1, -1);
-    }
-
     m_applet->config().writeEntry("customPosition", pixelsToSave);
     m_applet->config().writeEntry("customPositionAffinityHoriz", horizSide);
     m_applet->config().writeEntry("customPositionAffinityVert", vertSide);
