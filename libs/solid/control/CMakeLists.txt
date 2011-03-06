@@ -21,9 +21,6 @@ set(solidcontrol_LIB_SRCS
    wirednetworkinterface.cpp
    wirelessaccesspoint.cpp
    wirelessnetworkinterface.cpp
-   remotecontrolbutton.cpp
-   remotecontrol.cpp
-   remotecontrolmanager.cpp
    modemmanager.cpp
    modemmanagerinterface.cpp
    modeminterface.cpp
@@ -48,9 +45,9 @@ install(TARGETS solidcontrol EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS
 
 ########### install files ###############
 
-install( FILES solidnetworkmanager.desktop solidremotecontrolmanager.desktop solidmodemmanager.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR}  )
-install( FILES networkmanager.h networkinterface.h remotecontrolmanager.h
-    remotecontrol.h remotecontrolbutton.h wirednetworkinterface.h wirelessnetworkinterface.h
+install( FILES solidnetworkmanager.desktop solidmodemmanager.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR}  )
+install( FILES networkmanager.h networkinterface.h 
+    wirednetworkinterface.h wirelessnetworkinterface.h
     wirelessaccesspoint.h singletondefs.h networking.h networkipv4config.h solid_control_export.h 
     networkcdmainterface.h networkgsminterface.h networkserialinterface.h
     modemmanager.h modemmanagerinterface.h

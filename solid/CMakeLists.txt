@@ -35,5 +35,4 @@ endif("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
 
 if(NOT WIN32)
   macro_optional_add_subdirectory(wicd)
-  add_subdirectory(lirc)
 endif(NOT WIN32)
