@@ -67,13 +67,13 @@ install(FILES
    )
 
 
-set(tasksmodel_SRCS 
-   modeltest/dynamictreemodel.cpp
-   modeltest/modeltest.cpp
-   modeltest/main.cpp
-   )
+#set(tasksmodel_SRCS 
+#   modeltest/dynamictreemodel.cpp
+#   modeltest/modeltest.cpp
+#   modeltest/main.cpp
+#   )
 
-kde4_add_executable(tasksmodeltest ${tasksmodel_SRCS})
-target_link_libraries(tasksmodeltest ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES} taskmanager kephal kworkspace)
+#kde4_add_executable(tasksmodeltest ${tasksmodel_SRCS})
+#target_link_libraries(tasksmodeltest ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES} taskmanager kephal kworkspace)
 
 
