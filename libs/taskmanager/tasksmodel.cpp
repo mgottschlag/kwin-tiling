@@ -41,6 +41,7 @@ public:
 
     TasksModel *q;
     QWeakPointer<GroupManager> groupManager;
+    TaskGroup *rootGroup;
     int rows;
 };
 
@@ -49,6 +50,7 @@ TasksModel::TasksModel(GroupManager *groupManager, QObject *parent)
       d(new TasksModelPrivate(this, groupManager))
 {
     if (groupManager) {
+        kDebug() << "connecting!" << groupManager->rootGroup();
         connect(groupManager, SIGNAL(reload()), this, SLOT(populateModel()));
     }
 
@@ -73,6 +75,8 @@ QVariant TasksModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::DisplayRole) {
         return item->name();
+    } else if (role == Qt::DecorationRole) {
+        return item->icon();
     }
 
     return QVariant();
@@ -85,7 +89,7 @@ QModelIndex TasksModel::index(int row, int column, const QModelIndex &parent) co
         return QModelIndex();
     }
 
-    kDebug() << "asking for" << row << column;
+    //kDebug() << "asking for" << row << column;
 
     TaskGroup *group = 0;
     if (parent.isValid()) {
@@ -140,7 +144,7 @@ QModelIndex TasksModel::parent(const QModelIndex &idx) const
     return createIndex(row, idx.column(), group);
 }
 
-int TasksModel::columnCount(const QModelIndex &parent) const
+int TasksModel::columnCount(const QModelIndex &) const
 {
     return 1;
 }
@@ -169,26 +173,41 @@ int TasksModel::rowCount(const QModelIndex &parent) const
 TasksModelPrivate::TasksModelPrivate(TasksModel *model, GroupManager *gm)
     : q(model),
       groupManager(gm),
+      rootGroup(0),
       rows(0)
 {
 }
 
 void TasksModelPrivate::populateModel()
 {
-    q->beginRemoveRows(QModelIndex(), 0, q->rowCount());
+    if (rows > 0) {
+        q->beginRemoveRows(QModelIndex(), 0, rows);
+        q->endRemoveRows();
+    }
 
     GroupManager *gm = groupManager.data();
     kDebug() << gm;
     if (!gm) {
         rows = 0;
+        rootGroup = 0;
         return;
     }
 
-    TaskGroup *root = gm->rootGroup();
-    rows = root->members().count();
-    kDebug() << "we gots ourselves rows #:" << rows;
+    if (rootGroup != gm->rootGroup()) {
+        if (rootGroup) {
+            QObject::disconnect(rootGroup, 0, q, 0);
+        }
+
+        rootGroup = gm->rootGroup();
+        QObject::connect(rootGroup, SIGNAL(itemAdded(AbstractGroupableItem*)), q, SLOT(populateModel()));
+        QObject::connect(rootGroup, SIGNAL(itemRemoved(AbstractGroupableItem*)), q, SLOT(populateModel()));
+        QObject::connect(rootGroup, SIGNAL(itemPositionChanged(AbstractGroupableItem*)), q, SLOT(populateModel()));
+        QObject::connect(rootGroup, SIGNAL(changed(::TaskManager::TaskChanges)), q, SLOT(populateModel()));
+    }
+
+    rows = rootGroup->members().count();
     QModelIndex idx;
-    populate(idx, root);
+    populate(idx, rootGroup);
 }
 
 void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
@@ -198,15 +217,11 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
     q->beginInsertRows(parent, 0, group->members().count());
     int i = 0;
     foreach (AbstractGroupableItem *item,  group->members()) {
-        q->insertRow(i, parent);
-        QModelIndex idx(q->index(i, 0, parent));
-        QMap<int, QVariant> data;
-        data.insert(Qt::DisplayRole, item->name());
-        data.insert(Qt::DecorationRole, item->icon());
-        q->setItemData(idx, data);
         if (item->itemType() == GroupItemType) {
+            QModelIndex idx(q->index(i, 0, parent));
             childGroups << idxGroupPair(idx, static_cast<TaskGroup *>(item));
         }
+        ++i;
     }
     q->endInsertRows();
 
