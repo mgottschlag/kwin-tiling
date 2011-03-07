@@ -289,6 +289,7 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
     if ( it != properties.end()) {
         d->isWirelessHardwareEnabled = it->toBool();
         kDebug(1441) << wifiHwKey << d->isWirelessHardwareEnabled;
+        emit wirelessHardwareEnabledChanged(d->isWirelessHardwareEnabled);
     }
     it = properties.find(wifiEnabledKey);
     if ( it != properties.end()) {
