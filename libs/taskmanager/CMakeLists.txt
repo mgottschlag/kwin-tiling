@@ -23,6 +23,7 @@ set(taskmanager_LIB_SRCS
    taskgroup.cpp
    taskitem.cpp
    taskmanager.cpp
+   tasksmodel.cpp
    )
 
 if(WIN32)
@@ -44,8 +45,7 @@ if (X11_Xcomposite_FOUND)
   target_link_libraries(taskmanager ${X11_Xcomposite_LIB})
 endif (X11_Xcomposite_FOUND)
 
-target_link_libraries(taskmanager kephal)
-target_link_libraries(taskmanager kworkspace)
+target_link_libraries(taskmanager kephal kworkspace)
 
 set_target_properties(taskmanager PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS taskmanager EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
@@ -65,5 +65,15 @@ install(FILES
    taskmanager_export.h
    DESTINATION ${INCLUDE_INSTALL_DIR}/taskmanager COMPONENT Devel
    )
+
+
+set(tasksmodel_SRCS 
+   modeltest/dynamictreemodel.cpp
+   modeltest/modeltest.cpp
+   modeltest/main.cpp
+   )
+
+kde4_add_executable(tasksmodeltest ${tasksmodel_SRCS})
+target_link_libraries(tasksmodeltest ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES} taskmanager kephal kworkspace)
 
 
