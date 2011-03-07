@@ -86,36 +86,6 @@ QModelIndex TasksModel::index(int row, int column, const QModelIndex &parent) co
     }
 
     kDebug() << "asking for" << row << column;
-    /*
-    QList<int> path;
-    QModelIndex idx(parent);
-    while (idx.isValid()) {
-        path << idx.row();
-        idx = idx.parent();
-    }
-
-    TaskGroup *group = gm->rootGroup();
-    for (int i = path.count() - 1; i > -1; --i) {
-        int row = path.at(i);
-        if (row >= group->members().count()) {
-            kDebug() << "fail 0";
-            return QModelIndex();
-        }
-
-        AbstractGroupableItem *item = group->members().at(i);
-        if (item->itemType() != GroupItemType) {
-            kDebug() << "fail 1" << i << row;
-            return QModelIndex();
-        }
-
-        group = static_cast<TaskGroup *>(item);
-    }
-
-    if (row >= group->members().count()) {
-        kDebug() << "fail 2";
-        return QModelIndex();
-    }
-    */
 
     TaskGroup *group = 0;
     if (parent.isValid()) {
