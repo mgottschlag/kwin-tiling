@@ -186,6 +186,12 @@ bool NMNetworkInterface::managed() const
     return d->managed;
 }
 
+void NMNetworkInterface::disconnectInterface()
+{
+    Q_D(NMNetworkInterface);
+    d->deviceIface.Disconnect();
+}
+
 void NMNetworkInterface::setManaged(const QVariant & driver)
 {
     Q_D(NMNetworkInterface);

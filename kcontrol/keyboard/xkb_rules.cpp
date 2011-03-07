@@ -18,10 +18,10 @@
 
 #include "xkb_rules.h"
 
+#include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
 
-#include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtGui/QTextDocument> // for Qt::escape
 #include <QtXml/QXmlAttributes>
@@ -121,6 +121,11 @@ void postProcess(Rules* rules)
 }
 
 
+Rules::Rules():
+	version("1.0")
+{
+}
+
 QString Rules::getRulesName()
 {
 	XkbRF_VarDefsRec vd;
@@ -173,7 +178,12 @@ const char Rules::XKB_OPTION_GROUP_SEPARATOR = ':';
 
 Rules* Rules::readRules()
 {
-	QFile file(findXkbRulesFile());
+	return readRules(findXkbRulesFile());
+}
+
+Rules* Rules::readRules(const QString& filename)
+{
+	QFile file(filename);
 	if( !file.open(QFile::ReadOnly | QFile::Text) ) {
 		qWarning() << "Cannot open the rules file" << file.fileName();
 		return NULL;
@@ -188,7 +198,7 @@ Rules* Rules::readRules()
 
 	QXmlInputSource xmlInputSource(&file);
 
-	qDebug() << "parsing rules from" << file.fileName();
+	kDebug() << "Parsing xkb rules from" << file.fileName();
 
 	if( ! reader.parse(xmlInputSource) ) {
 		qWarning() << "Failed to parse the rules file" << file.fileName();
@@ -222,6 +232,10 @@ bool RulesHandler::startElement(const QString &/*namespaceURI*/, const QString &
 	}
 	else if( strPath.endsWith("optionList/group/option") ) {
 		rules->optionGroupInfos.last()->optionInfos << new OptionInfo();
+	}
+	else if( strPath == ("xkbConfigRegistry") && ! attributes.value("version").isEmpty()  ) {
+		rules->version = attributes.value("version");
+		kDebug() << "xkbConfigRegistry version" << rules->version;
 	}
 	return true;
 }

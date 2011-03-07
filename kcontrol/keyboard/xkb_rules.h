@@ -77,6 +77,9 @@ struct Rules {
 	QList<LayoutInfo*> layoutInfos;
     QList<ModelInfo*> modelInfos;
     QList<OptionGroupInfo*> optionGroupInfos;
+    QString version;
+
+    Rules();
 
 	~Rules() {
 		foreach(LayoutInfo* layoutInfo, layoutInfos) delete layoutInfo;
@@ -93,6 +96,7 @@ struct Rules {
     }
 
     static Rules* readRules();
+    static Rules* readRules(const QString& filename);
     static QString getRulesName();
 };
 

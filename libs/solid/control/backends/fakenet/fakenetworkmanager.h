@@ -53,6 +53,8 @@ Q_OBJECT
         bool isNetworkingEnabled() const;
         bool isWirelessEnabled() const;
         bool isWirelessHardwareEnabled() const;
+        bool isWwanEnabled() const;
+        bool isWwanHardwareEnabled() const;
 
         void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters);
 
@@ -63,6 +65,7 @@ Q_OBJECT
 
     public Q_SLOTS:
         void setWirelessEnabled(bool);
+        void setWwanEnabled(bool);
         void setNetworkingEnabled(bool);
 
     private:
@@ -73,6 +76,8 @@ Q_OBJECT
         bool mUserNetworkingEnabled;
         bool mUserWirelessEnabled;
         bool mRfKillEnabled;
+        bool mUserWwanEnabled;
+        bool mWwanEnabled;
         QMap<QString, FakeNetworkInterface *> mNetworkInterfaces;
         QStringList mActiveConnections;
         QString mXmlFile;

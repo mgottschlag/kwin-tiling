@@ -135,4 +135,8 @@ bool WicdNetworkInterface::deactivateConnection()
     return false;
 }
 
+void WicdNetworkInterface::disconnectInterface()
+{
+}
+
 #include "networkinterface.moc"
