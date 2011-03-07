@@ -344,7 +344,7 @@ void TaskItemLayout::layoutItems()
                 setRowMaximumHeight(row, maximumCellSize.height());
                 setColumnMaximumWidth(col, QWIDGETSIZE_MAX);
             } else {
-                if (item->abstractItem()->itemType() == TaskManager::LauncherItemType) {
+                if (item->abstractItem() && item->abstractItem()->itemType() == TaskManager::LauncherItemType) {
                     setColumnFixedWidth(col, maximumCellSize.height()); //The Icon size is a sqare, so it needs the same width as height
                 } else {
                     setColumnMaximumWidth(col, maximumCellSize.width());
