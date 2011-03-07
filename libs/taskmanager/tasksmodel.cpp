@@ -26,6 +26,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "groupmanager.h"
 #include "taskgroup.h"
 
+#include <KDebug>
+
 namespace TaskManager
 {
 
@@ -39,6 +41,7 @@ public:
 
     TasksModel *q;
     QWeakPointer<GroupManager> groupManager;
+    int rows;
 };
 
 TasksModel::TasksModel(GroupManager *groupManager, QObject *parent)
@@ -48,6 +51,8 @@ TasksModel::TasksModel(GroupManager *groupManager, QObject *parent)
     if (groupManager) {
         connect(groupManager, SIGNAL(reload()), this, SLOT(populateModel()));
     }
+
+    d->populateModel();
 }
 
 TasksModel::~TasksModel()
@@ -57,17 +62,112 @@ TasksModel::~TasksModel()
 
 QVariant TasksModel::data(const QModelIndex &index, int role) const
 {
+    if (!index.isValid()) {
+        return QVariant();
+    }
+
+    AbstractGroupableItem *item = static_cast<AbstractGroupableItem *>(index.internalPointer());
+    if (!item) {
+        return QVariant();
+    }
+
+    if (role == Qt::DisplayRole) {
+        return item->name();
+    }
+
     return QVariant();
 }
 
 QModelIndex TasksModel::index(int row, int column, const QModelIndex &parent) const
 {
-    return QModelIndex();
+    GroupManager *gm = d->groupManager.data();
+    if (!gm || row < 0 || column < 0) {
+        return QModelIndex();
+    }
+
+    kDebug() << "asking for" << row << column;
+    /*
+    QList<int> path;
+    QModelIndex idx(parent);
+    while (idx.isValid()) {
+        path << idx.row();
+        idx = idx.parent();
+    }
+
+    TaskGroup *group = gm->rootGroup();
+    for (int i = path.count() - 1; i > -1; --i) {
+        int row = path.at(i);
+        if (row >= group->members().count()) {
+            kDebug() << "fail 0";
+            return QModelIndex();
+        }
+
+        AbstractGroupableItem *item = group->members().at(i);
+        if (item->itemType() != GroupItemType) {
+            kDebug() << "fail 1" << i << row;
+            return QModelIndex();
+        }
+
+        group = static_cast<TaskGroup *>(item);
+    }
+
+    if (row >= group->members().count()) {
+        kDebug() << "fail 2";
+        return QModelIndex();
+    }
+    */
+
+    TaskGroup *group = 0;
+    if (parent.isValid()) {
+        AbstractGroupableItem *item = static_cast<AbstractGroupableItem *>(parent.internalPointer());
+        if (item && item->itemType() == GroupItemType) {
+            group = static_cast<TaskGroup *>(item);
+        }
+    } else {
+        group = gm->rootGroup();
+    }
+
+    if (!group || row >= group->members().count()) {
+        return QModelIndex();
+    }
+
+    return createIndex(row, column, group->members().at(row));
 }
 
-QModelIndex TasksModel::parent(const QModelIndex &index) const
+QModelIndex TasksModel::parent(const QModelIndex &idx) const
 {
-    return QModelIndex();
+    GroupManager *gm = d->groupManager.data();
+    if (!gm) {
+        return QModelIndex();
+    }
+
+    AbstractGroupableItem *item = static_cast<AbstractGroupableItem *>(idx.internalPointer());
+    if (!item) {
+        return QModelIndex();
+    }
+
+    TaskGroup *group = item->parentGroup();
+    if (!group || group == gm->rootGroup()) {
+        return QModelIndex();
+    }
+
+    int row = 0;
+    bool found = false;
+    TaskGroup *grandparent = group->parentGroup();
+    while (row < grandparent->members().count()) {
+        if (group == grandparent->members().at(row)) {
+            found = true;
+            break;
+        }
+
+        ++row;
+    }
+
+    if (!found) {
+        return QModelIndex();
+    }
+
+    return createIndex(row, idx.column(), group);
 }
 
 int TasksModel::columnCount(const QModelIndex &parent) const
@@ -77,15 +177,30 @@ int TasksModel::columnCount(const QModelIndex &parent) const
 
 int TasksModel::rowCount(const QModelIndex &parent) const
 {
+    TaskGroup *group = 0;
+    if (!parent.isValid()) {
+        if (d->groupManager) {
+            group = d->groupManager.data()->rootGroup();
+        }
+    } else {
+        AbstractGroupableItem *item = static_cast<AbstractGroupableItem *>(parent.internalPointer());
+        if (item->itemType() == GroupItemType) {
+            group = static_cast<TaskGroup *>(item);
+        }
+    }
+
+    if (group) {
+        return group->members().count();
+    }
+
     return 0;
 }
 
-
 TasksModelPrivate::TasksModelPrivate(TasksModel *model, GroupManager *gm)
     : q(model),
-      groupManager(gm)
+      groupManager(gm),
+      rows(0)
 {
-    populateModel();
 }
 
 void TasksModelPrivate::populateModel()
@@ -93,11 +208,15 @@ void TasksModelPrivate::populateModel()
     q->beginRemoveRows(QModelIndex(), 0, q->rowCount());
 
     GroupManager *gm = groupManager.data();
+    kDebug() << gm;
     if (!gm) {
+        rows = 0;
         return;
     }
 
     TaskGroup *root = gm->rootGroup();
+    rows = root->members().count();
+    kDebug() << "we gots ourselves rows #:" << rows;
     QModelIndex idx;
     populate(idx, root);
 }
