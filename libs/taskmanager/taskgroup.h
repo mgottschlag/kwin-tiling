@@ -136,7 +136,9 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     /** inform visualization about wat is added and removed */
+    void itemAboutToBeAdded(AbstractGroupableItem *item);
     void itemAdded(AbstractGroupableItem *item);
+    void itemAboutToBeRemoved(AbstractGroupableItem *item);
     void itemRemoved(AbstractGroupableItem *item);
     void groupEditRequest();
     /** inform visualization about position change */

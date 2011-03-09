@@ -180,6 +180,8 @@ void TaskGroup::add(AbstractGroupableItem *item)
         return;
     }
 
+    emit itemAboutToBeAdded(item);
+
     if (d->groupName.isEmpty()) {
         TaskItem *taskItem = qobject_cast<TaskItem*>(item);
         if (taskItem) {
@@ -248,6 +250,7 @@ void TaskGroup::Private::signalRemovals()
 {
     // signal removals for is full of dangling pointers. do not use them!
     foreach (AbstractGroupableItem *item, signalRemovalsFor) {
+        emit q->itemAboutToBeRemoved(item);
         emit q->itemRemoved(item);
     }
 
@@ -292,6 +295,7 @@ void TaskGroup::remove(AbstractGroupableItem *item)
         return;
     }
 
+    emit itemAboutToBeRemoved(item);
     disconnect(item, 0, this, 0);
 
     d->members.removeAll(item);
