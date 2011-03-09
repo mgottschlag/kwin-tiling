@@ -46,12 +46,10 @@ public:
     void groupChanged(::TaskManager::TaskChanges changes);
 
     int indexOf(AbstractGroupableItem *item);
-    void addDelta(TaskGroup *group, int amount);
 
     TasksModel *q;
     QWeakPointer<GroupManager> groupManager;
     TaskGroup *rootGroup;
-    QHash<TaskGroup *, int> deltas;
 };
 
 TasksModel::TasksModel(GroupManager *groupManager, QObject *parent)
@@ -109,7 +107,7 @@ QModelIndex TasksModel::index(int row, int column, const QModelIndex &parent) co
         group = gm->rootGroup();
     }
 
-    if (!group || row >= group->members().count() - d->deltas.value(group, 0)) {
+    if (!group || row >= group->members().count()) {
         return QModelIndex();
     }
 
@@ -160,15 +158,13 @@ int TasksModel::columnCount(const QModelIndex &) const
 int TasksModel::rowCount(const QModelIndex &parent) const
 {
     if (!parent.isValid()) {
-        return d->rootGroup->members().count() - d->deltas.value(d->rootGroup, 0);
+        return d->rootGroup->members().count();
     }
 
     AbstractGroupableItem *item = static_cast<AbstractGroupableItem *>(parent.internalPointer());
     if (item->itemType() == GroupItemType) {
         TaskGroup *group = static_cast<TaskGroup *>(item);
-        const int rowCount = group->members().count() - d->deltas.value(group, 0);
-        kDebug() << "row count for" << group << "with real count of" << group->members().count() <<
-            "is" << rowCount;
+        const int rowCount = group->members().count();
     }
 
     return 0;
@@ -253,17 +249,6 @@ int TasksModelPrivate::indexOf(AbstractGroupableItem *item)
     return row;
 }
 
-void TasksModelPrivate::addDelta(TaskGroup *group, int amount)
-{
-    const int delta = deltas.value(group, 0) + amount;
-    kDebug() << "adding" << delta << "to" << group;
-    if (delta == 0) {
-        deltas.remove(group);
-    } else {
-        deltas.insert(group, delta);
-    }
-}
-
 void TasksModelPrivate::itemAboutToBeAdded(AbstractGroupableItem *item, int index)
 {
     TaskGroup *parent = item->parentGroup();
@@ -278,19 +263,6 @@ void TasksModelPrivate::itemAboutToBeAdded(AbstractGroupableItem *item, int inde
 void TasksModelPrivate::itemAdded(AbstractGroupableItem *item)
 {
     Q_UNUSED(item)
-    q->endInsertRows();
-    return;
-    //kDebug() << item << item->parentGroup();
-    TaskGroup *parent = item->parentGroup();
-    QModelIndex parentIdx;
-    if (parent->parentGroup()) {
-        parentIdx = q->createIndex(indexOf(parent), 0, parent);
-    }
-
-    const int index = indexOf(item);
-    addDelta(parent, 1);
-    q->beginInsertRows(parentIdx, index, index);
-    addDelta(parent, -1);
     q->endInsertRows();
 }
 
