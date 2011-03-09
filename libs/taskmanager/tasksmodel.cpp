@@ -164,7 +164,7 @@ int TasksModel::rowCount(const QModelIndex &parent) const
     AbstractGroupableItem *item = static_cast<AbstractGroupableItem *>(parent.internalPointer());
     if (item->itemType() == GroupItemType) {
         TaskGroup *group = static_cast<TaskGroup *>(item);
-        const int rowCount = group->members().count();
+        return group->members().count();
     }
 
     return 0;
