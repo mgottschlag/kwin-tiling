@@ -209,12 +209,24 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
         return;
     }
 
-    QObject::connect(group, SIGNAL(itemAboutToBeAdded(AbstractGroupableItem*,int)), q, SLOT(itemAboutToBeAdded(AbstractGroupableItem*,int)), Qt::UniqueConnection);
-    QObject::connect(group, SIGNAL(itemAdded(AbstractGroupableItem*)), q, SLOT(itemAdded(AbstractGroupableItem*)), Qt::UniqueConnection);
-    QObject::connect(group, SIGNAL(itemAboutToBeRemoved(AbstractGroupableItem*)), q, SLOT(itemAboutToBeRemoved(AbstractGroupableItem*)), Qt::UniqueConnection);
-    QObject::connect(group, SIGNAL(itemRemoved(AbstractGroupableItem*)), q, SLOT(itemRemoved(AbstractGroupableItem*)), Qt::UniqueConnection);
-    QObject::connect(group, SIGNAL(itemPositionChanged(AbstractGroupableItem*)), q, SLOT(itemMoved(AbstractGroupableItem*)), Qt::UniqueConnection);
-    QObject::connect(group, SIGNAL(changed(::TaskManager::TaskChanges)), q, SLOT(groupChanged(::TaskManager::TaskChanges)), Qt::UniqueConnection);
+    QObject::connect(group, SIGNAL(itemAboutToBeAdded(AbstractGroupableItem*,int)),
+                     q, SLOT(itemAboutToBeAdded(AbstractGroupableItem*,int)),
+                     Qt::UniqueConnection);
+    QObject::connect(group, SIGNAL(itemAdded(AbstractGroupableItem*)),
+                     q, SLOT(itemAdded(AbstractGroupableItem*)),
+                     Qt::UniqueConnection);
+    QObject::connect(group, SIGNAL(itemAboutToBeRemoved(AbstractGroupableItem*)),
+                     q, SLOT(itemAboutToBeRemoved(AbstractGroupableItem*)),
+                     Qt::UniqueConnection);
+    QObject::connect(group, SIGNAL(itemRemoved(AbstractGroupableItem*)),
+                     q, SLOT(itemRemoved(AbstractGroupableItem*)),
+                     Qt::UniqueConnection);
+    QObject::connect(group, SIGNAL(itemPositionChanged(AbstractGroupableItem*)),
+                     q, SLOT(itemMoved(AbstractGroupableItem*)),
+                     Qt::UniqueConnection);
+    QObject::connect(group, SIGNAL(changed(::TaskManager::TaskChanges)),
+                     q, SLOT(groupChanged(::TaskManager::TaskChanges)),
+                     Qt::UniqueConnection);
 
     typedef QPair<QModelIndex, TaskGroup *> idxGroupPair;
     QList<idxGroupPair> childGroups;
