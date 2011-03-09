@@ -39,6 +39,7 @@ public:
     void populateModel();
     void populate(const QModelIndex &parent, TaskGroup *group);
     void itemAdded(AbstractGroupableItem *item);
+    void itemAboutToBeRemoved(AbstractGroupableItem *item);
     void itemRemoved(AbstractGroupableItem *item);
     void itemMoved(AbstractGroupableItem *item);
     void groupChanged(::TaskManager::TaskChanges changes);
@@ -211,6 +212,7 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
     }
 
     QObject::connect(group, SIGNAL(itemAdded(AbstractGroupableItem*)), q, SLOT(itemAdded(AbstractGroupableItem*)), Qt::UniqueConnection);
+    QObject::connect(group, SIGNAL(itemAboutToBeRemoved(AbstractGroupableItem*)), q, SLOT(itemAboutToBeRemoved(AbstractGroupableItem*)), Qt::UniqueConnection);
     QObject::connect(group, SIGNAL(itemRemoved(AbstractGroupableItem*)), q, SLOT(itemRemoved(AbstractGroupableItem*)), Qt::UniqueConnection);
     QObject::connect(group, SIGNAL(itemPositionChanged(AbstractGroupableItem*)), q, SLOT(itemMoved(AbstractGroupableItem*)), Qt::UniqueConnection);
     QObject::connect(group, SIGNAL(changed(::TaskManager::TaskChanges)), q, SLOT(groupChanged(::TaskManager::TaskChanges)), Qt::UniqueConnection);
@@ -276,9 +278,22 @@ void TasksModelPrivate::itemAdded(AbstractGroupableItem *item)
     q->endInsertRows();
 }
 
-void TasksModelPrivate::itemRemoved(AbstractGroupableItem *item)
+void TasksModelPrivate::itemAboutToBeRemoved(AbstractGroupableItem *item)
 {
     kDebug() << item;
+    TaskGroup *parent = static_cast<TaskGroup *>(q->sender());//item->parentGroup();
+    QModelIndex parentIdx;
+    if (parent && parent->parentGroup()) {
+        parentIdx = q->createIndex(indexOf(parent), 0, parent);
+    }
+
+    const int index = indexOf(item);
+    q->beginRemoveRows(parentIdx, index, index);
+}
+
+void TasksModelPrivate::itemRemoved(AbstractGroupableItem *item)
+{
+    q->endRemoveRows();
 }
 
 void TasksModelPrivate::itemMoved(AbstractGroupableItem *item)
