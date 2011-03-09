@@ -180,8 +180,6 @@ void TaskGroup::add(AbstractGroupableItem *item)
         return;
     }
 
-    emit itemAboutToBeAdded(item);
-
     if (d->groupName.isEmpty()) {
         TaskItem *taskItem = qobject_cast<TaskItem*>(item);
         if (taskItem) {
@@ -201,24 +199,21 @@ void TaskGroup::add(AbstractGroupableItem *item)
         }
     }
 
-    bool inserted = false;
+    int index = d->members.count();
     if (item->itemType() == LauncherItemType) {
         // insert launchers together at the head of the list, but still
         // in the order they appear
-        for (int i = 0; i < d->members.count(); ++i) {
-            if (d->members.at(i)->itemType() != LauncherItemType) {
-                d->members.insert(i, item);
-                inserted = true;
+        for (index = 0; index < d->members.count(); ++index) {
+            if (d->members.at(index)->itemType() != LauncherItemType) {
                 break;
             }
         }
     }
 
-    if (!inserted) {
-        d->members.append(item);
-    }
-
     item->setParentGroup(this);
+    emit itemAboutToBeAdded(item, index);
+    d->members.insert(index, item);
+
 
     connect(item, SIGNAL(destroyed(AbstractGroupableItem*)),
             this, SLOT(itemDestroyed(AbstractGroupableItem*)));
@@ -241,6 +236,7 @@ void TaskGroup::add(AbstractGroupableItem *item)
 
 void TaskGroup::Private::itemDestroyed(AbstractGroupableItem *item)
 {
+    emit q->itemAboutToBeRemoved(item);
     members.removeAll(item);
     signalRemovalsFor << item;
     QTimer::singleShot(0, q, SLOT(signalRemovals()));
@@ -250,7 +246,6 @@ void TaskGroup::Private::signalRemovals()
 {
     // signal removals for is full of dangling pointers. do not use them!
     foreach (AbstractGroupableItem *item, signalRemovalsFor) {
-        emit q->itemAboutToBeRemoved(item);
         emit q->itemRemoved(item);
     }
 
