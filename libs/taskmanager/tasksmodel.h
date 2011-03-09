@@ -39,6 +39,21 @@ class TASKMANAGER_EXPORT TasksModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
+    enum {
+     IsStartup = Qt::UserRole + 1,
+     OnAllDesktops = Qt::UserRole + 2,
+     Desktop = Qt::UserRole + 3,
+     Shaded = Qt::UserRole + 4,
+     Maximized = Qt::UserRole + 5,
+     Minimized = Qt::UserRole + 6,
+     FullScreen = Qt::UserRole + 7,
+     BelowOthers = Qt::UserRole + 8,
+     AlwaysOnTop = Qt::UserRole + 9,
+     Active = Qt::UserRole + 10,
+     DemandsAttention = Qt::UserRole + 11,
+     LauncherUrl = Qt::UserRole + 12
+    } DisplayRoles;
+
     explicit TasksModel(GroupManager *groupManager, QObject *parent = 0);
     ~TasksModel();
 

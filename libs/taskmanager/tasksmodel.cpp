@@ -84,6 +84,30 @@ QVariant TasksModel::data(const QModelIndex &index, int role) const
         return item->name();
     } else if (role == Qt::DecorationRole) {
         return item->icon();
+    } else if (role == TasksModel::IsStartup) {
+        return item->isStartupItem();
+    } else if (role == TasksModel::OnAllDesktops) {
+        return item->isOnAllDesktops();
+    } else if (role == TasksModel::Desktop) {
+        return item->desktop();
+    } else if (role == TasksModel::Shaded) {
+        return item->isShaded();
+    } else if (role == TasksModel::Maximized) {
+        return item->isMaximized();
+    } else if (role == TasksModel::Minimized) {
+        return item->isMinimized();
+    } else if (role == TasksModel::FullScreen) {
+        return item->isFullScreen();
+    } else if (role == TasksModel::BelowOthers) {
+        return item->isKeptBelowOthers();
+    } else if (role == TasksModel::AlwaysOnTop) {
+        return item->isAlwaysOnTop();
+    } else if (role == TasksModel::Active) {
+        return item->isActive();
+    } else if (role == TasksModel::DemandsAttention) {
+        return item->demandsAttention();
+    } else if (role == TasksModel::LauncherUrl) {
+        return item->launcherUrl();
     }
 
     return QVariant();
