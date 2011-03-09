@@ -44,6 +44,7 @@ public:
     void itemRemoved(AbstractGroupableItem *item);
     void itemMoved(AbstractGroupableItem *item);
     void groupChanged(::TaskManager::TaskChanges changes);
+    void itemChanged(::TaskManager::TaskChanges changes);
 
     int indexOf(AbstractGroupableItem *item);
 
@@ -223,6 +224,10 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
         if (item->itemType() == GroupItemType) {
             QModelIndex idx(q->index(i, 0, parent));
             childGroups << idxGroupPair(idx, static_cast<TaskGroup *>(item));
+        } else {
+            QObject::connect(item, SIGNAL(changed(::TaskManager::TaskChanges)),
+                             q, SLOT(itemChanged(::TaskManager::TaskChanges)),
+                             Qt::UniqueConnection);
         }
         ++i;
     }
@@ -293,6 +298,15 @@ void TasksModelPrivate::itemMoved(AbstractGroupableItem *item)
 void TasksModelPrivate::groupChanged(::TaskManager::TaskChanges changes)
 {
     kDebug() << changes;
+}
+
+void TasksModelPrivate::itemChanged(::TaskManager::TaskChanges changes)
+{
+    AbstractGroupableItem *item = static_cast<AbstractGroupableItem *>(q->sender());
+    const int index = indexOf(item);
+    //TODO: only emit for which columns changed!
+    QModelIndex idx = q->createIndex(index, 0, item);
+    emit q->dataChanged(idx, idx);
 }
 
 }

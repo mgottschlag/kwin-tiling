@@ -59,6 +59,7 @@ private:
     Q_PRIVATE_SLOT(d, void itemRemoved(AbstractGroupableItem*))
     Q_PRIVATE_SLOT(d, void itemMoved(AbstractGroupableItem*))
     Q_PRIVATE_SLOT(d, void groupChanged(::TaskManager::TaskChanges))
+    Q_PRIVATE_SLOT(d, void itemChanged(::TaskManager::TaskChanges))
 };
 
 } // namespace TaskManager
