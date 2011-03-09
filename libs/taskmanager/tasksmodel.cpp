@@ -343,6 +343,7 @@ void TasksModelPrivate::itemAboutToMove(AbstractGroupableItem *item, int current
 
 void TasksModelPrivate::itemMoved(AbstractGroupableItem *item)
 {
+    Q_UNUSED(item)
     q->endMoveRows();
 }
 
