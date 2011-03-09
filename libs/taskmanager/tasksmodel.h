@@ -53,6 +53,7 @@ private:
     TasksModelPrivate * const d;
 
     Q_PRIVATE_SLOT(d, void populateModel())
+    Q_PRIVATE_SLOT(d, void itemAboutToBeAdded(AbstractGroupableItem*,int))
     Q_PRIVATE_SLOT(d, void itemAdded(AbstractGroupableItem*))
     Q_PRIVATE_SLOT(d, void itemAboutToBeRemoved(AbstractGroupableItem*))
     Q_PRIVATE_SLOT(d, void itemRemoved(AbstractGroupableItem*))

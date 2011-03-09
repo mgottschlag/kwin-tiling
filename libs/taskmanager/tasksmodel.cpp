@@ -38,6 +38,7 @@ public:
 
     void populateModel();
     void populate(const QModelIndex &parent, TaskGroup *group);
+    void itemAboutToBeAdded(AbstractGroupableItem *item, int index);
     void itemAdded(AbstractGroupableItem *item);
     void itemAboutToBeRemoved(AbstractGroupableItem *item);
     void itemRemoved(AbstractGroupableItem *item);
@@ -211,6 +212,7 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
         return;
     }
 
+    QObject::connect(group, SIGNAL(itemAboutToBeAdded(AbstractGroupableItem*,int)), q, SLOT(itemAboutToBeAdded(AbstractGroupableItem*,int)), Qt::UniqueConnection);
     QObject::connect(group, SIGNAL(itemAdded(AbstractGroupableItem*)), q, SLOT(itemAdded(AbstractGroupableItem*)), Qt::UniqueConnection);
     QObject::connect(group, SIGNAL(itemAboutToBeRemoved(AbstractGroupableItem*)), q, SLOT(itemAboutToBeRemoved(AbstractGroupableItem*)), Qt::UniqueConnection);
     QObject::connect(group, SIGNAL(itemRemoved(AbstractGroupableItem*)), q, SLOT(itemRemoved(AbstractGroupableItem*)), Qt::UniqueConnection);
@@ -262,8 +264,22 @@ void TasksModelPrivate::addDelta(TaskGroup *group, int amount)
     }
 }
 
+void TasksModelPrivate::itemAboutToBeAdded(AbstractGroupableItem *item, int index)
+{
+    TaskGroup *parent = item->parentGroup();
+    QModelIndex parentIdx;
+    if (parent->parentGroup()) {
+        parentIdx = q->createIndex(indexOf(parent), 0, parent);
+    }
+
+    q->beginInsertRows(parentIdx, index, index);
+}
+
 void TasksModelPrivate::itemAdded(AbstractGroupableItem *item)
 {
+    Q_UNUSED(item)
+    q->endInsertRows();
+    return;
     //kDebug() << item << item->parentGroup();
     TaskGroup *parent = item->parentGroup();
     QModelIndex parentIdx;
@@ -293,6 +309,7 @@ void TasksModelPrivate::itemAboutToBeRemoved(AbstractGroupableItem *item)
 
 void TasksModelPrivate::itemRemoved(AbstractGroupableItem *item)
 {
+    Q_UNUSED(item)
     q->endRemoveRows();
 }
 
