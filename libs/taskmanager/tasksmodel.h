@@ -53,6 +53,10 @@ private:
     TasksModelPrivate * const d;
 
     Q_PRIVATE_SLOT(d, void populateModel())
+    Q_PRIVATE_SLOT(d, void itemAdded(AbstractGroupableItem*))
+    Q_PRIVATE_SLOT(d, void itemRemoved(AbstractGroupableItem*))
+    Q_PRIVATE_SLOT(d, void itemMoved(AbstractGroupableItem*))
+    Q_PRIVATE_SLOT(d, void groupChanged(::TaskManager::TaskChanges))
 };
 
 } // namespace TaskManager

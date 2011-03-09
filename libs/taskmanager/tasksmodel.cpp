@@ -38,10 +38,18 @@ public:
 
     void populateModel();
     void populate(const QModelIndex &parent, TaskGroup *group);
+    void itemAdded(AbstractGroupableItem *item);
+    void itemRemoved(AbstractGroupableItem *item);
+    void itemMoved(AbstractGroupableItem *item);
+    void groupChanged(::TaskManager::TaskChanges changes);
+
+    int indexOf(AbstractGroupableItem *item);
+    void addDelta(TaskGroup *group, int amount);
 
     TasksModel *q;
     QWeakPointer<GroupManager> groupManager;
     TaskGroup *rootGroup;
+    QHash<TaskGroup *, int> deltas;
 };
 
 TasksModel::TasksModel(GroupManager *groupManager, QObject *parent)
@@ -49,7 +57,6 @@ TasksModel::TasksModel(GroupManager *groupManager, QObject *parent)
       d(new TasksModelPrivate(this, groupManager))
 {
     if (groupManager) {
-        kDebug() << "connecting!" << groupManager->rootGroup();
         connect(groupManager, SIGNAL(reload()), this, SLOT(populateModel()));
     }
 
@@ -100,7 +107,7 @@ QModelIndex TasksModel::index(int row, int column, const QModelIndex &parent) co
         group = gm->rootGroup();
     }
 
-    if (!group || row >= group->members().count()) {
+    if (!group || row >= group->members().count() - d->deltas.value(group, 0)) {
         return QModelIndex();
     }
 
@@ -151,12 +158,15 @@ int TasksModel::columnCount(const QModelIndex &) const
 int TasksModel::rowCount(const QModelIndex &parent) const
 {
     if (!parent.isValid()) {
-        return d->rootGroup->members().count();
+        return d->rootGroup->members().count() - d->deltas.value(d->rootGroup, 0);
     }
 
     AbstractGroupableItem *item = static_cast<AbstractGroupableItem *>(parent.internalPointer());
     if (item->itemType() == GroupItemType) {
-        return static_cast<TaskGroup *>(item)->members().count();
+        TaskGroup *group = static_cast<TaskGroup *>(item);
+        const int rowCount = group->members().count() - d->deltas.value(group, 0);
+        kDebug() << "row count for" << group << "with real count of" << group->members().count() <<
+            "is" << rowCount;
     }
 
     return 0;
@@ -186,10 +196,6 @@ void TasksModelPrivate::populateModel()
 
         rootGroup = gm->rootGroup();
         kDebug() << "root group connection" << rootGroup;
-        QObject::connect(rootGroup, SIGNAL(itemAdded(AbstractGroupableItem*)), q, SLOT(populateModel()));
-        QObject::connect(rootGroup, SIGNAL(itemRemoved(AbstractGroupableItem*)), q, SLOT(populateModel()));
-        QObject::connect(rootGroup, SIGNAL(itemPositionChanged(AbstractGroupableItem*)), q, SLOT(populateModel()));
-        QObject::connect(rootGroup, SIGNAL(changed(::TaskManager::TaskChanges)), q, SLOT(populateModel()));
     }
 
     q->beginResetModel();
@@ -203,6 +209,11 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
     if (group->members().isEmpty()) {
         return;
     }
+
+    QObject::connect(group, SIGNAL(itemAdded(AbstractGroupableItem*)), q, SLOT(itemAdded(AbstractGroupableItem*)), Qt::UniqueConnection);
+    QObject::connect(group, SIGNAL(itemRemoved(AbstractGroupableItem*)), q, SLOT(itemRemoved(AbstractGroupableItem*)), Qt::UniqueConnection);
+    QObject::connect(group, SIGNAL(itemPositionChanged(AbstractGroupableItem*)), q, SLOT(itemMoved(AbstractGroupableItem*)), Qt::UniqueConnection);
+    QObject::connect(group, SIGNAL(changed(::TaskManager::TaskChanges)), q, SLOT(groupChanged(::TaskManager::TaskChanges)), Qt::UniqueConnection);
 
     typedef QPair<QModelIndex, TaskGroup *> idxGroupPair;
     QList<idxGroupPair> childGroups;
@@ -219,6 +230,65 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
     foreach (const idxGroupPair &pair, childGroups) {
         populate(pair.first, pair.second);
     }
+}
+
+int TasksModelPrivate::indexOf(AbstractGroupableItem *item)
+{
+    Q_ASSERT(item != rootGroup);
+    int row = 0;
+    //kDebug() << item << item->parentGroup();
+
+    foreach (const AbstractGroupableItem *child, item->parentGroup()->members()) {
+        if (child == item) {
+            break;
+        }
+
+        ++row;
+    }
+
+    return row;
+}
+
+void TasksModelPrivate::addDelta(TaskGroup *group, int amount)
+{
+    const int delta = deltas.value(group, 0) + amount;
+    kDebug() << "adding" << delta << "to" << group;
+    if (delta == 0) {
+        deltas.remove(group);
+    } else {
+        deltas.insert(group, delta);
+    }
+}
+
+void TasksModelPrivate::itemAdded(AbstractGroupableItem *item)
+{
+    //kDebug() << item << item->parentGroup();
+    TaskGroup *parent = item->parentGroup();
+    QModelIndex parentIdx;
+    if (parent->parentGroup()) {
+        parentIdx = q->createIndex(indexOf(parent), 0, parent);
+    }
+
+    const int index = indexOf(item);
+    addDelta(parent, 1);
+    q->beginInsertRows(parentIdx, index, index);
+    addDelta(parent, -1);
+    q->endInsertRows();
+}
+
+void TasksModelPrivate::itemRemoved(AbstractGroupableItem *item)
+{
+    kDebug() << item;
+}
+
+void TasksModelPrivate::itemMoved(AbstractGroupableItem *item)
+{
+    kDebug() << item;
+}
+
+void TasksModelPrivate::groupChanged(::TaskManager::TaskChanges changes)
+{
+    kDebug() << changes;
 }
 
 }
