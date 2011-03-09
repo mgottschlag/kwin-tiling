@@ -23,7 +23,7 @@
     <entry name="body" type="String">
       <label>The whole text of the notification</label>
     </entry>
-    <entry name="timeout" type="Integer">
+    <entry name="timeout" type="Int">
       <label>The timeout after which the notification will be closed</label>
     </entry>
   </group>
