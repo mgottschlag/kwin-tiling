@@ -42,6 +42,7 @@ public:
     void itemAdded(AbstractGroupableItem *item);
     void itemAboutToBeRemoved(AbstractGroupableItem *item);
     void itemRemoved(AbstractGroupableItem *item);
+    void itemAboutToMove(AbstractGroupableItem *item, int currentIndex, int newIndex);
     void itemMoved(AbstractGroupableItem *item);
     void itemChanged(::TaskManager::TaskChanges changes);
 
@@ -220,6 +221,9 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
     QObject::connect(group, SIGNAL(itemRemoved(AbstractGroupableItem*)),
                      q, SLOT(itemRemoved(AbstractGroupableItem*)),
                      Qt::UniqueConnection);
+    QObject::connect(group, SIGNAL(itemAboutToMove(AbstractGroupableItem*,int,int)),
+                     q, SLOT(itemAboutToMove(AbstractGroupableItem*,int,int)),
+                     Qt::UniqueConnection);
     QObject::connect(group, SIGNAL(itemPositionChanged(AbstractGroupableItem*)),
                      q, SLOT(itemMoved(AbstractGroupableItem*)),
                      Qt::UniqueConnection);
@@ -286,8 +290,7 @@ void TasksModelPrivate::itemAdded(AbstractGroupableItem *item)
 
 void TasksModelPrivate::itemAboutToBeRemoved(AbstractGroupableItem *item)
 {
-    kDebug() << item;
-    TaskGroup *parent = static_cast<TaskGroup *>(q->sender());//item->parentGroup();
+    TaskGroup *parent = static_cast<TaskGroup *>(q->sender());
     QModelIndex parentIdx;
     if (parent && parent->parentGroup()) {
         parentIdx = q->createIndex(indexOf(parent), 0, parent);
@@ -303,9 +306,20 @@ void TasksModelPrivate::itemRemoved(AbstractGroupableItem *item)
     q->endRemoveRows();
 }
 
+void TasksModelPrivate::itemAboutToMove(AbstractGroupableItem *item, int currentIndex, int newIndex)
+{
+    QModelIndex parentIdx;
+    TaskGroup *parent = item->parentGroup();
+    if (parent && parent->parentGroup()) {
+        parentIdx = q->createIndex(indexOf(parent), 0, parent);
+    }
+
+    q->beginMoveRows(parentIdx, currentIndex, currentIndex, parentIdx, newIndex + 1);
+}
+
 void TasksModelPrivate::itemMoved(AbstractGroupableItem *item)
 {
-    kDebug() << item;
+    q->endMoveRows();
 }
 
 void TasksModelPrivate::itemChanged(::TaskManager::TaskChanges changes)
