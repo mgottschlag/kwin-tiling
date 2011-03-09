@@ -43,7 +43,6 @@ public:
     void itemAboutToBeRemoved(AbstractGroupableItem *item);
     void itemRemoved(AbstractGroupableItem *item);
     void itemMoved(AbstractGroupableItem *item);
-    void groupChanged(::TaskManager::TaskChanges changes);
     void itemChanged(::TaskManager::TaskChanges changes);
 
     int indexOf(AbstractGroupableItem *item);
@@ -236,7 +235,9 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
         if (item->itemType() == GroupItemType) {
             QModelIndex idx(q->index(i, 0, parent));
             childGroups << idxGroupPair(idx, static_cast<TaskGroup *>(item));
-        } else {
+        }
+
+        if (item != rootGroup) {
             QObject::connect(item, SIGNAL(changed(::TaskManager::TaskChanges)),
                              q, SLOT(itemChanged(::TaskManager::TaskChanges)),
                              Qt::UniqueConnection);
@@ -305,11 +306,6 @@ void TasksModelPrivate::itemRemoved(AbstractGroupableItem *item)
 void TasksModelPrivate::itemMoved(AbstractGroupableItem *item)
 {
     kDebug() << item;
-}
-
-void TasksModelPrivate::groupChanged(::TaskManager::TaskChanges changes)
-{
-    kDebug() << changes;
 }
 
 void TasksModelPrivate::itemChanged(::TaskManager::TaskChanges changes)
