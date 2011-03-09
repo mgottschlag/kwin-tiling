@@ -142,6 +142,7 @@ Q_SIGNALS:
     void itemRemoved(AbstractGroupableItem *item);
     void groupEditRequest();
     /** inform visualization about position change */
+    void itemAboutToMove(AbstractGroupableItem *item, int currentIndex, int newIndex);
     void itemPositionChanged(AbstractGroupableItem *item);
     /** The group changed the desktop, is emitted in the toDesktop function */
     void movedToDesktop(int newDesk);
