@@ -673,6 +673,7 @@ bool TaskGroup::moveItem(int oldIndex, int newIndex)
     }
 
     AbstractGroupableItem *item = d->members.at(oldIndex);
+    emit itemAboutToMove(item, oldIndex, newIndex);
     d->members.move(oldIndex, newIndex);
     emit itemPositionChanged(item);
     return true;
