@@ -29,8 +29,9 @@
 #include <X11/extensions/shape.h>
 #endif
 
-#include <KWindowSystem>
 #include <KDebug>
+#include <KIdleTime>
+#include <KWindowSystem>
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
@@ -308,6 +309,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_glowBar(0),
       m_mousePollTimer(0),
       m_strutsTimer(new QTimer(this)),
+      m_rehideAfterAutounhideTimer(new QTimer(this)),
       m_spacer(0),
       m_spacerIndex(-1),
       m_shadowWindow(0),
@@ -317,7 +319,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_visibilityMode(NormalPanel),
       m_lastHorizontal(true),
       m_editing(false),
-      m_triggerEntered(false)
+      m_triggerEntered(false),
+      m_respectStatus(true)
 {
     // KWin setup
     KWindowSystem::setOnAllDesktops(winId(), true);
@@ -326,6 +329,10 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     m_strutsTimer->setSingleShot(true);
     connect(m_strutsTimer, SIGNAL(timeout()), this, SLOT(updateStruts()));
+
+    m_rehideAfterAutounhideTimer->setSingleShot(true);
+    m_rehideAfterAutounhideTimer->setInterval(AUTOUNHIDE_CHECK_DELAY);
+    connect(m_rehideAfterAutounhideTimer, SIGNAL(timeout()), this, SLOT(checkAutounhide()));
 
     // Graphics view setup
     setFrameStyle(QFrame::NoFrame);
@@ -405,7 +412,7 @@ void PanelView::setContainment(Plasma::Containment *containment)
         disconnect(oldContainment);
     }
 
-    connect(containment, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(setStatus(Plasma::ItemStatus)));
+    connect(containment, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(statusUpdated(Plasma::ItemStatus)));
     connect(containment, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
     connect(containment, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
     connect(containment, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)), this, SLOT(appletAdded(Plasma::Applet *)));
@@ -1425,7 +1432,7 @@ void PanelView::unhide(bool destroyTrigger)
     }
 }
 
-void PanelView::setStatus(Plasma::ItemStatus newStatus)
+void PanelView::statusUpdated(Plasma::ItemStatus newStatus)
 {
     if (newStatus == Plasma::AcceptingInputStatus) {
         KWindowSystem::forceActiveWindow(winId());
@@ -1435,11 +1442,28 @@ void PanelView::setStatus(Plasma::ItemStatus newStatus)
 void PanelView::checkUnhide(Plasma::ItemStatus newStatus)
 {
     //kDebug() << "================= got a new status: " << newStatus << Plasma::ActiveStatus;
+    m_respectStatus = true;
+
     if (newStatus > Plasma::ActiveStatus) {
         unhide();
+        m_rehideAfterAutounhideTimer->start();
     } else {
         startAutoHide();
     }
+}
+
+void PanelView::checkAutounhide()
+{
+    if (KIdleTime::instance()->idleTime() >= AUTOUNHIDE_CHECK_DELAY) {
+        connect(KIdleTime::instance(), SIGNAL(resumingFromIdle()), this, SLOT(checkAutounhide()),
+                Qt::UniqueConnection);
+        KIdleTime::instance()->catchNextResumeEvent();
+        return;
+    }
+
+    disconnect(KIdleTime::instance(), SIGNAL(resumingFromIdle()), this, SLOT(checkAutounhide()));
+    m_respectStatus = false;
+    startAutoHide();
 }
 
 void PanelView::unhide()
@@ -1454,7 +1478,6 @@ void PanelView::resetTriggerEnteredSuppression()
 
 void PanelView::startAutoHide()
 {
-    //TODO: is 5s too long? not long enough?
     /*
     kDebug() << m_editing << (containment() ? containment()->status() : 0) << Plasma::ActiveStatus
              << geometry().adjusted(-10, -10, 10, 10).contains(QCursor::pos()) << hasPopup();
@@ -1465,7 +1488,10 @@ void PanelView::startAutoHide()
     }
     */
 
-    if (m_editing || (containment() && containment()->status() > Plasma::ActiveStatus) ||
+    m_rehideAfterAutounhideTimer->stop();
+
+    if (m_editing ||
+        (m_respectStatus && (containment() && containment()->status() > Plasma::ActiveStatus)) ||
         geometry().adjusted(-10, -10, 10, 10).contains(QCursor::pos()) ||
         hasPopup()) {
         if (!m_mousePollTimer) {
