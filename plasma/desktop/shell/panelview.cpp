@@ -1508,7 +1508,6 @@ void PanelView::startAutoHide()
 
 
     if (m_editing || (m_respectStatus && (containment() && containment()->status() > Plasma::ActiveStatus))) {
-        kDebug() << "respect status" << m_respectStatus << (m_editing? "but editing": "");
         if (m_mousePollTimer) {
             m_mousePollTimer->stop();
             disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(startAutoHide()));
