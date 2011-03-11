@@ -1476,7 +1476,11 @@ void PanelView::checkAutounhide()
 
     disconnect(KIdleTime::instance(), SIGNAL(resumingFromIdle()), this, SLOT(checkAutounhide()));
     m_respectStatus = false;
-    startAutoHide();
+    if (sender() == KIdleTime::instance()) {
+        QTimer::singleShot(2000, this, SLOT(startAutoHide()));
+    } else {
+        startAutoHide();
+    }
     //kDebug() << "exit 0 ***************************";
 }
 
