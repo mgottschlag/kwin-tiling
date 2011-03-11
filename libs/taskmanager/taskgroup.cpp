@@ -199,24 +199,21 @@ void TaskGroup::add(AbstractGroupableItem *item)
         }
     }
 
-    bool inserted = false;
+    int index = d->members.count();
     if (item->itemType() == LauncherItemType) {
         // insert launchers together at the head of the list, but still
         // in the order they appear
-        for (int i = 0; i < d->members.count(); ++i) {
-            if (d->members.at(i)->itemType() != LauncherItemType) {
-                d->members.insert(i, item);
-                inserted = true;
+        for (index = 0; index < d->members.count(); ++index) {
+            if (d->members.at(index)->itemType() != LauncherItemType) {
                 break;
             }
         }
     }
 
-    if (!inserted) {
-        d->members.append(item);
-    }
-
     item->setParentGroup(this);
+    emit itemAboutToBeAdded(item, index);
+    d->members.insert(index, item);
+
 
     connect(item, SIGNAL(destroyed(AbstractGroupableItem*)),
             this, SLOT(itemDestroyed(AbstractGroupableItem*)));
@@ -239,6 +236,7 @@ void TaskGroup::add(AbstractGroupableItem *item)
 
 void TaskGroup::Private::itemDestroyed(AbstractGroupableItem *item)
 {
+    emit q->itemAboutToBeRemoved(item);
     members.removeAll(item);
     signalRemovalsFor << item;
     QTimer::singleShot(0, q, SLOT(signalRemovals()));
@@ -292,6 +290,7 @@ void TaskGroup::remove(AbstractGroupableItem *item)
         return;
     }
 
+    emit itemAboutToBeRemoved(item);
     disconnect(item, 0, this, 0);
 
     d->members.removeAll(item);
@@ -674,6 +673,7 @@ bool TaskGroup::moveItem(int oldIndex, int newIndex)
     }
 
     AbstractGroupableItem *item = d->members.at(oldIndex);
+    emit itemAboutToMove(item, oldIndex, newIndex);
     d->members.move(oldIndex, newIndex);
     emit itemPositionChanged(item);
     return true;
