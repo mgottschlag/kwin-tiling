@@ -23,10 +23,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "tasksmodel.h"
 
-#include "groupmanager.h"
-#include "taskgroup.h"
+#include <QMetaEnum>
 
 #include <KDebug>
+
+#include "groupmanager.h"
+#include "taskgroup.h"
 
 namespace TaskManager
 {
@@ -57,6 +59,16 @@ TasksModel::TasksModel(GroupManager *groupManager, QObject *parent)
     : QAbstractItemModel(parent),
       d(new TasksModelPrivate(this, groupManager))
 {
+    // set the role names based on the values of the DisplayRoles enum for the sake of QML
+    QHash<int, QByteArray> roles;
+    roles.insert(Qt::DisplayRole, "DisplayRole");
+    roles.insert(Qt::DecorationRole, "DecorationRole");
+    QMetaEnum e = metaObject()->enumerator(metaObject()->indexOfEnumerator("DisplayRoles"));
+    for (int i = 0; i < e.keyCount(); ++i) {
+        roles.insert(e.value(i), e.key(i));
+    }
+    setRoleNames(roles);
+
     if (groupManager) {
         connect(groupManager, SIGNAL(reload()), this, SLOT(populateModel()));
     }
