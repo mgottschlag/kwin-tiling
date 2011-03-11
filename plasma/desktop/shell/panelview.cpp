@@ -330,6 +330,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     m_strutsTimer->setSingleShot(true);
     connect(m_strutsTimer, SIGNAL(timeout()), this, SLOT(updateStruts()));
 
+    // this timer controls checks to re-hide a panel after it's been unhidden
+    // for the user because, e.g., something is demanding attention
     m_rehideAfterAutounhideTimer->setSingleShot(true);
     m_rehideAfterAutounhideTimer->setInterval(AUTOUNHIDE_CHECK_DELAY);
     connect(m_rehideAfterAutounhideTimer, SIGNAL(timeout()), this, SLOT(checkAutounhide()));
@@ -448,6 +450,7 @@ void PanelView::setContainment(Plasma::Containment *containment)
     updateStruts();
     checkShadow();
 
+    // if we are an autohiding panel, then see if the status mandates we do something about it
     if (m_visibilityMode != NormalPanel && m_visibilityMode != WindowsGoBelow) {
         checkUnhide(containment->status());
     }
@@ -1451,6 +1454,7 @@ void PanelView::checkUnhide(Plasma::ItemStatus newStatus)
     if (newStatus > Plasma::ActiveStatus) {
         unhide();
         //kDebug() << "starting the timer!";
+        // start our rehide timer, so that the panel doesn't stay up and stuck forever and a day
         m_rehideAfterAutounhideTimer->start();
     } else {
         startAutoHide();
@@ -1461,6 +1465,8 @@ void PanelView::checkAutounhide()
 {
     //kDebug() << "***************************" << KIdleTime::instance()->idleTime();
     if (KIdleTime::instance()->idleTime() >= AUTOUNHIDE_CHECK_DELAY) {
+        // the user is idle .. let's not hige the panel on them quite yet, but rather given them a
+        // chance to see this thing!
         connect(KIdleTime::instance(), SIGNAL(resumingFromIdle()), this, SLOT(checkAutounhide()),
                 Qt::UniqueConnection);
         KIdleTime::instance()->catchNextResumeEvent();
@@ -1507,6 +1513,8 @@ void PanelView::startAutoHide()
         return;
     }
 
+    // since we've gotten this far, we don't need to worry about rehiding-after-auto-unhide, so just
+    // stop the timer
     m_rehideAfterAutounhideTimer->stop();
 
     if (geometry().adjusted(-10, -10, 10, 10).contains(QCursor::pos()) || hasPopup()) {
