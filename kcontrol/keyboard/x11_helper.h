@@ -20,6 +20,7 @@
 #ifndef X11_HELPER_H_
 #define X11_HELPER_H_
 
+#include <QtGui/QKeySequence>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtGui/QWidget>
@@ -80,11 +81,16 @@ struct LayoutUnit {
 		layout = layoutUnit.layout;
 		variant = layoutUnit.variant;
 		displayName = layoutUnit.displayName;
+		shortcut = layoutUnit.shortcut;
 	}
 
 	QString getRawDisplayName() const { return displayName; }
 	QString getDisplayName() const { return !displayName.isEmpty() ? displayName :  layout; }
 	void setDisplayName(const QString& name) { displayName = name; }
+
+	void setShortcut(const QKeySequence& shortcut) { this->shortcut = shortcut; }
+	QKeySequence getShortcut() const { return shortcut; }
+
 	bool isEmpty() const { return layout.isEmpty(); }
 	bool operator==(const LayoutUnit& layoutItem) const {
 		return layout==layoutItem.layout && variant==layoutItem.variant;
@@ -96,6 +102,7 @@ struct LayoutUnit {
 
 private:
 	QString displayName;
+	QKeySequence shortcut;
 };
 
 struct LayoutSet {

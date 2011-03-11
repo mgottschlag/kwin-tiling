@@ -85,6 +85,8 @@ class Calendar : public QObject,
                                         public KCalCore::IncidenceBase::IncidenceObserver
 {
   Q_OBJECT
+
+  Q_PROPERTY( int incidencesCount READ incidencesCount NOTIFY calendarChanged )
   public:
 
     /**
@@ -737,7 +739,7 @@ class Calendar : public QObject,
 
     Akonadi::Item journal( Akonadi::Item::Id id ) const;
 
-    KCalCore::Alarm::List alarms( const KDateTime &from, const KDateTime &to );
+    KCalCore::Alarm::List alarms( const KDateTime &from, const KDateTime &to, bool excludeBlockedAlarms = false );
     KCalCore::Alarm::List alarmsTo( const KDateTime &to );
 
     Akonadi::Item findParent( const Akonadi::Item &item ) const;
@@ -748,6 +750,11 @@ class Calendar : public QObject,
 
     Akonadi::Item::Id itemIdForIncidenceUid( const QString &uid ) const;
     Akonadi::Item itemForIncidenceUid( const QString &uid ) const;
+
+    /**
+     * Returns the number of incidences in the calendar.
+     */
+    int incidencesCount() const;
 
     using QObject::event;   // prevent warning about hidden virtual method
 

@@ -42,11 +42,14 @@ public:
     bool isNetworkingEnabled() const;
     bool isWirelessEnabled() const;
     bool isWirelessHardwareEnabled() const;
+    bool isWwanEnabled() const;
+    bool isWwanHardwareEnabled() const;
     QStringList activeConnections() const;
     Solid::Control::NetworkInterface::Types supportedInterfaceTypes() const;
 
 public Q_SLOTS:
     void setWirelessEnabled(bool);
+    void setWwanEnabled(bool);
     void setNetworkingEnabled(bool);
 
 private Q_SLOTS:

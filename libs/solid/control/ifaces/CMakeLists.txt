@@ -11,8 +11,6 @@ set(solidcontrolifaces_LIB_SRCS
    wirednetworkinterface.cpp
    wirelessaccesspoint.cpp
    wirelessnetworkinterface.cpp
-   remotecontrol.cpp
-   remotecontrolmanager.cpp
    modemmanager.cpp
    modemmanagerinterface.cpp
    modeminterface.cpp
@@ -31,7 +29,6 @@ set(unused
    network.cpp
    wirelessnetwork.cpp
    authentication.cpp
-   remotecontrolmanager.cpp
    )
 
 kde4_add_library(solidcontrolifaces SHARED ${solidcontrolifaces_LIB_SRCS})
@@ -44,5 +41,5 @@ install(TARGETS solidcontrolifaces EXPORT kdeworkspaceLibraryTargets ${INSTALL_T
 
 ########### install files ###############
 
-install( FILES networkmanager.h networkinterface.h networkcdmainterface.h networkgsminterface.h networkserialinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h remotecontrol.h remotecontrolmanager.h modemmanager.h modeminterface.h modemlocationinterface.h modemcdmainterface.h modemgsmcardinterface.h modemgsmcontactsinterface.h modemgsmnetworkinterface.h modemgsmsmsinterface.h modemgsmhsointerface.h modemgsmussdinterface.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/control/ifaces COMPONENT Devel)
+install( FILES networkmanager.h networkinterface.h networkcdmainterface.h networkgsminterface.h networkserialinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h modemmanager.h modeminterface.h modemlocationinterface.h modemcdmainterface.h modemgsmcardinterface.h modemgsmcontactsinterface.h modemgsmnetworkinterface.h modemgsmsmsinterface.h modemgsmhsointerface.h modemgsmussdinterface.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/control/ifaces COMPONENT Devel)
 

@@ -102,11 +102,13 @@ void Nepomuk::QueryClientWrapper::slotNewEntries(const QList<Nepomuk::Query::Res
 
         KMimeType::Ptr mimetype;
         if (res.hasProperty(Nepomuk::Vocabulary::NIE::mimeType())) {
-                mimetype = KMimeType::mimeType(res.property(Nepomuk::Vocabulary::NIE::mimeType()).toString());
-        } else if (res.isFile() && res.toFile().url().isLocalFile()) {
+            mimetype = KMimeType::mimeType(res.property(Nepomuk::Vocabulary::NIE::mimeType()).toString());
+        }
+        if (!mimetype && res.isFile() && res.toFile().url().isLocalFile()) {
             const KUrl url(res.toFile().url());
             mimetype = KMimeType::findByUrl(url);
         }
+
         if (mimetype) {
             type = mimetype->comment();
             iconName = mimetype->iconName();

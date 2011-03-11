@@ -161,7 +161,6 @@ module PlasmaScriptengineRuby
   class Applet < Plasma::AppletScript
     def initialize(parent, args)
       super(parent)
-      @applet = applet
     end
 
     def camelize(str)

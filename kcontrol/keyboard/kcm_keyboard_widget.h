@@ -34,6 +34,7 @@ class QString;
 class QPushButton;
 class LayoutsTableModel;
 class KCMiscKeyboardWidget;
+class KeyboardLayoutActionCollection;
 
 class KCMKeyboardWidget: public QTabWidget
 {
@@ -74,7 +75,7 @@ private:
     Ui::TabWidget *uiWidget;
     KeyboardConfig *keyboardConfig;
 	const KComponentData componentData;
-	KActionCollection* actionCollection;
+	KeyboardLayoutActionCollection* actionCollection;
 	LayoutsTableModel* layoutsTableModel;
 	KCMiscKeyboardWidget* kcmMiscWidget;
 	bool uiUpdating;
@@ -93,6 +94,7 @@ private:
     void populateWithCurrentLayouts();
     void populateWithCurrentXkbOptions();
     void updateLoopCount();
+    void handleParameters(const QVariantList &args);
 };
 
 

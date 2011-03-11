@@ -837,6 +837,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
                    (horizontal ? c->geometry().width() :
                                  c->geometry().height()) >= m_lastSeenSize) {
             // we are moving from a smaller space where we are 100% to a larger one
+            kDebug() << "we are moving from a smaller space where we are 100% to a larger one";
             c->setMinimumSize(0, 0);
             c->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 
@@ -852,6 +853,35 @@ void PanelView::pinchContainment(const QRect &screenGeom)
                 if (min.height() == max.height()) {
                     c->setMinimumSize(min.width(), sh);
                 }
+            }
+        } else if (m_lastSeenSize > (horizontal ? sw : sh) &&
+                    (m_offset + (horizontal ? c->geometry().width() :
+                                 c->geometry().height())) > (horizontal ? sw : sh)) {
+            kDebug() << "we are moving from a bigger space to a smaller one where the panel won't fit!!";
+            if ((horizontal ? c->geometry().width() :
+                                 c->geometry().height()) > (horizontal ? sw : sh)) {
+                kDebug() << "panel is larger than screen, adjusting panel size";
+                setOffset(0);
+                c->setMinimumSize(0, 0);
+                c->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+
+                if (horizontal) {
+                    c->setMaximumSize(sw, max.height());
+                    c->resize(sw, c->geometry().height());
+                    if (min.width() == max.width()) {
+                        c->setMinimumSize(sw, min.height());
+                    }
+                } else {
+                    c->setMaximumSize(max.width(), sh);
+                    c->resize(c->geometry().width(), sh);
+                    if (min.height() == max.height()) {
+                        c->setMinimumSize(min.width(), sh);
+                    }
+                }
+            } else {
+                kDebug() << "reducing offset so the panel fits in screen";
+                setOffset((horizontal ? sw : sh) -
+                          (horizontal ? c->geometry().width() : c->geometry().height()));
             }
         }
     }

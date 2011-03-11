@@ -20,6 +20,7 @@
 #ifndef FLAGS_H_
 #define FLAGS_H_
 
+#include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QMap>
 
@@ -28,8 +29,13 @@ class QIcon;
 class LayoutUnit;
 class KeyboardConfig;
 class Rules;
+namespace Plasma {
+	class Svg;
+}
 
-class Flags {
+class Flags : public QObject
+{
+	Q_OBJECT
 
 public:
 	Flags();
@@ -38,17 +44,26 @@ public:
 	const QIcon getIcon(const QString& layout);
 	const QIcon getIconWithText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig);
 	const QPixmap& getTransparentPixmap() const { return *transparentPixmap; }
-	void clearCache();
 
 	static QString getLongText(const LayoutUnit& layoutUnit, const Rules* rules);
 	static QString getShortText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig);
+	static QString getFullText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig, const Rules* rules);
+
+public Q_SLOTS:
+	void themeChanged();
+	void clearCache();
+
+Q_SIGNALS:
+	void pixmapChanged();
 
 private:
 	QString getCountryFromLayoutName(const QString& fullLayoutName) const;
+	Plasma::Svg* getSvg();
 
 	QMap<QString, QIcon> iconMap;
 	QMap<QString, QIcon> iconOrTextMap;
 	QPixmap* transparentPixmap;
+	Plasma::Svg* svg;
 };
 
 #endif /* FLAGS_H_ */

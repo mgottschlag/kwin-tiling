@@ -82,6 +82,7 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         void constraintsEvent(Plasma::Constraints constraints);
         QTime lastTimeSeen() const;
         void resetLastTimeSeen();
+	void focusInEvent(QFocusEvent * event);
 
     protected Q_SLOTS:
         void setCurrentTimezone(const QString &tz);

@@ -217,6 +217,7 @@ Workspace::Workspace(bool restore)
                 );
 
     Extensions::init();
+    compositingSuspended = !options->useCompositing;
     setupCompositing();
 
     // Compatibility
@@ -1100,7 +1101,7 @@ void Workspace::slotReconfigure()
         updateCurrentTopMenu();
     }
 
-    if (options->useCompositing && !compositingSuspended) {
+    if (!compositingSuspended) {
         setupCompositing();
         if (effects)   // setupCompositing() may fail
             effects->reconfigure();
@@ -1143,7 +1144,6 @@ void Workspace::slotReinitCompositing()
 {
     // Reparse config. Config options will be reloaded by setupCompositing()
     KGlobal::config()->reparseConfiguration();
-    options->updateSettings();
 
     // Update any settings that can be set in the compositing kcm.
     updateElectricBorders();
@@ -1153,6 +1153,7 @@ void Workspace::slotReinitCompositing()
 
     // resume compositing if suspended
     compositingSuspended = false;
+    options->compositingInitialized = false;
     setupCompositing();
     KDecorationFactory* factory = mgr->factory();
     factory->reset(SettingCompositing);
@@ -2440,7 +2441,7 @@ void Workspace::showElectricBorderWindowOutline()
     if (!movingClient)
         return;
     // code copied from TabBox::updateOutline() in tabbox.cpp
-    QRect c = movingClient->electricBorderMaximizeGeometry();
+    QRect c = movingClient->electricBorderMaximizeGeometry(cursorPos(), currentDesktop());
     // left/right parts are between top/bottom, they don't reach as far as the corners
     XMoveResizeWindow(QX11Info::display(), outline_left, c.x(), c.y() + 5, 5, c.height() - 10);
     XMoveResizeWindow(QX11Info::display(), outline_right, c.x() + c.width() - 5, c.y() + 5, 5, c.height() - 10);

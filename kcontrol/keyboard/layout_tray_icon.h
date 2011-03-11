@@ -41,13 +41,16 @@ class LayoutTrayIcon : public QObject
     Q_OBJECT
 
 public:
-    LayoutTrayIcon();
+    LayoutTrayIcon(const Rules* rules, const KeyboardConfig& keyboardConfig);
     ~LayoutTrayIcon();
+
+    void layoutMapChanged();
+
+public Q_SLOTS:
+    void layoutChanged();
 
 private Q_SLOTS:
 	void toggleLayout();
-    void layoutChanged();
-    void layoutMapChanged();
     void scrollRequested(int, Qt::Orientation);
 
 private:
@@ -55,8 +58,7 @@ private:
 	void destroy();
 	const QIcon getFlag(const QString& layout) const;
 
-	XEventNotifier xEventNotifier;
-	KeyboardConfig* keyboardConfig;
+	const KeyboardConfig& keyboardConfig;
 	const Rules* rules;
 	Flags* flags;
     KStatusNotifierItem *m_notifierItem;

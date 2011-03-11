@@ -70,8 +70,7 @@ Sources and other compositing managers:
 
 #include <kxerrorhandler.h>
 
-// TODO: use <>
-#include "lib/kwinglplatform.h"
+#include <kwinglplatform.h>
 
 #include "utils.h"
 #include "client.h"
@@ -330,6 +329,8 @@ QRegion SceneOpenGL::Texture::optimizeBindDamage(const QRegion& reg, int limit)
 bool SceneOpenGL::Texture::load(const Pixmap& pix, const QSize& size,
                                 int depth)
 {
+    if (pix == None)
+        return false;
     return load(pix, size, depth,
                 QRegion(0, 0, size.width(), size.height()));
 }

@@ -422,6 +422,7 @@ void ControllerWindow::showWidgetExplorer()
         m_watchedWidget = m_widgetExplorer;
         setGraphicsWidget(m_widgetExplorer);
     }
+    m_widgetExplorer->setFocus();
 }
 
 bool ControllerWindow::showingWidgetExplorer() const
@@ -456,6 +457,8 @@ void ControllerWindow::showActivityManager()
         m_activityManager->show();
         setGraphicsWidget(m_activityManager);
     }
+    m_activityManager->setFlag(QGraphicsItem::ItemIsFocusable);
+    m_activityManager->setFocus();
 }
 
 bool ControllerWindow::showingActivityManager() const

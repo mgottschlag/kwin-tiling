@@ -43,6 +43,7 @@ public:
         QString udi() const;
         QString interfaceName() const;
         QString driver() const;
+        void disconnectInterface();
         bool isActive() const;
         Solid::Control::IPv4Config ipV4Config() const;
         Solid::Control::NetworkInterface::ConnectionState connectionState() const;

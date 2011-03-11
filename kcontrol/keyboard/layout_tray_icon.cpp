@@ -19,7 +19,6 @@
 #include "layout_tray_icon.h"
 
 //#include <kdebug.h>
-
 #include <kstatusnotifieritem.h>
 #include <klocalizedstring.h>
 #include <kmenu.h>
@@ -35,12 +34,11 @@
 //
 // Layout Tray Icon
 //
-LayoutTrayIcon::LayoutTrayIcon():
-	xEventNotifier(),
-	keyboardConfig(new KeyboardConfig()),
-	rules(Rules::readRules()),
+LayoutTrayIcon::LayoutTrayIcon(const Rules* rules_, const KeyboardConfig& keyboardConfig_):
+	keyboardConfig(keyboardConfig_),
+	rules(rules_),
 	flags(new Flags()),
-	layoutsMenu(new LayoutsMenu(*keyboardConfig, *rules, *flags))
+	layoutsMenu(new LayoutsMenu(keyboardConfig_, *rules, *flags))
 {
     m_notifierItem = new KStatusNotifierItem(this);
     m_notifierItem->setCategory(KStatusNotifierItem::SystemServices);
@@ -62,8 +60,6 @@ LayoutTrayIcon::LayoutTrayIcon():
 LayoutTrayIcon::~LayoutTrayIcon()
 {
 	destroy();
-	delete keyboardConfig;
-	delete rules;
 	delete flags;
 	delete layoutsMenu;
 }
@@ -72,23 +68,18 @@ void LayoutTrayIcon::init()
 {
     connect(m_notifierItem, SIGNAL(activateRequested(bool, QPoint)), this, SLOT(toggleLayout()));
     connect(m_notifierItem, SIGNAL(scrollRequested(int, Qt::Orientation)), this, SLOT(scrollRequested(int, Qt::Orientation)));
-	connect(&xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));
-	connect(&xEventNotifier, SIGNAL(layoutMapChanged()), this, SLOT(layoutMapChanged()));
-	xEventNotifier.start();
+	connect(flags, SIGNAL(pixmapChanged()), this, SLOT(layoutChanged()));
 }
 
 void LayoutTrayIcon::destroy()
 {
-	xEventNotifier.stop();
-	disconnect(&xEventNotifier, SIGNAL(layoutMapChanged()), this, SLOT(layoutMapChanged()));
-	disconnect(&xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));
+	disconnect(flags, SIGNAL(pixmapChanged()), this, SLOT(layoutChanged()));
     disconnect(m_notifierItem, SIGNAL(scrollRequested(int, Qt::Orientation)), this, SLOT(scrollRequested(int, Qt::Orientation)));
     disconnect(m_notifierItem, SIGNAL(activateRequested(bool, QPoint)), this, SLOT(toggleLayout()));
 }
 
 void LayoutTrayIcon::layoutMapChanged()
 {
-	keyboardConfig->load();
 	flags->clearCache();
 
 	KMenu* menu = m_notifierItem->contextMenu();
@@ -105,7 +96,7 @@ void LayoutTrayIcon::layoutChanged()
 	if( layoutUnit.isEmpty() )
 		return;
 
-	QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
+//	QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
 //	kDebug() << "systray: LayoutChanged" << layoutUnit.toString() << shortText;
 	QString longText = Flags::getLongText(layoutUnit, rules);
 
@@ -114,7 +105,7 @@ void LayoutTrayIcon::layoutChanged()
 	const QIcon icon(getFlag(layoutUnit.layout));
 	m_notifierItem->setToolTipIconByPixmap(icon);
 
-	QIcon textOrIcon = flags->getIconWithText(layoutUnit, *keyboardConfig);
+	QIcon textOrIcon = flags->getIconWithText(layoutUnit, keyboardConfig);
 	m_notifierItem->setIconByPixmap( textOrIcon );
 }
 
@@ -130,5 +121,5 @@ void LayoutTrayIcon::scrollRequested(int delta, Qt::Orientation /*orientation*/)
 
 const QIcon LayoutTrayIcon::getFlag(const QString& layout) const
 {
-	return keyboardConfig->showFlag ? flags->getIcon(layout) : QIcon();
+	return keyboardConfig.showFlag ? flags->getIcon(layout) : QIcon();
 }

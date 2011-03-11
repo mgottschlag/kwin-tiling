@@ -24,6 +24,9 @@
 #include <kglobalsettings.h>
 #include <klocalizedstring.h>
 
+#include <plasma/svg.h>
+#include <plasma/paintutils.h>
+
 #include <QtCore/QStringList>
 #include <QtGui/QPixmap>
 #include <QtGui/QPainter>
@@ -34,14 +37,14 @@
 //for text handling
 #include "keyboard_config.h"
 #include "xkb_rules.h"
-#include "utils.h"
 
 
 static const int FLAG_MAX_WIDTH = 21;
 static const int FLAG_MAX_HEIGHT = 14;
 static const char flagTemplate[] = "l10n/%1/flag.png";
 
-Flags::Flags()
+Flags::Flags():
+	svg(NULL)
 {
 	transparentPixmap = new QPixmap(FLAG_MAX_WIDTH, FLAG_MAX_HEIGHT);
 	transparentPixmap->fill(Qt::transparent);
@@ -49,6 +52,10 @@ Flags::Flags()
 
 Flags::~Flags()
 {
+	if( svg != NULL ) {
+		disconnect(svg, SIGNAL(repaintNeeded()), this, SLOT(themeChanged()));
+		delete svg;
+	}
 	delete transparentPixmap;
 }
 
@@ -60,11 +67,17 @@ const QIcon Flags::getIcon(const QString& layout)
 
 	QIcon icon;
 	if( ! layout.isEmpty() ) {
-		QString countryCode = getCountryFromLayoutName( layout );
-		if( ! countryCode.isEmpty() ) {
-			QString file = KStandardDirs::locate("locale", QString(flagTemplate).arg(countryCode));
-//			kDebug() << "Creating icon for" << layout << "with" << file;
+		if( layout == "epo" ) {
+			QString file = KStandardDirs::locate("data", "kcmkeyboard/pics/epo.png");
 			icon.addFile(file);
+		}
+		else {
+			QString countryCode = getCountryFromLayoutName( layout );
+			if( ! countryCode.isEmpty() ) {
+				QString file = KStandardDirs::locate("locale", QString(flagTemplate).arg(countryCode));
+				//			kDebug() << "Creating icon for" << layout << "with" << file;
+				icon.addFile(file);
+			}
 		}
 	}
 	iconMap[ layout ] = icon;
@@ -112,17 +125,26 @@ QString Flags::getShortText(const LayoutUnit& layoutUnit, const KeyboardConfig& 
 	return layoutText;
 }
 
-static QString getDisplayText(const QString& layout, const QString& variant)
+QString Flags::getFullText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig, const Rules* rules)
 {
-	return variant.isEmpty()
-			? layout
-			: i18nc("layout - variant", "%1 - %2", layout, variant);
+	QString shortText = Flags::getShortText(layoutUnit, keyboardConfig);
+	QString longText = Flags::getLongText(layoutUnit, rules);
+	return i18nc("short layout label - full layout name", "%1 - %2", shortText, longText);
+}
+
+static QString getDisplayText(const QString& layout, const QString& variant, const Rules* rules)
+{
+	if( variant.isEmpty() )
+		return layout;
+	if( rules->version == "1.0" )
+		return i18nc("layout - variant", "%1 - %2", layout, variant);
+	return variant;
 }
 
 QString Flags::getLongText(const LayoutUnit& layoutUnit, const Rules* rules)
 {
 	if( rules == NULL ) {
-		return getDisplayText(layoutUnit.layout, layoutUnit.variant);
+		return getDisplayText(layoutUnit.layout, layoutUnit.variant, rules);
 	}
 
 	QString layoutText = layoutUnit.layout;
@@ -134,7 +156,7 @@ QString Flags::getLongText(const LayoutUnit& layoutUnit, const Rules* rules)
 			const VariantInfo* variantInfo = layoutInfo->getVariantInfo(layoutUnit.variant);
 			QString variantText = variantInfo != NULL ? variantInfo->description : layoutUnit.variant;
 
-			layoutText = getDisplayText(layoutText, variantText);
+			layoutText = getDisplayText(layoutText, variantText, rules);
 		}
 	}
 
@@ -184,14 +206,38 @@ const QIcon Flags::getIconWithText(const LayoutUnit& layoutUnit, const KeyboardC
 //	p.drawText(pm.rect(), Qt::AlignCenter | Qt::AlignHCenter, layoutText);
 //	QIcon icon(pm);
 
-	QPixmap pixmap = Utils::shadowText(layoutText, font, Qt::black, Qt::white, QPoint(), 4);
-	QIcon icon(pixmap);
+	// we init svg so that we get notification about theme change
+	//Plasma::Svg* svg =
+	getSvg();
+//    QPixmap pixmap = Plasma::PaintUtils::texturedText(layoutText, font, svg);
+    QPixmap pixmap = Plasma::PaintUtils::shadowText(layoutText, font);
+
+    QIcon icon(pixmap);
 	iconOrTextMap[ key ] = icon;
 
 	return icon;
 }
 
+Plasma::Svg* Flags::getSvg()
+{
+	if( svg == NULL ) {
+		svg = new Plasma::Svg;
+	    svg->setImagePath("widgets/labeltexture");
+	    svg->setContainsMultipleImages(true);
+	    connect(svg, SIGNAL(repaintNeeded()), this, SLOT(themeChanged()));
+	}
+	return svg;
+}
+
+void Flags::themeChanged()
+{
+//	kDebug() << "Theme changed, new text color" << Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+	clearCache();
+	emit pixmapChanged();
+}
+
 void Flags::clearCache()
 {
+//	kDebug() << "Clearing flag pixmap cache";
 	iconOrTextMap.clear();
 }

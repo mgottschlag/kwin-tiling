@@ -51,6 +51,7 @@ class CalendarApplet : public Plasma::PopupApplet
 
     protected:
         void createConfigurationInterface(KConfigDialog *parent);
+	void focusInEvent(QFocusEvent * event);
 
     protected slots:
         void configAccepted();

@@ -241,6 +241,27 @@ bool WicdNetworkManager::isWirelessHardwareEnabled() const
     return false;
 }
 
+/* Wicd 1.x does not support Wwan (Mobile Broadand). It is schedule for 2.x.
+   http://wicd.sourceforge.net/moinmoin/FAQ */
+bool WicdNetworkManager::isWwanEnabled() const
+{
+    return false;
+}
+
+/* Wicd 1.x does not support Wwan (Mobile Broadand). It is schedule for 2.x.
+   http://wicd.sourceforge.net/moinmoin/FAQ */
+void WicdNetworkManager::setWwanEnabled(bool)
+{
+    return;
+}
+
+/* Wicd 1.x does not support Wwan (Mobile Broadand). It is schedule for 2.x.
+   http://wicd.sourceforge.net/moinmoin/FAQ */
+bool WicdNetworkManager::isWwanHardwareEnabled() const
+{
+    return false;
+}
+
 QStringList WicdNetworkManager::activeConnections() const
 {
     QStringList activeConnections;

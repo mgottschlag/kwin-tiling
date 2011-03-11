@@ -594,6 +594,13 @@ void ClockApplet::init()
     QTimer::singleShot(0, this, SLOT(createToday()));
 }
 
+void ClockApplet::focusInEvent(QFocusEvent* event)
+{
+    Q_UNUSED(event);
+    d->calendarWidget->setFlag(QGraphicsItem::ItemIsFocusable);
+    d->calendarWidget->setFocus();
+}
+
 void ClockApplet::popupEvent(bool show)
 {
     if (!show) {

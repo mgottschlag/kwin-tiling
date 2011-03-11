@@ -265,8 +265,7 @@ PlasmaApp::PlasmaApp()
             SIGNAL(remoteAppletAnnounced(Plasma::PackageMetadata)),
             this, SLOT(remotePlasmoidAdded(Plasma::PackageMetadata)));
 
-    Plasma::AuthorizationManager::self()->setAuthorizationPolicy(
-        Plasma::AuthorizationManager::PinPairing);
+    Plasma::AuthorizationManager::self()->setAuthorizationPolicy(Plasma::AuthorizationManager::PinPairing);
 
     QTimer::singleShot(0, this, SLOT(setupDesktop()));
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor end" << "(line:" << __LINE__ << ")";

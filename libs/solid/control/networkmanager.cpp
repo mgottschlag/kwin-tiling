@@ -56,6 +56,10 @@ Solid::Control::NetworkManagerPrivate::NetworkManagerPrivate() : m_invalidDevice
                 this, SIGNAL(wirelessEnabledChanged(bool)));
         connect(managerBackend(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
                 this, SIGNAL(wirelessHardwareEnabledChanged(bool)));
+        connect(managerBackend(), SIGNAL(wwanEnabledChanged(bool)),
+                this, SIGNAL(wwanEnabledChanged(bool)));
+        connect(managerBackend(), SIGNAL(wwanHardwareEnabledChanged(bool)),
+                this, SIGNAL(wwanHardwareEnabledChanged(bool)));
         connect(managerBackend(), SIGNAL(networkingEnabledChanged(bool)),
                 this, SIGNAL(networkingEnabledChanged(bool)));
         connect(managerBackend(), SIGNAL(activeConnectionsChanged()),
@@ -130,6 +134,16 @@ bool Solid::Control::NetworkManager::isWirelessHardwareEnabled()
     return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), false, isWirelessHardwareEnabled());
 }
 
+bool Solid::Control::NetworkManager::isWwanEnabled()
+{
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), false, isWwanEnabled());
+}
+
+bool Solid::Control::NetworkManager::isWwanHardwareEnabled()
+{
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), false, isWwanHardwareEnabled());
+}
+
 void Solid::Control::NetworkManager::setNetworkingEnabled(bool enabled)
 {
     SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), setNetworkingEnabled(enabled));
@@ -138,6 +152,11 @@ void Solid::Control::NetworkManager::setNetworkingEnabled(bool enabled)
 void Solid::Control::NetworkManager::setWirelessEnabled(bool enabled)
 {
     SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), setWirelessEnabled(enabled));
+}
+
+void Solid::Control::NetworkManager::setWwanEnabled(bool enabled)
+{
+    SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), setWwanEnabled(enabled));
 }
 
 Solid::Networking::Status Solid::Control::NetworkManager::status()

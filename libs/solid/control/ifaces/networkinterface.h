@@ -70,6 +70,12 @@ namespace Ifaces
         virtual QString driver() const = 0;
 
         /**
+         * Disconnects a device and prevents the device from automatically
+         * activating further connections without user intervention.
+         */
+        virtual void disconnectInterface() = 0;
+
+        /**
          * Access the network configuration for this object
          */
         virtual Solid::Control::IPv4Config ipV4Config() const = 0;
@@ -80,6 +86,7 @@ namespace Ifaces
          * @return true if this network interface is active, false otherwise
          */
         virtual bool isActive() const = 0;
+
         /**
          * Retrieves the current state of the network connection held by this device.
          * It's a high level view of the connection. It's user oriented so technically

@@ -20,11 +20,16 @@
 
 #include "calendar.h"
 #include "calendar_p.h"
+
+#include "collectionselection.h"
+#include "blockalarmsattribute.h"
 #include "utils.h"
 
 #include <KLocale>
-
+#include <KSelectionProxyModel>
+#include <Akonadi/EntityMimeTypeFilterModel>
 #include <QtCore/QMultiHash>
+#include <QItemSelection>
 
 using namespace CalendarSupport;
 
@@ -42,6 +47,7 @@ Calendar::Private::Private( QAbstractItemModel *treeModel, QAbstractItemModel *m
   m_filterProxy = new CalFilterProxyModel( q );
   m_filterProxy->setFilter( mDefaultFilter );
   m_filterProxy->setSourceModel( model );
+  m_filterProxy->setObjectName( "Implements KCalCore filtering functionality" );
 
   // user information...
   mOwner.setName( i18n( "Unknown Name" ) );
@@ -71,6 +77,10 @@ Calendar::Private::Private( QAbstractItemModel *treeModel, QAbstractItemModel *m
 
   connect( m_treeModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
            this, SLOT(dataChangedInTreeModel(QModelIndex,QModelIndex)) );
+
+  connect( m_treeModel, SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
+           SLOT(onRowsMovedInTreeModel(QModelIndex,int,int,QModelIndex,int)) );
+
   /*
   connect( m_monitor, SIGNAL(itemLinked(const Akonadi::Item,Akonadi::Collection)),
            this, SLOT(itemAdded(const Akonadi::Item,Akonadi::Collection)) );
@@ -120,6 +130,65 @@ void Calendar::Private::rowsAboutToBeRemoved( const QModelIndex &parent, int sta
 
 void Calendar::Private::layoutChanged()
 {
+
+}
+
+void Calendar::Private::onRowsMovedInTreeModel( const QModelIndex &sourceParent, int sourceStart, int sourceEnd,
+                                                const QModelIndex &destinationParent, int destinationRow )
+{
+  Q_ASSERT( sourceEnd >= sourceStart );
+  Q_ASSERT( sourceStart >= 0 );
+  Q_ASSERT( destinationRow >= 0 );
+
+  const Akonadi::Collection sourceCollection = collectionFromIndex( sourceParent );
+  const Akonadi::Collection destinationCollection = collectionFromIndex( destinationParent );
+
+  if ( sourceCollection.isValid() && destinationCollection.isValid() &&
+       sourceCollection.id() != destinationCollection.id() ) {
+    const int numItems = sourceEnd - sourceStart + 1;
+    Akonadi::Item::List movedItems = itemsFromModel( m_treeModel, destinationParent, destinationRow,
+                                                     destinationRow + numItems - 1 );
+
+    { // Start hack
+      // KSelectionProxyModel doesn't honour rowsMoved() yet, so, if the source model emitted rowsMoved
+      // (items changing collection) we could only catch it in the onLayoutChanged() slot, which isn't
+      // performant. So we listen to the source model's rowsMoved() and check manuall if it when in or
+      // out of the selection, and notify the application.
+      Akonadi::EntityMimeTypeFilterModel *m = qobject_cast<Akonadi::EntityMimeTypeFilterModel*>( m_model );
+      if ( m ) {
+        KSelectionProxyModel *sm = qobject_cast<KSelectionProxyModel*>( m->sourceModel() );
+        if ( sm ) {
+          CollectionSelection collectionSelection( sm->selectionModel() );
+          const bool sourceCollectionIsSelected = collectionSelection.contains( sourceCollection.id() );
+          const bool destinationCollectionIsSelected = collectionSelection.contains( destinationCollection.id() );
+          if ( sourceCollectionIsSelected && destinationCollectionIsSelected ) {
+            foreach( const Akonadi::Item item, movedItems ) {
+              if ( item.isValid() && item.hasPayload<KCalCore::Incidence::Ptr>() ) {
+                // We have old items ( that think they belong to another collection ) inside m_itemMap
+                if ( m_itemMap.contains( item.id() ) ) {
+                  itemsRemoved( movedItems );
+                  itemsAdded( movedItems );
+                }
+              }
+            }
+          } else if ( !sourceCollectionIsSelected && destinationCollectionIsSelected ) { // Added
+            itemsAdded( movedItems );
+          } else if ( sourceCollectionIsSelected && !destinationCollectionIsSelected ) { // Removed
+            itemsRemoved( movedItems );
+          }
+        }
+      }
+    } // end hack
+  }
+}
+
+void Calendar::Private::appendVirtualItems( Akonadi::Item::List &itemList )
+{
+  foreach( const Akonadi::Item &item, itemList ) {
+    if ( m_virtualItems.contains( item.id() ) ) {
+      itemList.append( m_virtualItems.value( item.id() ) );
+    }
+  }
 }
 
 void Calendar::Private::modelReset()
@@ -137,6 +206,8 @@ void Calendar::Private::clear()
   m_childToUnseenParent.clear();
   m_unseenParentToChildren.clear();
   m_itemIdsForDate.clear();
+  m_itemDateForItemId.clear();
+  m_virtualItems.clear();
 }
 
 void Calendar::Private::readFromModel()
@@ -165,10 +236,7 @@ void Calendar::Private::dataChanged( const QModelIndex &topLeft, const QModelInd
 Calendar::Private::~Private()
 {
   Q_FOREACH ( const Akonadi::Item &item, m_itemMap ) {
-    KCalCore::Incidence::Ptr incidence = CalendarSupport::incidence( item );
-    if (incidence) {
-      incidence->unRegisterObserver( q );
-    }
+    CalendarSupport::incidence( item )->unRegisterObserver( q );
   }
 
   delete mTimeZones;
@@ -185,20 +253,35 @@ void Calendar::Private::updateItem( const Akonadi::Item &item, UpdateMode mode )
   const bool alreadyExisted = m_itemMap.contains( item.id() );
   const Akonadi::Item::Id id = item.id();
 
+  const KCalCore::Incidence::Ptr incidence = CalendarSupport::incidence( item );
+  Q_ASSERT( incidence );
+
+  // TODO: remove this debug message in a few months
   kDebug() << "id=" << item.id()
            << "version=" << item.revision()
            << "alreadyExisted=" << alreadyExisted
            << "; mode = " << mode
-           << "; calendar = " << q;
-  //Q_ASSERT( mode == DontCare || alreadyExisted == ( mode == AssertExists ) );
+           << "; uid = " << incidence->uid()
+           << "; storageCollection.id() = " << item.storageCollectionId() // the real collection
+           << "; parentCollection.id() = " << item.parentCollection().id(); // can be a virtual collection
 
-  const KCalCore::Incidence::Ptr incidence = CalendarSupport::incidence( item );
-  if (!incidence) {
-      return;
+  if ( mode != AssertExists && alreadyExisted ) {
+    // An item from a virtual folder was inserted and we already have an item with
+    // this id, belonging to the real collection. So we just insert it in m_virtualItems
+    // so we keep track of it. Most hashes are indexed by Item::Id, and korg does lookups by Id too,
+    // so we can't just treat this item as an independent one.
+    if ( m_itemMap[id].parentCollection().id() != item.parentCollection().id() ) {
+      m_virtualItems[item.id()].append( item );
+      q->notifyIncidenceAdded( item );
+    } else {
+      kError() << "Item " << item.id() << " is already known.";
+    }
+    return;
   }
 
-  if ( alreadyExisted ) {
+  //Q_ASSERT( mode == DontCare || alreadyExisted == ( mode == AssertExists ) );
 
+  if ( alreadyExisted ) {
     if ( !m_itemMap.contains( id ) ) {
       // Item was deleted almost at the same time the change was made
       // ignore this change
@@ -212,13 +295,24 @@ void Calendar::Private::updateItem( const Akonadi::Item &item, UpdateMode mode )
     }
 
     if ( item.storageCollectionId() != m_itemMap.value( id ).storageCollectionId() ) {
-      // there was once a bug that resulted in items forget their collectionId...
-      kDebug() << "item.storageCollectionId() = " << item.storageCollectionId()
-               << "; m_itemMap.value( id ).storageCollectionId() = "
-               << m_itemMap.value( id ).storageCollectionId()
-               << "; item.isValid() = " << item.isValid()
-               << "; calendar = " << q;
-      Q_ASSERT_X( false, "updateItem", "updated item has different collection id" );
+      // An item moved happened, update our internal copy, the storateCollectionId has changed.
+      Akonadi::Collection::Id oldCollectionId = m_itemMap.value( id ).storageCollectionId();
+      m_itemMap.insert( id, item );
+      if ( item.isValid() ) {
+        UnseenItem oldUi;
+        UnseenItem newUi;
+        oldUi.collection = oldCollectionId;
+        oldUi.uid = incidence->uid();
+        if ( m_uidToItemId.contains( oldUi ) ) {
+          newUi.collection = item.storageCollectionId();
+          newUi.uid = oldUi.uid;
+          m_uidToItemId.remove( oldUi );
+          m_uidToItemId.insert( newUi, item.id() );
+        } else {
+          Q_ASSERT_X( false, "Calendar::Private::updateItem", "Item wasn't found in m_uidToItemId" );
+          return;
+        }
+      }
     }
     // update-only goes here
   } else {
@@ -249,14 +343,14 @@ void Calendar::Private::updateItem( const Akonadi::Item &item, UpdateMode mode )
   } else if ( const KCalCore::Journal::Ptr j = CalendarSupport::journal( item ) ) {
     date = j->dtStart().date().toString();
   } else {
-    kDebug() << "Item id is " << item.id()
+    kError() << "Item id is " << item.id()
              << item.hasPayload<KCalCore::Incidence::Ptr>()
              << item.hasPayload<KCalCore::Event::Ptr>()
              << item.hasPayload<KCalCore::Todo::Ptr>()
              << item.hasPayload<KCalCore::Journal::Ptr>();
     KCalCore::Incidence::Ptr p = CalendarSupport::incidence( item );
     if ( p ) {
-      kDebug() << "incidence uid is " << p->uid()
+      kError() << "incidence uid is " << p->uid()
                << " and type is " << p->typeStr();
     }
 
@@ -294,14 +388,32 @@ void Calendar::Private::updateItem( const Akonadi::Item &item, UpdateMode mode )
     knowParent = parentIt != m_uidToItemId.constEnd();
   }
 
-  if ( alreadyExisted ) {
+  if ( alreadyExisted ) { // We're updating an existing item
     const bool existedInUidMap = m_uidToItemId.contains( ui );
     if ( m_uidToItemId.value( ui ) != item.id() ) {
-      kDebug()<< "item.id() = " << item.id() << "; cached id = " << m_uidToItemId.value( ui )
+      kError()<< "Ignoring item. item.id() = " << item.id() << "; cached id = " << m_uidToItemId.value( ui )
               << "; item uid = "  << ui.uid
-              << "; calendar = " << q
-              << "; existed in cache = " << existedInUidMap;
-      Q_ASSERT_X( false, "updateItem", "uidToId map disagrees with item id" );
+              << "; calendar = " << q->objectName()
+              << "; existed in cache = " << existedInUidMap
+              << "; storageCollection.id() = " << item.storageCollectionId() // the real collection
+              << "; parentCollection.id() = " << item.parentCollection().id() // can be a virtual collection
+              << "; hasParent = " << hasParent
+              << "; knowParent = " << knowParent;
+      if ( existedInUidMap ) {
+        Q_ASSERT_X( false, "updateItem", "uidToId map disagrees with item id" );
+      } else {
+        kDebug() << "m_uidToItemId has size " << m_uidToItemId.count();
+        QMapIterator<UnseenItem, Akonadi::Item::Id> i( m_uidToItemId );
+        while ( i.hasNext() ) {
+          i.next();
+          if ( i.key().uid == ui.uid || i.value() == item.id() ) {
+            kDebug() << " key " << i.key().uid << i.key().collection << " has value " << i.value();
+          }
+        }
+        kError() << "Possible cause is that the resource isn't explicitly setting an uid ( and a random one is generated )";
+        Q_ASSERT_X( false, "updateItem", "Item not found inside m_uidToItemId" );
+      }
+      return;
     }
 
     QHash<Akonadi::Item::Id,Akonadi::Item::Id>::Iterator oldParentIt = m_childToParent.find( id );
@@ -331,8 +443,7 @@ void Calendar::Private::updateItem( const Akonadi::Item &item, UpdateMode mode )
         }
       }
     }
-
-  } else {
+  } else { // We're inserting a new item
     m_uidToItemId.insert( ui, item.id() );
 
     //check for already known children:
@@ -378,6 +489,7 @@ void Calendar::Private::itemChanged( const Akonadi::Item &item )
   Q_ASSERT( item.isValid() );
   const KCalCore::Incidence::Ptr incidence = CalendarSupport::incidence( item );
   if ( !incidence ) {
+    kWarning() << "Really? No incidence for item.id() " << item.id();
     return;
   }
   updateItem( item, AssertExists );
@@ -422,11 +534,8 @@ void Calendar::Private::removeItemFromMaps( const Akonadi::Item &item )
 
   unseen_item.collection = unseen_parent.collection = item.storageCollectionId();
 
-  KCalCore::Incidence::Ptr incidence = CalendarSupport::incidence( item );
-  if (incidence) {
-      unseen_item.uid   = incidence->uid();
-      unseen_parent.uid = incidence->relatedTo();
-  } 
+  unseen_item.uid   = CalendarSupport::incidence( item )->uid();
+  unseen_parent.uid = CalendarSupport::incidence( item )->relatedTo();
 
   if ( m_childToParent.contains( item.id() ) ) {
     Akonadi::Item::Id parentId = m_childToParent.take( item.id() );
@@ -445,6 +554,12 @@ void Calendar::Private::removeItemFromMaps( const Akonadi::Item &item )
   m_unseenParentToChildren[unseen_parent].removeAll( item.id() );
 
   m_uidToItemId.remove( unseen_item );
+  m_itemDateForItemId.remove( item.id() );
+
+  const QList<QString> entriesToDelete = m_itemIdsForDate.keys( item.id() );
+  foreach( const QString &entryToDelete, entriesToDelete ) {
+    m_itemIdsForDate.remove( entryToDelete );
+  }
 }
 
 void Calendar::Private::itemsRemoved( const Akonadi::Item::List &items )
@@ -452,12 +567,23 @@ void Calendar::Private::itemsRemoved( const Akonadi::Item::List &items )
   assertInvariants();
   foreach ( const Akonadi::Item &item, items ) {
     Q_ASSERT( item.isValid() );
-    Akonadi::Item ci( m_itemMap.take( item.id() ) );
 
-    removeItemFromMaps( ci );
+    if ( !m_virtualItems.value( item.id() ).isEmpty() ) {
+      // We have more than one item with the same id, due to virtual folders, so we can't
+      // cleanup any hashes, to-do hierarchies, id to uid maps, etc, yet. We can only do that
+      // when the last item is removed. Just decrement and return.
+      m_virtualItems[item.id()].removeLast();
+      q->notifyIncidenceDeleted( item );
+      emit q->calendarChanged();
+      return;
+    }
 
-    Q_ASSERT( ci.hasPayload<KCalCore::Incidence::Ptr>() );
-    const KCalCore::Incidence::Ptr incidence = ci.payload<KCalCore::Incidence::Ptr>();
+    Akonadi::Item oldItem( m_itemMap.take( item.id() ) );
+
+    removeItemFromMaps( oldItem );
+
+    Q_ASSERT( oldItem.hasPayload<KCalCore::Incidence::Ptr>() );
+    const KCalCore::Incidence::Ptr incidence = oldItem.payload<KCalCore::Incidence::Ptr>();
     /*
     kDebug() << "Remove uid=" << incidence->uid()
              << "summary=" << incidence->summary()
@@ -478,12 +604,16 @@ void Calendar::Private::itemsRemoved( const Akonadi::Item::List &items )
     } else if ( const KCalCore::Journal::Ptr j = incidence.dynamicCast<KCalCore::Journal>() ) {
       m_itemIdsForDate.remove( j->dtStart().date().toString(), item.id() );
     } else {
+      kError() << "Unsupported incidence type: " << incidence;
       Q_ASSERT( false );
       continue;
     }
 
+    // oldItem will almost always be the same as item, but, when you move an item from one collection
+    // and the destination collection isn't selected, itemsRemoved() is called, and they will differ
+    // on the parentCollection id.
+    q->notifyIncidenceDeleted( oldItem );
     incidence->unRegisterObserver( q );
-    q->notifyIncidenceDeleted( item );
   }
   emit q->calendarChanged();
   assertInvariants();
@@ -624,6 +754,7 @@ Akonadi::Item::List Calendar::rawTodos( TodoSortField sortField,
       todoList.append( i.value() );
     }
   }
+  d->appendVirtualItems( todoList );
   return sortTodos( todoList, sortField, sortDirection );
 }
 
@@ -639,6 +770,7 @@ Akonadi::Item::List Calendar::rawTodosForDate( const QDate &date )
     }
     ++it;
   }
+  d->appendVirtualItems( todoList );
   return todoList;
 }
 
@@ -647,12 +779,22 @@ KCalCore::Alarm::List Calendar::alarmsTo( const KDateTime &to )
   return alarms( KDateTime( QDate( 1900, 1, 1 ) ), to );
 }
 
-KCalCore::Alarm::List Calendar::alarms( const KDateTime &from, const KDateTime &to )
+KCalCore::Alarm::List Calendar::alarms( const KDateTime &from, const KDateTime &to, bool excludeBlockedAlarms )
 {
   KCalCore::Alarm::List alarmList;
   QHashIterator<Akonadi::Item::Id, Akonadi::Item> i( d->m_itemMap );
   while ( i.hasNext() ) {
     const Akonadi::Item item = i.next().value();
+
+    if ( excludeBlockedAlarms ) {
+      // take the collection from m_collectionMap, because we need the up-to-date collection attributes
+      const Akonadi::Collection parentCollection = d->m_collectionMap.value( item.storageCollectionId() );
+      if ( parentCollection.isValid() ) {
+        if ( parentCollection.hasAttribute<BlockAlarmsAttribute>() )
+          continue; // do not include alarms from this collection
+      }
+    }
+
     KCalCore::Incidence::Ptr incidence = CalendarSupport::incidence( item );
     if ( !incidence ) {
       continue;
@@ -674,7 +816,7 @@ Akonadi::Item::List Calendar::rawEventsForDate( const QDate &date,
 {
   Akonadi::Item::List eventList;
   // Find the hash for the specified date
-  QString dateStr = date.toString();
+  const QString dateStr = date.toString();
   // Iterate over all non-recurring, single-day events that start on this date
   QMultiHash<QString, Akonadi::Item::Id>::const_iterator it =
     d->m_itemIdsForDate.constFind( dateStr );
@@ -722,6 +864,9 @@ Akonadi::Item::List Calendar::rawEventsForDate( const QDate &date,
       }
     }
   }
+
+  d->appendVirtualItems( eventList );
+
   return sortEvents( eventList, sortField, sortDirection );
 }
 
@@ -776,6 +921,9 @@ Akonadi::Item::List Calendar::rawEvents( const QDate &start, const QDate &end,
       eventList.append( i.value() );
     }
   }
+
+  d->appendVirtualItems( eventList );
+
   return eventList;
 }
 
@@ -795,6 +943,7 @@ Akonadi::Item::List Calendar::rawEvents( EventSortField sortField,
       eventList.append( i.value() );
     }
   }
+  d->appendVirtualItems( eventList );
   return sortEvents( eventList, sortField, sortDirection );
 }
 
@@ -819,6 +968,7 @@ Akonadi::Item::List Calendar::rawJournals( JournalSortField sortField,
       journalList.append( i.value() );
     }
   }
+  d->appendVirtualItems( journalList );
   return sortJournals( journalList, sortField, sortDirection );
 }
 
@@ -834,6 +984,7 @@ Akonadi::Item::List Calendar::rawJournalsForDate( const QDate &date )
     }
     ++it;
   }
+  d->appendVirtualItems( journalList );
   return journalList;
 }
 
@@ -1038,12 +1189,25 @@ Akonadi::Item::List Calendar::incidences( const QDate &date )
 
 Akonadi::Item::List Calendar::incidences()
 {
-  return itemsFromModel( d->m_filterProxy );
+  if ( d->m_filterProxy->filter() == 0 || !d->m_filterProxy->filter()->isEnabled() ) {
+    // Lets skip the filterProxy and return m_itemMap, which is cheaper.
+    return rawIncidences();
+  } else {
+    return itemsFromModel( d->m_filterProxy );
+  }
 }
 
 Akonadi::Item::List Calendar::rawIncidences()
 {
-  return itemsFromModel( d->m_model );
+  // The following code is 100x faster than: return itemsFromModel( d->m_model )
+  QHashIterator<Akonadi::Item::Id, Akonadi::Item> i( d->m_itemMap );
+  Akonadi::Item::List list;
+  while ( i.hasNext() ) {
+    i.next();
+    list.append( i.value() );
+  }
+
+  return list;
 }
 
 Akonadi::Item::List Calendar::sortEvents( const Akonadi::Item::List &eventList_,
@@ -1924,7 +2088,7 @@ bool Calendar::hasChangeRights( const Akonadi::Item &item ) const
   // if the users changes the rights, item.parentCollection()
   // can still have the old rights, so we use call collection()
   // which returns the updated one
-  const Akonadi::Collection col = collection( item.parentCollection().id() );
+  const Akonadi::Collection col = collection( item.storageCollectionId() );
   return col.rights() & Akonadi::Collection::CanChangeItem;
 }
 
@@ -1933,7 +2097,11 @@ bool Calendar::hasDeleteRights( const Akonadi::Item &item ) const
   // if the users changes the rights, item.parentCollection()
   // can still have the old rights, so we use call collection()
   // which returns the updated one
-  const Akonadi::Collection col = collection( item.parentCollection().id() );
+  const Akonadi::Collection col = collection( item.storageCollectionId() );
   return col.rights() & Akonadi::Collection::CanDeleteItem;
 }
 
+int Calendar::incidencesCount() const
+{
+  return d->m_model->rowCount();
+}

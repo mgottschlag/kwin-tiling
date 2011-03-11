@@ -258,12 +258,11 @@ public:
     void resizeWithChecks(int w, int h, ForceGeometry_t force = NormalGeometrySet);
     void resizeWithChecks(const QSize& s, ForceGeometry_t force = NormalGeometrySet);
     void keepInArea(QRect area, bool partial = false);
-    void setElectricBorderMode(ElectricMaximizingMode mode);
-    ElectricMaximizingMode electricBorderMode() const;
+    void setElectricBorderMode(QuickTileMode mode);
+    QuickTileMode electricBorderMode() const;
     void setElectricBorderMaximizing(bool maximizing);
     bool isElectricBorderMaximizing() const;
-    QRect electricBorderMaximizeGeometry();
-
+    QRect electricBorderMaximizeGeometry(QPoint pos, int desktop);
     QSize sizeForClientSize(const QSize&, Sizemode mode = SizemodeAny, bool noframe = false) const;
 
     /** Set the quick tile mode ("snap") of this window.
@@ -506,7 +505,6 @@ private:
     void updateAllowedActions(bool force = false);
     QRect fullscreenMonitorsArea(NETFullscreenMonitors topology) const;
     void changeMaximize(bool horizontal, bool vertical, bool adjust);
-    void checkMaximizeGeometry();
     int checkFullScreenHack(const QRect& geom) const;   // 0 - None, 1 - One xinerama screen, 2 - Full area
     void updateFullScreenHack(const QRect& geom);
     void getWmNormalHints();
@@ -599,7 +597,7 @@ private:
 
     /** The quick tile mode of this window.
      */
-    QuickTileMode quick_tile_mode;
+    int quick_tile_mode;
     QRect geom_pretile;
 
     void readTransient();
@@ -709,7 +707,7 @@ private:
     TabBox::TabBoxClientImpl* m_tabBoxClient;
 
     bool electricMaximizing;
-    ElectricMaximizingMode electricMode;
+    QuickTileMode electricMode;
 
     friend bool performTransiencyCheck();
     friend class SWrapper::Client;

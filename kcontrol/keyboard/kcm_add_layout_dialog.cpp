@@ -128,5 +128,6 @@ void AddLayoutDialog::accept()
 		label = "";
 	}
 	selectedLayoutUnit.setDisplayName( label );
+	selectedLayoutUnit.setShortcut(layoutDialogUi->kkeysequencewidget->keySequence());
 	QDialog::accept();
 }
