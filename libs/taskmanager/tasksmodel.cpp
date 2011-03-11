@@ -356,9 +356,9 @@ void TasksModelPrivate::itemMoved(AbstractGroupableItem *item)
 
 void TasksModelPrivate::itemChanged(::TaskManager::TaskChanges changes)
 {
+    Q_UNUSED(changes)
     AbstractGroupableItem *item = static_cast<AbstractGroupableItem *>(q->sender());
     const int index = indexOf(item);
-    //TODO: only emit for which columns changed!
     QModelIndex idx = q->createIndex(index, 0, item);
     emit q->dataChanged(idx, idx);
 }
