@@ -37,9 +37,10 @@ class TasksModelPrivate;
 class TASKMANAGER_EXPORT TasksModel : public QAbstractItemModel
 {
     Q_OBJECT
+    Q_ENUMS(DisplayRoles)
 
 public:
-    enum {
+    enum DisplayRoles {
      IsStartup = Qt::UserRole + 1,
      OnAllDesktops = Qt::UserRole + 2,
      Desktop = Qt::UserRole + 3,
@@ -52,7 +53,7 @@ public:
      Active = Qt::UserRole + 10,
      DemandsAttention = Qt::UserRole + 11,
      LauncherUrl = Qt::UserRole + 12
-    } DisplayRoles;
+    };
 
     explicit TasksModel(GroupManager *groupManager, QObject *parent = 0);
     ~TasksModel();
