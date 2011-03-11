@@ -50,7 +50,7 @@ namespace Ifaces
     public:
         enum OperationMode { Unassociated, Adhoc, Managed, Master, Repeater };
         // corresponding to 802.11 capabilities defined in NetworkManager.h
-        enum Capability { NoCapability = 0x0, Wep40 = 0x2, Wep104, Tkip = 0x4, Ccmp = 0x8, Wpa = 0x10, Rsn = 0x20 };
+        enum Capability { NoCapability = 0x0, Wep40 = 0x1, Wep104 = 0x2, Tkip = 0x4, Ccmp = 0x8, Wpa = 0x10, Rsn = 0x20 };
         Q_DECLARE_FLAGS(Capabilities, Capability)
 
         /**
