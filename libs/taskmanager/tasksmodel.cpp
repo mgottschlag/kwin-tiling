@@ -251,9 +251,6 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
     QObject::connect(group, SIGNAL(itemPositionChanged(AbstractGroupableItem*)),
                      q, SLOT(itemMoved(AbstractGroupableItem*)),
                      Qt::UniqueConnection);
-    QObject::connect(group, SIGNAL(changed(::TaskManager::TaskChanges)),
-                     q, SLOT(groupChanged(::TaskManager::TaskChanges)),
-                     Qt::UniqueConnection);
 
     typedef QPair<QModelIndex, TaskGroup *> idxGroupPair;
     QList<idxGroupPair> childGroups;
@@ -265,11 +262,9 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
             childGroups << idxGroupPair(idx, static_cast<TaskGroup *>(item));
         }
 
-        if (item != rootGroup) {
-            QObject::connect(item, SIGNAL(changed(::TaskManager::TaskChanges)),
-                             q, SLOT(itemChanged(::TaskManager::TaskChanges)),
-                             Qt::UniqueConnection);
-        }
+        QObject::connect(item, SIGNAL(changed(::TaskManager::TaskChanges)),
+                         q, SLOT(itemChanged(::TaskManager::TaskChanges)),
+                         Qt::UniqueConnection);
         ++i;
     }
 
