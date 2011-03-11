@@ -1454,8 +1454,10 @@ void PanelView::checkUnhide(Plasma::ItemStatus newStatus)
     if (newStatus > Plasma::ActiveStatus) {
         unhide();
         //kDebug() << "starting the timer!";
-        // start our rehide timer, so that the panel doesn't stay up and stuck forever and a day
-        m_rehideAfterAutounhideTimer->start();
+        if (newStatus == Plasma::NeedsAttentionStatus) {
+            // start our rehide timer, so that the panel doesn't stay up and stuck forever and a day
+            m_rehideAfterAutounhideTimer->start();
+        }
     } else {
         startAutoHide();
     }
