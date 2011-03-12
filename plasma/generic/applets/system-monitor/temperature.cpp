@@ -2,6 +2,7 @@
  *   Copyright (C) 2007 Petri Damsten <damu@iki.fi>
  *   Copyright (C) 2008 Marco Martin <notmart@gmail.com>
  *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
+ *   Copyright (C) 2011 Elvis Stansvik <elvstone@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -29,6 +30,7 @@
 #include <QTimer>
 #include <cmath>
 #include "plotter.h"
+#include "temperature-offset-delegate.h"
 
 using namespace KUnitConversion;
 
@@ -91,7 +93,8 @@ void Temperature::createConfigurationInterface(KConfigDialog *parent)
     ui.setupUi(widget);
     m_tempModel.clear();
     m_tempModel.setHorizontalHeaderLabels(QStringList() << i18n("Sensor")
-                                                        << i18n("Name"));
+                                                        << i18n("Name")
+                                                        << i18n("Offset"));
 
     QStandardItem *parentItem = m_tempModel.invisibleRootItem();
     foreach (const QString& temp, m_sources) {
@@ -103,10 +106,14 @@ void Temperature::createConfigurationInterface(KConfigDialog *parent)
         }
         QStandardItem *item2 = new QStandardItem(temperatureTitle(temp));
         item2->setEditable(true);
-        parentItem->appendRow(QList<QStandardItem *>() << item1 << item2);
+        QStandardItem *item3 = new QStandardItem(
+                KGlobal::locale()->formatNumber(temperatureOffset(temp), 1));
+        item3->setEditable(true);
+        parentItem->appendRow(QList<QStandardItem *>() << item1 << item2 << item3);
     }
     ui.treeView->setModel(&m_tempModel);
     ui.treeView->resizeColumnToContents(0);
+    ui.treeView->setItemDelegateForColumn(2, new TemperatureOffsetDelegate());
 
     ui.intervalSpinBox->setValue(interval() / 1000.0);
     ui.intervalSpinBox->setSuffix(i18nc("second", " s"));
@@ -132,6 +139,8 @@ void Temperature::configAccepted()
         if (item) {
             cgGlobal.writeEntry(item->text(),
                                 parentItem->child(i, 1)->text());
+            cgGlobal.writeEntry(item->text() + "_offset", QString::number(
+                                    parentItem->child(i, 2)->data(Qt::EditRole).toDouble(), 'f', 1));
             if (item->checkState() == Qt::Checked) {
                 appendSource(item->text());
             }
@@ -148,6 +157,12 @@ QString Temperature::temperatureTitle(const QString& source)
 {
     KConfigGroup cg = globalConfig();
     return cg.readEntry(source, source.mid(source.lastIndexOf('/') + 1).replace('_',' '));
+}
+
+double Temperature::temperatureOffset(const QString& source)
+{
+    KConfigGroup cg = globalConfig();
+    return cg.readEntry(source + "_offset", 0.0);
 }
 
 bool Temperature::addVisualization(const QString& source)
@@ -186,7 +201,7 @@ void Temperature::dataUpdated(const QString& source,
     SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
     QString temp;
     QString unit = data["units"].toString();
-    double doubleValue = data["value"].toDouble();
+    double doubleValue = data["value"].toDouble() + temperatureOffset(source);
     Value value = Value(doubleValue, unit);
 
     if (KGlobal::locale()->measureSystem() == KLocale::Metric) {
