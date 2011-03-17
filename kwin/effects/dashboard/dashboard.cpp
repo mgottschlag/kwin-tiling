@@ -29,6 +29,8 @@ DashboardEffect::DashboardEffect()
     : transformWindow(false)
     , activateAnimation(false)
     , deactivateAnimation(false)
+    , retransformWindow(false)
+    , window(NULL)
 {
     // propagate that the effect is loaded
     propagate();
@@ -67,24 +69,21 @@ void DashboardEffect::reconfigure(ReconfigureFlags)
     // read settings again
     KConfigGroup config = EffectsHandler::effectConfig("Dashboard");
 
-    brightness = config.readEntry("Brightness", "50");
-    saturation = config.readEntry("Saturation", "50");
-    duration = config.readEntry("Duration", "500");
+    brightness = qreal(config.readEntry<int>("Brightness", 50)) / 100.0;
+    saturation = qreal(config.readEntry<int>("Saturation", 50)) / 100.0;
+    duration = config.readEntry<int>("Duration", 500);
 
     blur = config.readEntry("Blur", false);
 
-    timeline.setDuration(animationTime(duration.toInt()));
+    timeline.setDuration(animationTime(duration));
 }
 
 void DashboardEffect::paintWindow(EffectWindow* w, int mask, QRegion region, WindowPaintData& data)
 {
     if (transformWindow && (w != window) && w->isManaged() && !isDashboard(w)) {
-        brightnessDelta = (1 - (brightness.toDouble() / 100));
-        saturationDelta = (1 - (saturation.toDouble() / 100));
-
         // dashboard active, transform other windows
-        data.brightness *= (1 - (brightnessDelta * timeline.currentValue()));
-        data.saturation *= (1 - (saturationDelta * timeline.currentValue()));
+        data.brightness *= (1 - ((1.0 - brightness) * timeline.currentValue()));
+        data.saturation *= (1 - ((1.0 - saturation) * timeline.currentValue()));
     }
 
     else if (transformWindow && (w == window) && w->isManaged()) {
@@ -117,6 +116,7 @@ void DashboardEffect::postPaintScreen()
             retransformWindow = false;
             transformWindow = false;
             effects->addRepaintFull();
+            window = NULL;
             effects->setActiveFullScreenEffect(0);
         }
 
@@ -131,6 +131,7 @@ void DashboardEffect::postPaintScreen()
             if (timeline.currentValue() == 0.0) {
                 deactivateAnimation = false;
                 transformWindow = false;
+                window = NULL;
                 effects->setActiveFullScreenEffect(0);
             }
 
