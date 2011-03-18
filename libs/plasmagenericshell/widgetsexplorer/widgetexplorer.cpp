@@ -32,12 +32,14 @@
 #include <kcomponentdata.h>
 #include <kpluginloader.h>
 #include <klineedit.h>
+#include <KStandardDirs>
 
 #include <plasma/applet.h>
 #include <plasma/corona.h>
 #include <plasma/containment.h>
 #include <plasma/widgets/toolbutton.h>
 #include <plasma/widgets/lineedit.h>
+#include <Plasma/DeclarativeWidget>
 
 #include "kcategorizeditemsviewmodels_p.h"
 #include "plasmaappletitemmodel_p.h"
@@ -101,6 +103,8 @@ public:
      * Widget that lists the applets
      */
     AppletsListWidget *appletsListWidget;
+
+    Plasma::DeclarativeWidget *declarativeWidget;
 
     /**
      * Widget that contains the search and categories filters
@@ -174,6 +178,11 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
     //filters & models
     appletsListWidget->setItemModel(&itemModel);
     initRunningApplets();
+
+    declarativeWidget = new Plasma::DeclarativeWidget(q);
+    declarativeWidget->setMinimumHeight(158);
+    declarativeWidget->setQmlPath(KStandardDirs::locate("data", "plasma/widgetsexplorer/widgetsexplorer.qml"));
+    mainLayout->addItem(declarativeWidget);
 
     q->setLayout(mainLayout);
 }
