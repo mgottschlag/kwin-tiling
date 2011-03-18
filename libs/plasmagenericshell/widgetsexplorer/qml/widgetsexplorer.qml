@@ -26,6 +26,7 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 Item {
     width: 200
     height: 200
+    signal addAppletRequested(string pluginName)
 
     PlasmaCore.Theme {
         id: theme
@@ -168,6 +169,12 @@ Item {
                     //verticalAlignment: Text.AlignVCenter
                     clip:true
                     wrapMode: Text.Wrap
+                }
+            }
+            MouseArea {
+                anchors.fill: parent
+                onDoubleClicked: {
+                    addAppletRequested(pluginName)
                 }
             }
         }

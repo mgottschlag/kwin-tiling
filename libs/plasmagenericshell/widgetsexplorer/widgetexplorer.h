@@ -108,12 +108,8 @@ public Q_SLOTS:
     /**
      * Adds currently selected applets
      */
-    void addApplet();
+    void addApplet(const QString &pluginName);
 
-    /**
-     * Adds applet
-     */
-    void addApplet(PlasmaAppletItem *appletItem);
 
 protected Q_SLOTS:
     void immutabilityChanged(Plasma::ImmutabilityType);

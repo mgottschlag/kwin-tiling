@@ -178,6 +178,7 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
         if (ctxt) {
             ctxt->setContextProperty("appletsModel", &itemModel);
             ctxt->setContextProperty("filterModel", &filterModel);
+            QObject::connect(declarativeWidget->rootObject(), SIGNAL(addAppletRequested(const QString &)), q, SLOT(addApplet(const QString &)));
         }
     }
 
@@ -356,27 +357,9 @@ Plasma::Corona *WidgetExplorer::corona() const
     return 0;
 }
 
-void WidgetExplorer::addApplet()
+void WidgetExplorer::addApplet(const QString &pluginName)
 {
-    if (!d->containment) {
-        return;
-    }
-//TODO
-    /*foreach (AbstractItem *item, d->appletsListWidget->selectedItems()) {
-        PlasmaAppletItem *selectedItem = (PlasmaAppletItem *) item;
-        kDebug() << "Adding applet " << selectedItem->name() << "to containment";
-        d->containment->addApplet(selectedItem->pluginName());
-    }*/
-}
-
-void WidgetExplorer::addApplet(PlasmaAppletItem *appletItem)
-{
-    if (!d->containment || !appletItem) {
-        return;
-    }
-
-    kDebug() << appletItem->pluginName();
-    d->containment->addApplet(appletItem->pluginName());
+    d->containment->addApplet(pluginName);
 }
 
 void WidgetExplorer::immutabilityChanged(Plasma::ImmutabilityType type)
