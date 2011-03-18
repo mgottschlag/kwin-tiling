@@ -91,6 +91,10 @@ private:
 class DefaultFilterModel : public QStandardItemModel
 {
 public:
+    enum Roles {
+        FilterTypeRole = Qt::UserRole+1,
+        FilterDataRole = Qt::UserRole+2,
+    };
     DefaultFilterModel(QObject *parent = 0);
 
     /**

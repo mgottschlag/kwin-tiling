@@ -70,6 +70,12 @@ DefaultFilterModel::DefaultFilterModel(QObject *parent) :
     QStandardItemModel(0, 1, parent)
 {
     setHeaderData(1, Qt::Horizontal, i18n("Filters"));
+    //This is to make QML that is understand it
+    QHash<int, QByteArray> newRoleNames = roleNames();
+    newRoleNames[FilterTypeRole] = "filterType";
+    newRoleNames[FilterDataRole] = "filterData";
+
+    setRoleNames(newRoleNames);
 }
 
 void DefaultFilterModel::addFilter(const QString &caption, const Filter &filter, const KIcon &icon)
@@ -80,6 +86,8 @@ void DefaultFilterModel::addFilter(const QString &caption, const Filter &filter,
     if (!icon.isNull()) {
         item->setIcon(icon);
     }
+    item->setData(filter.first, FilterTypeRole);
+    item->setData(filter.second, FilterDataRole);
 
     newRow << item;
     appendRow(newRow);

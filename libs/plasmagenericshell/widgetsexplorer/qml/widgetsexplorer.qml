@@ -42,7 +42,11 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            appletCategoryFilter.filterRegExp = display
+                            if (filterType == "") {
+                                appletCategoryFilter.filterRegExp = ""
+                            } else if (filterType == "category") {
+                                appletCategoryFilter.filterRegExp = filterData
+                            }
                         }
                     }
                 }
