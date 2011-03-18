@@ -22,7 +22,6 @@
 import Qt 4.7
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 import org.kde.plasma.core 0.1 as PlasmaCore
-import org.kde.plasma.graphicslayouts 4.7 as GraphicsLayouts
 
 Item {
     width: 200
@@ -30,6 +29,25 @@ Item {
 
     PlasmaCore.Theme {
         id: theme
+    }
+
+    PlasmaCore.Dialog {
+        id: categoriesDialog
+        mainItem: Column {
+            Repeater {
+                model: filterModel
+                delegate: Text {
+                    color: theme.textColor
+                    text: display
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            appletCategoryFilter.filterRegExp = display
+                        }
+                    }
+                }
+            }
+        }
     }
 
     Item {
@@ -44,7 +62,13 @@ Item {
                 width: list.width / Math.floor(list.width / 180)
                 height: categoryButton.height
             }
-            PlasmaWidgets.PushButton { id: categoryButton; text: "Category"}
+            PlasmaWidgets.PushButton {
+                id: categoryButton
+                text: "Categories"
+                onClicked: {
+                    categoriesDialog.visible = !categoriesDialog.visible
+                }
+            }
         }
         Row {
             anchors.right: parent.right
@@ -64,7 +88,11 @@ Item {
         clip: true
         orientation: ListView.Horizontal
         snapMode: ListView.SnapToItem
-        model: appletsModel
+        model: PlasmaCore.SortFilterModel {
+                    id: appletCategoryFilter
+                    filterRole: "category"
+                    sourceModel: appletsModel
+                }
 
         onContentXChanged: {
             if (!scrollBar.moving) {
@@ -78,7 +106,7 @@ Item {
                 scrollBar.maximum = (contentWidth - width)/10
             }
         }
-        
+
         delegate: PlasmaCore.FrameSvgItem {
             id: background
             width: list.width / Math.floor(list.width / 180)

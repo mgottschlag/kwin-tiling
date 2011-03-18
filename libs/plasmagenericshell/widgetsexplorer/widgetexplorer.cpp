@@ -177,6 +177,7 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
         QDeclarativeContext *ctxt = declarativeWidget->engine()->rootContext();
         if (ctxt) {
             ctxt->setContextProperty("appletsModel", &itemModel);
+            ctxt->setContextProperty("filterModel", &filterModel);
         }
     }
 
