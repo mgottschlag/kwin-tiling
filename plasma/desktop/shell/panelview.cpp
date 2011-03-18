@@ -1448,18 +1448,18 @@ void PanelView::statusUpdated(Plasma::ItemStatus newStatus)
 
 void PanelView::checkUnhide(Plasma::ItemStatus newStatus)
 {
-    kDebug() << "================= got a status: " << newStatus << Plasma::ActiveStatus;
+    //kDebug() << "================= got a status: " << newStatus << Plasma::ActiveStatus;
+    m_respectStatus = true;
+
     if (newStatus > Plasma::ActiveStatus) {
         unhide();
         if (newStatus == Plasma::NeedsAttentionStatus) {
-            kDebug() << "starting the timer!";
+            //kDebug() << "starting the timer!";
             // start our rehide timer, so that the panel doesn't stay up and stuck forever and a day
             m_rehideAfterAutounhideTimer->start();
-        } else {
-            m_respectStatus = true;
         }
     } else {
-        m_respectStatus = true;
+        //kDebug() << "new status, just autohiding";
         startAutoHide();
     }
 }
