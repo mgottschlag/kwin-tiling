@@ -11,7 +11,6 @@ set(appletexplorer_SRCS
    ../widgetsexplorer/appleticon.cpp
    ../widgetsexplorer/appletsfiltering.cpp
    ../widgetsexplorer/applettooltip.cpp
-   ../widgetsexplorer/appletslist.cpp
    ../widgetsexplorer/widgetexplorer.cpp
    ../widgetsexplorer/openwidgetassistant.cpp
    ../abstracticon.cpp

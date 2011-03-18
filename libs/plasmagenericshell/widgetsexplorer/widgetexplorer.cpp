@@ -46,7 +46,6 @@
 
 #include "kcategorizeditemsviewmodels_p.h"
 #include "plasmaappletitemmodel_p.h"
-#include "appletslist.h"
 #include "appletsfiltering.h"
 
 //getting the user local
@@ -102,11 +101,6 @@ public:
     PlasmaAppletItemModel itemModel;
     KCategorizedItemsViewModels::DefaultFilterModel filterModel;
 
-    /**
-     * Widget that lists the applets
-     */
-    AppletsListWidget *appletsListWidget;
-
     Plasma::DeclarativeWidget *declarativeWidget;
 
     /**
@@ -146,7 +140,6 @@ void WidgetExplorerPrivate::initFilters()
     }
 
     filteringWidget->setModel(&filterModel);
-    appletsListWidget->setFilterModel(&filterModel);
 }
 
 void WidgetExplorerPrivate::init(Plasma::Location loc)
@@ -160,26 +153,19 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
     mainLayout->setContentsMargins(0, 4, 0, 0);
     mainLayout->setSpacing(0);
     filteringWidget = new FilteringWidget(orientation, q);
-    appletsListWidget = new AppletsListWidget(location);
 
     //connect
-    QObject::connect(appletsListWidget, SIGNAL(appletDoubleClicked(PlasmaAppletItem*)), q, SLOT(addApplet(PlasmaAppletItem*)));
-    QObject::connect(filteringWidget->textSearch(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
-    QObject::connect(filteringWidget, SIGNAL(filterChanged(int)), appletsListWidget, SLOT(filterChanged(int)));
+    //QObject::connect(appletsListWidget, SIGNAL(appletDoubleClicked(PlasmaAppletItem*)), q, SLOT(addApplet(PlasmaAppletItem*)));
+    //QObject::connect(filteringWidget->textSearch(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
+    //QObject::connect(filteringWidget, SIGNAL(filterChanged(int)), appletsListWidget, SLOT(filterChanged(int)));
     QObject::connect(filteringWidget, SIGNAL(closeClicked()), q, SIGNAL(closeClicked()));
 
     mainLayout->addItem(filteringWidget);
-    mainLayout->addItem(appletsListWidget);
-    appletsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mainLayout->setAlignment(appletsListWidget, Qt::AlignTop | Qt::AlignHCenter);
 
     if (orientation == Qt::Vertical) {
         mainLayout->setAlignment(filteringWidget, Qt::AlignTop | Qt::AlignHCenter);
-        mainLayout->setStretchFactor(appletsListWidget, 10);
     }
 
-    //filters & models
-    appletsListWidget->setItemModel(&itemModel);
     initRunningApplets();
 
     declarativeWidget = new Plasma::DeclarativeWidget(q);
@@ -206,10 +192,8 @@ void WidgetExplorerPrivate::setLocation(const Plasma::Location loc)
     location = loc;
     orientation = ((location == Plasma::LeftEdge || location == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
     filteringWidget->setListOrientation(orientation);
-    appletsListWidget->setLocation(loc);
     if (orientation == Qt::Vertical) {
         mainLayout->setAlignment(filteringWidget, Qt::AlignTop | Qt::AlignHCenter);
-        mainLayout->setStretchFactor(appletsListWidget, 10);
     }
 }
 
@@ -313,13 +297,14 @@ Plasma::Location WidgetExplorer::location() const
 
 void WidgetExplorer::setIconSize(int size)
 {
-    d->appletsListWidget->setIconSize(size);
+    //TODO
     adjustSize();
 }
 
 int WidgetExplorer::iconSize() const
 {
-    return d->appletsListWidget->iconSize();
+    //TODO
+    return 32;
 }
 
 void WidgetExplorer::populateWidgetList(const QString &app)
@@ -327,11 +312,7 @@ void WidgetExplorer::populateWidgetList(const QString &app)
     d->application = app;
     d->itemModel.setApplication(app);
     d->initFilters();
-    //d->appletsListWidget->setFilterModel(&d->filterModel);
 
-    //FIXME: AFAIK this shouldn't be necessary ... but here it is. need to find out what in that
-    //       maze of models and views is screwing up
-    d->appletsListWidget->setItemModel(&d->itemModel);
     d->itemModel.setRunningApplets(d->runningApplets);
 }
 
@@ -379,12 +360,12 @@ void WidgetExplorer::addApplet()
     if (!d->containment) {
         return;
     }
-
-    foreach (AbstractItem *item, d->appletsListWidget->selectedItems()) {
+//TODO
+    /*foreach (AbstractItem *item, d->appletsListWidget->selectedItems()) {
         PlasmaAppletItem *selectedItem = (PlasmaAppletItem *) item;
         kDebug() << "Adding applet " << selectedItem->name() << "to containment";
         d->containment->addApplet(selectedItem->pluginName());
-    }
+    }*/
 }
 
 void WidgetExplorer::addApplet(PlasmaAppletItem *appletItem)
