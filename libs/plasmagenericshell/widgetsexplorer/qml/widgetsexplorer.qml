@@ -65,7 +65,7 @@ Item {
         orientation: ListView.Horizontal
         snapMode: ListView.SnapToItem
         model: appletsModel
-        
+
         onContentXChanged: {
             if (!scrollBar.moving) {
                 scrollBar.value = contentX/10
