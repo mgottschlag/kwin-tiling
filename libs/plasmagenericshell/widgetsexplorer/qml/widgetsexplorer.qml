@@ -28,69 +28,10 @@ Item {
     width: 200
     height: 200
 
-    ListModel {
-        id: appletsModel
-        ListElement {
-            name: "Notes"
-            description: "Desktop Sticky notes"
-            icon: "knotes"
-        }
-        ListElement {
-            name: "Weather"
-            description: "Weather station"
-            icon: "weather-clear"
-        }
-        ListElement {
-            name: "Application Launcher menu"
-            description: "Traditional menu based application launcher"
-            icon: "start-here-kde"
-        }
-        ListElement {
-            name: "Weather"
-            description: "Weather station"
-            icon: "weather-clear"
-        }
-        ListElement {
-            name: "Notes"
-            description: "Desktop Sticky notes"
-            icon: "knotes"
-        }
-        ListElement {
-            name: "Weather"
-            description: "Weather station"
-            icon: "weather-clear"
-        }
-        ListElement {
-            name: "Notes"
-            description: "Desktop Sticky notes"
-            icon: "knotes"
-        }
-        ListElement {
-            name: "Weather"
-            description: "Weather station"
-            icon: "weather-clear"
-        }
-        ListElement {
-            name: "Notes"
-            description: "Desktop Sticky notes"
-            icon: "knotes"
-        }
-        ListElement {
-            name: "Weather"
-            description: "Weather station"
-            icon: "weather-clear"
-        }
-        ListElement {
-            name: "Notes"
-            description: "Desktop Sticky notes"
-            icon: "knotes"
-        }
-        ListElement {
-            name: "Weather"
-            description: "Weather station"
-            icon: "weather-clear"
-        }
+    PlasmaCore.Theme {
+        id: theme
     }
+
     Item {
         id: topBar
         anchors.top: parent.top
@@ -153,7 +94,7 @@ Item {
                 anchors.topMargin: background.margins.top
                 anchors.bottomMargin: background.margins.bottom
                 width: Math.min(64, height)
-                icon: QIcon(model.icon)
+                icon: decoration
             }
             Column {
                 anchors.left: iconWidget.right
@@ -166,6 +107,7 @@ Item {
                 anchors.bottomMargin: background.margins.bottom
                 Text {
                     id: titleText
+                    color: theme.textColor
                     text: name
                     font.bold:true
                     anchors.left: parent.left
@@ -176,6 +118,7 @@ Item {
                 }
                 Text {
                     text: description
+                    color: theme.textColor
                     anchors.top: titleText.bottom
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left

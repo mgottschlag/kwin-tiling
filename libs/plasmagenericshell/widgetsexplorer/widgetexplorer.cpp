@@ -20,6 +20,9 @@
 
 #include "widgetexplorer.h"
 
+#include <QDeclarativeContext>
+#include <QDeclarativeEngine>
+
 #include <kaction.h>
 #include <kconfig.h>
 #include <kconfiggroup.h>
@@ -183,6 +186,13 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
     declarativeWidget->setMinimumHeight(158);
     declarativeWidget->setQmlPath(KStandardDirs::locate("data", "plasma/widgetsexplorer/widgetsexplorer.qml"));
     mainLayout->addItem(declarativeWidget);
+
+    if (declarativeWidget->engine()) {
+        QDeclarativeContext *ctxt = declarativeWidget->engine()->rootContext();
+        if (ctxt) {
+            ctxt->setContextProperty("appletsModel", &itemModel);
+        }
+    }
 
     q->setLayout(mainLayout);
 }

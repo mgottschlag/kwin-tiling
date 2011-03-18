@@ -38,7 +38,7 @@ kde4_add_ui_files(plasmagenericshell_LIB_SRCS BackgroundDialog.ui MousePlugins.u
 
 kde4_add_library(plasmagenericshell SHARED ${plasmagenericshell_LIB_SRCS})
 
-target_link_libraries(plasmagenericshell ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_KFILE_LIBS} ${QT_QTSCRIPT_LIBRARY} kworkspace kephal)
+target_link_libraries(plasmagenericshell ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_KFILE_LIBS} ${QT_QTSCRIPT_LIBRARY} ${QT_QTDECLARATIVE_LIBRARY} kworkspace kephal)
 if(UNIX AND Q_WS_X11)
     target_link_libraries(plasmagenericshell ${X11_LIBRARIES})
 endif(UNIX AND Q_WS_X11)
