@@ -55,6 +55,7 @@ PlasmaAppletItem::PlasmaAppletItem(PlasmaAppletItemModel *model,
     setData(info.version(), PlasmaAppletItemModel::VersionRole);
     setData(info.author(), PlasmaAppletItemModel::AuthorRole);
     setData(info.email(), PlasmaAppletItemModel::EmailRole);
+    setData(0, PlasmaAppletItemModel::RunningRole);
 }
 
 QString PlasmaAppletItem::pluginName() const
@@ -110,6 +111,7 @@ int PlasmaAppletItem::running() const
 void PlasmaAppletItem::setRunning(int count)
 {
     m_runningCount = count;
+    setData(count, PlasmaAppletItemModel::RunningRole);
     emitDataChanged();
 }
 
@@ -199,6 +201,7 @@ PlasmaAppletItemModel::PlasmaAppletItemModel(QObject * parent)
     newRoleNames[VersionRole] = "version";
     newRoleNames[AuthorRole] = "author";
     newRoleNames[EmailRole] = "email";
+    newRoleNames[RunningRole] = "running";
 
     setRoleNames(newRoleNames);
 

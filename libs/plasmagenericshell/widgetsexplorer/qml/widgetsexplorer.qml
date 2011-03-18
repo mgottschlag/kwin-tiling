@@ -44,8 +44,13 @@ Item {
                         onClicked: {
                             if (filterType == "") {
                                 appletCategoryFilter.filterRegExp = ""
+                                appletRunningFilter.filterRegExp = ""
+                            } else if (filterType == "running") {
+                                appletCategoryFilter.filterRegExp = ""
+                                appletRunningFilter.filterRegExp = "[^0]+"
                             } else if (filterType == "category") {
                                 appletCategoryFilter.filterRegExp = filterData
+                                appletRunningFilter.filterRegExp = ""
                             }
                         }
                     }
@@ -93,9 +98,14 @@ Item {
         orientation: ListView.Horizontal
         snapMode: ListView.SnapToItem
         model: PlasmaCore.SortFilterModel {
-                    id: appletCategoryFilter
-                    filterRole: "category"
-                    sourceModel: appletsModel
+                    id: appletRunningFilter
+                    filterRole: "running"
+                    sortRole: "display"
+                    sourceModel: PlasmaCore.SortFilterModel {
+                        id: appletCategoryFilter
+                        filterRole: "category"
+                        sourceModel: appletsModel
+                    }
                 }
 
         onContentXChanged: {
