@@ -1477,13 +1477,18 @@ void PanelView::checkAutounhide()
         return;
     }
 
-    disconnect(KIdleTime::instance(), SIGNAL(resumingFromIdle()), this, SLOT(checkAutounhide()));
     m_respectStatus = false;
+    //kDebug() << "in to check ... who's resonsible?" << sender() << KIdleTime::instance();
     if (sender() == KIdleTime::instance()) {
+        //kDebug() << "doing a 2s wait";
         QTimer::singleShot(2000, this, SLOT(startAutoHide()));
     } else {
+        //kDebug() << "just starting autohide!";
         startAutoHide();
     }
+
+    // this line must come after the check on sender() as it *clears* that value!
+    disconnect(KIdleTime::instance(), SIGNAL(resumingFromIdle()), this, SLOT(checkAutounhide()));
     //kDebug() << "exit 0 ***************************";
 }
 
