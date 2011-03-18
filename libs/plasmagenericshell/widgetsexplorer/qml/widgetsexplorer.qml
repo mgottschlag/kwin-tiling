@@ -76,7 +76,11 @@ Item {
                 id: categoryButton
                 text: "Categories"
                 onClicked: {
-                    categoriesDialog.visible = !categoriesDialog.visible
+                    if (categoriesDialog.visible) {
+                        categoriesDialog.visible = false
+                    } else {
+                        categoriesDialog.showPopup(categoryButton)
+                    }
                 }
             }
         }
