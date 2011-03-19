@@ -182,4 +182,28 @@ void DefaultItemFilterProxyModel::setFilter(const Filter &filter)
     emit filterChanged();
 }
 
+void DefaultItemFilterProxyModel::setFilterType(const QString type)
+{
+    m_filter.first = type;
+    invalidateFilter();
+    emit filterChanged();
+}
+
+QString DefaultItemFilterProxyModel::filterType() const
+{
+    return m_filter.first;
+}
+
+void DefaultItemFilterProxyModel::setFilterQuery(const QVariant query)
+{
+    m_filter.second = query;
+    invalidateFilter();
+    emit filterChanged();
+}
+
+QVariant DefaultItemFilterProxyModel::filterQuery() const
+{
+    return m_filter.second;
+}
+
 }

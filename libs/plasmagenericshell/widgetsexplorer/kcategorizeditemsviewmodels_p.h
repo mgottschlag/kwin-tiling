@@ -118,6 +118,8 @@ class DefaultItemFilterProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
+    Q_PROPERTY(QString filterType READ filterType WRITE setFilterType NOTIFY filterChanged)
+    Q_PROPERTY(QVariant filterQuery READ filterQuery WRITE setFilterQuery NOTIFY filterChanged)
 
 public:
     DefaultItemFilterProxyModel(QObject *parent = 0);
@@ -127,6 +129,13 @@ public:
 
     void setSearchTerm(const QString &pattern);
     QString searchTerm() const;
+
+    void setFilterType(const QString type);
+    QString filterType() const;
+
+    void setFilterQuery(const QVariant query);
+    QVariant filterQuery() const;
+
     void setFilter(const Filter &filter);
 
     void setSourceModel(QAbstractItemModel *sourceModel);
