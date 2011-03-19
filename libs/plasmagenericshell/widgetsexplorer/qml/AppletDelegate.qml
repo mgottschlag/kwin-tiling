@@ -27,6 +27,40 @@ PlasmaCore.FrameSvgItem {
     height: list.height
     imagePath: "widgets/tasks"
     prefix: "normal"
+
+    ListView.onRemove: SequentialAnimation {
+        PropertyAction {
+            target: background
+            property: "ListView.delayRemove"
+            value: true
+        }
+        NumberAnimation {
+            target: background
+            property: "y"
+            to: background.height
+            duration: 250
+            easing.type: Easing.InOutQuad
+        }
+        PropertyAction {
+            target: background
+            property: "ListView.delayRemove"
+            value: false
+        }
+    }
+
+    ListView.onAdd: NumberAnimation {
+            target: background
+            property: "y"
+            from: -background.height
+            to: 0
+            duration: 250
+            easing.type: Easing.InOutQuad
+        }
+
+    Behavior on x {
+        NumberAnimation { duration: 250 }
+    }
+
     PlasmaWidgets.IconWidget {
         id:iconWidget
         anchors.left: parent.left
