@@ -1,7 +1,5 @@
-// -*- coding: iso-8859-1 -*-
 /*
- *   Author: Marco Martin <mart@kde.org>
- *   Date: Fri Dec 10 2010, 23:38:41
+ *   Copyright 2011 Marco Martin <mart@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -110,62 +108,7 @@ Item {
             }
         }
 
-        delegate: PlasmaCore.FrameSvgItem {
-            id: background
-            width: list.width / Math.floor(list.width / 180)
-            height: list.height
-            imagePath: "widgets/tasks"
-            prefix: "normal"
-            PlasmaWidgets.IconWidget {
-                id:iconWidget
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.leftMargin: background.margins.left
-                anchors.topMargin: background.margins.top
-                anchors.bottomMargin: background.margins.bottom
-                width: Math.min(64, height)
-                icon: decoration
-            }
-            Column {
-                anchors.left: iconWidget.right
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                anchors.leftMargin: background.margins.left
-                anchors.topMargin: background.margins.top
-                anchors.rightMargin: background.margins.right
-                anchors.bottomMargin: background.margins.bottom
-                Text {
-                    id: titleText
-                    color: theme.textColor
-                    text: name
-                    font.bold:true
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    height: paintedHeight
-                    clip: true
-                    wrapMode: Text.Wrap
-                }
-                Text {
-                    text: description
-                    color: theme.textColor
-                    anchors.top: titleText.bottom
-                    anchors.bottom: parent.bottom
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    //verticalAlignment: Text.AlignVCenter
-                    clip:true
-                    wrapMode: Text.Wrap
-                }
-            }
-            MouseArea {
-                anchors.fill: parent
-                onDoubleClicked: {
-                    addAppletRequested(pluginName)
-                }
-            }
-        }
+        delegate: AppletDelegate {}
     }
     PlasmaWidgets.ScrollBar {
         id: scrollBar
