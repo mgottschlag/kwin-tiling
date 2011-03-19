@@ -106,8 +106,18 @@ PlasmaCore.FrameSvgItem {
     }
     MouseArea {
         anchors.fill: parent
+        hoverEnabled: true
         onDoubleClicked: {
             addAppletRequested(pluginName)
+        }
+        onEntered: {
+            tooltipDialog.icon = decoration
+            tooltipDialog.title = name
+            tooltipDialog.description = description
+            tooltipDialog.author = author
+            //tooltipDialog.email = email
+            tooltipDialog.license = license
+            tooltipDialog.visible = true
         }
     }
 }

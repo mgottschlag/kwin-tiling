@@ -22,6 +22,7 @@ import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 import org.kde.plasma.core 0.1 as PlasmaCore
 
 Item {
+    id: main
     width: 200
     height: 200
     signal addAppletRequested(string pluginName)
@@ -48,6 +49,19 @@ Item {
                 }
             }
         }
+    }
+
+    PlasmaCore.Dialog {
+        id: tooltipDialog
+        property variant icon
+        property string title
+        property string description
+        property string author
+        property string email
+        property string license
+        mainItem: Tooltip {
+                     id: tooltipWidget
+                  }
     }
 
     Item {
