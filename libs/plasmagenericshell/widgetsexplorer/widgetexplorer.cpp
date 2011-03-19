@@ -100,6 +100,7 @@ public:
 
     PlasmaAppletItemModel itemModel;
     KCategorizedItemsViewModels::DefaultFilterModel filterModel;
+    DefaultItemFilterProxyModel filterItemModel;
 
     Plasma::DeclarativeWidget *declarativeWidget;
 
@@ -155,9 +156,7 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
     filteringWidget = new FilteringWidget(orientation, q);
 
     //connect
-    //QObject::connect(appletsListWidget, SIGNAL(appletDoubleClicked(PlasmaAppletItem*)), q, SLOT(addApplet(PlasmaAppletItem*)));
     //QObject::connect(filteringWidget->textSearch(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
-    //QObject::connect(filteringWidget, SIGNAL(filterChanged(int)), appletsListWidget, SLOT(filterChanged(int)));
     QObject::connect(filteringWidget, SIGNAL(closeClicked()), q, SIGNAL(closeClicked()));
 
     mainLayout->addItem(filteringWidget);
@@ -169,14 +168,18 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
     initRunningApplets();
 
     declarativeWidget = new Plasma::DeclarativeWidget(q);
-    declarativeWidget->setMinimumHeight(158);
+    declarativeWidget->setMinimumHeight(128);
     declarativeWidget->setQmlPath(KStandardDirs::locate("data", "plasma/widgetsexplorer/widgetsexplorer.qml"));
     mainLayout->addItem(declarativeWidget);
 
     if (declarativeWidget->engine()) {
         QDeclarativeContext *ctxt = declarativeWidget->engine()->rootContext();
         if (ctxt) {
-            ctxt->setContextProperty("appletsModel", &itemModel);
+            filterItemModel.setSortCaseSensitivity(Qt::CaseInsensitive);
+            filterItemModel.setDynamicSortFilter(true);
+            filterItemModel.setSourceModel(&itemModel);
+            filterItemModel.sort(0);
+            ctxt->setContextProperty("appletsModel", &filterItemModel);
             ctxt->setContextProperty("filterModel", &filterModel);
             QObject::connect(declarativeWidget->rootObject(), SIGNAL(addAppletRequested(const QString &)), q, SLOT(addApplet(const QString &)));
         }
@@ -316,6 +319,7 @@ void WidgetExplorer::populateWidgetList(const QString &app)
     d->initFilters();
 
     d->itemModel.setRunningApplets(d->runningApplets);
+
 }
 
 QString WidgetExplorer::application()

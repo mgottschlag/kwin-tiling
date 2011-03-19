@@ -71,6 +71,7 @@ Item {
             PlasmaWidgets.LineEdit {
                 width: list.width / Math.floor(list.width / 180)
                 height: categoryButton.height
+                onTextChanged: appletsModel.searchTerm = text
             }
             PlasmaWidgets.PushButton {
                 id: categoryButton

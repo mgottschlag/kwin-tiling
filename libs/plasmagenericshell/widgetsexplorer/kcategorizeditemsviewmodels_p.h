@@ -116,7 +116,8 @@ public:
  */
 class DefaultItemFilterProxyModel : public QSortFilterProxyModel
 {
-Q_OBJECT
+    Q_OBJECT
+    Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
 
 public:
     DefaultItemFilterProxyModel(QObject *parent = 0);
@@ -124,7 +125,8 @@ public:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
 
-    void setSearch(const QString &pattern);
+    void setSearchTerm(const QString &pattern);
+    QString searchTerm() const;
     void setFilter(const Filter &filter);
 
     void setSourceModel(QAbstractItemModel *sourceModel);

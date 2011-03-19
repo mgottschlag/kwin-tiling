@@ -119,8 +119,10 @@ void DefaultItemFilterProxyModel::setSourceModel(QAbstractItemModel *sourceModel
         return;
     }
 
+    setRoleNames(sourceModel->roleNames());
+
     m_innerModel.setSourceModel(model);
-    QSortFilterProxyModel::setSourceModel(&m_innerModel);
+    QSortFilterProxyModel::setSourceModel(model);
 }
 
 QStandardItemModel *DefaultItemFilterProxyModel::sourceModel() const
@@ -136,6 +138,7 @@ int DefaultItemFilterProxyModel::columnCount(const QModelIndex &index) const
 
 QVariant DefaultItemFilterProxyModel::data(const QModelIndex &index, int role) const
 {
+    return QSortFilterProxyModel::data(index, role);
     return m_innerModel.data(index, (index.column() == 1), role);
 }
 
@@ -162,11 +165,16 @@ bool DefaultItemFilterProxyModel::lessThan(const QModelIndex &left,
             sourceModel()->data(right).toString()) < 0;
 }
 
-void DefaultItemFilterProxyModel::setSearch(const QString &pattern)
+void DefaultItemFilterProxyModel::setSearchTerm(const QString &pattern)
 {
     m_searchPattern = pattern;
     invalidateFilter();
     emit searchTermChanged(pattern);
+}
+
+QString DefaultItemFilterProxyModel::searchTerm() const
+{
+    return m_searchPattern;
 }
 
 void DefaultItemFilterProxyModel::setFilter(const Filter &filter)
