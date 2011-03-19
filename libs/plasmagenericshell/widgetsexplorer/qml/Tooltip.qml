@@ -24,14 +24,15 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 Item {
     id: main
 
-    width: 200
-    height: 300
+    width: 250
+    height: 200
 
     PlasmaWidgets.IconWidget {
         id: tooltipIconWidget
         anchors.left: parent.left
         anchors.top: parent.top
-        width: Math.min(64, height)
+        width: 64
+        height: 64
         icon: tooltipDialog.icon
     }
     Column {
@@ -57,7 +58,8 @@ Item {
         }
     }
     Grid {
-        anchors.top: nameColumn.bottom
+        anchors.top: tooltipIconWidget.bottom
+        anchors.topMargin: 16
         rows: 2
         columns: 2
         Text {
