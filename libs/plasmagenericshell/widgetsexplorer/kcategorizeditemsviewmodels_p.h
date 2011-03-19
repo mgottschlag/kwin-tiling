@@ -131,7 +131,7 @@ public:
 
     void setSourceModel(QAbstractItemModel *sourceModel);
 
-    QStandardItemModel *sourceModel() const;
+    QAbstractItemModel *sourceModel() const;
 
     int columnCount(const QModelIndex &index) const;
 
@@ -142,45 +142,8 @@ Q_SIGNALS:
     void filterChanged();
 
 private:
-
-    class InnerProxyModel : public QAbstractItemModel
-    {
-    public:
-        InnerProxyModel(QObject *parent = 0);
-
-        Qt::ItemFlags flags(const QModelIndex &index) const;
-
-        QVariant data(const QModelIndex &index, bool favoriteColumn,
-                      int role = Qt::DisplayRole) const;
-        QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-        bool setData(const QModelIndex &index, const QVariant &value,
-                     int role = Qt::EditRole);
-
-        QVariant headerData(int section, Qt::Orientation orientation,
-                            int role = Qt::DisplayRole) const;
-        bool setHeaderData(int section, Qt::Orientation orientation,
-                           const QVariant &value, int role = Qt::EditRole);
-
-        int rowCount(const QModelIndex &parent = QModelIndex()) const;
-        int columnCount(const QModelIndex &index) const;
-
-        QModelIndex index(int row, int column,
-                          const QModelIndex &parent = QModelIndex()) const;
-        QModelIndex parent(const QModelIndex &index) const;
-
-        QMimeData *mimeData(const QModelIndexList &indexes) const;
-
-        void setSourceModel(QStandardItemModel *sourceModel);
-        QStandardItemModel *sourceModel() const;
-
-    private:
-        QStandardItemModel *m_sourceModel;
-    };
-
     Filter m_filter;
     QString m_searchPattern;
-    InnerProxyModel m_innerModel;
-
 };
 
 } //end of namespace

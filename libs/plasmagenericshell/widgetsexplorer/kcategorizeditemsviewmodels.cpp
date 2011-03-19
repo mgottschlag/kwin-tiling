@@ -105,8 +105,8 @@ void DefaultFilterModel::addSeparator(const QString &caption)
 
 // DefaultItemFilterProxyModel
 
-DefaultItemFilterProxyModel::DefaultItemFilterProxyModel(QObject *parent) :
-    QSortFilterProxyModel(parent), m_innerModel(parent)
+DefaultItemFilterProxyModel::DefaultItemFilterProxyModel(QObject *parent)
+    : QSortFilterProxyModel(parent)
 {
 }
 
@@ -121,13 +121,12 @@ void DefaultItemFilterProxyModel::setSourceModel(QAbstractItemModel *sourceModel
 
     setRoleNames(sourceModel->roleNames());
 
-    m_innerModel.setSourceModel(model);
     QSortFilterProxyModel::setSourceModel(model);
 }
 
-QStandardItemModel *DefaultItemFilterProxyModel::sourceModel() const
+QAbstractItemModel *DefaultItemFilterProxyModel::sourceModel() const
 {
-    return m_innerModel.sourceModel();
+    return QSortFilterProxyModel::sourceModel();
 }
 
 int DefaultItemFilterProxyModel::columnCount(const QModelIndex &index) const
@@ -139,7 +138,6 @@ int DefaultItemFilterProxyModel::columnCount(const QModelIndex &index) const
 QVariant DefaultItemFilterProxyModel::data(const QModelIndex &index, int role) const
 {
     return QSortFilterProxyModel::data(index, role);
-    return m_innerModel.data(index, (index.column() == 1), role);
 }
 
 bool DefaultItemFilterProxyModel::filterAcceptsRow(int sourceRow,
@@ -182,115 +180,6 @@ void DefaultItemFilterProxyModel::setFilter(const Filter &filter)
     m_filter = filter;
     invalidateFilter();
     emit filterChanged();
-}
-
-// DefaultItemFilterProxyModel::InnerProxyModel
-
-DefaultItemFilterProxyModel::InnerProxyModel::InnerProxyModel(QObject *parent) :
-    QAbstractItemModel(parent), m_sourceModel(NULL)
-{
-}
-
-Qt::ItemFlags DefaultItemFilterProxyModel::InnerProxyModel::flags(const QModelIndex &index) const
-{
-    if (!m_sourceModel) {
-        return 0;
-    }
-    return m_sourceModel->flags(index);
-}
-
-QVariant DefaultItemFilterProxyModel::InnerProxyModel::data(
-    const QModelIndex &index, bool favoriteColumn, int role) const
-{
-    Q_UNUSED(favoriteColumn);
-    return data(index, role);
-}
-
-QVariant DefaultItemFilterProxyModel::InnerProxyModel::data(
-        const QModelIndex &index, int role) const
-{
-    if (!m_sourceModel) {
-        return QVariant();
-    }
-    return m_sourceModel->data(index, role);
-}
-
-QVariant DefaultItemFilterProxyModel::InnerProxyModel::headerData(
-    int section, Qt::Orientation orientation, int role) const
-{
-    Q_UNUSED(orientation);
-    Q_UNUSED(role);
-    return QVariant(section);
-}
-
-int DefaultItemFilterProxyModel::InnerProxyModel::rowCount(const QModelIndex &parent) const
-{
-    if (!m_sourceModel) {
-        return 0;
-    }
-    return m_sourceModel->rowCount(parent);
-}
-
-bool DefaultItemFilterProxyModel::InnerProxyModel::setData(
-    const QModelIndex &index, const QVariant &value, int role)
-{
-    if (!m_sourceModel) {
-        return false;
-    }
-    return m_sourceModel->setData(index, value, role);
-}
-
-bool DefaultItemFilterProxyModel::InnerProxyModel::setHeaderData(
-    int section, Qt::Orientation orientation, const QVariant &value, int role)
-{
-    Q_UNUSED(section);
-    Q_UNUSED(value);
-    Q_UNUSED(orientation);
-    Q_UNUSED(role);
-    return false;
-}
-
-QModelIndex DefaultItemFilterProxyModel::InnerProxyModel::index(
-    int row, int column, const QModelIndex &parent) const
-{
-    Q_UNUSED(column);
-    if (!m_sourceModel) {
-        return QModelIndex();
-    }
-    return m_sourceModel->index(row, 0, parent);
-}
-
-QModelIndex DefaultItemFilterProxyModel::InnerProxyModel::parent(const QModelIndex &index) const
-{
-    if (!m_sourceModel) {
-        return QModelIndex();
-    }
-    return m_sourceModel->parent(index);
-}
-
-QMimeData *DefaultItemFilterProxyModel::InnerProxyModel::mimeData(
-    const QModelIndexList &indexes) const
-{
-    if (!m_sourceModel) {
-        return NULL;
-    }
-    return m_sourceModel->mimeData(indexes);
-}
-
-int DefaultItemFilterProxyModel::InnerProxyModel::columnCount(const QModelIndex &index) const
-{
-    Q_UNUSED(index);
-    return COLUMN_COUNT;
-}
-
-void DefaultItemFilterProxyModel::InnerProxyModel::setSourceModel(QStandardItemModel *sourceModel)
-{
-    m_sourceModel = sourceModel;
-}
-
-QStandardItemModel *DefaultItemFilterProxyModel::InnerProxyModel::sourceModel() const
-{
-    return m_sourceModel;
 }
 
 }
