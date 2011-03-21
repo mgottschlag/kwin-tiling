@@ -27,6 +27,8 @@ PlasmaCore.FrameSvgItem {
     height: list.height
     imagePath: "widgets/tasks"
     prefix: "normal"
+    
+    property string title: name
 
     ListView.onRemove: SequentialAnimation {
         PropertyAction {
@@ -84,7 +86,7 @@ PlasmaCore.FrameSvgItem {
         Text {
             id: titleText
             color: theme.textColor
-            text: name
+            text: title
             font.bold:true
             anchors.left: parent.left
             anchors.right: parent.right
@@ -112,12 +114,12 @@ PlasmaCore.FrameSvgItem {
         }
         onEntered: {
             tooltipDialog.icon = decoration
-            tooltipDialog.title = name
             tooltipDialog.description = description
             tooltipDialog.author = author
             //tooltipDialog.email = email
             tooltipDialog.license = license
-            tooltipDialog.visible = true
+
+            tooltipDialog.appletDelegate = background
         }
     }
 }

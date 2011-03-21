@@ -27,6 +27,9 @@ Item {
     width: 250
     height: 200
 
+    property string title: tooltipDialog.appletDelegate.title
+
+
     PlasmaWidgets.IconWidget {
         id: tooltipIconWidget
         anchors.left: parent.left
@@ -42,7 +45,7 @@ Item {
         anchors.right: parent.right
         Text {
             color: theme.textColor
-            text: tooltipDialog.title
+            text: title
             font.bold:true
             anchors.left: parent.left
             anchors.right: parent.right
