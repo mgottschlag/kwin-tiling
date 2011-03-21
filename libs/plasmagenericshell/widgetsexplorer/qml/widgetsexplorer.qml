@@ -53,21 +53,18 @@ Item {
 
     PlasmaCore.Dialog {
         id: tooltipDialog
-        property variant icon
-        property string description
-        property string author
-        property string email
-        property string license
         property Item appletDelegate
+
         onAppletDelegateChanged: {
             var point = tooltipDialog.popupPosition(appletDelegate)
             tooltipDialog.x = point.x
             tooltipDialog.y = point.y
             tooltipDialog.visible = true
         }
-        mainItem: Tooltip {
-                     id: tooltipWidget
-                  }
+        mainItem: Tooltip { id: tooltipWidget }
+        Behavior on x {
+            NumberAnimation { duration: 250 }
+        }
     }
 
     Item {

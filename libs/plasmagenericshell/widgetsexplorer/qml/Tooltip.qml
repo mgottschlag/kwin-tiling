@@ -27,7 +27,12 @@ Item {
     width: 250
     height: 200
 
+    property variant icon: tooltipDialog.appletDelegate.icon
     property string title: tooltipDialog.appletDelegate.title
+    property string description: tooltipDialog.appletDelegate.description
+    property string author: tooltipDialog.appletDelegate.author
+    property string email: tooltipDialog.appletDelegate.email
+    property string license: tooltipDialog.appletDelegate.license
 
 
     PlasmaWidgets.IconWidget {
@@ -36,7 +41,7 @@ Item {
         anchors.top: parent.top
         width: 64
         height: 64
-        icon: tooltipDialog.icon
+        icon: main.icon
     }
     Column {
         id: nameColumn
@@ -53,7 +58,7 @@ Item {
             wrapMode: Text.Wrap
         }
         Text {
-            text: tooltipDialog.description
+            text: description
             color: theme.textColor
             anchors.left: parent.left
             anchors.right: parent.right
@@ -73,7 +78,7 @@ Item {
         }
         Text {
             id: licenseText
-            text: tooltipDialog.license
+            text: license
             color: theme.textColor
             wrapMode: Text.Wrap
         }
@@ -85,7 +90,7 @@ Item {
         }
         Text {
             id: authorText
-            text: tooltipDialog.author
+            text: author
             color: theme.textColor
             wrapMode: Text.Wrap
         }

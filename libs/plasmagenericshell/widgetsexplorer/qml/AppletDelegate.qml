@@ -27,8 +27,13 @@ PlasmaCore.FrameSvgItem {
     height: list.height
     imagePath: "widgets/tasks"
     prefix: "normal"
-    
+
+    property variant icon: decoration
     property string title: name
+    property string description: model.description
+    property string author: model.author
+    property string email: model.email
+    property string license: model.license
 
     ListView.onRemove: SequentialAnimation {
         PropertyAction {
@@ -72,7 +77,7 @@ PlasmaCore.FrameSvgItem {
         anchors.topMargin: background.margins.top
         anchors.bottomMargin: background.margins.bottom
         width: Math.min(64, height)
-        icon: decoration
+        icon: background.icon
     }
     Column {
         anchors.left: iconWidget.right
@@ -113,12 +118,6 @@ PlasmaCore.FrameSvgItem {
             addAppletRequested(pluginName)
         }
         onEntered: {
-            tooltipDialog.icon = decoration
-            tooltipDialog.description = description
-            tooltipDialog.author = author
-            //tooltipDialog.email = email
-            tooltipDialog.license = license
-
             tooltipDialog.appletDelegate = background
         }
     }
