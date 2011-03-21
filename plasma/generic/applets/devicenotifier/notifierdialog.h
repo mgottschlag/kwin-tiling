@@ -114,7 +114,7 @@ class DeviceNotifier;
 
           /**
           * Expand a device, showing its actions
-          * @param uid the udi of the device
+          * @param udi the udi of the device
           **/
           void expandDevice(const QString &udi);
 
