@@ -1,6 +1,7 @@
 /*  This file is part of the KDE project
     Copyright (C) 2006 Will Stephenson <wstephenson@kde.org>
     Copyright (C) 2006-2007 Kevin Ottens <ervin@kde.org>
+    Copyright (C) 2010-2011 Lamarque Souza <lamarque@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -54,10 +55,12 @@ namespace Control
         void _k_destroyed(QObject *object);
 
     private:
-        ModemInterfaceList buildDeviceList(const QStringList &udiList);
-        QPair<ModemInterface *, QObject *> findRegisteredModemInterface(const QString &udi, const ModemInterface::GsmInterfaceType ifaceType);
+        typedef QPair<ModemInterface *, QObject *> ModemInterfaceIfacePair;
 
-        QMap<QString, QMap<ModemInterface::GsmInterfaceType, QPair<ModemInterface *, QObject *> > > m_modemInterfaceMap;
+        ModemInterfaceList buildDeviceList(const QStringList &udiList);
+        ModemInterfaceIfacePair findRegisteredModemInterface(const QString &udi, const ModemInterface::GsmInterfaceType ifaceType);
+
+        QMap<QString, QMap<ModemInterface::GsmInterfaceType, ModemInterfaceIfacePair> > m_modemInterfaceMap;
         ModemInterface m_invalidDevice;
     };
 }

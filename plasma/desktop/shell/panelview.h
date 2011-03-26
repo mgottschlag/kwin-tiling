@@ -141,7 +141,7 @@ public Q_SLOTS:
     /**
      * Decides whether give focus to the panel
      */
-    void setStatus(Plasma::ItemStatus newStatus);
+    void statusUpdated(Plasma::ItemStatus newStatus);
 
     /**
      * Pinches the min/max sizes of the containment to the current screen resolution
@@ -240,6 +240,7 @@ private Q_SLOTS:
     void overlayMoved(PanelAppletOverlay *overlay);
     void panelDeleted();
     void startAutoHide();
+    void checkAutounhide();
 
     /**
      * update the appearance of the unhide hinter
@@ -269,6 +270,7 @@ private:
     GlowBar *m_glowBar;
     QTimer *m_mousePollTimer;
     QTimer *m_strutsTimer;
+    QTimer *m_rehideAfterAutounhideTimer;
     QTimeLine *m_timeLine;
     QGraphicsWidget *m_spacer;
     int m_spacerIndex;
@@ -290,7 +292,10 @@ private:
 
     bool m_editing : 1;
     bool m_triggerEntered : 1;
+    bool m_respectStatus : 1;
+
     static const int STRUTSTIMERDELAY = 200;
+    static const int AUTOUNHIDE_CHECK_DELAY = 3000;
 };
 
 #endif

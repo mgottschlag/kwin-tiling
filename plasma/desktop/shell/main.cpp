@@ -114,7 +114,7 @@ KDE_EXPORT int kdemain(int argc, char **argv)
     PlasmaApp *app = PlasmaApp::self();
     QApplication::setWindowIcon(KIcon("plasma"));
     app->disableSessionManagement(); // autostarted
-    
+
     int rc = app->exec();    
     delete app;
     return rc;

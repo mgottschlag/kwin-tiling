@@ -1,14 +1,14 @@
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/../CContLib ${CMAKE_CURRENT_SOURCE_DIR}/../ )
 
-ADD_LIBRARY(libksysguardd STATIC 
+ADD_LIBRARY(libksysguardd STATIC
+            acpi.c
             apm.c
-            CPU.c
+            cpuinfo.c
             diskstat.c
             loadavg.c
             logfile.c
             Memory.c
             netdev.c
-            ProcessList.c)
-
-TARGET_LINK_LIBRARIES(libksysguardd kvm)
-
+            ProcessList.c
+            stat.c
+            uptime.c)

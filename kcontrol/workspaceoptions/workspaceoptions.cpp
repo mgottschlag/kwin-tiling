@@ -111,8 +111,10 @@ void WorkspaceOptionsModule::save()
 
     KConfigGroup ownButtonsCg(m_ownConfig, "TitleBarButtons");
     KConfigGroup ownPresentWindowsCg(m_ownConfig, "Effect-PresentWindows");
+    KConfigGroup ownCompositingCg(m_ownConfig, "Compositing");
     KConfigGroup kwinStyleCg(m_kwinConfig, "Style");
     KConfigGroup kwinPresentWindowsCg(m_kwinConfig, "Effect-PresentWindows");
+    KConfigGroup kwinCompositingCg(m_kwinConfig, "Compositing");
 
 
     QString desktopTitleBarButtonsLeft = ownButtonsCg.readEntry("DesktopLeft", "MS");
@@ -136,12 +138,19 @@ void WorkspaceOptionsModule::save()
     int desktopPresentWindowsLayoutMode = 0;
     int netbookPresentWindowsLayoutMode = 1;
 
+    bool desktopUnredirectFullscreen = ownCompositingCg.readEntry("DesktopUnredirectFullscreen", true);
+    bool netbookUnredirectFullscreen = ownCompositingCg.readEntry("NetbookUnredirectFullscreen", false);
+
     if (m_currentlyIsDesktop) {
         //save the user preferences on titlebar buttons
         desktopTitleBarButtonsLeft = kwinStyleCg.readEntry("ButtonsOnLeft", "MS");
         desktopTitleBarButtonsRight = kwinStyleCg.readEntry("ButtonsOnRight", "HIA__X");
         ownButtonsCg.writeEntry("DesktopLeft", desktopTitleBarButtonsLeft);
         ownButtonsCg.writeEntry("DesktopRight", desktopTitleBarButtonsRight);
+
+        //Unredirect fullscreen
+        desktopUnredirectFullscreen = kwinCompositingCg.readEntry("UnredirectFullscreen", true);
+        ownCompositingCg.writeEntry("DesktopUnredirectFullscreen", desktopUnredirectFullscreen);
 
         //desktop grid effect
         desktopPresentWindowsLayoutMode = kwinPresentWindowsCg.readEntry("LayoutMode", 0);
@@ -176,6 +185,10 @@ void WorkspaceOptionsModule::save()
         ownButtonsCg.writeEntry("NetbookLeft", netbookTitleBarButtonsLeft);
         ownButtonsCg.writeEntry("NetbookRight", netbookTitleBarButtonsRight);
 
+        //Unredirect fullscreen
+        netbookUnredirectFullscreen = kwinCompositingCg.readEntry("UnredirectFullscreen", true);
+        ownCompositingCg.writeEntry("NetbookUnredirectFullscreen", netbookUnredirectFullscreen);
+
         //desktop grid effect
         desktopPresentWindowsLayoutMode = kwinPresentWindowsCg.readEntry("LayoutMode", 0);
         ownPresentWindowsCg.writeEntry("NetbookLayoutMode", desktopPresentWindowsLayoutMode);
@@ -205,12 +218,16 @@ void WorkspaceOptionsModule::save()
     }
     ownButtonsCg.sync();
     ownPresentWindowsCg.sync();
+    ownCompositingCg.sync();
 
     kwinStyleCg.writeEntry("CustomButtonPositions", true);
     if (isDesktop) {
         //kill/enable the minimize button, unless configured differently
         kwinStyleCg.writeEntry("ButtonsOnLeft", desktopTitleBarButtonsLeft);
         kwinStyleCg.writeEntry("ButtonsOnRight", desktopTitleBarButtonsRight);
+
+        // enable unredirect fullscreen, unless configured differently
+        kwinCompositingCg.writeEntry("UnredirectFullscreen", desktopUnredirectFullscreen);
 
         //present windows mode
         kwinPresentWindowsCg.writeEntry("LayoutMode", desktopPresentWindowsLayoutMode);
@@ -234,6 +251,9 @@ void WorkspaceOptionsModule::save()
         kwinStyleCg.writeEntry("ButtonsOnLeft", netbookTitleBarButtonsLeft);
         kwinStyleCg.writeEntry("ButtonsOnRight", netbookTitleBarButtonsRight);
 
+        // disable unredirect fullscreen, unless configured differently
+        kwinCompositingCg.writeEntry("UnredirectFullscreen", netbookUnredirectFullscreen);
+
         //present windows mode
         kwinPresentWindowsCg.writeEntry("LayoutMode", netbookPresentWindowsLayoutMode);
 
@@ -255,6 +275,7 @@ void WorkspaceOptionsModule::save()
 
     kwinStyleCg.sync();
     kwinPresentWindowsCg.sync();
+    kwinCompositingCg.sync();
 
     // Reload KWin.
     QDBusMessage message = QDBusMessage::createSignal( "/KWin", "org.kde.KWin", "reloadConfig" );

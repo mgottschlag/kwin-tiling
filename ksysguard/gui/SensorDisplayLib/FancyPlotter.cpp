@@ -261,6 +261,8 @@ void FancyPlotter::configureSettings()
     mSettingsDialog->setRangeUnits( mUnit );
     mSettingsDialog->setRangeUnits( mUnit );
 
+    mSettingsDialog->setStackBeams( mPlotter->stackGraph() );
+
     bool hasIntegerRange = true;
     SensorModelEntry::List list;
     for ( int i = 0; i < (int)mBeams; ++i ) {
@@ -324,6 +326,7 @@ void FancyPlotter::applySettings() {
     mPlotter->setShowHorizontalLines( mSettingsDialog->showHorizontalLines() );
 
     mPlotter->setShowAxis( mSettingsDialog->showAxis() );
+    mPlotter->setStackGraph( mSettingsDialog->stackBeams() );
 
     QFont font;
     font.setPointSize( mSettingsDialog->fontSize() );
@@ -495,6 +498,7 @@ void FancyPlotter::setTooltip()
     QString description;
     QString lastValue;
     bool neednewline = false;
+    bool showingSummationGroup = false;
     int beamId = -1;
     //Note that the number of beams can be less than the number of sensors, since some sensors
     //get added together for a beam.
@@ -514,9 +518,17 @@ void FancyPlotter::setTooltip()
         } else {
             lastValue = i18n("Error");
         }
-        if(beamId != sensor->beamId && !sensor->summationName.isEmpty()) {
-            tooltip += i18nc("%1 is what is being shown statistics for, like 'Memory', 'Swap', etc.", "<p><b>%1:</b><br>", sensor->summationName);
-            neednewline = false;
+        if (beamId != sensor->beamId) {
+            if (!sensor->summationName.isEmpty()) {
+                tooltip += i18nc("%1 is what is being shown statistics for, like 'Memory', 'Swap', etc.", "<p><b>%1:</b><br>", sensor->summationName);
+                showingSummationGroup = true;
+                neednewline = false;
+            } else if (showingSummationGroup) {
+                //When a summation group has finished, seperate the next sensor with a newline
+                showingSummationGroup = false;
+                tooltip += "<br>";
+            }
+
         }
         beamId = sensor->beamId;
 
@@ -550,7 +562,7 @@ void FancyPlotter::sendDataToPlotter( )
             mSampleBuf.append(mPlotter->lastValue(mSampleBuf.count())); //we might have sensors missing so set their values to the previously known value
         mPlotter->addSample( mSampleBuf );
         if(isVisible()) {
-            if(QToolTip::isVisible() && mPlotter->geometry().contains(mPlotter->mapFromGlobal( QCursor::pos() ))) {
+            if(QToolTip::isVisible() && (qApp->topLevelAt(QCursor::pos()) == window()) && mPlotter->geometry().contains(mPlotter->mapFromGlobal( QCursor::pos() ))) {
                 setTooltip();
                 QToolTip::showText(QCursor::pos(), mPlotter->toolTip(), mPlotter);
             }
@@ -708,8 +720,11 @@ void FancyPlotter::answerReceived( int id, const QList<QByteArray> &answerlist )
         QString summationName = sensor->summationName;
         int beamId = sensor->beamId;
 
+        Q_ASSERT(beamId < mPlotter->numBeams());
+        Q_ASSERT(beamId < mLabelLayout->count());
+
         if(summationName.isEmpty())
-            static_cast<FancyPlotterLabel *>((static_cast<QWidgetItem *>(mLabelLayout->itemAt(beamId)))->widget())->setLabel(info.name(), mPlotter->beamColor(id-100));
+            static_cast<FancyPlotterLabel *>((static_cast<QWidgetItem *>(mLabelLayout->itemAt(beamId)))->widget())->setLabel(info.name(), mPlotter->beamColor(beamId));
 
     } else if( id == 200) {
         /* FIXME This doesn't check the host!  */
@@ -763,6 +778,7 @@ bool FancyPlotter::restoreSettings( QDomElement &element )
     mPlotter->setHorizontalScale( element.attribute( "hScale", "6" ).toUInt() );
 
     mPlotter->setShowHorizontalLines( element.attribute( "hLines", "1" ).toUInt() );
+    mPlotter->setStackGraph( element.attribute("stacked", "0").toInt());
 
     QString filename = element.attribute( "svgBackground");
     if (!filename.isEmpty() && filename[0] == '/') {
@@ -837,6 +853,7 @@ bool FancyPlotter::saveSettings( QDomDocument &doc, QDomElement &element)
     element.setAttribute( "hLines", mPlotter->showHorizontalLines() );
 
     element.setAttribute( "svgBackground", mPlotter->svgBackground() );
+    element.setAttribute( "stacked", mPlotter->stackGraph() );
 
     element.setAttribute( "version", 1 );
     element.setAttribute( "labels", mPlotter->showAxis() );

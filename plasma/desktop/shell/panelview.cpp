@@ -29,8 +29,9 @@
 #include <X11/extensions/shape.h>
 #endif
 
-#include <KWindowSystem>
 #include <KDebug>
+#include <KIdleTime>
+#include <KWindowSystem>
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
@@ -308,6 +309,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_glowBar(0),
       m_mousePollTimer(0),
       m_strutsTimer(new QTimer(this)),
+      m_rehideAfterAutounhideTimer(new QTimer(this)),
       m_spacer(0),
       m_spacerIndex(-1),
       m_shadowWindow(0),
@@ -317,7 +319,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_visibilityMode(NormalPanel),
       m_lastHorizontal(true),
       m_editing(false),
-      m_triggerEntered(false)
+      m_triggerEntered(false),
+      m_respectStatus(true)
 {
     // KWin setup
     KWindowSystem::setOnAllDesktops(winId(), true);
@@ -326,6 +329,12 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     m_strutsTimer->setSingleShot(true);
     connect(m_strutsTimer, SIGNAL(timeout()), this, SLOT(updateStruts()));
+
+    // this timer controls checks to re-hide a panel after it's been unhidden
+    // for the user because, e.g., something is demanding attention
+    m_rehideAfterAutounhideTimer->setSingleShot(true);
+    m_rehideAfterAutounhideTimer->setInterval(AUTOUNHIDE_CHECK_DELAY);
+    connect(m_rehideAfterAutounhideTimer, SIGNAL(timeout()), this, SLOT(checkAutounhide()));
 
     // Graphics view setup
     setFrameStyle(QFrame::NoFrame);
@@ -405,7 +414,7 @@ void PanelView::setContainment(Plasma::Containment *containment)
         disconnect(oldContainment);
     }
 
-    connect(containment, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(setStatus(Plasma::ItemStatus)));
+    connect(containment, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(statusUpdated(Plasma::ItemStatus)));
     connect(containment, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
     connect(containment, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
     connect(containment, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)), this, SLOT(appletAdded(Plasma::Applet *)));
@@ -440,6 +449,11 @@ void PanelView::setContainment(Plasma::Containment *containment)
 
     updateStruts();
     checkShadow();
+
+    // if we are an autohiding panel, then see if the status mandates we do something about it
+    if (m_visibilityMode != NormalPanel && m_visibilityMode != WindowsGoBelow) {
+        checkUnhide(containment->status());
+    }
 }
 
 void PanelView::themeChanged()
@@ -1425,7 +1439,7 @@ void PanelView::unhide(bool destroyTrigger)
     }
 }
 
-void PanelView::setStatus(Plasma::ItemStatus newStatus)
+void PanelView::statusUpdated(Plasma::ItemStatus newStatus)
 {
     if (newStatus == Plasma::AcceptingInputStatus) {
         KWindowSystem::forceActiveWindow(winId());
@@ -1434,12 +1448,48 @@ void PanelView::setStatus(Plasma::ItemStatus newStatus)
 
 void PanelView::checkUnhide(Plasma::ItemStatus newStatus)
 {
-    //kDebug() << "================= got a new status: " << newStatus << Plasma::ActiveStatus;
+    //kDebug() << "================= got a status: " << newStatus << Plasma::ActiveStatus;
+    m_respectStatus = true;
+
     if (newStatus > Plasma::ActiveStatus) {
         unhide();
+        if (newStatus == Plasma::NeedsAttentionStatus) {
+            //kDebug() << "starting the timer!";
+            // start our rehide timer, so that the panel doesn't stay up and stuck forever and a day
+            m_rehideAfterAutounhideTimer->start();
+        }
     } else {
+        //kDebug() << "new status, just autohiding";
         startAutoHide();
     }
+}
+
+void PanelView::checkAutounhide()
+{
+    //kDebug() << "***************************" << KIdleTime::instance()->idleTime();
+    if (KIdleTime::instance()->idleTime() >= AUTOUNHIDE_CHECK_DELAY) {
+        // the user is idle .. let's not hige the panel on them quite yet, but rather given them a
+        // chance to see this thing!
+        connect(KIdleTime::instance(), SIGNAL(resumingFromIdle()), this, SLOT(checkAutounhide()),
+                Qt::UniqueConnection);
+        KIdleTime::instance()->catchNextResumeEvent();
+        //kDebug() << "exit 1 ***************************";
+        return;
+    }
+
+    m_respectStatus = false;
+    //kDebug() << "in to check ... who's resonsible?" << sender() << KIdleTime::instance();
+    if (sender() == KIdleTime::instance()) {
+        //kDebug() << "doing a 2s wait";
+        QTimer::singleShot(2000, this, SLOT(startAutoHide()));
+    } else {
+        //kDebug() << "just starting autohide!";
+        startAutoHide();
+    }
+
+    // this line must come after the check on sender() as it *clears* that value!
+    disconnect(KIdleTime::instance(), SIGNAL(resumingFromIdle()), this, SLOT(checkAutounhide()));
+    //kDebug() << "exit 0 ***************************";
 }
 
 void PanelView::unhide()
@@ -1454,7 +1504,6 @@ void PanelView::resetTriggerEnteredSuppression()
 
 void PanelView::startAutoHide()
 {
-    //TODO: is 5s too long? not long enough?
     /*
     kDebug() << m_editing << (containment() ? containment()->status() : 0) << Plasma::ActiveStatus
              << geometry().adjusted(-10, -10, 10, 10).contains(QCursor::pos()) << hasPopup();
@@ -1465,9 +1514,21 @@ void PanelView::startAutoHide()
     }
     */
 
-    if (m_editing || (containment() && containment()->status() > Plasma::ActiveStatus) ||
-        geometry().adjusted(-10, -10, 10, 10).contains(QCursor::pos()) ||
-        hasPopup()) {
+
+    if (m_editing || (m_respectStatus && (containment() && containment()->status() > Plasma::ActiveStatus))) {
+        if (m_mousePollTimer) {
+            m_mousePollTimer->stop();
+            disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(startAutoHide()));
+        }
+
+        return;
+    }
+
+    // since we've gotten this far, we don't need to worry about rehiding-after-auto-unhide, so just
+    // stop the timer
+    m_rehideAfterAutounhideTimer->stop();
+
+    if (geometry().adjusted(-10, -10, 10, 10).contains(QCursor::pos()) || hasPopup()) {
         if (!m_mousePollTimer) {
             leaveEvent(0);
         }

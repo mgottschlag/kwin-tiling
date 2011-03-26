@@ -57,6 +57,7 @@ class Temperature : public SM::Applet
         QRegExp m_rx;
 
         QString temperatureTitle(const QString& source);
+        double temperatureOffset(const QString& source);
         bool addVisualization(const QString& source);
         bool isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data);
 };
