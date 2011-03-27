@@ -72,10 +72,11 @@ private:
 
     Plasma::Corona *m_corona;
     QMultiHash<QString, int> m_storedApplets;
+
     int m_maxId;
 
-    //TODO: it will have an arbitrary number of views
-    QList<SingleView *> m_views;
+    QHash<QString, SingleView *> m_viewForPlugin;
+    QHash<SingleView *, QString> m_pluginForView;
 };
 
 #endif // multiple inclusion guard
