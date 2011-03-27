@@ -31,9 +31,6 @@ KWIN_EFFECT(slidingpopups, SlidingPopupsEffect)
 
 SlidingPopupsEffect::SlidingPopupsEffect()
 {
-    KConfigGroup conf = effects->effectConfig("SlidingPopups");
-    mFadeInTime = animationTime(conf, "SlideInTime", 250);
-    mFadeOutTime = animationTime(conf, "SlideOutTime", 250);
     mAtom = XInternAtom(display(), "_KDE_SLIDE", False);
     effects->registerPropertyType(mAtom, true);
     // TODO hackish way to announce support, make better after 4.0
@@ -43,12 +40,37 @@ SlidingPopupsEffect::SlidingPopupsEffect()
     connect(effects, SIGNAL(windowClosed(EffectWindow*)), this, SLOT(slotWindowClosed(EffectWindow*)));
     connect(effects, SIGNAL(windowDeleted(EffectWindow*)), this, SLOT(slotWindowDeleted(EffectWindow*)));
     connect(effects, SIGNAL(propertyNotify(EffectWindow*,long)), this, SLOT(slotPropertyNotify(EffectWindow*,long)));
+    reconfigure(ReconfigureAll);
 }
 
 SlidingPopupsEffect::~SlidingPopupsEffect()
 {
     XDeleteProperty(display(), rootWindow(), mAtom);
     effects->registerPropertyType(mAtom, false);
+}
+
+void SlidingPopupsEffect::reconfigure(ReconfigureFlags flags)
+{
+    Q_UNUSED(flags)
+    KConfigGroup conf = effects->effectConfig("SlidingPopups");
+    mFadeInTime = animationTime(conf, "SlideInTime", 250);
+    mFadeOutTime = animationTime(conf, "SlideOutTime", 250);
+    QHash< const EffectWindow*, QTimeLine* >::iterator it = mAppearingWindows.begin();
+    while (it != mAppearingWindows.end()) {
+        it.value()->setDuration(animationTime(mFadeInTime));
+        it++;
+    }
+    it = mDisappearingWindows.begin();
+    while (it != mDisappearingWindows.end()) {
+        it.value()->setDuration(animationTime(mFadeOutTime));
+        it++;
+    }
+    QHash< const EffectWindow*, Data >::iterator wIt = mWindowsData.begin();
+    while (wIt != mWindowsData.end()) {
+        wIt.value().fadeInDuration = mFadeInTime;
+        wIt.value().fadeOutDuration = mFadeOutTime;
+        wIt++;
+    }
 }
 
 void SlidingPopupsEffect::prePaintScreen(ScreenPrePaintData& data, int time)
@@ -126,8 +148,24 @@ void SlidingPopupsEffect::paintWindow(EffectWindow* w, int mask, QRegion region,
 
 void SlidingPopupsEffect::postPaintWindow(EffectWindow* w)
 {
-    if (mAppearingWindows.contains(w) || mDisappearingWindows.contains(w))
+    if (mAppearingWindows.contains(w) || mDisappearingWindows.contains(w)) {
         w->addRepaintFull(); // trigger next animation repaint
+        const int start = mWindowsData[ w ].start;
+        switch(mWindowsData[ w ].from) {
+        case West:
+            effects->addRepaint(QRect(start, w->y(), w->x(), w->height()));
+            break;
+        case North:
+            effects->addRepaint(QRect(w->x(), start, w->width(), w->y()));
+            break;
+        case East:
+            effects->addRepaint(QRect(w->x() + w->width(), w->y(), displayWidth() - w->x() - w->width() - start, w->height()));
+            break;
+        case South:
+        default:
+            effects->addRepaint(QRect(w->x(), w->y()+w->height(), w->width(), displayHeight() - w->y() - w->height() - start));
+        }
+    }
     effects->postPaintWindow(w);
     if (mDisappearingWindows.contains(w) && mDisappearingWindows[ w ]->currentValue() >= 1) {
         delete mDisappearingWindows.take(w);

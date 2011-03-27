@@ -456,6 +456,14 @@ void NotifierDialog::setDeviceData(const QString &udi, QVariant data, int role)
     }
 }
 
+void NotifierDialog::expandDevice(const QString &udi)
+{
+    DeviceItem *item = itemForUdi(udi);
+    if (item) {
+        item->expand();
+    }
+}
+
 QVariant NotifierDialog::getDeviceData(const QString &udi, int role)
 {
     DeviceItem *item = itemForUdi(udi);

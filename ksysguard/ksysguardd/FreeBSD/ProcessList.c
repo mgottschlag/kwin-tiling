@@ -23,6 +23,7 @@
 
 #include "ProcessList.h"
 
+#include <ctype.h>
 #include <fcntl.h>
 #include <paths.h>
 #include <pwd.h>
@@ -42,9 +43,7 @@
 
 #define KILL_COMMAND "kill"
 #define SETPRIORITY_COMMAND "setpriority"
-#define PROC_MONITOR "ps"
-#define NPROC_MONITOR "pscount"
-#define PID_MONITOR "lastpid"
+
 #define PROCBUF 1024
 #define STATEBUF 12
 #define NAMEBUF 24
@@ -52,6 +51,8 @@
 #define ARGBUF 256
 #define PWDBUF 16
 #define NAMELEN 128
+
+#define MONITORBUF 20
 
 static struct kinfo_proc proc_buf[PROCBUF], prev_list[PROCBUF];
 static int nproc, prev_nproc, sorted_proc[PROCBUF], prev_sorted[PROCBUF];
@@ -61,7 +62,7 @@ static float scale;
 
 static int pagesize, smpmode;
 
-static unsigned int lastpid;
+static pid_t lastpid = 0, procspawn;
 
 static struct {
     uid_t uid;
@@ -70,13 +71,15 @@ static struct {
 static int pwd_size = 0, pwd_hit = 0, pwd_last = 0;
 
 static char *const statuses[] = { "", "IDLE", "RUN", "SLEEP", "STOP", "ZOMBIE", "WAIT", "LOCK" };
+static pid_t statcnt[8];
 static char (*cpunames)[8] = NULL;
 
 static int cmp_pid(const void *, const void *);
 static char *getname(const uid_t);
 
 void initProcessList(struct SensorModul *sm) {
-    size_t len;
+    char name[MONITORBUF];
+    size_t len, stat, chr, chr_size;
 
     if (!RunAsDaemon) {
         registerCommand(KILL_COMMAND, killProcess);
@@ -97,21 +100,48 @@ void initProcessList(struct SensorModul *sm) {
 
     pagesize = getpagesize() / 1024;
 
-    registerMonitor(PROC_MONITOR, "table", printProcessList, printProcessListInfo, sm);
-    registerMonitor(NPROC_MONITOR, "integer", printProcessCount, printProcessCountInfo, sm);
-    registerMonitor(PID_MONITOR, "integer", printLastPID, printLastPIDInfo, sm);
+    registerMonitor("processes/ps", "table", printProcessList, printProcessListInfo, sm);
+    registerMonitor("processes/lastpid", "integer", printLastPID, printLastPIDInfo, sm);
+    registerMonitor("processes/procspawn", "integer", printProcSpawn, printProcSpawnInfo, sm);
+
+    strcpy(name, "processes/ps");
+    registerMonitor("processes/pscount", "integer", printProcessCount, printProcessCountInfo, sm);
+    for (stat = 1; stat < 8; ++stat) {
+        chr_size = strlcpy(name + 12, statuses[stat], MONITORBUF - 12);
+        for (chr = 0; chr < chr_size; ++chr)
+            name[12 + chr] = tolower(name[12 + chr]);
+        registerMonitor(name, "integer", printProcessxCount, printProcessxCountInfo, sm);
+    }
+
+    registerLegacyMonitor("ps", "table", printProcessList, printProcessListInfo, sm);
+    registerLegacyMonitor("processes/pscount", "integer", printProcessCount, printProcessCountInfo, sm);
 
     nproc = 0;
     updateProcessList();
 }
 
 void exitProcessList(void) {
+    char name[MONITORBUF];
+    size_t stat, chr, chr_size;
+
     removeCommand(KILL_COMMAND);
     removeCommand(SETPRIORITY_COMMAND);
 
-    removeMonitor(PROC_MONITOR);
-    removeMonitor(NPROC_MONITOR);
-    removeMonitor(PID_MONITOR);
+    removeMonitor("processes/ps");
+    removeMonitor("processes/lastpid");
+    removeMonitor("processes/procspawn");
+
+    strcpy(name, "processes/ps");
+    removeMonitor("processes/pscount");
+    for (stat = 1; stat < 8; ++stat) {
+        chr_size = strlcpy(name + 12, statuses[stat], MONITORBUF - 12);
+        for (chr = 0; chr < chr_size; ++chr)
+            name[12 + chr] = tolower(name[12 + chr]);
+        removeMonitor(name);
+    }
+
+    removeMonitor("ps");
+    removeMonitor("pscount");
 
     free(cpunames);
     cpunames = NULL;
@@ -120,6 +150,7 @@ void exitProcessList(void) {
 int updateProcessList(void) {
     int proc;
     int mib[3];
+    pid_t prevpid = lastpid, pid;
     size_t len;
     struct timespec update;
 
@@ -135,7 +166,7 @@ int updateProcessList(void) {
     sysctl(mib, 3, proc_buf, &len, NULL, 0);
     nproc = len / sizeof(struct kinfo_proc);
 
-    len = sizeof(unsigned int);
+    len = sizeof(lastpid);
     sysctlbyname("kern.lastpid", &lastpid, &len, NULL, 0);
 
     if (nproc > PROCBUF)
@@ -143,6 +174,25 @@ int updateProcessList(void) {
     for (proc = 0; proc < nproc; ++proc)
         sorted_proc[proc] = proc;
     qsort(sorted_proc, nproc, sizeof(int), cmp_pid);
+
+    bzero(statcnt, sizeof(statcnt));
+    if (lastpid >= prevpid) {
+        procspawn = lastpid - prevpid;
+        for (proc = 0; proc < prev_nproc; ++proc) {
+            pid = prev_list[prev_sorted[proc]].ki_pid;
+            if (prevpid < pid && pid <= lastpid)
+                --procspawn;
+            ++statcnt[prev_list[prev_sorted[proc]].ki_stat];
+        }
+    } else {
+        procspawn = prevpid - lastpid + 1;
+        for (proc = 0; proc < prev_nproc; ++proc) {
+            pid = prev_list[prev_sorted[proc]].ki_pid;
+            if (pid <= lastpid || pid > prevpid)
+                --procspawn;
+            ++statcnt[prev_list[prev_sorted[proc]].ki_stat];
+        }
+    }
 
     scale = (update.tv_sec - last_update.tv_sec) + (update.tv_nsec - last_update.tv_nsec) / 1000000000.0;
     last_update = update;
@@ -255,6 +305,10 @@ void printProcessList(const char* cmd)
         else
             load = ps->ki_runtime / 1000000.0 / scale;
 
+        if (!ps->ki_pid)
+            // XXX: TODO: add support for displaying kernel process
+            continue;
+
         fprintf(CurrentClient, "%s\t%ld\t%ld\t%ld\t%ld\t%s\t%.2f\t%.2f\t%d\t%ld\t%ld\t%s\t%s\n",
                name, (long)ps->ki_pid, (long)ps->ki_ppid,
                (long)ps->ki_uid, (long)ps->ki_pgid, state,
@@ -274,7 +328,37 @@ void printProcessCount(const char *cmd) {
 }
 
 void printProcessCountInfo(const char *cmd) {
-    fprintf(CurrentClient, "Number of Processes\t1\t65535\t\n");
+    fprintf(CurrentClient, "Number of Processes\t0\t0\t\n");
+}
+
+void printProcessxCount(const char *cmd) {
+    int idx;
+
+    for (idx = 1; idx < 7; ++idx)
+        if (strncasecmp(cmd + 12, statuses[idx], strlen(cmd + 12) - 1) == 0)
+            break;
+
+    fprintf(CurrentClient, "%d\n", statcnt[idx]);
+}
+
+void printProcessxCountInfo(const char *cmd) {
+    int idx;
+    static char *const statnames[] = {"", "Idle", "Running", "Sleeping", "Stopped", "Zombie", "Waiting", "Locked" };
+
+    for (idx = 1; idx < 7; ++idx) {
+        if (strncasecmp(cmd + 12, statuses[idx], strlen(cmd + 12) - 1) == 0)
+            break;
+    }
+
+    fprintf(CurrentClient, "%s Processes\t0\t0\t\n", statnames[idx]);
+}
+
+void printProcSpawn(const char *cmd) {
+    fprintf(CurrentClient, "%u\n", procspawn);
+}
+
+void printProcSpawnInfo(const char *cmd) {
+    fprintf(CurrentClient, "Number of processes spawned\t0\t0\t1/s\n");
 }
 
 void printLastPID(const char *cmd) {

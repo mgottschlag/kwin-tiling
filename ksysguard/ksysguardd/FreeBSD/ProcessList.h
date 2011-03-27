@@ -37,6 +37,11 @@ void printThreadListInfo(const char *);
 
 void printProcessCount(const char *);
 void printProcessCountInfo(const char *);
+void printProcessxCount(const char *);
+void printProcessxCountInfo(const char *);
+
+void printProcSpawn(const char *);
+void printProcSpawnInfo(const char *);
 
 void printLastPID(const char *);
 void printLastPIDInfo(const char *);

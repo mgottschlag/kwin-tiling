@@ -24,6 +24,8 @@
 #include <QVBoxLayout>
 #include <QSortFilterProxyModel>
 #include <QTime>
+#include <QMenu>
+#include <QAction>
 
 #include <kdebug.h>
 #include <kglobal.h>
@@ -38,10 +40,56 @@
 #include "ListView.moc"
 #include "ListViewSettings.h"
 
+static QString formatByteSize(qlonglong amountInKB, int units) {
+    enum { UnitsAuto, UnitsKB, UnitsMB, UnitsGB, UnitsTB, UnitsPB };
+    static QString kString = i18n("%1 K", QString::fromLatin1("%1"));
+    static QString mString = i18n("%1 M", QString::fromLatin1("%1"));
+    static QString gString = i18n("%1 G", QString::fromLatin1("%1"));
+    static QString tString = i18n("%1 T", QString::fromLatin1("%1"));
+    static QString pString = i18n("%1 P", QString::fromLatin1("%1"));
+    double amount;
+
+    if (units == UnitsAuto) {
+        if (amountInKB < 1024.0*0.9)
+            units = UnitsKB; // amount < 0.9 MiB == KiB
+        else if (amountInKB < 1024.0*1024.0*0.9)
+            units = UnitsMB; // amount < 0.9 GiB == MiB
+        else if (amountInKB < 1024.0*1024.0*1024.0*0.9)
+            units = UnitsGB; // amount < 0.9 TiB == GiB
+        else if (amountInKB < 1024.0*1024.0*1024.0*1024.0*0.9)
+            units = UnitsTB; // amount < 0.9 PiB == TiB
+        else
+            units = UnitsPB;
+    }
+
+    switch(units) {
+      case UnitsKB:
+        return kString.arg(KGlobal::locale()->formatNumber(amountInKB, 0));
+      case UnitsMB:
+        amount = amountInKB/1024.0;
+        return mString.arg(KGlobal::locale()->formatNumber(amount, 1));
+      case UnitsGB:
+        amount = amountInKB/(1024.0*1024.0);
+        if(amount < 0.1 && amount > 0.05) amount = 0.1;
+        return gString.arg(KGlobal::locale()->formatNumber(amount, 1));
+      case UnitsTB:
+        amount = amountInKB/(1024.0*1024.0*1024.0);
+        if(amount < 0.1 && amount > 0.05) amount = 0.1;
+        return tString.arg(KGlobal::locale()->formatNumber(amount, 1));
+      case UnitsPB:
+        amount = amountInKB/(1024.0*1024.0*1024.0*1024.0);
+        if(amount < 0.1 && amount > 0.05) amount = 0.1;
+        return pString.arg(KGlobal::locale()->formatNumber(amount, 1));
+      default:
+          return "";  // error
+    }
+}
+
 ListView::ListView(QWidget* parent, const QString& title, SharedSettings *workSheetSettings)
     : KSGRD::SensorDisplay(parent, title, workSheetSettings)
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
+    mUnits = UnitsKB;
     mView = new QTreeView(this);
 //    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
 //    proxyModel->setSourceModel(&mModel);
@@ -51,8 +99,9 @@ ListView::ListView(QWidget* parent, const QString& title, SharedSettings *workSh
     this->setLayout(layout);
 
     mView->setContextMenuPolicy( Qt::CustomContextMenu );
-    connect(mView, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(showContextMenu(const QPoint &)));
-    connect(mView, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(showContextMenu(const QPoint &)));
+    mView->header()->setContextMenuPolicy( Qt::CustomContextMenu );
+    connect(mView, SIGNAL(customContextMenuRequested(QPoint)), SLOT(showContextMenu(QPoint)));
+    connect(mView->header(), SIGNAL(customContextMenuRequested(QPoint)), SLOT(showColumnContextMenu(QPoint)));
 
     mView->setAlternatingRowColors(true);
     mView->header()->setMovable(true);
@@ -74,14 +123,110 @@ ListView::ListView(QWidget* parent, const QString& title, SharedSettings *workSh
     mView->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
 }
 
+
+void ListView::showColumnContextMenu(const QPoint &point)
+{
+    QMenu *menu = new QMenu();
+
+    int index = mView->header()->logicalIndexAt(point);
+    if (index < 0 || index >= mColumnTypes.count())
+        return; //Should be impossible
+
+    /*if(index >= 0) {
+        //selected a column.  Give the option to hide it
+        action = new QAction(&menu);
+        action->setData(-index-1); //We set data to be negative (and minus 1) to hide a column, and positive to show a column
+        action->setText(i18n("Hide Column '%1'", d->mFilterModel.headerData(index, Qt::Horizontal, Qt::DisplayRole).toString()));
+        menu.addAction(action);
+        if(d->mUi->treeView->header()->sectionsHidden()) {
+            menu.addSeparator();
+        }
+    }*/
+
+    QAction *actionAuto = NULL;
+    QAction *actionKB = NULL;
+    QAction *actionMB = NULL;
+    QAction *actionGB = NULL;
+    QAction *actionTB = NULL;
+    if (mColumnTypes[index] == KByte) {
+        menu->addSeparator()->setText(i18n("Display Units"));
+        QActionGroup *unitsGroup = new QActionGroup(menu);
+        /* Automatic (human readable)*/
+        actionAuto = new QAction(menu);
+        actionAuto->setText(i18n("Mixed"));
+        actionAuto->setCheckable(true);
+        menu->addAction(actionAuto);
+        unitsGroup->addAction(actionAuto);
+        /* Kilobytes */
+        actionKB = new QAction(menu);
+        actionKB->setText(i18n("Kilobytes"));
+        actionKB->setCheckable(true);
+        menu->addAction(actionKB);
+        unitsGroup->addAction(actionKB);
+        /* Megabytes */
+        actionMB = new QAction(menu);
+        actionMB->setText(i18n("Megabytes"));
+        actionMB->setCheckable(true);
+        menu->addAction(actionMB);
+        unitsGroup->addAction(actionMB);
+        /* Gigabytes */
+        actionGB = new QAction(menu);
+        actionGB->setText(i18n("Gigabytes"));
+        actionGB->setCheckable(true);
+        menu->addAction(actionGB);
+        unitsGroup->addAction(actionGB);
+        /* Terabytes */
+        actionTB = new QAction(menu);
+        actionTB->setText(i18n("Terabytes"));
+        actionTB->setCheckable(true);
+        menu->addAction(actionTB);
+        unitsGroup->addAction(actionTB);
+
+        switch(mUnits) {
+            case UnitsAuto:
+                actionAuto->setChecked(true);
+                break;
+            case UnitsKB:
+                actionKB->setChecked(true);
+                break;
+            case UnitsMB:
+                actionMB->setChecked(true);
+                break;
+            case UnitsGB:
+                actionGB->setChecked(true);
+                break;
+            case UnitsTB:
+                actionTB->setChecked(true);
+                break;
+            default:
+                break;
+        }
+        unitsGroup->setExclusive(true);
+    }
+
+
+    QAction *result = menu->exec(mView->header()->mapToGlobal(point));
+    if (result == actionAuto)
+        mUnits = UnitsAuto;
+    else if (result == actionKB)
+        mUnits = UnitsKB;
+    else if (result == actionMB)
+        mUnits = UnitsMB;
+    else if (result == actionGB)
+        mUnits = UnitsGB;
+    else if (result == actionTB)
+        mUnits = UnitsTB;
+    delete menu;
+}
+
 bool
 ListView::addSensor(const QString& hostName, const QString& sensorName, const QString& sensorType, const QString& title)
 {
     if (sensorType != "listview")
         return false;
-    if(sensorName.isEmpty()) return false;
+    if(sensorName.isEmpty())
+        return false;
 
-    kDebug() << "addSensor and sensorName is " << sensorName;
     registerSensor(new KSGRD::SensorProperties(hostName, sensorName, sensorType, title));
 
     setTitle(title);
@@ -90,7 +235,7 @@ ListView::addSensor(const QString& hostName, const QString& sensorName, const QS
      * requests we use 100 for info requests. */
     sendRequest(hostName, sensorName + '?', 100);
     sendRequest(hostName, sensorName, 19);
-    return (true);
+    return true;
 }
 
 void ListView::updateList()
@@ -130,7 +275,7 @@ ListView::answerReceived(int id, const QList<QByteArray>& answer)
              * the information about the table headers. */
             if (answer.count() != 2)
             {
-                kDebug(1215) << "wrong number of lines";
+                kWarning(1215) << "wrong number of lines";
                 return;
             }
             KSGRD::SensorTokenizer headers(answer[0], '\t');
@@ -168,7 +313,7 @@ ListView::answerReceived(int id, const QList<QByteArray>& answer)
                     item->setEditable(false);
                     switch( mColumnTypes[j] ) {
                       case Int:
-                        item->setData(records[j].toInt(), Qt::UserRole);
+                        item->setData(records[j].toLongLong(), Qt::UserRole);
                         item->setText(records[j]);
                         break;
                       case Percentage:
@@ -183,10 +328,11 @@ ListView::answerReceived(int id, const QList<QByteArray>& answer)
                         item->setData(QTime::fromString(records[j]), Qt::DisplayRole);
                         item->setData(QTime::fromString(records[j]), Qt::UserRole);
                         break;
-                      case KByte:
+                      case KByte: {
                         item->setData(records[j].toInt(), Qt::UserRole);
-                        item->setText(i18nc("units in kb", "%1 K", records[j].toInt()));
+                        item->setText(formatByteSize(records[j].toLongLong(), mUnits));
                         break;
+                      }
                       case DiskStat:
                       case Text:
                       default:
@@ -206,12 +352,12 @@ ListView::answerReceived(int id, const QList<QByteArray>& answer)
 bool
 ListView::restoreSettings(QDomElement& element)
 {
-    kDebug() << "restore settings";
     addSensor(element.attribute("hostName"), element.attribute("sensorName"), (element.attribute("sensorType").isEmpty() ? "listview" : element.attribute("sensorType")), element.attribute("title"));
 
     //At this stage, we don't have the heading information, so we cannot setup the headers yet.
     //Save the info, the restore later.
     mHeaderSettings = QByteArray::fromBase64(element.attribute("treeViewHeader").toLatin1());
+    mUnits = (ListView::Units)element.attribute("units", "0").toInt();
 
 /*    QPalette pal = monitor->palette();
     pal.setColor(QPalette::Link, restoreColor(element, "gridColor",
@@ -231,13 +377,10 @@ ListView::restoreSettings(QDomElement& element)
 bool
 ListView::saveSettings(QDomDocument& doc, QDomElement& element)
 {
-    kDebug() << "save settings";
     if(!sensors().isEmpty()) {
         element.setAttribute("hostName", sensors().at(0)->hostName());
         element.setAttribute("sensorName", sensors().at(0)->name());
         element.setAttribute("sensorType", sensors().at(0)->type());
-
-        kDebug() << "sensorName is " << sensors().at(0)->name();
 
 /*    QPalette pal = monitor->palette();
     saveColor(element, "gridColor", pal.color(QPalette::Link));
@@ -246,6 +389,7 @@ ListView::saveSettings(QDomDocument& doc, QDomElement& element)
 */
     }
     element.setAttribute("treeViewHeader", QString::fromLatin1(mView->header()->saveState().toBase64()));
+    element.setAttribute("units", QString::number(mUnits));
 
     SensorDisplay::saveSettings(doc, element);
     return true;

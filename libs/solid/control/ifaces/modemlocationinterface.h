@@ -17,8 +17,8 @@
 
 */
 
-#ifndef SOLID_IFACES_MODEMGSMHSOINTERFACE_H
-#define SOLID_IFACES_MODEMGSMHSOINTERFACE_H
+#ifndef SOLID_IFACES_MODEMLOCATIONINTERFACE_H
+#define SOLID_IFACES_MODEMLOCATIONINTERFACE_H
 
 #include "../solid_control_export.h"
 #include "../modemlocationinterface.h"
