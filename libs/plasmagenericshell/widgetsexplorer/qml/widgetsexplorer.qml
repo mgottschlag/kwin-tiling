@@ -55,6 +55,11 @@ Item {
         id: tooltipDialog
         property Item appletDelegate
 
+        Component.onCompleted: {
+            tooltipDialog.setAttribute(Qt.WA_X11NetWmWindowTypeDock, true)
+            tooltipDialog.windowFlags |= Qt.WindowStaysOnTopHint|Qt.X11BypassWindowManagerHint
+        }
+
         onAppletDelegateChanged: {
             var point = tooltipDialog.popupPosition(appletDelegate)
             tooltipDialog.x = point.x
