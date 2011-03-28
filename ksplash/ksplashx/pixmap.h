@@ -48,7 +48,7 @@
 
 #include "x11_defs.h"
 
-class QImage;
+#include "qimage.h"
 
 enum Optimization { DefaultOptim, NoOptim, MemoryOptim=NoOptim,
 			NormalOptim, BestOptim };
@@ -62,6 +62,7 @@ struct PixmapData
     int d;
     Optimization optim;
     XImage* ximage;
+    QImage orig;
     };
 
 class PP : public Qt // inherit from Qt to reduce needed code changes in the function
