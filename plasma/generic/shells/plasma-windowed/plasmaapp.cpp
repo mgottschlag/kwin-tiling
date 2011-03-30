@@ -110,6 +110,13 @@ int  PlasmaApp::newInstance()
         pluginName = args->arg(0);
     }
 
+    //is the applet already running?
+    if (m_viewForPlugin.contains(pluginName)) {
+        m_viewForPlugin.value(pluginName)->activateWindow();
+        m_viewForPlugin.value(pluginName)->raise();
+        return 0;
+    }
+
     QVariantList appletArgs;
     for (int i = 1; i < args->count(); ++i) {
         appletArgs << args->arg(i);
@@ -164,7 +171,8 @@ int  PlasmaApp::newInstance()
 
     args->clear();
 
-    m_views.append(view);
+    m_viewForPlugin[pluginName] = view;
+    m_pluginForView[view] = pluginName;
     KWindowSystem::setOnDesktop(view->winId(), KWindowSystem::currentDesktop());
     view->show();
     view->raise();
@@ -179,7 +187,7 @@ void PlasmaApp::cleanup()
         m_corona->saveLayout();
     }
 
-    qDeleteAll(m_views);
+    qDeleteAll(m_viewForPlugin.values());
 
     delete m_corona;
     m_corona = 0;
@@ -195,7 +203,7 @@ void PlasmaApp::syncConfig()
 
 void PlasmaApp::themeChanged()
 {
-    foreach (SingleView *view, m_views) {
+    foreach (SingleView *view, m_viewForPlugin) {
         if (view->autoFillBackground()) {
             view->setBackgroundBrush(KColorUtils::mix(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor), Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor), 0.15));
         }
@@ -235,8 +243,11 @@ void PlasmaApp::storeApplet(Plasma::Applet *applet)
 
 void PlasmaApp::viewDestroyed(QObject *view)
 {
-    m_views.removeAll(static_cast<SingleView *>(view));
-    if (m_views.isEmpty()) {
+    SingleView *sView = static_cast<SingleView *>(view);
+    
+    m_viewForPlugin.remove(m_pluginForView.value(sView));
+    m_pluginForView.remove(sView);
+    if (m_viewForPlugin.isEmpty()) {
         quit();
     }
 }

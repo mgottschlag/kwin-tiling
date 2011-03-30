@@ -91,6 +91,7 @@ Comment[sr@ijekavianlatin]=Motor za podatke o stanju programa, na osnovu protoko
 Comment[sr@latin]=Motor za podatke o stanju programa, na osnovu protokola izveštavača o stanju.
 Comment[sv]=Gränssnitt för statusinformation om program baserat på protokollet för statusunderrättelser.
 Comment[th]=กลไกสำหรับข้อมูลสถานะแอพลิเคชัน โดยใช้โพรโทคอลตัวแจ้งสถานะ
+Comment[tr]=Uygulamaların durum bilgisi için motor
 Comment[uk]=Рушій даних щодо стану програм, заснований на протоколі сповіщення про стан.
 Comment[x-test]=xxEngine for applications' status information, based on the Status Notifier protocol.xx
 Comment[zh_CN]=用于提供应用程序状态信息的引擎，急于状态通知协议。

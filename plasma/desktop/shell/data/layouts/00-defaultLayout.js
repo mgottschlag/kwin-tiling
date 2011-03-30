@@ -1,3 +1,15 @@
+function widgetExists(name)
+{
+    var widgets = knownWidgetTypes;
+    for (i in widgets) {
+        if (widgets[i] == name) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 var topLeftScreen = 0
 var rect = screenGeometry(0)
 
@@ -11,14 +23,16 @@ for (var i = 1; i < screenCount; ++i) {
     }
 }
 
+var hasFolderview = widgetExists("folderview");
+print("HAS FOLDERVIEW?!!!!!!!!!!!!!! " + hasFolderview);
+
 for (var i = 0; i < screenCount; ++i) {
     var desktop = new Activity
     desktop.screen = i
     desktop.wallpaperPlugin = 'image'
     desktop.wallpaperMode = 'SingleImage'
 
-    print("for screen " + i)
-    if (i == topLeftScreen) {
+    if (hasFolderview && i == topLeftScreen) {
         var folderview = desktop.addWidget("folderview")
         folderview.writeConfig("url", "desktop:/")
     }
