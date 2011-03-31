@@ -8,7 +8,6 @@ set(activitymanager_SRCS
     activitymanager/activitymanager.cpp
     activitymanager/activityicon.cpp
     activitymanager/activitylist.cpp
-    activitymanager/activitycontrols.cpp
     activitymanager/filterbar.cpp
     activitymanager/kidenticongenerator.cpp
 )
