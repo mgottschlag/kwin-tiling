@@ -129,6 +129,7 @@ Comment[sr@ijekavianlatin]=Servis radnji unosa, izvršava podešene radnje na pr
 Comment[sr@latin]=Servis radnji unosa, izvršava podešene radnje na pritiske tastera
 Comment[sv]=Tjänst för inmatningsåtgärder som utför inställda åtgärder vid tangentnedtryckning
 Comment[th]=บริการการกระทำเพื่อป้อนข้อมูลสำหรับเรียกการกระทำที่ได้ปรับแต่งไว้เมื่อมีการกดปุ่มพิมพ์
+Comment[tr]=Tuş basımları üzerinde önceden yapılandırılmış eylemleri gerçekleştiren Girdi Eylemleri hizmeti
 Comment[uk]=Служба «Ввід» виконує вказані дії у відповідь на натискання певних клавіш
 Comment[wa]=Siervice des faitindjes d' intrêye fijhant les faitindjes apontieyes cwand on tchôke les tapes
 Comment[x-test]=xxInput Actions service performing configured actions on key pressesxx
