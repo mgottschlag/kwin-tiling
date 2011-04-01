@@ -25,6 +25,8 @@
 #include <QAbstractItemView>
 #include <QDebug>
 #include <QMap>
+#include <QDBusMessage>
+#include <QDBusConnection>
 
 // KDE
 #include <KIcon>
@@ -57,7 +59,7 @@ class ContextMenuFactory::Private
 {
 public:
     Private()
-            : applet(0) {
+            : applet(0), packagekitAvailable(false) {
     }
 
     QAction *advancedActionsMenu(const QString& url) const {
@@ -92,12 +94,30 @@ public:
 
     QMap<QAbstractItemView*, QList<QAction*> > viewActions;
     Plasma::Applet *applet;
+    bool packagekitAvailable;
 };
 
 ContextMenuFactory::ContextMenuFactory(QObject *parent)
         : QObject(parent)
         , d(new Private)
 {
+    // QDBusServiceWatcher is not suitable for this code because
+    // the org.freedesktop.PackageKit interface might not be available
+    // due to it being DBus activated.
+    QDBusMessage message;
+    message = QDBusMessage::createMethodCall("org.freedesktop.DBus",
+                                             "/org/freedesktop/DBus",
+                                             "org.freedesktop.DBus",
+                                             "ListActivatableNames");
+
+    QDBusMessage reply = QDBusConnection::sessionBus().call(message);
+    if (reply.type() == QDBusMessage::ReplyMessage
+     && reply.arguments().size() == 1) {
+        QStringList list = reply.arguments().first().toStringList();
+        if (list.contains("org.freedesktop.PackageKit")) {
+            d->packagekitAvailable = true;
+        }
+    }
 }
 
 ContextMenuFactory::~ContextMenuFactory()
@@ -120,7 +140,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
     if (url.isEmpty()) {
         return;
     }
-    
+
     // ivan: The url handling is dirty - instead of handling it in
     // the source data models (that define them), we are handling
     // them here. So, we need to make urls from KRunner model
@@ -204,7 +224,20 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
             actions << addToPanelAction;
         }
     }
-    
+
+    QAction *pkUninstall = 0;
+    // If we have PackageKit session interface we might be able to remove applications
+    if (d->packagekitAvailable) {
+        KService::Ptr service = KService::serviceByStorageId(url);
+        if(service && service->isApplication()) {
+            pkUninstall = new QAction(this);
+
+            // PackageKit uninstall action
+            pkUninstall->setText(i18n("Uninstall"));
+            actions << pkUninstall;
+        }
+    }
+
     QAction *advancedSeparator = new QAction(this);
     if (actions.count() > 0) {
         // advanced item actions
@@ -294,7 +327,20 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
                 }
             }
         }
-    } else if (addToPanelAction && result == addToPanelAction) {
+    } else if (pkUninstall && result == pkUninstall) {
+        QStringList files;
+        files << url;
+        QDBusMessage message;
+        message = QDBusMessage::createMethodCall("org.freedesktop.PackageKit",
+                                                 "/org/freedesktop/PackageKit",
+                                                 "org.freedesktop.PackageKit.Modify",
+                                                 "RemovePackageByFiles");
+        message << (uint) 0;
+        message << files;
+        message << QString();
+
+        QDBusConnection::sessionBus().call(message, QDBus::NoBlock);
+    }else if (addToPanelAction && result == addToPanelAction) {
         if (d->applet) {
             // we assume that the panel is the same containment where the kickoff is located
             Plasma::Containment *panel = d->applet->containment();
@@ -316,6 +362,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
     delete favoriteAction;
     delete addToDesktopAction;
     delete addToPanelAction;
+    delete pkUninstall;
     delete advancedSeparator;
     delete viewSeparator;
     delete ejectAction;
