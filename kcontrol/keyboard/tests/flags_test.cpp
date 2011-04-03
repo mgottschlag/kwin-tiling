@@ -82,6 +82,9 @@ private Q_SLOTS:
         QVERIFY( flags->getLongText(layoutUnit1, rules).startsWith("USA - International") );
         QCOMPARE( flags->getLongText(layoutUnit2, rules), QString("USA - other") );
 
+        rules = NULL; // when no rules found
+        QCOMPARE( flags->getLongText(layoutUnit1, rules), QString("us - intl") );
+
         flags->clearCache();
     }
 
