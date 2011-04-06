@@ -23,24 +23,31 @@
 #include <plasma/containmentactions.h>
 
 class QAction;
-class QMenu;
+class KMenu;
 
 class AppLauncher : public Plasma::ContainmentActions
 {
     Q_OBJECT
     public:
         AppLauncher(QObject* parent, const QVariantList& args);
+        ~AppLauncher();
 
         void init(const KConfigGroup &config);
 
         void contextEvent(QEvent *event);
+        QList<QAction*> contextualActions();
         //returns true if something (other than a separator) was successfully added
         bool addApp(QMenu *menu, const QString &source);
 
     public slots:
         void switchTo(QAction *action);
 
+    protected:
+        void makeMenu();
+
     private:
+        KMenu *m_menu;
+        QAction *m_action;
 };
 
 K_EXPORT_PLASMA_CONTAINMENTACTIONS(applauncher, AppLauncher)
