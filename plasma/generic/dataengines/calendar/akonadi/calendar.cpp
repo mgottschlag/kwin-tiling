@@ -254,7 +254,10 @@ void Calendar::Private::updateItem( const Akonadi::Item &item, UpdateMode mode )
   const Akonadi::Item::Id id = item.id();
 
   const KCalCore::Incidence::Ptr incidence = CalendarSupport::incidence( item );
-  Q_ASSERT( incidence );
+
+  if ( !incidence ) {
+    return;
+  }
 
   // TODO: remove this debug message in a few months
   kDebug() << "id=" << item.id()
