@@ -22,16 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define _SPLASH_H
 
 #include <stdio.h>
-#include "qcolor.h"
-
-static inline QRgb blend(const QRgb& c, const QRgb& background )
-{
-    if( qAlpha( c ) == 255 )
-        return c;
-    return qRgb( ( qRed( background ) * ( 255 - qAlpha( c ) ) + qRed( c ) * qAlpha( c ) ) / 255,
-                 ( qGreen( background ) * ( 255 - qAlpha( c ) ) + qGreen( c ) * qAlpha( c ) ) / 255,
-                 ( qBlue( background ) * ( 255 - qAlpha( c ) ) + qBlue( c ) * qAlpha( c ) ) / 255 );
-}
 
 void runSplash( const char* theme, bool test, int pipe );
 

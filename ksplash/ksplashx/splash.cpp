@@ -488,7 +488,7 @@ static QImage loadAnimImage( const char* file, int frames )
     return img;
     }
 
-static PixmapData* imageAnimToPixmaps( const QImage& img, const QImage& orig, int frames )
+static PixmapData* imageAnimToPixmaps( const QImage& img, int frames )
     {
     if( img.isNull())
         return NULL;
@@ -508,9 +508,6 @@ static PixmapData* imageAnimToPixmaps( const QImage& img, const QImage& orig, in
         ret[ frame ].w = framew;
         ret[ frame ].h = frameh;
         ret[ frame ].d = x11Depth();
-        ret[ frame ].orig = orig.copy(
-            ( frame % ANIM_IMAGES_ROW ) * framew, ( frame / ANIM_IMAGES_ROW ) * frameh, framew, frameh);
-        
         }
     if( pix.hd != None )
         XFreePixmap( qt_xdisplay(), pix.hd );
@@ -541,40 +538,10 @@ static void doPaint( const QRect& area )
         if( anim != NULL
             && area.intersects( QRect( anim->x, anim->y, frame->w, frame->h )))
             {
-                QRect rect = area.intersect(QRect( anim->x, anim->y, frame->w, frame->h));
-                
-                const int w = rect.width();
-                const int h = rect.height();
-                
-                const int h_off = frame->w - w;
-                const int v_off = rect.top() - anim->y;
-                
-                rect.moveBy(-area.x(), -area.y());
-                XImage* img = XGetImage(qt_xdisplay(), pixmap, rect.x(), rect.y(), w, h, AllPlanes, ZPixmap);
-                
-                QRgb* bg = (QRgb*)(img->data);
-                QRgb* fg = (QRgb*)frame->orig.bits();
-                fg += v_off * frame->w;
-                for (int y=0 ; y<h ; ++y)
-                {
-                    if (anim->x < area.x())
-                    {
-                        fg += h_off;
-                    }
-                    
-                    for (int x=0; x<w ; ++x, ++fg, ++bg)
-                    {
-                        *bg = blend(*fg, *bg);
-                    }
-                    
-                    if (anim->x > area.x())
-                    {
-                        fg += h_off;
-                    }
-                }
-                
-                XPutImage(qt_xdisplay(), pixmap, gc, img, 0, 0, rect.left(), rect.top(), w, h);
-                XDestroyImage(img);
+            XCopyArea( qt_xdisplay(), frame->hd, pixmap, gc,
+                qMax( 0, area.x() - anim->x ), qMax( 0, area.y() - anim->y ),
+                area.x() - anim->x + area.width(), area.y() - anim->y + area.height(),
+                qMax( 0, anim->x - area.x()), qMax( 0, anim->y - area.y()));
             }
         }
     XCopyArea( qt_xdisplay(), pixmap, window, gc, 0, 0, area.width(), area.height(), area.x(), area.y());
@@ -624,7 +591,7 @@ static bool waitState( int expected_state )
         fprintf( stderr, "No window contents\n" );
         exit( 3 );
         }
-    time_t test_time = time( NULL ) + 1;
+    time_t test_time = time( NULL ) + 2;
 #ifdef DEBUG
     fprintf( stderr,"AWATING STATE: %d (%s)\n", expected_state, states[ expected_state ] );
 #endif
@@ -704,7 +671,7 @@ static bool waitState( int expected_state )
         if( test && time( NULL ) >= test_time )
             {
             ++state;
-            test_time = time( NULL ) + 1;
+            test_time = time( NULL ) + 2;
             }
         if( expected_state <= state )
             return false;
@@ -801,6 +768,15 @@ static int makeAbsoluteX( const char* screen_ref, int x_rel, const char* image_r
 static int makeAbsoluteY( const char* screen_ref, int y_rel, const char* image_ref, int height )
     {
     return makeAbsolute( screen_ref[ 1 ], y_rel, image_ref[ 1 ], height, geometry.height()) + geometry.y();
+    }
+
+static inline QRgb blend( QRgb c, QRgb background )
+    {
+    if( qAlpha( c ) == 255 )
+        return c;
+    return qRgb( ( qRed( background ) * ( 255 - qAlpha( c ) ) + qRed( c ) * qAlpha( c ) ) / 255,
+                 ( qGreen( background ) * ( 255 - qAlpha( c ) ) + qGreen( c ) * qAlpha( c ) ) / 255,
+                 ( qBlue( background ) * ( 255 - qAlpha( c ) ) + qBlue( c ) * qAlpha( c ) ) / 255 );
     }
 
 static void blend( QImage& img, int x_pos, int y_pos, int x_img, int y_img, int w_img, int h_img )
@@ -1192,11 +1168,10 @@ void runSplash( const char* them, bool t, int p )
             if( splash_image.isNull())
                 createSplashImage();
             QImage imgs = loadAnimImage( buf, frames );
-            QImage origs = imgs.copy();
             if( !imgs.isNull())
                 {
                 blendAnim( imgs, x, y, frames );
-                PixmapData* pixs = imageAnimToPixmaps( imgs, origs, frames );
+                PixmapData* pixs = imageAnimToPixmaps( imgs, frames );
                 delete animations[ number ];
                 animations[ number ] = new AnimData( x, y, pixs, frames, delay, repeat );
                 }
@@ -1232,7 +1207,6 @@ void runSplash( const char* them, bool t, int p )
             if( splash_image.isNull())
                 createSplashImage();
             QImage imgs = loadAnimImage( buf, frames );
-            QImage origs = imgs.copy();
             if( !imgs.isNull())
                 {
                 int framew, frameh;
@@ -1240,7 +1214,7 @@ void runSplash( const char* them, bool t, int p )
                 x = makeAbsoluteX( window_ref, x_rel, image_ref, framew );
                 y = makeAbsoluteY( window_ref, y_rel, image_ref, frameh );
                 blendAnim( imgs, x, y, frames );
-                PixmapData* pixs = imageAnimToPixmaps( imgs, origs, frames );
+                PixmapData* pixs = imageAnimToPixmaps( imgs, frames );
                 delete animations[ number ];
                 animations[ number ] = new AnimData( x, y, pixs, frames, delay, repeat );
                 }
