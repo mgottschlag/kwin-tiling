@@ -310,6 +310,8 @@ void LockProcess::signalPipeSignal()
     if (tmp == 'T') {
         quitSaver();
     } else if (tmp == '1') {
+        // In case SimulateUserActivity (SIGUSR1) is called during the dead-time (mBusy == true).
+        mInitialLock = true;
         if (!mBusy && mDialogs.isEmpty()) {
             mBusy = true;
             quit();
