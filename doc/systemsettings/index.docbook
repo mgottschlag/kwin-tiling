@@ -128,9 +128,10 @@ When you start &systemsettings;, you are presented with a window, which is divid
 </para>
 
 <para>
-Across the top is a toolbar. The toolbar provides the user with the ability to go back into the main view from within a module using the <guibutton>Overview</guibutton>, or to search for something within all of the modules.
+Across the top is a toolbar. The toolbar provides the user with the ability to go back into the main view from within a module using the <guibutton>Overview</guibutton>.
 You can also find a <guimenu>Help</guimenu> menu as well as a <guibutton>Configure</guibutton> button which provides you a dialog with alternate view settings.
 </para>
+<para>To search for something within all of the modules, start to type keywords into the search field at the right of the toolbar in the <guibutton>Overview</guibutton>. When you start typing, a list of matching topics will popup. Select one and only the groups with settings for this  keyword are enabled, the other are greyed out.</para>
 
 <para>
 Underneath the toolbar is an icon view of the individual modules that 
@@ -141,7 +142,7 @@ appears, explaining the purpose of the module.
 </sect1>
 
 <sect1 id="general">
-<title>&systemsettings; Categories</title>
+<title>&systemsettings; Categories and Modules</title>
 <para>A brief overview of all categories and their modules:</para>
 
 <variablelist>
@@ -284,6 +285,8 @@ Task Scheduler
 </varlistentry>
 
 </variablelist>
+
+<tip><para>Use the search field in <guibutton>Overview</guibutton> to find all matching modules for a given keyword.</para></tip>
 </sect1>
 <sect1 id="exiting">
 <title>Exiting the &kde; &systemsettings;</title>
