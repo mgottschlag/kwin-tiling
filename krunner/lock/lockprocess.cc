@@ -805,14 +805,16 @@ void LockProcess::stopSaver()
         if (mLocked) {
             KDisplayManager().setLock( false );
             mLocked = false;
-            KNotification::event( QLatin1String( "unlocked" ) );
+            KNotification *u = new KNotification( QLatin1String( "unlocked" ) );
+	    u->sendEvent();
         }
         ungrabInput();
         const char *out = "GOAWAY!";
         for (QList<int>::ConstIterator it = child_sockets.constBegin(); it != child_sockets.constEnd(); ++it)
             write(*it, out, sizeof(out));
     }
-    KNotification::event( QLatin1String( "savingstopped" ) );
+    KNotification *s = new KNotification( QLatin1String( "savingstopped" ) );
+    s->sendEvent();
 }
 
 // private static
