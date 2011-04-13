@@ -43,6 +43,7 @@ Name[x-test]=xxSimplest Image Hostingxx
 Name[zh_CN]=Simplest Image Hosting
 Name[zh_TW]=Simplest Image Hosting
 Comment=Allows images to be shared using the Simplest Image Hosting service
+Comment[ca]=Permet la compartició d'imatges utilitzant el servei «Simplest Image Hosting»
 Comment[cs]=Povolí sdílení obrázků pomocí služby Simplest Image Hosting
 Comment[el]=Επιτρέπει  στις εικόνες να γίνουν κοινόχρηστες χρησιμοποιώντας την υπηρεσία imgur
 Comment[en_GB]=Allows images to be shared using the Simplest Image Hosting service

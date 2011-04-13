@@ -111,7 +111,7 @@ void KColorCm::populateSchemeList()
     schemeList->clear();
 
     // add entries
-	QIcon icon;
+    QIcon icon;
     const QStringList schemeFiles = KGlobal::dirs()->findAllResources("data", "color-schemes/*.colors", KStandardDirs::NoDuplicates);
     for (int i = 0; i < schemeFiles.size(); ++i)
     {
@@ -213,13 +213,13 @@ void KColorCm::loadScheme(KSharedConfigPtr config) // const QString &path)
 
     updateColorSchemes();
     updateEffectsPage(); // intentionally before swapping back m_config
+    updatePreviews();
 
     m_config = temp;
     updateFromColorSchemes();
     updateFromEffectsPage();
     updateFromOptions();
     updateColorTable();
-    updatePreviews();
 
     m_loadedSchemeHasUnsavedChanges = false;
     //m_changed = false;
