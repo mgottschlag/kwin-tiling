@@ -113,7 +113,7 @@ void StandardActionsModule::load()
         KStandardShortcut::StandardShortcut shortcutId = KStandardAction::shortcutForActionId(id);
         // If the StandardShortcutId is AccelNone skip configuration for this
         // action.
-        if (shortcutId == KStandardShortcut::AccelNone)
+        if (shortcutId == KStandardShortcut::AccelNone || shortcutIdsAdded.contains(shortcutId))
             {
             continue;
             }
