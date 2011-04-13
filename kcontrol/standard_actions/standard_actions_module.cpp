@@ -18,6 +18,7 @@
 #include "standard_actions_module.h"
 
 
+#include <KAboutData>
 #include <KAction>
 #include <KActionCollection>
 #include <KConfigGroup>
@@ -41,6 +42,9 @@ StandardActionsModule::StandardActionsModule(
       ,m_editor(NULL)
       ,m_actionCollection(NULL)
     {
+    KAboutData about("kcm_standard_actions", 0, ki18n("Standard Shortcuts"), "0.1");
+    StandardActionsModuleFactory::componentData().setAboutData(about);
+
     // Configure the KCM
     KCModule::setButtons(KCModule::Buttons(KCModule::Default | KCModule::Apply | KCModule::Help));
 
