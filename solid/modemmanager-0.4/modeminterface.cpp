@@ -30,6 +30,11 @@ MMModemInterfacePrivate::MMModemInterfacePrivate( const QString & path, QObject 
     Q_UNUSED(owner);
 }
 
+MMModemInterfacePrivate::~MMModemInterfacePrivate()
+{
+
+}
+
 MMModemInterface::MMModemInterface(const QString & path, MMModemManager * manager, QObject * parent) : QObject(parent), d_ptr(new MMModemInterfacePrivate(path, this))
 {
     Q_D(MMModemInterface);
@@ -46,7 +51,7 @@ MMModemInterface::MMModemInterface(MMModemInterfacePrivate & dd, MMModemManager 
 
 MMModemInterface::~MMModemInterface()
 {
-
+    delete d_ptr;
 }
 
 void MMModemInterface::init()

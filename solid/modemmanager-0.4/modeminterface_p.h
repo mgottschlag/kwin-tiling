@@ -31,6 +31,7 @@ class MMModemInterfacePrivate
 {
 public:
     MMModemInterfacePrivate( const QString & path, QObject * owner );
+    virtual ~MMModemInterfacePrivate();
     OrgFreedesktopModemManagerModemInterface modemIface;
     OrgFreedesktopModemManagerModemSimpleInterface modemSimpleIface;
     QString udi;
