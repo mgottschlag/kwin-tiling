@@ -56,6 +56,11 @@ NMNetworkInterfacePrivate::NMNetworkInterfacePrivate( const QString & path, QObj
     //propHelper.registerProperty(NM_DEVICE_UDI, PropertySignalPair("uni",0));
 }
 
+NMNetworkInterfacePrivate::~NMNetworkInterfacePrivate()
+{
+
+}
+
 NMNetworkInterface::NMNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent) : QObject(parent), d_ptr(new NMNetworkInterfacePrivate(path, this))
 {
     Q_D(NMNetworkInterface);
@@ -83,7 +88,7 @@ void NMNetworkInterface::init()
 
 NMNetworkInterface::~NMNetworkInterface()
 {
-
+    delete d_ptr;
 }
 
 QString NMNetworkInterface::uni() const
