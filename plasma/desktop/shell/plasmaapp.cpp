@@ -94,6 +94,8 @@
 #include <X11/extensions/Xrender.h>
 #endif
 
+extern QString plasmaLocale;
+
 PlasmaApp* PlasmaApp::self()
 {
     if (!kapp) {
@@ -114,6 +116,7 @@ PlasmaApp::PlasmaApp()
 {
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor start" << "(line:" << __LINE__ << ")";
     PlasmaApp::suspendStartup(true);
+    KGlobal::locale()->setLanguage(plasmaLocale, &KConfig());
     KGlobal::locale()->insertCatalog("libplasma");
     KGlobal::locale()->insertCatalog("plasmagenericshell");
     KCrash::setFlags(KCrash::AutoRestart);
