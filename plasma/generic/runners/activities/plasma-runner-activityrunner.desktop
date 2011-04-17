@@ -44,3 +44,4 @@ X-KDE-PluginInfo-Name=org.kde.activities
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-License=LGPL
 X-KDE-PluginInfo-EnabledByDefault=true
+X-Plasma-AdvertiseSingleRunnerQueryMode=true
