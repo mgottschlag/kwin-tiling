@@ -74,17 +74,23 @@ static void registerSignalHandler(SignalHandler handler)
     sigprocmask(SIG_UNBLOCK, &mask, 0);
 }
 
-void signalHander(int)
+static void signalHander(int)
 {
     registerSignalHandler(0L);
     theFontFolder.saveDisabled();
     registerSignalHandler(signalHander);
 }
 
+static void cleanup()
+{
+    theFontFolder.saveDisabled();
+}
+
 Helper::Helper()
 {
     KFI_DBUG;
     registerSignalHandler(signalHander);
+    qAddPostRoutine(cleanup);
     theFontFolder.init(true, true);
     theFontFolder.loadDisabled();
 }
