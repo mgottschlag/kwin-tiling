@@ -702,106 +702,112 @@ void FontInst::toggle(bool enable, const QString &family, quint32 style, bool in
     FamilyCont::ConstIterator fam;
     StyleCont::ConstIterator  st;
     int                       result=findFont(family, style, folder, fam, st) ? (int)STATUS_OK : (int)KIO::ERR_DOES_NOT_EXIST;
-    FileCont                  files((*st).files()),
-                              toggledFiles;
-    FileCont::ConstIterator   it(files.begin()),
-                              end(files.end());
-    QHash<File, QString>      movedFonts;
-    QHash<QString, QString>   movedAssoc;
-    QSet<QString>             modifiedDirs;
-
-    for(; it!=end && STATUS_OK==result; ++it)
-    {
-        QString to=Misc::getDir((*it).path())+
-                        QString(enable ? Misc::unhide(Misc::getFile((*it).path()))
-                                       : Misc::hide(Misc::getFile((*it).path())));
-        if(to!=(*it).path())
-        {
-            KFI_DBUG << "MOVE:" << (*it).path() << " to " << to;
-            // If the font is a system font, and we're not root, then just go through the actions here - so
-            // that we can build the list of changes that would happen...
-            if((inSystem && !isSystem) || renameFontFile((*it).path(), to))
-            {
-                modifiedDirs.insert(Misc::getDir(enable ? to : (*it).path()));
-                toggledFiles.insert(File(to, (*it).foundry(), (*it).index()));
-                // Now try to move an associated AFM or PFM files...
-                QStringList assoc;
-
-                movedFonts[*it]=to;
-                Misc::getAssociatedFiles((*it).path(), assoc);
-
-                QStringList::ConstIterator ait(assoc.constBegin()),
-                                           aend(assoc.constEnd());
-
-                for(; ait!=aend && STATUS_OK==result; ++ait)
-                {
-                    to=Misc::getDir(*ait)+
-                            QString(enable ? Misc::unhide(Misc::getFile(*ait))
-                                           : Misc::hide(Misc::getFile(*ait)));
-
-                    if(to!=*ait)
-                    {
-                        if((inSystem && !isSystem) || renameFontFile(*ait, to))
-                        {
-                            movedAssoc[*ait]=to;
-                        }
-                        else
-                        {
-                            result=KIO::ERR_WRITE_ACCESS_DENIED;
-                        }
-                    }
-                }
-            }
-            else
-                result=KIO::ERR_WRITE_ACCESS_DENIED;
-        }
-    }
-
-    if(inSystem && !isSystem)
-    {
-        Family toggleFam((*fam).name());
-
-        toggleFam.add(*st);
-        QVariantMap args;
-        args["method"] = "toggle";
-        QString     xml;
-        QTextStream str(&xml);
-        toggleFam.toXml(false, str);
-        args["xml"] = xml;
-        args["enable"] = enable;
-        result=performAction(args);
-    }
 
     if(STATUS_OK==result)
     {
-        Family addFam((*fam).name()),
-               delFam((*fam).name());
-        Style  addStyle((*st).value(), (*st).scalable(), (*st).writingSystems()),
-               delStyle((*st).value(), (*st).scalable(), (*st).writingSystems());
+        FileCont                  files((*st).files()),
+                                  toggledFiles;
+        FileCont::ConstIterator   it(files.begin()),
+                                  end(files.end());
+        QHash<File, QString>      movedFonts;
+        QHash<QString, QString>   movedAssoc;
+        QSet<QString>             modifiedDirs;
 
-        addStyle.setFiles(toggledFiles);
-        addFam.add(addStyle);
-        delStyle.setFiles(files);
-        delFam.add(delStyle);
-        (*st).setFiles(toggledFiles);
+        for(; it!=end && STATUS_OK==result; ++it)
+        {
+            QString to=Misc::getDir((*it).path())+
+                            QString(enable ? Misc::unhide(Misc::getFile((*it).path()))
+                                           : Misc::hide(Misc::getFile((*it).path())));
+            if(to!=(*it).path())
+            {
+                KFI_DBUG << "MOVE:" << (*it).path() << " to " << to;
+                // If the font is a system font, and we're not root, then just go through the actions here - so
+                // that we can build the list of changes that would happen...
+                if((inSystem && !isSystem) || renameFontFile((*it).path(), to))
+                {
+                    modifiedDirs.insert(Misc::getDir(enable ? to : (*it).path()));
+                    toggledFiles.insert(File(to, (*it).foundry(), (*it).index()));
+                    // Now try to move an associated AFM or PFM files...
+                    QStringList assoc;
 
-        theFolders[folder].addModifiedDirs(modifiedDirs);
-        emit fontsAdded(Families(addFam, FOLDER_SYS==folder));
-        emit fontsRemoved(Families(delFam, FOLDER_SYS==folder));
+                    movedFonts[*it]=to;
+                    Misc::getAssociatedFiles((*it).path(), assoc);
 
-        theFolders[folder].setDisabledDirty();
-    }
-    else // un-move fonts!
-    {
-        QHash<File, QString>::ConstIterator    fit(movedFonts.constBegin()),
-                                                fend(movedFonts.constEnd());
-        QHash<QString, QString>::ConstIterator ait(movedAssoc.constBegin()),
-                                                aend(movedAssoc.constEnd());
+                    QStringList::ConstIterator ait(assoc.constBegin()),
+                                               aend(assoc.constEnd());
 
-        for(; fit!=fend; ++fit)
-            renameFontFile(fit.value(), fit.key().path());
-        for(; ait!=aend; ++ait)
-            renameFontFile(ait.value(), ait.key());
+                    for(; ait!=aend && STATUS_OK==result; ++ait)
+                    {
+                        to=Misc::getDir(*ait)+
+                                QString(enable ? Misc::unhide(Misc::getFile(*ait))
+                                               : Misc::hide(Misc::getFile(*ait)));
+
+                        if(to!=*ait)
+                        {
+                            if((inSystem && !isSystem) || renameFontFile(*ait, to))
+                            {
+                                movedAssoc[*ait]=to;
+                            }
+                            else
+                            {
+                                result=KIO::ERR_WRITE_ACCESS_DENIED;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    result=KIO::ERR_WRITE_ACCESS_DENIED;
+                }
+            }
+        }
+
+        if(inSystem && !isSystem)
+        {
+            Family toggleFam((*fam).name());
+
+            toggleFam.add(*st);
+            QVariantMap args;
+            args["method"] = "toggle";
+            QString     xml;
+            QTextStream str(&xml);
+            toggleFam.toXml(false, str);
+            args["xml"] = xml;
+            args["enable"] = enable;
+            result=performAction(args);
+        }
+
+        if(STATUS_OK==result)
+        {
+            Family addFam((*fam).name()),
+                delFam((*fam).name());
+            Style  addStyle((*st).value(), (*st).scalable(), (*st).writingSystems()),
+                delStyle((*st).value(), (*st).scalable(), (*st).writingSystems());
+
+            addStyle.setFiles(toggledFiles);
+            addFam.add(addStyle);
+            delStyle.setFiles(files);
+            delFam.add(delStyle);
+            (*st).setFiles(toggledFiles);
+
+            theFolders[folder].addModifiedDirs(modifiedDirs);
+            emit fontsAdded(Families(addFam, FOLDER_SYS==folder));
+            emit fontsRemoved(Families(delFam, FOLDER_SYS==folder));
+
+            theFolders[folder].setDisabledDirty();
+        }
+        else // un-move fonts!
+        {
+            QHash<File, QString>::ConstIterator    fit(movedFonts.constBegin()),
+                                                   fend(movedFonts.constEnd());
+            QHash<QString, QString>::ConstIterator ait(movedAssoc.constBegin()),
+                                                   aend(movedAssoc.constEnd());
+
+            for(; fit!=fend; ++fit)
+                renameFontFile(fit.value(), fit.key().path());
+            for(; ait!=aend; ++ait)
+                renameFontFile(ait.value(), ait.key());
+        }
     }
     emit status(pid, result);
 
