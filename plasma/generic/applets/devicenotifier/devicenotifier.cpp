@@ -409,6 +409,7 @@ void DeviceNotifier::deviceAdded(const Solid::Device &device, bool hotplugged)
 
             if (hotplugged) {
                 notifyDevice(udi);
+                m_dialog->expandDevice(udi);
             }
 
             m_dialog->setDeviceData(udi, visibility, NotifierDialog::VisibilityRole);

@@ -28,6 +28,7 @@ class NMWiredNetworkInterfacePrivate : public NMNetworkInterfacePrivate
 {
 public:
     NMWiredNetworkInterfacePrivate(const QString &path, QObject * owner);
+    virtual ~NMWiredNetworkInterfacePrivate();
     OrgFreedesktopNetworkManagerDeviceWiredInterface wiredIface;
     QString hardwareAddress;
     int bitrate;

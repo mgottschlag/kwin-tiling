@@ -17,6 +17,7 @@ set ( text_paint_LIB ${KDE4_PLASMA_LIBS} )
 set( kded_keyboard_SRCS
     keyboard_daemon.cpp
     layout_memory.cpp
+    layout_memory_persister.cpp
     x11_helper.cpp
     xinput_helper.cpp
     xkb_helper.cpp

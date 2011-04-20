@@ -88,6 +88,27 @@ namespace Control
          */
         SOLIDCONTROL_EXPORT bool isWirelessEnabled();
 
+        /**
+         * Retrieves the activation status of wwan (mobile broadband) networking in the system.
+         *
+         * @return true if this wwan networking is enabled, false otherwise
+         */
+        SOLIDCONTROL_EXPORT bool isWwanEnabled();
+
+        /**
+         * Retrieves the status of wwan (mobile broadband) hardware in the system.
+         *
+         * @since KDE 4.7
+         * @return true if this wwan networking is enabled, false otherwise
+         */
+        SOLIDCONTROL_EXPORT bool isWwanHardwareEnabled();
+
+        /**
+         * Activates or deactivates wwan (mobile broadband) networking.
+         *
+         * @param enabled true to activate wwan networking, false otherwise
+         */
+        SOLIDCONTROL_EXPORT void setWwanEnabled(bool enabled);
 
         /**
          * Activates or deactivates networking (as a whole).
@@ -169,6 +190,15 @@ namespace Control
              * This signal is emitted when the status of the wireless hardware changed
              */
             void wirelessHardwareEnabledChanged(bool enabled);
+            /**
+             * This signal is emitted when the status of the wwan (mobile broadband) changed
+             */
+            void wwanEnabledChanged(bool enabled);
+    
+            /**
+             * This signal is emitted when the status of the wwan (mobile broadband) hardware changed
+             */
+            void wwanHardwareEnabledChanged(bool enabled);
             /**
              * This signal is emitted when the status of overall networking changed
              */

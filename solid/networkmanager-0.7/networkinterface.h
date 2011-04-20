@@ -49,7 +49,7 @@ Q_FLAGS(Solid::Control::NetworkInterface::Capabilities)
 public:
     NMNetworkInterface( const QString & path, NMNetworkManager * manager, QObject * parent );
     NMNetworkInterface( NMNetworkInterfacePrivate &dd, NMNetworkManager * manager, QObject * parent );
-    ~NMNetworkInterface();
+    virtual ~NMNetworkInterface();
     QString uni() const;
     void setUni(const QVariant&);
     QString interfaceName() const;

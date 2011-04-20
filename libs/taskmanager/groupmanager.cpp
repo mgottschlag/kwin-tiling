@@ -570,6 +570,7 @@ void GroupManager::reconnect()
     if (!d->showOnlyCurrentScreen) {
         d->geometryTasks.clear();
     }
+
     d->reloadTasks();
 }
 

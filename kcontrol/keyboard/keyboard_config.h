@@ -73,6 +73,8 @@ public:
 	void setDefaults();
 	void load();
 	void save();
+
+	static QString getSwitchingPolicyString(SwitchingPolicy switchingPolicy);
 };
 
 #endif /* KEYBOARD_CONFIG_H_ */

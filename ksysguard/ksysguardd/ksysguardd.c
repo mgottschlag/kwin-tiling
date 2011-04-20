@@ -48,7 +48,7 @@
 #ifdef HAVE_SYS_INOTIFY_H
 #include <sys/inotify.h>
 #endif
-   
+
 #define CMDBUFSIZE	128
 #define MAX_CLIENTS	100
 
@@ -214,8 +214,8 @@ void makeDaemon( void )
         _exit( 1 );
 
       dropPrivileges();
-      
-      fd = open("/dev/null", O_RDWR, 0); 
+
+      fd = open("/dev/null", O_RDWR, 0);
       if (fd != -1) {
           dup2(fd, STDIN_FILENO);
           dup2(fd, STDOUT_FILENO);
@@ -237,14 +237,14 @@ static int readCommand( int fd, char* cmdBuf, size_t len )
     int result = read( fd, &c, 1 );
     if (result < 0)
       return -1; /* Error */
-      
+
     if (result == 0) {
       if (i == 0)
         return -1; /* Connection lost */
 
       break; /* End of data */
     }
-    
+
     if (c == '\n')
       break; /* End of line */
 
@@ -526,7 +526,7 @@ char* escapeString( char* string ) {
     }
     resultP[0] = string[i];
     resultP++;
-    
+
     ++i;
   }
   resultP[0] = '\0';
@@ -546,31 +546,6 @@ static void setupInotify(int *mtabfd) {
 int main( int argc, char* argv[] )
 {
   fd_set fds;
-
-#ifdef OSTYPE_FreeBSD
-	/**
-    If we are not root or the executable does not belong to the
-    kmem group, ksysguardd will crash because of permission problems
-    for opening /dev/kmem
-   */
-  struct group* grentry = NULL;
-
-  if ( geteuid() != 0 ) {
-    grentry = getgrnam( "kmem" );
-    if ( grentry == NULL ) {
-      fprintf( stderr, "the group kmem is missing on your system\n" );
-      return -1;
-    }
-
-    if ( getegid() != grentry->gr_gid ) {
-      fprintf( stderr, "ksysguardd cannot be started because of permission conflicts!\n"
-                       "Start the program as user 'root' or change its group to 'kmem' and set the sgid-bit\n" );
-      return -1;
-    }
-
-    endgrent();
-  }
-#endif
 
   printWelcome( stdout );
 
@@ -600,6 +575,10 @@ int main( int argc, char* argv[] )
   setupInotify(&mtabfd);
 #endif
 
+  struct timeval now;
+  struct timeval last;
+  gettimeofday( &last, NULL );
+
   while ( !QuitApp ) {
     int highestFD = setupSelect( &fds );
 #ifdef HAVE_SYS_INOTIFY_H
@@ -607,18 +586,23 @@ int main( int argc, char* argv[] )
       FD_SET( mtabfd, &fds);
     if(mtabfd > highestFD) highestFD = mtabfd;
 #endif
+
     /* wait for communication or timeouts */
-    
     int ret = select( highestFD + 1, &fds, NULL, NULL, NULL );
     if(ret >= 0) {
+        gettimeofday( &now, NULL );
+        if ( now.tv_sec - last.tv_sec >= 5 ) { /* 5 second intervals */
+            /* If so, update all sensors and save current time to last. */
+            checkModules();
+            last = now;
+        }
 #ifdef HAVE_SYS_INOTIFY_H
-      if(mtabfd >= 0 && FD_ISSET(mtabfd, &fds)) {
-	close(mtabfd);
-	setupInotify(&mtabfd);
-        checkModules();
-      }
+        if(mtabfd >= 0 && FD_ISSET(mtabfd, &fds)) {
+            close(mtabfd);
+            setupInotify(&mtabfd);
+        }
 #endif
-      handleSocketTraffic( ServerSocket, &fds );
+        handleSocketTraffic( ServerSocket, &fds );
     }
   }
 

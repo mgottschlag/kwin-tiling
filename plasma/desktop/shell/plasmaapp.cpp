@@ -94,6 +94,8 @@
 #include <X11/extensions/Xrender.h>
 #endif
 
+extern QString plasmaLocale;
+
 PlasmaApp* PlasmaApp::self()
 {
     if (!kapp) {
@@ -114,6 +116,11 @@ PlasmaApp::PlasmaApp()
 {
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor start" << "(line:" << __LINE__ << ")";
     PlasmaApp::suspendStartup(true);
+
+    if (KGlobalSettings::isMultiHead()) {
+        KGlobal::locale()->setLanguage(plasmaLocale, KGlobal::config().data());
+    }
+
     KGlobal::locale()->insertCatalog("libplasma");
     KGlobal::locale()->insertCatalog("plasmagenericshell");
     KCrash::setFlags(KCrash::AutoRestart);
@@ -181,7 +188,7 @@ PlasmaApp::PlasmaApp()
             XCloseDisplay(dpy);
         }
 #endif
-        QSize size = Kephal::ScreenUtils::screenSize(id);
+        const QSize size = Kephal::ScreenUtils::screenSize(id);
         cacheSize += 4 * size.width() * size.height() / 1024;
     } else {
         const int numScreens = Kephal::ScreenUtils::numScreens();
@@ -265,8 +272,7 @@ PlasmaApp::PlasmaApp()
             SIGNAL(remoteAppletAnnounced(Plasma::PackageMetadata)),
             this, SLOT(remotePlasmoidAdded(Plasma::PackageMetadata)));
 
-    Plasma::AuthorizationManager::self()->setAuthorizationPolicy(
-        Plasma::AuthorizationManager::PinPairing);
+    Plasma::AuthorizationManager::self()->setAuthorizationPolicy(Plasma::AuthorizationManager::PinPairing);
 
     QTimer::singleShot(0, this, SLOT(setupDesktop()));
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor end" << "(line:" << __LINE__ << ")";

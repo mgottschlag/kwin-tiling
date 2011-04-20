@@ -454,7 +454,7 @@ int TaskGroupItem::count() const
     return m_groupMembers.count();
 }
 
-AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupableItem * groupableItem)
+AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupableItem *groupableItem)
 {
     //kDebug() << "item to create" << groupableItem << endl;
     AbstractTaskItem *item = 0;
@@ -466,15 +466,11 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupab
     } else if (groupableItem->itemType() == TaskManager::LauncherItemType) {
         AppLauncherItem *launcherItem = new AppLauncherItem(this, m_applet, static_cast<TaskManager::LauncherItem*>(groupableItem));
         item = launcherItem;
-    } else { //it's a window task
+    } else {
+        //it's a window task
         WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet);
         windowItem->setTask(static_cast<TaskManager::TaskItem*>(groupableItem));
         item = windowItem;
-    }
-
-    if (!item) {
-        kDebug() << "invalid Item";
-        return 0;
     }
 
     if (m_collapsed) {
@@ -493,17 +489,23 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractGroupableItem * groupableItem
     }
 
     //returns the corresponding item or creates a new one
-    bool isNew = false;
     AbstractTaskItem *item = m_groupMembers.value(groupableItem);
 
     if (!item) {
         item = createAbstractItem(groupableItem);
-        isNew = true;
-    }
 
-    if (!item) {
-        kDebug() << "invalid Item";
-        return;
+        if (item) {
+            connect(item, SIGNAL(activated(AbstractTaskItem*)),
+                    this, SLOT(updateActive(AbstractTaskItem*)));
+
+            TaskGroupItem *group = qobject_cast<TaskGroupItem*>(item);
+            if (group) {
+                connect(item, SIGNAL(changed()), this, SLOT(relayoutItems()));
+            }
+        } else {
+            kDebug() << "invalid Item";
+            return;
+        }
     }
 
     m_groupMembers[groupableItem] = item;
@@ -528,17 +530,9 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractGroupableItem * groupableItem
         m_activeTaskIndex = 0;
     }
 
-    if (isNew) {
-        connect(item, SIGNAL(activated(AbstractTaskItem*)),
-                this, SLOT(updateActive(AbstractTaskItem*)));
-
-        TaskGroupItem *group = qobject_cast<TaskGroupItem*>(item);
-        if (group) {
-            connect(item, SIGNAL(changed()), this, SLOT(relayoutItems()));
-        }
+    if (collapsed()) {
+        update();
     }
-
-    update();
 }
 
 void TaskGroupItem::itemRemoved(TaskManager::AbstractGroupableItem * groupableItem)
@@ -1277,6 +1271,7 @@ int TaskGroupItem::indexOf(AbstractTaskItem *task, bool descendGroups)
             ++index;
         }
     }
+
     return -1;
 }
 

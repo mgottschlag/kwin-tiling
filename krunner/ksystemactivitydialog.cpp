@@ -25,6 +25,7 @@
 #include <QLineEdit>
 #include <QLayout>
 #include <QString>
+#include <QAction>
 #include <QTreeView>
 
 #include <KConfigGroup>
@@ -45,6 +46,12 @@ KSystemActivityDialog::KSystemActivityDialog(QWidget *parent)
     (void)minimumSizeHint(); //Force the dialog to be laid out now
     layout()->setContentsMargins(0,0,0,0);
     m_processList.treeView()->setCornerWidget(new QWidget);
+
+    // Since we kinda act like an application more than just a Window, map the usual ctrl+Q shortcut to close as well
+    QAction *closeWindow = new QAction(this);
+    closeWindow->setShortcut(QKeySequence::Quit);
+    connect(closeWindow, SIGNAL(triggered(bool)), this, SLOT(accept()));
+    addAction(closeWindow);
 
     setInitialSize(QSize(650, 420));
     KConfigGroup cg = KGlobal::config()->group("TaskDialog");

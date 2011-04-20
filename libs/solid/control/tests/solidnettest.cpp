@@ -73,16 +73,19 @@ void SolidNetTest::testManagerBasicFeatures()
 {
     QCOMPARE(Solid::Control::NetworkManager::isNetworkingEnabled(), true);
     QCOMPARE(Solid::Control::NetworkManager::isWirelessEnabled(), true);
+    QCOMPARE(Solid::Control::NetworkManager::isWwanEnabled(), true);
 
     Solid::Control::NetworkManager::setNetworkingEnabled(false);
 
     QCOMPARE(Solid::Control::NetworkManager::isNetworkingEnabled(), false);
     QCOMPARE(Solid::Control::NetworkManager::isWirelessEnabled(), false);
+    QCOMPARE(Solid::Control::NetworkManager::isWwanEnabled(), false);
 
     Solid::Control::NetworkManager::setNetworkingEnabled(true);
 
     QCOMPARE(Solid::Control::NetworkManager::isNetworkingEnabled(), true);
     QCOMPARE(Solid::Control::NetworkManager::isWirelessEnabled(), true);
+    QCOMPARE(Solid::Control::NetworkManager::isWwanEnabled(), true);
 
     Solid::Control::NetworkManager::setWirelessEnabled(false);
 
@@ -103,6 +106,26 @@ void SolidNetTest::testManagerBasicFeatures()
 
     QCOMPARE(Solid::Control::NetworkManager::isNetworkingEnabled(), true);
     QCOMPARE(Solid::Control::NetworkManager::isWirelessEnabled(), true);
+
+    Solid::Control::NetworkManager::setWwanEnabled(false);
+
+    QCOMPARE(Solid::Control::NetworkManager::isNetworkingEnabled(), true);
+    QCOMPARE(Solid::Control::NetworkManager::isWwanEnabled(), false);
+
+    Solid::Control::NetworkManager::setNetworkingEnabled(false);
+
+    QCOMPARE(Solid::Control::NetworkManager::isNetworkingEnabled(), false);
+    QCOMPARE(Solid::Control::NetworkManager::isWwanEnabled(), false);
+
+    Solid::Control::NetworkManager::setNetworkingEnabled(true);
+
+    QCOMPARE(Solid::Control::NetworkManager::isNetworkingEnabled(), true);
+    QCOMPARE(Solid::Control::NetworkManager::isWwanEnabled(), false);
+
+    Solid::Control::NetworkManager::setWwanEnabled(true);
+
+    QCOMPARE(Solid::Control::NetworkManager::isNetworkingEnabled(), true);
+    QCOMPARE(Solid::Control::NetworkManager::isWwanEnabled(), true);
 }
 
 void SolidNetTest::testInterfaceBasicFeatures()

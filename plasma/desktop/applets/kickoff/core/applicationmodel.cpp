@@ -364,7 +364,11 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
         }
         break;
     case Kickoff::UrlRole:
-        return node->desktopEntry;
+        if (node->isDir) {
+            return "applications://" + node->desktopEntry;
+        } else {
+            return node->desktopEntry;
+        }
         break;
     case Kickoff::SubTitleMandatoryRole:
         return nameAfterDescription(index) && node->subTitleMandatory;

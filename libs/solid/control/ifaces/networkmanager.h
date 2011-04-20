@@ -99,6 +99,21 @@ namespace Ifaces
          */
         virtual bool isWirelessHardwareEnabled() const = 0;
 
+        /**
+         * Retrieves the activation status of wwan (mobile broadband) networking in the system.
+         *
+         * @return true if this wwan networking is enabled, false otherwise
+         */
+        virtual bool isWwanEnabled() const = 0;
+
+        /**
+         * Retrieves the status of wwan (mobile broadband) hardware in the system.
+         *
+         * @since KDE 4.7
+         * @return true if this wwan networking is enabled, false otherwise
+         */
+        virtual bool isWwanHardwareEnabled() const = 0;
+
         virtual void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters ) = 0;
 
         virtual void deactivateConnection(const QString & activeConnection) = 0;
@@ -133,6 +148,13 @@ namespace Ifaces
          */
         virtual void setWirelessEnabled(bool enabled) = 0;
 
+        /**
+         * Activates or deactivates wwan (mobile broadband) networking.
+         *
+         * @param enabled true to activate wwan (mobile broadband) networking, false otherwise
+         */
+        virtual void setWwanEnabled(bool enabled) = 0;
+
     Q_SIGNALS:
         /**
          * This signal is emitted when the system's connection state changes
@@ -162,6 +184,16 @@ namespace Ifaces
          * This signal is emitted when the status of the wireless hardware changed
          */
         void wirelessHardwareEnabledChanged(bool enabled);
+
+        /**
+         * This signal is emitted when the status of the wwan (mobile broadband) changed
+         */
+        void wwanEnabledChanged(bool enabled);
+
+        /**
+         * This signal is emitted when the status of the wwan (mobile broadband) hardware changed
+         */
+        void wwanHardwareEnabledChanged(bool enabled);
 
         /**
          * This signal is emitted when the status of overall networking changed

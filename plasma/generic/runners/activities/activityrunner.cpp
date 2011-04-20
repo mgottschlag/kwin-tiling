@@ -65,10 +65,9 @@ void ActivityRunner::serviceStatusChanged(KActivityConsumer::ServiceStatus statu
     m_enabled = active;
     QList<Plasma::RunnerSyntax> syntaxes;
     if (m_enabled) {
-        syntaxes << Plasma::RunnerSyntax(m_keywordi18n, i18n("Lists all activities currently available to be run."))
-                 << Plasma::RunnerSyntax(i18nc("KRunner keyword", "activity :q:"), i18n("Switches to activity :q:."));
+        setDefaultSyntax(Plasma::RunnerSyntax(i18nc("KRunner keyword", "activity :q:"), i18n("Switches to activity :q:.")));
+        addSyntax(Plasma::RunnerSyntax(m_keywordi18n, i18n("Lists all activities currently available to be run.")));
     }
-    setSyntaxes(syntaxes);
 }
 
 ActivityRunner::~ActivityRunner()
@@ -99,6 +98,8 @@ void ActivityRunner::match(Plasma::RunnerContext &context)
             name = term.right(term.size() - m_keyword.size()).trimmed();
             list = name.isEmpty();
         }
+    } else if (context.singleRunnerQueryMode()) {
+        name = term;
     } else {
         return;
     }

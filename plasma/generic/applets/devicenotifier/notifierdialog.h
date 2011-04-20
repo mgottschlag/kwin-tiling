@@ -113,6 +113,12 @@ class DeviceNotifier;
           void insertDevice(const QString &udi);
 
           /**
+          * Expand a device, showing its actions
+          * @param udi the udi of the device
+          **/
+          void expandDevice(const QString &udi);
+
+          /**
           * Get the DeviceItem with a specified udi
           * @param udi the udi of the device
           * @return a pointer to the DeviceItem

@@ -18,6 +18,7 @@
 #include "standard_actions_module.h"
 
 
+#include <KAboutData>
 #include <KAction>
 #include <KActionCollection>
 #include <KConfigGroup>
@@ -29,10 +30,32 @@
 #include <KLocale>
 
 #include <QVBoxLayout>
+#include <QSet>
 
 K_PLUGIN_FACTORY(StandardActionsModuleFactory, registerPlugin<StandardActionsModule>();)
 K_EXPORT_PLUGIN(StandardActionsModuleFactory("kcm_standard_actions"))
 
+static void dressUpAction(KAction *action, KStandardShortcut::StandardShortcut shortcutId)
+    {
+    // Remember the shortcutId so we know where to save changes.
+    action->setData(shortcutId);
+    // We have to manually adjust the action. We want to show the
+    // hardcoded default and the user set shortcut. But action currently
+    // only contain the active shortcuts as default shortcut. So we
+    // have to fill it correctly
+    KShortcut hardcoded = KStandardShortcut::hardcodedDefaultShortcut(shortcutId);
+    KShortcut active    = KStandardShortcut::shortcut(shortcutId);
+    // Set the hardcoded default shortcut as default shortcut
+    action->setShortcut(hardcoded, KAction::DefaultShortcut);
+    // Set the user defined values as active shortcuts. If the user only
+    // has overwritten the primary shortcut make sure the alternate one
+    // still get's shown
+    if (active.alternate()==QKeySequence())
+        {
+        active.setAlternate(hardcoded.alternate());
+        }
+    action->setShortcut(active, KAction::ActiveShortcut);
+    }
 
 StandardActionsModule::StandardActionsModule(
         QWidget *parent,
@@ -41,6 +64,9 @@ StandardActionsModule::StandardActionsModule(
       ,m_editor(NULL)
       ,m_actionCollection(NULL)
     {
+    KAboutData about("kcm_standard_actions", 0, ki18n("Standard Shortcuts"), "0.1");
+    StandardActionsModuleFactory::componentData().setAboutData(about);
+
     // Configure the KCM
     KCModule::setButtons(KCModule::Buttons(KCModule::Default | KCModule::Apply | KCModule::Help));
 
@@ -78,36 +104,36 @@ void StandardActionsModule::load()
             this,
             StandardActionsModuleFactory::componentData());
 
-    // Put all standard shortcuts into the collection
+    // Keeps track of which shortcut IDs have been added
+    QSet<int> shortcutIdsAdded;
+
+    // Put all shortcuts for standard actions into the collection
     Q_FOREACH(KStandardAction::StandardAction id, KStandardAction::actionIds())
         {
         KStandardShortcut::StandardShortcut shortcutId = KStandardAction::shortcutForActionId(id);
         // If the StandardShortcutId is AccelNone skip configuration for this
         // action.
-        if (shortcutId == KStandardShortcut::AccelNone)
+        if (shortcutId == KStandardShortcut::AccelNone || shortcutIdsAdded.contains(shortcutId))
             {
             continue;
             }
         // Create the action
         KAction *action = KStandardAction::create(id, NULL, NULL, m_actionCollection);
-        // Remember the shortcutId so we know where to save changes.
-        action->setData(shortcutId);
-        // We have to manually adjust the action. We want to show the
-        // hardcoded default and the user set shortcut. But action currently
-        // only contain the active shortcuts as default shortcut. So we
-        // have to fill it correctly
-        KShortcut hardcoded = KStandardShortcut::hardcodedDefaultShortcut(shortcutId);
-        KShortcut active    = KStandardShortcut::shortcut(shortcutId);
-        // Set the hardcoded default shortcut as default shortcut
-        action->setShortcut(hardcoded, KAction::DefaultShortcut);
-        // Set the user defined values as active shortcuts. If the user only
-        // has overwritten the primary shortcut make sure the alternate one
-        // still get's shown
-        if (active.alternate()==QKeySequence())
+        dressUpAction(action, shortcutId);
+        shortcutIdsAdded << shortcutId;
+        }
+
+    // Put in the remaining standard shortcuts too...
+    for(int i = int(KStandardShortcut::AccelNone) + 1; i < KStandardShortcut::StandardShortcutCount; ++i)
+        {
+        KStandardShortcut::StandardShortcut shortcutId = static_cast<KStandardShortcut::StandardShortcut>(i);
+        if(!shortcutIdsAdded.contains(shortcutId))
             {
-            active.setAlternate(hardcoded.alternate());
+            KAction *action = new KAction(KStandardShortcut::label(shortcutId), this);
+            action->setWhatsThis(KStandardShortcut::whatsThis(shortcutId));
+            dressUpAction(action, shortcutId);
+            m_actionCollection->addAction(KStandardShortcut::name(shortcutId), action);
             }
-        action->setShortcut(active, KAction::ActiveShortcut);
         }
 
     // Hand the collection to the editor

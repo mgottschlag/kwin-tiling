@@ -39,6 +39,7 @@
 #include <KFileItemListProperties>
 #include <KIO/NetAccess>
 
+#include <KMimeType>
 #include <KMimeTypeTrader>
 #include <KService>
 

@@ -26,6 +26,7 @@
 #include <QX11Info>
 #endif
 #include <QBitmap>
+#include <QTimer>
 
 #include <KDebug>
 #include <KWindowSystem>
@@ -352,7 +353,11 @@ void KRunnerDialog::showEvent(QShowEvent *)
 
 void KRunnerDialog::hideEvent(QHideEvent *)
 {
-    m_runnerManager->matchSessionComplete();
+    // We delay the call to matchSessionComplete until next event cycle
+    // This is necessary since we might hide the dialog right before running
+    // a match, and the runner might still need to be prepped to
+    // succesfully run a match
+    QTimer::singleShot(0, m_runnerManager, SLOT(matchSessionComplete()));
     delete m_configWidget;
     m_configWidget = 0;
 }

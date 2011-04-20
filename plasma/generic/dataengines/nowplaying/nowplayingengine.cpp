@@ -46,6 +46,8 @@ NowPlayingEngine::NowPlayingEngine(QObject* parent,
 {
     Q_UNUSED(args)
 
+    setData("players", QStringList());
+
     connect(dbusWatcher, SIGNAL(newPlayer(Player::Ptr)),
             this,        SLOT(addPlayer(Player::Ptr)));
     connect(dbusWatcher, SIGNAL(playerDisappeared(Player::Ptr)),
@@ -60,8 +62,6 @@ NowPlayingEngine::NowPlayingEngine(QObject* parent,
 #ifdef XMMS_FOUND
     pollingWatcher->addFactory(new XmmsFactory(pollingWatcher));
 #endif
-
-    setData("players", QStringList());
 }
 
 Plasma::Service* NowPlayingEngine::serviceForSource(const QString& source)
@@ -111,25 +111,17 @@ bool NowPlayingEngine::sourceRequestEvent(const QString& source)
     return false;
 }
 
-bool NowPlayingEngine::updateSourceEvent(const QString& source)
-{
-    if (source == "help" || source == "properties") {
-        // help text doesn't change
-        return true;
-    }
-
-    return false;
-}
-
 void NowPlayingEngine::addPlayer(Player::Ptr player)
 {
     kDebug() << "Adding player" << player->name();
     Plasma::DataContainer *container = containerForSource("players");
+    QStringList players;
     if (container) {
-        QStringList players = container->data()["players"].toStringList();
-    } else {
-        setData("players", QStringList() << player->name());
+        players = container->data()["players"].toStringList();
     }
+
+    players << player->name();
+    setData("players", players);
 
     addSource(new PlayerContainer(player, this));
 }

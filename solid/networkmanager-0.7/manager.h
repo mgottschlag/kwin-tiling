@@ -48,6 +48,8 @@ public:
     bool isNetworkingEnabled() const;
     bool isWirelessEnabled() const;
     bool isWirelessHardwareEnabled() const;
+    bool isWwanEnabled() const;
+    bool isWwanHardwareEnabled() const;
     void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters);
     void deactivateConnection(const QString & activeConnection);
     QStringList activeConnections() const;
@@ -55,6 +57,7 @@ public:
 public Q_SLOTS:
     void setNetworkingEnabled(bool enabled);
     void setWirelessEnabled(bool enabled);
+    void setWwanEnabled(bool enabled);
 
 Q_SIGNALS:
     void networkingEnabledChanged(bool);
