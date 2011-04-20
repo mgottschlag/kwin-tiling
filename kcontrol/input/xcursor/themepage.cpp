@@ -29,6 +29,7 @@
 #include <KIO/Job>
 #include <KIO/DeleteJob>
 #include <KIO/NetAccess>
+#include <knewstuff3/downloaddialog.h>
 
 
 #include <KTar>
@@ -61,6 +62,7 @@ ThemePage::ThemePage(QWidget *parent)
     : QWidget(parent)
 {
     setupUi(this);
+    installKnsButton->setIcon( KIcon("get-hot-new-stuff") );
 
     model = new CursorThemeModel(this);
 
@@ -83,9 +85,12 @@ ThemePage::ThemePage(QWidget *parent)
 
     // Disable the install button if we can't install new themes to ~/.icons,
     // or Xcursor isn't set up to look for cursor themes there.
-    if (!model->searchPaths().contains(QDir::homePath() + "/.icons") || !iconsIsWritable())
-        installButton->setEnabled(false);
+    if (!model->searchPaths().contains(QDir::homePath() + "/.icons") || !iconsIsWritable()) {
+            installButton->setEnabled(false);
+            installKnsButton->setEnabled(false);
+    }
 
+    connect(installKnsButton, SIGNAL(clicked()), SLOT(getNewClicked()));
     connect(installButton, SIGNAL(clicked()), SLOT(installClicked()));
     connect(removeButton,  SIGNAL(clicked()), SLOT(removeClicked()));
 }
@@ -277,6 +282,15 @@ void ThemePage::currentChanged(const QModelIndex &current, const QModelIndex &pr
     emit changed(appliedIndex != current);
 }
 
+void ThemePage::getNewClicked()
+{
+    KNS3::DownloadDialog dialog("xcursor.knsrc", this);
+    if (dialog.exec()) {
+        KNS3::Entry::List list = dialog.changedEntries();
+        if (list.count() > 0)
+            model->refreshList();
+    }
+}
 
 void ThemePage::installClicked()
 {

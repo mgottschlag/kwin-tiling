@@ -33,8 +33,8 @@
 
 // Check for older version
 #if !defined(XCURSOR_LIB_MAJOR) && defined(XCURSOR_MAJOR)
-#  define XCURSOR_LIB_MAJOR	XCURSOR_MAJOR
-#  define XCURSOR_LIB_MINOR	XCURSOR_MINOR
+#  define XCURSOR_LIB_MAJOR XCURSOR_MAJOR
+#  define XCURSOR_LIB_MINOR XCURSOR_MINOR
 #endif
 
 
@@ -51,6 +51,14 @@ CursorThemeModel::~CursorThemeModel()
    list.clear();
 }
 
+void CursorThemeModel::refreshList()
+{
+    beginResetModel();
+    qDeleteAll(list);
+    list.clear();
+    endResetModel();
+    insertThemes();
+}
 
 QVariant CursorThemeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -324,7 +332,9 @@ void CursorThemeModel::processThemeDir(const QDir &themeDir)
     }
 
     // Append the theme to the list
+    beginInsertRows(QModelIndex(), list.size(), list.size());
     list.append(theme);
+    endInsertRows();
 }
 
 
@@ -369,7 +379,7 @@ bool CursorThemeModel::addTheme(const QDir &dir)
     // Don't add the theme to the list if it's hidden
     if (theme->isHidden()) {
         delete theme;
-        return false; 
+        return false;
     }
 
     // ### If the theme is hidden, the user will probably find it strange that it
