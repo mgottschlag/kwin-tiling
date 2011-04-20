@@ -1,5 +1,5 @@
 
-add_subdirectory( pics ) 
+add_subdirectory( pics )
 KDE4_NO_ENABLE_FINAL(input)
 
 macro_optional_find_package(USB)
@@ -43,7 +43,7 @@ set(kapplymousetheme_SRCS kapplymousetheme.cpp )
 
 kde4_add_executable(kapplymousetheme ${kapplymousetheme_SRCS})
 
-target_link_libraries(kapplymousetheme 
+target_link_libraries(kapplymousetheme
 ${KDE4_KDEUI_LIBS} ${X11_Xrender_LIB} ${X11_X11_LIB})
 if (X11_Xcursor_FOUND)
    target_link_libraries(kapplymousetheme ${X11_Xcursor_LIB})
@@ -83,7 +83,7 @@ set(kcm_cursortheme_PART_SRCS kcmcursortheme.cpp ${libnoinst_SRCS})
 kde4_add_plugin(kcm_cursortheme ${kcm_cursortheme_PART_SRCS})
 
 
-target_link_libraries(kcm_cursortheme ${KDE4_KIO_LIBS} ${X11_LIBRARIES})
+target_link_libraries(kcm_cursortheme ${KDE4_KIO_LIBS} ${KDE4_KNEWSTUFF3_LIBS} ${X11_LIBRARIES})
 
 if (X11_Xcursor_FOUND)
    target_link_libraries(kcm_cursortheme ${X11_Xcursor_LIB})
@@ -101,4 +101,5 @@ install( FILES mouse.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES cursortheme.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES cursor_large_black.pcf.gz cursor_large_white.pcf.gz cursor_small_white.pcf.gz  DESTINATION  ${DATA_INSTALL_DIR}/kcminput )
 install( FILES mouse_cursor_theme.upd  DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
+install( FILES xcursor/xcursor.knsrc DESTINATION  ${CONFIG_INSTALL_DIR} )
 

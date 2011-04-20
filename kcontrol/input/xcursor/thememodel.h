@@ -3,7 +3,7 @@
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
- * License version 2 or at your option version 3 as published 
+ * License version 2 or at your option version 3 as published
  * by the Free Software Foundation.
  *
  * This program is distributed in the hope that it will be useful,
@@ -61,7 +61,7 @@ class CursorThemeModel : public QAbstractTableModel
 
     public:
         CursorThemeModel(QObject *parent = 0);
-        ~CursorThemeModel(); 
+        ~CursorThemeModel();
        inline int columnCount(const QModelIndex &parent = QModelIndex()) const;
         inline int rowCount(const QModelIndex &parent = QModelIndex()) const;
         QVariant headerData(int section, Qt::Orientation orientation, int role) const;
@@ -84,6 +84,9 @@ class CursorThemeModel : public QAbstractTableModel
 
         /// Returns the list of base dirs Xcursor looks for themes in.
         const QStringList searchPaths();
+
+        /// Refresh the list of themes by checking what's on disk.
+        void refreshList();
 
     private:
         bool handleDefault(const QDir &dir);
