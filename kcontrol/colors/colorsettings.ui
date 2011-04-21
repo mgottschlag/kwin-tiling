@@ -470,6 +470,16 @@
                <string>New Row</string>
               </property>
              </row>
+             <row>
+              <property name="text">
+               <string>New Row</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>New Row</string>
+              </property>
+             </row>
              <column>
               <property name="text">
                <string>0</string>
@@ -592,12 +602,22 @@
              </item>
              <item row="22" column="0">
               <property name="text">
-               <string>Inactive Titlebar</string>
+               <string>Active Titlebar Secondary</string>
               </property>
              </item>
              <item row="23" column="0">
               <property name="text">
+               <string>Inactive Titlebar</string>
+              </property>
+             </item>
+             <item row="24" column="0">
+              <property name="text">
                <string>Inactive Titlebar Text</string>
+              </property>
+             </item>
+             <item row="25" column="0">
+              <property name="text">
+               <string>Inactive Titlebar Secondary</string>
               </property>
              </item>
             </widget>
