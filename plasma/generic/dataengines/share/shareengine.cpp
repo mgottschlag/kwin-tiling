@@ -48,9 +48,18 @@ void ShareEngine::updatePlugins(const QStringList &changes)
 
     removeAllSources();
 
+    KService::List services = KServiceTypeTrader::self()->query("Plasma/ShareProvider");
+    QMultiMap<int, KService::Ptr> sortedServices;
+    foreach (KService::Ptr service, services) {
+        sortedServices.insert(service->property("X-KDE-Priority").toInt(), service);
+    }
+
+    QMapIterator<int, KService::Ptr> it(sortedServices);
+    it.toBack();
     QHash<QString, QStringList> mimetypes;
-    const KService::List services = KServiceTypeTrader::self()->query("Plasma/ShareProvider");
-    foreach (const KService::Ptr &service, services) {
+    while (it.hasPrevious()) {
+        it.previous();
+        KService::Ptr service = it.value();
         const QString pluginName =
             service->property("X-KDE-PluginInfo-Name", QVariant::String).toString();
 
@@ -77,10 +86,10 @@ void ShareEngine::updatePlugins(const QStringList &changes)
     }
 
 
-    QHashIterator<QString, QStringList> it(mimetypes);
-    while (it.hasNext()) {
-        it.next();
-        setData("Mimetypes", it.key(), it.value());
+    QHashIterator<QString, QStringList> it2(mimetypes);
+    while (it2.hasNext()) {
+        it2.next();
+        setData("Mimetypes", it2.key(), it2.value());
     }
 }
 

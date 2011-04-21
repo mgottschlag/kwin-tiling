@@ -105,9 +105,9 @@ void ShareProvider::addPostItem(const QString &key, const QString &value,
     str += "\r\n";
 
     if (!key.isEmpty()) {
-      	str += "Content-Disposition: form-data; name=\"";
-    	str += key.toAscii();
-    	str += "\"\r\n";
+        str += "Content-Disposition: form-data; name=\"";
+        str += key.toAscii();
+        str += "\"\r\n";
     }
 
     if (!contentType.isEmpty()) {
@@ -190,7 +190,6 @@ void ShareProvider::finishedContentData(KIO::Job *job, const QByteArray &data)
         return;
     }
 
-    QByteArray str;
     if (!m_isBlob) {
         // it's just text and we can return here using data()
         addPostItem(m_content_key, data.data(), "text/plain");
@@ -200,7 +199,8 @@ void ShareProvider::finishedContentData(KIO::Job *job, const QByteArray &data)
     }
 
     // Add the special http post stuff with the content of the file
-    QString fileSize = QString("%1").arg(data.size());
+    QByteArray str;
+    const QString fileSize = QString("%1").arg(data.size());
     str += "--";
     str += m_boundary;
     str += "\r\n";
