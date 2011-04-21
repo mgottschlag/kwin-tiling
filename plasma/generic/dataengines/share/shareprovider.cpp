@@ -129,7 +129,7 @@ void ShareProvider::addPostItem(const QString &key, const QString &value,
 void ShareProvider::addPostFile(const QString &contentKey, const QString &content)
 {
     // add a file in a post form (gets it using KIO)
-    m_content_key = contentKey;
+    m_contentKey = contentKey;
     m_content = content;
 
     // we expect either text or an URL of a file. The file can be a text file
@@ -148,8 +148,8 @@ void ShareProvider::addPostFile(const QString &contentKey, const QString &conten
     if (!mjob->exec()) {
         // it's not a file - usually this happens when we are
         // just sharing plain text, so add the content and publish it
-        addPostItem(m_content_key, m_content, "text/plain");
-        addQueryItem(m_content_key, m_content);
+        addPostItem(m_contentKey, m_content, "text/plain");
+        addQueryItem(m_contentKey, m_content);
         emit readyToPublish();
         return;
     }
@@ -192,8 +192,8 @@ void ShareProvider::finishedContentData(KIO::Job *job, const QByteArray &data)
 
     if (!m_isBlob) {
         // it's just text and we can return here using data()
-        addPostItem(m_content_key, data.data(), "text/plain");
-        addQueryItem(m_content_key, data.data());
+        addPostItem(m_contentKey, data.data(), "text/plain");
+        addQueryItem(m_contentKey, data.data());
         emit readyToPublish();
         return;
     }
@@ -205,7 +205,7 @@ void ShareProvider::finishedContentData(KIO::Job *job, const QByteArray &data)
     str += m_boundary;
     str += "\r\n";
     str += "Content-Disposition: form-data; name=\"";
-    str += m_content_key.toAscii();
+    str += m_contentKey.toAscii();
     str += "\"; ";
     str += "filename=\"";
     str += QFile::encodeName(KUrl(m_content).fileName()).replace(".tmp", ".jpg");
