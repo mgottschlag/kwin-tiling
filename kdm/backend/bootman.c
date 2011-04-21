@@ -160,6 +160,103 @@ commitGrub(void)
     }
 }
 
+#define GRUB2_MENU "/boot/grub/grub.cfg"
+
+static char *grubReboot;
+
+static int
+getGrub2(char ***opts, int *def, int *cur)
+{
+    FILE *f;
+    char *ptr, *linp;
+    int len, ret = BO_NOMAN, i;
+    char line[1000];
+
+    if (!grubReboot && !(grubReboot = locate("grub-reboot")))
+        return BO_NOMAN;
+
+    *def = -1;
+    *cur = -1;
+    *opts = initStrArr(0);
+
+    if (!(f = fopen(GRUB2_MENU, "r")))
+        return errno == ENOENT ? BO_NOMAN : BO_IO;
+    while ((len = fGets(line, sizeof(line), f)) != -1) {
+        for (linp = line; isspace(*linp); linp++, len--);
+        if ((ptr = match(linp, &len, "set", 3)) && !memcmp(ptr, "default=\"${saved_entry}\"", 24)) {
+            ret = BO_OK;
+        } else if ((ptr = match(linp, &len, "menuentry", 9))) {
+            linp = ptr;
+            if (*linp == '\'') {
+                for (i = 0, linp++; *linp && *linp != '\''; linp++)
+                    ptr[i++] = *linp;
+            } else if (*linp == '"') {
+                for (i = 0, linp++; *linp && *linp != '"'; linp++) {
+                    if (*linp == '\\') {
+                        switch (*(++linp)) {
+                        case 0:
+                            return BO_IO; /* Unexpected end */
+                        case '$':
+                        case '"':
+                        case '\\':
+                            break;
+                        default:
+                            ptr[i++] = '\\';
+                            break;
+                        }
+                    }
+                    ptr[i++] = *linp;
+                }
+            } else {
+                for (i = 0; *linp && !isspace(*linp); linp++) {
+                    if (*linp == '\\' && !*(++linp))
+                        return BO_IO; /* Unexpected end */
+                    ptr[i++] = *linp;
+                }
+            }
+            *opts = addStrArr(*opts, ptr, i);
+        }
+    }
+    fclose(f);
+
+    return ret;
+}
+
+static int
+setGrub2(const char *opt, SdRec *sdr)
+{
+    char **opts;
+    int def, cur, ret, i;
+
+    if ((ret = getGrub2(&opts, &def, &cur)) != BO_OK)
+        return ret;
+    for (i = 0; opts[i]; i++) {
+        if (!strcmp(opts[i], opt)) {
+            sdr->osindex = i;
+            sdr->bmstamp = mTime(GRUB2_MENU);
+            freeStrArr(opts);
+            return BO_OK;
+        }
+    }
+    freeStrArr(opts);
+    return BO_NOENT;
+}
+
+static void
+commitGrub2(void)
+{
+    if (sdRec.bmstamp != mTime(GRUB2_MENU) &&
+        setGrub2(sdRec.osname, &sdRec) != BO_OK)
+        return;
+
+    if (grubReboot) {
+        char index[16];
+        const char *args[] = { grubReboot, index, 0 };
+        sprintf(index, "%d", sdRec.osindex);
+        runAndWait((char **)args, environ);
+    }
+}
+
 static char *lilo;
 
 static int
@@ -254,6 +351,7 @@ static const struct {
 } bootOpts[] = {
     { getNull, setNull, 0 },
     { getGrub, setGrub, commitGrub },
+    { getGrub2, setGrub2, commitGrub2 },
     { getLilo, setLilo, commitLilo },
 };
 

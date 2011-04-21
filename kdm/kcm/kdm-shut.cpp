@@ -97,6 +97,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent)
     bm_combo = new KBackedComboBox(group4);
     bm_combo->insertItem("None", i18nc("boot manager", "None"));
     bm_combo->insertItem("Grub", i18n("Grub"));
+    bm_combo->insertItem("Grub2", i18n("Grub2"));
 #if defined(__linux__) && (defined(__i386__) || defined(__amd64__))
     bm_combo->insertItem("Lilo", i18n("Lilo"));
 #endif
