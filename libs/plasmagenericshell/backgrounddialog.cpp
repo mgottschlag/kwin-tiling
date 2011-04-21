@@ -474,6 +474,10 @@ KConfigGroup BackgroundDialog::wallpaperConfig(const QString &plugin)
 
 void BackgroundDialog::saveConfig()
 {
+    if (!isButtonEnabled(Apply)) {
+        return;
+    }
+
     const QString wallpaperPlugin = d->backgroundDialogUi.wallpaperMode->itemData(d->backgroundDialogUi.wallpaperMode->currentIndex()).value<WallpaperInfo>().first;
     const QString wallpaperMode = d->backgroundDialogUi.wallpaperMode->itemData(d->backgroundDialogUi.wallpaperMode->currentIndex()).value<WallpaperInfo>().second;
     const QString containment = d->backgroundDialogUi.containmentComboBox->itemData(d->backgroundDialogUi.containmentComboBox->currentIndex(),
