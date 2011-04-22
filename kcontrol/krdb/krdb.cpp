@@ -93,9 +93,10 @@ static void applyGtkStyles(bool active, int version)
    QLatin1String systemGtkrc = QLatin1String(sysGtkrc(version));
    if (!list.contains(systemGtkrc))
       list.prepend(systemGtkrc);
-   list.removeAll("");
    list.removeAll(gtkkde);
    list.append(gtkkde);
+   if (!active)
+      ::unlink(QFile::encodeName(gtkkde));
 
    // Pass env. var to kdeinit.
    QString name = gtkEnvVar(version);
@@ -235,7 +236,7 @@ static QString color( const QColor& col )
     return QString( "{ %1, %2, %3 }" ).arg( item( col.red() ) ).arg( item( col.green() ) ).arg( item( col.blue() ) );
 }
 
-static void createGtkrc( bool exportColors, const QPalette& cg, bool exportGtkTheme, const QString& gtkTheme, int version )
+static void createGtkrc( bool exportColors, const QPalette& cg, int version )
 {
     // lukas: why does it create in ~/.kde/share/config ???
     // pfeiffer: so that we don't overwrite the user's gtkrc.
@@ -256,16 +257,10 @@ static void createGtkrc( bool exportColors, const QPalette& cg, bool exportGtkTh
             "#\n"
             "#\n", QDateTime::currentDateTime().toString());
 
-    if ( 2==version ) {  // we should maybe check for MacOS settings here
-        t << endl;
-        t << "gtk-alternative-button-order = 1" << endl;
-        t << endl;
-    }
-
+    t << "style \"default\"" << endl;
+    t << "{" << endl;
     if (exportColors)
     {
-        t << "style \"default\"" << endl;
-        t << "{" << endl;
         t << "  bg[NORMAL] = " << color( cg.color( QPalette::Active, QPalette::Background ) ) << endl;
         t << "  bg[SELECTED] = " << color( cg.color(QPalette::Active, QPalette::Highlight) ) << endl;
         t << "  bg[INSENSITIVE] = " << color( cg.color( QPalette::Active, QPalette::Background ) ) << endl;
@@ -289,11 +284,19 @@ static void createGtkrc( bool exportColors, const QPalette& cg, bool exportGtkTh
         t << "  fg[INSENSITIVE] = " << color( cg.color( QPalette::Active, QPalette::Mid ) ) << endl;
         t << "  fg[ACTIVE] = " << color( cg.color( QPalette::Active, QPalette::Foreground ) ) << endl;
         t << "  fg[PRELIGHT] = " << color( cg.color( QPalette::Active, QPalette::Foreground ) ) << endl;
-        t << "}" << endl;
-        t << endl;
-        t << "class \"*\" style \"default\"" << endl;
-        t << endl;
-        
+    }
+
+    t << "}" << endl;
+    t << endl;
+    t << "class \"*\" style \"default\"" << endl;
+    t << endl;
+    if ( 2==version ) {  // we should maybe check for MacOS settings here
+	t << "gtk-alternative-button-order = 1" << endl;
+	t << endl;
+    }
+
+    if (exportColors)
+    {
         // tooltips don't have the standard background color
         t << "style \"ToolTip\"" << endl;
         t << "{" << endl;
@@ -319,68 +322,6 @@ static void createGtkrc( bool exportColors, const QPalette& cg, bool exportGtkTh
         t << "class \"*MenuItem\" style \"MenuItem\"" << endl;
         t << endl;
     }
-    
-    if (exportGtkTheme)
-    {
-        QString gtkStyle;
-        if (gtkTheme.toLower() == "oxygen")
-            gtkStyle = QString("oxygen-gtk");
-        else
-            gtkStyle = gtkTheme;
-
-        bool exist_gtkrc = false;
-        QByteArray gtkrc = getenv(gtkEnvVar(version));
-        QStringList listGtkrc = QFile::decodeName(gtkrc).split(":");
-        if (listGtkrc.contains(saveFile.fileName()))
-            listGtkrc.removeAll(saveFile.fileName());
-        listGtkrc.append(QDir::homePath() + userGtkrc(version));
-        listGtkrc.append(QDir::homePath() + "/.gtkrc-2.0-kde");
-        listGtkrc.append(QDir::homePath() + "/.gtkrc-2.0-kde4");
-        listGtkrc.removeAll("");
-        listGtkrc.removeDuplicates();
-        for (int i = 0; i < listGtkrc.size(); ++i)
-        {
-            if ((exist_gtkrc = QFile::exists(listGtkrc.at(i))))
-                break;
-        }
-
-        if (!exist_gtkrc)
-        {
-            QString gtk2ThemeFilename;
-            gtk2ThemeFilename = QString("%1/.themes/%2/gtk-2.0/gtkrc").arg(QDir::homePath()).arg(gtkStyle);
-            if (!QFile::exists(gtk2ThemeFilename)) {
-                QStringList gtk2ThemePath;
-                gtk2ThemeFilename.clear();
-                QByteArray xdgDataDirs = getenv("XDG_DATA_DIRS");
-                gtk2ThemePath.append(QDir::homePath() + "/.local");
-                gtk2ThemePath.append(QFile::decodeName(xdgDataDirs).split(":"));
-                gtk2ThemePath.removeDuplicates();
-                for (int i = 0; i < gtk2ThemePath.size(); ++i)
-                {
-                    gtk2ThemeFilename = QString("%1/themes/%2/gtk-2.0/gtkrc").arg(gtk2ThemePath.at(i)).arg(gtkStyle);
-                    if (QFile::exists(gtk2ThemeFilename))
-                        break;
-                    else
-                        gtk2ThemeFilename.clear();
-                }
-            }
-
-            if (!gtk2ThemeFilename.isEmpty())
-            {
-                t << "include \"" << gtk2ThemeFilename << "\"" << endl;
-                t << endl;
-                t << "style \"user-font\"" << endl;
-                t << "{" << endl;
-                t << "  font_name = \"Sans Serif\"" << endl;
-                t << "}" << endl;
-                t << "widget_class \"*\" style \"user-font\"" << endl;
-                t << endl;
-                t << "gtk-theme-name=\"" << gtkStyle << "\"" << endl;
-                t << endl;
-            }
-        }
-
-    }
 }
 
 // -----------------------------------------------------------------------------
@@ -392,7 +333,6 @@ void runRdb( uint flags )
   bool exportQtColors    = flags & KRdbExportQtColors;
   bool exportQtSettings  = flags & KRdbExportQtSettings;
   bool exportXftSettings = flags & KRdbExportXftSettings;
-  bool exportGtkTheme = flags & KRdbExportGtkTheme;
 
   KSharedConfigPtr kglobalcfg = KSharedConfig::openConfig( "kdeglobals" );
   KConfigGroup kglobals(kglobalcfg, "KDE");
@@ -405,23 +345,13 @@ void runRdb( uint flags )
     exit(0);
   }
 
-
-  KConfigGroup generalCfgGroup(kglobalcfg, "General");
-
-  QString gtkTheme;
-  if (generalCfgGroup.hasKey("widgetStyle"))
-    gtkTheme = generalCfgGroup.readEntry("widgetStyle");
-  else
-    exportGtkTheme = false;
-
-  createGtkrc( exportColors, newPal, exportGtkTheme, gtkTheme, 1 );
-  createGtkrc( exportColors, newPal, exportGtkTheme, gtkTheme, 2 );
-
   // Export colors to non-(KDE/Qt) apps (e.g. Motif, GTK+ apps)
   if (exportColors)
   {
     KGlobal::dirs()->addResourceType("appdefaults", "data", "kdisplay/app-defaults/");
     KGlobal::locale()->insertCatalog("krdb");
+    createGtkrc( true, newPal, 1 );
+    createGtkrc( true, newPal, 2 );
 
     QString preproc;
     QColor backCol = newPal.color( QPalette::Active, QPalette::Background );
@@ -483,6 +413,8 @@ void runRdb( uint flags )
 
   if (exportXftSettings)
   {
+    KConfigGroup generalCfgGroup(kglobalcfg, "General");
+
     if (generalCfgGroup.hasKey("XftAntialias"))
     {
       contents += "Xft.antialias: ";
