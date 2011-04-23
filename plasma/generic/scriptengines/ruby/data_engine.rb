@@ -112,7 +112,7 @@ module PlasmaScriptengineRuby
     end
 
     def camelize(str)
-      str.gsub(/(^|[_-])(.)/) { $2.upcase }
+      str.gsub(/(^|[._-])(.)/) { $2.upcase }
     end
 
     def init
