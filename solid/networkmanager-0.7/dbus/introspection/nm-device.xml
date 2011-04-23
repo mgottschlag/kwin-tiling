@@ -138,7 +138,7 @@
       </tp:enumvalue>
       <tp:enumvalue suffix="WIFI" value="2">
         <tp:docstring>
-          The device is an 802.11 WiFi device.
+          The device is an 802.11 WiFi device.include/NetworkManager.h:
         </tp:docstring>
       </tp:enumvalue>
       <tp:enumvalue suffix="GSM" value="3">
@@ -151,6 +151,12 @@
           The device is a CDMA/IS-95-based cellular WAN device.
         </tp:docstring>
       </tp:enumvalue>
+      <tp:enumvalue suffix="BLUETOOTH" value="5">
+        <tp:docstring>
+          The device is a BLUETOOTH cellular.
+        </tp:docstring>
+      </tp:enumvalue>
+
     </tp:enum>
 
     <tp:flags name="NM_DEVICE_CAP" value-prefix="NM_DEVICE_CAP" type="u">
