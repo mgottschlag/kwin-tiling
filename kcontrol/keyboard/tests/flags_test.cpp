@@ -77,7 +77,7 @@ private Q_SLOTS:
         QCOMPARE( flags->getShortText(layoutUnit1, keyboardConfig), QString("usi") );
         QCOMPARE( flags->getShortText(layoutUnit2, keyboardConfig), QString("us") );
 
-        const Rules* rules = Rules::readRules();
+        const Rules* rules = Rules::readRules(Rules::NO_EXTRAS);
         QCOMPARE( flags->getLongText(layoutUnit, rules), QString("USA") );
         QVERIFY( flags->getLongText(layoutUnit1, rules).startsWith("USA - International") );
         QCOMPARE( flags->getLongText(layoutUnit2, rules), QString("USA - other") );

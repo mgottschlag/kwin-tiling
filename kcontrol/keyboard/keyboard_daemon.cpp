@@ -50,7 +50,7 @@ KeyboardDaemon::KeyboardDaemon(QObject *parent, const QList<QVariant>&)
 	  xEventNotifier(NULL),
 	  layoutTrayIcon(NULL),
 	  layoutMemory(keyboardConfig),
-	  rules(Rules::readRules())
+	  rules(Rules::readRules(Rules::READ_EXTRAS))
 {
 	if( ! X11Helper::xkbSupported(NULL) )
 		return;		//TODO: shut down the daemon?

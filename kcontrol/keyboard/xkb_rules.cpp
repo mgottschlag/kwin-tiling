@@ -23,6 +23,7 @@
 #include <klocale.h>
 
 #include <QtCore/QDir>
+#include <QtCore/QRegExp>
 #include <QtGui/QTextDocument> // for Qt::escape
 #include <QtXml/QXmlAttributes>
 
@@ -43,8 +44,9 @@
 class RulesHandler : public QXmlDefaultHandler
 {
 public:
-	RulesHandler(Rules* rules_):
-		rules(rules_) {}
+	RulesHandler(Rules* rules_, bool fromExtras_):
+		rules(rules_),
+		fromExtras(fromExtras_){}
 
     bool startElement(const QString &namespaceURI, const QString &localName,
                       const QString &qName, const QXmlAttributes &attributes);
@@ -59,6 +61,7 @@ private:
 
     QStringList path;
     Rules* rules;
+    const bool fromExtras;
 };
 
 static QString translate_xml_item(const QString& itemText)
@@ -86,7 +89,7 @@ static QString translate_description(ConfigItem* item)
 //		}
 //	}
 //}
-
+static
 void postProcess(Rules* rules)
 {
 	//TODO remove elements with empty names to safeguard us
@@ -101,6 +104,7 @@ void postProcess(Rules* rules)
 		modelInfo->vendor = translate_xml_item(modelInfo->vendor);
 		modelInfo->description = translate_description(modelInfo);
 	}
+
 	foreach(LayoutInfo* layoutInfo, rules->layoutInfos) {
 		layoutInfo->description = translate_description(layoutInfo);
 
@@ -173,24 +177,65 @@ static QString findXkbRulesFile()
 	return rulesFile;
 }
 
+static
+void mergeRules(Rules* rules, Rules* extraRules)
+{
+	rules->modelInfos.append( extraRules->modelInfos );
+	rules->optionGroupInfos.append( extraRules->optionGroupInfos );	// need to iterate and merge?
+
+	QList<LayoutInfo*> layoutsToAdd;
+	foreach(LayoutInfo* extraLayoutInfo, extraRules->layoutInfos) {
+		LayoutInfo* layoutInfo = findByName(rules->layoutInfos, extraLayoutInfo->name);
+		if( layoutInfo != NULL ) {
+			layoutInfo->variantInfos.append( extraLayoutInfo->variantInfos );
+			layoutInfo->languages.append( extraLayoutInfo->languages );
+		}
+		else {
+			layoutsToAdd.append(extraLayoutInfo);
+		}
+	}
+	rules->layoutInfos.append(layoutsToAdd);
+	kDebug() << "Merged from extra rules:" << extraRules->layoutInfos.size() << "layouts," << extraRules->modelInfos.size() << "models," << extraRules->optionGroupInfos.size() << "option groups";
+
+	// base rules now own the objects - remove them from extra rules so that it does not try to delete them
+	extraRules->layoutInfos.clear();
+	extraRules->modelInfos.clear();
+	extraRules->optionGroupInfos.clear();
+}
+
 
 const char Rules::XKB_OPTION_GROUP_SEPARATOR = ':';
 
-Rules* Rules::readRules()
+Rules* Rules::readRules(ExtrasFlag extrasFlag)
 {
-	return readRules(findXkbRulesFile());
+	Rules* rules = new Rules();
+	QString rulesFile = findXkbRulesFile();
+	if( ! readRules(rules, rulesFile, false) ) {
+		delete rules;
+		return NULL;
+	}
+	if( extrasFlag == Rules::READ_EXTRAS ) {
+		QRegExp regex("\\.xml$");
+		Rules* rulesExtra = new Rules();
+		QString extraRulesFile = rulesFile.replace(regex, ".extras.xml");
+		if( readRules(rulesExtra, extraRulesFile, true) ) {	// not fatal if it fails
+			mergeRules(rules, rulesExtra);
+		}
+		delete rulesExtra;
+	}
+	return rules;
 }
 
-Rules* Rules::readRules(const QString& filename)
+
+Rules* Rules::readRules(Rules* rules, const QString& filename, bool fromExtras)
 {
 	QFile file(filename);
 	if( !file.open(QFile::ReadOnly | QFile::Text) ) {
-		qWarning() << "Cannot open the rules file" << file.fileName();
+		kError() << "Cannot open the rules file" << file.fileName();
 		return NULL;
 	}
 
-	Rules* rules = new Rules();
-	RulesHandler rulesHandler(rules);
+	RulesHandler rulesHandler(rules, fromExtras);
 
 	QXmlSimpleReader reader;
 	reader.setContentHandler(&rulesHandler);
@@ -201,7 +246,7 @@ Rules* Rules::readRules(const QString& filename)
 	kDebug() << "Parsing xkb rules from" << file.fileName();
 
 	if( ! reader.parse(xmlInputSource) ) {
-		qWarning() << "Failed to parse the rules file" << file.fileName();
+		kError() << "Failed to parse the rules file" << file.fileName();
 		delete rules;
 		return NULL;
 	}
@@ -218,10 +263,10 @@ bool RulesHandler::startElement(const QString &/*namespaceURI*/, const QString &
 
 	QString strPath = path.join("/");
 	if( strPath.endsWith("layoutList/layout/configItem") ) {
-		rules->layoutInfos << new LayoutInfo();
+			rules->layoutInfos << new LayoutInfo(fromExtras);
 	}
 	else if( strPath.endsWith("layoutList/layout/variantList/variant") ) {
-		rules->layoutInfos.last()->variantInfos << new VariantInfo();
+		rules->layoutInfos.last()->variantInfos << new VariantInfo(fromExtras);
 	}
 	else if( strPath.endsWith("modelList/model") ) {
 		rules->modelInfos << new ModelInfo();
@@ -272,6 +317,10 @@ bool RulesHandler::characters(const QString &str)
 		else if( strPath.endsWith("layoutList/layout/variantList/variant/configItem/description") ) {
 			rules->layoutInfos.last()->variantInfos.last()->description = str.trimmed();
 //			qDebug() << "\tvariant descr:" << str;
+		}
+		else if( strPath.endsWith("layoutList/layout/variantList/variant/configItem/languageList/iso639Id") ) {
+			rules->layoutInfos.last()->variantInfos.last()->languages << str.trimmed();
+//			qDebug() << "\tvlang:" << str;
 		}
 		else if( strPath.endsWith("modelList/model/configItem/name") ) {
 			rules->modelInfos.last()->name = str.trimmed();

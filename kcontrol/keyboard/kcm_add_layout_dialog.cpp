@@ -69,6 +69,19 @@ AddLayoutDialog::AddLayoutDialog(const Rules* rules_, Flags* flags_, QWidget* pa
     connect(layoutDialogUi->layoutComboBox, SIGNAL(activated(int)), this, SLOT(layoutChanged(int)));
 }
 
+static
+bool containsLanguage(const LayoutInfo* layoutInfo, const QString& lang)
+{
+	if( layoutInfo->languages.contains(lang) )
+		return true;
+
+	foreach(const VariantInfo* variantInfo, layoutInfo->variantInfos) {
+		if( variantInfo->languages.contains(lang) )
+			return true;
+	}
+	return false;
+}
+
 void AddLayoutDialog::languageChanged(int langIdx)
 {
 	QString lang = layoutDialogUi->languageComboBox->itemData(langIdx).toString();
@@ -80,7 +93,7 @@ void AddLayoutDialog::languageChanged(int langIdx)
 
 	layoutDialogUi->layoutComboBox->clear();
     foreach(const LayoutInfo* layoutInfo, rules->layoutInfos) {
-    	if( lang.isEmpty() || layoutInfo->languages.contains(lang) ) {
+    	if( lang.isEmpty() || containsLanguage(layoutInfo, lang) ) {
     		if( flags ) {
     			QIcon icon(flags->getIcon(layoutInfo->name));
     			if( icon.isNull() ) {
@@ -93,6 +106,7 @@ void AddLayoutDialog::languageChanged(int langIdx)
     		}
     	}
     }
+    layoutDialogUi->layoutComboBox->model()->sort(0);
 	layoutDialogUi->layoutComboBox->setCurrentIndex(0);
 	layoutChanged(0);
 
@@ -105,13 +119,20 @@ void AddLayoutDialog::layoutChanged(int layoutIdx)
 	if( layoutName == selectedLayout )
 		return;
 
+	QString lang = layoutDialogUi->languageComboBox->itemData(layoutDialogUi->languageComboBox->currentIndex()).toString();
+
 	layoutDialogUi->variantComboBox->clear();
 	const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutName);
     foreach(const VariantInfo* variantInfo, layoutInfo->variantInfos) {
-    	layoutDialogUi->variantComboBox->addItem(variantInfo->description, variantInfo->name);
+        if( lang.isEmpty() || variantInfo->languages.contains(lang) ) {
+        	layoutDialogUi->variantComboBox->addItem(variantInfo->description, variantInfo->name);
+        }
     }
-    layoutDialogUi->variantComboBox->model()->sort(0);
-	layoutDialogUi->variantComboBox->insertItem(0, i18nc("variant", "Default"), "");
+
+    if( lang.isEmpty() || layoutInfo->languages.contains(lang) ) {
+    	layoutDialogUi->variantComboBox->model()->sort(0);
+    	layoutDialogUi->variantComboBox->insertItem(0, i18nc("variant", "Default"), "");
+    }
 	layoutDialogUi->variantComboBox->setCurrentIndex(0);
 
 	layoutDialogUi->labelEdit->setText(layoutName);
