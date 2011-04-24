@@ -77,10 +77,22 @@ QString Solid::Control::NetworkInterface::interfaceName() const
     return_SOLID_CALL(Ifaces::NetworkInterface *, d->backendObject(), QString(), interfaceName());
 }
 
+QString Solid::Control::NetworkInterface::ipInterfaceName() const
+{
+    Q_D(const NetworkInterface);
+    return_SOLID_CALL(Ifaces::NetworkInterface *, d->backendObject(), QString(), ipInterfaceName());
+}
+
 QString Solid::Control::NetworkInterface::driver() const
 {
     Q_D(const NetworkInterface);
     return_SOLID_CALL(Ifaces::NetworkInterface *, d->backendObject(), QString(), driver());
+}
+
+bool Solid::Control::NetworkInterface::firmwareMissing() const
+{
+    Q_D(const NetworkInterface);
+    return_SOLID_CALL(Ifaces::NetworkInterface *, d->backendObject(), false, firmwareMissing());
 }
 
 void Solid::Control::NetworkInterface::disconnectInterface() const

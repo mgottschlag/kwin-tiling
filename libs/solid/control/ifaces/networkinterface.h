@@ -65,6 +65,20 @@ namespace Ifaces
         virtual QString interfaceName() const = 0;
 
         /**
+         * The name of the device's data interface when available. This property
+         * may not refer to the actual data interface until the device has
+         * successfully established a data connection, indicated by the device's
+         * State becoming ACTIVATED.
+         */
+        virtual QString ipInterfaceName() const = 0;
+
+        /**
+         * If TRUE, indicates the device is likely missing firmware necessary for
+         * its operation.
+         */
+        virtual bool firmwareMissing() const = 0;
+
+        /**
          * Handle for the system driver controlling this network interface
          */
         virtual QString driver() const = 0;

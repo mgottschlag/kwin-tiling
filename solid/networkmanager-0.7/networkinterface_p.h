@@ -43,6 +43,7 @@ public:
     QString driver;
     int ipV4Address;
     QString interfaceName;
+    bool firmwareMissing;
     NMNetworkManager * manager;
     //NMPropertyHelper propHelper;
 };

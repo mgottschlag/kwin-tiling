@@ -70,6 +70,17 @@ QString WicdNetworkInterface::interfaceName() const
     return d->name;
 }
 
+QString WicdNetworkInterface::ipInterfaceName() const
+{
+    return d->name;
+}
+
+bool WicdNetworkInterface::firmwareMissing() const
+{
+    // TODO: check if wicd can detect firmware missing.
+    return false;
+}
+
 Solid::Control::IPv4Config WicdNetworkInterface::ipV4Config() const
 {
     // Let's parse ifconfig here
