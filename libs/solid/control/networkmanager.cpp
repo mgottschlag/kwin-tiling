@@ -268,8 +268,6 @@ Solid::Control::NetworkManagerPrivate::findRegisteredNetworkInterface(const QStr
                 device = new GsmNetworkInterface(iface);
             } else if (qobject_cast<Ifaces::CdmaNetworkInterface *>(iface) != 0) {
                 device = new CdmaNetworkInterface(iface);
-            } else if (qobject_cast<Ifaces::BtNetworkInterface *>(iface) != 0) {
-                device = new BtNetworkInterface(iface);
             } else {
                 kDebug() << "Unhandled network interface: " << uni;
             }
