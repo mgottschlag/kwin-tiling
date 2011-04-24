@@ -158,20 +158,6 @@ namespace Control
         bool firmwareMissing() const;
 
         /**
-         * The name of the device's data interface when available. This property
-         * may not refer to the actual data interface until the device has
-         * successfully established a data connection, indicated by the device's
-         * State becoming ACTIVATED.
-         */
-        QString ipInterfaceName() const;
-
-        /**
-         * If TRUE, indicates the device is likely missing firmware necessary for
-         * its operation.
-         */
-        bool firmwareMissing() const;
-
-        /**
          * Handle for the system driver controlling this network interface
          */
         QString driver() const;

@@ -38,7 +38,7 @@ public:
     virtual ~WicdNetworkInterface();
     QString interfaceName() const;
     QString ipInterfaceName() const;
-    bool firmwareMissing();
+    bool firmwareMissing() const;
     virtual QString driver() const = 0;
     Solid::Control::IPv4Config ipV4Config() const;
     QString uni() const;
