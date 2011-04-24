@@ -59,6 +59,16 @@ bool FakeNetworkInterface::firmwareMissing() const
     return mPropertyMap["firmwareMissing"].toBool();
 }
 
+QString FakeNetworkInterface::ipInterfaceName() const
+{
+    return mPropertyMap["ipInterface"].toString();
+}
+
+bool FakeNetworkInterface::firmwareMissing() const
+{
+    return mPropertyMap["firmwareMissing"].toBool();
+}
+
 QString FakeNetworkInterface::driver() const
 {
     return mPropertyMap["driver"].toString();

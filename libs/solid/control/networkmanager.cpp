@@ -262,6 +262,8 @@ Solid::Control::NetworkManagerPrivate::findRegisteredNetworkInterface(const QStr
                 device = new WirelessNetworkInterface(iface);
             } else if (qobject_cast<Ifaces::WiredNetworkInterface *>(iface) != 0) {
                 device = new WiredNetworkInterface(iface);
+            } else if (qobject_cast<Ifaces::BtNetworkInterface *>(iface) != 0) {
+                device = new BtNetworkInterface(iface);
             } else if (qobject_cast<Ifaces::GsmNetworkInterface *>(iface) != 0) {
                 device = new GsmNetworkInterface(iface);
             } else if (qobject_cast<Ifaces::CdmaNetworkInterface *>(iface) != 0) {

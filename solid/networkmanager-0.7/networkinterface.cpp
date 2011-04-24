@@ -122,6 +122,12 @@ QString NMNetworkInterface::ipInterfaceName() const
     return d->deviceIface.ipInterface();
 }
 
+QString NMNetworkInterface::ipInterfaceName() const
+{
+    Q_D(const NMNetworkInterface);
+    return d->deviceIface.ipInterface();
+}
+
 QString NMNetworkInterface::driver() const
 {
     Q_D(const NMNetworkInterface);
@@ -144,6 +150,12 @@ QString NMNetworkInterface::udi() const
 {
     Q_D(const NMNetworkInterface);
     return d->udi;
+}
+
+bool NMNetworkInterface::firmwareMissing() const
+{
+    Q_D(const NMNetworkInterface);
+    return d->firmwareMissing;
 }
 
 int NMNetworkInterface::ipV4Address() const

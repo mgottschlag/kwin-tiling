@@ -59,10 +59,10 @@ Solid::Control::BtNetworkInterface::~BtNetworkInterface()
 {
 }
 
-/*Solid::Control::NetworkInterface::Type Solid::Control::BtNetworkInterface::type() const
+Solid::Control::NetworkInterface::Type Solid::Control::BtNetworkInterface::type() const
 {
-    return Gsm;
-}*/
+    return Bluetooth;
+}
 
 void Solid::Control::BtNetworkInterface::makeConnections(QObject * source)
 {

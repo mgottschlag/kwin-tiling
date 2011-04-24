@@ -63,9 +63,9 @@ namespace Control
         /**
          * The NetworkInterface type.
          *
-         * @return the NetworkInterface::Type.  This always returns NetworkInterface::Ieee8023
+         * @return the NetworkInterface::Type.  This always returns NetworkInterface::Bluetooth
          */
-        /*virtual NetworkInterface::Type type() const;*/
+        virtual NetworkInterface::Type type() const;
 
         /**
          * Retrieves the capabilities supported by this device.
