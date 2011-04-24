@@ -242,7 +242,7 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
             }
 
             QMimeData *mimeData = new QMimeData();
-            mimeData->setData("text/uri-list", urlString.toAscii());
+            mimeData->setData("text/uri-list", urlString.toUtf8());
             mimeData->setText(mimeData->text());
             QDrag *drag = new QDrag(this);
             drag->setMimeData(mimeData);
