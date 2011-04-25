@@ -49,6 +49,7 @@ public Q_SLOTS:
 protected:
     Solid::Control::ModemGsmCardInterface *modemGsmCardIface;
     Solid::Control::ModemGsmNetworkInterface *modemGsmNetworkIface;
+    QString getUdiForModemManager();
 };
 
 #endif

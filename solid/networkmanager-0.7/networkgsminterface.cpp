@@ -59,10 +59,33 @@ void NMGsmNetworkInterface::gsmPropertiesChanged(const QVariantMap & changedProp
     kDebug(1441) << changedProperties.keys();
 }
 
+QString NMGsmNetworkInterface::getUdiForModemManager()
+{
+    if (driver() != QLatin1String("bluez")) {
+        return udi();
+    }
+
+    /* BlueZ knows about the rfcommX string that we could use to find the device in ModemManager
+     * but does not export this info, so let's use the first bluetooth device we find in ModemManager.
+     * Modem will be registered in ModemManager only after someone execute its org.bluez.Serial.Connect method. */
+    foreach(const Solid::Control::ModemInterface *modem, Solid::Control::ModemManager::modemInterfaces()) {
+        if (modem->driver() == QLatin1String("bluetooth")) {
+            return modem->udi();
+        }
+    }
+
+    modemRemoved(udi());
+    return QString();
+}
+
 Solid::Control::ModemGsmCardInterface * NMGsmNetworkInterface::getModemCardIface()
 {
+    QString correctUdi = getUdiForModemManager();
+    if (correctUdi.isEmpty()) {
+        return 0;
+    }
     if (modemGsmCardIface == 0) {
-        modemGsmCardIface = qobject_cast<Solid::Control::ModemGsmCardInterface*> (Solid::Control::ModemManager::findModemInterface(udi(), Solid::Control::ModemInterface::GsmCard));
+        modemGsmCardIface = qobject_cast<Solid::Control::ModemGsmCardInterface*> (Solid::Control::ModemManager::findModemInterface(correctUdi, Solid::Control::ModemInterface::GsmCard));
         connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), this, SLOT(modemRemoved(const QString &)));
     }
 
@@ -71,9 +94,15 @@ Solid::Control::ModemGsmCardInterface * NMGsmNetworkInterface::getModemCardIface
 
 Solid::Control::ModemGsmNetworkInterface * NMGsmNetworkInterface::getModemNetworkIface()
 {
+    QString correctUdi = getUdiForModemManager();
+    if (correctUdi.isEmpty()) {
+        return 0;
+    }
     if (modemGsmNetworkIface == 0) {
-        modemGsmNetworkIface = qobject_cast<Solid::Control::ModemGsmNetworkInterface*> (Solid::Control::ModemManager::findModemInterface(udi(), Solid::Control::ModemInterface::GsmNetwork));
-        connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), this, SLOT(modemRemoved(const QString &)));
+        modemGsmNetworkIface = qobject_cast<Solid::Control::ModemGsmNetworkInterface*> (Solid::Control::ModemManager::findModemInterface(correctUdi, Solid::Control::ModemInterface::GsmNetwork));
+        if (modemGsmNetworkIface) {
+            connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), this, SLOT(modemRemoved(const QString &)));
+        }
     }
 
     return modemGsmNetworkIface;
