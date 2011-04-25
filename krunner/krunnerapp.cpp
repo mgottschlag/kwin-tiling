@@ -106,7 +106,7 @@ KActionCollection* KRunnerApp::actionCollection()
 
 void KRunnerApp::initialize()
 {
-    setWindowIcon(KIcon(QLatin1String( "system-run" )));
+    setWindowIcon(KIcon(QLatin1String("system-run")));
 
     setQuitOnLastWindowClosed(false);
     KCrash::setFlags(KCrash::AutoRestart);
@@ -117,31 +117,31 @@ void KRunnerApp::initialize()
     m_runnerManager = new Plasma::RunnerManager;
 
     new AppAdaptor(this);
-    QDBusConnection::sessionBus().registerObject( QLatin1String( "/App" ), this );
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/App"), this);
 
     // Global keys
     m_actionCollection = new KActionCollection(this);
     KAction* a = 0;
 
-    if (KAuthorized::authorize(QLatin1String( "run_command" ))) {
-        a = m_actionCollection->addAction(QLatin1String( "Run Command" ));
+    if (KAuthorized::authorize(QLatin1String("run_command"))) {
+        a = m_actionCollection->addAction(QLatin1String("Run Command"));
         a->setText(i18n("Run Command"));
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::Key_F2));
         connect(a, SIGNAL(triggered(bool)), SLOT(displayOrHide()));
 
-        a = m_actionCollection->addAction(QLatin1String( "Run Command on clipboard contents" ));
+        a = m_actionCollection->addAction(QLatin1String("Run Command on clipboard contents"));
         a->setText(i18n("Run Command on clipboard contents"));
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::SHIFT+Qt::Key_F2));
         connect(a, SIGNAL(triggered(bool)), SLOT(displayWithClipboardContents()));
     }
 
-    a = m_actionCollection->addAction(QLatin1String( "Show System Activity" ));
+    a = m_actionCollection->addAction(QLatin1String("Show System Activity"));
     a->setText(i18n("Show System Activity"));
     a->setGlobalShortcut(KShortcut(Qt::CTRL+Qt::Key_Escape));
     connect(a, SIGNAL(triggered(bool)), SLOT(showTaskManager()));
 
-    if (KAuthorized::authorize(QLatin1String( "switch_user" ))) {
-        a = m_actionCollection->addAction(QLatin1String( "Switch User" ));
+    if (KAuthorized::authorize(QLatin1String("switch_user"))) {
+        a = m_actionCollection->addAction(QLatin1String("Switch User"));
         a->setText(i18n("Switch User"));
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Insert));
         connect(a, SIGNAL(triggered(bool)), SLOT(switchUser()));
@@ -150,8 +150,8 @@ void KRunnerApp::initialize()
     //FIXME: lock/logout should be in the session management runner which also provides similar
     // functions
 #ifdef Q_WS_X11
-    if (KAuthorized::authorize(QLatin1String( "lock_screen" ))) {
-        a = m_actionCollection->addAction(QLatin1String( "Lock Session" ));
+    if (KAuthorized::authorize(QLatin1String("lock_screen"))) {
+        a = m_actionCollection->addAction(QLatin1String("Lock Session"));
         a->setText(i18n("Lock Session"));
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_L));
         connect(a, SIGNAL(triggered(bool)), &m_saver, SLOT(Lock()));
@@ -184,7 +184,7 @@ void KRunnerApp::initialize()
 
 
     m_actionCollection->readSettings();
-    if (KAuthorized::authorize(QLatin1String( "run_command" ))) {
+    if (KAuthorized::authorize(QLatin1String("run_command"))) {
         //m_runnerManager->setAllowedRunners(QStringList() << "shell");
         m_runnerManager->reloadConfiguration(); // pre-load the runners
 
@@ -210,7 +210,7 @@ void KRunnerApp::singleRunnerModeActionTriggered()
 
 void KRunnerApp::querySingleRunner(const QString& runnerId, const QString &term)
 {
-    if (!KAuthorized::authorize(QLatin1String( "run_command" ))) {
+    if (!KAuthorized::authorize(QLatin1String("run_command"))) {
         return;
     }
 
@@ -265,7 +265,7 @@ void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
 
 void KRunnerApp::display()
 {
-    if (!KAuthorized::authorize(QLatin1String( "run_command" ))) {
+    if (!KAuthorized::authorize(QLatin1String("run_command"))) {
         return;
     }
 
@@ -275,7 +275,7 @@ void KRunnerApp::display()
 
 void KRunnerApp::displaySingleRunner(const QString &runnerId)
 {
-    if (!KAuthorized::authorize(QLatin1String( "run_command" ))) {
+    if (!KAuthorized::authorize(QLatin1String("run_command"))) {
         return;
     }
 
@@ -286,7 +286,7 @@ void KRunnerApp::displaySingleRunner(const QString &runnerId)
 
 void KRunnerApp::displayOrHide()
 {
-    if (!KAuthorized::authorize(QLatin1String( "run_command" ))) {
+    if (!KAuthorized::authorize(QLatin1String("run_command"))) {
         m_interface->hide();
         return;
     }
@@ -310,7 +310,7 @@ void KRunnerApp::displayOrHide()
 
 void KRunnerApp::query(const QString &term)
 {
-    if (!KAuthorized::authorize(QLatin1String( "run_command" ))) {
+    if (!KAuthorized::authorize(QLatin1String("run_command"))) {
         return;
     }
 
@@ -319,7 +319,7 @@ void KRunnerApp::query(const QString &term)
 
 void KRunnerApp::displayWithClipboardContents()
 {
-    if (!KAuthorized::authorize(QLatin1String( "run_command" ))) {
+    if (!KAuthorized::authorize(QLatin1String("run_command"))) {
         return;
     }
 
@@ -329,7 +329,7 @@ void KRunnerApp::displayWithClipboardContents()
 
 void KRunnerApp::switchUser()
 {
-    const KService::Ptr service = KService::serviceByStorageId(QLatin1String( "plasma-runner-sessions.desktop" ));
+    const KService::Ptr service = KService::serviceByStorageId(QLatin1String("plasma-runner-sessions.desktop"));
     KPluginInfo info(service);
 
     if (info.isValid()) {
@@ -349,7 +349,7 @@ void KRunnerApp::switchUser()
             m_runnerManager->setSingleMode(true);
             m_interface->display();
             //TODO: ugh, magic strings. See sessions/sessionrunner.cpp
-            m_runnerManager->launchQuery(QLatin1String( "SESSIONS" ), info.pluginName());
+            m_runnerManager->launchQuery(QLatin1String("SESSIONS"), info.pluginName());
         }
     }
 }
