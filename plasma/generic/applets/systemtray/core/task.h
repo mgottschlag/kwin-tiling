@@ -74,7 +74,6 @@ public:
     Q_ENUMS(Category)
 
 
-
     virtual ~Task();
 
     /**
@@ -174,6 +173,12 @@ public:
      */
     void resetHiddenStatus();
 
+    /**
+     * Can be used by the hostwhen they no longer wish to use the widget associated
+     * with the host.
+     */
+    virtual void abandon(Plasma::Applet *host);
+
 Q_SIGNALS:
     /**
      * Emitted when something about the task has changed
@@ -189,8 +194,8 @@ Q_SIGNALS:
 
 protected:
     Task(QObject *parent = 0);
-
     QHash<Plasma::Applet *, QGraphicsWidget *> widgetsByHost() const;
+    QGraphicsWidget *forget(Plasma::Applet *host);
 
     /**
      * Called when a new widget is required

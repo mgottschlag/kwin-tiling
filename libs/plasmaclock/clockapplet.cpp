@@ -399,7 +399,7 @@ void ClockApplet::configChanged()
     }
 
     KConfigGroup cg = config();
-    d->selectedTimezones = cg.readEntry("timeZones", QStringList());
+    d->selectedTimezones = cg.readEntry("timeZones", QStringList() << "UTC");
     d->timezone = cg.readEntry("timezone", d->timezone);
     d->defaultTimezone = cg.readEntry("defaultTimezone", d->timezone);
     d->forceTzDisplay = d->timezone != d->defaultTimezone;
