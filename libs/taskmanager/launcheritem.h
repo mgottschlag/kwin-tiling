@@ -118,7 +118,10 @@ Q_SIGNALS:
 private:
     friend class LauncherItemPrivate;
     LauncherItemPrivate * const d;
-
+    
+    //preferred applications hack
+    QString defaultApplication(QString application, bool storageId = false);
+    
     Q_PRIVATE_SLOT(d, void associateDestroyed(QObject *obj))
 };
 
