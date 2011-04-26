@@ -81,6 +81,7 @@ void AppLauncherItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
 void AppLauncherItem::updateToolTip()
 {
     Plasma::ToolTipContent data(m_launcher->name(),m_launcher->genericName(),m_launcher->icon());
+    data.setInstantPopup(true);
     Plasma::ToolTipManager::self()->setContent(this, data);
 }
 
