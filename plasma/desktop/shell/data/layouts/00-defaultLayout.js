@@ -24,7 +24,6 @@ for (var i = 1; i < screenCount; ++i) {
 }
 
 var hasFolderview = widgetExists("folderview");
-print("HAS FOLDERVIEW?!!!!!!!!!!!!!! " + hasFolderview);
 
 for (var i = 0; i < screenCount; ++i) {
     var desktop = new Activity
