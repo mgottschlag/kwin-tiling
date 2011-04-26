@@ -6,6 +6,7 @@ if (panelIds.length == 1) {
 
 panel.height = 27
 panel.addWidget("launcher")
+panel.addWidget("org.kde.showActivityManager")
 panel.addWidget("pager")
 tasks = panel.addWidget("tasks")
 panel.addWidget("systemtray")

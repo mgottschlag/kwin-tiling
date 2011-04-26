@@ -503,7 +503,7 @@ void InternalToolBox::reposition()
                     setCorner(InternalToolBox::Top);
                 } else {
                     setPos(avail.topLeft());
-                    setCorner(InternalToolBox::TopLeft);
+                    setCorner(InternalToolBox::Top);
                 }
             } else {
                 if (avail.top() > screenGeom.top()) {
@@ -514,16 +514,16 @@ void InternalToolBox::reposition()
                     setCorner(InternalToolBox::Top);
                 } else {
                     setPos(avail.topRight() - QPoint(boundingRect().width(), 0));
-                    setCorner(InternalToolBox::TopRight);
+                    setCorner(InternalToolBox::Top);
                 }
             }
         } else {
             if (QApplication::layoutDirection() == Qt::RightToLeft) {
                 setPos(d->containment->mapFromScene(QPointF(d->containment->geometry().topLeft())));
-                setCorner(InternalToolBox::TopLeft);
+                setCorner(InternalToolBox::Top);
             } else {
                 setPos(d->containment->mapFromScene(QPointF(d->containment->geometry().topRight())));
-                setCorner(InternalToolBox::TopRight);
+                setCorner(InternalToolBox::Top);
             }
         }
     }
