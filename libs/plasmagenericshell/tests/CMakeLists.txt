@@ -9,7 +9,6 @@ set(appletexplorer_SRCS
    ../widgetsexplorer/kcategorizeditemsviewmodels.cpp
    ../widgetsexplorer/plasmaappletitemmodel.cpp
    ../widgetsexplorer/appleticon.cpp
-   ../widgetsexplorer/appletsfiltering.cpp
    ../widgetsexplorer/applettooltip.cpp
    ../widgetsexplorer/widgetexplorer.cpp
    ../widgetsexplorer/openwidgetassistant.cpp
