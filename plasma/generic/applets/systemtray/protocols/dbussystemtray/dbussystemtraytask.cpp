@@ -103,7 +103,6 @@ QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
     iconWidget->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
     //standard fdo icon sizes is 24x24, opposed to the 22x22 SizeSmallMedium
     iconWidget->setPreferredSize(24, 24);
-
     return iconWidget;
 }
 
@@ -214,7 +213,7 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
 
             //FIXME: quite ugly, checks if the applet is klipper and if is less than 2 widgets have been created. if so, assign a default global shortcut
             QString shortcutText;
-            if (i.key()->property("firstRun").toBool() == true  && name() == "Klipper" && widgetsByHost().count() < 2) {
+            if (i.key()->property("firstRun").toBool() == true && name() == "Klipper" && widgetsByHost().count() < 2) {
 
                 QString file = KStandardDirs::locateLocal("config", "kglobalshortcutsrc");
                 KConfig config(file);
