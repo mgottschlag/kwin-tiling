@@ -168,6 +168,7 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
             ctxt->setContextProperty("appletsModel", &filterItemModel);
             ctxt->setContextProperty("filterModel", &filterModel);
             QObject::connect(declarativeWidget->rootObject(), SIGNAL(addAppletRequested(const QString &)), q, SLOT(addApplet(const QString &)));
+            QObject::connect(declarativeWidget->rootObject(), SIGNAL(closeRequested()), q, SIGNAL(closeClicked()));
         }
     }
 

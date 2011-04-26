@@ -26,6 +26,7 @@ Item {
     width: 200
     height: 200
     signal addAppletRequested(string pluginName)
+    signal closeRequested()
 
     PlasmaCore.Theme {
         id: theme
@@ -102,7 +103,11 @@ Item {
             spacing: 4
             PlasmaWidgets.PushButton { icon: QIcon("get-hot-new-stuff"); text: "Get new widgets"}
             PlasmaWidgets.PushButton { icon: QIcon("preferences-activities"); text: "Activities"}
-            PlasmaWidgets.IconWidget { size: "22x"+parent.height; icon: QIcon("window-close")}
+            PlasmaWidgets.IconWidget {
+                size: "22x"+parent.height
+                icon: QIcon("window-close")
+                onClicked: main.closeRequested()
+            }
         }
     }
     ListView {
