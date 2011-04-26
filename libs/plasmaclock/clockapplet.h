@@ -76,13 +76,13 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         void createConfigurationInterface(KConfigDialog *parent);
         void initExtenderItem(Plasma::ExtenderItem *item);
         void updateTipContent();
-	void updateClockApplet();
-	void updateClockApplet(const Plasma::DataEngine::Data &data);
+        void updateClockApplet();
+        void updateClockApplet(const Plasma::DataEngine::Data &data);
         void popupEvent(bool show);
         void constraintsEvent(Plasma::Constraints constraints);
         QTime lastTimeSeen() const;
         void resetLastTimeSeen();
-	void focusInEvent(QFocusEvent * event);
+        void focusInEvent(QFocusEvent * event);
 
     protected Q_SLOTS:
         void setCurrentTimezone(const QString &tz);
