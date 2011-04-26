@@ -17,14 +17,12 @@ set(libklipper_common_SRCS
     clipcommandprocess.cpp
 )
 
-macro_optional_find_package(Dmtx)
-macro_log_feature(DMTX_FOUND "Dmtx" "Datamatrix library" "http://www.libdmtx.org" FALSE "" "Needed to create mobile barcodes from clipboard data")
-if (DMTX_FOUND)
-    set(libklipper_common_SRCS ${libklipper_common_SRCS} mobilebarcode.cpp)
-    add_definitions(-DHAVE_DMTX)
-endif (DMTX_FOUND)
-
-include_directories(${QNTRACK_INCLUDE_DIR})
+macro_optional_find_package(Prison)
+macro_log_feature(PRISON_FOUND "Prison" "Prison library" "http://projects.kde.org/prison" FALSE "" "Needed to create mobile barcodes from clipboard data")
+if (PRISON_FOUND)
+    add_definitions(-DHAVE_PRISON)
+    include_directories(${PRISON_INCLUDE_DIR})
+endif (PRISON_FOUND)
 
 
 kde4_add_app_icon(libklipper_common_SRCS "${KDE4_ICON_INSTALL_DIR}/oxygen/*/apps/klipper.png")
@@ -40,9 +38,9 @@ target_link_libraries(kdeinit_klipper ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES} ${ZLIB
 if (X11_Xfixes_FOUND)
   target_link_libraries(kdeinit_klipper ${X11_Xfixes_LIB})
 endif (X11_Xfixes_FOUND)
-if (DMTX_FOUND)
-  target_link_libraries(kdeinit_klipper ${DMTX_LIBRARIES})
-endif (DMTX_FOUND)
+if (PRISON_FOUND)
+  target_link_libraries(kdeinit_klipper ${PRISON_LIBRARIES})
+endif (PRISON_FOUND)
 
 install(TARGETS kdeinit_klipper ${INSTALL_TARGETS_DEFAULT_ARGS})
 install(TARGETS klipper         ${INSTALL_TARGETS_DEFAULT_ARGS})
