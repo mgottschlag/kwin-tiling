@@ -35,8 +35,8 @@
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2010-09-02</date>
-<releaseinfo>0.8 (&kde; 4.5)</releaseinfo>
+<date>2011-04-26</date>
+<releaseinfo>0.8 (&kde; 4.7)</releaseinfo>
 
 <abstract><para>&kmenuedit; allows editing one of the &kde; application launchers: &kickoff;, the classic &kmenu; or Lancelot Launcher. 
 </para></abstract>
@@ -59,12 +59,10 @@
 
 <para>&kmenuedit; allows editing of &kde; application launchers: &kickoff;, classic &kmenu; or Lancelot Launcher.</para>
 
-<para>&kmenuedit; can be started either by &RMB; clicking the
-application lancher button on the panel and choosing
-<guimenuitem>Menu Editor</guimenuitem>, or by choosing
-<guimenuitem>Menu Editor</guimenuitem> from the
-<guisubmenu>Settings</guisubmenu> submenu of the application launcher or by typing <userinput>kmenuedit
-</userinput> in the &krunner; line.</para>
+<para>&kmenuedit; can be started either by &RMB; clicking the application lancher 
+button on the panel and choosing <guimenuitem>Edit
+Applications...</guimenuitem>, or 
+by typing <userinput>kmenuedit</userinput> in the &krunner; line.</para>
 
 <para>&kmenuedit; allows you to:</para>
 
@@ -86,7 +84,9 @@ and <guimenuitem>Paste</guimenuitem> menu items</para></listitem>
 <title>Adding a Menu Entry</title>
 
   <para>In this example, we will add &firefox; to the <guisubmenu>Internet</guisubmenu> submenu.</para>
-  <para>To start off, we need to open &kmenuedit;, so &RMB; on the application launcher menu, click <guimenuitem>Menu Editor</guimenuitem> to start &kmenuedit;. After &kmenuedit; has started, select <guisubmenu>Internet</guisubmenu> as shown in picture below. 
+  <para>To start off, we need to open &kmenuedit;, so &RMB; on the application 
+launcher menu, click <guimenuitem>Edit Applications...</guimenuitem> to start 
+&kmenuedit;. After &kmenuedit; has started, select <guisubmenu>Internet</guisubmenu> as shown in picture below.
 <screenshot>
 <screeninfo>Select <guisubmenu>Internet</guisubmenu></screeninfo>
 <mediaobject>
