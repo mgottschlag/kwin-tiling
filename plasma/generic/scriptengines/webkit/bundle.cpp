@@ -129,7 +129,6 @@ Bundle::Bundle(QObject *parent, QVariantList args)
 Bundle::~Bundle()
 {
     close();
-    qWarning("done");
 }
 
 void Bundle::setData(const QByteArray &data)
