@@ -28,6 +28,7 @@
 ShowActivityManager::ShowActivityManager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args)
 {
+    setAspectRatioMode(Plasma::ConstrainedSquare);
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
 
     m_icon = new Plasma::IconWidget(this);
