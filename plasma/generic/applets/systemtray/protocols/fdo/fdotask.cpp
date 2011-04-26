@@ -32,7 +32,8 @@ class FdoTask::Private
 {
 public:
     Private(WId winId)
-        : winId(winId)
+        : winId(winId),
+          widget(0)
     {
         KWindowInfo info = KWindowSystem::windowInfo(winId, NET::WMName, NET::WM2WindowClass);
 
@@ -51,6 +52,7 @@ public:
     QString name;
     QString typeId;
     QIcon icon;
+    FdoGraphicsWidget *widget;
 };
 
 
@@ -58,8 +60,8 @@ FdoTask::FdoTask(WId winId, QObject *parent)
     : Task(parent),
       d(new Private(winId))
 {
+    setCategory(ApplicationStatus);
 }
-
 
 FdoTask::~FdoTask()
 {
@@ -67,38 +69,43 @@ FdoTask::~FdoTask()
     delete d;
 }
 
-
 bool FdoTask::isEmbeddable() const
 {
     return !isUsed();
 }
-
 
 QString FdoTask::name() const
 {
     return d->name;
 }
 
-
 QString FdoTask::typeId() const
 {
     return d->typeId;
 }
-
 
 QIcon FdoTask::icon() const
 {
     return d->icon;
 }
 
+void FdoTask::abandon(Plasma::Applet *host)
+{
+    forget(host);
+    if (d->widget) {
+        d->widget->hide();
+    }
+}
 
 QGraphicsWidget* FdoTask::createWidget(Plasma::Applet *applet)
 {
-    QGraphicsWidget *widget = new FdoGraphicsWidget(d->winId, applet);
-    connect(widget, SIGNAL(clientClosed()), this, SLOT(deleteLater()));
-    return widget;
-}
+    if (!d->widget) {
+        d->widget = new FdoGraphicsWidget(d->winId, applet);
+        connect(d->widget, SIGNAL(clientClosed()), this, SLOT(deleteLater()));
+    }
 
+    return d->widget;
+}
 
 }
 

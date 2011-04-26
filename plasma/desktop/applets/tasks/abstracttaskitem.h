@@ -190,6 +190,7 @@ protected:
 
     virtual void updateTask(::TaskManager::TaskChanges changes) = 0; // pure virtual function
     virtual void updateToolTip() = 0; // pure virtual function
+    void clearToolTip();
     QString expanderElement() const;
     void stopWindowHoverEffect();
     bool shouldIgnoreDragEvent(QGraphicsSceneDragDropEvent *event);
