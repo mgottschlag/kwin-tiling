@@ -332,12 +332,12 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
 
             const int row = d->hiddenTasksLayout->rowCount();
             widget->setParentItem(d->hiddenTasksWidget);
-            //kDebug() << "putting" << task->name() << "into" << row;
-            d->hiddenTasksLayout->setRowFixedHeight(row, 24);
+            //kDebug() << "putting" << task->name() << widget << "into" << row;
+            QFontMetrics fm(font());
+            d->hiddenTasksLayout->setRowFixedHeight(row, qMax(24, fm.height()));
             d->hiddenTasksLayout->addItem(widget, row, 0);
             d->hiddenTasksLayout->addItem(hiddenLabel, row, 1);
-            d->hiddenTasksLayout->invalidate();
-            d->hiddenTasksWidget->resize(d->hiddenTasksWidget->effectiveSizeHint(Qt::PreferredSize));
+            adjustHiddentTasksWidget();
         }
 
         widget->show();
@@ -446,6 +446,11 @@ void TaskArea::relayoutHiddenTasks()
         ++row;
     }
 
+    adjustHiddentTasksWidget();
+}
+
+void TaskArea::adjustHiddentTasksWidget()
+{
     d->hiddenTasksLayout->invalidate();
     d->hiddenTasksWidget->resize(d->hiddenTasksWidget->effectiveSizeHint(Qt::PreferredSize));
 }
