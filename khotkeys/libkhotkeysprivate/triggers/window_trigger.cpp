@@ -159,9 +159,7 @@ void WindowTrigger::setOnWindowEvents(WindowEvents events)
 
 void WindowTrigger::set_window_rules(Windowdef_list *list)
     {
-    if (_windows)
-        delete _windows;
-
+     delete _windows;
     _windows = list;
     }
 

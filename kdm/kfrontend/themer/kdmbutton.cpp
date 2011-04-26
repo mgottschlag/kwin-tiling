@@ -75,8 +75,7 @@ KdmButton::doPlugActions(bool)
             emit needPlacement();
         }
     } else {
-        if (myWidget)
-            delete myWidget;
+        delete myWidget;
     }
 }
 

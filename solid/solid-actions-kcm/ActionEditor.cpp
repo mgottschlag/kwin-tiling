@@ -53,9 +53,7 @@ ActionEditor::ActionEditor(QWidget *parent) : KDialog(parent)
 
 ActionEditor::~ActionEditor()
 {
-    if( topItem ) {
-        delete topItem;
-    }
+    delete topItem;
 }
 
 void ActionEditor::setActionToEdit( ActionItem * item )
@@ -73,9 +71,7 @@ void ActionEditor::setActionToEdit( ActionItem * item )
 
 void ActionEditor::setPredicate( Solid::Predicate predicate )
 {
-    if( topItem ) {
-        delete topItem;
-    }
+    delete topItem;
     topItem = new PredicateItem( Solid::Predicate(), 0 );
     rootItem = new PredicateItem( predicate, topItem );
     rootModel->setRootPredicate( rootItem->parent() );
