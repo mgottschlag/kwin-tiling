@@ -46,7 +46,6 @@
 
 #include "kcategorizeditemsviewmodels_p.h"
 #include "plasmaappletitemmodel_p.h"
-#include "appletsfiltering.h"
 
 //getting the user local
 //KGlobal::dirs()->localkdedir();
@@ -104,10 +103,6 @@ public:
 
     Plasma::DeclarativeWidget *declarativeWidget;
 
-    /**
-     * Widget that contains the search and categories filters
-     */
-    FilteringWidget *filteringWidget;
     QGraphicsLinearLayout *mainLayout;
     int iconSize;
 };
@@ -140,7 +135,6 @@ void WidgetExplorerPrivate::initFilters()
                               KCategorizedItemsViewModels::Filter("category", category.second));
     }
 
-    filteringWidget->setModel(&filterModel);
 }
 
 void WidgetExplorerPrivate::init(Plasma::Location loc)
@@ -153,17 +147,9 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
     mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
     mainLayout->setContentsMargins(0, 4, 0, 0);
     mainLayout->setSpacing(0);
-    filteringWidget = new FilteringWidget(orientation, q);
 
     //connect
-    //QObject::connect(filteringWidget->textSearch(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
-    QObject::connect(filteringWidget, SIGNAL(closeClicked()), q, SIGNAL(closeClicked()));
-
-    mainLayout->addItem(filteringWidget);
-
-    if (orientation == Qt::Vertical) {
-        mainLayout->setAlignment(filteringWidget, Qt::AlignTop | Qt::AlignHCenter);
-    }
+ //QObject::connect(filteringWidget, SIGNAL(closeClicked()), q, SIGNAL(closeClicked()));
 
     initRunningApplets();
 
@@ -196,10 +182,7 @@ void WidgetExplorerPrivate::setLocation(const Plasma::Location loc)
 
     location = loc;
     orientation = ((location == Plasma::LeftEdge || location == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
-    filteringWidget->setListOrientation(orientation);
-    if (orientation == Qt::Vertical) {
-        mainLayout->setAlignment(filteringWidget, Qt::AlignTop | Qt::AlignHCenter);
-    }
+
 }
 
 void WidgetExplorerPrivate::initRunningApplets()
@@ -381,15 +364,6 @@ void WidgetExplorer::keyPressEvent(QKeyEvent *event)
         return;
     }
 
-    Plasma::LineEdit *lineEdit = d->filteringWidget->textSearch();
-    const QString newText = event->text();
-    if (newText.isEmpty()) {
-        QGraphicsWidget::keyPressEvent(event);
-    } else {
-        lineEdit->setText(lineEdit->text() + event->text());
-        lineEdit->nativeWidget()->setCursorPosition(lineEdit->text().length());
-        lineEdit->setFocus();
-    }
 }
 
 bool WidgetExplorer::event(QEvent *event)
@@ -398,7 +372,6 @@ bool WidgetExplorer::event(QEvent *event)
         case QEvent::ActionAdded:
         case QEvent::ActionChanged:
         case QEvent::ActionRemoved:
-            d->filteringWidget->updateActions(actions());
             break;
         default:
             break;
@@ -410,7 +383,6 @@ bool WidgetExplorer::event(QEvent *event)
 void WidgetExplorer::focusInEvent(QFocusEvent* event)
 {
     Q_UNUSED(event);
-    d->filteringWidget->textSearch()->setFocus();
 }
 
 
