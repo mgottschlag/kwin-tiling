@@ -100,11 +100,7 @@ Action* ActivateWindowAction::copy( ActionData* data_P ) const
 
 void ActivateWindowAction::set_window_list(Windowdef_list *list)
     {
-    if (_window)
-        {
-        delete _window;
-        }
-
+    delete _window;
     _window = list;
     }
 

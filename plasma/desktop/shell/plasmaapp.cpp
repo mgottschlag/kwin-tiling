@@ -1077,9 +1077,7 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
     if ((containment->containmentType() == Plasma::Containment::DesktopContainment ||
          containment->containmentType() == Plasma::Containment::CustomContainment)) {
         QAction *a = containment->action("remove");
-        if (a) {
-            delete a; //activities handle removal now
-        }
+        delete a; //activities handle removal now
         if (!(m_loadingActivity.isEmpty() || m_corona->offscreenWidgets().contains(containment))) {
             Plasma::Context *context = containment->context();
             if (context->currentActivityId().isEmpty()) {
