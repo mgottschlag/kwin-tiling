@@ -34,12 +34,13 @@ class FdoTask : public Task
 
 public:
     FdoTask(WId winId, QObject *parent);
-    virtual ~FdoTask();
+    ~FdoTask();
 
-    virtual bool isEmbeddable() const;
-    virtual QString name() const;
-    virtual QString typeId() const;
-    virtual QIcon icon() const;
+    bool isEmbeddable() const;
+    QString name() const;
+    QString typeId() const;
+    QIcon icon() const;
+    void abandon(Plasma::Applet *host);
 
 signals:
     void taskDeleted(WId winId);

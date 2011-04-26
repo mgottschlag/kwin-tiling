@@ -33,6 +33,9 @@ static const QString CONFIG_GROUPNAME("Layout");
 
 const int KeyboardConfig::NO_LOOPING = -1;
 
+QString KeyboardConfig::getSwitchingPolicyString(SwitchingPolicy switchingPolicy) {
+	return SWITCHING_POLICIES[switchingPolicy];
+}
 
 static int findStringIndex(const char* strings[], const QString& toFind, int defaultIndex)
 {

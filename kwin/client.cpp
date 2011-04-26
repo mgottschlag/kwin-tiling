@@ -44,6 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "notifications.h"
 #include "rules.h"
 #include "scene.h"
+#include "shadow.h"
 #include "deleted.h"
 #include "paintredirector.h"
 #include "tabbox.h"
@@ -95,6 +96,7 @@ Client::Client(Workspace* ws)
     , transient_for (NULL)
     , transient_for_id(None)
     , original_transient_for_id(None)
+    , blocks_compositing(false)
     , autoRaiseTimer(NULL)
     , shadeHoverTimer(NULL)
     , delayedMoveResizeTimer(NULL)
@@ -193,6 +195,10 @@ Client::Client(Workspace* ws)
 #if defined(HAVE_XSYNC) || defined(HAVE_XDAMAGE)
     ready_for_painting = false; // wait for first damage or sync reply
 #endif
+
+    connect(this, SIGNAL(clientGeometryShapeChanged(KWin::Client*,QRect)), SIGNAL(geometryChanged()));
+    connect(this, SIGNAL(clientMaximizedStateChanged(KWin::Client*,KDecorationDefines::MaximizeMode)), SIGNAL(geometryChanged()));
+    connect(this, SIGNAL(clientStepUserMovedResized(KWin::Client*,QRect)), SIGNAL(geometryChanged()));
 
     // SELI TODO: Initialize xsizehints??
 }
@@ -2110,6 +2116,20 @@ void Client::updateCursor()
                                  cursor.handle(), xTime());
 }
 
+void Client::updateCompositeBlocking(bool readProperty)
+{
+    const bool usedToBlock = blocks_compositing;
+    if (readProperty) {
+        const unsigned long properties[2] = {0, NET::WM2BlockCompositing};
+        NETWinInfo2 i(QX11Info::display(), window(), rootWindow(), properties, 2);
+        blocks_compositing = rules()->checkBlockCompositing(i.isBlockingCompositing());
+    }
+    else
+        blocks_compositing = rules()->checkBlockCompositing(blocks_compositing);
+    if (usedToBlock != blocks_compositing)
+        workspace()->updateCompositeBlocking(blocks_compositing ? this : 0);
+}
+
 Client::Position Client::mousePosition(const QPoint& p) const
 {
     if (decoration != NULL)
@@ -2143,7 +2163,10 @@ void Client::updateAllowedActions(bool force)
         return;
     // TODO: This could be delayed and compressed - It's only for pagers etc. anyway
     info->setAllowedActions(allowed_actions);
-    if (decoration)
+
+    // ONLY if relevant features have changed (and the window didn't just get/loose moveresize for maximization state changes)
+    const unsigned long relevant = ~(NET::ActionMove|NET::ActionResize);
+    if (decoration && (allowed_actions & relevant) != (old_allowed_actions & relevant))
         decoration->reset(KDecoration::SettingButtons);
 }
 
@@ -2218,6 +2241,17 @@ void Client::checkActivities()
 void Client::setSessionInteract(bool needed)
 {
     needsSessionInteract = needed;
+}
+
+QRect Client::decorationRect() const
+{
+    if (decoration && decoration->widget()) {
+        return decoration->widget()->rect().translated(-padding_left, -padding_top);
+    } else if (hasShadow()) {
+        return shadow()->shadowRegion().boundingRect();
+    } else {
+        return QRect(0, 0, width(), height());
+    }
 }
 
 } // namespace

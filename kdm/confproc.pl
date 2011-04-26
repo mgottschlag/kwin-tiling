@@ -335,7 +335,7 @@ while (<INFILE>) {
         if ($type eq "enum") {
           my $enum = "static const char *e".$key."[] = { ";
           my $n_e_def = 0;
-          while (getl(), /^ ([A-Za-z]+)(\/([A-Z_]+))?: (.+)$/) {
+          while (getl(), /^ (\w+)(\/(\w+))?: (.+)$/) {
             my $e_nam = $1;
             $enum .= "\"".$e_nam."\", ";
             defined($3) &&

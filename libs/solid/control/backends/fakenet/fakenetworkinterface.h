@@ -42,6 +42,8 @@ public:
         QString uni() const;
         QString udi() const;
         QString interfaceName() const;
+        QString ipInterfaceName() const;
+        bool firmwareMissing() const;
         QString driver() const;
         void disconnectInterface();
         bool isActive() const;

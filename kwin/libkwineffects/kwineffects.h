@@ -174,6 +174,15 @@ enum WindowQuadType {
     WindowQuadError, // for the stupid default ctor
     WindowQuadContents,
     WindowQuadDecoration,
+    // Shadow Quad types
+    WindowQuadShadowTop,
+    WindowQuadShadowTopRight,
+    WindowQuadShadowRight,
+    WindowQuadShadowBottomRight,
+    WindowQuadShadowBottom,
+    WindowQuadShadowBottomLeft,
+    WindowQuadShadowLeft,
+    WindowQuadShadowTopLeft,
     EFFECT_QUAD_TYPE_START = 100 ///< @internal
 };
 
@@ -584,6 +593,12 @@ public:
     virtual void windowToScreen(EffectWindow* w, int screen) = 0;
     virtual void setShowingDesktop(bool showing) = 0;
 
+
+    // Activities
+    /**
+     * @returns The ID of the current activity.
+     */
+    virtual QString currentActivity() const = 0;
     // Desktops
     /**
      * @returns The ID of the current desktop.
@@ -1021,6 +1036,10 @@ public:
     virtual bool isMinimized() const = 0;
     virtual double opacity() const = 0;
     virtual bool hasAlpha() const = 0;
+
+    virtual bool isOnCurrentActivity() const;
+    virtual bool isOnActivity(QString id) const = 0;
+    virtual bool isOnAllActivities() const = 0;
 
     virtual bool isOnDesktop(int d) const;
     virtual bool isOnCurrentDesktop() const;

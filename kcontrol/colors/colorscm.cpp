@@ -63,6 +63,8 @@ void KColorCm::WindecoColors::load(const KSharedConfigPtr &config)
     m_colors[ActiveForeground] = group.readEntry("activeForeground", QColor(255, 255, 255));
     m_colors[InactiveBackground] = group.readEntry("inactiveBackground", QColor(224, 223, 222));
     m_colors[InactiveForeground] = group.readEntry("inactiveForeground", QColor(75, 71, 67));
+    m_colors[ActiveBlend] = group.readEntry("activeBlend", m_colors[ActiveForeground]);
+    m_colors[InactiveBlend] = group.readEntry("inactiveBlend", m_colors[InactiveForeground]);
 }
 
 QColor KColorCm::WindecoColors::color(WindecoColors::Role role) const
@@ -111,7 +113,7 @@ void KColorCm::populateSchemeList()
     schemeList->clear();
 
     // add entries
-	QIcon icon;
+    QIcon icon;
     const QStringList schemeFiles = KGlobal::dirs()->findAllResources("data", "color-schemes/*.colors", KStandardDirs::NoDuplicates);
     for (int i = 0; i < schemeFiles.size(); ++i)
     {
@@ -213,13 +215,13 @@ void KColorCm::loadScheme(KSharedConfigPtr config) // const QString &path)
 
     updateColorSchemes();
     updateEffectsPage(); // intentionally before swapping back m_config
+    updatePreviews();
 
     m_config = temp;
     updateFromColorSchemes();
     updateFromEffectsPage();
     updateFromOptions();
     updateColorTable();
-    updatePreviews();
 
     m_loadedSchemeHasUnsavedChanges = false;
     //m_changed = false;
@@ -372,8 +374,10 @@ void KColorCm::on_schemeImportButton_clicked()
             m_commonColorButtons[19]->setColor(g.readEntry("windowForeground", m_colorSchemes[KColorScheme::Tooltip].foreground().color()));
             m_commonColorButtons[20]->setColor(g.readEntry("activeBackground", m_wmColors.color(WindecoColors::ActiveBackground)));
             m_commonColorButtons[21]->setColor(g.readEntry("activeForeground", m_wmColors.color(WindecoColors::ActiveForeground)));
-            m_commonColorButtons[22]->setColor(g.readEntry("inactiveBackground", m_wmColors.color(WindecoColors::InactiveBackground)));
-            m_commonColorButtons[23]->setColor(g.readEntry("inactiveForeground", m_wmColors.color(WindecoColors::InactiveForeground)));
+            m_commonColorButtons[22]->setColor(g.readEntry("activeBlend", m_wmColors.color(WindecoColors::ActiveBlend)));
+            m_commonColorButtons[23]->setColor(g.readEntry("inactiveBackground", m_wmColors.color(WindecoColors::InactiveBackground)));
+            m_commonColorButtons[24]->setColor(g.readEntry("inactiveForeground", m_wmColors.color(WindecoColors::InactiveForeground)));
+            m_commonColorButtons[25]->setColor(g.readEntry("inactiveBlend", m_wmColors.color(WindecoColors::InactiveBlend)));
 
             colorSet->setCurrentIndex(1);
             m_backgroundButtons[KColorScheme::AlternateBackground]->setColor(g.readEntry("alternateBackground",
@@ -641,6 +645,8 @@ void KColorCm::updateFromColorSchemes()
     WMGroup.writeEntry("activeForeground", m_wmColors.color(WindecoColors::ActiveForeground));
     WMGroup.writeEntry("inactiveBackground", m_wmColors.color(WindecoColors::InactiveBackground));
     WMGroup.writeEntry("inactiveForeground", m_wmColors.color(WindecoColors::InactiveForeground));
+    WMGroup.writeEntry("activeBlend", m_wmColors.color(WindecoColors::ActiveBlend));
+    WMGroup.writeEntry("inactiveBlend", m_wmColors.color(WindecoColors::InactiveBlend));
 }
 
 void KColorCm::updateFromOptions()
@@ -732,7 +738,7 @@ void KColorCm::setupColorTable()
     commonColorTable->horizontalHeader()->setMinimumSectionSize(minWidth);
     commonColorTable->horizontalHeader()->setResizeMode(1, QHeaderView::ResizeToContents);
 
-    for (int i = 0; i < 24; ++i)
+    for (int i = 0; i < 26; ++i)
     {
         KColorButton * button = new KColorButton(this);
         commonColorTable->setRowHeight(i, button->sizeHint().height());
@@ -871,8 +877,10 @@ void KColorCm::updateColorTable()
 
         m_commonColorButtons[20]->setColor(m_wmColors.color(WindecoColors::ActiveBackground));
         m_commonColorButtons[21]->setColor(m_wmColors.color(WindecoColors::ActiveForeground));
-        m_commonColorButtons[22]->setColor(m_wmColors.color(WindecoColors::InactiveBackground));
-        m_commonColorButtons[23]->setColor(m_wmColors.color(WindecoColors::InactiveForeground));
+        m_commonColorButtons[22]->setColor(m_wmColors.color(WindecoColors::ActiveBlend));
+        m_commonColorButtons[23]->setColor(m_wmColors.color(WindecoColors::InactiveBackground));
+        m_commonColorButtons[24]->setColor(m_wmColors.color(WindecoColors::InactiveForeground));
+        m_commonColorButtons[25]->setColor(m_wmColors.color(WindecoColors::InactiveBlend));
 
         foreach (button, m_commonColorButtons)
         {
@@ -1046,20 +1054,28 @@ void KColorCm::changeColor(int row, const QColor &newColor)
                 KConfigGroup(m_config, "Colors:Tooltip").writeEntry("ForegroundNormal", newColor);
                 break;
             case 20:
-                // Active Window
+                // Active Title Background
                 KConfigGroup(m_config, "WM").writeEntry("activeBackground", newColor);
                 break;
             case 21:
-                // Active Window Text
+                // Active Title Text
                 KConfigGroup(m_config, "WM").writeEntry("activeForeground", newColor);
                 break;
             case 22:
-                // Inactive Window
-                KConfigGroup(m_config, "WM").writeEntry("inactiveBackground", newColor);
+                // Active Title Secondary
+                KConfigGroup(m_config, "WM").writeEntry("activeBlend", newColor);
                 break;
             case 23:
-                // Inactive Window Text
+                // Inactive Title Background
+                KConfigGroup(m_config, "WM").writeEntry("inactiveBackground", newColor);
+                break;
+            case 24:
+                // Inactive Title Text
                 KConfigGroup(m_config, "WM").writeEntry("inactiveForeground", newColor);
+                break;
+            case 25:
+                // Inactive Title Secondary
+                KConfigGroup(m_config, "WM").writeEntry("inactiveBlend", newColor);
                 break;
         }
         m_commonColorButtons[row]->blockSignals(true);

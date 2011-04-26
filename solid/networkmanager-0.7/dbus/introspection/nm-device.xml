@@ -9,7 +9,15 @@
     </property>
     <property name="Interface" type="s" access="read">
       <tp:docstring>
-        The network interface offered by the device.
+        The name of the device's control (and often data) interface.
+      </tp:docstring>
+    </property>
+    <property name="IpInterface" type="s" access="read">
+      <tp:docstring>
+        The name of the device's data interface when available.  This property
+        may not refer to the actual data interface until the device has
+        successfully established a data connection, indicated by the device's
+        State becoming ACTIVATED.
       </tp:docstring>
     </property>
     <property name="Driver" type="s" access="read">
@@ -42,9 +50,20 @@
         Object path of the Dhcp4Config object describing the DHCP options returned by the DHCP server.  Only valid when the device is in the NM_DEVICE_STATE_ACTIVATED state.
       </tp:docstring>
     </property>
+    <property name="Ip6Config" type="o" access="read">
+      <tp:docstring>
+        Object path of the Ip6Config object describing the configuration of the device.  Only valid when the device is in the NM_DEVICE_STATE_ACTIVATED state.
+      </tp:docstring>
+    </property>
     <property name="Managed" type="b" access="read">
       <tp:docstring>
         Whether or not this device is managed by NetworkManager.
+      </tp:docstring>
+    </property>
+    <property name="FirmwareMissing" type="b" access="read">
+      <tp:docstring>
+        If TRUE, indicates the device is likely missing firmware necessary for
+        its operation.
       </tp:docstring>
     </property>
     <property name="DeviceType" type="u" access="read" tp:type="NM_DEVICE_TYPE">
@@ -53,6 +72,13 @@
       </tp:docstring>
     </property>
 
+    <method name="Disconnect">
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_device_disconnect"/>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <tp:docstring>
+        Disconnects a device and prevents the device from automatically activating further connections without user intervention.
+      </tp:docstring>
+    </method>
 
     <signal name="StateChanged">
       <arg name="new_state" type="u" tp:type="NM_DEVICE_STATE">
@@ -149,6 +175,11 @@
       <tp:enumvalue suffix="CDMA" value="4">
         <tp:docstring>
           The device is a CDMA/IS-95-based cellular WAN device.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="BLUETOOTH" value="5">
+        <tp:docstring>
+          The device is a BLUETOOTH cellular.
         </tp:docstring>
       </tp:enumvalue>
     </tp:enum>
@@ -371,7 +402,27 @@
           The device's carrier/link changed.
         </tp:docstring>
       </tp:enumvalue>
-	</tp:enum>
+      <tp:enumvalue suffix="CONNECTION_ASSUMED" value="41">
+        <tp:docstring>
+          The device's existing connection was assumed.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="SUPPLICANT_AVAILABLE" value="42">
+        <tp:docstring>
+          The 802.1x supplicant is now available.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="MODEM_NOT_FOUND" value="43">
+        <tp:docstring>
+          The modem could not be found.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="BT_FAILED" value="44">
+        <tp:docstring>
+          The Bluetooth connection timed out or failed.
+        </tp:docstring>
+      </tp:enumvalue>
+    </tp:enum>
 
   </interface>
 </node>

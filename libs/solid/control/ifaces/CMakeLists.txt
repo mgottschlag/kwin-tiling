@@ -7,6 +7,7 @@ set(solidcontrolifaces_LIB_SRCS
    networkcdmainterface.cpp
    networkgsminterface.cpp
    networkserialinterface.cpp
+   networkbtinterface.cpp
    networkmanager.cpp
    wirednetworkinterface.cpp
    wirelessaccesspoint.cpp
@@ -41,5 +42,5 @@ install(TARGETS solidcontrolifaces EXPORT kdeworkspaceLibraryTargets ${INSTALL_T
 
 ########### install files ###############
 
-install( FILES networkmanager.h networkinterface.h networkcdmainterface.h networkgsminterface.h networkserialinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h modemmanager.h modeminterface.h modemlocationinterface.h modemcdmainterface.h modemgsmcardinterface.h modemgsmcontactsinterface.h modemgsmnetworkinterface.h modemgsmsmsinterface.h modemgsmhsointerface.h modemgsmussdinterface.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/control/ifaces COMPONENT Devel)
+install( FILES networkmanager.h networkinterface.h networkcdmainterface.h networkgsminterface.h networkserialinterface.h networkbtinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h modemmanager.h modeminterface.h modemlocationinterface.h modemcdmainterface.h modemgsmcardinterface.h modemgsmcontactsinterface.h modemgsmnetworkinterface.h modemgsmsmsinterface.h modemgsmhsointerface.h modemgsmussdinterface.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/control/ifaces COMPONENT Devel)
 

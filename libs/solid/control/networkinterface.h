@@ -88,8 +88,9 @@ namespace Control
          * - Serial: generic serial type for non-cellular ppp connections
          * - Gsm: cellular device of the GSM family, used in Europe
          * - Cdma: cellular device of the CDMA family, used in the USA
+         * - Bluetooth: network bluetooth device (usually a cell phone)
          */
-        enum Type { UnknownType = 0x0, Ieee8023 = 0x1, Ieee80211 = 0x2, Serial = 0x4, Gsm = 0x8, Cdma = 0x10 };
+        enum Type { UnknownType = 0x0, Ieee8023 = 0x1, Ieee80211 = 0x2, Serial = 0x4, Gsm = 0x8, Cdma = 0x10, Bluetooth = 0x20 };
 
         Q_DECLARE_FLAGS(Capabilities, Capability)
         Q_DECLARE_FLAGS(Types, Type)
@@ -141,6 +142,20 @@ namespace Control
          * The system name for the network interface
          */
         QString interfaceName() const;
+
+        /**
+         * The name of the device's data interface when available. This property
+         * may not refer to the actual data interface until the device has
+         * successfully established a data connection, indicated by the device's
+         * State becoming ACTIVATED.
+         */
+        QString ipInterfaceName() const;
+
+        /**
+         * If TRUE, indicates the device is likely missing firmware necessary for
+         * its operation.
+         */
+        bool firmwareMissing() const;
 
         /**
          * Handle for the system driver controlling this network interface

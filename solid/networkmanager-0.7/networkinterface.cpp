@@ -49,11 +49,17 @@ NMNetworkInterfacePrivate::NMNetworkInterfacePrivate( const QString & path, QObj
     ipV4Address = deviceIface.ip4Address();    
     managed = deviceIface.managed();
     udi = deviceIface.udi();
+    firmwareMissing = deviceIface.firmwareMissing();
 
     //TODO set active connections based on active connection list on the manager; find out if
     //signal needed
     //activeConnection = deviceIface.activeConnection();
     //propHelper.registerProperty(NM_DEVICE_UDI, PropertySignalPair("uni",0));
+}
+
+NMNetworkInterfacePrivate::~NMNetworkInterfacePrivate()
+{
+
 }
 
 NMNetworkInterface::NMNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent) : QObject(parent), d_ptr(new NMNetworkInterfacePrivate(path, this))
@@ -83,7 +89,7 @@ void NMNetworkInterface::init()
 
 NMNetworkInterface::~NMNetworkInterface()
 {
-
+    delete d_ptr;
 }
 
 QString NMNetworkInterface::uni() const
@@ -110,10 +116,22 @@ void NMNetworkInterface::setInterfaceName(const QVariant & name)
     d->interfaceName = name.toString();
 }
 
+QString NMNetworkInterface::ipInterfaceName() const
+{
+    Q_D(const NMNetworkInterface);
+    return d->deviceIface.ipInterface();
+}
+
 QString NMNetworkInterface::driver() const
 {
     Q_D(const NMNetworkInterface);
     return d->driver;
+}
+
+bool NMNetworkInterface::firmwareMissing() const
+{
+    Q_D(const NMNetworkInterface);
+    return d->firmwareMissing;
 }
 
 void NMNetworkInterface::setDriver(const QVariant & driver)

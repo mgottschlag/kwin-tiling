@@ -32,11 +32,15 @@ using namespace Plasma;
 
 DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
+      m_refreshFails(0),
       dropping(false),
       m_startupCompleted(false)
 {
     qRegisterMetaType<QImage>("QImage");
     qRegisterMetaType<QPersistentModelIndex>("QPersistentModelIndex");
+
+    m_delayedRefreshTimer = new QTimer(this);
+    m_delayedRefreshTimer->setSingleShot(true);
 
     m_layout = new DesktopLayout;
     m_layout->setAlignment(Qt::AlignTop|Qt::AlignLeft);
@@ -129,10 +133,12 @@ void DefaultDesktop::onAppletTransformedItself()
 
 void DefaultDesktop::refreshWorkingArea()
 {
+    m_delayedRefreshTimer->stop();
+
     Corona *c = corona();
     if (!c) {
         //kDebug() << "no corona?!";
-        QTimer::singleShot(100, this, SLOT(refreshWorkingArea()));
+        m_delayedRefreshTimer->start(DELAYED_REFRESH_WAIT);
         return;
     }
 
@@ -144,17 +150,18 @@ void DefaultDesktop::refreshWorkingArea()
         // From screen coordinates to containment coordinates
         workingGeom.translate(-c->screenGeometry(screen()).topLeft());
     } else {
-        workingGeom = geometry();
-        workingGeom = mapFromScene(workingGeom).boundingRect();
+        workingGeom = mapFromScene(geometry()).boundingRect();
         //kDebug() << "defaults due to no screen; got:" << workingGeom;
     }
 
     if (workingGeom.isValid()) {
         //kDebug() << "!!!!!!!!!!!!! workingGeom is" << workingGeom;
+        m_refreshFails = 0;
         m_layout->setWorkingArea(workingGeom);
         m_layout->adjustPhysicalPositions();
-    } else {
-        QTimer::singleShot(100, this, SLOT(refreshWorkingArea()));
+    } else if (m_refreshFails < MAX_REFRESH_FAILS) {
+        ++m_refreshFails;
+        m_delayedRefreshTimer->start(DELAYED_REFRESH_WAIT);
     }
 }
 

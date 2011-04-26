@@ -713,9 +713,7 @@ void FlipScrollView::startDrag(Qt::DropActions supportedActions)
     QIcon icon = idx.data(Qt::DecorationRole).value<QIcon>();
     drag->setPixmap(icon.pixmap(IconSize(KIconLoader::Desktop)));
 
-    Qt::DropAction dropAction = drag->exec();
-    Q_UNUSED(dropAction);
-    QAbstractItemView::startDrag(supportedActions);
+    drag->exec();
 }
 
 void FlipScrollView::updateFlipAnimation(qreal)

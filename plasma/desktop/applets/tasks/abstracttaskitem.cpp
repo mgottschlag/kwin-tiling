@@ -159,10 +159,18 @@ void AbstractTaskItem::checkSettings()
     TaskGroupItem *group = qobject_cast<TaskGroupItem *>(this);
 
     if (m_applet->showToolTip() && (!group || group->collapsed())) {
-        Plasma::ToolTipManager::self()->registerWidget(this);
+        clearToolTip();
     } else {
         Plasma::ToolTipManager::self()->unregisterWidget(this);
     }
+}
+
+void AbstractTaskItem::clearToolTip()
+{
+    Plasma::ToolTipContent data;
+    data.setInstantPopup(true);
+
+    Plasma::ToolTipManager::self()->setContent(this, data);
 }
 
 void AbstractTaskItem::clearAbstractItem()
@@ -271,13 +279,13 @@ void AbstractTaskItem::toolTipAboutToShow()
                 SIGNAL(windowPreviewActivated(WId,Qt::MouseButtons,Qt::KeyboardModifiers,QPoint)),
                 this, SLOT(activateWindow(WId,Qt::MouseButtons)));
     } else {
-        Plasma::ToolTipManager::self()->clearContent(this);
+        clearToolTip();
     }
 }
 
 void AbstractTaskItem::toolTipHidden()
 {
-    Plasma::ToolTipManager::self()->clearContent(this);
+    clearToolTip();
     disconnect(Plasma::ToolTipManager::self(),
                SIGNAL(windowPreviewActivated(WId,Qt::MouseButtons,Qt::KeyboardModifiers,QPoint)),
                this, SLOT(activateWindow(WId,Qt::MouseButtons)));

@@ -271,6 +271,7 @@ bool TaskArea::removeFromHiddenArea(SystemTray::Task *task)
 
 bool TaskArea::addWidgetForTask(SystemTray::Task *task)
 {
+    //kDebug() << "adding task" << task->name();
     if (!task->isEmbeddable(d->host)) {
         //kDebug() << "task is not embeddable, so FAIL" << task->name();
         return false;
@@ -293,6 +294,7 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
 
     //check if it's not necessary to move the icon
     if (d->isTaskProperlyPlaced(task, widget)) {
+        //kDebug() << "widget is properly placed";
         return false;
     }
 
@@ -308,7 +310,7 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
     //if the dbus icon has a category that the applet doesn't want to show remove it
     if (!d->host->shownCategories().contains(task->category()) && !qobject_cast<Plasma::Applet *>(widget)) {
         removeFromHiddenArea(task);
-        widget->deleteLater();
+        task->abandon(d->host);
         return true;
     }
 
@@ -332,12 +334,12 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
 
             const int row = d->hiddenTasksLayout->rowCount();
             widget->setParentItem(d->hiddenTasksWidget);
-            //kDebug() << "putting" << task->name() << "into" << row;
-            d->hiddenTasksLayout->setRowFixedHeight(row, 24);
+            //kDebug() << "putting" << task->name() << widget << "into" << row;
+            QFontMetrics fm(font());
+            d->hiddenTasksLayout->setRowFixedHeight(row, qMax(24, fm.height()));
             d->hiddenTasksLayout->addItem(widget, row, 0);
             d->hiddenTasksLayout->addItem(hiddenLabel, row, 1);
-            d->hiddenTasksLayout->invalidate();
-            d->hiddenTasksWidget->resize(d->hiddenTasksWidget->effectiveSizeHint(Qt::PreferredSize));
+            adjustHiddentTasksWidget();
         }
 
         widget->show();
@@ -446,6 +448,11 @@ void TaskArea::relayoutHiddenTasks()
         ++row;
     }
 
+    adjustHiddentTasksWidget();
+}
+
+void TaskArea::adjustHiddentTasksWidget()
+{
     d->hiddenTasksLayout->invalidate();
     d->hiddenTasksWidget->resize(d->hiddenTasksWidget->effectiveSizeHint(Qt::PreferredSize));
 }

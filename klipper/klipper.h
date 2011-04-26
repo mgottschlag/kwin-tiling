@@ -99,7 +99,7 @@ public Q_SLOTS:
     void slotHistoryTopChanged();
     void slotConfigure();
     void slotEditData();
-#ifdef HAVE_DMTX
+#ifdef HAVE_PRISON
     void slotShowBarcode();
 #endif
     void slotCycleNext();
@@ -201,7 +201,7 @@ private:
     QAction* m_clearHistoryAction;
     QAction* m_repeatAction;
     QAction* m_editAction;
-#ifdef HAVE_DMTX
+#ifdef HAVE_PRISON
     QAction* m_showBarcodeAction;
 #endif
     QAction* m_configureAction;

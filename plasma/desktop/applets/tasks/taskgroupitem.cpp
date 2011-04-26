@@ -289,7 +289,7 @@ void TaskGroupItem::updateToolTip()
     QWidget *dialog = m_applet->popupDialog();
 
     if (dialog && dialog->isVisible()) {
-        Plasma::ToolTipManager::self()->clearContent(this);
+        clearToolTip();
         return;
     }
 
@@ -303,6 +303,7 @@ void TaskGroupItem::updateToolTip()
 
     data.setImage(m_group.data()->icon());
     data.setClickable(true);
+    data.setInstantPopup(true);
     data.setHighlightWindows(m_applet->highlightWindows());
 
     QList<WId> windows;

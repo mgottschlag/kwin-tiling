@@ -38,6 +38,7 @@
 #include "bindings.h"
 #include "keyboard_hardware.h"
 #include "layout_tray_icon.h"
+#include "layout_memory_persister.h"
 
 
 K_PLUGIN_FACTORY(KeyboardFactory, registerPlugin<KeyboardDaemon>();)
@@ -49,7 +50,7 @@ KeyboardDaemon::KeyboardDaemon(QObject *parent, const QList<QVariant>&)
 	  xEventNotifier(NULL),
 	  layoutTrayIcon(NULL),
 	  layoutMemory(keyboardConfig),
-	  rules(Rules::readRules())
+	  rules(Rules::readRules(Rules::READ_EXTRAS))
 {
 	if( ! X11Helper::xkbSupported(NULL) )
 		return;		//TODO: shut down the daemon?
@@ -61,10 +62,21 @@ KeyboardDaemon::KeyboardDaemon(QObject *parent, const QList<QVariant>&)
 
 	configureKeyboard();
 	registerListeners();
+
+	LayoutMemoryPersister layoutMemoryPersister(layoutMemory);
+	if( layoutMemoryPersister.restore(KGlobal::mainComponent().componentName()) ) {
+		if( layoutMemoryPersister.getGlobalLayout().isValid() ) {
+			X11Helper::setLayout(layoutMemoryPersister.getGlobalLayout());
+		}
+	}
 }
 
 KeyboardDaemon::~KeyboardDaemon()
 {
+	LayoutMemoryPersister layoutMemoryPersister(layoutMemory);
+	layoutMemoryPersister.setGlobalLayout(X11Helper::getCurrentLayout());
+	layoutMemoryPersister.save(KGlobal::mainComponent().componentName());
+
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.disconnect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT( configureKeyboard() ));
 	dbus.unregisterObject(KEYBOARD_DBUS_OBJECT_PATH);

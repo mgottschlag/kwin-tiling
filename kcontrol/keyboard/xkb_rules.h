@@ -40,12 +40,21 @@ inline T* findByName(QList<T*> list, QString name) {
 }
 
 struct VariantInfo: public ConfigItem {
+	QList<QString> languages;
+	const bool fromExtras;
+
+	VariantInfo(bool fromExtras_):
+		fromExtras(fromExtras_) {}
 };
 
 struct LayoutInfo: public ConfigItem {
 	QList<VariantInfo*> variantInfos;
 	QList<QString> languages;
+	const bool fromExtras;
 
+//	LayoutInfo() {}
+	LayoutInfo(bool fromExtras_):
+		fromExtras(fromExtras_) {}
 	~LayoutInfo() { foreach(VariantInfo* variantInfo, variantInfos) delete variantInfo; }
 
 	VariantInfo* getVariantInfo(const QString& variantName) const {
@@ -72,6 +81,8 @@ struct OptionGroupInfo: public ConfigItem {
 };
 
 struct Rules {
+    enum ExtrasFlag { NO_EXTRAS, READ_EXTRAS };
+
 	static const char XKB_OPTION_GROUP_SEPARATOR;
 
 	QList<LayoutInfo*> layoutInfos;
@@ -95,8 +106,8 @@ struct Rules {
     	return findByName(optionGroupInfos, optionGroupName);
     }
 
-    static Rules* readRules();
-    static Rules* readRules(const QString& filename);
+    static Rules* readRules(ExtrasFlag extrasFlag);
+    static Rules* readRules(Rules* rules, const QString& filename, bool fromExtras);
     static QString getRulesName();
 };
 

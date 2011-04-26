@@ -61,6 +61,11 @@ SceneOpenGL::SceneOpenGL(Workspace* ws)
 
 SceneOpenGL::~SceneOpenGL()
 {
+    if (!init_ok) {
+        // TODO this probably needs to clean up whatever has been created until the failure
+        wspace->destroyOverlay();
+        return;
+    }
     foreach (Window * w, windows)
     delete w;
     // do cleanup after initBuffer()
@@ -71,6 +76,9 @@ SceneOpenGL::~SceneOpenGL()
     eglReleaseThread();
     SceneOpenGL::EffectFrame::cleanup();
     checkGLError("Cleanup");
+    if (wspace->overlayWindow()) {
+        wspace->destroyOverlay();
+    }
 }
 
 bool SceneOpenGL::initTfp()
@@ -91,6 +99,8 @@ bool SceneOpenGL::initRenderingContext()
     if (!wspace->createOverlay()) {
         kError(1212) << "Could not get overlay window";
         return false;
+    } else {
+        wspace->setupOverlay(None);
     }
     surface = eglCreateWindowSurface(dpy, config, wspace->overlayWindow(), 0);
 

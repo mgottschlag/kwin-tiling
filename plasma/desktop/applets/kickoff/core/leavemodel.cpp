@@ -52,9 +52,9 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
     } else if (basename == "lock") {
         item->setText(i18n("Lock"));
         item->setIcon(KIcon("system-lock-screen"));
-        item->setData(i18n("Lock Screen"), Kickoff::SubTitleRole);
+        item->setData(i18n("Lock screen"), Kickoff::SubTitleRole);
     } else if (basename == "switch") {
-        item->setText(i18n("Switch User"));
+        item->setText(i18n("Switch user"));
         item->setIcon(KIcon("system-switch-user"));
         item->setData(i18n("Start a parallel session as a different user"), Kickoff::SubTitleRole);
     } else if (basename == "shutdown") {
@@ -64,7 +64,7 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
     } else if (basename == "restart") {
         item->setText(i18nc("Restart computer", "Restart"));
         item->setIcon(KIcon("system-reboot"));
-        item->setData(i18n("Restart Computer"), Kickoff::SubTitleRole);
+        item->setData(i18n("Restart computer"), Kickoff::SubTitleRole);
     } else if (basename == "savesession") {
         item->setText(i18n("Save Session"));
         item->setIcon(KIcon("document-save"));

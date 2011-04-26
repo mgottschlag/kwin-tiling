@@ -51,6 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "scene_basic.h"
 #include "scene_xrender.h"
 #include "scene_opengl.h"
+#include "shadow.h"
 #include "compositingprefs.h"
 #include "notifications.h"
 
@@ -281,6 +282,32 @@ void Workspace::toggleCompositing()
     }
 }
 
+void Workspace::updateCompositeBlocking(Client *c)
+{
+    if (c) { // if c == 0 we just check if we can resume
+        if (c->isBlockingCompositing()) {
+            compositingBlocked = true;
+            suspendCompositing(true);
+        }
+    }
+    else if (compositingBlocked) {  // lost a client and we're blocked - can we resume?
+        // NOTICE do NOT check for "compositingSuspended" or "!compositing()"
+        // only "resume" if it was really disabled for a block
+        bool resume = true;
+        for (ClientList::ConstIterator it = clients.constBegin(); it != clients.constEnd(); ++it) {
+            if ((*it)->isBlockingCompositing()) {
+                resume = false;
+                break;
+            }
+        }
+        if (resume) { // do NOT attempt to call suspendCompositing(false); from within the eventchain!
+            compositingBlocked = false;
+            if (compositingSuspended)
+                QMetaObject::invokeMethod(this, "slotToggleCompositing", Qt::QueuedConnection);
+        }
+    }
+}
+
 void Workspace::suspendCompositing()
 {
     suspendCompositing(true);
@@ -383,6 +410,9 @@ void Workspace::performCompositing()
         repaints_region |= c->repaints().translated(c->pos());
         repaints_region |= c->decorationPendingRegion();
         c->resetRepaints(c->decorationRect());
+        if (c->hasShadow()) {
+            c->resetRepaints(c->shadow()->shadowRegion().boundingRect());
+        }
     }
     QRegion repaints = repaints_region;
     // clear all repaints, so that post-pass can add repaints for the next repaint
@@ -857,6 +887,9 @@ void Toplevel::addRepaint(int x, int y, int w, int h)
 void Toplevel::addRepaintFull()
 {
     repaints_region = rect();
+    if (hasShadow()) {
+        repaints_region = repaints_region.united(shadow()->shadowRegion());
+    }
     workspace()->checkCompositeTimer();
 }
 
@@ -947,6 +980,9 @@ bool Client::shouldUnredirect() const
 void Client::addRepaintFull()
 {
     repaints_region = decorationRect();
+    if (hasShadow()) {
+        repaints_region = repaints_region.united(shadow()->shadowRegion());
+    }
     workspace()->checkCompositeTimer();
 }
 
@@ -990,6 +1026,9 @@ bool Deleted::shouldUnredirect() const
 void Deleted::addRepaintFull()
 {
     repaints_region = decorationRect();
+    if (hasShadow()) {
+        repaints_region = repaints_region.united(shadow()->shadowRegion());
+    }
     workspace()->checkCompositeTimer();
 }
 

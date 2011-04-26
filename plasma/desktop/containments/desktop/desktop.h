@@ -31,6 +31,7 @@
 
 #include "desktoplayout.h"
 
+class QTimer;
 
 namespace Plasma
 {
@@ -69,8 +70,13 @@ protected Q_SLOTS:
 
 private:
     DesktopLayout *m_layout;
+    QTimer *m_delayedRefreshTimer;
+    int m_refreshFails;
     bool dropping;
     bool m_startupCompleted;
+
+    static const int DELAYED_REFRESH_WAIT = 100;
+    static const int MAX_REFRESH_FAILS = 20;
 };
 
 #endif // PLASMA_PANEL_H

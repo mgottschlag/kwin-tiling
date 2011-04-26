@@ -23,6 +23,8 @@
 #include <KGlobalSettings>
 #include <KColorScheme>
 
+#include <QtDebug>
+
 PreviewWidget::PreviewWidget(QWidget *parent) : QFrame(parent)
 {
     setupUi(this);
@@ -120,7 +122,7 @@ inline void adjustWidgetForeground(QWidget *widget, QPalette::ColorGroup state,
 void PreviewWidget::setPalette(const KSharedConfigPtr &config,
                                QPalette::ColorGroup state)
 {
-    QPalette palette = KGlobalSettings::createApplicationPalette(config);
+    QPalette palette = KGlobalSettings::createNewApplicationPalette(config);
 
     if (state != QPalette::Active) {
         copyPaletteBrush(palette, state, QPalette::Base);

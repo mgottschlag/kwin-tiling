@@ -28,9 +28,8 @@ function contentKey() {
 function setup() {
     provider.addQueryItem("name", "KDE");
     provider.addQueryItem("title", "mypaste");
-    provider.addQueryItem("email", "");
     provider.addQueryItem("lang", "text");
-    provider.addQueryItem("website", "");
+    provider.addQueryItem("expiry", "1440");
     provider.addQueryItem("submit", "submit");
 }
 

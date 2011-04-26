@@ -870,6 +870,8 @@ void Client::propertyNotifyEvent(XPropertyEvent* e)
             getSyncCounter();
         else if (e->atom == atoms->activities)
             checkActivities();
+        else if (e->atom == atoms->kde_net_wm_block_compositing)
+            updateCompositeBlocking(true);
         break;
     }
 }
@@ -1640,7 +1642,7 @@ void Unmanaged::configureNotifyEvent(XConfigureEvent* e)
         static_cast<EffectsHandlerImpl*>(effects)->checkInputWindowStacking(); // keep them on top
     QRect newgeom(e->x, e->y, e->width, e->height);
     if (newgeom != geom) {
-        addWorkspaceRepaint(geometry());  // damage old area
+        addWorkspaceRepaint(visibleRect());  // damage old area
         QRect old = geom;
         geom = newgeom;
         addRepaintFull();
@@ -1666,6 +1668,8 @@ void Toplevel::propertyNotifyEvent(XPropertyEvent* e)
             getWmClientLeader();
         else if (e->atom == atoms->wm_window_role)
             getWindowRole();
+        else if (e->atom == atoms->kde_net_wm_shadow)
+            getShadow();
         break;
     }
     emit propertyNotify(this, e->atom);

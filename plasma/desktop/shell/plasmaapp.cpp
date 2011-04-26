@@ -94,6 +94,8 @@
 #include <X11/extensions/Xrender.h>
 #endif
 
+extern QString plasmaLocale;
+
 PlasmaApp* PlasmaApp::self()
 {
     if (!kapp) {
@@ -114,6 +116,11 @@ PlasmaApp::PlasmaApp()
 {
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor start" << "(line:" << __LINE__ << ")";
     PlasmaApp::suspendStartup(true);
+
+    if (KGlobalSettings::isMultiHead()) {
+        KGlobal::locale()->setLanguage(plasmaLocale, KGlobal::config().data());
+    }
+
     KGlobal::locale()->insertCatalog("libplasma");
     KGlobal::locale()->insertCatalog("plasmagenericshell");
     KCrash::setFlags(KCrash::AutoRestart);
@@ -181,7 +188,7 @@ PlasmaApp::PlasmaApp()
             XCloseDisplay(dpy);
         }
 #endif
-        QSize size = Kephal::ScreenUtils::screenSize(id);
+        const QSize size = Kephal::ScreenUtils::screenSize(id);
         cacheSize += 4 * size.width() * size.height() / 1024;
     } else {
         const int numScreens = Kephal::ScreenUtils::numScreens();
@@ -1070,9 +1077,7 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
     if ((containment->containmentType() == Plasma::Containment::DesktopContainment ||
          containment->containmentType() == Plasma::Containment::CustomContainment)) {
         QAction *a = containment->action("remove");
-        if (a) {
-            delete a; //activities handle removal now
-        }
+        delete a; //activities handle removal now
         if (!(m_loadingActivity.isEmpty() || m_corona->offscreenWidgets().contains(containment))) {
             Plasma::Context *context = containment->context();
             if (context->currentActivityId().isEmpty()) {

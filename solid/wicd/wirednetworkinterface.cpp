@@ -145,15 +145,34 @@ QString WicdWiredNetworkInterface::hardwareAddress() const
     // Let's parse ifconfig here
 
     QProcess ifconfig;
-
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    qputenv("PATH", QString("/bin:/usr/bin:/sbin:/usr/sbin:" + env.value("PATH")).toAscii());
+    qputenv("LC_ALL", "C");
     ifconfig.start(QString("ifconfig %1").arg(uni()));
-    ifconfig.waitForFinished();
+
+    // ifconfig is not installed or not found in PATH.
+    if (!ifconfig.waitForStarted()) {
+        return QString();
+    }
+
+    // ifconfig returned a error.
+    if (!ifconfig.waitForFinished()) {
+        return QString();
+    }
 
     QString result = ifconfig.readAllStandardOutput();
-
     QStringList lines = result.split('\n');
 
-    return lines.at(0).split("HWaddr ").at(1);
+    // ifconfig returned something.
+    if (lines.count() > 0) {
+        QStringList result = lines.at(0).split("HWaddr ");
+
+        // MAC address not found.
+        if (result.count() > 1)
+            return result.at(1);
+    }
+    
+    return QString();
 }
 
 int WicdWiredNetworkInterface::bitRate() const

@@ -59,7 +59,7 @@ KCMKeyboard::KCMKeyboard(QWidget *parent, const QVariantList &args)
     " parameters and layouts."));
 
 
-  rules = Rules::readRules();
+  rules = Rules::readRules(Rules::READ_EXTRAS);
 
   keyboardConfig = new KeyboardConfig();
 

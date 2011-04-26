@@ -23,7 +23,7 @@ Name[gu]=શોધ અને શરુકરનાર એન્જિન
 Name[he]=מנוע חיפוש והפעלה
 Name[hi]=खोज और लाँच इंजन
 Name[hr]=Mehanizam za pretragu i pokretanje
-Name[ia]=Motor per Cercar e Lancear
+Name[ia]=Motor per cercar e lancear
 Name[id]=Mesin Pencari dan Peluncur
 Name[it]=Motore di ricerca e avvio
 Name[ja]=検索起動エンジン
@@ -95,6 +95,7 @@ Comment[pa]=SAL ਕਨਟੇਨਮੈਂਟ ਲਈ ਕਿਊਰੀ ਹੈਂਡ�
 Comment[pl]=Silnik do obsługi zapytań do kontenera SAL
 Comment[pt]=Motor para lidar com as pesquisas ao contentor ASL
 Comment[pt_BR]=Mecanismo para lidar com pesquisas ao contêiner ASL
+Comment[ru]=Обработка запросов к контейнеру «Поиск и запуск»
 Comment[si]=SAL ධාරක විමසීම් හැසිරවිම සඳහා එන්ජිම
 Comment[sk]=Nástroj na spracovanie dotazov pre Hľadať a spustiť
 Comment[sl]=Pogon za ravnanje s poizvedbami za vsebnik SAL

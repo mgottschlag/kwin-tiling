@@ -233,6 +233,7 @@ void WindowTaskItem::updateToolTip()
         }
         data.setWindowToPreview(m_task->task()->window());
         data.setClickable(true);
+        data.setInstantPopup(true);
         data.setHighlightWindows(m_applet->highlightWindows());
 
         if (group && group->collapsed()) {
@@ -241,7 +242,7 @@ void WindowTaskItem::updateToolTip()
 
         Plasma::ToolTipManager::self()->setContent(this, data);
     } else {
-        Plasma::ToolTipManager::self()->clearContent(this);
+        clearToolTip();
     }
 }
 

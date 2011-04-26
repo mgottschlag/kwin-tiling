@@ -92,6 +92,7 @@ struct LayoutUnit {
 	QKeySequence getShortcut() const { return shortcut; }
 
 	bool isEmpty() const { return layout.isEmpty(); }
+	bool isValid() const { return ! isEmpty(); }
 	bool operator==(const LayoutUnit& layoutItem) const {
 		return layout==layoutItem.layout && variant==layoutItem.variant;
 	}
@@ -114,6 +115,10 @@ struct LayoutSet {
 	LayoutSet(const LayoutSet& currentLayouts) {
 		this->layouts = currentLayouts.layouts;
 		this->currentLayout = currentLayouts.currentLayout;
+	}
+
+	bool isValid() const {
+		return currentLayout.isValid() && layouts.contains(currentLayout);
 	}
 
 	bool operator == (const LayoutSet& currentLayouts) const {

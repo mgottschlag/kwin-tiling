@@ -47,6 +47,7 @@ const ThemeItemNameType themeCollectionName[] = {
     { "Pager", I18N_NOOP2("plasma name", "Pager"), "widgets/pager", "plasma"},
     { "Run Command Dialog", I18N_NOOP2("plasma name", "Run Command Dialog"), "dialogs/krunner", "system-run"},
     { "Shutdown Dialog", I18N_NOOP2("plasma name", "Shutdown Dialog"), "dialogs/shutdowndialog", "system-shutdown"},
+    { "Icons", I18N_NOOP2("plasma name", "Icons"), "icons/", "preferences-desktop-icons"},
     { 0, 0,0,0 } // end of data
 };
 

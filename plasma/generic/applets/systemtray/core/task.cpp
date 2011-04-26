@@ -99,6 +99,19 @@ QHash<Plasma::Applet *, QGraphicsWidget *> Task::widgetsByHost() const
     return d->widgetsByHost;
 }
 
+void Task::abandon(Plasma::Applet *host)
+{
+    QGraphicsWidget *widget = d->widgetsByHost.value(host);
+    if (widget) {
+        widget->deleteLater();
+    }
+}
+
+QGraphicsWidget *Task::forget(Plasma::Applet *host)
+{
+    return d->widgetsByHost.take(host);
+}
+
 void Task::widgetDeleted()
 {
     bool wasEmbeddable = isEmbeddable();
@@ -192,6 +205,5 @@ void Task::resetHiddenStatus()
 }
 
 }
-
 
 #include "task.moc"

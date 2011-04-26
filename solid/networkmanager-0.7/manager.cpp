@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkinterface.h"
 #include "networkgsminterface.h"
 #include "networkcdmainterface.h"
+#include "networkbtinterface.h"
 
 const QString NMNetworkManager::DBUS_SERVICE(QString::fromLatin1("org.freedesktop.NetworkManager"));
 const QString NMNetworkManager::DBUS_DAEMON_PATH(QString::fromLatin1("/org/freedesktop/NetworkManager"));
@@ -120,23 +121,27 @@ QObject *NMNetworkManager::createNetworkInterface(const QString &uni)
     uint deviceType = devIface.deviceType();
     NMNetworkInterface * createdInterface = 0;
     switch ( deviceType ) {
-        case DEVICE_TYPE_802_3_ETHERNET:
+        case NM_DEVICE_TYPE_ETHERNET:
             createdInterface = new NMWiredNetworkInterface(uni, this, 0); // these are deleted by the frontend manager
             break;
-        case DEVICE_TYPE_802_11_WIRELESS:
+        case NM_DEVICE_TYPE_WIFI:
             createdInterface = new NMWirelessNetworkInterface(uni, this, 0);
             break;
-        case DEVICE_TYPE_GSM:
+        case NM_DEVICE_TYPE_GSM:
             createdInterface = new NMGsmNetworkInterface(uni, this, 0);
             break;
-        case DEVICE_TYPE_CDMA:
+        case NM_DEVICE_TYPE_CDMA:
             createdInterface = new NMCdmaNetworkInterface(uni, this, 0);
             break;
             /*
-        case DEVICE_TYPE_SERIAL:
+        case NM_DEVICE_TYPE_SERIAL:
             createdInterface = new NMSerialNetworkInterface(uni, this, 0);
             break;
             */
+        case NM_DEVICE_TYPE_BT:
+            createdInterface = new NMBtNetworkInterface(uni, this, 0);
+            break;
+
         default:
             kDebug(1441) << "Can't create object of type " << deviceType;
             break;

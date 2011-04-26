@@ -295,6 +295,8 @@ public:
 
     virtual void setupCompositing();
     virtual void finishCompositing();
+    inline bool isBlockingCompositing() { return blocks_compositing; }
+    void updateCompositeBlocking(bool readProperty = false);
 
     QString caption(bool full = true) const;
     void updateCaption();
@@ -399,11 +401,7 @@ public:
     bool decorationPixmapRequiresRepaint();
     void ensureDecorationPixmapsPainted();
 
-    QRect decorationRect() const {
-        return (decoration && decoration->widget()) ?
-               decoration->widget()->rect().translated(-padding_left, -padding_top) :
-               QRect(0, 0, width(), height());
-    }
+    QRect decorationRect() const;
 
     QRect transparentRect() const;
 
@@ -647,6 +645,7 @@ private:
     uint urgency : 1; ///< XWMHints, UrgencyHint
     uint ignore_focus_stealing : 1; ///< Don't apply focus stealing prevention to this client
     uint demands_attention : 1;
+    bool blocks_compositing;
     WindowRules client_rules;
     void getWMHints();
     void readIcons();
@@ -964,7 +963,7 @@ inline QSize Client::clientSize() const
 
 inline QRect Client::visibleRect() const
 {
-    return geometry().adjusted(-padding_left, -padding_top, padding_right, padding_bottom);
+    return Toplevel::visibleRect().adjusted(-padding_left, -padding_top, padding_right, padding_bottom);
 }
 
 inline void Client::setGeometry(const QRect& r, ForceGeometry_t force, bool emitJs)

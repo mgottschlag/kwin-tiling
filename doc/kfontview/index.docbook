@@ -89,7 +89,7 @@ This feature enables you to check that a font supports the characters you need.
 preview mode additional tooltip info's are displayed hovering a character with the 
 mouse pointer: 
 The character's Unicode <guilabel>Category</guilabel> and the value in <guilabel>
-UCS-4</guilabel>, <guilabel>UTF-18</guilabel>, <guilabel>UTF-8</guilabel> and 
+UCS-4</guilabel>, <guilabel>UTF-16</guilabel>, <guilabel>UTF-8</guilabel> and 
 as <guilabel>XML Decimal Entity</guilabel>.</para>
 
 <para>

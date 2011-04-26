@@ -30,6 +30,7 @@ class NMNetworkInterfacePrivate
 {
 public:
     NMNetworkInterfacePrivate( const QString & path, QObject * owner );
+    virtual ~NMNetworkInterfacePrivate();
     OrgFreedesktopNetworkManagerDeviceInterface deviceIface;
     Solid::Control::NetworkInterface::Capabilities capabilities;
     //bool isLinkUp;
@@ -42,6 +43,7 @@ public:
     QString driver;
     int ipV4Address;
     QString interfaceName;
+    bool firmwareMissing;
     NMNetworkManager * manager;
     //NMPropertyHelper propHelper;
 };

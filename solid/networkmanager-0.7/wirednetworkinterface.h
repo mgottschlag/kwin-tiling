@@ -40,7 +40,7 @@ Q_PROPERTY(int bitRate READ bitRate WRITE setBitRate NOTIFY bitRateChanged)
 
 public:
     NMWiredNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent);
-    ~NMWiredNetworkInterface();
+    virtual ~NMWiredNetworkInterface();
     QString hardwareAddress() const;
     int bitRate() const;
     void setBitRate(const QVariant&);

@@ -44,7 +44,7 @@ K_EXPORT_PLASMA_APPLET(keyboard, KeyboardApplet)
 KeyboardApplet::KeyboardApplet(QObject *parent, const QVariantList &args):
 	Plasma::Applet(parent, args),
 	xEventNotifier(),
-	rules(Rules::readRules()),
+	rules(Rules::readRules(Rules::READ_EXTRAS)),
 	keyboardConfig(new KeyboardConfig()),
 	layoutsMenu(new LayoutsMenu(*keyboardConfig, *rules, flags))
 {

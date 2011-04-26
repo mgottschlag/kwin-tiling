@@ -48,6 +48,7 @@ class ThemePage : public QWidget, private Ui::ThemePage
 
     private slots:
         void currentChanged(const QModelIndex &, const QModelIndex &);
+        void getNewClicked();
         void installClicked();
         void removeClicked();
 

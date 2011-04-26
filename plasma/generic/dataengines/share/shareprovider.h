@@ -78,7 +78,7 @@ protected:
 
 private:
     QString m_content;
-    QString m_content_key;
+    QString m_contentKey;
     QString m_mimetype;
 
     bool m_isBlob;

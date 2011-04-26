@@ -31,8 +31,19 @@
 #include <Plasma/ServiceJob>
 
 AppLauncher::AppLauncher(QObject *parent, const QVariantList &args)
-    : Plasma::ContainmentActions(parent, args)
+    : Plasma::ContainmentActions(parent, args),
+      m_action(new QAction(this))
 {
+    m_menu = new KMenu();
+    connect(m_menu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
+    connect(m_menu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
+
+    m_action->setMenu(m_menu);
+}
+
+AppLauncher::~AppLauncher()
+{
+    delete m_menu;
 }
 
 void AppLauncher::init(const KConfigGroup &)
@@ -41,23 +52,35 @@ void AppLauncher::init(const KConfigGroup &)
 
 void AppLauncher::contextEvent(QEvent *event)
 {
+    makeMenu();
+    m_menu->adjustSize();
+    m_menu->exec(popupPosition(m_menu->size(), event));
+}
+
+QList<QAction*> AppLauncher::contextualActions()
+{
+    makeMenu();
+
+    QList<QAction*> list;
+    list << m_action;
+    return list;
+}
+
+void AppLauncher::makeMenu()
+{
     Plasma::DataEngine *apps = dataEngine("apps");
     if (!apps->isValid()) {
         return;
     }
 
-    KMenu desktopMenu;
+    m_menu->clear();
 
     //add the whole kmenu
     Plasma::DataEngine::Data app = dataEngine("apps")->query("/");
     const QStringList sources = app.value("entries").toStringList();
     foreach (const QString &source, sources) {
-        addApp(&desktopMenu, source);
+        addApp(m_menu, source);
     }
-
-    connect(&desktopMenu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
-    desktopMenu.adjustSize();
-    desktopMenu.exec(popupPosition(desktopMenu.size(), event));
 }
 
 bool AppLauncher::addApp(QMenu *menu, const QString &source)

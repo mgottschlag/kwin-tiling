@@ -117,7 +117,9 @@ private:
                 ActiveForeground = 0,
                 ActiveBackground = 1,
                 InactiveForeground = 2,
-                InactiveBackground = 3
+                InactiveBackground = 3,
+                ActiveBlend = 4,
+                InactiveBlend = 5
             };
 
             WindecoColors() {}
@@ -127,7 +129,7 @@ private:
             void load(const KSharedConfigPtr&);
             QColor color(Role) const;
         private:
-            QColor m_colors[4];
+            QColor m_colors[6];
     };
 
     /** create a preview of a color scheme */

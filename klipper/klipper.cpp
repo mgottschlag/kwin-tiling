@@ -53,8 +53,10 @@
 #include "historystringitem.h"
 #include "klipperpopup.h"
 
-#ifdef HAVE_DMTX
-#include "mobilebarcode.h"
+#ifdef HAVE_PRISON
+#include <prison/BarcodeWidget>
+#include <prison/DataMatrixBarcode>
+#include <prison/QRCodeBarcode>
 #endif
 
 #include <zlib.h>
@@ -209,7 +211,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     qobject_cast<KAction*>(m_editAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_E), KAction::DefaultShortcut);
     connect(m_editAction, SIGNAL(triggered()), SLOT(slotEditData()));
 
-#ifdef HAVE_DMTX
+#ifdef HAVE_PRISON
     // add barcode for mobile phones
     m_showBarcodeAction = m_collection->addAction("show_barcode");
     m_showBarcodeAction->setText(i18n("&Show Barcode..."));
@@ -243,7 +245,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     popup->plugAction( m_configureAction );
     popup->plugAction( m_repeatAction );
     popup->plugAction( m_editAction );
-#ifdef HAVE_DMTX
+#ifdef HAVE_PRISON
     popup->plugAction( m_showBarcodeAction );
 #endif
     if ( !isApplet() ) {
@@ -1124,9 +1126,10 @@ void Klipper::slotEditData()
 
 }
 
-#ifdef HAVE_DMTX
+#ifdef HAVE_PRISON
 void Klipper::slotShowBarcode()
 {
+    using namespace prison;
     const HistoryStringItem* item = dynamic_cast<const HistoryStringItem*>(m_history->first());
 
     KDialog dlg;
@@ -1134,12 +1137,22 @@ void Klipper::slotShowBarcode()
     dlg.setCaption( i18n("Mobile Barcode") );
     dlg.setButtons( KDialog::Ok );
 
-    MobileBarcode::DataMatrixWidget* barcode = new MobileBarcode::DataMatrixWidget( &dlg );
+    QWidget* mw = new QWidget(&dlg);
+    QHBoxLayout* layout = new QHBoxLayout(mw);
+
+    BarcodeWidget* qrcode = new BarcodeWidget(new QRCodeBarcode());
+    BarcodeWidget* datamatrix = new BarcodeWidget(new DataMatrixBarcode());
+
     if (item) {
-        barcode->setData( item->text() );
+        qrcode->setData( item->text() );
+        datamatrix->setData( item->text() );
     }
-    barcode->setFocus();
-    dlg.setMainWidget( barcode );
+
+    layout->addWidget(qrcode);
+    layout->addWidget(datamatrix);
+
+    mw->setFocus();
+    dlg.setMainWidget( mw );
     dlg.adjustSize();
 
     dlg.exec();

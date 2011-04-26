@@ -333,7 +333,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     // this timer controls checks to re-hide a panel after it's been unhidden
     // for the user because, e.g., something is demanding attention
     m_rehideAfterAutounhideTimer->setSingleShot(true);
-    m_rehideAfterAutounhideTimer->setInterval(AUTOUNHIDE_CHECK_DELAY);
     connect(m_rehideAfterAutounhideTimer, SIGNAL(timeout()), this, SLOT(checkAutounhide()));
 
     // Graphics view setup
@@ -1456,7 +1455,7 @@ void PanelView::checkUnhide(Plasma::ItemStatus newStatus)
         if (newStatus == Plasma::NeedsAttentionStatus) {
             //kDebug() << "starting the timer!";
             // start our rehide timer, so that the panel doesn't stay up and stuck forever and a day
-            m_rehideAfterAutounhideTimer->start();
+            m_rehideAfterAutounhideTimer->start(AUTOUNHIDE_CHECK_DELAY);
         }
     } else {
         //kDebug() << "new status, just autohiding";

@@ -333,10 +333,12 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
 
     Plasma::ItemStatus status = Plasma::PassiveStatus;
     foreach (const Plasma::DataEngine::Data &data, m_batteriesData) {
-        if (status == Plasma::NeedsAttentionStatus || (data.value("Percent", 0).toInt() < 10)) {
+        if (data.value("Percent", 0).toInt() < 10) {
             status = Plasma::NeedsAttentionStatus;
-        } else {
+            break;
+        } else if (data["State"].toString() != "NoCharge") {
             status = Plasma::ActiveStatus;
+            break;
         }
     }
     setStatus(status);

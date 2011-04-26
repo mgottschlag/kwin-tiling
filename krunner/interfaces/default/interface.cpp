@@ -364,6 +364,7 @@ void Interface::display(const QString &term)
         }
     } else if (!term.isEmpty()) {
         m_searchTerm->setItemText(0, term);
+        m_searchTerm->setCurrentIndex(0);
     }
 }
 

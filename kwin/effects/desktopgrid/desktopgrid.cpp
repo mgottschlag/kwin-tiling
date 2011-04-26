@@ -54,6 +54,7 @@ DesktopGridEffect::DesktopGridEffect()
     , keyboardGrab(false)
     , wasWindowMove(false)
     , wasDesktopMove(false)
+    , isValidMove(false)
     , windowMove(NULL)
     , windowMoveDiff()
     , gridSize()
@@ -430,6 +431,8 @@ void DesktopGridEffect::slotWindowClosed(EffectWindow* w)
 
 void DesktopGridEffect::slotWindowDeleted(EffectWindow* w)
 {
+    if (w == windowMove)
+        windowMove = 0;
     for (QHash< DesktopButtonsView*, EffectWindow*>::iterator it = m_desktopButtonsViews.begin();
             it != m_desktopButtonsViews.end(); ++it) {
         if (it.value() && it.value() == w) {
@@ -541,7 +544,7 @@ void DesktopGridEffect::windowInputMouseEvent(Window, QEvent* e)
             XDefineCursor(display(), input, QCursor(Qt::ClosedHandCursor).handle());
         }
         if (d != highlightedDesktop) { // Highlight desktop
-            if ((me->buttons() & Qt::LeftButton) && !wasWindowMove && d <= effects->numberOfDesktops()) {
+            if ((me->buttons() & Qt::LeftButton) && isValidMove && !wasWindowMove && d <= effects->numberOfDesktops()) {
                 EffectWindowList windows = effects->stackingOrder();
                 EffectWindowList stack;
                 foreach (EffectWindow * w, windows) {
@@ -578,6 +581,7 @@ void DesktopGridEffect::windowInputMouseEvent(Window, QEvent* e)
     }
     if (e->type() == QEvent::MouseButtonPress) {
         if (me->buttons() == Qt::LeftButton) {
+            isValidMove = true;
 //             QRect rect;
             dragStartPos = me->pos();
             bool isDesktop = (me->modifiers() & Qt::ControlModifier);
@@ -623,6 +627,7 @@ void DesktopGridEffect::windowInputMouseEvent(Window, QEvent* e)
         }
     }
     if (e->type() == QEvent::MouseButtonRelease && me->button() == Qt::LeftButton) {
+        isValidMove = false;
         if (!wasWindowMove && !wasDesktopMove) {
             setCurrentDesktop(posToDesktop(me->pos()));
             if (windowMove)
@@ -1094,7 +1099,7 @@ void DesktopGridEffect::setup()
                 WindowMotionManager manager;
                 foreach (EffectWindow * w, effects->stackingOrder()) {
                     if (w->isOnDesktop(i) && w->screen() == j && !w->isDesktop() && !w->isDock() &&
-                            w->visibleInClientGroup() && !w->isSkipSwitcher()) {
+                            w->visibleInClientGroup() && !w->isSkipSwitcher() && w->isOnCurrentActivity()) {
                         manager.manage(w);
                     }
                 }

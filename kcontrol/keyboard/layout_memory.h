@@ -27,12 +27,12 @@
 #include "x11_helper.h"
 #include "keyboard_config.h"
 
+class LayoutMemoryPersister;
+
 class LayoutMemory : public QObject
 {
     Q_OBJECT
 
-    //QVariant does not support long for WId so we'll use QString for key instead
-    QMap<QString, LayoutSet> layoutMap;
     // if there's some transient windows coming up we'll need to either ignore it
     // or in case of layout switcher popup menu to apply new layout to previous key
     QString previousLayoutMapKey;
@@ -55,6 +55,12 @@ public:
 	virtual ~LayoutMemory();
 
 	void configChanged();
+
+protected:
+    //QVariant does not support long for WId so we'll use QString for key instead
+    QMap<QString, LayoutSet> layoutMap;
+
+	friend class LayoutMemoryPersister;
 };
 
 #endif /* LAYOUT_MEMORY_H_ */

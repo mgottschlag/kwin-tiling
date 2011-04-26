@@ -22,6 +22,10 @@
 
 #include "../xkb_rules.h"
 
+#include <QtXml/qdom.h>
+#include <QtXml/qxml.h>
+
+static const Rules::ExtrasFlag readExtras = Rules::NO_EXTRAS;
 
 class RulesTest : public QObject
 {
@@ -31,7 +35,7 @@ class RulesTest : public QObject
 
 private Q_SLOTS:
     void initTestCase() {
-    	rules = Rules::readRules();
+    	rules = Rules::readRules(readExtras);
     }
 
     void cleanupTestCase() {
@@ -88,9 +92,114 @@ private Q_SLOTS:
         }
     }
 
+    void testExtras() {
+    	Rules* rulesWithExtras = Rules::readRules(Rules::READ_EXTRAS);
+    	QVERIFY2(rulesWithExtras->layoutInfos.size() > rules->layoutInfos.size(), "Rules with extras should have more layouts");
+
+    	foreach(const LayoutInfo* layoutInfo, rules->layoutInfos) {
+    		QVERIFY( ! layoutInfo->fromExtras );
+    	}
+
+    	bool foundFromExtras = false, foundNonExtras = false;
+    	foreach(const LayoutInfo* layoutInfo, rulesWithExtras->layoutInfos) {
+    		if( layoutInfo->fromExtras ) foundFromExtras = true;
+    		if( ! layoutInfo->fromExtras ) foundNonExtras = true;
+    		layoutInfo->languages.size();	// make sure we can access all merged objects
+    		layoutInfo->variantInfos.size();	// make sure we can access all merged objects
+    	}
+    	QVERIFY( foundNonExtras );
+    	QVERIFY( foundFromExtras );
+    }
+
+    void testWriteNewXml() {
+    	QDomDocument doc("xkbConfigRegistry");
+    	QDomElement root = doc.createElement("xkbConfigRegistry");
+    	root.setAttribute("version", "2.0");
+    	doc.appendChild(root);
+
+    	QDomElement modelList = doc.createElement("modelList");
+    	root.appendChild(modelList);
+    	foreach(const ModelInfo* modelInfo, rules->modelInfos) {
+        	QDomElement model = doc.createElement("model");
+        	model.setAttribute("name", modelInfo->name);
+        	model.setAttribute("description", modelInfo->description);
+        	model.setAttribute("vendor", modelInfo->vendor);
+    		modelList.appendChild(model);
+    	}
+
+    	QDomElement layoutList = doc.createElement("layoutList");
+    	foreach(const LayoutInfo* layoutInfo, rules->layoutInfos) {
+        	QDomElement layout = doc.createElement("layout");
+        	layout.setAttribute("name", layoutInfo->name);
+        	layout.setAttribute("description", layoutInfo->description);
+
+        	QDomElement langList = doc.createElement("languageList");
+        	foreach(const QString& lang, layoutInfo->languages) {
+            	QDomElement langNode = doc.createElement("lang");
+            	langNode.setAttribute("iso639Id", lang);
+            	langList.appendChild(langNode);
+        	}
+        	if( langList.hasChildNodes() ) {
+        		layout.appendChild(langList);
+        	}
+
+        	QDomElement variantList = doc.createElement("variantList");
+        	foreach(const VariantInfo* variantInfo, layoutInfo->variantInfos) {
+            	QDomElement variant = doc.createElement("variant");
+            	variant.setAttribute("name", variantInfo->name);
+            	variant.setAttribute("description", variantInfo->description);
+
+            	QDomElement langList = doc.createElement("languageList");
+            	foreach(const QString& lang, variantInfo->languages) {
+                	QDomElement langNode = doc.createElement("lang");
+                	langNode.setAttribute("iso639Id", lang);
+                	langList.appendChild(langNode);
+            	}
+            	if( langList.hasChildNodes() ) {
+            		variant.appendChild(langList);
+            	}
+
+            	variantList.appendChild(variant);
+        	}
+        	if( variantList.hasChildNodes() ) {
+        		layout.appendChild(variantList);
+        	}
+
+        	layoutList.appendChild(layout);
+    	}
+    	root.appendChild(layoutList);
+
+    	QDomElement optionGroupList = doc.createElement("optionList");
+    	foreach(const OptionGroupInfo* optionGroupInfo, rules->optionGroupInfos) {
+        	QDomElement optionGroup = doc.createElement("optionGroup");
+        	optionGroup.setAttribute("name", optionGroupInfo->name);
+        	optionGroup.setAttribute("description", optionGroupInfo->description);
+        	optionGroup.setAttribute("exclusive", optionGroupInfo->exclusive);
+
+        	foreach(const OptionInfo* optionGroupInfo, optionGroupInfo->optionInfos) {
+            	QDomElement option = doc.createElement("option");
+            	option.setAttribute("name", optionGroupInfo->name);
+            	option.setAttribute("description", optionGroupInfo->description);
+            	optionGroup.appendChild(option);
+        	}
+
+        	optionGroupList.appendChild(optionGroup);
+    	}
+    	root.appendChild(optionGroupList);
+
+    	QFile file("base2.xml");
+        if( ! file.open( QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text) ) {
+        	kWarning() << "Failed to open layout memory xml file for writing" << file.fileName();
+        	QFAIL("failed");
+        }
+
+        QTextStream out(&file);
+        out << doc.toString();
+    }
+
     void loadRulesBenchmark() {
     	QBENCHMARK {
-    		Rules* rules = Rules::readRules();
+    		Rules* rules = Rules::readRules(readExtras);
     		delete rules;
     	}
     }

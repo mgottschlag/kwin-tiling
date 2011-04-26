@@ -136,7 +136,7 @@ static QString getDisplayText(const QString& layout, const QString& variant, con
 {
 	if( variant.isEmpty() )
 		return layout;
-	if( rules->version == "1.0" )
+	if( rules == NULL || rules->version == "1.0" )
 		return i18nc("layout - variant", "%1 - %2", layout, variant);
 	return variant;
 }
