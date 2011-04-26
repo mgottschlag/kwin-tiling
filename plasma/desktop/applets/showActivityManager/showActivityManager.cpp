@@ -23,7 +23,10 @@
 #include <QDBusConnection>
 #include <QDBusMessage>
 
+#include <KIcon>
+
 #include <Plasma/IconWidget>
+#include <Plasma/ToolTipManager>
 
 ShowActivityManager::ShowActivityManager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args)
@@ -36,6 +39,11 @@ ShowActivityManager::ShowActivityManager(QObject *parent, const QVariantList &ar
     connect(m_icon, SIGNAL(clicked()), this, SLOT(showManager()));
 
     layout->addItem(m_icon);
+
+    Plasma::ToolTipContent content(i18n("Show Activity Manager"),
+                                   i18n("Click or press the Meta key and 'Q' to show the activity manager"),
+                                   KIcon("preferences-activities"));
+    Plasma::ToolTipManager::self()->setContent(this, content);
 }
 
 void ShowActivityManager::showManager()
