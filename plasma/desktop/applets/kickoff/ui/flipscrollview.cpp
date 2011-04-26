@@ -91,6 +91,8 @@ public:
             q->verticalScrollBar()->setValue(previousVerticalOffsets.pop());
         }
 
+        emit q->currentRootChanged(index);
+
         if (q->viewOptions().direction == Qt::RightToLeft) {
             animLeftToRight = !animLeftToRight;
         }
@@ -113,6 +115,7 @@ public:
     }
 
     QRect headerRect(const QModelIndex& headerIndex = QModelIndex()) const {
+#if 0
         Q_UNUSED(headerIndex)
         QFontMetrics fm(KGlobalSettings::smallestReadableFont());
         const int top = ItemDelegate::TOP_OFFSET - q->verticalScrollBar()->value();
@@ -124,10 +127,14 @@ public:
 
         //kDebug() << "flip header is" << rect;
         return rect;
+#else
+        return QRect();
+#endif
     }
 
     void drawHeader(QPainter *painter, const QRectF& rect,
                     const QModelIndex& headerIndex, QStyleOptionViewItem options) {
+#if 0
         QFontMetrics fm(KGlobalSettings::smallestReadableFont());
         QModelIndex branchIndex = headerIndex;
 
@@ -168,9 +175,11 @@ public:
         }
 
         painter->restore();
+#endif
     }
 
     void drawBackArrow(QPainter *painter, QStyle::State state) {
+#if 0
         painter->save();
         if (state & QStyle::State_MouseOver) {
             painter->setBrush(q->palette().highlight());
@@ -205,6 +214,7 @@ public:
             painter->resetTransform();
         }
         painter->restore();
+#endif
     }
 
     QPainterPath trianglePath(qreal width = 5, qreal height = 10) {
@@ -217,7 +227,11 @@ public:
     }
 
     QRect backArrowRect() const {
+#if 0
         return QRect(0, 0, ItemDelegate::BACK_ARROW_WIDTH, q->height());
+#else
+        return QRect();
+#endif
     }
 
     void updateScrollBarRange() {
@@ -268,6 +282,12 @@ FlipScrollView::~FlipScrollView()
 {
     delete d;
 }
+
+void FlipScrollView::setCurrentRoot(const QModelIndex &index)
+{
+    d->setCurrentRoot(index);
+}
+
 void FlipScrollView::viewRoot()
 {
     QModelIndex index;

@@ -50,6 +50,8 @@ public:
     FlipScrollView(QWidget *parent = 0);
     virtual ~FlipScrollView();
 
+    void setCurrentRoot(const QModelIndex &index);
+
     /** Go to the root item. */
     void viewRoot();
 
@@ -59,6 +61,9 @@ public:
     virtual QRect visualRect(const QModelIndex& index) const;
 
     int itemHeight() const;
+
+Q_SIGNALS:
+    void currentRootChanged(const QModelIndex &index);
 
 protected:
     // reimplemented from QWidget
