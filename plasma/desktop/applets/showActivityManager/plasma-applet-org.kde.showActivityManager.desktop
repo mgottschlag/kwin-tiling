@@ -1,5 +1,24 @@
 [Desktop Entry]
 Name=Activities
+Name[ca]=Activitats
+Name[cs]=Aktivity
+Name[de]=Aktivitäten
+Name[es]=Actividades
+Name[et]=Tegevused
+Name[hr]=Aktivnosti
+Name[ia]=Activitates
+Name[ja]=アクティビティ
+Name[km]=សកម្មភាព
+Name[nb]=Aktiviteter
+Name[nds]=Aktiviteten
+Name[nl]=Activiteiten
+Name[pt]=Actividades
+Name[pt_BR]=Atividades
+Name[sv]=Aktiviteter
+Name[tr]=Eylemler
+Name[uk]=Простори дій
+Name[x-test]=xxActivitiesxx
+Name[zh_TW]=活動
 Comment=Shows the activity manager
 Icon=activities
 Type=Service
