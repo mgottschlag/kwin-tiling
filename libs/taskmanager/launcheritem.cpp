@@ -182,7 +182,11 @@ void LauncherItem::launch()
 {
     //NOTE: preferred is NOT a protocol, it's just a magic string
     if (d->url.protocol() == "preferred"){
-        new KRun(KStandardDirs::locate("xdgdata-apps", defaultApplication(d->url.host(), true)), 0);
+        QString desktopFile = KStandardDirs::locate("xdgdata-apps", defaultApplication(d->url.host(), true));
+        if (desktopFile.isNull()){
+            desktopFile = KStandardDirs::locate("apps", defaultApplication(d->url.host(), true));
+        }
+        new KRun(desktopFile, 0);
     }else{
         new KRun(d->url, 0);
     }
@@ -305,11 +309,18 @@ void LauncherItem::setLauncherUrl(const KUrl &url)
     
     //NOTE: preferred is NOT a protocol, it's just a magic string
     }else if (d->url.protocol() == "preferred"){
-        KDesktopFile f(KStandardDirs::locate("xdgdata-apps", defaultApplication(d->url.host(), true)));
+        QString desktopFile = KStandardDirs::locate("xdgdata-apps", defaultApplication(d->url.host(), true));
+        if (desktopFile.isNull()){
+            desktopFile = KStandardDirs::locate("apps", defaultApplication(d->url.host(), true));
+        }
+        KDesktopFile f(desktopFile);
         KConfigGroup cg(&f, "Desktop Entry");
         
         d->icon = KIcon(f.readIcon());
-        d->name = cg.readEntry("StartupWMClass", "");
+        QString exec = cg.readEntry("Exec", "");
+        if (!exec.isNull()){
+            d->name = exec.split(' ').at(0);
+        }
         d->genericName = f.readGenericName();
     } else {
         d->icon = KIcon(KMimeType::iconNameForUrl(d->url));
