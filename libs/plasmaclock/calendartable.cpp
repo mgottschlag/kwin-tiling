@@ -641,51 +641,41 @@ bool CalendarTable::dateHasDetails(const QDate &date) const
            d->journals.contains(julian);
 }
 
-QString CalendarTable::dateDetails(const QDate &date) const
+QStringList CalendarTable::dateDetails(const QDate &date) const
 {
-    QString details;
+    QStringList details;
     const int julian = date.toJulianDay();
 
     if (d->holidays.contains(julian)) {
-        details.append("<br>");
-        QString notDaysOff;
-
         foreach (int holidayUid, d->holidays.values(julian)) {
             Plasma::DataEngine::Data holidayData = d->holidayEvents.value(holidayUid);
+            QString region = holidayData.value("RegionCode").toString();
+
             if (d->holidayIsDayOff(holidayData)) {
-                QString region = holidayData.value("RegionCode").toString();
-                details += i18nc("Day off: Holiday name (holiday region)",
+                details << i18nc("Day off: Holiday name (holiday region)",
                                  "<i>Holiday</i>: %1 (%2)",
                                  holidayData.value("Name").toString(),
                                  d->holidaysRegions.value(region).value("Name").toString());
-                details.append("<br>");
             } else {
                 QString region = holidayData.value("RegionCode").toString();
-                notDaysOff += i18nc("Not day off: Holiday name (holiday region)",
+                details << i18nc("Not day off: Holiday name (holiday region)",
                                     "%1 (%2)",
                                     holidayData.value("Name").toString(),
                                     d->holidaysRegions.value(region).value("Name").toString());
-                notDaysOff.append("<br>");
             }
         }
-
-        details.append(notDaysOff);
     }
 
     if (d->events.contains(julian)) {
-        details += "<br>";
-
         foreach (const Plasma::DataEngine::Data &occurrence, d->events.values(julian)) {
-            details += i18n("<i>Event</i>: %1<br>", buildOccurrenceDescription(occurrence));
+            details << i18n("<i>Event</i>: %1", buildOccurrenceDescription(occurrence));
         }
     }
 
     if (d->todos.contains(julian)) {
-        details += "<br>";
-
         foreach (const Plasma::DataEngine::Data &occurrence, d->todos.values(julian)) {
             //TODO add Status and Percentage Complete when strings not frozen
-            details += i18n("<i>Todo</i>: %1<br>", buildOccurrenceDescription(occurrence));
+            details << i18n("<i>Todo</i>: %1", buildOccurrenceDescription(occurrence));
         }
     }
 
@@ -731,6 +721,16 @@ void CalendarTable::setCurrentDate(const QDate &date)
 const QDate& CalendarTable::currentDate() const
 {
     return d->currentDate;
+}
+
+QDate CalendarTable::startDate() const
+{
+    return d->viewStartDate;
+}
+
+QDate CalendarTable::endDate() const
+{
+    return d->viewEndDate;
 }
 
 Plasma::DataEngine *CalendarTablePrivate::calendarEngine()
@@ -805,6 +805,7 @@ void CalendarTablePrivate::populateCalendar()
     }
 
     pendingPopulations = NoPendingPopulation;
+    emit q->eventsChanged();
 }
 
 void CalendarTablePrivate::populateEvents()

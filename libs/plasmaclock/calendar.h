@@ -61,7 +61,7 @@ public:
     QStringList holidaysRegions() const;
 
     bool dateHasDetails(const QDate &date) const;
-    QString dateDetails(const QDate &date) const;
+    QStringList dateDetails(const QDate &date) const;
 
     void setAutomaticUpdateEnabled(bool automatic);
     bool isAutomaticUpdateEnabled() const;
@@ -86,7 +86,7 @@ private Q_SLOTS:
     void prevYear();
     void nextYear();
     void dateUpdated();
-    void displayEvents(const QDate &date);
+    void displayEvents(const QDate &date = QDate());
     void goToToday();
     void goToWeek(int week);
     void manualDateChange();

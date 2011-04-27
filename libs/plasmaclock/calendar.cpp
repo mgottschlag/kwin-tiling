@@ -47,6 +47,7 @@
 #include <Plasma/Label>
 #include <Plasma/LineEdit>
 #include <Plasma/SpinBox>
+#include <Plasma/TextBrowser>
 #include <Plasma/ToolButton>
 #include <Plasma/ToolTipManager>
 #include <Plasma/DataEngine>
@@ -88,7 +89,7 @@ class CalendarPrivate
         Plasma::ToolButton *forward;
         Plasma::CalendarTable *calendarTable;
         Plasma::LineEdit *dateText;
-        Plasma::Label *eventsDisplay;
+        Plasma::TextBrowser *eventsDisplay;
         ToolButton *jumpToday;
         QMenu *monthMenu;
         Plasma::SpinBox *weekSpinBox;
@@ -126,6 +127,7 @@ void Calendar::init(const QDate &initialDate)
     connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated()));
     connect(d->calendarTable, SIGNAL(dateHovered(const QDate &)), this, SIGNAL(dateHovered(const QDate &)));
     connect(d->calendarTable, SIGNAL(dateSelected(const QDate &)), this, SLOT(displayEvents(const QDate &)));
+    connect(d->calendarTable, SIGNAL(eventsChanged()), this, SLOT(displayEvents()));
     connect(this, SIGNAL(dateHovered(const QDate &)), this, SLOT(displayEvents(const QDate &)));
 
     d->back = new Plasma::ToolButton(this);
@@ -182,7 +184,7 @@ void Calendar::init(const QDate &initialDate)
     connect(d->weekSpinBox, SIGNAL(valueChanged(int)), this, SLOT(goToWeek(int)));
     layoutTools->addItem(d->weekSpinBox);
 
-    d->eventsDisplay = new Plasma::Label(this);
+    d->eventsDisplay = new Plasma::TextBrowser(this);
 
     calendarLayout->addItem(hLayout);
     calendarLayout->addItem(d->calendarTable);
@@ -191,6 +193,7 @@ void Calendar::init(const QDate &initialDate)
     layout->addItem(d->eventsDisplay);
 
     setDate(initialDate);
+    displayEvents();
 }
 
 CalendarTable *Calendar::calendarTable() const
@@ -251,7 +254,7 @@ bool Calendar::dateHasDetails(const QDate &date) const
     return calendarTable()->dateHasDetails(date);
 }
 
-QString Calendar::dateDetails(const QDate &date) const
+QStringList Calendar::dateDetails(const QDate &date) const
 {
     return calendarTable()->dateDetails(date);
 }
@@ -316,15 +319,53 @@ void Calendar::dateUpdated()
     // Ignore the date passed in, only ever show the date to match the CalendarTable
     refreshWidgets();
     emit dateChanged(date());
+    displayEvents();
 }
 
 void Calendar::displayEvents(const QDate &date)
 {
+    QString html;
+    QList<QDate> datesToProcess;
+
     if (dateHasDetails(date)) {
-        d->eventsDisplay->setText(dateDetails(date));
+        datesToProcess << date;
     } else {
-        d->eventsDisplay->setText(QString());
+        QDate dt = calendarTable()->date();
+        QDate end = calendarTable()->endDate();
+
+        if (dt.isValid() && end.isValid()) {
+            while (dt<=end) {
+                datesToProcess << dt;
+                dt = dt.addDays(1);
+            }
+        }
     }
+
+    int processedDetails = 0;
+    const int detailsMax = 5;
+
+    foreach (const QDate &d, datesToProcess) {
+        if (dateHasDetails(d)) {
+            html+= "<b>"+d.toString()+"</b>";
+            html+= "<ul>";
+
+            QStringList details = dateDetails(d);
+            foreach (const QString &detail, details) {
+                if (processedDetails<detailsMax) {
+                    html+= "<li>"+detail+"</li>";
+                    processedDetails++;
+                }
+            }
+
+            html+= "</ul>";
+        }
+
+        if (processedDetails>=detailsMax) {
+            break;
+        }
+    }
+
+    d->eventsDisplay->setText(html);
 }
 
 // Update the nav widgets to show the current date in the CalendarTable
