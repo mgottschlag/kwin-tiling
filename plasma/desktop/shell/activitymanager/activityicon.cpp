@@ -36,6 +36,7 @@
 #include <KIcon>
 #include <KRun>
 #include <KStandardDirs>
+#include <KGlobalSettings>
 
 #include <Plasma/Label>
 #include <Plasma/PushButton>
@@ -159,7 +160,21 @@ void ActivityIcon::createActivity(Plasma::AbstractIcon * icon)
             );
 
             foreach (const QString & exec, service->property("X-Plasma-ContainmentLayout-ExecuteOnCreation", QVariant::StringList).toStringList()) {
-                KRun::runCommand(exec, 0);
+                QString realExec = exec;
+
+                #define LazyReplace(VAR, VAL) \
+                    if (realExec.contains(VAR)) realExec = realExec.replace(VAR, VAL);
+
+                LazyReplace("$desktop",   KGlobalSettings::desktopPath());
+                LazyReplace("$autostart", KGlobalSettings::autostartPath());
+                LazyReplace("$documents", KGlobalSettings::documentPath());
+                LazyReplace("$music",     KGlobalSettings::musicPath());
+                LazyReplace("$video",     KGlobalSettings::videosPath());
+                LazyReplace("$downloads", KGlobalSettings::downloadPath());
+                LazyReplace("$pictures",  KGlobalSettings::picturesPath());
+
+                KRun::runCommand(realExec, 0);
+                #undef LazyReplace
             }
         }
     }
