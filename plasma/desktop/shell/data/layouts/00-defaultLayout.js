@@ -1,3 +1,4 @@
+loadTemplate("org.kde.plasma-desktop.defaultPanel")
 
 for (var i = 0; i < screenCount; ++i) {
     var desktop = new Activity
@@ -5,7 +6,14 @@ for (var i = 0; i < screenCount; ++i) {
     desktop.screen = i
     desktop.wallpaperPlugin = 'image'
     desktop.wallpaperMode = 'SingleImage'
+
+    //Create more panels for other screens
+    if (i > 0){
+        var panel = new Panel
+        panel.screen = i
+        panel.location = 'bottom'
+        panel.height = 27
+        var tasks = panel.addWidget("tasks")
+        tasks.writeConfig("showOnlyCurrentScreen", true);
+    }
 }
-
-loadTemplate("org.kde.plasma-desktop.defaultPanel")
-
