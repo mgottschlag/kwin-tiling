@@ -36,6 +36,7 @@ class ActivityIcon : public Plasma::AbstractIcon
 
     public:
         explicit ActivityIcon(const QString &id);
+        explicit ActivityIcon(const QString &name, const QString &icon);
         virtual ~ActivityIcon();
 
         void setClosable(bool closable);
@@ -69,6 +70,7 @@ class ActivityIcon : public Plasma::AbstractIcon
         ActivityActionWidget * m_buttonRemove;
         ActivityActionWidget * m_buttonStart;
         ActivityActionWidget * m_buttonConfigure;
+        KIcon m_icon;
 
         bool m_closable : 1;
         bool m_active : 1;

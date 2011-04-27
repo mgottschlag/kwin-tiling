@@ -28,6 +28,9 @@
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 
+#include <KService>
+#include <KServiceTypeTrader>
+
 ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
     : AbstractIconList(location, parent),
       m_activityController(new KActivityController(this))
@@ -35,6 +38,12 @@ ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
     QStringList activities = m_activityController->listActivities();
     foreach (const QString &activity, activities) {
         createActivityIcon(activity);
+    }
+
+    KService::List templates = KServiceTypeTrader::self()->query("Plasma/LayoutTemplate");
+    foreach (const KService::Ptr &service, templates) {
+        if (!service->property("X-Plasma-ContainmentLayout-ShowAsExisting", QVariant::Bool).toBool()) continue;
+        createActivityIcon(service->name(), service->icon());
     }
 
     updateClosable();
@@ -66,6 +75,16 @@ void ActivityList::createActivityIcon(const QString &id)
     m_allAppletsHash.insert(id, icon);
     connect(icon->activity(), SIGNAL(stateChanged()), this, SLOT(updateClosable()));
 }
+
+void ActivityList::createActivityIcon(const QString &name, const QString &iconName)
+{
+    ActivityIcon *icon = new ActivityIcon(name, iconName);
+    addIcon(icon);
+    m_allAppletsHash.insert("null:" + name, icon);
+    // m_allAppletsHash.insert(id, icon);
+    // connect(icon->activity(), SIGNAL(stateChanged()), this, SLOT(updateClosable()));
+}
+
 /*
 void AppletsListWidget::appletIconDoubleClicked(AbstractIcon *icon)
 {
@@ -125,7 +144,7 @@ void ActivityList::updateClosable()
     foreach (Plasma::AbstractIcon *i, m_allAppletsHash) {
         ActivityIcon *icon = qobject_cast<ActivityIcon*>(i);
 
-        if (icon && icon->activity()->state() == KActivityInfo::Running) {
+        if (icon && icon->activity() && icon->activity()->state() == KActivityInfo::Running) {
             if (running) {
                 //found two, no worries
                 twoRunning = true;

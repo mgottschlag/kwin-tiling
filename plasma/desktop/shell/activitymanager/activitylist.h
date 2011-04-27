@@ -51,6 +51,7 @@ private Q_SLOTS:
 
 private:
     void createActivityIcon(const QString &id);
+    void createActivityIcon(const QString &name, const QString &icon);
 
     KActivityController *m_activityController;
 
