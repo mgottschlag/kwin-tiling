@@ -58,10 +58,20 @@ public:
     QString name();
     QPixmap pixmap(const QSize &size); //FIXME do we want diff. sizes? updates?
 
+    enum State {
+        Invalid  = KActivityInfo::Invalid,
+        Running  = KActivityInfo::Running,
+        Starting = KActivityInfo::Starting,
+        Stopped  = KActivityInfo::Stopped,
+        Stopping = KActivityInfo::Stopping,
+        PreCreation = 32
+    };
+
     /**
      * whether this is the currently active activity
      */
     bool isCurrent();
+
     /**
      * state of the activity
      */

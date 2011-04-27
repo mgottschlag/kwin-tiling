@@ -34,11 +34,18 @@
 
 #include <KIconLoader>
 #include <KIcon>
+#include <KRun>
+#include <KStandardDirs>
+#include <KGlobalSettings>
 
 #include <Plasma/Label>
 #include <Plasma/PushButton>
 #include <Plasma/LineEdit>
 #include <Plasma/IconWidget>
+#include <Plasma/Package>
+
+#include <scripting/layouttemplatepackagestructure.h>
+#include "scripting/desktopscriptengine.h"
 
 #define REMOVE_ICON KIcon("edit-delete")
 #define STOP_ICON KIcon("media-playback-stop")
@@ -109,13 +116,90 @@ ActivityIcon::ActivityIcon(const QString &id)
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 }
 
+ActivityIcon::ActivityIcon(const QString &name, const QString &icon, const QString &plugin)
+    : AbstractIcon(0),
+      m_buttonStop(0),
+      m_buttonRemove(0),
+      m_buttonStart(0),
+      m_buttonConfigure(0),
+      m_closable(false),
+      m_inlineWidgetAnim(0),
+      m_activity(0),
+      m_icon(icon),
+      m_pluginName(plugin),
+      m_iconName(icon)
+{
+    DesktopCorona *c = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
+
+    updateButtons();
+
+    connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)),
+            this, SLOT(createActivity(Plasma::AbstractIcon*)));
+    setName(name);
+    currentStatusChanged();
+
+    setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+}
+
+void ActivityIcon::createActivity(Plasma::AbstractIcon * icon)
+{
+    KService::Ptr service = KService::serviceByStorageId(m_pluginName);
+
+    KPluginInfo info(service);
+    Plasma::PackageStructure::Ptr structure(new WorkspaceScripting::LayoutTemplatePackageStructure);
+
+    const QString path = KStandardDirs::locate("data", structure->defaultPackageRoot() + '/' + info.pluginName() + '/');
+    if (!path.isEmpty()) {
+        Plasma::Package package(path, structure);
+        const QString scriptFile = package.filePath("mainscript");
+        if (!scriptFile.isEmpty()) {
+            PlasmaApp::self()->createActivityFromScript(
+                m_pluginName,
+                name(),
+                m_iconName
+            );
+
+            foreach (const QString & exec, service->property("X-Plasma-ContainmentLayout-ExecuteOnCreation", QVariant::StringList).toStringList()) {
+                QString realExec = exec;
+
+                #define LazyReplace(VAR, VAL) \
+                    if (realExec.contains(VAR)) realExec = realExec.replace(VAR, VAL);
+
+                LazyReplace("$desktop",   KGlobalSettings::desktopPath());
+                LazyReplace("$autostart", KGlobalSettings::autostartPath());
+                LazyReplace("$documents", KGlobalSettings::documentPath());
+                LazyReplace("$music",     KGlobalSettings::musicPath());
+                LazyReplace("$video",     KGlobalSettings::videosPath());
+                LazyReplace("$downloads", KGlobalSettings::downloadPath());
+                LazyReplace("$pictures",  KGlobalSettings::picturesPath());
+
+                KRun::runCommand(realExec, 0);
+                #undef LazyReplace
+            }
+
+            KConfig config("plasma-desktoprc");
+            KConfigGroup group(&config, "ActivityManager HiddenTemplates");
+
+            group.writeEntry(m_pluginName, true);
+            group.sync();
+
+            emit requestsRemoval();
+        }
+    }
+
+}
+
 ActivityIcon::~ActivityIcon()
 {
 }
 
 QPixmap ActivityIcon::pixmap(const QSize &size)
 {
-    return m_activity ? m_activity->pixmap(size) : QPixmap();
+    if (m_activity) {
+        return m_activity->pixmap(size);
+    } else {
+        return m_icon.pixmap(size);
+    }
 }
 
 QMimeData* ActivityIcon::mimeData()
@@ -181,14 +265,16 @@ void ActivityIcon::showRemovalConfirmation()
 {
     ActivityControls * w = new ActivityRemovalConfirmation(this);
 
-    connect(w, SIGNAL(removalConfirmed()), m_activity, SLOT(remove()));
+    if (m_activity)
+        connect(w, SIGNAL(removalConfirmed()), m_activity, SLOT(remove()));
 
     showInlineWidget(w);
 }
 
 void ActivityIcon::showConfiguration()
 {
-    showInlineWidget(new ActivityConfiguration(this, m_activity));
+    if (m_activity)
+        showInlineWidget(new ActivityConfiguration(this, m_activity));
 }
 
 void ActivityIcon::startInlineAnim()
@@ -300,58 +386,58 @@ void ActivityIcon::updateLayout()
 
 void ActivityIcon::updateButtons()
 {
-    if (!m_activity) {
-        return;
-    }
+    if (m_activity) {
 
-    if (!m_buttonConfigure) {
-        m_buttonConfigure = new ActivityActionWidget(this, "showConfiguration", CONFIGURE_ICON, i18n("Configure activity"));
-    }
-
-#define DESTROY_ACTIVITY_ACTION_WIDIGET(A) \
-    if (A) {                               \
-        A->hide();                         \
-        A->deleteLater();                  \
-        A = 0;                             \
-    }
-
-    switch (m_activity->state()) {
-    case KActivityInfo::Running:
-        DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStart);
-        DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonRemove);
-
-        if (m_closable) {
-            if (!m_buttonStop) {
-                m_buttonStop = new ActivityActionWidget(this, "stopActivity", STOP_ICON, i18n("Stop activity"));
-            }
-        } else {
-            DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStop);
-        }
-        break;
-
-    case KActivityInfo::Stopped:
-        DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStop);
-
-        if (!m_buttonRemove) {
-            m_buttonRemove = new ActivityActionWidget(this, "showRemovalConfirmation", REMOVE_ICON, i18n("Stop activity"));
+        if (!m_buttonConfigure) {
+            m_buttonConfigure = new ActivityActionWidget(this, "showConfiguration", CONFIGURE_ICON, i18n("Configure activity"));
         }
 
-        if (!m_buttonStart) {
-            m_buttonStart = new ActivityActionWidget(this, "startActivity", START_ICON, i18n("Start activity"), QSize(32, 32));
+        #define DESTROY_ACTIVITY_ACTION_WIDIGET(A) \
+        if (A) {                               \
+            A->hide();                         \
+            A->deleteLater();                  \
+            A = 0;                             \
         }
-        break;
 
-    case KActivityInfo::Invalid:
-        DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonConfigure);
-        // no break
+        switch (m_activity->state()) {
+            case KActivityInfo::Running:
+                DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStart);
+                DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonRemove);
 
-    default: //transitioning or invalid: don't let the user mess with it
-        DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStart);
-        DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonRemove);
-        DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStop);
+                if (m_closable) {
+                    if (!m_buttonStop) {
+                        m_buttonStop = new ActivityActionWidget(this, "stopActivity", STOP_ICON, i18n("Stop activity"));
+                    }
+                } else {
+                    DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStop);
+                }
+                break;
+
+            case KActivityInfo::Stopped:
+                DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStop);
+
+                if (!m_buttonRemove) {
+                    m_buttonRemove = new ActivityActionWidget(this, "showRemovalConfirmation", REMOVE_ICON, i18n("Stop activity"));
+                }
+
+                if (!m_buttonStart) {
+                    m_buttonStart = new ActivityActionWidget(this, "startActivity", START_ICON, i18n("Start activity"), QSize(32, 32));
+                }
+                break;
+
+            case KActivityInfo::Invalid:
+                DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonConfigure);
+                // no break
+
+            default: //transitioning or invalid: don't let the user mess with it
+                DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStart);
+                DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonRemove);
+                DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStop);
+        }
+
+        #undef DESTROY_ACTIVITY_ACTION_WIDIGET
+
     }
-
-#undef DESTROY_ACTIVITY_ACTION_WIDIGET
 
     updateLayout();
 }
@@ -370,13 +456,15 @@ void ActivityIcon::startActivity()
 
 void ActivityIcon::updateContents()
 {
-    setName(m_activity->name());
+    if (m_activity)
+        setName(m_activity->name());
     update();
 }
 
 void ActivityIcon::currentStatusChanged()
 {
-    setSelected(m_activity->isCurrent());
+    if (m_activity)
+        setSelected(m_activity->isCurrent());
 }
 
 void ActivityIcon::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)

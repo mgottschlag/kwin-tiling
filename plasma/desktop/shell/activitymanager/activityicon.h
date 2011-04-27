@@ -36,6 +36,7 @@ class ActivityIcon : public Plasma::AbstractIcon
 
     public:
         explicit ActivityIcon(const QString &id);
+        explicit ActivityIcon(const QString &name, const QString &icon, const QString &plugin);
         virtual ~ActivityIcon();
 
         void setClosable(bool closable);
@@ -47,6 +48,9 @@ class ActivityIcon : public Plasma::AbstractIcon
 
         void setGeometry(const QRectF & rect);
         void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
+
+    Q_SIGNALS:
+        void requestsRemoval();
 
     private Q_SLOTS:
         void stopActivity();
@@ -61,6 +65,7 @@ class ActivityIcon : public Plasma::AbstractIcon
         void updateButtons();
         void updateContents();
         void currentStatusChanged();
+        void createActivity(Plasma::AbstractIcon * icon);
 
     private:
         QString m_id;
@@ -69,6 +74,9 @@ class ActivityIcon : public Plasma::AbstractIcon
         ActivityActionWidget * m_buttonRemove;
         ActivityActionWidget * m_buttonStart;
         ActivityActionWidget * m_buttonConfigure;
+        KIcon m_icon;
+        QString m_iconName;
+        QString m_pluginName;
 
         bool m_closable : 1;
         bool m_active : 1;

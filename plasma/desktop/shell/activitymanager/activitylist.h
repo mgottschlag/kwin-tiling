@@ -47,12 +47,16 @@ private Q_SLOTS:
     void activityAdded(const QString &id);
     void activityRemoved(const QString &id);
 
+    void iconDeleted();
+
     void updateClosable();
 
 private:
     void createActivityIcon(const QString &id);
+    void createActivityIcon(const QString &name, const QString &icon, const QString &plugin);
 
     KActivityController *m_activityController;
+    ActivityIcon * m_scheduleHideOnAdd;
 
 };
 
