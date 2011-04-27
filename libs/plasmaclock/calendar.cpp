@@ -23,6 +23,7 @@
 //Qt
 #include <QtCore/QDate>
 #include <QtGui/QGraphicsSceneWheelEvent>
+#include <QtGui/QGraphicsGridLayout>
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QGraphicsProxyWidget>
 #include <QtGui/QGraphicsView>
@@ -46,6 +47,7 @@
 #include <Plasma/Label>
 #include <Plasma/LineEdit>
 #include <Plasma/SpinBox>
+#include <Plasma/TextBrowser>
 #include <Plasma/ToolButton>
 #include <Plasma/ToolTipManager>
 #include <Plasma/DataEngine>
@@ -87,6 +89,7 @@ class CalendarPrivate
         Plasma::ToolButton *forward;
         Plasma::CalendarTable *calendarTable;
         Plasma::LineEdit *dateText;
+        Plasma::TextBrowser *eventsDisplay;
         ToolButton *jumpToday;
         QMenu *monthMenu;
         Plasma::SpinBox *weekSpinBox;
@@ -95,21 +98,13 @@ class CalendarPrivate
 Calendar::Calendar(const QDate &date, QGraphicsWidget *parent)
     : QGraphicsWidget(parent), d(new CalendarPrivate())
 {
-    init(new CalendarTable(date, this));
-    setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+    init(date);
 }
 
 Calendar::Calendar(QGraphicsWidget *parent)
     : QGraphicsWidget(parent), d(new CalendarPrivate())
 {
-    init(new CalendarTable(this));
-    setCacheMode(QGraphicsItem::DeviceCoordinateCache);
-}
-
-Calendar::Calendar(CalendarTable *calendarTable, QGraphicsWidget *parent)
-    : QGraphicsWidget(parent), d(new CalendarPrivate())
-{
-    init(calendarTable ? calendarTable : new CalendarTable(this));
+    init();
 }
 
 Calendar::~Calendar()
@@ -118,18 +113,22 @@ Calendar::~Calendar()
    delete d;
 }
 
-void Calendar::init(CalendarTable *calendarTable)
+void Calendar::init(const QDate &initialDate)
 {
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(Qt::Vertical, this);
+    setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(Qt::Horizontal, this);
+    QGraphicsLinearLayout *calendarLayout = new QGraphicsLinearLayout(Qt::Vertical, layout);
     QGraphicsLinearLayout *hLayout = new QGraphicsLinearLayout(layout);
     QGraphicsLinearLayout *layoutTools = new QGraphicsLinearLayout(layout);
 
-    d->calendarTable = calendarTable;
+    d->calendarTable = new CalendarTable(this);
     d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
+    connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated()));
     connect(d->calendarTable, SIGNAL(dateHovered(const QDate &)), this, SIGNAL(dateHovered(const QDate &)));
-    connect(d->calendarTable, SIGNAL(dateSelected(const QDate &)), this, SLOT(showTip(const QDate &)));
-    connect(this, SIGNAL(dateHovered(const QDate &)), this, SLOT(showTip(const QDate &)));
+    connect(d->calendarTable, SIGNAL(dateSelected(const QDate &)), this, SLOT(displayEvents(const QDate &)));
+    connect(d->calendarTable, SIGNAL(eventsChanged()), this, SLOT(displayEvents()));
+    connect(this, SIGNAL(dateHovered(const QDate &)), this, SLOT(displayEvents(const QDate &)));
 
     d->back = new Plasma::ToolButton(this);
     d->back->setText("<");
@@ -140,7 +139,6 @@ void Calendar::init(CalendarTable *calendarTable)
     hLayout->addStretch();
 
     d->month = new WheelyToolButton(this);
-    d->month->setText(calendar()->monthName(calendar()->month(date()), calendar()->year(date())));
     d->month->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     d->monthMenu = new QMenu();
     d->month->nativeWidget()->setMenu(d->monthMenu);
@@ -150,7 +148,6 @@ void Calendar::init(CalendarTable *calendarTable)
     hLayout->addItem(d->month);
 
     d->year = new WheelyToolButton(this);
-    d->year->setText(calendar()->yearString(date()));
     d->year->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(d->year, SIGNAL(wheelUp()), this, SLOT(prevYear()));
     connect(d->year, SIGNAL(wheelDown()), this, SLOT(nextYear()));
@@ -159,7 +156,6 @@ void Calendar::init(CalendarTable *calendarTable)
 
     d->yearSpinBox = new Plasma::SpinBox(this);
     d->yearSpinBox->setRange(calendar()->year(calendar()->earliestValidDate()), calendar()->year(calendar()->latestValidDate()));
-    d->yearSpinBox->setValue(calendar()->year(date()));
     d->yearSpinBox->hide();
     connect(d->yearSpinBox->nativeWidget(), SIGNAL(editingFinished()), this, SLOT(hideYearSpinBox()));
 
@@ -179,22 +175,25 @@ void Calendar::init(CalendarTable *calendarTable)
     layoutTools->addStretch();
 
     d->dateText = new Plasma::LineEdit(this);
-    d->dateText->setText(calendar()->formatDate(date(),  KLocale::ShortDate));
     connect(d->dateText->nativeWidget(), SIGNAL(returnPressed()), this, SLOT(manualDateChange()));
     layoutTools->addItem(d->dateText);
     layoutTools->addStretch();
 
     d->weekSpinBox = new Plasma::SpinBox(this);
     d->weekSpinBox->setMinimum(1);
-    d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
     connect(d->weekSpinBox, SIGNAL(valueChanged(int)), this, SLOT(goToWeek(int)));
     layoutTools->addItem(d->weekSpinBox);
 
-    layout->addItem(hLayout);
-    layout->addItem(d->calendarTable);
-    layout->addItem(layoutTools);
+    d->eventsDisplay = new Plasma::TextBrowser(this);
 
-    dateUpdated(date());
+    calendarLayout->addItem(hLayout);
+    calendarLayout->addItem(d->calendarTable);
+    calendarLayout->addItem(layoutTools);
+    layout->addItem(calendarLayout);
+    layout->addItem(d->eventsDisplay);
+
+    setDate(initialDate);
+    displayEvents();
 }
 
 void Calendar::focusInEvent(QFocusEvent* event)
@@ -246,18 +245,12 @@ CalendarTable *Calendar::calendarTable() const
 void Calendar::setCalendar(const QString &newCalendarType)
 {
     calendarTable()->setCalendar(newCalendarType);
-    d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
-    d->yearSpinBox->setRange(calendar()->year(calendar()->earliestValidDate()),
-                             calendar()->year(calendar()->latestValidDate()));
     refreshWidgets();
 }
 
 void Calendar::setCalendar(const KCalendarSystem *newCalendar)
 {
     calendarTable()->setCalendar(newCalendar);
-    d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
-    d->yearSpinBox->setRange(calendar()->year(calendar()->earliestValidDate()),
-                             calendar()->year(calendar()->latestValidDate()));
     refreshWidgets();
 }
 
@@ -275,23 +268,11 @@ void Calendar::setDate(const QDate &toDate)
     if (d->calendarTable->date() != toDate) {
         refreshWidgets();
     }
-
-    d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
 }
 
 const QDate& Calendar::date() const
 {
     return calendarTable()->date();
-}
-
-void Calendar::setDisplayHolidays(bool showHolidays)
-{
-    calendarTable()->setDisplayHolidays(showHolidays);
-}
-
-bool Calendar::displayHolidays()
-{
-    return calendarTable()->displayHolidays();
 }
 
 void Calendar::clearHolidaysRegions()
@@ -314,7 +295,7 @@ bool Calendar::dateHasDetails(const QDate &date) const
     return calendarTable()->dateHasDetails(date);
 }
 
-QString Calendar::dateDetails(const QDate &date) const
+QStringList Calendar::dateDetails(const QDate &date) const
 {
     return calendarTable()->dateDetails(date);
 }
@@ -374,35 +355,58 @@ void Calendar::goToToday()
     setDate(QDate::currentDate());
 }
 
-void Calendar::dateUpdated(const QDate &newDate)
+void Calendar::dateUpdated()
 {
     // Ignore the date passed in, only ever show the date to match the CalendarTable
-    Q_UNUSED(newDate);
     refreshWidgets();
     emit dateChanged(date());
+    displayEvents();
 }
 
-void Calendar::showTip(const QDate &date)
+void Calendar::displayEvents(const QDate &date)
 {
-    QGraphicsWidget *item = parentWidget();
-    if (!item) {
-        item = this;
-    }
+    QString html;
+    QList<QDate> datesToProcess;
 
     if (dateHasDetails(date)) {
-        const QString details = dateDetails(date);
-        Plasma::ToolTipContent content(calendar()->formatDate(date),
-                                       details,
-                                       KIcon("view-pim-calendar"));
-        content.setAutohide(false);
-        Plasma::ToolTipManager::self()->setContent(item, content);
-        Plasma::ToolTipManager::self()->show(item);
+        datesToProcess << date;
     } else {
-        if (Plasma::ToolTipManager::self()->isVisible(item)) {
-            Plasma::ToolTipManager::self()->hide(item);
+        QDate dt = calendarTable()->date();
+        QDate end = calendarTable()->endDate();
+
+        if (dt.isValid() && end.isValid()) {
+            while (dt<=end) {
+                datesToProcess << dt;
+                dt = dt.addDays(1);
+            }
         }
-        Plasma::ToolTipManager::self()->setContent(item, Plasma::ToolTipContent());
     }
+
+    int processedDetails = 0;
+    const int detailsMax = 5;
+
+    foreach (const QDate &d, datesToProcess) {
+        if (dateHasDetails(d)) {
+            html+= "<b>"+d.toString()+"</b>";
+            html+= "<ul>";
+
+            QStringList details = dateDetails(d);
+            foreach (const QString &detail, details) {
+                if (processedDetails<detailsMax) {
+                    html+= "<li>"+detail+"</li>";
+                    processedDetails++;
+                }
+            }
+
+            html+= "</ul>";
+        }
+
+        if (processedDetails>=detailsMax) {
+            break;
+        }
+    }
+
+    d->eventsDisplay->setText(html);
 }
 
 // Update the nav widgets to show the current date in the CalendarTable
@@ -414,7 +418,15 @@ void Calendar::refreshWidgets()
     d->dateText->setText(calendar()->formatDate(date(),  KLocale::ShortDate));
 
     // Block the signals to prevent changing the date again
+    d->yearSpinBox->blockSignals(true);
+    d->yearSpinBox->setRange(calendar()->year(calendar()->earliestValidDate()),
+                             calendar()->year(calendar()->latestValidDate()));
+    d->yearSpinBox->setValue(calendar()->year(date()));
+    d->yearSpinBox->blockSignals(false);
+
+    // Block the signals to prevent changing the date again
     d->weekSpinBox->blockSignals(true);
+    d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
     d->weekSpinBox->setValue(calendar()->weekNumber(date()));
     d->weekSpinBox->blockSignals(false);
 }

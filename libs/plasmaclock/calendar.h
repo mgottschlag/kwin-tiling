@@ -45,7 +45,6 @@ class PLASMACLOCK_EXPORT Calendar : public QGraphicsWidget
 public:
     explicit Calendar(QGraphicsWidget *parent = 0);
     explicit Calendar(const QDate &, QGraphicsWidget *parent = 0);
-    explicit Calendar(CalendarTable *calendarTable, QGraphicsWidget *parent = 0);
     ~Calendar();
 
     CalendarTable *calendarTable() const;
@@ -57,15 +56,12 @@ public:
     void setDate(const QDate &date);
     const QDate& date() const;
 
-    void setDisplayHolidays(bool showHolidays);
-    bool displayHolidays();
-
     void clearHolidaysRegions();
     void addHolidaysRegion(const QString &regionCode, bool daysOff);
     QStringList holidaysRegions() const;
 
     bool dateHasDetails(const QDate &date) const;
-    QString dateDetails(const QDate &date) const;
+    QStringList dateDetails(const QDate &date) const;
 
     void setAutomaticUpdateEnabled(bool automatic);
     bool isAutomaticUpdateEnabled() const;
@@ -94,8 +90,8 @@ private Q_SLOTS:
     void nextMonth();
     void prevYear();
     void nextYear();
-    void dateUpdated(const QDate &newDate);
-    void showTip(const QDate &date);
+    void dateUpdated();
+    void displayEvents(const QDate &date = QDate());
     void goToToday();
     void goToWeek(int week);
     void manualDateChange();
@@ -105,7 +101,7 @@ private Q_SLOTS:
     void hideYearSpinBox();
 
 private:
-    void init(CalendarTable *calendarTable);
+    void init(const QDate &date = QDate());
     void refreshWidgets();
     CalendarPrivate* const d;
 };
