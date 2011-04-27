@@ -284,7 +284,7 @@ void ClockApplet::updateTipContent()
     }
 
     if (d->calendarWidget->dateHasDetails(tipDate)) {
-        subText.append("<br>").append(d->calendarWidget->dateDetails(tipDate));
+        subText.append("<br>").append(d->calendarWidget->dateDetails(tipDate).join("<br>"));
     }
 
     tipData.setSubText(subText);
