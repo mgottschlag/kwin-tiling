@@ -34,11 +34,17 @@
 
 #include <KIconLoader>
 #include <KIcon>
+#include <KRun>
+#include <KStandardDirs>
 
 #include <Plasma/Label>
 #include <Plasma/PushButton>
 #include <Plasma/LineEdit>
 #include <Plasma/IconWidget>
+#include <Plasma/Package>
+
+#include <scripting/layouttemplatepackagestructure.h>
+#include "scripting/desktopscriptengine.h"
 
 #define REMOVE_ICON KIcon("edit-delete")
 #define STOP_ICON KIcon("media-playback-stop")
@@ -136,12 +142,28 @@ ActivityIcon::ActivityIcon(const QString &name, const QString &icon, const QStri
 
 void ActivityIcon::createActivity(Plasma::AbstractIcon * icon)
 {
-    ActivityIcon * aicon = qobject_cast <ActivityIcon*> (icon);
-    PlasmaApp::self()->createActivityFromScript(
-            aicon->m_pluginName,
-            aicon->name(),
-            aicon->m_iconName
+    KService::Ptr service = KService::serviceByStorageId(m_pluginName);
+
+    KPluginInfo info(service);
+    Plasma::PackageStructure::Ptr structure(new WorkspaceScripting::LayoutTemplatePackageStructure);
+
+    const QString path = KStandardDirs::locate("data", structure->defaultPackageRoot() + '/' + info.pluginName() + '/');
+    if (!path.isEmpty()) {
+        Plasma::Package package(path, structure);
+        const QString scriptFile = package.filePath("mainscript");
+        if (!scriptFile.isEmpty()) {
+            PlasmaApp::self()->createActivityFromScript(
+                m_pluginName,
+                name(),
+                m_iconName
             );
+
+            foreach (const QString & exec, service->property("X-Plasma-ContainmentLayout-ExecuteOnCreation", QVariant::StringList).toStringList()) {
+                KRun::runCommand(exec, 0);
+            }
+        }
+    }
+
 }
 
 ActivityIcon::~ActivityIcon()

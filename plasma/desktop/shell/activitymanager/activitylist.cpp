@@ -27,14 +27,9 @@
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
-#include <Plasma/Package>
 
 #include <KService>
 #include <KServiceTypeTrader>
-#include <KStandardDirs>
-
-#include <scripting/layouttemplatepackagestructure.h>
-#include "scripting/desktopscriptengine.h"
 
 ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
     : AbstractIconList(location, parent),
@@ -48,19 +43,7 @@ ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
     KService::List templates = KServiceTypeTrader::self()->query("Plasma/LayoutTemplate");
     foreach (const KService::Ptr &service, templates) {
         if (!service->property("X-Plasma-ContainmentLayout-ShowAsExisting", QVariant::Bool).toBool()) continue;
-
-        KPluginInfo info(service);
-        Plasma::PackageStructure::Ptr structure(new WorkspaceScripting::LayoutTemplatePackageStructure);
-
-        const QString path = KStandardDirs::locate("data", structure->defaultPackageRoot() + '/' + info.pluginName() + '/');
-        if (!path.isEmpty()) {
-            Plasma::Package package(path, structure);
-            const QString scriptFile = package.filePath("mainscript");
-            if (!scriptFile.isEmpty()) {
-                createActivityIcon(service->name(), service->icon(), scriptFile);
-            }
-        }
-
+        createActivityIcon(service->name(), service->icon(), service->storageId());
     }
 
     updateClosable();
