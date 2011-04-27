@@ -4,7 +4,7 @@ if (panelIds.length == 1) {
     panel.location = 'bottom'
 }
 
-panel.height = 27
+panel.height = screenGeometry(panel.screen).height > 768 ? 35 : 27
 panel.addWidget("launcher")
 panel.addWidget("org.kde.showActivityManager")
 panel.addWidget("pager")
