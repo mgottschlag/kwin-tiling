@@ -49,6 +49,9 @@ class ActivityIcon : public Plasma::AbstractIcon
         void setGeometry(const QRectF & rect);
         void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
 
+    Q_SIGNALS:
+        void requestsRemoval();
+
     private Q_SLOTS:
         void stopActivity();
         void startActivity();

@@ -33,7 +33,8 @@
 
 ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
     : AbstractIconList(location, parent),
-      m_activityController(new KActivityController(this))
+      m_activityController(new KActivityController(this)),
+      m_scheduleHideOnAdd(0)
 {
     QStringList activities = m_activityController->listActivities();
     foreach (const QString &activity, activities) {
@@ -43,6 +44,12 @@ ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
     KService::List templates = KServiceTypeTrader::self()->query("Plasma/LayoutTemplate");
     foreach (const KService::Ptr &service, templates) {
         if (!service->property("X-Plasma-ContainmentLayout-ShowAsExisting", QVariant::Bool).toBool()) continue;
+
+        KConfig config("plasma-desktoprc");
+        KConfigGroup group(&config, "ActivityManager HiddenTemplates");
+
+        if (group.readEntry(service->storageId(), false)) continue;
+
         createActivityIcon(service->name(), service->icon(), service->storageId());
     }
 
@@ -79,6 +86,10 @@ void ActivityList::createActivityIcon(const QString &id)
 void ActivityList::createActivityIcon(const QString &name, const QString &iconName, const QString &plugin)
 {
     ActivityIcon *icon = new ActivityIcon(name, iconName, plugin);
+
+    connect(icon, SIGNAL(requestsRemoval()),
+            this, SLOT(iconDeleted()));
+
     addIcon(icon);
     m_allAppletsHash.insert("null:" + name, icon);
     // m_allAppletsHash.insert(id, icon);
@@ -114,6 +125,15 @@ void ActivityList::activityAdded(const QString &id)
         }
     }
     */
+
+    // Syncing removal of template activity andd addition of a
+    // new activity based on it
+    if (m_scheduleHideOnAdd) {
+        hideIcon(m_scheduleHideOnAdd);
+        m_allAppletsHash.remove(m_allAppletsHash.key(m_scheduleHideOnAdd));
+        m_scheduleHideOnAdd = 0;
+    }
+
     createActivityIcon(id);
     updateList();
 }
@@ -163,4 +183,13 @@ void ActivityList::updateClosable()
     } else if (running) {
         running->setClosable(false);
     }
+}
+
+void ActivityList::iconDeleted()
+{
+    ActivityIcon * icon = qobject_cast < ActivityIcon * > (sender());
+
+    if (!icon) return;
+
+    m_scheduleHideOnAdd = icon;
 }

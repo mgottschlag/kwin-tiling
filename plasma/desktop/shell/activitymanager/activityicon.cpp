@@ -176,6 +176,14 @@ void ActivityIcon::createActivity(Plasma::AbstractIcon * icon)
                 KRun::runCommand(realExec, 0);
                 #undef LazyReplace
             }
+
+            KConfig config("plasma-desktoprc");
+            KConfigGroup group(&config, "ActivityManager HiddenTemplates");
+
+            group.writeEntry(m_pluginName, true);
+            group.sync();
+
+            emit requestsRemoval();
         }
     }
 
