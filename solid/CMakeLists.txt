@@ -17,7 +17,7 @@ if(NETWORKMANAGER_FOUND)
     add_subdirectory(networkmanager-0.6)
   endif (NM_0_6)
 
-  macro_ensure_version("0.7.0" ${NETWORKMANAGER_VERSION} NM_0_7)
+  macro_ensure_version_range("0.7.0" ${NETWORKMANAGER_VERSION} "0.9.0" NM_0_7)
   if (NM_0_7)
     message(STATUS "Will build networkmanager-0.7")
     set(HAVE_NETWORKMANAGER TRUE)

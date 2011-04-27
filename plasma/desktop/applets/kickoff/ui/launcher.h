@@ -21,6 +21,7 @@
 #define LAUNCHER_H
 
 // Qt
+#include <QModelIndex>
 #include <QWidget>
 
 // Plasma
@@ -92,8 +93,11 @@ private Q_SLOTS:
     void focusFavoritesView();
     void resultsAvailable();
     void updateThemedPalette();
+    void fillBreadcrumbs(const QModelIndex &index);
+    void breadcrumbActivated();
 
 private:
+    void addBreadcrumb(const QModelIndex &index, bool isLeaf);
     void init();
 
     class Private;

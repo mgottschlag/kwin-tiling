@@ -29,6 +29,7 @@
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMouseEvent>
+#include <QPushButton>
 #include <QStackedWidget>
 #include <QTabBar>
 #include <QToolButton>
@@ -62,6 +63,8 @@
 #include "ui/searchbar.h"
 #include "ui/tabbar.h"
 #include "ui/contentareacap.h"
+
+Q_DECLARE_METATYPE(QPersistentModelIndex)
 
 using namespace Kickoff;
 
@@ -103,7 +106,8 @@ public:
     }
 
     void addView(const QString& name, const QIcon& icon,
-                 QAbstractItemModel *model = 0, QAbstractItemView *view = 0)
+                 QAbstractItemModel *model = 0, QAbstractItemView *view = 0,
+                 QWidget *headerWidget = 0)
     {
         view->setFrameStyle(QFrame::NoFrame);
         // prevent the view from stealing focus from the search bar
@@ -126,7 +130,18 @@ public:
         connect(view, SIGNAL(customContextMenuRequested(QPoint)), q, SLOT(showViewContextMenu(QPoint)));
 
         contentSwitcher->addTab(icon, name);
-        contentArea->addWidget(view);
+
+        if (!headerWidget) {
+            contentArea->addWidget(view);
+        } else {
+            QWidget *parent = new QWidget;
+            parent->setLayout(new QVBoxLayout);
+            parent->layout()->setSpacing(0);
+            parent->layout()->setContentsMargins(0, 0, 0, 0);
+            parent->layout()->addWidget(headerWidget);
+            parent->layout()->addWidget(view);
+            contentArea->addWidget(parent);
+        }
     }
 
     void initTabs()
@@ -202,8 +217,21 @@ public:
         delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         applicationView->setItemDelegate(delegate);
 
+        applicationBreadcrumbs = new QWidget;
+        applicationBreadcrumbs->setLayout(new QHBoxLayout);
+        applicationBreadcrumbs->layout()->setContentsMargins(0, 0, 0, 0);
+        applicationBreadcrumbs->layout()->setSpacing(0);
+
+        QPalette palette = applicationBreadcrumbs->palette();
+        palette.setColor(QPalette::Window, palette.color(QPalette::Active, QPalette::Base));
+        applicationBreadcrumbs->setPalette(palette);
+        applicationBreadcrumbs->setAutoFillBackground(true);
+
+        connect(applicationView, SIGNAL(currentRootChanged(QModelIndex)),
+                q, SLOT(fillBreadcrumbs(QModelIndex)));
+
         addView(i18n("Applications"), KIcon("applications-other"),
-                applicationModel, applicationView);
+                applicationModel, applicationView, applicationBreadcrumbs);
     }
 
     void setupRecentView()
@@ -458,6 +486,7 @@ public:
     ContentAreaCap *contentAreaFooter;
     TabBar *contentSwitcher;
     FlipScrollView *applicationView;
+    QWidget *applicationBreadcrumbs;
     UrlItemView *searchView;
     QAbstractItemView *favoritesView;
     ContextMenuFactory *contextMenuFactory;
@@ -891,6 +920,70 @@ void Launcher::setLauncherOrigin(const Plasma::PopupPlacement placement, Plasma:
 
     d->panelEdge = location;
     reset();
+}
+
+void Launcher::fillBreadcrumbs(const QModelIndex &index)
+{
+    QList<QWidget*> children = d->applicationBreadcrumbs->findChildren<QWidget*>();
+    foreach (QWidget *child, children) {
+        delete child;
+    }
+
+    QHBoxLayout *layout = static_cast<QHBoxLayout*>(d->applicationBreadcrumbs->layout());
+    while (layout->count()>0) {
+        delete layout->takeAt(0);
+    }
+
+    QModelIndex current = index;
+    while (current.isValid()) {
+        addBreadcrumb(current, current==index);
+        current = current.parent();
+    }
+
+    if (index.isValid()) {
+        addBreadcrumb(QModelIndex(), false);
+    }
+
+    layout->addStretch(1);
+}
+
+void Launcher::addBreadcrumb(const QModelIndex &index, bool isLeaf)
+{
+    QPushButton *button = new QPushButton(d->applicationBreadcrumbs);
+    button->setFlat(true);
+    button->setStyleSheet("* { padding: 4 }");
+
+    QPalette palette = button->palette();
+    palette.setColor(QPalette::ButtonText, palette.color(QPalette::Disabled, QPalette::ButtonText));
+    button->setPalette(palette);
+
+    QString suffix;
+    if (!isLeaf) {
+        suffix = " >";
+    } else {
+        button->setEnabled(false);
+    }
+
+    if (index.isValid()) {
+        button->setText(index.data().toString()+suffix);
+    } else {
+        button->setText(i18n("All Applications")+suffix);
+    }
+
+    QVariant data = QVariant::fromValue(QPersistentModelIndex(index));
+    button->setProperty("applicationIndex", data);
+    connect(button, SIGNAL(clicked()),
+            this, SLOT(breadcrumbActivated()));
+
+    QHBoxLayout *layout = static_cast<QHBoxLayout*>(d->applicationBreadcrumbs->layout());
+    layout->insertWidget(0, button);
+}
+
+void Launcher::breadcrumbActivated()
+{
+    QPushButton *button = static_cast<QPushButton*>(sender());
+    QModelIndex index = button->property("applicationIndex").value<QPersistentModelIndex>();
+    d->applicationView->setCurrentRoot(index);
 }
 
 #include "launcher.moc"

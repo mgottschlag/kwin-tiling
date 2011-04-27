@@ -1,0 +1,39 @@
+[Desktop Entry]
+Name=Activities
+Name[ca]=Activitats
+Name[cs]=Aktivity
+Name[de]=Aktivitäten
+Name[es]=Actividades
+Name[et]=Tegevused
+Name[hr]=Aktivnosti
+Name[ia]=Activitates
+Name[ja]=アクティビティ
+Name[km]=សកម្មភាព
+Name[nb]=Aktiviteter
+Name[nds]=Aktiviteten
+Name[nl]=Activiteiten
+Name[pt]=Actividades
+Name[pt_BR]=Atividades
+Name[sv]=Aktiviteter
+Name[tr]=Eylemler
+Name[uk]=Простори дій
+Name[x-test]=xxActivitiesxx
+Name[zh_TW]=活動
+Comment=Shows the activity manager
+Icon=activities
+Type=Service
+X-KDE-ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_showActivityManager
+X-KDE-PluginInfo-Author=Aaron Seigo
+X-KDE-PluginInfo-Email=plasma-devel@kde.org
+X-KDE-PluginInfo-Name=org.kde.showActivityManager
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=Windows and Tasks
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+X-Plasma-Requires-FileDialog=Unused
+X-Plasma-Requires-LaunchApp=Unused
+
