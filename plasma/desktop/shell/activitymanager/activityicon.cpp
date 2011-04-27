@@ -109,7 +109,7 @@ ActivityIcon::ActivityIcon(const QString &id)
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 }
 
-ActivityIcon::ActivityIcon(const QString &name, const QString &icon)
+ActivityIcon::ActivityIcon(const QString &name, const QString &icon, const QString &plugin)
     : AbstractIcon(0),
       m_buttonStop(0),
       m_buttonRemove(0),
@@ -118,17 +118,30 @@ ActivityIcon::ActivityIcon(const QString &name, const QString &icon)
       m_closable(false),
       m_inlineWidgetAnim(0),
       m_activity(0),
-      m_icon(icon)
+      m_icon(icon),
+      m_pluginName(plugin),
+      m_iconName(icon)
 {
     DesktopCorona *c = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
 
     updateButtons();
 
-//    connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)), m_activity, SLOT(activate()));
+    connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)),
+            this, SLOT(createActivity(Plasma::AbstractIcon*)));
     setName(name);
     currentStatusChanged();
 
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+}
+
+void ActivityIcon::createActivity(Plasma::AbstractIcon * icon)
+{
+    ActivityIcon * aicon = qobject_cast <ActivityIcon*> (icon);
+    PlasmaApp::self()->createActivityFromScript(
+            aicon->m_pluginName,
+            aicon->name(),
+            aicon->m_iconName
+            );
 }
 
 ActivityIcon::~ActivityIcon()

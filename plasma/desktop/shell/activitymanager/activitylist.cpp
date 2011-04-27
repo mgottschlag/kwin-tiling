@@ -27,9 +27,14 @@
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
+#include <Plasma/Package>
 
 #include <KService>
 #include <KServiceTypeTrader>
+#include <KStandardDirs>
+
+#include <scripting/layouttemplatepackagestructure.h>
+#include "scripting/desktopscriptengine.h"
 
 ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
     : AbstractIconList(location, parent),
@@ -43,7 +48,19 @@ ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
     KService::List templates = KServiceTypeTrader::self()->query("Plasma/LayoutTemplate");
     foreach (const KService::Ptr &service, templates) {
         if (!service->property("X-Plasma-ContainmentLayout-ShowAsExisting", QVariant::Bool).toBool()) continue;
-        createActivityIcon(service->name(), service->icon());
+
+        KPluginInfo info(service);
+        Plasma::PackageStructure::Ptr structure(new WorkspaceScripting::LayoutTemplatePackageStructure);
+
+        const QString path = KStandardDirs::locate("data", structure->defaultPackageRoot() + '/' + info.pluginName() + '/');
+        if (!path.isEmpty()) {
+            Plasma::Package package(path, structure);
+            const QString scriptFile = package.filePath("mainscript");
+            if (!scriptFile.isEmpty()) {
+                createActivityIcon(service->name(), service->icon(), scriptFile);
+            }
+        }
+
     }
 
     updateClosable();
@@ -76,9 +93,9 @@ void ActivityList::createActivityIcon(const QString &id)
     connect(icon->activity(), SIGNAL(stateChanged()), this, SLOT(updateClosable()));
 }
 
-void ActivityList::createActivityIcon(const QString &name, const QString &iconName)
+void ActivityList::createActivityIcon(const QString &name, const QString &iconName, const QString &plugin)
 {
-    ActivityIcon *icon = new ActivityIcon(name, iconName);
+    ActivityIcon *icon = new ActivityIcon(name, iconName, plugin);
     addIcon(icon);
     m_allAppletsHash.insert("null:" + name, icon);
     // m_allAppletsHash.insert(id, icon);
