@@ -1315,6 +1315,12 @@ void PlasmaApp::remotePlasmoidAdded(Plasma::PackageMetadata metadata)
         return;
     }
 
+    Plasma::Containment *c = m_desktops.at(0)->containment();
+    if (!c && c->immutability() == Plasma::SystemImmutable) {
+        kDebug() << "There is no containment or the containment is system locked";
+        return;
+    }
+
     // the notification ptr is automatically delete when the notification is closed
     KNotification *notification = new KNotification("newplasmoid", m_desktops.at(0));
     notification->setText(i18n("A new widget has become available on the network:<br><b>%1</b> - <i>%2</i>",
