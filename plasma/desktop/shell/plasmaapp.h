@@ -154,6 +154,7 @@ private Q_SLOTS:
     void wallpaperCheckInTimeout();
     void dashboardClosed();
     void relocatePanels();
+    void executeCommands(const QList < QVariant > & commands);
 
 private:
     DesktopCorona *m_corona;
@@ -174,6 +175,7 @@ private:
     int m_startupSuspendWaitCount;
     bool m_ignoreDashboardClosures;
     bool m_pendingFixedDashboard;
+    bool m_unlockCorona;
     QString m_loadingActivity;
 };
 

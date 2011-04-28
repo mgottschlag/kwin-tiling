@@ -59,6 +59,7 @@
 #include <KNotification>
 #include <KRun>
 #include <KWindowSystem>
+#include <KService>
 
 #include <ksmserver_interface.h>
 
@@ -89,6 +90,7 @@
 #include "panelview.h"
 #include "plasma-shell-desktop.h"
 #include "toolbutton.h"
+#include "klistconfirmationdialog.h"
 
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
@@ -113,7 +115,8 @@ PlasmaApp::PlasmaApp()
       m_mapper(new QSignalMapper(this)),
       m_startupSuspendWaitCount(0),
       m_ignoreDashboardClosures(false),
-      m_pendingFixedDashboard(false)
+      m_pendingFixedDashboard(false),
+      m_unlockCorona(false)
 {
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor start" << "(line:" << __LINE__ << ")";
     PlasmaApp::suspendStartup(true);
@@ -129,12 +132,12 @@ PlasmaApp::PlasmaApp()
     // why is the next line of code here here?
     //
     // plasma-desktop was once plasma. not a big deal, right?
-    // 
+    //
     // well, kglobalaccel has a policy of forever
     // reserving shortcuts. even if the application is not running, it will still
     // defend that application's right to using that global shortcut. this has,
     // at least to me, some very obvious negative impacts on usability, such as
-    // making it difficult for the user to switch between applications of the 
+    // making it difficult for the user to switch between applications of the
     // same type and use the same global shortcuts, or when the component changes
     // name as in plasma-desktop.
     //
@@ -146,7 +149,7 @@ PlasmaApp::PlasmaApp()
     // into re-reading it and it starts too early in the start up sequence for
     // kconf_update to beat it to the config file.
     //
-    // so we instead deal with a dbus roundtrip with kded 
+    // so we instead deal with a dbus roundtrip with kded
     // (8 context switches at minimum iirc?)
     // at every app start for something that really only needs to be done once
     // but which we can't know for sure when it has been done.
@@ -1313,20 +1316,39 @@ void PlasmaApp::remotePlasmoidAdded(Plasma::PackageMetadata metadata)
         return;
     }
 
+    if (m_corona->immutability() == Plasma::SystemImmutable) {
+        kDebug() << "Corona is system locked";
+        return;
+    }
+
     // the notification ptr is automatically delete when the notification is closed
     KNotification *notification = new KNotification("newplasmoid", m_desktops.at(0));
     notification->setText(i18n("A new widget has become available on the network:<br><b>%1</b> - <i>%2</i>",
                                metadata.name(), metadata.description()));
-    notification->setActions(QStringList(i18n("Add to current activity")));
+
+    // locked, but the user is able to unlock
+    if (m_corona->immutability() == Plasma::UserImmutable) {
+        m_unlockCorona = true;
+        notification->setActions(QStringList(i18n("Unlock and add to current activity")));
+    } else {
+        // immutability == Plasma::Mutable
+        notification->setActions(QStringList(i18n("Add to current activity")));
+    }
 
     m_mapper->setMapping(notification, metadata.remoteLocation().prettyUrl());
     connect(notification, SIGNAL(action1Activated()), m_mapper, SLOT(map()));
+
     kDebug() << "firing notification";
     notification->sendEvent();
 }
 
 void PlasmaApp::addRemotePlasmoid(const QString &location)
 {
+    if (m_unlockCorona) {
+        m_unlockCorona = false;
+        m_corona->setImmutability(Plasma::Mutable);
+    }
+
     Plasma::AccessManager::self()->accessRemoteApplet(KUrl(location));
 }
 
@@ -1370,6 +1392,15 @@ void PlasmaApp::createActivityFromScript(const QString &script, const QString &n
     controller.setCurrentActivity(m_loadingActivity);
     m_loadingActivity.clear();
 
+    KListConfirmationDialog * confirmDialog = new KListConfirmationDialog(
+            i18n("Run applications"),
+            i18n("This activity template requests to run the following applications"),
+            i18n("Run selected"),
+            i18n("Run none")
+            );
+    connect(confirmDialog, SIGNAL(selected(QList<QVariant>)),
+            this, SLOT(executeCommands(QList<QVariant>)));
+
     foreach (const QString & exec, startupApps) {
         QString realExec = exec;
 
@@ -1384,8 +1415,28 @@ void PlasmaApp::createActivityFromScript(const QString &script, const QString &n
         LazyReplace("$downloads", KGlobalSettings::downloadPath());
         LazyReplace("$pictures",  KGlobalSettings::picturesPath());
 
-        KRun::runCommand(realExec, 0);
+        QString name = realExec.split(" ")[0];
+
+        KService::Ptr service = KService::serviceByDesktopName(name);
+
+        if (service) {
+            confirmDialog->addItem(KIcon(service->icon()), service->name(),
+                    ((realExec == name) ? QString() : realExec), realExec, true);
+        } else {
+            confirmDialog->addItem(KIcon("dialog-warning"), name,
+                    ((realExec == name) ? QString() : realExec), realExec, false);
+        }
+
         #undef LazyReplace
+    }
+
+    confirmDialog->exec();
+}
+
+void PlasmaApp::executeCommands(const QList < QVariant > & commands)
+{
+    foreach (const QVariant & command, commands) {
+        KRun::runCommand(command.toString(), 0);
     }
 }
 
