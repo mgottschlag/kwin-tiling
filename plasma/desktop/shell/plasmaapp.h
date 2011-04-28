@@ -175,6 +175,7 @@ private:
     int m_startupSuspendWaitCount;
     bool m_ignoreDashboardClosures;
     bool m_pendingFixedDashboard;
+    bool m_unlockCorona;
     QString m_loadingActivity;
 };
 

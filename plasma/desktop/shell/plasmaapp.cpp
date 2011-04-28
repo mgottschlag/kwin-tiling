@@ -115,7 +115,8 @@ PlasmaApp::PlasmaApp()
       m_mapper(new QSignalMapper(this)),
       m_startupSuspendWaitCount(0),
       m_ignoreDashboardClosures(false),
-      m_pendingFixedDashboard(false)
+      m_pendingFixedDashboard(false),
+      m_unlockCorona(false)
 {
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor start" << "(line:" << __LINE__ << ")";
     PlasmaApp::suspendStartup(true);
@@ -1315,9 +1316,8 @@ void PlasmaApp::remotePlasmoidAdded(Plasma::PackageMetadata metadata)
         return;
     }
 
-    Plasma::Containment *c = m_desktops.at(0)->containment();
-    if (!c && c->immutability() == Plasma::SystemImmutable) {
-        kDebug() << "There is no containment or the containment is system locked";
+    if (m_corona->immutability() == Plasma::SystemImmutable) {
+        kDebug() << "Corona is system locked";
         return;
     }
 
@@ -1325,16 +1325,30 @@ void PlasmaApp::remotePlasmoidAdded(Plasma::PackageMetadata metadata)
     KNotification *notification = new KNotification("newplasmoid", m_desktops.at(0));
     notification->setText(i18n("A new widget has become available on the network:<br><b>%1</b> - <i>%2</i>",
                                metadata.name(), metadata.description()));
-    notification->setActions(QStringList(i18n("Add to current activity")));
+
+    // locked, but the user is able to unlock
+    if (m_corona->immutability() == Plasma::UserImmutable) {
+        m_unlockCorona = true;
+        notification->setActions(QStringList(i18n("Unlock and add to current activity")));
+    } else {
+        // immutability == Plasma::Mutable
+        notification->setActions(QStringList(i18n("Add to current activity")));
+    }
 
     m_mapper->setMapping(notification, metadata.remoteLocation().prettyUrl());
     connect(notification, SIGNAL(action1Activated()), m_mapper, SLOT(map()));
+
     kDebug() << "firing notification";
     notification->sendEvent();
 }
 
 void PlasmaApp::addRemotePlasmoid(const QString &location)
 {
+    if (m_unlockCorona) {
+        m_unlockCorona = false;
+        m_corona->setImmutability(Plasma::Mutable);
+    }
+
     Plasma::AccessManager::self()->accessRemoteApplet(KUrl(location));
 }
 
