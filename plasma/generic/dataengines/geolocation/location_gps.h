@@ -58,6 +58,9 @@ public:
 
 private:
     Gpsd* m_gpsd;
+#if GPSD_API_MAJOR_VERSION >= 5
+    gps_data_t* m_gpsdata;
+#endif
 };
 
 #endif
