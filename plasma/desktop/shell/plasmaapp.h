@@ -154,6 +154,7 @@ private Q_SLOTS:
     void wallpaperCheckInTimeout();
     void dashboardClosed();
     void relocatePanels();
+    void executeCommands(const QList < QVariant > & commands);
 
 private:
     DesktopCorona *m_corona;

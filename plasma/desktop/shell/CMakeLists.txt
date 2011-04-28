@@ -29,6 +29,7 @@ set(plasma_SRCS
     panelappletoverlay.cpp
     plasmaapp.cpp
     positioningruler.cpp
+    klistconfirmationdialog.cpp
     ${wallpaper_SRCS}
     ${activitymanager_SRCS}
 )
