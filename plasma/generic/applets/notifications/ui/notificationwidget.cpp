@@ -433,7 +433,7 @@ void NotificationWidgetPrivate::buttonClicked()
 {
     //a decsion has already been taken
     if (actionsWidget) {
-        actionsWidget->hide();
+        notification.data()->deleteLater();
     }
     emit q->actionTriggered(notification.data());
 }
