@@ -469,7 +469,6 @@ void ActivityIcon::paint(QPainter * painter, const QStyleOptionGraphicsItem * op
 
 void ActivityIcon::hideTemplate()
 {
-    qDebug() << "connect########################################## hide template called for" << m_pluginName;
     KConfig config("plasma-desktoprc");
     KConfigGroup group(&config, "ActivityManager HiddenTemplates");
 
