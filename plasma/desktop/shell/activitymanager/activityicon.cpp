@@ -169,7 +169,7 @@ void ActivityIcon::createActivity(Plasma::AbstractIcon * icon)
         group.writeEntry(m_pluginName, true);
         group.sync();
 
-        emit requestsRemoval();
+        emit requestsRemoval(false);
     }
 }
 
@@ -251,6 +251,8 @@ void ActivityIcon::showRemovalConfirmation()
 
     if (m_activity)
         connect(w, SIGNAL(removalConfirmed()), m_activity, SLOT(remove()));
+    else
+        connect(w, SIGNAL(removalConfirmed()), this, SLOT(hideTemplate()));
 
     showInlineWidget(w);
 }
@@ -421,6 +423,10 @@ void ActivityIcon::updateButtons()
 
         #undef DESTROY_ACTIVITY_ACTION_WIDIGET
 
+    } else {
+        if (!m_buttonRemove) {
+            m_buttonRemove = new ActivityActionWidget(this, "showRemovalConfirmation", REMOVE_ICON, i18n("Stop activity"));
+        }
     }
 
     updateLayout();
@@ -459,6 +465,18 @@ void ActivityIcon::paint(QPainter * painter, const QStyleOptionGraphicsItem * op
     }
 
     AbstractIcon::paint(painter, option, widget);
+}
+
+void ActivityIcon::hideTemplate()
+{
+    qDebug() << "connect########################################## hide template called for" << m_pluginName;
+    KConfig config("plasma-desktoprc");
+    KConfigGroup group(&config, "ActivityManager HiddenTemplates");
+
+    group.writeEntry(m_pluginName, true);
+    group.sync();
+
+    emit requestsRemoval(true);
 }
 
 #include "activityicon.moc"

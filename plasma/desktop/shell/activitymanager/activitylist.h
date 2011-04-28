@@ -47,7 +47,7 @@ private Q_SLOTS:
     void activityAdded(const QString &id);
     void activityRemoved(const QString &id);
 
-    void iconDeleted();
+    void templateHidden(bool immediate);
 
     void updateClosable();
 
