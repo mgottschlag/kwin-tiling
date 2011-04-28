@@ -2,8 +2,7 @@
  KWin - the KDE window manager
  This file is part of the KDE project.
 
-Copyright (C) 1999, 2000    Daniel M. Duley <mosfet@kde.org>
-Copyright (C) 2003 Lubos Lunak <l.lunak@kde.org>
+Copyright (C) 2011 Martin Gräßlin <mgraesslin@kde.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,31 +18,34 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 
-#ifndef KWIN_PLUGINS_H
-#define KWIN_PLUGINS_H
+#ifndef KWIN_OUTLINE_H
+#define KWIN_OUTLINE_H
 
-#include <kdecoration_plugins_p.h>
+#include <kwineffects.h>
 
 namespace KWin
 {
 
-class PluginMgr
-    : public KDecorationPlugins
+class OutlineEffect : public Effect
 {
+    Q_OBJECT
 public:
-    PluginMgr();
-    virtual bool provides(Requirement);
-    /**
-     * @returns @c true if there is no decoration plugin.
-     **/
-    bool hasNoDecoration() const;
-protected:
-    virtual void error(const QString& error_msg);
+    OutlineEffect();
+    virtual ~OutlineEffect();
+
+    virtual void paintScreen(int mask, QRegion region, ScreenPaintData& data);
+    virtual bool provides(Feature feature);
+
+public Q_SLOTS:
+    void slotShowOutline(const QRect &geometry);
+    void slotHideOutline();
+
 private:
-    void setNoDecoration(bool noDecoration);
-    bool m_noDecoration;
+    QRect m_geometry;
+    bool m_active;
+    EffectFrame *m_outline;
 };
 
 } // namespace
 
-#endif
+#endif // KWIN_OUTLINE_H

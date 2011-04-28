@@ -101,13 +101,14 @@ KDecoration* KDecorationPlugins::createDecoration(KDecorationBridge* bridge)
 // returns true if plugin was loaded successfully
 bool KDecorationPlugins::loadPlugin(QString nameStr)
 {
+    KConfigGroup group(config, QString("Style"));
     if (nameStr.isEmpty()) {
-        KConfigGroup group(config, QString("Style"));
         nameStr = group.readEntry("PluginLib", defaultPlugin);
     }
-    // make sure people can switch between HEAD and kwin_iii branch
-    if (nameStr.startsWith(QLatin1String("kwin_")))
-        nameStr = "kwin3_" + nameStr.mid(5);
+    if (group.readEntry<bool>("NoPlugin", false)) {
+        error(i18n("Loading of window decoration plugin library disabled in configuration."));
+        return false;
+    }
 
     KLibrary *oldLibrary = library;
     KDecorationFactory* oldFactory = fact;
