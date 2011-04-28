@@ -181,10 +181,13 @@ bool LauncherItem::isGroupItem() const
 void LauncherItem::launch()
 {
     //NOTE: preferred is NOT a protocol, it's just a magic string
-    if (d->url.protocol() == "preferred"){
-        QString desktopFile = KStandardDirs::locate("xdgdata-apps", defaultApplication(d->url.host(), true));
+    if (d->url.protocol() == "preferred") {
+        const QString storageId = defaultApplication(d->url.host(), true);
+        KService::Ptr service = KService::serviceByStorageId(storageId);
+
+        QString desktopFile = KStandardDirs::locate("xdgdata-apps", service->entryPath());
         if (desktopFile.isNull()){
-            desktopFile = KStandardDirs::locate("apps", defaultApplication(d->url.host(), true));
+            desktopFile = KStandardDirs::locate("apps", service->entryPath());
         }
         new KRun(desktopFile, 0);
     }else{
@@ -306,16 +309,20 @@ void LauncherItem::setLauncherUrl(const KUrl &url)
         d->icon = KIcon(f.readIcon());
         d->name = f.readName();
         d->genericName = f.readGenericName();
-    
+
     //NOTE: preferred is NOT a protocol, it's just a magic string
     }else if (d->url.protocol() == "preferred"){
-        QString desktopFile = KStandardDirs::locate("xdgdata-apps", defaultApplication(d->url.host(), true));
+        const QString storageId = defaultApplication(d->url.host(), true);
+        KService::Ptr service = KService::serviceByStorageId(storageId);
+
+        QString desktopFile = KStandardDirs::locate("xdgdata-apps", service->entryPath());
         if (desktopFile.isNull()){
-            desktopFile = KStandardDirs::locate("apps", defaultApplication(d->url.host(), true));
+            desktopFile = KStandardDirs::locate("apps", service->entryPath());
         }
+
         KDesktopFile f(desktopFile);
         KConfigGroup cg(&f, "Desktop Entry");
-        
+
         d->icon = KIcon(f.readIcon());
         QString exec = cg.readEntry("Exec", "");
         if (!exec.isNull()){
