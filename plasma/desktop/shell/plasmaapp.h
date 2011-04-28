@@ -88,7 +88,7 @@ public:
     /**
      * create a new activity from @p script
      */
-    void createActivityFromScript(const QString &script, const QString &name = QString(), const QString &icon = QString());
+    void createActivityFromScript(const QString &script, const QString &name = QString(), const QString &icon = QString(), const QStringList &startupApps = QStringList());
     static bool isPanelContainment(Plasma::Containment *containment);
 
 #ifdef Q_WS_X11

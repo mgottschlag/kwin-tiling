@@ -34,7 +34,6 @@
 
 #include <KIconLoader>
 #include <KIcon>
-#include <KRun>
 #include <KStandardDirs>
 #include <KGlobalSettings>
 
@@ -152,41 +151,26 @@ void ActivityIcon::createActivity(Plasma::AbstractIcon * icon)
     if (!path.isEmpty()) {
         Plasma::Package package(path, structure);
         const QString scriptFile = package.filePath("mainscript");
-        if (!scriptFile.isEmpty()) {
+        const QStringList startupApps = service->property("X-Plasma-ContainmentLayout-ExecuteOnCreation", QVariant::StringList).toStringList();
+
+        if (!scriptFile.isEmpty() || !startupApps.isEmpty()) {
             PlasmaApp::self()->createActivityFromScript(
-                m_pluginName,
+                scriptFile,
                 name(),
-                m_iconName
+                m_iconName,
+                startupApps
             );
-
-            foreach (const QString & exec, service->property("X-Plasma-ContainmentLayout-ExecuteOnCreation", QVariant::StringList).toStringList()) {
-                QString realExec = exec;
-
-                #define LazyReplace(VAR, VAL) \
-                    if (realExec.contains(VAR)) realExec = realExec.replace(VAR, VAL);
-
-                LazyReplace("$desktop",   KGlobalSettings::desktopPath());
-                LazyReplace("$autostart", KGlobalSettings::autostartPath());
-                LazyReplace("$documents", KGlobalSettings::documentPath());
-                LazyReplace("$music",     KGlobalSettings::musicPath());
-                LazyReplace("$video",     KGlobalSettings::videosPath());
-                LazyReplace("$downloads", KGlobalSettings::downloadPath());
-                LazyReplace("$pictures",  KGlobalSettings::picturesPath());
-
-                KRun::runCommand(realExec, 0);
-                #undef LazyReplace
-            }
-
-            KConfig config("plasma-desktoprc");
-            KConfigGroup group(&config, "ActivityManager HiddenTemplates");
-
-            group.writeEntry(m_pluginName, true);
-            group.sync();
-
-            emit requestsRemoval();
         }
-    }
 
+
+        KConfig config("plasma-desktoprc");
+        KConfigGroup group(&config, "ActivityManager HiddenTemplates");
+
+        group.writeEntry(m_pluginName, true);
+        group.sync();
+
+        emit requestsRemoval();
+    }
 }
 
 ActivityIcon::~ActivityIcon()
