@@ -86,4 +86,6 @@ ENDMACRO(INSTALL_PLASMA_JAVASCRIPT_TEMPLATE)
 INSTALL_PLASMA_JAVASCRIPT_TEMPLATE(data/layouts/org.kde.plasma-desktop.defaultPanel org.kde.plasma-desktop.defaultPanel)
 INSTALL_PLASMA_JAVASCRIPT_TEMPLATE(data/layouts/org.kde.plasma-desktop.findWidgets org.kde.plasma-desktop.findWidgets)
 INSTALL_PLASMA_JAVASCRIPT_TEMPLATE(data/layouts/org.kde.plasma-desktop.photoActivity org.kde.plasma-desktop.photoActivity)
+INSTALL_PLASMA_JAVASCRIPT_TEMPLATE(data/layouts/org.kde.plasma-desktop.desktopIcons org.kde.plasma-desktop.desktopIcons)
+INSTALL_PLASMA_JAVASCRIPT_TEMPLATE(data/layouts/org.kde.plasma-desktop.SaL org.kde.plasma-desktop.SaL)
 

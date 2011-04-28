@@ -182,7 +182,7 @@ void Applet::configChanged()
 
     m_shownCategories.clear();
 
-    if (cg.readEntry("ShowApplicationStatus", gcg.readEntry("ShowApplicationStatus", true))) {
+    if (cg.readEntry("ShowApplicationStatus", gcg.readEntry("ShowApplicationStatus", false))) {
         m_shownCategories.insert(Task::ApplicationStatus);
     }
 

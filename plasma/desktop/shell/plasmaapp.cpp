@@ -57,6 +57,7 @@
 #include <KGlobalAccel>
 #include <KGlobalSettings>
 #include <KNotification>
+#include <KRun>
 #include <KWindowSystem>
 
 #include <ksmserver_interface.h>
@@ -1354,7 +1355,7 @@ void PlasmaApp::createActivity(const QString &plugin)
     controller.setCurrentActivity(id);
 }
 
-void PlasmaApp::createActivityFromScript(const QString &script, const QString &name, const QString &icon)
+void PlasmaApp::createActivityFromScript(const QString &script, const QString &name, const QString &icon, const QStringList &startupApps)
 {
     KActivityController controller;
     m_loadingActivity = controller.addActivity(name);
@@ -1368,6 +1369,24 @@ void PlasmaApp::createActivityFromScript(const QString &script, const QString &n
 
     controller.setCurrentActivity(m_loadingActivity);
     m_loadingActivity.clear();
+
+    foreach (const QString & exec, startupApps) {
+        QString realExec = exec;
+
+        #define LazyReplace(VAR, VAL) \
+            if (realExec.contains(VAR)) realExec = realExec.replace(VAR, VAL);
+
+        LazyReplace("$desktop",   KGlobalSettings::desktopPath());
+        LazyReplace("$autostart", KGlobalSettings::autostartPath());
+        LazyReplace("$documents", KGlobalSettings::documentPath());
+        LazyReplace("$music",     KGlobalSettings::musicPath());
+        LazyReplace("$video",     KGlobalSettings::videosPath());
+        LazyReplace("$downloads", KGlobalSettings::downloadPath());
+        LazyReplace("$pictures",  KGlobalSettings::picturesPath());
+
+        KRun::runCommand(realExec, 0);
+        #undef LazyReplace
+    }
 }
 
 #include "plasmaapp.moc"

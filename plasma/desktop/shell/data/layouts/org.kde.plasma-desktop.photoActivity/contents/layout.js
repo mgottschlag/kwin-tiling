@@ -1,5 +1,5 @@
 var activity = new Activity
-activity.name = i18n("Photos")
+activity.name = i18n("Photos Activity")
 
 var pictures = userDataPath("pictures")
 
@@ -12,6 +12,4 @@ frame.writeConfig("recursive slideshow", true)
 frame.writeConfig("slideshow paths", pictures)
 frame.writeConfig("slideshow time", 300)
 frame.writeConfig("random", true)
-
-
 

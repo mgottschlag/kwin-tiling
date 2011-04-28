@@ -190,10 +190,12 @@ void FilterBar::populateActivityMenu()
         if (!path.isEmpty()) {
             Plasma::Package package(path, structure);
             const QString scriptFile = package.filePath("mainscript");
-            if (!scriptFile.isEmpty()) {
+            const QStringList startupApps = service->property("X-Plasma-ContainmentLayout-ExecuteOnCreation", QVariant::StringList).toStringList();
+
+            if (!scriptFile.isEmpty() || !startupApps.isEmpty()) {
                 QAction *action = new QAction(KIcon(info.icon()), info.name(), templatesMenu);
-                QStringList data;
-                data << scriptFile << info.name() << info.icon();
+                QVariantList data;
+                data << scriptFile << info.name() << info.icon() << startupApps;
                 action->setData(data);
                 sorted.insert(info.name(), action);
             }
@@ -221,9 +223,12 @@ void FilterBar::createActivity(QAction *action)
     if (type == QVariant::String) {
         QString plugin = action->data().toString();
         PlasmaApp::self()->createActivity(plugin);
-    } else if (type == QVariant::StringList) {
-        QStringList data = action->data().toStringList();
-        PlasmaApp::self()->createActivityFromScript(data[0], data[1], data[2]);
+    } else if (type == QVariant::List) {
+        QVariantList data = action->data().toList();
+        PlasmaApp::self()->createActivityFromScript(data[0].toString(),
+                                                    data[1].toString(),
+                                                    data[2].toString(),
+                                                    data[3].toStringList());
     } else if (action->data().toInt() == 0) {
         PlasmaApp::self()->cloneCurrentActivity();
     } else { //ghns
