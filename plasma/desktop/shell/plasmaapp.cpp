@@ -60,6 +60,7 @@
 #include <KRun>
 #include <KWindowSystem>
 #include <KService>
+#include <KIconLoader>
 
 #include <ksmserver_interface.h>
 
@@ -1325,6 +1326,11 @@ void PlasmaApp::remotePlasmoidAdded(Plasma::PackageMetadata metadata)
     KNotification *notification = new KNotification("newplasmoid", m_desktops.at(0));
     notification->setText(i18n("A new widget has become available on the network:<br><b>%1</b> - <i>%2</i>",
                                metadata.name(), metadata.description()));
+
+    // setup widget icon
+    if (!metadata.icon().isEmpty()) {
+        notification->setPixmap(KIcon(metadata.icon()).pixmap(IconSize(KIconLoader::Desktop)));
+    }
 
     // locked, but the user is able to unlock
     if (m_corona->immutability() == Plasma::UserImmutable) {
