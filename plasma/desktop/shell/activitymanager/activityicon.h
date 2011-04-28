@@ -50,7 +50,7 @@ class ActivityIcon : public Plasma::AbstractIcon
         void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
 
     Q_SIGNALS:
-        void requestsRemoval();
+        void requestsRemoval(bool immediate);
 
     private Q_SLOTS:
         void stopActivity();
@@ -66,6 +66,7 @@ class ActivityIcon : public Plasma::AbstractIcon
         void updateContents();
         void currentStatusChanged();
         void createActivity(Plasma::AbstractIcon * icon);
+        void hideTemplate();
 
     private:
         QString m_id;

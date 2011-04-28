@@ -87,8 +87,8 @@ void ActivityList::createActivityIcon(const QString &name, const QString &iconNa
 {
     ActivityIcon *icon = new ActivityIcon(name, iconName, plugin);
 
-    connect(icon, SIGNAL(requestsRemoval()),
-            this, SLOT(iconDeleted()));
+    connect(icon, SIGNAL(requestsRemoval(bool)),
+            this, SLOT(templateHidden(bool)));
 
     addIcon(icon);
     m_allAppletsHash.insert("null:" + name, icon);
@@ -185,11 +185,18 @@ void ActivityList::updateClosable()
     }
 }
 
-void ActivityList::iconDeleted()
+void ActivityList::templateHidden(bool immediate)
 {
     ActivityIcon * icon = qobject_cast < ActivityIcon * > (sender());
 
     if (!icon) return;
 
-    m_scheduleHideOnAdd = icon;
+    if (immediate) {
+        hideIcon(icon);
+        m_allAppletsHash.remove(m_allAppletsHash.key(icon));
+
+    } else {
+        m_scheduleHideOnAdd = icon;
+    }
 }
+
