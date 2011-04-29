@@ -1,6 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Desktop Icons
+Name[ia]=Icones de scriptorio
+Name[pt]=Ícones do Ecrã
+Name[tr]=Masaüstü Simgeleri
+Name[uk]=Піктограми стільниці
+Name[x-test]=xxDesktop Iconsxx
 Icon=user-desktop
 Type=Service
 ServiceTypes=Plasma/LayoutTemplate
