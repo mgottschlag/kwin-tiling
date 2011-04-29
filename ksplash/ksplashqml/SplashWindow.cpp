@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 Ivan Cukic <ivan.cukic(at)kde.org>
+ *   Copyright (C) 2010 Ivan Cukic <ivan.cukic(at)kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License version 2,
@@ -17,38 +17,28 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "SplashApp.h"
+#include "SplashWindow.h"
 
-#include <iostream>
-#include <X11/Xlib.h>
+#include <QGraphicsObject>
 
-int main(int argc, char **argv)
+SplashWindow::SplashWindow()
+    : QDeclarativeView(), m_state(0)
 {
-    // lets fork and all that...
+    setWindowFlags(
+            Qt::FramelessWindowHint |
+            Qt::WindowStaysOnTopHint
+        );
 
-#define SPLASH_TEST
-#ifndef SPLASH_TEST
-    pid_t pid = fork();
-    if (pid < -1) {
-        return -1;
-    }
+    setSource(QUrl("/opt/kde/src/workspace/ksplash/ksplashqml/qml/demo.qml"));
 
-    if (pid != 0) {
-        // this is the parent process, returning pid of the fork
-        // printf("%d\n", pid);
-        return 0;
-    }
+    rootObject()->setProperty("width", size().width());
+    rootObject()->setProperty("height", size().height());
+}
 
-    // close stdin,stdout,stderr, otherwise startkde will block
-    close(0);
-    close(1);
-    close(2);
-#endif
+void SplashWindow::setState(int state)
+{
+    m_state = state;
 
-    Display * display = XOpenDisplay(NULL);
-
-    SplashApp app(display, argc, argv);
-
-    return app.exec();
+    rootObject()->setProperty("state", state);
 }
 

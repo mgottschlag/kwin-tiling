@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 Ivan Cukic <ivan.cukic(at)kde.org>
+ *   Copyright (C) 2010 Ivan Cukic <ivan.cukic(at)kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License version 2,
@@ -17,38 +17,22 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "SplashApp.h"
+#ifndef SPLASH_WINDOW_H_
+#define SPLASH_WINDOW_H_
 
-#include <iostream>
-#include <X11/Xlib.h>
+#include <QObject>
+#include <QDeclarativeView>
 
-int main(int argc, char **argv)
-{
-    // lets fork and all that...
+class SplashWindow: public QDeclarativeView {
 
-#define SPLASH_TEST
-#ifndef SPLASH_TEST
-    pid_t pid = fork();
-    if (pid < -1) {
-        return -1;
-    }
+public:
+    SplashWindow();
 
-    if (pid != 0) {
-        // this is the parent process, returning pid of the fork
-        // printf("%d\n", pid);
-        return 0;
-    }
+    void setState(int i);
 
-    // close stdin,stdout,stderr, otherwise startkde will block
-    close(0);
-    close(1);
-    close(2);
-#endif
+private:
+    int m_state;
 
-    Display * display = XOpenDisplay(NULL);
+};
 
-    SplashApp app(display, argc, argv);
-
-    return app.exec();
-}
-
+#endif // SPLASH_WINDOW_H_

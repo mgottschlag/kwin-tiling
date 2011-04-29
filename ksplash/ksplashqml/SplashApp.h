@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 Ivan Cukic <ivan.cukic(at)kde.org>
+ *   Copyright (C) 2010 Ivan Cukic <ivan.cukic(at)kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License version 2,
@@ -17,38 +17,39 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "SplashApp.h"
+#ifndef SPLASH_APP_H_
+#define SPLASH_APP_H_
 
-#include <iostream>
+#include <QObject>
+#include <QApplication>
+#include <QBasicTimer>
+
 #include <X11/Xlib.h>
 
-int main(int argc, char **argv)
-{
-    // lets fork and all that...
+class SplashWindow;
 
-#define SPLASH_TEST
-#ifndef SPLASH_TEST
-    pid_t pid = fork();
-    if (pid < -1) {
-        return -1;
-    }
+class SplashApp: public QApplication {
 
-    if (pid != 0) {
-        // this is the parent process, returning pid of the fork
-        // printf("%d\n", pid);
-        return 0;
-    }
+public:
+    SplashApp(Display * display, int argc, char ** argv);
+    ~SplashApp();
 
-    // close stdin,stdout,stderr, otherwise startkde will block
-    close(0);
-    close(1);
-    close(2);
-#endif
+    Display * display() const;
 
-    Display * display = XOpenDisplay(NULL);
+    bool x11EventFilter(XEvent * xe);
+    int x11ProcessEvent(XEvent * xe);
 
-    SplashApp app(display, argc, argv);
+protected:
+    void timerEvent(QTimerEvent * event);
+    void setState(int state);
 
-    return app.exec();
-}
+private:
+    Display * m_display;
+    int m_state;
+    Atom m_kde_splash_progress;
+    SplashWindow * m_window;
+    bool m_testing;
+    QBasicTimer m_timer;
+};
 
+#endif // SPLASH_APP_H_
