@@ -121,6 +121,8 @@ public Q_SLOTS:
 
     void toggleActivityManager();
 
+    void addRemotePlasmoid(const QString &location);
+
 protected:
 #ifdef Q_WS_X11
     PanelView *findPanelForTrigger(WId trigger) const;
@@ -148,7 +150,6 @@ private Q_SLOTS:
     void checkVirtualDesktopViews(int numDesktops);
     void setWmClass(WId id);
     void remotePlasmoidAdded(Plasma::PackageMetadata metadata);
-    void addRemotePlasmoid(const QString &location);
     void plasmoidAccessFinished(Plasma::AccessAppletJob *job);
     void wallpaperCheckedIn();
     void wallpaperCheckInTimeout();
