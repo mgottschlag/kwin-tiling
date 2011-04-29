@@ -56,11 +56,13 @@ Display * SplashApp::display() const
 
 void SplashApp::timerEvent(QTimerEvent * event)
 {
-    m_timer.stop();
+    if (event->timerId() == m_timer.timerId()) {
+        m_timer.stop();
 
-    setState(m_state + 1);
+        setState(m_state + 1);
 
-    m_timer.start(TEST_STEP_INTERVAL, this);
+        m_timer.start(TEST_STEP_INTERVAL, this);
+    }
 }
 
 bool SplashApp::x11EventFilter(XEvent * xe)

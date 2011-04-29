@@ -26,7 +26,6 @@ int main(int argc, char **argv)
 {
     // lets fork and all that...
 
-#define SPLASH_TEST
 #ifndef SPLASH_TEST
     pid_t pid = fork();
     if (pid < -1) {

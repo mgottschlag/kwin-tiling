@@ -36,22 +36,33 @@ QML.Item {
 
     /* JavaScript functions ---------------------------{{{ */
     onStateChanged: {
-        // text.text = "new state: " + state
         if (state == 2) {
-            state1.x = - state1.width
-            state2.x = (main.width - state2.width) / 2
+            state1.x = (main.width - state1.width) / 2
+            state1.opacity = 1
         }
         if (state == 3) {
-            state2.x = - state2.width
-            state3.x = (main.width - state3.width) / 2
+            state1.x = - state1.width
+            state2.x = (main.width - state2.width) / 2
+            state1.opacity = 0
+            state2.opacity = 1
         }
         if (state == 4) {
-            state3.x = - state3.width
-            state4.x = (main.width - state4.width) / 2
+            state2.x = - state2.width
+            state3.x = (main.width - state3.width) / 2
+            state2.opacity = 0
+            state3.opacity = 1
         }
         if (state == 5) {
+            state3.x = - state3.width
+            state4.x = (main.width - state4.width) / 2
+            state3.opacity = 0
+            state4.opacity = 1
+        }
+        if (state == 6) {
             state4.x = - state4.width
             state5.x = (main.width - state5.width) / 2
+            state4.opacity = 0
+            state5.opacity = 1
         }
     }
     /* }}} */
@@ -64,10 +75,19 @@ QML.Item {
     QML.Image {
         anchors.fill: parent
 
-        source: "/home/ivan/.kde/share/wallpapers/stripes-debian-blue/contents/images/1024x768.jpg"
+        source: "images/background.jpg"
 
         width: 1024
         height: 600
+    }
+
+    QML.Rectangle {
+        width: parent.width
+        height: 100
+        x: 0
+        y: (parent.height - height) / 2
+        color: "#ffffff"
+        opacity: 0.2
     }
 
     QML.Image {
@@ -75,7 +95,9 @@ QML.Item {
         x: main.width + width
         y: (main.height - height) / 2
         source: "images/hardware.png"
-        QML.Behavior on x { QML.NumberAnimation { duration: 1000 } }
+        QML.Behavior on x { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
+        opacity: 0
+        QML.Behavior on opacity { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
     }
 
     QML.Image {
@@ -83,7 +105,9 @@ QML.Item {
         x: main.width + width
         y: (main.height - height) / 2
         source: "images/configuring.png"
-        QML.Behavior on x { QML.NumberAnimation { duration: 1000 } }
+        QML.Behavior on x { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
+        opacity: 0
+        QML.Behavior on opacity { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
     }
 
     QML.Image {
@@ -91,7 +115,9 @@ QML.Item {
         x: main.width + width
         y: (main.height - height) / 2
         source: "images/globe.png"
-        QML.Behavior on x { QML.NumberAnimation { duration: 1000 } }
+        QML.Behavior on x { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
+        opacity: 0
+        QML.Behavior on opacity { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
     }
 
     QML.Image {
@@ -99,7 +125,9 @@ QML.Item {
         x: main.width + width
         y: (main.height - height) / 2
         source: "images/desktop.png"
-        QML.Behavior on x { QML.NumberAnimation { duration: 1000 } }
+        QML.Behavior on x { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
+        opacity: 0
+        QML.Behavior on opacity { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
     }
 
     QML.Image {
@@ -107,9 +135,10 @@ QML.Item {
         x: main.width + width
         y: (main.height - height) / 2
         source: "images/kde.png"
-        QML.Behavior on x { QML.NumberAnimation { duration: 1000 } }
+        QML.Behavior on x { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
+        opacity: 0
+        QML.Behavior on opacity { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
     }
-
 
     /* }}} */
 
