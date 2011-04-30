@@ -589,6 +589,11 @@ bool GroupManager::addLauncher(const KUrl &url, QIcon icon, QString name, QStrin
     if (!launcher) {
         launcher = new LauncherItem(d->currentRootGroup(), url);
 
+        if (!launcher->isValid()) {
+            delete launcher;
+            return false;
+        }
+
         if (!icon.isNull()) {
             launcher->setIcon(icon);
         }

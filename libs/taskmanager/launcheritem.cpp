@@ -306,29 +306,37 @@ void LauncherItem::setLauncherUrl(const KUrl &url)
     if (d->url.isLocalFile() && KDesktopFile::isDesktopFile(d->url.toLocalFile())) {
         KDesktopFile f(d->url.toLocalFile());
 
-        d->icon = KIcon(f.readIcon());
-        d->name = f.readName();
-        d->genericName = f.readGenericName();
-
-    //NOTE: preferred is NOT a protocol, it's just a magic string
-    }else if (d->url.protocol() == "preferred"){
+        if (f.tryExec()) {
+            d->icon = KIcon(f.readIcon());
+            d->name = f.readName();
+            d->genericName = f.readGenericName();
+        } else {
+            d->url = KUrl();
+            return;
+        }
+    } else if (d->url.protocol() == "preferred") {
+        //NOTE: preferred is NOT a protocol, it's just a magic string
         const QString storageId = defaultApplication(d->url.host(), true);
-        KService::Ptr service = KService::serviceByStorageId(storageId);
+        const KService::Ptr service = KService::serviceByStorageId(storageId);
 
-        QString desktopFile = KStandardDirs::locate("xdgdata-apps", service->entryPath());
-        if (desktopFile.isNull()){
-            desktopFile = KStandardDirs::locate("apps", service->entryPath());
+        if (service) {
+            QString desktopFile = KStandardDirs::locate("xdgdata-apps", service->entryPath());
+            if (desktopFile.isNull()) {
+                desktopFile = KStandardDirs::locate("apps", service->entryPath());
+            }
+
+            KDesktopFile f(desktopFile);
+            KConfigGroup cg(&f, "Desktop Entry");
+
+            d->icon = KIcon(f.readIcon());
+            QString exec = cg.readEntry("Exec", "");
+            if (!exec.isNull()) {
+                d->name = exec.split(' ').at(0);
+            }
+            d->genericName = f.readGenericName();
+        } else {
+            d->url = KUrl();
         }
-
-        KDesktopFile f(desktopFile);
-        KConfigGroup cg(&f, "Desktop Entry");
-
-        d->icon = KIcon(f.readIcon());
-        QString exec = cg.readEntry("Exec", "");
-        if (!exec.isNull()){
-            d->name = exec.split(' ').at(0);
-        }
-        d->genericName = f.readGenericName();
     } else {
         d->icon = KIcon(KMimeType::iconNameForUrl(d->url));
     }
@@ -340,6 +348,11 @@ void LauncherItem::setLauncherUrl(const KUrl &url)
     if (d->icon.isNull()) {
         d->icon = KIcon("unknown");
     }
+}
+
+bool LauncherItem::isValid() const
+{
+    return d->url.isValid();
 }
 
 void LauncherItem::setIcon(const QIcon& icon)
