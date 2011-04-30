@@ -63,6 +63,8 @@ QML.Item {
             state5.x = (main.width - state5.width) / 2
             state4.opacity = 0
             state5.opacity = 1
+            state5.width = 128
+            state5.height = 128
         }
     }
     /* }}} */
@@ -98,6 +100,8 @@ QML.Item {
         QML.Behavior on x { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
         opacity: 0
         QML.Behavior on opacity { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
+
+        QML.Image { y: 128; x: parent.x - main.width / 2; height: 128; width: 128; opacity: 0.2 * parent.opacity; source: parent.source }
     }
 
     QML.Image {
@@ -108,6 +112,8 @@ QML.Item {
         QML.Behavior on x { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
         opacity: 0
         QML.Behavior on opacity { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
+
+        QML.Image { y: 128; x: parent.x - main.width / 2; height: 128; width: 128; opacity: 0.2 * parent.opacity; source: parent.source }
     }
 
     QML.Image {
@@ -118,6 +124,8 @@ QML.Item {
         QML.Behavior on x { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
         opacity: 0
         QML.Behavior on opacity { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
+
+        QML.Image { y: 128; x: parent.x - main.width / 2; height: 128; width: 128; opacity: 0.2 * parent.opacity; source: parent.source }
     }
 
     QML.Image {
@@ -128,6 +136,8 @@ QML.Item {
         QML.Behavior on x { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
         opacity: 0
         QML.Behavior on opacity { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
+
+        QML.Image { y: 128; x: parent.x - main.width / 2; height: 128; width: 128; opacity: 0.2 * parent.opacity; source: parent.source }
     }
 
     QML.Image {
@@ -136,8 +146,12 @@ QML.Item {
         y: (main.height - height) / 2
         source: "images/kde.png"
         QML.Behavior on x { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
+        QML.Behavior on width { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
+        QML.Behavior on height { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
         opacity: 0
         QML.Behavior on opacity { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
+
+        // QML.Image { y: 128; x: parent.x - main.width / 2; height: 128; width: 128; opacity: 0.2 * parent.opacity; source: parent.source }
     }
 
     /* }}} */
