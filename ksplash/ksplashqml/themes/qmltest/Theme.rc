@@ -1,0 +1,9 @@
+[KSplash Theme: QMLtest]
+Name = Default Splash Screen
+Description = Air and Horos Splash Screen
+Version = 1.0
+Author = Nuno Pinheiro <nuno@oxygen-icons.org>, Riccardo Iaconelli <riccardo@kde.org> and Marco Martin <notmart@gmail.com>
+Homepage = http://www.kde.org
+
+# Theme behaviour settings.
+Engine = KSplashQML

@@ -45,10 +45,10 @@ QString themeDir(QString theme)
 {
     QString path;
 
-    path = homeDir() + "/share/apps/ksplashqml/Themes/" + theme;
+    path = homeDir() + "/share/apps/ksplash/Themes/" + theme;
 
     if (!QDir(path).exists()) {
-        path = systemDir() + "/ksplashqml/Themes/" + theme;
+        path = systemDir() + "/ksplash/Themes/" + theme;
     }
 
     return path;
