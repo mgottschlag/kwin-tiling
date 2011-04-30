@@ -20,7 +20,7 @@
 #include "SplashWindow.h"
 #include "SplashApp.h"
 
-#define TEST_STEP_INTERVAL 5000
+#define TEST_STEP_INTERVAL 2000
 
 SplashApp::SplashApp(Display * display, int argc, char ** argv)
     : QApplication(display, argc, argv),
