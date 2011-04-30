@@ -34,6 +34,7 @@ SplashWindow::SplashWindow()
 
     rootContext()->setContextProperty("screenSize", size());
     setSource(QUrl(themeDir(QApplication::arguments().at(1)) + "/main.qml"));
+    setStyleSheet("background: #000000; border: none");
 }
 
 void SplashWindow::setState(int state)
