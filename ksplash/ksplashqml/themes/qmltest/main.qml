@@ -78,9 +78,6 @@ QML.Item {
         anchors.fill: parent
 
         source: "images/background.jpg"
-
-        width: 1024
-        height: 600
     }
 
     QML.Rectangle {
