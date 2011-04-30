@@ -60,6 +60,7 @@
 #include <KRun>
 #include <KWindowSystem>
 #include <KService>
+#include <KIconLoader>
 
 #include <ksmserver_interface.h>
 
@@ -1326,6 +1327,11 @@ void PlasmaApp::remotePlasmoidAdded(Plasma::PackageMetadata metadata)
     notification->setText(i18n("A new widget has become available on the network:<br><b>%1</b> - <i>%2</i>",
                                metadata.name(), metadata.description()));
 
+    // setup widget icon
+    if (!metadata.icon().isEmpty()) {
+        notification->setPixmap(KIcon(metadata.icon()).pixmap(IconSize(KIconLoader::Desktop)));
+    }
+
     // locked, but the user is able to unlock
     if (m_corona->immutability() == Plasma::UserImmutable) {
         m_unlockCorona = true;
@@ -1415,14 +1421,13 @@ void PlasmaApp::createActivityFromScript(const QString &script, const QString &n
         LazyReplace("$downloads", KGlobalSettings::downloadPath());
         LazyReplace("$pictures",  KGlobalSettings::picturesPath());
 
-        QStringList params = realExec.split(" ");
-        QString name = params[0];
+        QString name = realExec.split(" ")[0];
 
         KService::Ptr service = KService::serviceByDesktopName(name);
 
         if (service) {
             confirmDialog->addItem(KIcon(service->icon()), service->name(),
-                    ((realExec == name) ? QString() : realExec), realExec, params.size() <= 2);
+                    ((realExec == name) ? QString() : realExec), realExec, exec.split(" ").size() <= 2);
         } else {
             confirmDialog->addItem(KIcon("dialog-warning"), name,
                     ((realExec == name) ? QString() : realExec), realExec, false);
