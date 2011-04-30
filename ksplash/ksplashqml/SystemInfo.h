@@ -17,34 +17,43 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "SplashWindow.h"
-#include "SystemInfo.h"
+#ifndef SYSTEM_INFO_H_
+#define SYSTEM_INFO_H_
 
-#include <QGraphicsObject>
-#include <QDeclarativeContext>
-#include <QApplication>
+#include <stdlib.h>
+#include <config-workspace.h>
 
-SplashWindow::SplashWindow()
-    : QDeclarativeView(), m_state(0)
+#include <QDir>
+#include <QString>
+
+QString homeDir()
 {
-    setWindowFlags(
-            Qt::FramelessWindowHint |
-            Qt::WindowStaysOnTopHint
-        );
+    const char * kdehome = getenv("KDEHOME");
+    if (kdehome || kdehome[0]) {
+        return QString() + getenv("HOME") + "/" + KDE_DEFAULT_HOME;
+    }
 
-    rootContext()->setContextProperty("screenSize", size());
-    setSource(QUrl(themeDir(QApplication::arguments().at(1)) + "/main.qml"));
+    return kdehome;
 }
 
-void SplashWindow::setState(int state)
+QString systemDir()
 {
-    m_state = state;
-
-    rootObject()->setProperty("state", state);
+    return KDE_DATADIR;
 }
 
-void SplashWindow::resizeEvent(QResizeEvent * event)
+QString themeDir(QString theme)
 {
-    rootContext()->setContextProperty("screenSize", size());
+    QString path;
+
+    path = homeDir() + "/share/apps/ksplashqml/Themes/" + theme;
+
+    if (!QDir(path).exists()) {
+        path = systemDir() + "/ksplashqml/Themes/" + theme;
+    }
+
+    return path;
 }
+
+#endif // SYSTEM_INFO_H_
+
 

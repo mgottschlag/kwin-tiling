@@ -4,10 +4,7 @@ set(ksplashqml_SRCS
     main.cpp
     SplashApp.cpp
     SplashWindow.cpp
-    #   Info.cpp
    )
-
-#qt4_generate_moc(Info.h ${CMAKE_CURRENT_BINARY_DIR}/Info.moc)
 
 add_executable(ksplashqml ${ksplashqml_SRCS})
 
