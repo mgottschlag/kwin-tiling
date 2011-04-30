@@ -309,6 +309,15 @@ void PanelController::moveEvent(QMoveEvent *event)
     ControllerWindow::moveEvent(event);
 }
 
+void PanelController::showEvent(QShowEvent *event)
+{
+    if (containment()) {
+        setMaximumSize(PlasmaApp::self()->corona()->screenGeometry(containment()->screen()).size());
+        syncToLocation();
+    }
+    ControllerWindow::showEvent(event);
+}
+
 void PanelController::setLocation(const Plasma::Location &loc)
 {
     if (location() == loc) {
@@ -408,7 +417,7 @@ void PanelController::syncToLocation()
     updateGeometry();
 
     setMinimumSize(QSize(0, 0));
-    setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+    setMaximumSize(sizeHint());
     resize(sizeHint());
 }
 
