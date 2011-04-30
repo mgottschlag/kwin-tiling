@@ -1415,13 +1415,14 @@ void PlasmaApp::createActivityFromScript(const QString &script, const QString &n
         LazyReplace("$downloads", KGlobalSettings::downloadPath());
         LazyReplace("$pictures",  KGlobalSettings::picturesPath());
 
-        QString name = realExec.split(" ")[0];
+        QStringList params = realExec.split(" ");
+        QString name = params[0];
 
         KService::Ptr service = KService::serviceByDesktopName(name);
 
         if (service) {
             confirmDialog->addItem(KIcon(service->icon()), service->name(),
-                    ((realExec == name) ? QString() : realExec), realExec, true);
+                    ((realExec == name) ? QString() : realExec), realExec, params.size() <= 2);
         } else {
             confirmDialog->addItem(KIcon("dialog-warning"), name,
                     ((realExec == name) ? QString() : realExec), realExec, false);
