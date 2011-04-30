@@ -12,7 +12,7 @@ for (var i = 0; i < screenCount; ++i) {
         var panel = new Panel
         panel.screen = i
         panel.location = 'bottom'
-        panel.height = panels()[i].height = screenGeometry(0).height > 768 ? 35 : 27
+        panel.height = panels()[i].height = screenGeometry(0).height > 1024 ? 35 : 27
         var tasks = panel.addWidget("tasks")
         tasks.writeConfig("showOnlyCurrentScreen", true);
     }
