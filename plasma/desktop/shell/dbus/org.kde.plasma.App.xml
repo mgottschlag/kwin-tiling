@@ -31,5 +31,8 @@
     </method>
     <method name="toggleActivityManager">
     </method>
+    <method name="addRemotePlasmoid">
+      <arg name="location" type="s" direction="in"/>
+    </method>
   </interface>
 </node>
