@@ -30,6 +30,9 @@ public:
 
     void setState(int i);
 
+protected:
+    virtual void resizeEvent (QResizeEvent * event);
+
 private:
     int m_state;
 

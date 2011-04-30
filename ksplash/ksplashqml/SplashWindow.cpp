@@ -20,6 +20,7 @@
 #include "SplashWindow.h"
 
 #include <QGraphicsObject>
+#include <QDeclarativeContext>
 
 SplashWindow::SplashWindow()
     : QDeclarativeView(), m_state(0)
@@ -29,10 +30,8 @@ SplashWindow::SplashWindow()
             Qt::WindowStaysOnTopHint
         );
 
+    rootContext()->setContextProperty("screenSize", size());
     setSource(QUrl("/opt/kde/src/workspace/ksplash/ksplashqml/qml/demo.qml"));
-
-    rootObject()->setProperty("width", size().width());
-    rootObject()->setProperty("height", size().height());
 }
 
 void SplashWindow::setState(int state)
@@ -40,5 +39,10 @@ void SplashWindow::setState(int state)
     m_state = state;
 
     rootObject()->setProperty("state", state);
+}
+
+void SplashWindow::resizeEvent(QResizeEvent * event)
+{
+    rootContext()->setContextProperty("screenSize", size());
 }
 

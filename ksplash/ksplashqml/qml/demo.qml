@@ -23,8 +23,8 @@ import Qt 4.7 as QML
 QML.Item {
     id: main
 
-    width: 1024
-    height: 600
+    width: screenSize.width
+    height: screenSize.height
 
     /* property declarations --------------------------{{{ */
     property int state
