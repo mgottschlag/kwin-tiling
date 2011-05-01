@@ -635,7 +635,7 @@ KGreeter::pluginSetup()
     QString ent, pn(verify->pluginName()), dn(dName + '_' + pn);
 
     if (_preselUser != PRESEL_PREV)
-        stsGroup->deleteEntry(verify->entitiesLocal() ? dName : dn, false);
+        stsGroup->deleteEntry(verify->entitiesLocal() ? dName : dn, 0);
     if (_preselUser != PRESEL_NONE && verify->entityPresettable()) {
         if (verify->entitiesLocal())
             ent = _preselUser == PRESEL_PREV ?

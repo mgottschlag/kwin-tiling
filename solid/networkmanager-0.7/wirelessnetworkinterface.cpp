@@ -190,7 +190,7 @@ void NMWirelessNetworkInterface::accessPointRemoved(const QDBusObjectPath &apPat
 
 Solid::Control::WirelessNetworkInterface::OperationMode NMWirelessNetworkInterface::convertOperationMode(uint theirMode)
 {
-    Solid::Control::WirelessNetworkInterface::OperationMode ourMode;
+    Solid::Control::WirelessNetworkInterface::OperationMode ourMode = Solid::Control::WirelessNetworkInterface::Unassociated;
     switch ( theirMode ) {
         case NM_802_11_MODE_UNKNOWN:
             ourMode = Solid::Control::WirelessNetworkInterface::Unassociated;
