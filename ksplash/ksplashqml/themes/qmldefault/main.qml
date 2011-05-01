@@ -160,7 +160,7 @@ Item {
         smooth: true
 
         x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
+        y: (parent.height - height) / 2 - 1
 
         source: "images/kdelogo-contrast.png"
 
@@ -168,7 +168,7 @@ Item {
         Behavior on opacity { NumberAnimation { duration: 1000; easing { type: Easing.InOutQuad } } }
 
         Text {
-            text: "KDE is up and running :) <-- just a joke"
+            text: "KDE Workspaces 4.7 'Friday'"
             color: "white"
 
             x: logo.width + 8
