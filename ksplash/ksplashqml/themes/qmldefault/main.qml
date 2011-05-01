@@ -18,16 +18,19 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import Qt 4.7 as QML
+import Qt 4.7
 
-QML.Item {
+Item {
     id: main
 
     width: screenSize.width
     height: screenSize.height
+    // width: 300
+    // height: 300
 
     /* property declarations --------------------------{{{ */
     property int state
+    property int iconSize: (screenSize.width <= 1024) ? 64 : 128
     /* }}} */
 
     /* signal declarations ----------------------------{{{ */
@@ -36,24 +39,23 @@ QML.Item {
 
     /* JavaScript functions ---------------------------{{{ */
     onStateChanged: {
+        if (state == 1) {
+            background.opacity = 1
+            gear.opacity = 0.5
+        }
         if (state == 2) {
-            state1.opacity = 1
-            progressBar.progress = 20
+            gear.opacity = 1
+            mask.opacity = 1
+            letter.opacity = 1
         }
         if (state == 3) {
-            progressBar.progress = 40
         }
         if (state == 4) {
-            state2.opacity = 0.33
-            progressBar.progress = 60
         }
         if (state == 5) {
-            state2.opacity = 0.67
-            progressBar.progress = 80
+            logo.opacity = 1
         }
         if (state == 6) {
-            state2.opacity = 1
-            progressBar.progress = 100
         }
     }
     /* }}} */
@@ -63,101 +65,115 @@ QML.Item {
     /* }}} */
 
     /* child objects ----------------------------------{{{ */
-    QML.Rectangle {
-        anchors.fill: parent
-        gradient: QML.Gradient {
-            QML.GradientStop { position: 0.0; color: "#111111" }
-            QML.GradientStop { position: 0.5; color: "#222222" }
-            QML.GradientStop { position: 1.0; color: "#111111" }
-        }
-    }
 
-    QML.Image {
-        id: state1
-
-        height: 64
-        width: 64
-        smooth: true
-
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-
-        source: "images/kde1.png"
-
-        opacity: 0
-        QML.Behavior on opacity { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
-    }
-
-    QML.Image {
-        id: state2
-
-        height: 64
-        width: 64
-        smooth: true
-
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-
-        source: "images/kde2.png"
-
-        opacity: 0
-        QML.Behavior on opacity { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
-    }
-
-    QML.Rectangle {
-        id: progressBarBackground
-        x: progressBar.x
-        y: progressBar.y
-        height: progressBar.height
-        width: state1.width
-        radius: 2
-
+    Rectangle {
         color: "black"
+        anchors.fill: parent
     }
 
-//    QML.Rectangle {
-//        id: progressBarGlow1
-//        y: progressBar.y - radius / 2
-//        x: progressBar.x - radius / 2
-//        height: progressBar.height + radius
-//        width: progressBar.width + radius
-//        radius: 4
-//
-//        color: "white"
-//        opacity: progressBar.opacity / 4
-//    }
-//
-//    QML.Rectangle {
-//        id: progressBarGlow2
-//        y: progressBar.y - radius / 2
-//        x: progressBar.x - radius / 2
-//        height: progressBar.height + radius
-//        width: progressBar.width + radius
-//        radius: 2
-//
-//        color: "white"
-//        opacity: progressBar.opacity / 2
-//    }
+    Rectangle {
+        id: background
 
-    QML.Rectangle {
-        id: progressBar
-        y: state1.y + state1.height + 8
-        x: state1.x
-        height: 2
-        width: 0
-        radius: 1
-
-        color: "white"
-        opacity: (state1.opacity + state2.opacity) / 2
-
-        property int progress: 0
-
-        onProgressChanged: {
-            width = (state1.width * progress) / 100
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#55555f" }
+            GradientStop { position: 1.0; color: "#000000" }
         }
 
-        QML.Behavior on opacity { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
-        QML.Behavior on width { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+
+        height: gear.y - 32
+
+        opacity: 0
+        Behavior on opacity { NumberAnimation { duration: 1000; easing { type: Easing.InOutQuad } } }
+    }
+
+    Image {
+        id: gear
+
+        height: iconSize
+        width: iconSize
+        smooth: true
+
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        source: "images/kdegear.png"
+
+        opacity: 0
+        Behavior on opacity { NumberAnimation { duration: 1000; easing { type: Easing.InOutQuad } } }
+
+        NumberAnimation {
+            id: animateRotation
+            target: gear
+            properties: "rotation"
+            from: 0
+            to: 360
+            duration: 5000
+
+            loops: Animation.Infinite
+            running: true
+        }
+
+    }
+
+    Image {
+        id: mask
+
+        height: iconSize
+        width: iconSize
+        smooth: true
+
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        source: "images/kdemask.png"
+
+        opacity: 0
+        Behavior on opacity { NumberAnimation { duration: 1000; easing { type: Easing.InOutQuad } } }
+    }
+
+    Image {
+        id: letter
+
+        height: iconSize
+        width: iconSize
+        smooth: true
+
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        source: "images/kdeletter.png"
+
+        opacity: 0
+        Behavior on opacity { NumberAnimation { duration: 1000; easing { type: Easing.InOutQuad } } }
+    }
+
+    Image {
+        id: logo
+
+        height: iconSize
+        width: iconSize
+        smooth: true
+
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        source: "images/kdelogo-contrast.png"
+
+        opacity: 0
+        Behavior on opacity { NumberAnimation { duration: 1000; easing { type: Easing.InOutQuad } } }
+
+        Text {
+            text: "KDE is up and running :) <-- just a joke"
+            color: "white"
+
+            x: logo.width + 8
+            y: (logo.height - height) / 2
+        }
     }
 
     /* }}} */
