@@ -554,6 +554,14 @@ void SplashInstaller::slotTest()
       KMessageBox::error(this,i18n("Failed to successfully test the splash screen."));
     return;
   }
+  else if( mEngineOfSelected == "KSplashQML" )
+  {
+    KProcess proc;
+    proc << "ksplashqml" << themeName << "--test";
+    if (proc.execute())
+      KMessageBox::error(this,i18n("Failed to successfully test the splash screen."));
+    return;
+  }
   else // KSplashML engines
   {
     KProcess proc;
