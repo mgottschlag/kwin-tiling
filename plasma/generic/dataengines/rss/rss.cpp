@@ -29,6 +29,7 @@
 #include <syndication/item.h>
 #include <syndication/loader.h>
 #include <syndication/image.h>
+#include <syndication/person.h>
 
 //Plasma
 #include <Plasma/DataEngine>
@@ -228,8 +229,15 @@ void RssEngine::processRss(Syndication::Loader* loader,
                 iconRequested = true;
             }
             dataItem["icon"] = m_feedIcons[url.toLower()];
+            QStringList authors;
+            foreach (const boost::shared_ptr<Syndication::Person> a, item->authors()) {
+                authors << a->name();
+            }
+            kDebug() << "authors from item:" << authors;
+            dataItem["author"] = authors;
 
             items.append(dataItem);
+
 
             if (!m_rssSourceNames.contains(url)) {
                 QMap<QString, QVariant> sourceItem;
