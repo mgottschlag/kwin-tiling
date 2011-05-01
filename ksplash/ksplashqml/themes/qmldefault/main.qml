@@ -37,6 +37,7 @@ QML.Item {
     /* JavaScript functions ---------------------------{{{ */
     onStateChanged: {
         if (state == 2) {
+            state1.opacity = 1
             progressBar.progress = 20
         }
         if (state == 3) {
@@ -83,6 +84,7 @@ QML.Item {
 
         source: "images/kde1.png"
 
+        opacity: 0
         QML.Behavior on opacity { QML.NumberAnimation { duration: 1000; easing { type: QML.Easing.InOutQuad } } }
     }
 
