@@ -20,22 +20,27 @@
 #ifndef SPLASH_WINDOW_H_
 #define SPLASH_WINDOW_H_
 
-#include <QObject>
 #include <QDeclarativeView>
 
-class SplashWindow: public QDeclarativeView {
+class QResizeEvent;
+class QMouseEvent;
+class QKeyEvent;
 
+class SplashWindow: public QDeclarativeView
+{
 public:
-    SplashWindow();
+    SplashWindow(bool testing);
 
     void setState(int i);
 
 protected:
-    virtual void resizeEvent (QResizeEvent * event);
+    virtual void resizeEvent (QResizeEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void mousePressEvent(QMouseEvent *event);
 
 private:
     int m_state;
-
+    bool m_testing;
 };
 
 #endif // SPLASH_WINDOW_H_

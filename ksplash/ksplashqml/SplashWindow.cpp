@@ -18,19 +18,28 @@
  */
 
 #include "SplashWindow.h"
+
+#include <QApplication>
+#include <QDeclarativeContext>
+#include <QGraphicsObject>
+#include <QKeyEvent>
+#include <QMouseEvent>
+
 #include "SystemInfo.h"
 
-#include <QGraphicsObject>
-#include <QDeclarativeContext>
-#include <QApplication>
-
-SplashWindow::SplashWindow()
-    : QDeclarativeView(), m_state(0)
+SplashWindow::SplashWindow(bool testing)
+    : QDeclarativeView(),
+      m_state(0),
+      m_testing(testing)
 {
     setWindowFlags(
             Qt::FramelessWindowHint |
             Qt::WindowStaysOnTopHint
         );
+
+    if (m_testing) {
+        setWindowState(Qt::WindowFullScreen);
+    }
 
     rootContext()->setContextProperty("screenSize", size());
     setSource(QUrl(themeDir(QApplication::arguments().at(1)) + "/main.qml"));
@@ -44,8 +53,24 @@ void SplashWindow::setState(int state)
     rootObject()->setProperty("state", state);
 }
 
-void SplashWindow::resizeEvent(QResizeEvent * event)
+void SplashWindow::resizeEvent(QResizeEvent *event)
 {
+    Q_UNUSED(event)
     rootContext()->setContextProperty("screenSize", size());
 }
 
+void SplashWindow::keyPressEvent(QKeyEvent *event)
+{
+    QDeclarativeView::keyPressEvent(event);
+    if (m_testing && !event->isAccepted() && event->key() == Qt::Key_Escape) {
+        close();
+    }
+}
+
+void SplashWindow::mousePressEvent(QMouseEvent *event)
+{
+    QDeclarativeView::mousePressEvent(event);
+    if (m_testing && !event->isAccepted()) {
+        close();
+    }
+}

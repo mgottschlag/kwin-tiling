@@ -28,7 +28,8 @@ SplashApp::SplashApp(Display * display, int argc, char ** argv)
       m_testing(false)
 {
     m_kde_splash_progress = XInternAtom(m_display, "_KDE_SPLASH_PROGRESS", False);
-    m_window = new SplashWindow();
+    m_testing = arguments().contains("--test");
+    m_window = new SplashWindow(m_testing);
 
     setState(1);
 
@@ -40,8 +41,7 @@ SplashApp::SplashApp(Display * display, int argc, char ** argv)
 
     XSelectInput(display, DefaultRootWindow(display), SubstructureNotifyMask);
 
-    if (m_testing = arguments().contains("--test")) {
-        m_window->setWindowState(Qt::WindowFullScreen);
+    if (m_testing) {
         m_timer.start(TEST_STEP_INTERVAL, this);
     }
 }
@@ -100,6 +100,7 @@ bool SplashApp::x11EventFilter(XEvent * xe)
 
 int SplashApp::x11ProcessEvent(XEvent * xe)
 {
+    Q_UNUSED(xe)
     return 0;
 }
 
