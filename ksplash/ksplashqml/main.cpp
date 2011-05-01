@@ -24,26 +24,38 @@
 
 int main(int argc, char **argv)
 {
+    bool test = false;
+    bool printPid = false;
+
+    for (int i = 1; i < argc; i++) {
+        if (strcmp("--test", argv[i]) == 0)
+            test = true;
+        else if (strcmp("--pid", argv[i]) == 0)
+            printPid = true;
+    }
+
     // lets fork and all that...
 
-// #define SPLASH_TEST
-#ifndef SPLASH_TEST
-    pid_t pid = fork();
-    if (pid < -1) {
-        return -1;
-    }
+    if (!test) {
+        pid_t pid = fork();
+        if (pid < -1) {
+            return -1;
+        }
 
-    if (pid != 0) {
-        // this is the parent process, returning pid of the fork
-        // printf("%d\n", pid);
-        return 0;
-    }
+        if (pid != 0) {
+            // this is the parent process, returning pid of the fork
+            if (printPid) {
+                std::cout << pid << std::endl;
+            }
 
-    // close stdin,stdout,stderr, otherwise startkde will block
-    close(0);
-    close(1);
-    close(2);
-#endif
+            return 0;
+        }
+
+        // close stdin,stdout,stderr, otherwise startkde will block
+        close(0);
+        close(1);
+        close(2);
+    }
 
     Display * display = XOpenDisplay(NULL);
 
