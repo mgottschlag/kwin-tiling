@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2010 by Ingomar Wesp <ingomar@wesp.name>                *
+ *   Copyright (C) 2010 - 2011 by Ingomar Wesp <ingomar@wesp.name>         *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -16,7 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA.         *
  ***************************************************************************/
-#include "launcherlist.h"
+#include "popuplauncherlist.h"
 
 // Qt
 #include <Qt>
@@ -29,7 +29,6 @@
 #include <QtGui/QApplication>
 #include <QtGui/QBrush>
 #include <QtGui/QDrag>
-#include <QtGui/QGraphicsGridLayout>
 #include <QtGui/QGraphicsItem>
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QGraphicsSceneDragDropEvent>
@@ -58,7 +57,6 @@
 #include <math.h>
 
 // Own
-#include "icongridlayout.h"
 #include "launcherdata.h"
 #include "launcher.h"
 
@@ -69,7 +67,7 @@ namespace Quicklaunch {
 class DropMarker : public Launcher {
 
 public:
-    DropMarker(LauncherList *parent)
+    DropMarker(PopupLauncherList *parent)
         : Launcher(LauncherData(), parent)
     {
         hide();
@@ -95,33 +93,23 @@ protected:
     }
 };
 
-LauncherList::LauncherList(LauncherListType type, QGraphicsItem *parent)
+PopupLauncherList::PopupLauncherList(QGraphicsItem *parent)
 :
     QGraphicsWidget(parent),
-    m_type(type),
     m_launchers(),
-    m_launcherNamesVisible(false),
     m_preferredIconSize(),
     m_locked(false),
-    m_layout(0),
+    m_layout(new QGraphicsLinearLayout()),
     m_mousePressedPos(),
     m_dropMarker(new DropMarker(this)),
     m_dropMarkerIndex(-1),
     m_placeHolder(0)
 {
-    if (type == IconGrid) {
-        m_layout = new IconGridLayout();
-        m_dropMarker->setOrientation(Qt::Vertical);
-    } else {
-        QGraphicsLinearLayout* layout = new QGraphicsLinearLayout();
-        layout->setOrientation(Qt::Vertical);
+    m_layout->setOrientation(Qt::Vertical);
 
-        m_layout = layout;
-
-        m_dropMarker->setOrientation(Qt::Horizontal);
-        m_dropMarker->setNameVisible(true);
-        m_dropMarker->setMaximumHeight(KIconLoader::SizeSmallMedium);
-    }
+    m_dropMarker->setOrientation(Qt::Horizontal);
+    m_dropMarker->setNameVisible(true);
+    m_dropMarker->setMaximumHeight(KIconLoader::SizeSmallMedium);
 
     setLayout(m_layout);
     initPlaceHolder();
@@ -129,25 +117,8 @@ LauncherList::LauncherList(LauncherListType type, QGraphicsItem *parent)
     setLocked(false);
 }
 
-bool LauncherList::launcherNamesVisible() const
-{
-    return m_launcherNamesVisible || m_type == IconList;
-}
 
-void LauncherList::setLauncherNamesVisible(bool enable)
-{
-    if (enable == m_launcherNamesVisible || m_type == IconList) {
-        return;
-    }
-
-    Q_FOREACH (Launcher *launcher, m_launchers) {
-        launcher->setNameVisible(enable);
-    }
-    m_dropMarker->setNameVisible(enable);
-    m_launcherNamesVisible = enable;
-}
-
-void LauncherList::setPreferredIconSize(int size)
+void PopupLauncherList::setPreferredIconSize(int size)
 {
     QSizeF newSize(size, size);
 
@@ -167,49 +138,42 @@ void LauncherList::setPreferredIconSize(int size)
     }
 }
 
-bool LauncherList::locked() const
+bool PopupLauncherList::locked() const
 {
     return m_locked;
 }
 
-void LauncherList::setLocked(bool enable)
+void PopupLauncherList::setLocked(bool enable)
 {
     m_locked = enable;
     setAcceptDrops(!enable);
 }
 
-IconGridLayout * LauncherList::gridLayout() const
+QGraphicsLinearLayout * PopupLauncherList::layout() const
 {
-    return m_type == IconGrid ? static_cast<IconGridLayout*>(m_layout) : 0;
+    return m_layout;
 }
 
-QGraphicsLinearLayout * LauncherList::listLayout() const
-{
-    return m_type == IconList
-        ? static_cast<QGraphicsLinearLayout*>(m_layout)
-        : 0;
-}
-
-int LauncherList::launcherCount() const
+int PopupLauncherList::launcherCount() const
 {
     return m_launchers.size();
 }
 
-void LauncherList::clear()
+void PopupLauncherList::clear()
 {
     while(launcherCount() > 0) {
         removeAt(0);
     }
 }
 
-void LauncherList::insert(int index, const LauncherData &launcherData)
+void PopupLauncherList::insert(int index, const LauncherData &launcherData)
 {
     QList<LauncherData> launcherDataList;
     launcherDataList.append(launcherData);
     insert(index, launcherDataList);
 }
 
-void LauncherList::insert(int index, const QList<LauncherData> &launcherDataList)
+void PopupLauncherList::insert(int index, const QList<LauncherData> &launcherDataList)
 {
     if (launcherDataList.size() == 0) {
         return;
@@ -227,14 +191,9 @@ void LauncherList::insert(int index, const QList<LauncherData> &launcherDataList
 
         Launcher *launcher = new Launcher(launcherData);
 
-        if (m_type == IconGrid) {
-            launcher->setNameVisible(m_launcherNamesVisible);
-            launcher->setOrientation(Qt::Vertical);
-        } else {
-            launcher->setOrientation(Qt::Horizontal);
-            launcher->setNameVisible(true);
-            launcher->setMaximumHeight(KIconLoader::SizeSmallMedium);
-        }
+        launcher->setOrientation(Qt::Horizontal);
+        launcher->setNameVisible(true);
+        launcher->setMaximumHeight(KIconLoader::SizeSmallMedium);
 
         if (m_preferredIconSize.isValid()) {
             launcher->setPreferredIconSize(m_preferredIconSize);
@@ -255,11 +214,7 @@ void LauncherList::insert(int index, const QList<LauncherData> &launcherDataList
             }
         }
 
-        if (m_type == IconGrid) {
-            gridLayout()->insertItem(layoutIndex, launcher);
-        } else {
-            listLayout()->insertItem(layoutIndex, launcher);
-        }
+        m_layout->insertItem(layoutIndex, launcher);
 
         index++;
     }
@@ -267,7 +222,7 @@ void LauncherList::insert(int index, const QList<LauncherData> &launcherDataList
     Q_EMIT launchersChanged();
 }
 
-void LauncherList::removeAt(int index)
+void PopupLauncherList::removeAt(int index)
 {
     int layoutIndex = index;
 
@@ -289,12 +244,12 @@ void LauncherList::removeAt(int index)
     Q_EMIT launchersChanged();
 }
 
-LauncherData LauncherList::launcherAt(int index) const
+LauncherData PopupLauncherList::launcherAt(int index) const
 {
     return m_launchers.at(index)->launcherData();
 }
 
-int LauncherList::launcherIndexAtPosition(const QPointF& pos) const
+int PopupLauncherList::launcherIndexAtPosition(const QPointF& pos) const
 {
     for (int i = 0; i < m_launchers.size(); i++) {
         if (m_launchers.at(i)->geometry().contains(pos)) {
@@ -304,7 +259,7 @@ int LauncherList::launcherIndexAtPosition(const QPointF& pos) const
     return -1;
 }
 
-bool LauncherList::eventFilter(QObject *watched, QEvent *event)
+bool PopupLauncherList::eventFilter(QObject *watched, QEvent *event)
 {
     Launcher *sourceLauncher =
         qobject_cast<Launcher*>(watched);
@@ -352,12 +307,7 @@ bool LauncherList::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
-LauncherList::LauncherListType LauncherList::launcherListType() const
-{
-    return m_type;
-}
-
-void LauncherList::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+void PopupLauncherList::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     Q_ASSERT(!m_locked);
 
@@ -392,11 +342,7 @@ void LauncherList::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
                 m_dropMarker->setLauncherData(LauncherData());
                 m_dropMarker->setIcon("document-multiple");
 
-                if (m_launcherNamesVisible || m_type == IconList) {
-                    m_dropMarker->setText(i18n("Multiple items"));
-                } else {
-                    m_dropMarker->setText(QString());
-                }
+                m_dropMarker->setText(i18n("Multiple items"));
             }
 
             if (m_launchers.size() != 0) {
@@ -408,13 +354,7 @@ void LauncherList::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
                 m_dropMarkerIndex = 0;
             }
 
-            if (m_type == IconGrid) {
-                gridLayout()->insertItem(m_dropMarkerIndex, m_dropMarker);
-            }
-            else {
-                listLayout()->insertItem(m_dropMarkerIndex, m_dropMarker);
-            }
-
+            m_layout->insertItem(m_dropMarkerIndex, m_dropMarker);
             m_dropMarker->show();
 
             event->accept();
@@ -428,7 +368,7 @@ void LauncherList::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 
-void LauncherList::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
+void PopupLauncherList::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
     // DragMoveEvents are always preceded by DragEnterEvents
     Q_ASSERT(m_dropMarkerIndex != -1);
@@ -437,20 +377,15 @@ void LauncherList::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
         determineDropMarkerIndex(mapFromScene(event->scenePos()));
 
     if (newDropMarkerIndex != m_dropMarkerIndex) {
-        if (m_type == IconGrid) {
-            gridLayout()->moveItem(m_dropMarkerIndex, newDropMarkerIndex);
-        } else {
-            QGraphicsLinearLayout *layout = listLayout();
 
-            layout->removeAt(m_dropMarkerIndex);
-            layout->insertItem(newDropMarkerIndex, m_dropMarker);
-        }
+        m_layout->removeAt(m_dropMarkerIndex);
+        m_layout->insertItem(newDropMarkerIndex, m_dropMarker);
 
         m_dropMarkerIndex = newDropMarkerIndex;
     }
 }
 
-void LauncherList::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
+void PopupLauncherList::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
     Q_UNUSED(event);
 
@@ -467,7 +402,7 @@ void LauncherList::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 
-void LauncherList::dropEvent(QGraphicsSceneDragDropEvent *event)
+void PopupLauncherList::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     int dropIndex = m_dropMarkerIndex;
 
@@ -489,13 +424,13 @@ void LauncherList::dropEvent(QGraphicsSceneDragDropEvent *event)
     event->accept();
 }
 
-void LauncherList::onPlaceHolderActivated()
+void PopupLauncherList::onPlaceHolderActivated()
 {
     Q_ASSERT(m_placeHolder);
     Plasma::ToolTipManager::self()->show(m_placeHolder);
 }
 
-void LauncherList::initPlaceHolder()
+void PopupLauncherList::initPlaceHolder()
 {
     Q_ASSERT(!m_placeHolder);
 
@@ -509,15 +444,10 @@ void LauncherList::initPlaceHolder()
     Plasma::ToolTipManager::self()->setContent(m_placeHolder, tcp);
 
     connect(m_placeHolder, SIGNAL(activated()), SLOT(onPlaceHolderActivated()));
-
-    if (m_type == IconGrid) {
-        gridLayout()->addItem(m_placeHolder);
-    } else {
-        listLayout()->addItem(m_placeHolder);
-    }
+    m_layout->addItem(m_placeHolder);
 }
 
-void LauncherList::deletePlaceHolder()
+void PopupLauncherList::deletePlaceHolder()
 {
     Q_ASSERT(m_placeHolder);
 
@@ -527,51 +457,21 @@ void LauncherList::deletePlaceHolder()
     m_placeHolder = 0;
 }
 
-int LauncherList::determineDropMarkerIndex(const QPointF &localPos) const
+int PopupLauncherList::determineDropMarkerIndex(const QPointF &localPos) const
 {
     if (m_placeHolder) {
         return 0;
     }
 
     // Determine the new index of the drop marker.
-    if (m_type == IconGrid) {
+    const int itemCount = m_layout->count();
 
-        IconGridLayout *layout = gridLayout();
-        Q_ASSERT(layout);
-
-        const int rowCount = layout->rowCount();
-        const int columnCount = layout->columnCount();
-
-        int row = 0;
-        while (row + 1 < rowCount && localPos.y() > layout->itemAt(row + 1, 0)->geometry().top()) {
-            row++;
-        }
-
-        int col = 0;
-        while (col + 1 < columnCount && localPos.x() > layout->itemAt(0, col + 1)->geometry().left()) {
-            col++;
-        }
-
-        int newDropMarkerIndex = row * columnCount + col;
-
-        if (newDropMarkerIndex > m_launchers.size())
-            newDropMarkerIndex = m_launchers.size();
-
-        return newDropMarkerIndex;
-
-    } else {
-        QGraphicsLinearLayout *layout = listLayout();
-
-        const int itemCount = layout->count();
-
-        int index = 0;
-        while (index + 1 < itemCount && localPos.y() > layout->itemAt(index + 1)->geometry().top()) {
-            index++;
-        }
-
-        return index;
+    int index = 0;
+    while (index + 1 < itemCount && localPos.y() > m_layout->itemAt(index + 1)->geometry().top()) {
+        index++;
     }
+    return index;
 }
 }
 
-#include "launcherlist.moc"
+#include "popuplauncherlist.moc"

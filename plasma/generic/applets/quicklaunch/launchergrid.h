@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2010 by Ingomar Wesp <ingomar@wesp.name>                *
+ *   Copyright (C) 2010 - 2011 by Ingomar Wesp <ingomar@wesp.name>         *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -16,11 +16,12 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA.         *
  ***************************************************************************/
-#ifndef QUICKLAUNCH_LAUNCHERLIST_H
-#define QUICKLAUNCH_LAUNCHERLIST_H
+#ifndef QUICKLAUNCH_LAUNCHERGRID_H
+#define QUICKLAUNCH_LAUNCHERGRID_H
 
 // Qt
 #include <Qt>
+#include <QtGlobal>
 #include <QtCore/QList>
 #include <QtCore/QPointF>
 #include <QtGui/QGraphicsWidget>
@@ -37,8 +38,6 @@
 class QAction;
 class QEvent;
 class QGraphicsItem;
-class QGraphicsLayout;
-class QGraphicsLinearLayout;
 class QGraphicsSceneResizeEvent;
 class QGraphicsSceneDragDropEvent;
 class QGraphicsSceneMouseEvent;
@@ -54,70 +53,73 @@ class IconGridLayout;
 class Launcher;
 
 /**
- * The LauncherList is a QGraphicsWidget that displays and manages Launchers.
- * Depending on its type, it uses different layouts for presenting
- * the launchers it governs. Since all launchers are managed by the
- * LauncherList and its layout, they should not be accessed directly, but
- * rather added or removed by passing LauncherData objects.
+ * The LauncherGrid is a QGraphicsWidget that displays and manages a grid of
+ * multiple Launchers.
+ * Since all launchers are managed by the LauncherGrid and its layout, they
+ * should not be accessed directly, but rather added or removed by passing
+ * LauncherData objects.
  *
- * LauncherList also takes care of drag & drop handling.
+ * LauncherGrid also takes care of drag & drop handling.
  */
-class LauncherList : public QGraphicsWidget
+class LauncherGrid : public QGraphicsWidget
 {
     Q_OBJECT
 
 public:
 
-    enum LauncherListType {
-        IconGrid, /** A grid of launchers managed by an IconGridLayout. */
-        IconList  /** A vertical list of launchers. */
+    enum LayoutMode {
+        PreferColumns, /**< Prefer columns over rows. */
+        PreferRows     /**< Prefer rows over columns. */
     };
 
     /**
-     * Creates a new LauncherList of the given type with the given parent item.
+     * Creates a new LauncherGrid with the given parent item.
      *
-     * @param type the type of the LauncherList
      * @param parent the parent QGraphicsItem
      */
-    explicit LauncherList(LauncherListType type, QGraphicsItem *parent = 0);
+    explicit LauncherGrid(QGraphicsItem *parent = 0);
 
     bool launcherNamesVisible() const;
     void setLauncherNamesVisible(bool enable);
     void setPreferredIconSize(int size);
 
+    LayoutMode layoutMode() const;
+    void setLayoutMode(LayoutMode);
+
+    int maxSectionCount() const;
+
+   /**
+    * Depending on the mode, @c setMaxSectionCount limits either the
+    * number of rows or the number of columns that are displayed. In
+    * @c PreferColumns mode, @a maxSectionCount limites the maximum
+    * number of columns while in @c PreferRows mode, it applies to
+    * the maximum number of rows.
+    *
+    * Setting @a maxSectionCount to @c 0 disables the limitation.
+    *
+    * @param maxSectionCount the maximum number of rows or columns
+    *    (depending on the mode) that should be displayed.
+    */
+   void setMaxSectionCount(int maxSectionCount);
+
+   bool maxSectionCountForced() const;
+   void setMaxSectionCountForced(bool enable);
+
     /**
-     * Indicates whether this LauncherList is locked and thus does not allow
+     * Indicates whether this LauncherGrid is locked and thus does not allow
      * adding, removing or reordering launchers by drag & drop.
      */
     bool locked() const;
 
     /**
-     * Locks or unlocks this LauncherList.
+     * Locks or unlocks this LauncherGrid.
      *
-     * @param enable whether this LauncherList should be locked, thereby
+     * @param enable whether this LauncherGrid should be locked, thereby
      * disabling adding, removing or reordering launchers by drag & drop.
      */
     void setLocked(bool enable);
 
-    /**
-     * Returns the IconGridLayout used to layout LauncherLists that have
-     * the type IconGrid. Returns 0 if this LauncherList is of a different type.
-     * This is a convenience method that allows callers to avoid casting
-     * the QGraphicsLayout returned by layout().
-     *
-     * @return the IconGridLayout used by this LauncherList
-     */
-    IconGridLayout *gridLayout() const;
-
-    /**
-     * Returns the QGraphicsLinearLayout used to layout LauncherLists that have
-     * the type IconList. Returns 0 if this LauncherList is of a different type.
-     * This is a convenience method that allows callers to avoid casting
-     * the QGraphicsLayout returned by layout().
-     *
-     * @return the QGraphicsLinearLayout used by this LauncherList
-     */
-    QGraphicsLinearLayout *listLayout() const;
+    IconGridLayout *layout() const;
 
     int launcherCount() const;
 
@@ -129,13 +131,6 @@ public:
     int launcherIndexAtPosition(const QPointF& pos) const;
 
     bool eventFilter(QObject *watched, QEvent *event);
-
-    /**
-     * Returns the type of this LauncherList.
-     *
-     * @return the type of this LauncherList
-     */
-    LauncherListType launcherListType() const;
 
 Q_SIGNALS:
     /**
@@ -162,13 +157,12 @@ private:
     void deletePlaceHolder();
     int determineDropMarkerIndex(const QPointF &localPos) const;
 
-    LauncherListType m_type;
     QList<Launcher*> m_launchers;
     bool m_launcherNamesVisible;
     QSizeF m_preferredIconSize;
     bool m_locked;
 
-    QGraphicsLayout *m_layout;
+    IconGridLayout *m_layout;
 
     QPointF m_mousePressedPos;
     DropMarker *m_dropMarker;
@@ -177,4 +171,4 @@ private:
 };
 }
 
-#endif /* QUICKLAUNCH_LAUNCHERLIST_H */
+#endif /* QUICKLAUNCH_LAUNCHERGRID_H */
