@@ -1,8 +1,8 @@
-[KSplash Theme: QMLtest]
-Name = Default Splash Screen
-Description = Air and Horos Splash Screen
+[KSplash Theme: qmldefault]
+Name = Minimalistic splash screen
+Description = Animated KDE logo on a black background
 Version = 1.0
-Author = Nuno Pinheiro <nuno@oxygen-icons.org>, Riccardo Iaconelli <riccardo@kde.org> and Marco Martin <notmart@gmail.com>
+Author = Ivan Cukic <ivan.cukic at kde.org>
 Homepage = http://www.kde.org
 
 # Theme behaviour settings.
