@@ -41,6 +41,7 @@ SplashApp::SplashApp(Display * display, int argc, char ** argv)
     XSelectInput(display, DefaultRootWindow(display), SubstructureNotifyMask);
 
     if (m_testing = arguments().contains("--test")) {
+        m_window->setWindowState(Qt::WindowFullScreen);
         m_timer.start(TEST_STEP_INTERVAL, this);
     }
 }
