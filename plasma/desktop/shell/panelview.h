@@ -255,10 +255,8 @@ private Q_SLOTS:
      */
     void updatePanelGeometry();
 
-    /**
-     * a shadow is needed only if the containment supports it and composite is on
-     */
-    void checkShadow();
+    void updateShadow();
+    void adjustShadow();
 
     void themeChanged();
     void setPanelDragPosition(const QPoint &point);
@@ -270,11 +268,11 @@ private:
     GlowBar *m_glowBar;
     QTimer *m_mousePollTimer;
     QTimer *m_strutsTimer;
+    QTimer *m_adjustShadowTimer;
     QTimer *m_rehideAfterAutounhideTimer;
     QTimeLine *m_timeLine;
     QGraphicsWidget *m_spacer;
     int m_spacerIndex;
-    ShadowWindow *m_shadowWindow;
 
     int m_offset;
     Qt::Alignment m_alignment;
