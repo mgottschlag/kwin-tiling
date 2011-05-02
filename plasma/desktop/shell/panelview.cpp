@@ -363,6 +363,7 @@ void PanelView::updateShadow()
 
 void PanelView::adjustShadow()
 {
+#ifdef Q_WS_X11
     const QRect screenRect = PlasmaApp::self()->corona()->screenGeometry(screen());
     const QRect geo = geometry();
     const bool top = geo.top() > screenRect.top();
@@ -410,10 +411,11 @@ void PanelView::adjustShadow()
         XDeleteProperty(dpy, winId(), atom);
     } else {
         const QString data = elements.join(", ");
-        kDebug() << "going to set the shadow of" << winId() << "to" << data;
+        //kDebug() << "going to set the shadow of" << winId() << "to" << data;
         XChangeProperty(dpy, winId(), atom, atom, 8, PropModeReplace,
-                reinterpret_cast<const unsigned char *>(data.toAscii().data()), data.size());
+                        reinterpret_cast<const unsigned char *>(data.toAscii().data()), data.size());
     }
+#endif
 }
 
 void PanelView::setPanelDragPosition(const QPoint &point)
