@@ -62,31 +62,54 @@ void PanelShadows::setupPixmaps()
     m_shadowPixmaps << pixmap("shadow-bottomleft");
     m_shadowPixmaps << pixmap("shadow-left");
     m_shadowPixmaps << pixmap("shadow-topleft");
+
+    m_data.clear();
+    foreach (const QPixmap &pixmap, m_shadowPixmaps) {
+        m_data << pixmap.handle();
+    }
+
+    QSize marginHint = elementSize("shadow-hint-top-margin");
+    if (marginHint.isValid()) {
+        m_data << marginHint.height();
+    } else {
+        m_data << m_shadowPixmaps[0].height(); // top
+    }
+
+    marginHint = elementSize("shadow-hint-right-margin");
+    if (marginHint.isValid()) {
+        m_data << marginHint.width();
+    } else {
+        m_data << m_shadowPixmaps[2].width(); // right
+    }
+
+    marginHint = elementSize("shadow-hint-bottom-margin");
+    if (marginHint.isValid()) {
+        m_data << marginHint.height();
+    } else {
+        m_data << m_shadowPixmaps[4].height(); // bottom
+    }
+
+    marginHint = elementSize("shadow-hint-left-margin");
+    if (marginHint.isValid()) {
+        m_data << marginHint.width();
+    } else {
+        m_data << m_shadowPixmaps[6].width(); // left
+    }
 }
 
 void PanelShadows::updateShadows(WId wid)
 {
 #ifdef Q_WS_X11
-    if (m_shadowPixmaps.isEmpty()) {
+    if (m_data.isEmpty()) {
         setupPixmaps();
     }
-
-    QVector<unsigned long> data;
-    foreach (const QPixmap &pixmap, m_shadowPixmaps) {
-        data.push_back(pixmap.handle());
-    }
-
-    data << m_shadowPixmaps[0].height(); // top
-    data << m_shadowPixmaps[2].width(); // right
-    data << m_shadowPixmaps[4].height(); // bottom
-    data << m_shadowPixmaps[6].width(); // left
 
     Display *dpy = QX11Info::display();
     Atom atom = XInternAtom(dpy, "_KDE_NET_WM_SHADOW", False);
 
     //kDebug() << "going to set the shadow of" << winId() << "to" << data;
-        XChangeProperty(dpy, wid, atom, XA_CARDINAL, 32, PropModeReplace,
-                        reinterpret_cast<const unsigned char *>(data.constData()), data.size());
+    XChangeProperty(dpy, wid, atom, XA_CARDINAL, 32, PropModeReplace,
+                    reinterpret_cast<const unsigned char *>(m_data.constData()), m_data.size());
 #endif
 }
 

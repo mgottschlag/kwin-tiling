@@ -41,6 +41,7 @@ private:
     void updateShadows(WId wid);
 
     QList<QPixmap> m_shadowPixmaps;
+    QVector<unsigned long> m_data;
     QSet<WId> m_wids;
 };
 
