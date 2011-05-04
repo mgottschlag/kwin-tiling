@@ -46,6 +46,7 @@
 #include "desktopcorona.h"
 #include "panelappletoverlay.h"
 #include "panelcontroller.h"
+#include "panelshadows.h"
 #include "plasmaapp.h"
 
 class GlowBar : public QWidget
@@ -195,6 +196,7 @@ private:
     QPixmap m_buffer;
 };
 
+PanelShadows *PanelView::s_shadows = 0;
 
 PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     : Plasma::View(panel, id, parent),
@@ -202,7 +204,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_glowBar(0),
       m_mousePollTimer(0),
       m_strutsTimer(new QTimer(this)),
-      m_adjustShadowTimer(new QTimer(this)),
       m_rehideAfterAutounhideTimer(new QTimer(this)),
       m_spacer(0),
       m_spacerIndex(-1),
@@ -215,6 +216,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_triggerEntered(false),
       m_respectStatus(true)
 {
+    PlasmaApp::self()->panelShadows()->addWinId(winId());
+
     // KWin setup
     KWindowSystem::setOnAllDesktops(winId(), true);
     KWindowSystem::setType(winId(), NET::Dock);
@@ -222,10 +225,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     m_strutsTimer->setSingleShot(true);
     connect(m_strutsTimer, SIGNAL(timeout()), this, SLOT(updateStruts()));
-
-    m_adjustShadowTimer->setSingleShot(true);
-    m_adjustShadowTimer->setInterval(100);
-    connect(m_adjustShadowTimer, SIGNAL(timeout()), this, SLOT(adjustShadow()));
 
     // this timer controls checks to re-hide a panel after it's been unhidden
     // for the user because, e.g., something is demanding attention
@@ -295,6 +294,7 @@ PanelView::~PanelView()
 
     delete m_glowBar;
     destroyUnhideTrigger();
+    PlasmaApp::self()->panelShadows()->removeWinId(winId());
 #ifdef Q_WS_WIN
     registerAccessBar(false);
 #endif
@@ -343,7 +343,6 @@ void PanelView::setContainment(Plasma::Containment *containment)
     kDebug() << "about to set the containment" << (QObject*)containment;
 
     updateStruts();
-    updateShadow();
 
     // if we are an autohiding panel, then see if the status mandates we do something about it
     if (m_visibilityMode != NormalPanel && m_visibilityMode != WindowsGoBelow) {
@@ -354,68 +353,6 @@ void PanelView::setContainment(Plasma::Containment *containment)
 void PanelView::themeChanged()
 {
     recreateUnhideTrigger();
-}
-
-void PanelView::updateShadow()
-{
-    m_adjustShadowTimer->start();
-}
-
-void PanelView::adjustShadow()
-{
-#ifdef Q_WS_X11
-    const QRect screenRect = PlasmaApp::self()->corona()->screenGeometry(screen());
-    const QRect geo = geometry();
-    const bool top = geo.top() > screenRect.top();
-    const bool bottom = geo.bottom() < screenRect.bottom();
-
-    QStringList elements;
-    if (top) {
-        elements << "#top";
-    }
-
-    if (bottom) {
-        elements << "#bottom";
-    }
-
-    if (geo.left() > screenRect.left()) {
-        elements << "#left";
-
-        if (top) {
-            elements << "#top-left";
-        }
-
-        if (bottom) {
-            elements << "#bottom-left";
-        }
-    }
-
-    if (geo.right() < screenRect.right()) {
-        elements << "#right";
-
-        if (top) {
-            elements << "#top-right";
-        }
-
-        if (bottom) {
-            elements << "#bottom-right";
-        }
-    }
-
-    //FIXME: all elements? what size? how about default sizes???
-    elements << "10, 10, 10, 10";
-    Display *dpy = QX11Info::display();
-    Atom atom = XInternAtom(dpy, "_KDE_NET_WM_SHADOW", False);
-
-    if (elements.isEmpty()) {
-        XDeleteProperty(dpy, winId(), atom);
-    } else {
-        const QString data = elements.join(", ");
-        //kDebug() << "going to set the shadow of" << winId() << "to" << data;
-        XChangeProperty(dpy, winId(), atom, atom, 8, PropModeReplace,
-                        reinterpret_cast<const unsigned char *>(data.toAscii().data()), data.size());
-    }
-#endif
 }
 
 void PanelView::setPanelDragPosition(const QPoint &point)
@@ -1197,7 +1134,6 @@ void PanelView::moveEvent(QMoveEvent *event)
     m_strutsTimer->stop();
     m_strutsTimer->start(STRUTSTIMERDELAY);
     recreateUnhideTrigger();
-    updateShadow();
 
     if (containment()) {
         foreach (Plasma::Applet *applet, containment()->applets()) {
@@ -1216,8 +1152,6 @@ void PanelView::resizeEvent(QResizeEvent *event)
 #ifdef Q_WS_WIN
     appBarPosChanged();
 #endif
-
-    updateShadow();
 
     if (containment()) {
         foreach (Plasma::Applet *applet, containment()->applets()) {

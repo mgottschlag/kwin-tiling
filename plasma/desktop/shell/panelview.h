@@ -51,10 +51,8 @@ namespace Plasma
 }
 
 class PanelController;
-
 class PanelAppletOverlay;
-
-class ShadowWindow;
+class PanelShadows;
 
 class PanelView : public Plasma::View
 {
@@ -255,20 +253,15 @@ private Q_SLOTS:
      */
     void updatePanelGeometry();
 
-    void updateShadow();
-    void adjustShadow();
-
     void themeChanged();
     void setPanelDragPosition(const QPoint &point);
 
 private:
-    Plasma::Svg *m_background;
     PanelController *m_panelController;
     QSet<PanelAppletOverlay*> m_appletOverlays;
     GlowBar *m_glowBar;
     QTimer *m_mousePollTimer;
     QTimer *m_strutsTimer;
-    QTimer *m_adjustShadowTimer;
     QTimer *m_rehideAfterAutounhideTimer;
     QTimeLine *m_timeLine;
     QGraphicsWidget *m_spacer;
@@ -292,6 +285,7 @@ private:
     bool m_triggerEntered : 1;
     bool m_respectStatus : 1;
 
+    static PanelShadows *s_shadows;
     static const int STRUTSTIMERDELAY = 200;
     static const int AUTOUNHIDE_CHECK_DELAY = 3000;
 };
