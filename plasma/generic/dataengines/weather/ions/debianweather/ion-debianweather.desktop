@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Debian Weather Service
+Comment=XML Data from edos.debian.net
+X-KDE-ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=debian
+X-KDE-Library=ion_debianweather
+X-KDE-PluginInfo-Name=DebianWeather
+X-KDE-ParentApp=weatherengine
