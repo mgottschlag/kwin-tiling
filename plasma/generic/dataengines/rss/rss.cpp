@@ -233,7 +233,6 @@ void RssEngine::processRss(Syndication::Loader* loader,
             foreach (const boost::shared_ptr<Syndication::Person> a, item->authors()) {
                 authors << a->name();
             }
-            kDebug() << "authors from item:" << authors;
             dataItem["author"] = authors;
 
             items.append(dataItem);
