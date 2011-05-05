@@ -33,6 +33,7 @@ Comment[sv]=Visar Aktivitetshanteraren
 Comment[tr]=Etkinlik yöneticisini gösterir
 Comment[uk]=Показує вікно керування просторами дій
 Comment[x-test]=xxShows the activity managerxx
+Comment[zh_TW]=顯示活動管理員
 Icon=activities
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet

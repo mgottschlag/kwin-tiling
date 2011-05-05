@@ -14,6 +14,7 @@ Name[sv]=img.susepaste.org
 Name[tr]=img.susepaste.org
 Name[uk]=img.susepaste.org
 Name[x-test]=xximg.susepaste.orgxx
+Name[zh_TW]=img.susepaste.org
 Comment=Allows images to be shared using the susepaste.org service
 Comment[ca]=Permet la compartició d'imatges utilitzant el servei susepaste.org
 Comment[cs]=Povolí sdílení obrázků pomocí služby susepaste.org
@@ -29,6 +30,7 @@ Comment[sv]=Tillåter att bilder delas genom att använda tjänsten susepaste.or
 Comment[tr]=susepaste.org hizmeti kullanarak resim paylaşımı sağlar
 Comment[uk]=Уможливлює оприлюднення зображень за допомогою служби susepaste.org
 Comment[x-test]=xxAllows images to be shared using the susepaste.org servicexx
+Comment[zh_TW]=允許使用 susepaste.org 服務分享影像
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ShareProvider
