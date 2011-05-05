@@ -27,7 +27,7 @@
 #ifndef IONDEBIANWEATHER_H
 #define IONDEBIANWEATHER_H
 
-#include <Plasma/Weather/Ion>
+#include "../ion.h"
 #include <Plasma/DataEngine>
 
 class KJob;
