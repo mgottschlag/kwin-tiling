@@ -141,22 +141,25 @@ void Tasks::configChanged()
 
     // only update these if they have actually changed, because they make the
     // group manager reload its tasks list
-    bool showOnlyCurrentDesktop = cg.readEntry("showOnlyCurrentDesktop", false);
+    const bool showOnlyCurrentDesktop = cg.readEntry("showOnlyCurrentDesktop", false);
     if (showOnlyCurrentDesktop != m_groupManager->showOnlyCurrentDesktop()) {
         m_groupManager->setShowOnlyCurrentDesktop(showOnlyCurrentDesktop);
         changed = true;
     }
-    bool showOnlyCurrentActivity = cg.readEntry("showOnlyCurrentActivity", true);
+
+    const bool showOnlyCurrentActivity = cg.readEntry("showOnlyCurrentActivity", true);
     if (showOnlyCurrentActivity != m_groupManager->showOnlyCurrentActivity()) {
         m_groupManager->setShowOnlyCurrentActivity(showOnlyCurrentActivity);
         changed = true;
     }
-    bool showOnlyCurrentScreen = cg.readEntry("showOnlyCurrentScreen", false);
+
+    const bool showOnlyCurrentScreen = cg.readEntry("showOnlyCurrentScreen", false);
     if (showOnlyCurrentScreen != m_groupManager->showOnlyCurrentScreen()) {
         m_groupManager->setShowOnlyCurrentScreen(showOnlyCurrentScreen);
         changed = true;
     }
-    bool showOnlyMinimized = cg.readEntry("showOnlyMinimized", false);
+
+    const bool showOnlyMinimized = cg.readEntry("showOnlyMinimized", false);
     if (showOnlyMinimized != m_groupManager->showOnlyMinimized()) {
         m_groupManager->setShowOnlyMinimized(showOnlyMinimized);
         changed = true;
@@ -172,7 +175,7 @@ void Tasks::configChanged()
         changed = true;
     }
 
-    bool onlyGroupWhenFull = cg.readEntry("groupWhenFull", true);
+    const bool onlyGroupWhenFull = cg.readEntry("groupWhenFull", true);
     if (onlyGroupWhenFull != m_groupManager->onlyGroupWhenFull()) {
         adjustGroupingStrategy();
         m_groupManager->setOnlyGroupWhenFull(onlyGroupWhenFull);
@@ -184,30 +187,31 @@ void Tasks::configChanged()
             cg.readEntry("sortingStrategy",
                          static_cast<int>(TaskManager::GroupManager::AlphaSorting))
         );
+
     if (sortingStrategy != m_groupManager->sortingStrategy()) {
         m_groupManager->setSortingStrategy(sortingStrategy);
         changed = true;
     }
 
-    int maxRows = cg.readEntry("maxRows", 2);
+    const int maxRows = cg.readEntry("maxRows", 2);
     if (maxRows != m_rootGroupItem->maxRows()) {
         m_rootGroupItem->setMaxRows(maxRows);
         changed = true;
     }
 
-    bool forceRows = cg.readEntry("forceRows", false);
+    const bool forceRows = cg.readEntry("forceRows", false);
     if (forceRows != m_rootGroupItem->forceRows()) {
         m_rootGroupItem->setForceRows(forceRows);
         changed = true;
     }
 
-    bool showTooltip = cg.readEntry("showTooltip", true);
+    const bool showTooltip = cg.readEntry("showTooltip", true);
     if (showTooltip != m_showTooltip) {
         m_showTooltip = showTooltip;
         changed = true;
     }
 
-    bool highlightWindows = cg.readEntry("highlightWindows", false);
+    const bool highlightWindows = cg.readEntry("highlightWindows", false);
     if (highlightWindows != m_highlightWindows) {
         m_highlightWindows = highlightWindows;
         changed = true;
