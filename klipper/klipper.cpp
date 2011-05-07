@@ -127,6 +127,7 @@ static void ensureGlobalSyncOff(KSharedConfigPtr config);
 Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     : QObject( parent )
     , m_overflowCounter( 0 )
+    , m_bKeepContents( true )
     , m_locklevel( 0 )
     , m_config( config )
     , m_pendingContentsCheck( false )
