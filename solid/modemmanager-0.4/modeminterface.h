@@ -38,7 +38,7 @@ Q_PROPERTY(QString udi READ udi)
 public:
     MMModemInterface( const QString & path, MMModemManager * manager, QObject * parent );
     MMModemInterface( MMModemInterfacePrivate &dd, MMModemManager * manager, QObject * parent );
-    ~MMModemInterface();
+    virtual ~MMModemInterface();
 
     QString udi() const;
 
