@@ -161,10 +161,6 @@ void KSMServer::launchWM( const QList< QStringList >& wmStartCommands )
     wmProcess = startApplication( wmStartCommands[ 0 ], QString(), QString(), true );
     connect( wmProcess, SIGNAL( error( QProcess::ProcessError )), SLOT( wmProcessChange()));
     connect( wmProcess, SIGNAL( finished( int, QProcess::ExitStatus )), SLOT( wmProcessChange()));
-    // there can be possibly more wm's (because of forking for multihead),
-    // but in such case care only about the process of the first one
-    for (int i = 1; i < wmStartCommands.count(); i++)
-        startApplication( wmStartCommands[i] );
     QTimer::singleShot( 4000, this, SLOT( autoStart0() ) );
 }
 
