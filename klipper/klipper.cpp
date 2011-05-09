@@ -317,9 +317,11 @@ void Klipper::slotStartShowTimer()
 void Klipper::loadSettings()
 {
     // Security bug 142882: If user has save clipboard turned off, old data should be deleted from disk
-    if (m_bKeepContents && !KlipperSettings::keepClipboardContents()) {
+    static bool firstrun = true;
+    if (!firstrun && m_bKeepContents && !KlipperSettings::keepClipboardContents()) {
         saveHistory(true);
     }
+    firstrun=false;
 
     m_bKeepContents = KlipperSettings::keepClipboardContents();
     m_bReplayActionInHistory = KlipperSettings::replayActionInHistory();
