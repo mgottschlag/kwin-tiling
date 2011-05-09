@@ -34,6 +34,7 @@ void PollingWatcher::addFactory(PollingPlayerFactory* factory)
     } else {
         m_polledFactories.insert(factory);
     }
+
     if (!m_timer) {
         m_timer = new QTimer(this);
         m_timer->setInterval(5000);
