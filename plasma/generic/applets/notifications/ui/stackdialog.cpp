@@ -237,7 +237,9 @@ void StackDialog::resizeEvent(QResizeEvent *event)
     Q_UNUSED(event)
     adjustWindowToTilePos();
     Plasma::Dialog::resizeEvent(event);
-    if (!m_hasCustomPosition) {
+    if (m_hasCustomPosition) {
+        adjustPosition(pos());
+    } else {
         move(m_applet->containment()->corona()->popupPosition(m_applet, size()));
     }
 }
