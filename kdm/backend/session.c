@@ -549,7 +549,6 @@ manageSession(void)
     int ex, cmd;
     volatile int clientPid = -1;
     volatile time_t tdiff = 0;
-    sigset_t ss;
 
     debug("manageSession %s\n", td->name);
     if ((ex = Setjmp(abortSession))) {

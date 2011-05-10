@@ -380,6 +380,7 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     connect(d->generalUi.interval, SIGNAL(valueChanged(int)), parent, SLOT(settingsModified()));
     connect(d->timezonesUi.timeZones, SIGNAL(itemChanged(QTreeWidgetItem*,int)), parent, SLOT(settingsModified()));
     connect(d->timezonesUi.timeZones, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(updateClockDefaultsTo()));
+    connect(d->timezonesUi.clockDefaultsTo,SIGNAL(activated(const QString &)), parent, SLOT(settingsModified()));
 }
 
 void ClockApplet::createClockConfigurationInterface(KConfigDialog *parent)

@@ -36,7 +36,6 @@ AppLauncher::AppLauncher(QObject *parent, const QVariantList &args)
 {
     m_menu = new KMenu();
     connect(m_menu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
-    connect(m_menu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
 
     m_action->setMenu(m_menu);
 }

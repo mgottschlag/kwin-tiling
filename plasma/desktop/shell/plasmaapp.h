@@ -48,9 +48,10 @@ namespace Kephal {
 
 class ControllerWindow;
 class DesktopView;
-class PanelView;
 class DesktopCorona;
 class InteractiveConsole;
+class PanelShadows;
+class PanelView;
 
 class PlasmaApp : public KUniqueApplication
 {
@@ -73,6 +74,7 @@ public:
      * Returns the PanelViews
      */
     QList<PanelView*> panelViews() const;
+    PanelShadows *panelShadows() const;
 
     ControllerWindow *showWidgetExplorer(int screen, Plasma::Containment *c);
     void hideController(int screen);
@@ -159,6 +161,7 @@ private Q_SLOTS:
 
 private:
     DesktopCorona *m_corona;
+    PanelShadows *m_panelShadows;
 
     QList<PanelView*> m_panels;
     QList<QWeakPointer<Plasma::Containment> > m_panelsWaiting;

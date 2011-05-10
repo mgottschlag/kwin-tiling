@@ -46,6 +46,7 @@
 #include "desktopcorona.h"
 #include "panelappletoverlay.h"
 #include "panelcontroller.h"
+#include "panelshadows.h"
 #include "plasmaapp.h"
 
 class GlowBar : public QWidget
@@ -195,113 +196,7 @@ private:
     QPixmap m_buffer;
 };
 
-
-class ShadowWindow : public QWidget
-{
-public:
-    ShadowWindow(PanelView *panel)
-       : QWidget(0),
-         m_panel(panel),
-         m_valid(false)
-    {
-        setAttribute(Qt::WA_TranslucentBackground);
-        setAttribute(Qt::WA_NoSystemBackground, false);
-        setAutoFillBackground(false);
-#ifdef Q_WS_X11
-        QRegion region(QRect(0,0,1,1));
-        XShapeCombineRegion(QX11Info::display(), winId(), ShapeInput, 0, 0,
-                            region.handle(), ShapeSet);
-#endif
-
-        m_shadow = new Plasma::FrameSvg(this);
-    }
-
-    void setSvg(const QString &path)
-    {
-        m_shadow->setImagePath(path);
-
-        if (!m_shadow->hasElementPrefix("shadow")) {
-            hide();
-            m_valid = false;
-        } else {
-            m_valid = true;
-        }
-
-        m_shadow->setElementPrefix("shadow");
-        adjustMargins(geometry());
-    }
-
-    bool isValid() const
-    {
-        return m_valid;
-    }
-
-    void adjustMargins(const QRect &geo)
-    {
-        QRect screenRect = PlasmaApp::self()->corona()->screenGeometry(m_panel->screen());
-
-        Plasma::FrameSvg::EnabledBorders enabledBorders = Plasma::FrameSvg::AllBorders;
-        qreal left, top, right, bottom;
-
-        m_shadow->getMargins(left, top, right, bottom);
-
-        if (geo.left() + left/2 <= screenRect.left()) {
-            enabledBorders ^= Plasma::FrameSvg::LeftBorder;
-        }
-        if (geo.top() + top/2 <= screenRect.top()) {
-            enabledBorders ^= Plasma::FrameSvg::TopBorder;
-        }
-        if (geo.bottom() - bottom/2 >= screenRect.bottom()) {
-            enabledBorders ^= Plasma::FrameSvg::BottomBorder;
-        }
-        if (geo.right() - right/2 >= screenRect.right()) {
-            enabledBorders ^= Plasma::FrameSvg::RightBorder;
-        }
-
-        m_shadow->setEnabledBorders(enabledBorders);
-
-        m_shadow->getMargins(left, top, right, bottom);
-        setContentsMargins(left, top, right, bottom);
-    }
-
-    void adjustGeometry()
-    {
-        int left, right, top, bottom;
-        adjustMargins(m_panel->geometry());
-        getContentsMargins(&left, &top, &right, &bottom);
-        setGeometry(m_panel->geometry().adjusted(-left, -top, right, bottom));
-    }
-
-protected:
-    bool event(QEvent *event)
-    {
-        if (event->type() == QEvent::Paint) {
-            QPainter p(this);
-            p.setCompositionMode(QPainter::CompositionMode_Source);
-            p.fillRect(rect(), Qt::transparent);
-        }
-        return QWidget::event(event);
-    }
-
-    void resizeEvent(QResizeEvent *event)
-    {
-        m_shadow->resizeFrame(event->size());
-        adjustMargins(geometry());
-    }
-
-    void paintEvent(QPaintEvent *e)
-    {
-        QPainter p(this);
-        //p.setCompositionMode(QPainter::CompositionMode_Source);
-        m_shadow->paintFrame(&p, e->rect(), e->rect());
-    }
-
-
-private:
-    Plasma::FrameSvg *m_shadow;
-    PanelView *m_panel;
-    bool m_valid;
-};
+PanelShadows *PanelView::s_shadows = 0;
 
 PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     : Plasma::View(panel, id, parent),
@@ -312,7 +207,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_rehideAfterAutounhideTimer(new QTimer(this)),
       m_spacer(0),
       m_spacerIndex(-1),
-      m_shadowWindow(0),
 #ifdef Q_WS_X11
       m_unhideTrigger(None),
 #endif
@@ -322,6 +216,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_triggerEntered(false),
       m_respectStatus(true)
 {
+    PlasmaApp::self()->panelShadows()->addWinId(winId());
+
     // KWin setup
     KWindowSystem::setOnAllDesktops(winId(), true);
     KWindowSystem::setType(winId(), NET::Dock);
@@ -397,8 +293,8 @@ PanelView::~PanelView()
     }
 
     delete m_glowBar;
-    delete m_shadowWindow;
     destroyUnhideTrigger();
+    PlasmaApp::self()->panelShadows()->removeWinId(winId());
 #ifdef Q_WS_WIN
     registerAccessBar(false);
 #endif
@@ -447,7 +343,6 @@ void PanelView::setContainment(Plasma::Containment *containment)
     kDebug() << "about to set the containment" << (QObject*)containment;
 
     updateStruts();
-    checkShadow();
 
     // if we are an autohiding panel, then see if the status mandates we do something about it
     if (m_visibilityMode != NormalPanel && m_visibilityMode != WindowsGoBelow) {
@@ -457,32 +352,7 @@ void PanelView::setContainment(Plasma::Containment *containment)
 
 void PanelView::themeChanged()
 {
-    checkShadow();
     recreateUnhideTrigger();
-}
-
-void PanelView::checkShadow()
-{
-#ifndef Q_WS_WIN
-    if (KWindowSystem::compositingActive() && containment()->property("shadowPath").isValid()) {
-        if (!m_shadowWindow) {
-            m_shadowWindow = new ShadowWindow(this);
-            KWindowSystem::setOnAllDesktops(winId(), true);
-        }
-        KWindowSystem::setType(m_shadowWindow->winId(), NET::Dock);
-        KWindowSystem::setState(m_shadowWindow->winId(), NET::KeepBelow);
-        KWindowSystem::setOnAllDesktops(m_shadowWindow->winId(), true);
-        m_shadowWindow->setSvg(containment()->property("shadowPath").toString());
-
-        m_shadowWindow->adjustGeometry();
-        if (m_shadowWindow->isValid() && isVisible()) {
-            m_shadowWindow->show();
-        }
-    } else if (m_shadowWindow) {
-        m_shadowWindow->deleteLater();
-        m_shadowWindow = 0;
-    }
-#endif
 }
 
 void PanelView::setPanelDragPosition(const QPoint &point)
@@ -1265,10 +1135,6 @@ void PanelView::moveEvent(QMoveEvent *event)
     m_strutsTimer->start(STRUTSTIMERDELAY);
     recreateUnhideTrigger();
 
-    if (m_shadowWindow) {
-        m_shadowWindow->adjustGeometry();
-    }
-
     if (containment()) {
         foreach (Plasma::Applet *applet, containment()->applets()) {
             applet->updateConstraints(Plasma::PopupConstraint);
@@ -1286,10 +1152,6 @@ void PanelView::resizeEvent(QResizeEvent *event)
 #ifdef Q_WS_WIN
     appBarPosChanged();
 #endif
-
-    if (m_shadowWindow) {
-        m_shadowWindow->adjustGeometry();
-    }
 
     if (containment()) {
         foreach (Plasma::Applet *applet, containment()->applets()) {
@@ -1405,13 +1267,6 @@ void PanelView::unhide(bool destroyTrigger)
     if (!isVisible()) {
         Plasma::WindowEffects::slideWindow(this, location());
         show();
-
-        if (m_shadowWindow && m_shadowWindow->isValid()) {
-            Plasma::WindowEffects::slideWindow(m_shadowWindow, location());
-            m_shadowWindow->show();
-            KWindowSystem::setState(m_shadowWindow->winId(), NET::KeepBelow);
-            KWindowSystem::setOnAllDesktops(m_shadowWindow->winId(), true);
-        }
     }
 
     KWindowSystem::setOnAllDesktops(winId(), true);
@@ -1546,10 +1401,6 @@ void PanelView::startAutoHide()
     } else {
         Plasma::WindowEffects::slideWindow(this, location());
         createUnhideTrigger();
-        if (m_shadowWindow) {
-            Plasma::WindowEffects::slideWindow(m_shadowWindow, location());
-            m_shadowWindow->hide();
-        }
         hide();
     }
 }

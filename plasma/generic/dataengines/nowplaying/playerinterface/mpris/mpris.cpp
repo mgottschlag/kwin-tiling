@@ -103,14 +103,19 @@ void Mpris::setup()
                 this,   SLOT(stateChanged(MprisDBusStatus)));
 
         QDBusReply<int> caps = m_player->GetCaps();
-        if (caps.isValid())
+        if (caps.isValid()) {
             capsChanged(caps);
+        }
+
         QDBusReply<QVariantMap> metadata = m_player->GetMetadata();
-        if (metadata.isValid())
+        if (metadata.isValid()) {
             trackChanged(metadata);
+        }
+
         QDBusReply<MprisDBusStatus> status = m_player->GetStatus();
-        if (status.isValid())
+        if (status.isValid()) {
             stateChanged(status);
+        }
     }
 }
 
@@ -119,6 +124,7 @@ bool Mpris::isRunning()
     if (!m_player->isValid()) {
         setup();
     }
+
     return m_player->isValid();
 }
 
@@ -213,8 +219,9 @@ int Mpris::position()
 {
     if (m_player->isValid()) {
         QDBusReply<int> positionMs = m_player->PositionGet();
-        if (positionMs.isValid())
+        if (positionMs.isValid()) {
             return positionMs / 1000;
+        }
     }
     return 0;
 }

@@ -71,6 +71,12 @@
 #include "../core/manager.h"
 #include "taskarea.h"
 
+static const bool DEFAULT_SHOW_APPS = true;
+static const bool DEFAULT_SHOW_COMMUNICATION = true;
+static const bool DEFAULT_SHOW_SERVICES = true;
+static const bool DEFAULT_SHOW_HARDWARE = true;
+static const bool DEFAULT_SHOW_UNKNOWN = true;
+
 namespace SystemTray
 {
 
@@ -182,23 +188,23 @@ void Applet::configChanged()
 
     m_shownCategories.clear();
 
-    if (cg.readEntry("ShowApplicationStatus", gcg.readEntry("ShowApplicationStatus", false))) {
+    if (cg.readEntry("ShowApplicationStatus", gcg.readEntry("ShowApplicationStatus", DEFAULT_SHOW_APPS))) {
         m_shownCategories.insert(Task::ApplicationStatus);
     }
 
-    if (cg.readEntry("ShowCommunications", gcg.readEntry("ShowCommunications", true))) {
+    if (cg.readEntry("ShowCommunications", gcg.readEntry("ShowCommunications", DEFAULT_SHOW_COMMUNICATION))) {
         m_shownCategories.insert(Task::Communications);
     }
 
-    if (cg.readEntry("ShowSystemServices", gcg.readEntry("ShowSystemServices", true))) {
+    if (cg.readEntry("ShowSystemServices", gcg.readEntry("ShowSystemServices", DEFAULT_SHOW_SERVICES))) {
         m_shownCategories.insert(Task::SystemServices);
     }
 
-    if (cg.readEntry("ShowHardware", gcg.readEntry("ShowHardware", true))) {
+    if (cg.readEntry("ShowHardware", gcg.readEntry("ShowHardware", DEFAULT_SHOW_HARDWARE))) {
         m_shownCategories.insert(Task::Hardware);
     }
 
-    if (cg.readEntry("ShowUnknown", gcg.readEntry("ShowUnknown", true))) {
+    if (cg.readEntry("ShowUnknown", gcg.readEntry("ShowUnknown", DEFAULT_SHOW_UNKNOWN))) {
         m_shownCategories.insert(Task::UnknownCategory);
     }
 
@@ -571,7 +577,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     applicationStatusItem->setText(i18nc("Systemtray items that describe the status of a generic application", "Application status"));
     applicationStatusItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     bool checked = cg.readEntry("ShowApplicationStatus",
-                                gcg.readEntry("ShowApplicationStatus", true));
+                                gcg.readEntry("ShowApplicationStatus", DEFAULT_SHOW_APPS));
     applicationStatusItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
     applicationStatusItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     applicationStatusItem->setData("ShowApplicationStatus", Qt::UserRole+1);
@@ -581,7 +587,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     communicationsItem->setText(i18nc("Items communication related, such as chat or email clients", "Communications"));
     communicationsItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     checked = cg.readEntry("ShowCommunications",
-                           gcg.readEntry("ShowCommunications", true));
+                           gcg.readEntry("ShowCommunications", DEFAULT_SHOW_COMMUNICATION));
     communicationsItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
     communicationsItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     communicationsItem->setData("ShowCommunications", Qt::UserRole+1);
@@ -591,7 +597,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     systemServicesItem->setText(i18nc("Items about the status of the system, such as a filesystem indexer", "System services"));
     systemServicesItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     checked = cg.readEntry("ShowSystemServices",
-                           gcg.readEntry("ShowSystemServices", true));
+                           gcg.readEntry("ShowSystemServices", DEFAULT_SHOW_SERVICES));
     systemServicesItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
     systemServicesItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     systemServicesItem->setData("ShowSystemServices", Qt::UserRole+1);
@@ -601,7 +607,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     hardwareControlItem->setText(i18nc("Items about hardware, such as battery or volume control", "Hardware control"));
     hardwareControlItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     checked = cg.readEntry("ShowHardware",
-                           gcg.readEntry("ShowHardware", true));
+                           gcg.readEntry("ShowHardware", DEFAULT_SHOW_HARDWARE));
     hardwareControlItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
     hardwareControlItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     hardwareControlItem->setData("ShowHardware", Qt::UserRole+1);
@@ -611,7 +617,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     unknownItem->setText(i18nc("Other uncategorized systemtray items", "Miscellaneous"));
     unknownItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     checked = cg.readEntry("ShowUnknown",
-                           gcg.readEntry("ShowUnknown", true));
+                           gcg.readEntry("ShowUnknown", DEFAULT_SHOW_UNKNOWN));
     unknownItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
     unknownItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     unknownItem->setData("ShowUnknown", Qt::UserRole+1);

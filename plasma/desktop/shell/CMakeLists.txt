@@ -24,6 +24,7 @@ set(plasma_SRCS
     interactiveconsole.cpp
     main.cpp
     panelcontroller.cpp
+    panelshadows.cpp
     panelview.cpp
     panelapplethandle.cpp
     panelappletoverlay.cpp

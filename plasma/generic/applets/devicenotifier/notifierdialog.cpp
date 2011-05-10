@@ -460,7 +460,9 @@ void NotifierDialog::expandDevice(const QString &udi)
 {
     DeviceItem *item = itemForUdi(udi);
     if (item) {
+        itemHoverEnter(item);
         item->expand();
+        deviceActivated(item);
     }
 }
 

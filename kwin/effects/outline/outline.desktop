@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Outline
+Name[et]=Kontuur
 Name[ia]=Profilo
+Name[km]=គ្រោង
 Name[nl]=Omlijning
 Name[pt]=Contorno
 Name[pt_BR]=Contorno
@@ -8,9 +10,12 @@ Name[ro]=Contur
 Name[sv]=Kontur
 Name[uk]=Контур
 Name[x-test]=xxOutlinexx
+Name[zh_TW]=輪廓
 Icon=preferences-system-windows-effect-outline
 Comment=Helper effect to render an outline
+Comment[et]=Abiefekt kontuuri renderdamiseks
 Comment[ia]=Effecto de adjuta pro render un profilo
+Comment[km]=បែបផែន​កម្មវិធី​​ជំនួយ​ ដើម្បី​បង្ហាញ​គ្រោង
 Comment[nl]=Effect van hulp bij weergeven van omlijning
 Comment[pt]=Efeito auxiliar para desenhar um contorno
 Comment[pt_BR]=Efeito auxiliar para desenhar um contorno
@@ -18,6 +23,7 @@ Comment[ro]=Efect ajutător pentru desenarea unui contur
 Comment[sv]=Hjälpeffekt för att återge en kontur
 Comment[uk]=Допоміжний ефект показу контуру
 Comment[x-test]=xxHelper effect to render an outlinexx
+Comment[zh_TW]=繪製輪廓的效果
 
 Type=Service
 X-KDE-ServiceTypes=KWin/Effect

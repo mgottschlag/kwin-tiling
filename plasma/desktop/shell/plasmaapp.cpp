@@ -88,6 +88,7 @@
 #include "desktopview.h"
 #include "interactiveconsole.h"
 #include "kactivityinfo.h"
+#include "panelshadows.h"
 #include "panelview.h"
 #include "plasma-shell-desktop.h"
 #include "toolbutton.h"
@@ -305,6 +306,7 @@ void PlasmaApp::setupDesktop()
     // intialize the default theme and set the font
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
     theme->setFont(AppSettings::desktopFont());
+    m_panelShadows = new PanelShadows();
 
     // this line initializes the corona.
     corona();
@@ -378,6 +380,9 @@ void PlasmaApp::cleanup()
     delete m_console.data();
     delete m_corona;
     m_corona = 0;
+
+    delete m_panelShadows;
+    m_panelShadows = 0;
 
     //TODO: This manual sync() should not be necessary. Remove it when
     // KConfig was fixed
@@ -483,6 +488,11 @@ void PlasmaApp::panelHidden(bool hidden)
 QList<PanelView*> PlasmaApp::panelViews() const
 {
     return m_panels;
+}
+
+PanelShadows *PlasmaApp::panelShadows() const
+{
+    return m_panelShadows;
 }
 
 ControllerWindow *PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *containment)
