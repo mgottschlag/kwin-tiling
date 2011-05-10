@@ -41,17 +41,17 @@ p, li { white-space: pre-wrap; }
      </property>
      <item>
       <property name="text">
-       <string extracomment="Don't change the state of exported hotkey actions.">Actual State</string>
+       <string comment="Don't change the state of exported hotkey actions.">Actual State</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string extracomment="Export hotkey actions in enabled state.">Enabled</string>
+       <string comment="Export hotkey actions in enabled state.">Enabled</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string extracomment="Export hotkey actions into disabled  state">Disabled</string>
+       <string comment="Export hotkey actions into disabled  state">Disabled</string>
       </property>
      </item>
     </widget>
