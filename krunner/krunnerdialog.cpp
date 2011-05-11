@@ -316,6 +316,7 @@ void KRunnerDialog::themeUpdated()
     //kDebug() << m_leftBorderWidth<< topHeight<< m_rightBorderWidth<< m_bottomBorderHeight;
     // the +1 gives us the extra mouseMoveEvent needed to always reset the resize cursor
     setContentsMargins(m_leftBorderWidth + 1, topHeight, m_rightBorderWidth + 1, m_bottomBorderHeight + 1);
+
     update();
 }
 
