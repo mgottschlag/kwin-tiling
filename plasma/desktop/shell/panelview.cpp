@@ -216,7 +216,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_triggerEntered(false),
       m_respectStatus(true)
 {
-    PlasmaApp::self()->panelShadows()->addWinId(winId());
+    PlasmaApp::self()->panelShadows()->addWindow(this);
 
     // KWin setup
     KWindowSystem::setOnAllDesktops(winId(), true);
@@ -294,7 +294,6 @@ PanelView::~PanelView()
 
     delete m_glowBar;
     destroyUnhideTrigger();
-    PlasmaApp::self()->panelShadows()->removeWinId(winId());
 #ifdef Q_WS_WIN
     registerAccessBar(false);
 #endif
