@@ -29,6 +29,7 @@ set(plasmagenericshell_LIB_SRCS
     mouseinputbutton.cpp
     mouseplugins.cpp
     mousepluginwidget.cpp
+    panelshadows.cpp
     toolbutton.cpp
     wallpaperpreview.cpp
     ${scripting_SRC}
