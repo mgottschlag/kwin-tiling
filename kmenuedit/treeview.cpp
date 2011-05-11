@@ -125,9 +125,9 @@ void TreeItem::paintCell ( QPainter * p, const QColorGroup & cg, int column, int
        // Draw Separator
        int h = (height() / 2) -1;
        if (isSelected())
-           p->setPen( cg.color( QPalette::HighlightedText ) );
+           p->setPen( palette().color( QPalette::HighlightedText ) );
        else
-           p->setPen( cg.color( QPalette::Text ) );
+           p->setPen( palette().color( QPalette::Text ) );
        p->drawLine(0, h,
                    width, h);
     }
@@ -405,9 +405,8 @@ TreeItem *TreeView::createTreeItem(TreeItem *parent, Q3ListViewItem *after, Menu
 void TreeView::fillBranch(MenuFolderInfo *folderInfo, TreeItem *parent)
 {
     QString relPath = parent ? parent->directory() : QString();
-    Q3PtrListIterator<MenuInfo> it( folderInfo->initialLayout );
     TreeItem *after = 0;
-    for (MenuInfo *info; (info = it.current()); ++it)
+    foreach (MenuInfo *info, folderInfo->initialLayout)
     {
        MenuEntryInfo *entry = dynamic_cast<MenuEntryInfo*>(info);
        if (entry)
@@ -786,7 +785,7 @@ void TreeView::slotDropped (QDropEvent * e, Q3ListViewItem *parent, Q3ListViewIt
    if (command == MOVE_FOLDER)
    {
       MenuFolderInfo *folderInfo = m_dragInfo;
-      if (e->action() == QDropEvent::Copy)
+      if (e->proposedAction() == Qt::CopyAction)
       {
          // Ugh.. this is hard :)
          // * Create new .directory file
@@ -859,7 +858,7 @@ void TreeView::slotDropped (QDropEvent * e, Q3ListViewItem *parent, Q3ListViewIt
       MenuEntryInfo *entryInfo = m_dragItem->entryInfo();
       QString menuId = entryInfo->menuId();
 
-      if (e->action() == QDropEvent::Copy)
+      if (e->proposedAction() == Qt::CopyAction)
       {
 
          // Need to copy file and then add it
@@ -901,7 +900,7 @@ void TreeView::slotDropped (QDropEvent * e, Q3ListViewItem *parent, Q3ListViewIt
    }
    else if (command == COPY_SEPARATOR)
    {
-      if (e->action() != QDropEvent::Copy)
+      if (e->proposedAction() != Qt::CopyAction)
          del(m_dragItem, false);
 
       TreeItem *newItem = createTreeItem(parentItem, after, m_separator, true);
