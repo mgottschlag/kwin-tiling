@@ -35,9 +35,6 @@ if(X11_Xinerama_FOUND)
 	add_subdirectory( xinerama )
 endif(X11_Xinerama_FOUND)
 
-#TODO needs porting to what changed in KDE4 + please also rethink if it's really needed/useful to provide a duplicated nav-hierachy for colors, fonts, etc. - thx :)
-#add_subdirectory( kthememanager )
-
 # TODO needs porting
 #add_subdirectory( smartcard )
 
