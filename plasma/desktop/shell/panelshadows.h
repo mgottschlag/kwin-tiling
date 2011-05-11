@@ -30,19 +30,22 @@ class PanelShadows : Plasma::Svg
 public:
     PanelShadows(QObject *parent = 0);
 
-    void addWinId(WId id);
-    void removeWinId(WId id);
+    void addWindow(const QWidget *window);
+    void removeWindow(const QWidget *window);
 
 private Q_SLOTS:
     void updateShadows();
+    void windowDestroyed(QObject *deletedObject);
 
 private:
+    void clearPixmaps();
     void setupPixmaps();
-    void updateShadows(WId wid);
+    void updateShadow(const QWidget *window);
+    void clearShadow(const QWidget *window);
 
     QList<QPixmap> m_shadowPixmaps;
     QVector<unsigned long> m_data;
-    QSet<WId> m_wids;
+    QSet<const QWidget *> m_windows;
 };
 
 #endif

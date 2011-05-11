@@ -18,6 +18,8 @@
 
 #include "panelshadows.h"
 
+#include <QWidget>
+
 #ifdef Q_WS_X11
 #include <QX11Info>
 #include <X11/Xatom.h>
@@ -32,28 +34,52 @@ PanelShadows::PanelShadows(QObject *parent)
     connect(this, SIGNAL(repaintNeeded()), this, SLOT(updateShadows()));
 }
 
-void PanelShadows::addWinId(WId id)
+void PanelShadows::addWindow(const QWidget *window)
 {
-    m_wids << id;
-    updateShadows(id);
+    if (!window || !window->isWindow()) {
+        return;
+    }
+
+    m_windows << window;
+    updateShadow(window);
+    connect(window, SIGNAL(destroyed(QObject*)), this, SLOT(windowDestroyed(QObject*)));
 }
 
-void PanelShadows::removeWinId(WId id)
+void PanelShadows::removeWindow(const QWidget *window)
 {
-    m_wids.remove(id);
+    if (!m_windows.contains(window)) {
+        return;
+    }
+
+    m_windows.remove(window);
+    disconnect(window, 0, this, 0);
+    clearShadow(window);
+
+    if (m_windows.isEmpty()) {
+        clearPixmaps();
+    }
+}
+
+void PanelShadows::windowDestroyed(QObject *deletedObject)
+{
+    m_windows.remove(static_cast<QWidget *>(deletedObject));
+
+    if (m_windows.isEmpty()) {
+        clearPixmaps();
+    }
 }
 
 void PanelShadows::updateShadows()
 {
     setupPixmaps();
-    foreach (const WId &wid, m_wids) {
-        updateShadows(wid);
+    foreach (const QWidget *window, m_windows) {
+        updateShadow(window);
     }
 }
 
 void PanelShadows::setupPixmaps()
 {
-    m_shadowPixmaps.clear();
+    clearPixmaps();
     m_shadowPixmaps << pixmap("shadow-top");
     m_shadowPixmaps << pixmap("shadow-topright");
     m_shadowPixmaps << pixmap("shadow-right");
@@ -63,7 +89,6 @@ void PanelShadows::setupPixmaps()
     m_shadowPixmaps << pixmap("shadow-left");
     m_shadowPixmaps << pixmap("shadow-topleft");
 
-    m_data.clear();
     foreach (const QPixmap &pixmap, m_shadowPixmaps) {
         m_data << pixmap.handle();
     }
@@ -97,7 +122,13 @@ void PanelShadows::setupPixmaps()
     }
 }
 
-void PanelShadows::updateShadows(WId wid)
+void PanelShadows::clearPixmaps()
+{
+    m_shadowPixmaps.clear();
+    m_data.clear();
+}
+
+void PanelShadows::updateShadow(const QWidget *window)
 {
 #ifdef Q_WS_X11
     if (m_data.isEmpty()) {
@@ -108,8 +139,17 @@ void PanelShadows::updateShadows(WId wid)
     Atom atom = XInternAtom(dpy, "_KDE_NET_WM_SHADOW", False);
 
     //kDebug() << "going to set the shadow of" << winId() << "to" << data;
-    XChangeProperty(dpy, wid, atom, XA_CARDINAL, 32, PropModeReplace,
+    XChangeProperty(dpy, window->winId(), atom, XA_CARDINAL, 32, PropModeReplace,
                     reinterpret_cast<const unsigned char *>(m_data.constData()), m_data.size());
+#endif
+}
+
+void PanelShadows::clearShadow(const QWidget *window)
+{
+#ifdef Q_WS_X11
+    Display *dpy = QX11Info::display();
+    Atom atom = XInternAtom(dpy, "_KDE_NET_WM_SHADOW", False);
+    XDeleteProperty(dpy, window->winId(), atom);
 #endif
 }
 
