@@ -69,6 +69,7 @@ Name[zh_TW]=熱插拔事件
 Comment=Tracks hot-pluggable devices as they appear and disappear.
 Comment[ar]=تتابع الأجهزة المركبة عندما تظهر أو تختفي
 Comment[ast]=Rexistra los preseos estrayibles cuando apaecen y desapaecen.
+Comment[bs]=Prati pojavljivanja i nestanke vruće uklonjivih uređaja.
 Comment[ca]=Segueix els dispositius de connexió en calent quan apareixen i desapareixen.
 Comment[ca@valencia]=Segueix els dispositius de connexió en calent quan apareixen i desapareixen.
 Comment[cs]=Oznamovat připojení a odpojení za běhu připojitelných zařízení

@@ -53,6 +53,7 @@ Name[zh_TW]=狀態通知器資訊
 Comment=Engine for applications' status information, based on the Status Notifier protocol.
 Comment[ar]=محرك للمعلومات عن حالة البرامج, مبني على بروتوكول Status Notifier
 Comment[ast]=Motor pa informar del estáu d'aplicaciones, basáu nel protocolu Status Notifier.
+Comment[bs]=Motor za podatke o stanju programa, na osnovu protokola izveštavača o stanju.
 Comment[ca]=Motor d'informació d'estat de les aplicacions, basat en el protocol notificador d'estat.
 Comment[ca@valencia]=Motor d'informació d'estat de les aplicacions, basat en el protocol notificador d'estat.
 Comment[cs]=Stroj pro informace o stavu aplikací, založen na protokolu Status Notifier

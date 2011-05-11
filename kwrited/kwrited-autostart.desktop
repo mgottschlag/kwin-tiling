@@ -95,6 +95,7 @@ Comment[be]=Назірае за паведамленнямі ад мясцовы
 Comment[be@latin]=Adsočvaje paviedamleńnia ad miascovych karystańnikaŭ, dasyłanyja zahadami „write(1)” ci „wall(1)”.
 Comment[bg]=Наблюдение за съобщения от локални потребители, изпратени с write(1) или wall(1)
 Comment[bn_IN]=write(1) অথবা wall(1) সহযোগে ব্যবহারকারীদের থেকে প্রাপ্ত বার্তার অপেক্ষা করা হবে
+Comment[bs]=Pazi na poruke od lokalnih korisnika poslatih naredbama write(1) ili wall(1)
 Comment[ca]=Fes atenció als missatges dels usuaris locals enviats amb write(1) o wall(1)
 Comment[ca@valencia]=Fes atenció als missatges dels usuaris locals enviats amb write(1) o wall(1)
 Comment[cs]=Sledování zpráv od místních uživatelů poslaných pomocí write(1) nebo wall(1)

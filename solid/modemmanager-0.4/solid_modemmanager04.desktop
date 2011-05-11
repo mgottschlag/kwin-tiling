@@ -59,6 +59,7 @@ Name[zh_TW]=數據機管理員 0.4
 Comment=Network management using the ModemManager daemon, version 0.4
 Comment[ar]=إدارة الشبكة باستعمال مراقب مدير المودم 0,4
 Comment[ast]=Xestión de rede usando'l serviciu ModemManager, versión 0.4
+Comment[bs]=Upravljanje mrežom demonom Menadžera modema, verzija 0.4
 Comment[ca]=Gestor de xarxes que usa el dimoni ModemManager, versió 0.4
 Comment[ca@valencia]=Gestor de xarxes que usa el dimoni ModemManager, versió 0.4
 Comment[cs]=Správa sítě pomocí démona ModemManager, verze 0.4

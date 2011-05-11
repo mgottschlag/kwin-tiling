@@ -62,6 +62,7 @@ Name[zh_TW]=搜索與啟動引擎
 Comment=Engine to handle queries to SAL containment
 Comment[ar]=محرك لمعاملة الاستعلامات إلى حاوية البحث والإطلاق
 Comment[ast]=Motor pa remanar consultes a un contenedor SAL
+Comment[bs]=Datomotor za obradu upita za sadržalac pretrage i pokretanja
 Comment[ca]=Motor per gestionar consultes al contenidor SAL
 Comment[ca@valencia]=Motor per gestionar consultes al contenidor SAL
 Comment[cs]=Stroj pro řízení dotazů SAL kontejneru

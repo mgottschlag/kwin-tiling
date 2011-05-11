@@ -70,6 +70,7 @@ Name[zh_TW]=應用程式工作資訊
 Comment=Application job updates (via kuiserver)
 Comment[ar]=تحديثات مهام التطبيقات (عن طريق kuiserver)
 Comment[ast]=Anovamientos de l'aplicación (vía kuiserver)
+Comment[bs]=Ažuriranja programskih poslova (preko KUI‑servera)
 Comment[ca]=Actualització de treballs d'aplicacions (via kuiserver)
 Comment[ca@valencia]=Actualització de treballs d'aplicacions (via kuiserver)
 Comment[cs]=Aktualizace úloh aplikací (pomocí kuiserver)

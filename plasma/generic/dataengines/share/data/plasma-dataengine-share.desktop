@@ -45,6 +45,7 @@ Name[x-test]=xxShare Servicesxx
 Name[zh_TW]=分享服務
 Comment=Engine to share content using different services
 Comment[ast]=Motor pa compartir conteníos a traviés d'estremaos servicios
+Comment[bs]=Motor za dijeljenje sadržaja preko različitih servisa
 Comment[ca]=Motor per compartir contingut utilitzant diferents serveis
 Comment[ca@valencia]=Motor per compartir contingut utilitzant diferents serveis
 Comment[cs]=Povolí sdílení obsahu pomocí různých služeb

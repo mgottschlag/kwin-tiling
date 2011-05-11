@@ -96,6 +96,7 @@ Comment[ast]=Un xestor de ventanes extensible con scriptss nun llinguaxe asemey�
 Comment[be]=Кіраўнік вокнаў з магчымасцю пашырэння сцэнарамі на мове, падобнай на Emacs Lisp
 Comment[be@latin]=Akońnik, jaki možna pašyryć svaimi prahramami ŭ movie, padobnaj da „Emacs Lisp”
 Comment[bg]=Разширяем мениджър на прозорци, който може да се управлява със скриптове (Emacs Lisp)
+Comment[bs]=Proširivi menadžer prozora, skriptuje se jezikom nalik na Emaksov lisp
 Comment[ca]=Un gestor de finestres extensible mitjançant scripts amb una aparença com el Lisp d'Emacs
 Comment[ca@valencia]=Un gestor de finestres extensible mitjançant scripts amb una aparença com el Lisp d'Emacs
 Comment[cs]=Rožšiřitelný správce oken skriptovatelný jazykem podobným jazyku Emacs Lisp
