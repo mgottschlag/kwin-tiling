@@ -335,7 +335,7 @@ bool FontAASettings::load()
     xft.apply();  // Save this setting
     KConfigGroup(&kglobals, "General").writeEntry("XftHintStyle", KXftConfig::toStr(hStyle));
     kglobals.sync();
-    runRdb(KRdbExportXftSettings);
+    runRdb(KRdbExportXftSettings | KRdbExportGtkTheme);
   }
 
   hintingStyle->setCurrentIndex(getIndex(hStyle));
@@ -791,7 +791,7 @@ void KFonts::save()
     dpi_original = dpi;
   }
 #endif
-  runRdb(KRdbExportXftSettings);
+  runRdb(KRdbExportXftSettings | KRdbExportGtkTheme);
 
   emit changed(false);
 }
