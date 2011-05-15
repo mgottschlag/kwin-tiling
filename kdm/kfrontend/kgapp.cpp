@@ -410,6 +410,7 @@ main(int argc ATTR_UNUSED, char **argv)
             scrns[dw->screenGeometry(i).size()] << i;
         QPixmap pm(dw->size());
         QPainter p(&pm);
+        p.fillRect(dw->rect(), Qt::black);
         QSize gsz = dw->screenGeometry(_greeterScreen).size();
         // Paint these first, as throwing away their images does not hurt
         QHash<QSize, QList<int> >::ConstIterator it;
