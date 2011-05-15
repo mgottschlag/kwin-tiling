@@ -1163,7 +1163,7 @@ mainLoop(void)
     fd_set reads;
 
     debug("mainLoop\n");
-    time(&now);
+    updateNow();
     while (
 #ifdef XDMCP
            anyListenSockets() ||
@@ -1213,7 +1213,7 @@ mainLoop(void)
         reads = wellKnownSocketsMask;
         nready = select(wellKnownSocketsMax + 1, &reads, 0, 0, tvp);
         debug("select returns %d\n", nready);
-        time(&now);
+        updateNow();
 #ifdef NEED_ENTROPY
         addTimerEntropy();
 #endif

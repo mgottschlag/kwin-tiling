@@ -416,7 +416,8 @@ openGreeter()
     gSet(&grttalk);
     if (grtproc.pid > 0)
         return;
-    if (time(0) < lastStart + 10) /* XXX should use some readiness indicator instead */
+    updateNow();
+    if (now < lastStart + 10) /* XXX should use some readiness indicator instead */
         sessionExit(EX_UNMANAGE_DPY);
     ASPrintf(&name, "greeter for display %s", td->name);
     debug("starting %s\n", name);
@@ -446,7 +447,8 @@ openGreeter()
         sessionExit(EX_UNMANAGE_DPY);
     }
     debug("%s ready\n", name);
-    time(&lastStart);
+    updateNow();
+    lastStart = now;
 }
 
 int
@@ -577,7 +579,7 @@ manageSession(void)
         /* NOTREACHED */
 #endif
 
-    tdiff = time(0) - td->hstent->lastExit - td->openDelay;
+    tdiff = now - td->hstent->lastExit - td->openDelay;
     if (autoLogon(tdiff)) {
         if (!verify(conv_auto, False))
             goto gcont;
