@@ -42,6 +42,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kstandarddirs.h>
 
 #include <QDesktopWidget>
+#include <QPainter>
 #include <QX11Info>
 
 #include <stdio.h>
@@ -408,19 +409,20 @@ main(int argc ATTR_UNUSED, char **argv)
         for (int i = 0; i < dw->numScreens(); i++)
             scrns[dw->screenGeometry(i).size()] << i;
         QPixmap pm(dw->size());
+        QPainter p(&pm);
         QSize gsz = dw->screenGeometry(_greeterScreen).size();
         // Paint these first, as throwing away their images does not hurt
         QHash<QSize, QList<int> >::ConstIterator it;
         for (it = scrns.constBegin(); it != scrns.constEnd(); ++it)
             if (it.key() != gsz)
                 foreach (int i, it.value())
-                    themer->paintBackground(&pm, dw->screenGeometry(i), false);
+                    themer->paintBackground(&p, dw->screenGeometry(i), false);
         // If we are lucky, these will use the same images as the greeter
         foreach (int i, scrns.value(gsz))
             if (i != _greeterScreen)
-                themer->paintBackground(&pm, dw->screenGeometry(i), false);
+                themer->paintBackground(&p, dw->screenGeometry(i), false);
         // Paint the greeter background last - it will be re-used.
-        themer->paintBackground(&pm, dw->screenGeometry(_greeterScreen), true);
+        themer->paintBackground(&p, dw->screenGeometry(_greeterScreen), true);
         QPalette palette;
         palette.setBrush(dw->backgroundRole(), QBrush(pm));
         dw->setPalette(palette);

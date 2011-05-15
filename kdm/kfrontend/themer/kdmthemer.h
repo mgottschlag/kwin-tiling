@@ -28,7 +28,7 @@
 class KdmItem;
 
 class QDomNode;
-class QPaintDevice;
+class QPainter;
 class QRect;
 
 /**
@@ -70,7 +70,7 @@ public:
     void setTypeVisible(const QString &t, bool show);
     bool typeVisible(const QString &t) { return m_showTypes.value(t, false); }
 
-    void paintBackground(QPaintDevice *dev, const QRect &rect, bool primaryScreen);
+    void paintBackground(QPainter *p, const QRect &rect, bool primaryScreen);
 
 public Q_SLOTS:
     void slotNeedPlacement();
