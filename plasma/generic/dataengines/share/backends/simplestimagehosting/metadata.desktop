@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Simplest Image Hosting
 Name[ast]=Simplest Image Hosting
+Name[bs]=Simplest imejdž hosting
 Name[ca]=Simplest Image Hosting
 Name[ca@valencia]=Simplest Image Hosting
 Name[cs]=Simplest Image Hosting
@@ -43,6 +44,7 @@ Name[x-test]=xxSimplest Image Hostingxx
 Name[zh_CN]=Simplest Image Hosting
 Name[zh_TW]=Simplest Image Hosting
 Comment=Allows images to be shared using the Simplest Image Hosting service
+Comment[bs]=Dijeljenje slika preko servisa Simplest image hosting
 Comment[ca]=Permet la compartició d'imatges utilitzant el servei «Simplest Image Hosting»
 Comment[cs]=Povolí sdílení obrázků pomocí služby Simplest Image Hosting
 Comment[de]=Ermöglicht die Veröffentlichung von Bildern über den simplest-image-hosting.net-Dienst

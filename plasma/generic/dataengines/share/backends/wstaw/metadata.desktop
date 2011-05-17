@@ -2,6 +2,7 @@
 Name=wstaw.org
 Name[ast]=wstaw.org
 Name[bg]=wstaw.org
+Name[bs]=wstaw.org
 Name[ca]=wstaw.org
 Name[ca@valencia]=wstaw.org
 Name[cs]=wstaw.org
@@ -50,6 +51,7 @@ Name[x-test]=xxwstaw.orgxx
 Name[zh_CN]=wstaw.org
 Name[zh_TW]=wstaw.org
 Comment=Allows images to be shared using the wstaw.org service
+Comment[bs]=Dopušta dijeljenje slika preko servisa wstaw.org
 Comment[ca]=Permet la compartició d'imatges utilitzant el servei wstaw.org
 Comment[cs]=Povolí sdílení obrázků pomocí služby wstaw.org
 Comment[de]=Ermöglicht die Veröffentlichung von Bildern über den wstaw.org-Dienst

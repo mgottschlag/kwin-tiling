@@ -3,6 +3,7 @@ Type=XSession
 Exec=startxfce4
 TryExec=startxfce4
 Name=Xfce 4
+Name[bs]=Iksefce 4
 Name[cs]=Xfce 4
 Name[ia]=Xfce 4
 Name[km]=Xfce 4

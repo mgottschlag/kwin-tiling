@@ -61,6 +61,7 @@ KDE_EXPORT int kdemain(int argc, char* argv[])
 
     KRunnerApp *app = KRunnerApp::self();
     KGlobal::locale()->insertCatalog(QLatin1String( "processui" ));
+    KGlobal::locale()->insertCatalog(QLatin1String( "libplasma" ));
     app->disableSessionManagement(); // autostarted
     int rc = app->exec();
     delete app;
