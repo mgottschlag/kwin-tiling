@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=img.susepaste.org
+Name[bs]=img.susepaste.org
 Name[ca]=img.susepaste.org
 Name[cs]=img.susepaste.org
 Name[de]=img.susepaste.org
@@ -17,6 +18,7 @@ Name[uk]=img.susepaste.org
 Name[x-test]=xximg.susepaste.orgxx
 Name[zh_TW]=img.susepaste.org
 Comment=Allows images to be shared using the susepaste.org service
+Comment[bs]=Dopušta dijeljenje slika preko servisa susepaste.org
 Comment[ca]=Permet la compartició d'imatges utilitzant el servei susepaste.org
 Comment[cs]=Povolí sdílení obrázků pomocí služby susepaste.org
 Comment[de]=Ermöglicht die Veröffentlichung von Bildern über den susepaste.org-Dienst

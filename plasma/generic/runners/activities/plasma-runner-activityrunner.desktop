@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Activities
+Name[bs]=motor aktivnosti
 Name[ca]=Activitats
 Name[cs]=Aktivity
 Name[de]=Aktivitäten
@@ -22,6 +23,7 @@ Name[uk]=Простори дій
 Name[x-test]=xxActivitiesxx
 Name[zh_TW]=活動
 Comment=List and switch between desktop activities
+Comment[bs]=Prikaz i prebacivanje između aktivnosti radne površine
 Comment[ca]=Llista i commuta entre activitats d'escriptori
 Comment[cs]=Zobrazení a přepínač aktivit pracovní plochy
 Comment[de]=Aktivitäten anzeigen und zwischen ihnen umschalten
