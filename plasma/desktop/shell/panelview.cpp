@@ -257,8 +257,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     m_lastSeenSize = sizes.readEntry("lastsize", m_lastHorizontal ? sw : sh);
 
     if (onScreen) {
-        const QString last = m_lastHorizontal ? "Horizontal" + QString::number(sw) :
-                                                "Vertical" + QString::number(sh);
+        const QString last = m_lastHorizontal ? QString::fromLatin1("Horizontal%1").arg(QString::number(sw)) :
+                                                QString::fromLatin1("Vertical%1").arg(QString::number(sh));
         if (sizes.hasGroup(last)) {
             KConfigGroup thisSize(&sizes, last);
             resize(thisSize.readEntry("size", m_lastHorizontal ? QSize(sw, 27) : QSize(27, sh)));
@@ -697,8 +697,8 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         lastSize.writeEntry("max", m_lastMax);
         configNeedsSaving();
 
-        const QString last = horizontal ? "Horizontal" + QString::number(sw) :
-                                          "Vertical" + QString::number(sh);
+        const QString last = horizontal ? QString::fromLatin1("Horizontal%1").arg(QString::number(sw)) :
+                                          QString::fromLatin1("Vertical%1").arg(QString::number(sh));
         if (sizes.hasGroup(last)) {
             KConfigGroup thisSize(&sizes, last);
 

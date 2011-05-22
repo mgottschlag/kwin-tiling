@@ -461,8 +461,8 @@ void BGDialog::loadWallpaperFilesList()
         }
         int slash = (*it).lastIndexOf('/') + 1;
         QString directory = (*it).left(slash);
-        if (cg.readEntry("ImageType") == "pixmap") {
-            papers[lrs] = qMakePair(rs, directory + fileName);
+        if (cg.readEntry("ImageType") == QLatin1String("pixmap")) {
+            papers[lrs] = qMakePair(rs, QString(directory + fileName));
             files.append(directory + fileName);
         }
     }

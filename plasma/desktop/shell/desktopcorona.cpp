@@ -474,7 +474,7 @@ void DesktopCorona::populateAddPanelsMenu()
                 const QString scriptFile = package.filePath("mainscript");
                 if (!scriptFile.isEmpty()) {
                     QAction *action = m_addPanelsMenu->addAction(info.name());
-                    action->setData("plasma-desktop-template:" + scriptFile);
+                    action->setData(QString::fromLatin1("plasma-desktop-template:%1").arg(scriptFile));
                 }
             }
         }
