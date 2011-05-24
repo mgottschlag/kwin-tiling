@@ -23,13 +23,11 @@
 #ifndef __treeview_h__
 #define __treeview_h__
 
-
-//Added by qt3to4:
 #include <QMenu>
 #include <QDropEvent>
-#include <k3listview.h>
-#include <kservice.h>
-#include <kservicegroup.h>
+#include <QTreeWidget>
+#include <KService>
+#include <KServiceGroup>
 
 class QMenu;
 class KActionCollection;
@@ -40,16 +38,16 @@ class MenuEntryInfo;
 class MenuSeparatorInfo;
 class KShortcut;
 
-class TreeItem : public Q3ListViewItem
+class TreeItem : public QTreeWidgetItem
 {
 public:
-  TreeItem(Q3ListViewItem *parent, Q3ListViewItem *after, const QString &menuIdn, bool __init = false);
-    TreeItem(Q3ListView *parent, Q3ListViewItem* after, const QString &menuId, bool __init = false);
+    TreeItem(QTreeWidgetItem *parent, QTreeWidgetItem *after, const QString &menuId, bool __init = false);
+    TreeItem(QTreeWidget *parent, QTreeWidgetItem *after, const QString &menuId, bool __init = false);
 
-    QString menuId() const { return _menuId; }
+    QString menuId() const { return m_menuId; }
 
-    QString directory() const { return _directoryPath; }
-    void setDirectoryPath(const QString& path) { _directoryPath = path; }
+    QString directory() const { return m_directoryPath; }
+    void setDirectoryPath(const QString& path) { m_directoryPath = path; }
 
     MenuFolderInfo *folderInfo() { return m_folderInfo; }
     void setMenuFolderInfo(MenuFolderInfo *folderInfo) { m_folderInfo = folderInfo; }
@@ -57,39 +55,37 @@ public:
     MenuEntryInfo *entryInfo() { return m_entryInfo; }
     void setMenuEntryInfo(MenuEntryInfo *entryInfo) { m_entryInfo = entryInfo; }
 
-    QString name() const { return _name; }
+    QString name() const { return m_name; }
     void setName(const QString &name);
 
     bool isDirectory() const { return m_folderInfo; }
     bool isEntry() const { return m_entryInfo; }
 
-    bool isHidden() const { return _hidden; }
+    bool isHidden() const { return m_hidden; }
     void setHidden(bool b);
 
-    bool isLayoutDirty() { return _layoutDirty; }
-    void setLayoutDirty() { _layoutDirty = true; }
+    bool isLayoutDirty() { return m_layoutDirty; }
+    void setLayoutDirty() { m_layoutDirty = true; }
     QStringList layout();
 
-    virtual void setOpen(bool o);
     void load();
 
-    virtual void paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align);
-    virtual void setup();
+    //virtual void paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align);
 
 private:
     void update();
 
-    bool _hidden : 1;
-    bool _init : 1;
-    bool _layoutDirty : 1;
-    QString _menuId;
-    QString _name;
-    QString _directoryPath;
+    bool m_hidden : 1;
+    bool m_init : 1;
+    bool m_layoutDirty : 1;
+    QString m_menuId;
+    QString m_name;
+    QString m_directoryPath;
     MenuFolderInfo *m_folderInfo;
     MenuEntryInfo *m_entryInfo;
 };
 
-class TreeView : public K3ListView
+class TreeView : public QTreeWidget
 {
     friend class TreeItem;
     Q_OBJECT
@@ -119,10 +115,10 @@ Q_SIGNALS:
     void entrySelected(MenuFolderInfo *folderInfo);
     void entrySelected(MenuEntryInfo *entryInfo);
     void disableAction();
+
 protected Q_SLOTS:
-    void itemSelected(Q3ListViewItem *);
-    void slotDropped(QDropEvent *, Q3ListViewItem *, Q3ListViewItem *);
-    void slotRMBPressed(Q3ListViewItem*, const QPoint&);
+    void itemSelected(QTreeWidgetItem *);
+    //FIXME void slotDropped(QDropEvent *, Q3ListViewItem *, Q3ListViewItem *);
 
     void newsubmenu();
     void newitem();
@@ -134,16 +130,19 @@ protected Q_SLOTS:
     void del();
 
 protected:
-    TreeItem *createTreeItem(TreeItem *parent, Q3ListViewItem *after, MenuFolderInfo *folderInfo, bool _init = false);
-    TreeItem *createTreeItem(TreeItem *parent, Q3ListViewItem *after, MenuEntryInfo *entryInfo, bool _init = false);
-    TreeItem *createTreeItem(TreeItem *parent, Q3ListViewItem *after, MenuSeparatorInfo *sepInfo, bool _init = false);
+    void contextMenuEvent(QContextMenuEvent *event);
+    QTreeWidgetItem *selectedItem();
+    TreeItem *createTreeItem(TreeItem *parent, QTreeWidgetItem *after, MenuFolderInfo *folderInfo, bool _init = false);
+    TreeItem *createTreeItem(TreeItem *parent, QTreeWidgetItem *after, MenuEntryInfo *entryInfo, bool _init = false);
+    TreeItem *createTreeItem(TreeItem *parent, QTreeWidgetItem *after, MenuSeparatorInfo *sepInfo, bool _init = false);
 
     void del(TreeItem *, bool deleteInfo);
     void fill();
     void fillBranch(MenuFolderInfo *folderInfo, TreeItem *parent);
     QString findName(KDesktopFile *df, bool deleted);
 
-    void closeAllItems(Q3ListViewItem *item);
+    void closeAllItems(QTreeWidgetItem *item);
+    TreeItem *expandPath(TreeItem *item, const QString &path);
 
     // moving = src will be removed later
     void copy( bool moving );
@@ -158,8 +157,8 @@ protected:
     QStringList dirList(const QString& relativePath);
 
     virtual bool acceptDrag(QDropEvent* event) const;
-    virtual Q3DragObject *dragObject();
-    virtual void startDrag();
+    //FIXME: virtual Q3DragObject *dragObject();
+    virtual void startDrag(Qt::DropActions supportedActions);
 
     void sendReloadMenu();
 
@@ -184,5 +183,6 @@ private:
     bool               m_layoutDirty;
 };
 
+Q_DECLARE_METATYPE(TreeItem *);
 
 #endif
