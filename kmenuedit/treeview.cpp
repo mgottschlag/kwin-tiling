@@ -90,6 +90,10 @@ TreeItem::TreeItem(QTreeWidget *parent, QTreeWidgetItem *after, const QString& m
     load();
 }
 
+TreeItem::~TreeItem()
+{
+}
+
 void TreeItem::setName(const QString &name)
 {
     if (m_name == name) {
@@ -213,7 +217,8 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
     m_separator = new MenuSeparatorInfo;
 }
 
-TreeView::~TreeView() {
+TreeView::~TreeView()
+{
     cleanupClipboard();
     delete m_rootFolder;
     delete m_separator;
@@ -705,13 +710,27 @@ QStringList TreeView::dirList(const QString& rPath)
 
 Qt::DropActions TreeView::supportedDropActions() const
 {
-    //FIXME: re-enabling CopyAction will probably require a full move to a QAbstractItemModel
-    return /*Qt::CopyAction | */Qt::MoveAction;
+    return Qt::CopyAction | Qt::MoveAction;
 }
 
 QStringList TreeView::mimeTypes() const
 {
     return m_dropMimeTypes;
+}
+
+void TreeView::startDrag(Qt::DropActions supportedActions)
+{
+    QList<QTreeWidgetItem *> items;
+    items << selectedItem();
+    QMimeData *data = mimeData(items);
+    if (!data) {
+        return;
+    }
+
+    QDrag *drag = new QDrag(this);
+    drag->setPixmap(selectedItem()->icon(0).pixmap(24, 24));
+    drag->setMimeData(data);
+    drag->exec(supportedActions, Qt::MoveAction);
 }
 
 QMimeData *TreeView::mimeData(const QList<QTreeWidgetItem *> items) const
@@ -853,42 +872,12 @@ bool TreeView::dropMimeData(QTreeWidgetItem *item, int index, const QMimeData *d
      parentFolderInfo->add(entryInfo);
 
      TreeItem *newItem = createTreeItem(parentItem, after, entryInfo, true);
-     newItem->setSelected(true);
-     itemSelected(newItem);
+     setCurrentItem(newItem);
 
      setLayoutDirty(parentItem);
      return true;
    }
 
-   // is there content in the clipboard?
-   /*
-FIXME:
-   if (!m_drag) {
-    return;
-    }
-    if (item->isDirectory()) {
-       m_dragItem = item;
-    } else if (item->isEntry()) {
-       m_dragInfo = 0;
-       m_dragItem = item;
-       QString menuId = item->menuId();
-       m_dragPath = item->entryInfo()->service->entryPath();
-       if (!m_dragPath.isEmpty()) {
-          m_dragPath = KStandardDirs::locate("apps", m_dragPath);
-       }
-
-       if (!m_dragPath.isEmpty()) {
-          KUrl url;
-          url.setPath(m_dragPath);
-          data->setUrls(QList<QUrl>() << url);
-       }
-    }
-    else
-    {
-       m_dragInfo = 0;
-       m_dragItem = item;
-    }
-*/
     QVariant p(data->data(s_internalMimeType));
     const MenuItemMimeData *itemData = dynamic_cast<const MenuItemMimeData *>(data);
     if (!itemData) {
@@ -900,13 +889,11 @@ FIXME:
         return false; // Nothing to do
     }
 
-    kDebug() << "an internal drag of" << dragItem->text(0) << (parentItem ? parentItem->text(0) : "Top level");
+    //kDebug() << "an internal drag of" << dragItem->text(0) << (parentItem ? parentItem->text(0) : "Top level");
     int command = COPY_SEPARATOR;
     if (dragItem->isDirectory()) {
-        kDebug() << "moving a folder";
         command = MOVE_FOLDER;
     } else if (dragItem->isEntry()) {
-        kDebug() << "moving a file";
         command = MOVE_FILE;
     }
 
@@ -972,8 +959,7 @@ FIXME:
 
          dragItem->setName(folderInfo->caption);
          dragItem->setDirectoryPath(folderInfo->fullId);
-         dragItem->setSelected(true);
-         itemSelected(dragItem);
+         setCurrentItem(dragItem);
       }
    } else if (command == MOVE_FILE) {
        MenuEntryInfo *entryInfo = dragItem->entryInfo();
@@ -1013,9 +999,7 @@ FIXME:
       parentFolderInfo->add(entryInfo);
 
       TreeItem *newItem = createTreeItem(parentItem, after, entryInfo);
-      kDebug() << "creating new tree item" << parentItem << after << newItem->text(0) << newItem->parent() << newItem->treeWidget();
-      newItem->setSelected(true);
-      itemSelected(newItem);
+      setCurrentItem(newItem);
    } else if (command == COPY_SEPARATOR) {
       if (action != Qt::CopyAction) {
          del(dragItem, false);
@@ -1023,8 +1007,7 @@ FIXME:
 
       TreeItem *newItem = createTreeItem(parentItem, after, m_separator);
 
-      newItem->setSelected(true);
-      itemSelected(newItem);
+      setCurrentItem(newItem);
    } else {
        return false;
       // Error
@@ -1124,9 +1107,7 @@ void TreeView::newsubmenu()
 
    TreeItem *newItem = createTreeItem(parentItem, item, folderInfo, true);
 
-   newItem->setSelected(true);
-   itemSelected( newItem);
-
+   setCurrentItem(newItem);
    setLayoutDirty(parentItem);
 }
 
@@ -1192,9 +1173,7 @@ void TreeView::newitem()
 
    TreeItem *newItem = createTreeItem(parentItem, item, entryInfo, true);
 
-   newItem->setSelected(true);
-   itemSelected(newItem);
-
+   setCurrentItem(newItem);
    setLayoutDirty(parentItem);
 }
 
@@ -1223,9 +1202,7 @@ void TreeView::newsep()
 
    TreeItem *newItem = createTreeItem(parentItem, item, m_separator, true);
 
-   newItem->setSelected(true);
-   itemSelected(newItem);
-
+   setCurrentItem(newItem);
    setLayoutDirty(parentItem);
 }
 
@@ -1238,9 +1215,8 @@ void TreeView::cut()
     m_ac->action("delete")->setEnabled(false);
 
     // Select new current item
-    currentItem()->setSelected(true);
-    // Switch the UI to show that item
-    itemSelected(selectedItem());
+    // TODO: is this completely redundant?
+    setCurrentItem(currentItem());
 }
 
 void TreeView::copy()
@@ -1375,8 +1351,7 @@ void TreeView::paste()
 
          TreeItem *newItem = createTreeItem(parentItem, item, folderInfo);
 
-         newItem->setSelected(true);
-         itemSelected(newItem);
+         setCurrentItem(newItem);
       }
 
       m_clipboard = COPY_FOLDER; // Next one copies.
@@ -1422,8 +1397,7 @@ void TreeView::paste()
 
       TreeItem *newItem = createTreeItem(parentItem, item, entryInfo, true);
 
-      newItem->setSelected(true);
-      itemSelected(newItem);
+      setCurrentItem(newItem);
    }
    else
    {
@@ -1433,8 +1407,7 @@ void TreeView::paste()
 
       TreeItem *newItem = createTreeItem(parentItem, item, m_separator, true);
 
-      newItem->setSelected(true);
-      itemSelected(newItem);
+      setCurrentItem(newItem);
    }
    setLayoutDirty(parentItem);
 }
@@ -1452,9 +1425,8 @@ void TreeView::del()
     m_ac->action("edit_copy")->setEnabled(false);
     m_ac->action("delete")->setEnabled(false);
     // Select new current item
-    currentItem()->setSelected(true);
-    // Switch the UI to show that item
-    itemSelected(selectedItem());
+    // TODO: is this completely redundant?
+    setCurrentItem(currentItem());
 }
 
 void TreeView::del(TreeItem *item, bool deleteInfo)

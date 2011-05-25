@@ -44,6 +44,7 @@ class TreeItem : public QTreeWidgetItem
 public:
     TreeItem(QTreeWidgetItem *parent, QTreeWidgetItem *after, const QString &menuId, bool __init = false);
     TreeItem(QTreeWidget *parent, QTreeWidgetItem *after, const QString &menuId, bool __init = false);
+    ~TreeItem();
 
     QString menuId() const { return m_menuId; }
 
@@ -133,6 +134,7 @@ protected Q_SLOTS:
 protected:
     void contextMenuEvent(QContextMenuEvent *event);
     void dropEvent(QDropEvent *event);
+    void startDrag(Qt::DropActions supportedActions);
     QTreeWidgetItem *selectedItem();
     TreeItem *createTreeItem(TreeItem *parent, QTreeWidgetItem *after, MenuFolderInfo *folderInfo, bool _init = false);
     TreeItem *createTreeItem(TreeItem *parent, QTreeWidgetItem *after, MenuEntryInfo *entryInfo, bool _init = false);
