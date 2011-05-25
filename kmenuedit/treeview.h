@@ -182,6 +182,7 @@ private:
     bool               m_detailedMenuEntries;
     bool               m_detailedEntriesNamesFirst;
     bool               m_layoutDirty;
+    QStringList        m_dropMimeTypes;
 };
 
 class MenuItemMimeData : public QMimeData

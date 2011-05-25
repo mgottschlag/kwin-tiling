@@ -187,6 +187,7 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
       m_clipboardFolderInfo(0), m_clipboardEntryInfo(0),
       m_layoutDirty(false)
 {
+    m_dropMimeTypes << s_internalMimeType << KUrl::List::mimeDataTypes();
     qRegisterMetaType<TreeItem *>("TreeItem");
     setObjectName(name);
     setAllColumnsShowFocus(true);
@@ -724,8 +725,7 @@ Qt::DropActions TreeView::supportedDropActions() const
 
 QStringList TreeView::mimeTypes() const
 {
-    kDebug() << "returning" << (QStringList() << s_internalMimeType << KUrl::List::mimeDataTypes());
-    return QStringList() << s_internalMimeType << KUrl::List::mimeDataTypes();
+    return m_dropMimeTypes;
 }
 
 QMimeData *TreeView::mimeData(const QList<QTreeWidgetItem *> items) const
@@ -734,7 +734,6 @@ QMimeData *TreeView::mimeData(const QList<QTreeWidgetItem *> items) const
         return 0;
     }
 
-    kDebug() << "making a new mime data with" << items.first() << supportedDropActions();
     return new MenuItemMimeData(dynamic_cast<TreeItem *>(items.first()));
 }
 
