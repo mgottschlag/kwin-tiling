@@ -26,6 +26,7 @@
 #include <QMenu>
 #include <QDropEvent>
 #include <QTreeWidget>
+
 #include <KService>
 #include <KServiceGroup>
 
@@ -163,7 +164,7 @@ protected:
 
 private:
     KActionCollection *m_ac;
-    QMenu        *m_rmb;
+    QMenu             *m_rmb;
     int                m_clipboard;
     MenuFolderInfo    *m_clipboardFolderInfo;
     MenuEntryInfo     *m_clipboardEntryInfo;

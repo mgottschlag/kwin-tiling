@@ -52,8 +52,6 @@
 #include <kconfig.h>
 #include <kconfiggroup.h>
 #include <kstandarddirs.h>
-#include <k3multipledrag.h>
-#include <k3urldrag.h>
 #include <kio/netaccess.h>
 
 #include "treeview.h"
