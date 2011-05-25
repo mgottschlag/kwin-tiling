@@ -62,8 +62,8 @@ public:
     bool isDirectory() const { return m_folderInfo; }
     bool isEntry() const { return m_entryInfo; }
 
-    bool isHidden() const { return m_hidden; }
-    void setHidden(bool b);
+    bool isHiddenInMenu() const { return m_hidden; }
+    void setHiddenInMenu(bool b);
 
     bool isLayoutDirty() const;
     void setLayoutDirty() { m_layoutDirty = true; }
@@ -132,6 +132,7 @@ protected Q_SLOTS:
 
 protected:
     void contextMenuEvent(QContextMenuEvent *event);
+    void dropEvent(QDropEvent *event);
     QTreeWidgetItem *selectedItem();
     TreeItem *createTreeItem(TreeItem *parent, QTreeWidgetItem *after, MenuFolderInfo *folderInfo, bool _init = false);
     TreeItem *createTreeItem(TreeItem *parent, QTreeWidgetItem *after, MenuEntryInfo *entryInfo, bool _init = false);
@@ -193,6 +194,7 @@ public:
     MenuItemMimeData(TreeItem *item);
     virtual QStringList formats() const;
     virtual bool hasFormat(const QString &mimeType) const;
+    TreeItem *item() const;
 
 protected:
     virtual QVariant retrieveData(const QString &mimeType, QVariant::Type type) const;
