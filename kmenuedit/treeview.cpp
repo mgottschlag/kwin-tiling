@@ -76,7 +76,6 @@ TreeItem::TreeItem(QTreeWidgetItem *parent, QTreeWidgetItem *after, const QStrin
       m_folderInfo(0),
       m_entryInfo(0)
 {
-    load();
 }
 
 TreeItem::TreeItem(QTreeWidget *parent, QTreeWidgetItem *after, const QString& menuId, bool _m_init)
@@ -213,7 +212,7 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
     connect(m_ac->action("newsubmenu"), SIGNAL(activated()), SLOT(newsubmenu()));
     connect(m_ac->action("newsep"), SIGNAL(activated()), SLOT(newsep()));
 
-    m_menuFile = new MenuFile( KStandardDirs::locateLocal("xdgconf-menu", "applications-kmenuedit.menu"));
+    m_menuFile = new MenuFile(KStandardDirs::locateLocal("xdgconf-menu", "applications-kmenuedit.menu"));
     m_rootFolder = new MenuFolderInfo;
     m_separator = new MenuSeparatorInfo;
     m_drag = 0;
@@ -378,6 +377,7 @@ TreeItem *TreeView::createTreeItem(TreeItem *parent, QTreeWidgetItem *after, Men
     item->setIcon(0, appIcon(folderInfo->icon));
     item->setDirectoryPath(folderInfo->fullId);
     item->setHidden(folderInfo->hidden);
+    item->load();
     return item;
 }
 
@@ -407,8 +407,9 @@ TreeItem *TreeView::createTreeItem(TreeItem *parent, QTreeWidgetItem *after, Men
     item->setMenuEntryInfo(entryInfo);
     item->setName(name);
     item->setIcon(0, appIcon(entryInfo->icon));
-
     item->setHidden(hidden);
+    item->load();
+
     return item;
 }
 
@@ -1145,7 +1146,7 @@ void TreeView::newsubmenu()
    folderInfo->fullId = parentFolderInfo->fullId + folderInfo->id;
 
    // create the TreeItem
-   if(parentItem)
+   if (parentItem)
       parentItem->setExpanded(true);
 
    // update fileInfo data
