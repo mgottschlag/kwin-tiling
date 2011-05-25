@@ -119,7 +119,7 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
     void itemSelected(QTreeWidgetItem *);
-    //FIXME void slotDropped(QDropEvent *, Q3ListViewItem *, Q3ListViewItem *);
+    bool dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action);
 
     void newsubmenu();
     void newitem();
@@ -157,8 +157,9 @@ protected:
     QStringList fileList(const QString& relativePath);
     QStringList dirList(const QString& relativePath);
 
-    virtual bool acceptDrag(QDropEvent* event) const;
-    virtual void startDrag(Qt::DropActions supportedActions);
+    virtual QStringList mimeTypes() const;
+    QMimeData *mimeData(const QList<QTreeWidgetItem *> items) const;
+    Qt::DropActions supportedDropActions() const;
 
     void sendReloadMenu();
 
@@ -181,6 +182,20 @@ private:
     bool               m_detailedMenuEntries;
     bool               m_detailedEntriesNamesFirst;
     bool               m_layoutDirty;
+};
+
+class MenuItemMimeData : public QMimeData
+{
+public:
+    MenuItemMimeData(TreeItem *item);
+    virtual QStringList formats() const;
+    virtual bool hasFormat(const QString &mimeType) const;
+
+protected:
+    virtual QVariant retrieveData(const QString &mimeType, QVariant::Type type) const;
+
+private:
+    TreeItem *m_item;
 };
 
 Q_DECLARE_METATYPE(TreeItem *);

@@ -192,8 +192,8 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
     setAllColumnsShowFocus(true);
     setRootIsDecorated(true);
     setSortingEnabled(false);
-    setAcceptDrops(true);
     setDragEnabled(true);
+    setAcceptDrops(true);
     setMinimumWidth(240);
 
     setHeaderLabels(QStringList() << QString(""));
@@ -717,22 +717,26 @@ QStringList TreeView::dirList(const QString& rPath)
     return dirlist;
 }
 
-bool TreeView::acceptDrag(QDropEvent* e) const
+Qt::DropActions TreeView::supportedDropActions() const
 {
-    if (e->provides(s_internalMimeType) && (e->source() == const_cast<TreeView *>(this))) {
-       return true;
-    }
-
-    if (KUrl::List::canDecode(e->mimeData())) {
-        KUrl::List urls = KUrl::List::fromMimeData(e->mimeData());
-        if (!urls.isEmpty() && urls[0].isLocalFile() && urls[0].path().endsWith(".desktop")) {
-            return true;
-        }
-    }
-
-    return false;
+    return Qt::CopyAction | Qt::MoveAction;
 }
 
+QStringList TreeView::mimeTypes() const
+{
+    kDebug() << "returning" << (QStringList() << s_internalMimeType << KUrl::List::mimeDataTypes());
+    return QStringList() << s_internalMimeType << KUrl::List::mimeDataTypes();
+}
+
+QMimeData *TreeView::mimeData(const QList<QTreeWidgetItem *> items) const
+{
+    if (items.isEmpty()) {
+        return 0;
+    }
+
+    kDebug() << "making a new mime data with" << items.first() << supportedDropActions();
+    return new MenuItemMimeData(dynamic_cast<TreeItem *>(items.first()));
+}
 
 static QString createDesktopFile(const QString &file, QString *menuId, QStringList *excludeList)
 {
@@ -785,9 +789,11 @@ static QString createDirectoryFile(const QString &file, QStringList *excludeList
 }
 
 
-/* FIXME
-void TreeView::slotDropped (QDropEvent * e, Q3ListViewItem *parent, Q3ListViewItem*after)
+bool TreeView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action)
 {
+    kDebug() << "dropped!";
+    return false;
+    /* FIXME
    if(!e) return;
 
    // get destination folder
@@ -979,62 +985,9 @@ void TreeView::slotDropped (QDropEvent * e, Q3ListViewItem *parent, Q3ListViewIt
    }
    m_drag = 0;
    setLayoutDirty(parentItem);
-}
 */
+}
 
-class MenuItemMimeData : public QMimeData
-{
-public:
-    MenuItemMimeData(TreeItem *item)
-        : QMimeData(),
-          m_item(item)
-    {
-
-    }
-
-    virtual QStringList formats() const
-    {
-        QStringList formats;
-        if (!m_item) {
-            return formats;
-        }
-
-        formats << s_internalMimeType;
-        return formats;
-    }
-
-    virtual bool hasFormat(const QString &mimeType) const
-    {
-        return m_item && mimeType == "KMenuEdit/ItemPointer";
-    }
-
-protected:
-    virtual QVariant retrieveData(const QString &mimeType, QVariant::Type type) const
-    {
-        Q_UNUSED(type);
-
-        if (m_item && mimeType == "KMenuEdit/ItemPointer") {
-            return qVariantFromValue<TreeItem*>(m_item);
-        }
-
-        return QVariant();
-    }
-
-private:
-    TreeItem *m_item;
-};
-
-void TreeView::startDrag(Qt::DropActions supportedActions)
-{
-    m_dragPath.clear();
-    TreeItem *item = (TreeItem*)selectedItem();
-    if (!item) {
-        return;
-    }
-
-    QDrag *drag = new QDrag(this);
-    QMimeData *data = new MenuItemMimeData(item);
-    drag->setMimeData(data);
 
     /*
     if (item->isDirectory()) {
@@ -1063,12 +1016,7 @@ void TreeView::startDrag(Qt::DropActions supportedActions)
        m_dragInfo = 0;
        m_dragItem = item;
     }
-
-    drag->addDragObject( new Q3StoredDrag("application/x-kmenuedit-internal", 0));
-    */
-    drag->setPixmap(item->icon(0).pixmap(QSize(24, 24)));
-    drag->exec(supportedActions);
-}
+*/
 
 QTreeWidgetItem *TreeView::selectedItem()
 {
@@ -1768,3 +1716,37 @@ void TreeView::sendReloadMenu()
         QDBusMessage::createSignal("/kickoff", "org.kde.plasma", "reloadMenu");
     QDBusConnection::sessionBus().send(message);
 }
+
+MenuItemMimeData::MenuItemMimeData(TreeItem *item)
+    : QMimeData(),
+      m_item(item)
+{
+}
+
+QStringList MenuItemMimeData::formats() const
+{
+    QStringList formats;
+    if (!m_item) {
+        return formats;
+    }
+
+    formats << s_internalMimeType;
+    return formats;
+}
+
+bool MenuItemMimeData::hasFormat(const QString &mimeType) const
+{
+    return m_item && mimeType == s_internalMimeType;
+}
+
+QVariant MenuItemMimeData::retrieveData(const QString &mimeType, QVariant::Type type) const
+{
+    Q_UNUSED(type);
+
+    if (m_item && mimeType == s_internalMimeType) {
+        return qVariantFromValue<TreeItem*>(m_item);
+    }
+
+    return QVariant();
+}
+
