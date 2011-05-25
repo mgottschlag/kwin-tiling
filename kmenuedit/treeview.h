@@ -169,10 +169,12 @@ private:
     int                m_clipboard;
     MenuFolderInfo    *m_clipboardFolderInfo;
     MenuEntryInfo     *m_clipboardEntryInfo;
+    /*
     int                m_drag;
     MenuFolderInfo    *m_dragInfo;
     TreeItem          *m_dragItem;
     QString            m_dragPath;
+    */
     bool               m_showHidden;
     MenuFile          *m_menuFile;
     MenuFolderInfo    *m_rootFolder;
