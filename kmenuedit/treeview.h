@@ -64,9 +64,9 @@ public:
     bool isHidden() const { return m_hidden; }
     void setHidden(bool b);
 
-    bool isLayoutDirty() { return m_layoutDirty; }
+    bool isLayoutDirty() const;
     void setLayoutDirty() { m_layoutDirty = true; }
-    QStringList layout();
+    void saveLayout(MenuFile *menuFile);
 
     void load();
 
@@ -157,7 +157,6 @@ protected:
     QStringList dirList(const QString& relativePath);
 
     virtual bool acceptDrag(QDropEvent* event) const;
-    //FIXME: virtual Q3DragObject *dragObject();
     virtual void startDrag(Qt::DropActions supportedActions);
 
     void sendReloadMenu();

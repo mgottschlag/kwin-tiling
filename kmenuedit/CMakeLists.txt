@@ -19,7 +19,7 @@ set(kmenuedit_KDEINIT_SRCS main.cpp ${kmenueditcommon_STAT_SRCS})
 
 kde4_add_kdeinit_executable( kmenuedit ${kmenuedit_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kmenuedit ${KDE4_KDEUILIBS} ${QT_QTXML_LIBRARY})
+target_link_libraries(kdeinit_kmenuedit ${KDE4_KIO_LIBS} ${QT_QTXML_LIBRARY} ${QT_QTDBUS_LIBRARY})
 
 install(TARGETS kdeinit_kmenuedit  DESTINATION ${LIB_INSTALL_DIR} )
 
