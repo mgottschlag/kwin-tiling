@@ -193,7 +193,7 @@ void KRandRSystemTray::updateToolTip()
 					if (output->rotation() & (RandR::Rotate90 | RandR::Rotate270))
 						currentSize = QSize(currentSize.height(), currentSize.width());
 
-					details += i18n("<td align=\"right\">Resolution: </td><td>%1 x %2</td></tr>",
+					details += "<tr>" + i18n("<td align=\"right\">Resolution: </td><td>%1 x %2</td></tr>",
 							QString::number(currentSize.width()),
 							QString::number(currentSize.height()));
 					RateList rates = output->refreshRates();
