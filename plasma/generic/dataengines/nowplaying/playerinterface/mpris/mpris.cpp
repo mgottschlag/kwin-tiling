@@ -68,7 +68,8 @@ Mpris::Mpris(const QString& name, PlayerFactory* factory)
     : QObject(),
       Player(factory),
       m_player(0),
-      m_playerName(name)
+      m_playerName(name),
+      m_artworkLoaded(false)
 {
     if (!name.startsWith(QLatin1String("org.mpris"))) {
         m_playerName = "org.mpris." + name;
@@ -238,22 +239,32 @@ float Mpris::volume()
 
 QPixmap Mpris::artwork()
 {
-    if (m_metadata.contains("arturl")) {
-        QString arturl = m_metadata["arturl"].toString();
-        if (!arturl.isEmpty()) {
-            if (!m_artfiles.contains(arturl) ||
-                !QFile::exists(m_artfiles[arturl])) {
-                QString artfile;
-                if (!KIO::NetAccess::download(arturl, artfile, 0)) {
-                    kWarning() << KIO::NetAccess::lastErrorString();
-                    return QPixmap();
-                }
-                m_artfiles[arturl] = artfile;
+    if (m_artworkLoaded) {
+        return m_artwork;
+    }
+
+    m_artwork = QPixmap();
+    const QString arturl = m_metadata["arturl"].toString();
+    if (!arturl.isEmpty()) {
+        if (!m_artfiles.contains(arturl) ||
+            (!m_artfiles[arturl].isEmpty() && !QFile::exists(m_artfiles[arturl]))) {
+            QString artfile;
+            if (!KIO::NetAccess::download(arturl, artfile, 0)) {
+                kWarning() << KIO::NetAccess::lastErrorString();
+                artfile.clear();
             }
-            return QPixmap(m_artfiles[arturl]);
+
+            m_artfiles[arturl] = artfile;
+        }
+
+        const QString url = m_artfiles[arturl];
+        if (!url.isEmpty()) {
+            m_artwork = QPixmap(url);
         }
     }
-    return QPixmap();
+
+    m_artworkLoaded = true;
+    return m_artwork;
 }
 
 bool Mpris::canPlay()
@@ -345,8 +356,12 @@ void Mpris::seek(int time)
 
 void Mpris::trackChanged(const QVariantMap& metadata)
 {
-    kDebug() << m_playerName << "metadata:" << metadata;
+    //kDebug() << m_playerName << "metadata:" << metadata;
+    const QString oldArt = m_metadata.value("arturl").toString();
     m_metadata = metadata;
+    if (m_artworkLoaded) {
+        m_artworkLoaded = oldArt != m_metadata.value("arturl");
+    }
 }
 
 void Mpris::stateChanged(MprisDBusStatus state)
