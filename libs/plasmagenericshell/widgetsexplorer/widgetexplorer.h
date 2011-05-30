@@ -129,7 +129,6 @@ private:
     Q_PRIVATE_SLOT(d, void containmentDestroyed())
 
     WidgetExplorerPrivate * const d;
-
 };
 
 } // namespace Plasma
