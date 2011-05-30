@@ -199,10 +199,10 @@ void FlipScrollView::viewRoot()
 QModelIndex FlipScrollView::indexAt(const QPoint& point) const
 {
     const int items = model()->rowCount(d->currentRoot());
-    const int rowIndex = point.y() / itemHeight();
+    const int rowIndex = (point.y() - verticalOffset()) / itemHeight();
 
     QRect itemRect = rect();
-    itemRect.setTop(itemRect.top());
+    itemRect.setTop(itemRect.top() + verticalOffset());
     itemRect.setLeft(ItemDelegate::HEADER_LEFT_MARGIN);
 
     if (rowIndex < items && itemRect.contains(point)) {
@@ -223,13 +223,13 @@ int FlipScrollView::itemHeight() const
     return d->itemHeight;
 }
 
-void FlipScrollView::scrollTo(const QModelIndex& index , ScrollHint hint)
+void FlipScrollView::scrollTo(const QModelIndex& index, ScrollHint hint)
 {
     if (!index.isValid()) {
         return;
     }
 
-    QRect itemRect = visualRect(index);
+    const QRect itemRect = visualRect(index);
     if (itemRect.isValid() && hint == EnsureVisible) {
         if (itemRect.top() < 0) {
             verticalScrollBar()->setValue(verticalScrollBar()->value() +
@@ -238,6 +238,7 @@ void FlipScrollView::scrollTo(const QModelIndex& index , ScrollHint hint)
             verticalScrollBar()->setValue(verticalScrollBar()->value() +
                                           (itemRect.bottom() - height()));
         }
+        update(itemRect);
     }
 }
 
@@ -261,8 +262,8 @@ QRect FlipScrollView::visualRect(const QModelIndex& index) const
         return QRect();
     }
 
-    const int scrollBarWidth = verticalScrollBar()->isVisible() ?  verticalScrollBar()->width() : 0;
-    QRect itemRect(leftOffset, index.row() * itemHeight(),
+    const int scrollBarWidth = verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0;
+    QRect itemRect(leftOffset, index.row() * itemHeight() - verticalOffset() ,
                    width() - leftOffset - scrollBarWidth, itemHeight());
 
     const qreal timeValue = d->flipAnimTimeLine->currentValue();
