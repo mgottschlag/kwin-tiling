@@ -21,6 +21,7 @@
 #ifndef POWERMANAGEMENTENGINE_H
 #define POWERMANAGEMENTENGINE_H
 
+#include <Plasma/Service>
 #include <Plasma/DataEngine>
 
 #include <solid/battery.h>
@@ -28,6 +29,8 @@
 
 #include <QtDBus/QDBusConnection>
 #include <QHash>
+
+class PowermanagementService;
 
 /**
  * This class provides runtime information about the battery and AC status
@@ -39,6 +42,7 @@ class PowermanagementEngine : public Plasma::DataEngine
 
 public:
     PowermanagementEngine( QObject* parent, const QVariantList& args );
+    Plasma::Service *serviceForSource (const QString& source);
     ~PowermanagementEngine();
     QStringList sources() const;
     Plasma::Service* serviceForSource(const QString &source);
@@ -66,6 +70,7 @@ private:
 
     QHash<QString, QString> m_batterySources;
 
+    friend class PowermanagementJob;
 };
 
 

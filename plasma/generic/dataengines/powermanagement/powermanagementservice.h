@@ -27,7 +27,6 @@ class PowerManagementService : public Plasma::Service
     Q_OBJECT
 
 public:
-<<<<<<< HEAD
     PowerManagementService(const QString &source);
     ServiceJob *createJob(const QString &operation,
                           QMap<QString, QVariant> &parameters);

@@ -19,7 +19,6 @@
 
 #include "powermanagementservice.h"
 #include "powermanagementjob.h"
-<<<<<<< HEAD
 
 PowerManagementService::PowerManagementService(const QString &source)
     : m_id(source)
