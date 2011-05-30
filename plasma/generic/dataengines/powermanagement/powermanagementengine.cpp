@@ -341,4 +341,6 @@ void PowermanagementEngine::reloadPowerDevilData()
     availableProfilesChanged();
 }
 
+K_EXPORT_PLASMA_DATAENGINE(powermanagement, PowermanagementEngine)
+
 #include "powermanagementengine.moc"
