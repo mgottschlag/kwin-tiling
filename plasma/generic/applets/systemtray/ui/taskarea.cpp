@@ -59,7 +59,8 @@ public:
           firstTasksLayout(new CompactLayout()),
           normalTasksLayout(new CompactLayout()),
           lastTasksLayout(new CompactLayout()),
-          location(Plasma::BottomEdge)
+          location(Plasma::BottomEdge),
+          sizeHintChanged(false)
     {
     }
 
@@ -99,8 +100,7 @@ public:
     Plasma::Location location;
     Plasma::ItemBackground *itemBackground;
     QTimer *hiddenRelayoutTimer;
-    QList<QWeakPointer<Task> > delayedRepositionTasks;
-    QTimer *repositionTimer;
+    bool sizeHintChanged;
 
     QSet<QString> hiddenTypes;
     QSet<QString> alwaysShownTypes;
@@ -119,11 +119,6 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
     d->topLayout->addItem(d->lastTasksLayout);
     d->topLayout->setContentsMargins(0, 0, 0, 0);
     d->topLayout->setSpacing(5);
-
-    d->repositionTimer = new QTimer(this);
-    d->repositionTimer->setInterval(1000);
-    d->repositionTimer->setSingleShot(true);
-    connect(d->repositionTimer, SIGNAL(timeout()), this, SLOT(delayedReposition()));
 
     d->hiddenTasksWidget = new QGraphicsWidget(this);
     d->hiddenTasksLayout = new QGraphicsGridLayout(d->hiddenTasksWidget);
@@ -182,28 +177,6 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
         //kDebug() << "checking" << task->name() << task->typeId() << d->alwaysShownTypes;
         changedPositioning = addWidgetForTask(task) || changedPositioning;
     }
-
-    if (checkUnhideTool() || changedPositioning) {
-        d->topLayout->invalidate();
-        emit sizeHintChanged(Qt::PreferredSize);
-    }
-}
-
-void TaskArea::delayedReposition()
-{
-    if (d->host->isUnderMouse()) {
-        d->repositionTimer->start();
-        return;
-    }
-
-    bool changedPositioning = false;
-    foreach (const QWeakPointer<Task> &task, d->delayedRepositionTasks) {
-        //kDebug() << "checking" << task->name() << task->typeId() << d->alwaysShownTypes;
-        if (task) {
-            changedPositioning = addWidgetForTask(task.data()) || changedPositioning;
-        }
-    }
-    d->delayedRepositionTasks.clear();
 
     if (checkUnhideTool() || changedPositioning) {
         d->topLayout->invalidate();
@@ -277,12 +250,6 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
         return false;
     }
 
-    //Delay the reposition if the applet is under the mouse cursor
-    if (d->host->isUnderMouse()) {
-        d->delayedRepositionTasks.append(task);
-        d->repositionTimer->start();
-        return false;
-    }
 
     checkVisibility(task);
     QGraphicsWidget *widget = task->widget(d->host);
@@ -385,6 +352,7 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
         } else {
             d->lastTasksLayout->insertItem(0, widget);
         }
+        d->sizeHintChanged = true;
     }
 
     widget->show();
@@ -397,6 +365,10 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
 void TaskArea::delayedAppletUpdate()
 {
     d->host->update();
+    if (d->sizeHintChanged) {
+        emit sizeHintChanged(Qt::PreferredSize);
+        d->sizeHintChanged = false;
+    }
 }
 
 void TaskArea::removeTask(Task *task)
