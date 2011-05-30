@@ -49,7 +49,6 @@ public:
     // reimplemented from ItemStateProvider
     virtual bool isVisible(const QModelIndex& index) const;
 
-    // margin is equivalent to ItemDelegate::BACK_ARROW_WIDTH + ItemDelegate::BACK_ARROW_SPACING
     static const int HEADER_LEFT_MARGIN = 5;
     static const int HEADER_TOP_MARGIN = 15;
     static const int HEADER_BOTTOM_MARGIN = 4;
@@ -59,9 +58,6 @@ public:
     static const int ITEM_LEFT_MARGIN = 25;
     static const int ITEM_RIGHT_MARGIN = 7;
     static const int TOP_OFFSET = 5;
-
-    static const int BACK_ARROW_WIDTH = 20;
-    static const int BACK_ARROW_SPACING = 5;
 };
 
 }
