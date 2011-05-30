@@ -795,6 +795,7 @@ void CalendarTablePrivate::populateCalendar()
             // Just fetch the days displayed in the grid
             eventsQuery = "events" + QString(':') + viewStartDate.toString(Qt::ISODate) +
                           QString(':') + viewEndDate.toString(Qt::ISODate);
+            kDebug() << "connecting to .. " << eventsQuery;
             calendarEngine()->connectSource(eventsQuery, q);
         } else {
             eventsQuery.clear();
