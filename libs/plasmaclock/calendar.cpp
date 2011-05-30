@@ -380,7 +380,7 @@ void Calendar::displayEvents(const QDate &date)
         QDate end = calendarTable()->endDate();
 
         if (dt.isValid() && end.isValid()) {
-            while (dt<=end) {
+            while (dt <= end) {
                 datesToProcess << dt;
                 dt = dt.addDays(1);
             }
@@ -392,13 +392,13 @@ void Calendar::displayEvents(const QDate &date)
 
     foreach (const QDate &d, datesToProcess) {
         if (dateHasDetails(d)) {
-            html+= "<b>"+d.toString()+"</b>";
-            html+= "<ul>";
+            html += "<b>"+d.toString()+"</b>";
+            html += "<ul>";
 
             QStringList details = dateDetails(d);
             foreach (const QString &detail, details) {
-                if (processedDetails<detailsMax) {
-                    html+= "<li>"+detail+"</li>";
+                if (processedDetails < detailsMax) {
+                    html += "<li>" + detail + "</li>";
                     processedDetails++;
                 }
             }
@@ -406,9 +406,13 @@ void Calendar::displayEvents(const QDate &date)
             html+= "</ul>";
         }
 
-        if (processedDetails>=detailsMax) {
+        if (processedDetails >= detailsMax) {
             break;
         }
+    }
+
+    if (processedDetails == 0) {
+        html = "<b>" + i18n("No upcoming events") + "</b>";
     }
 
     d->eventsDisplay->setText(html);
