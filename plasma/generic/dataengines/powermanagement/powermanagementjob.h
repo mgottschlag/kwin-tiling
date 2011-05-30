@@ -11,10 +11,10 @@ class PowermanagementJob : public Plasma::ServiceJob
     
 public:
     PowermanagementJob (PowermanagementEngine* engine,
-                            const QString& destination,
-                            const QString& operation,
-                            QMap<QString,QVariant>& parameters,
-                            QObject* parent = 0)
+                        const QString& destination,
+                        const QString& operation,
+                        QMap<QString,QVariant>& parameters,
+                        QObject* parent = 0)
     : ServiceJob (destination, operation, parameters, parent),
       m_engine(engine)
     {

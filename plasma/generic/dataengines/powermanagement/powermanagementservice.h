@@ -18,7 +18,7 @@ protected:
 
 private:
     PowermanagementEngine* m_engine;
-
+    QString m_dest;
 };
 
 #endif // POWERMANAGEMENT_SERVICE_H

@@ -20,6 +20,7 @@
  */
 
 #include "powermanagementengine.h"
+#include "powermanagementservice.h"
 
 //solid specific includes
 #include <solid/devicenotifier.h>
@@ -52,6 +53,11 @@ PowermanagementEngine::PowermanagementEngine(QObject* parent, const QVariantList
 
 PowermanagementEngine::~PowermanagementEngine()
 {}
+
+Plasma::Service* PowermanagementEngine::serviceForSource(const QString& source)
+{
+    return new PowermanagementService (this, source);
+}
 
 void PowermanagementEngine::init()
 {
@@ -340,5 +346,7 @@ void PowermanagementEngine::reloadPowerDevilData()
 
     availableProfilesChanged();
 }
+
+K_EXPORT_PLASMA_DATAENGINE(powermanagement, PowermanagementEngine)
 
 #include "powermanagementengine.moc"

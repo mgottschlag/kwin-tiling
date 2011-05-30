@@ -4,7 +4,8 @@
 
 PowermanagementService::PowermanagementService (PowermanagementEngine* parent, const QString& source)
     : Plasma::Service(parent),
-      m_engine (parent)
+      m_engine (parent),
+      m_dest (source)
 {
     setName ("powermanagement");
     setDestination (source);
@@ -13,7 +14,7 @@ PowermanagementService::PowermanagementService (PowermanagementEngine* parent, c
 Plasma::ServiceJob* PowermanagementService::createJob (const QString& operation,
                                                        QMap<QString, QVariant>& parameters)
 {
-    return new PowermanagementJob (m_engine, destination(), operation, parameters, this);
+    return new PowermanagementJob (m_engine, m_dest, operation, parameters, this);
 }
 
 #include "powermanagementservice.moc"
