@@ -34,7 +34,10 @@ class ShowActivityManager : public Plasma::Applet
 public:
     ShowActivityManager(QObject *parent, const QVariantList &args);
 
-protected slots:
+public Q_SLOTS:
+    void configChanged();
+
+protected Q_SLOTS:
     void showManager();
 
 private:
