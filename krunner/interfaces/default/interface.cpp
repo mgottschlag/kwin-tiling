@@ -185,7 +185,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     // we restore the original size, which will set the results view back to its
     // normal size, then we hide the results view and resize the dialog
 
-    setMinimumSize(QSize(MIN_WIDTH , 0));
+    setMinimumSize(QSize(MIN_WIDTH, m_searchTerm->sizeHint().height()));
 
     // we load the last used size; the saved value is the size of the dialog when the
     // results are visible;
@@ -610,7 +610,7 @@ void Interface::hideResultsArea()
 void Interface::resetResultsArea()
 {
     m_resultsView->hide();
-    setMinimumSize(QSize(MIN_WIDTH, 0));
+    setMinimumSize(QSize(MIN_WIDTH, m_searchTerm->sizeHint().height()));
     resize(qMax(minimumSizeHint().width(), m_defaultSize.width()), minimumSizeHint().height());
 }
 

@@ -67,6 +67,5 @@ private:
 
 };
 
-K_EXPORT_PLASMA_DATAENGINE(powermanagement, PowermanagementEngine)
 
 #endif
