@@ -46,6 +46,7 @@
 //Plasma
 #include <Plasma/Label>
 #include <Plasma/LineEdit>
+#include <Plasma/Separator>
 #include <Plasma/SpinBox>
 #include <Plasma/TextBrowser>
 #include <Plasma/ToolButton>
@@ -186,10 +187,14 @@ void Calendar::init(const QDate &initialDate)
 
     d->eventsDisplay = new Plasma::TextBrowser(this);
 
+    Plasma::Separator *separator = new Plasma::Separator(this);
+    separator->setOrientation(Qt::Vertical);
+
     calendarLayout->addItem(hLayout);
     calendarLayout->addItem(d->calendarTable);
     calendarLayout->addItem(layoutTools);
     layout->addItem(calendarLayout);
+    layout->addItem(separator);
     layout->addItem(d->eventsDisplay);
 
     setDate(initialDate);
