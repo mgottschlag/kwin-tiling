@@ -236,14 +236,14 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
                 return KMenu::eventFilter(watched, event);
             }
 
-            QString urlString = index.data(UrlRole).toString();
-            if (urlString.isNull()) {
+            QUrl url = index.data(UrlRole).toUrl();
+            if (url.isEmpty()) {
                 return KMenu::eventFilter(watched, event);
             }
 
             QMimeData *mimeData = new QMimeData();
-            mimeData->setData("text/uri-list", urlString.toUtf8());
-            mimeData->setText(mimeData->text());
+            mimeData->setUrls(QList<QUrl>() << url);
+            mimeData->setText(url.toString());
             QDrag *drag = new QDrag(this);
             drag->setMimeData(mimeData);
 
