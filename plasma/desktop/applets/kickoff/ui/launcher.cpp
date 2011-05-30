@@ -926,11 +926,13 @@ void Launcher::fillBreadcrumbs(const QModelIndex &index)
 {
     QList<QWidget*> children = d->applicationBreadcrumbs->findChildren<QWidget*>();
     foreach (QWidget *child, children) {
-        delete child;
+        child->setParent(0);
+        child->hide();
+        child->deleteLater();
     }
 
     QHBoxLayout *layout = static_cast<QHBoxLayout*>(d->applicationBreadcrumbs->layout());
-    while (layout->count()>0) {
+    while (layout->count() > 0) {
         delete layout->takeAt(0);
     }
 
