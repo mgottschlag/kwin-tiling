@@ -130,7 +130,7 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
             m_taskArea, SLOT(removeTask(SystemTray::Task*)));
 
     connect(m_taskArea, SIGNAL(sizeHintChanged(Qt::SizeHint)),
-            this, SLOT(propogateSizeHintChange(Qt::SizeHint)));
+            this, SLOT(propogateSizeHintChange(Qt::SizeHint)), Qt::QueuedConnection);
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
             this, SLOT(themeChanged()));
