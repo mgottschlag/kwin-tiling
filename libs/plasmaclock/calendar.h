@@ -60,6 +60,7 @@ public:
     void addHolidaysRegion(const QString &regionCode, bool daysOff);
     QStringList holidaysRegions() const;
 
+    bool isDisplayingDateDetails() const;
     bool dateHasDetails(const QDate &date) const;
     QStringList dateDetails(const QDate &date) const;
 
