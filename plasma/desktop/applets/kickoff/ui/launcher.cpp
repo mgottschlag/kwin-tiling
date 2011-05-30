@@ -37,6 +37,7 @@
 
 // KDE
 #include <KDebug>
+#include <KGlobalSettings>
 #include <KIcon>
 #include <kuser.h>
 #include <Plasma/Theme>
@@ -218,6 +219,7 @@ public:
         applicationView->setItemDelegate(delegate);
 
         applicationBreadcrumbs = new QWidget;
+        applicationBreadcrumbs->setMinimumHeight(ItemDelegate::HEADER_HEIGHT);
         applicationBreadcrumbs->setLayout(new QHBoxLayout);
         applicationBreadcrumbs->layout()->setContentsMargins(0, 0, 0, 0);
         applicationBreadcrumbs->layout()->setSpacing(0);
@@ -229,6 +231,7 @@ public:
 
         connect(applicationView, SIGNAL(currentRootChanged(QModelIndex)),
                 q, SLOT(fillBreadcrumbs(QModelIndex)));
+        q->fillBreadcrumbs(QModelIndex());
 
         addView(i18n("Applications"), KIcon("applications-other"),
                 applicationModel, applicationView, applicationBreadcrumbs);
@@ -936,22 +939,22 @@ void Launcher::fillBreadcrumbs(const QModelIndex &index)
         delete layout->takeAt(0);
     }
 
+    layout->addStretch(10);
+
     QModelIndex current = index;
     while (current.isValid()) {
-        addBreadcrumb(current, current==index);
+        addBreadcrumb(current, current == index);
         current = current.parent();
     }
 
-    if (index.isValid()) {
-        addBreadcrumb(QModelIndex(), false);
-    }
-
-    layout->addStretch(1);
+    // show a '>' only if the index is valid, and therefore All Applications is not alone up there
+    addBreadcrumb(QModelIndex(), !index.isValid());
 }
 
 void Launcher::addBreadcrumb(const QModelIndex &index, bool isLeaf)
 {
     QPushButton *button = new QPushButton(d->applicationBreadcrumbs);
+    button->setFont(KGlobalSettings::smallestReadableFont());
     button->setFlat(true);
     button->setStyleSheet("* { padding: 4 }");
 
@@ -960,10 +963,10 @@ void Launcher::addBreadcrumb(const QModelIndex &index, bool isLeaf)
     button->setPalette(palette);
 
     QString suffix;
-    if (!isLeaf) {
-        suffix = " >";
-    } else {
+    if (isLeaf) {
         button->setEnabled(false);
+    } else {
+        suffix = " >";
     }
 
     if (index.isValid()) {
@@ -978,7 +981,7 @@ void Launcher::addBreadcrumb(const QModelIndex &index, bool isLeaf)
             this, SLOT(breadcrumbActivated()));
 
     QHBoxLayout *layout = static_cast<QHBoxLayout*>(d->applicationBreadcrumbs->layout());
-    layout->insertWidget(0, button);
+    layout->insertWidget(1, button);
 }
 
 void Launcher::breadcrumbActivated()
