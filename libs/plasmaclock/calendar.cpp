@@ -412,7 +412,7 @@ void Calendar::displayEvents(const QDate &date)
     }
 
     if (processedDetails == 0) {
-        html = "<b>" + i18n("No upcoming events") + "</b>";
+        html = "<p align=\"center\"><b>" + i18n("No upcoming events") + "</b></p>";
     }
 
     d->eventsDisplay->setText(html);
