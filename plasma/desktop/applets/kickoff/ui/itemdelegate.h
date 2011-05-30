@@ -55,7 +55,7 @@ public:
     static const int HEADER_HEIGHT = 35;
     static const int FIRST_HEADER_HEIGHT = 20;
 
-    static const int ITEM_LEFT_MARGIN = 25;
+    static const int ITEM_LEFT_MARGIN = 12;
     static const int ITEM_RIGHT_MARGIN = 7;
     static const int TOP_OFFSET = 5;
 };
