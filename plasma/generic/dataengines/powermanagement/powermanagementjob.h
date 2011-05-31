@@ -22,7 +22,9 @@
 // plasma
 #include <Plasma/ServiceJob>
 
-class PowerManagementJob : public Plasma::ServiceJob
+typedef QMap<QString, QString> StringStringMap;
+
+class PowermanagementJob : public Plasma::ServiceJob
 {
 
     Q_OBJECT
@@ -42,4 +44,6 @@ class PowerManagementJob : public Plasma::ServiceJob
         QString callForType(const SuspendType &type);
 };
 
-#endif // POWERMANAGEMENTJOB_H
+Q_DECLARE_METATYPE (StringStringMap);
+
+#endif // POWERMANAGEMENT_JOB_H

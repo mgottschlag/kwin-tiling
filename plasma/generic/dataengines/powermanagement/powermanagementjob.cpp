@@ -83,6 +83,23 @@ void PowerManagementJob::start()
             setResult(false);
         }
     }
+    else if (operation == "changeProfile") {
+        if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
+            QDBusMessage call = QDBusMessage::createMethodCall ("org.kde.Solid.PowerManagement",
+                                                                "/org/kde/Solid/PowerManagement",
+                                                                "org.kde.Solid.PowerManagement",
+                                                                "loadProfile");
+
+            Plasma::DataEngine::Data data = m_engine->query("PowerDevil");
+            StringStringMap availableProfiles = data["Available profiles"].value< StringStringMap >();
+            QString profile = availableProfiles.key(parameters().value("profile").toString());
+
+            call.setArguments(QList<QVariant>() << QVariant::fromValue(profile));
+            QDBusConnection::sessionBus().asyncCall (call);
+        } else {
+            kDebug() << "DBus org.kde.Solid.PowerMangement not available.";
+        }
+    }
 
     kDebug() << "don't know what to do with " << operation;
     setResult(false);

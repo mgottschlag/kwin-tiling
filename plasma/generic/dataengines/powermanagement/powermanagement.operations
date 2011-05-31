@@ -13,4 +13,10 @@
           <label>The value of the screen brightness.</label>
         </entry>
     </group>
+
+    <group name="changeProfile">
+        <entry name="profile" type="String">
+          <label>The name of the power profile to be used.</label>
+        </entry>
+    </group>
 </kcfg>
