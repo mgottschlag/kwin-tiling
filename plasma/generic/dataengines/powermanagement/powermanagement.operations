@@ -7,4 +7,10 @@
 
     <group name="hibernate">
     </group>
+
+    <group name="setBrightness">
+        <entry name="brightness" type="Int">
+          <label>The value of the screen brightness.</label>
+        </entry>
+    </group>
 </kcfg>

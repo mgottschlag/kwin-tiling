@@ -68,6 +68,20 @@ void PowerManagementJob::start()
         requestShutDown();
         setResult(true);
         return;
+    } else if (operation == "setBrightness") {
+        if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
+            QDBusMessage call = QDBusMessage::createMethodCall ("org.kde.Solid.PowerManagement",
+                                                                "/org/kde/Solid/PowerManagement",
+                                                                "org.kde.Solid.PowerManagement",
+                                                                "setBrightness");
+            int brightness = parameters().value("brightness").toInt();
+            call.setArguments(QList<QVariant>() << QVariant::fromValue(brightness));
+            QDBusConnection::sessionBus().asyncCall(call);
+            setResult(true);
+        } else {
+            kDebug() << "DBus org.kde.Solid.PowerMangement not available.";
+            setResult(false);
+        }
     }
 
     kDebug() << "don't know what to do with " << operation;
