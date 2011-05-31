@@ -5,6 +5,8 @@
 
 #include <Plasma/ServiceJob>
 
+typedef QMap<QString, QString> StringStringMap;
+
 class PowermanagementJob : public Plasma::ServiceJob
 {
     Q_OBJECT
@@ -25,5 +27,7 @@ public:
 private:
     PowermanagementEngine* m_engine;
 };
+
+Q_DECLARE_METATYPE (StringStringMap);
 
 #endif // POWERMANAGEMENT_JOB_H
