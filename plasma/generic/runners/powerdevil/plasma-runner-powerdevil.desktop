@@ -150,4 +150,5 @@ X-KDE-PluginInfo-EnabledByDefault=true
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-Name=PowerDevil
 X-KDE-PluginInfo-Version=1.0
+X-Plasma-AdvertiseSingleRunnerQueryMode=true
 X-KDE-ServiceTypes=Plasma/Runner

@@ -845,6 +845,8 @@ void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine:
             }
         }
     }
+
+    emit eventsChanged();
     update();
 }
 
