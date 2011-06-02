@@ -61,6 +61,7 @@ private slots:
     void profileChanged(const QString &current);
     void batteryRemainingTimeChanged(qulonglong time);
     void availableProfilesChanged();
+    void screenBrightnessChanged(int brightness);
     void reloadPowerDevilData();
 
 private:

@@ -20,6 +20,7 @@
 
 import Qt 4.7
 import org.kde.plasma.core 0.1 as PlasmaCore
+import "core"
 
 Item {
     id: batterymonitor
@@ -29,8 +30,28 @@ Item {
     PlasmaCore.DataSource {
         id: pmSource
         engine: "powermanagement"
-        connectedSources: ["AC Adapter", "Battery", "Battery0"]
+        connectedSources: ["AC Adapter", "Battery", "Battery0", "PowerDevil"]
         interval: 0
+    }
+
+    PlasmaCore.Dialog {
+        id: dialog
+        mainItem: PopupDialog {
+            percent: pmSource.data["Battery0"]["Percent"]
+            pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
+            screenBrightness: pmSource.data["PowerDevil"]["Screen brightness"]
+            onSleepClicked: dialog.visible=false
+            onHibernateClicked: dialog.visible=false
+            onChangeBrightness: pmSource.data["PowerDevil"].setBrightness(50)
+        }
+        Component.onCompleted: setAttribute(Qt.WA_X11NetWmWindowTypeDock, true);
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            dialog.visible=!dialog.visible
+        }
     }
 
     PlasmaCore.Svg{
