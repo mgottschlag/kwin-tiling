@@ -89,6 +89,14 @@ void PowermanagementEngine::init()
                                                    SLOT(availableProfilesChanged()))) {
             kDebug() << "error connecting to configuration changes";
         }
+        // Listen to screen brightness changes
+        if (!QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement",
+                                                   "/org/kde/Solid/PowerManagement",
+                                                   "org.kde.Solid.PowerManagement",
+                                                   "brightnessChanged", this,
+                                                   SLOT(screenBrightnessCnhanged(int)))) {
+            kDebug() << "error connecting to configuration changes";
+        }
 
         setData("PowerDevil", DataEngine::Data());
 
@@ -317,6 +325,16 @@ void PowermanagementEngine::availableProfilesChanged()
     setData("PowerDevil", "Available profiles", QVariant::fromValue(profiles));
 }
 
+void PowermanagementEngine::screenBrightnessChanged(int brightness)
+{
+    /*QDBusMessage call = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement",
+                                                      "org.kde.Solid.PowerManagement", "brightness");
+    QDBusPendingReply<int> reply = QDBusConnection::sessionBus().asyncCall (call);
+    reply.waitForFinished();
+    setData("PowerDevil", "Screen brightness", reply.value());*/
+    setData("PowerDevil", "Screen brightness", brightness);
+}
+
 void PowermanagementEngine::reloadPowerDevilData()
 {
     // Init data
@@ -345,6 +363,16 @@ void PowermanagementEngine::reloadPowerDevilData()
     }
 
     availableProfilesChanged();
+
+    {
+        QDBusMessage call = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement",
+                                                          "org.kde.Solid.PowerManagement", "brightness");
+        QDBusPendingReply<int> reply = QDBusConnection::sessionBus().asyncCall (call);
+        reply.waitForFinished();
+        if (reply.isValid()) {
+            screenBrightnessChanged(reply.value());
+        }
+    }
 }
 
 K_EXPORT_PLASMA_DATAENGINE(powermanagement, PowermanagementEngine)
