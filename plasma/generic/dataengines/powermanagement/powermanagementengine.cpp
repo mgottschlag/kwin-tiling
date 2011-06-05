@@ -3,6 +3,7 @@
  *   Copyright 2007-2008 Sebastian Kuegler <sebas@kde.org>
  *   CopyRight 2007 Maor Vanmak <mvanmak1@gmail.com>
  *   Copyright 2008 Dario Freddi <drf54321@gmail.com>
+ *   Copyright 2011 Viranch Mehta <viranch.mehta@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -95,7 +96,7 @@ void PowermanagementEngine::init()
                                                    "/org/kde/Solid/PowerManagement",
                                                    "org.kde.Solid.PowerManagement",
                                                    "brightnessChanged", this,
-                                                   SLOT(screenBrightnessCnhanged(int)))) {
+                                                   SLOT(screenBrightnessChanged(int)))) {
             kDebug() << "error connecting to configuration changes";
         }
 
@@ -339,11 +340,6 @@ void PowermanagementEngine::availableProfilesChanged()
 
 void PowermanagementEngine::screenBrightnessChanged(int brightness)
 {
-    /*QDBusMessage call = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement",
-                                                      "org.kde.Solid.PowerManagement", "brightness");
-    QDBusPendingReply<int> reply = QDBusConnection::sessionBus().asyncCall (call);
-    reply.waitForFinished();
-    setData("PowerDevil", "Screen brightness", reply.value());*/
     setData("PowerDevil", "Screen brightness", brightness);
 }
 

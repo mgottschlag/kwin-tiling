@@ -1,6 +1,6 @@
-// -*- coding: iso-8859-1 -*-
 /*
  *   Copyright 2011 Sebastian Kügler <sebas@kde.org>
+ *   Copyright 2011 Viranch Mehta <viranch.mehta@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -37,14 +37,29 @@ Item {
     PlasmaCore.Dialog {
         id: dialog
         mainItem: PopupDialog {
+            id: dialogItem
             percent: pmSource.data["Battery0"]["Percent"]
             pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
             screenBrightness: pmSource.data["PowerDevil"]["Screen brightness"]
             onSleepClicked: dialog.visible=false
             onHibernateClicked: dialog.visible=false
-            onChangeBrightness: pmSource.data["PowerDevil"].setBrightness(50)
+            onChangeBrightness: {
+                service = pmSource.serviceForSource("PowerDevil");
+                operation = service.operationDescription("setBrightness");
+                operation.brightness = screenBrightness;
+                service.startOperationCall(operation);
+            }
+            Component.onCompleted: {
+                var profiles = pmSource.data["PowerDevil"]["Available profiles"];
+                for (var i in profiles) {
+                    print(i);
+                    print(profiles[i]);
+                }
+            }
         }
-        Component.onCompleted: setAttribute(Qt.WA_X11NetWmWindowTypeDock, true);
+        Component.onCompleted: {
+            setAttribute(Qt.WA_X11NetWmWindowTypeDock, true);
+        }
     }
 
     MouseArea {

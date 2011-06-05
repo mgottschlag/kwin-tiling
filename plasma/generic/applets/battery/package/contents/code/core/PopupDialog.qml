@@ -1,3 +1,22 @@
+/*
+ *   Copyright 2011 Viranch Mehta <viranch.mehta@gmail.com>
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU Library General Public License as
+ *   published by the Free Software Foundation; either version 2 or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details
+ *
+ *   You should have received a copy of the GNU Library General Public
+ *   License along with this program; if not, write to the
+ *   Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 import Qt 4.7
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
@@ -14,6 +33,10 @@ Item {
     signal sleepClicked
     signal hibernateClicked
     signal changeBrightness
+
+    function addProfile(profile) {
+        profiles.addItem(profile);
+    }
 
     Item {
         id: labels
@@ -116,13 +139,18 @@ Item {
             minimum: 0
             maximum: 100
             value: parent.screenBrightness
+            /* FIXME: this is non-existant property */
+            //tickInterval: 10
             anchors {
                 left: parent.left
                 top: adapterValue.bottom
                 topMargin: -5
                 right: parent.right
             }
-            onValueChanged: changeBrightness()
+            onValueChanged: {
+                screenBrightness = value;
+                changeBrightness();
+            }
         }
 
         PlasmaWidgets.IconWidget {
