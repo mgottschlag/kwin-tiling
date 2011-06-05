@@ -41,8 +41,18 @@ Item {
             percent: pmSource.data["Battery0"]["Percent"]
             pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
             screenBrightness: pmSource.data["PowerDevil"]["Screen brightness"]
-            onSleepClicked: dialog.visible=false
-            onHibernateClicked: dialog.visible=false
+            onSleepClicked: {
+                dialog.visible=false
+                service = pmSource.serviceForSource("PowerDevil");
+                operation = service.operationDescription("suspend");
+                service.startOperationCall(operation);
+            }
+            onHibernateClicked: {
+                dialog.visible=false
+                service = pmSource.serviceForSource("PowerDevil");
+                operation = service.operationDescription("hibernate");
+                service.startOperationCall(operation);
+            }
             onChangeBrightness: {
                 service = pmSource.serviceForSource("PowerDevil");
                 operation = service.operationDescription("setBrightness");
