@@ -20,12 +20,15 @@ Comment[pt_BR]=Monitor de bateria simples
 Comment[sv]=Enkel batteriövervakning
 Comment[uk]=Простий засіб спостереження за акумуляторами
 Comment[x-test]=xxSimple battery monitorxx
-Type=Service
-ServiceTypes=Plasma/Containment
+
 Icon=battery
-X-KDE-ParentAppp=plasma-mobile
+Type=Service
+ServiceTypes=Plasma/Applet,Plasma/PopupApplet
+
 X-Plasma-API=declarativeappletscript
-X-Plasma-MainScript=code/batterymonitor.qml
+X-Plasma-MainScript=ui/batterymonitor.qml
+X-Plasma-DefaultSize=100,100
+
 X-KDE-PluginInfo-Author=Sebastian Kügler
 X-KDE-PluginInfo-Email=sebas@kde.org
 X-KDE-PluginInfo-Name=org.kde.batterymonitor

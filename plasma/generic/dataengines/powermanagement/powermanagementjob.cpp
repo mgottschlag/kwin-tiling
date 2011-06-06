@@ -80,11 +80,29 @@ void PowerManagementJob::start()
             QDBusConnection::sessionBus().asyncCall(call);
             setResult(true);
         } else {
-            kDebug() << "DBus org.kde.Solid.PowerMangement not available.";
-            setResult(false);
+            kDebug() << "set brightness: DBus org.kde.Solid.PowerMangement not available.";
         }
-    }
-    else if (operation == "changeProfile") {
+    } else if (operation == "lock") {
+        if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.freedesktop.ScreenSaver")) {
+            QDBusMessage call = QDBusMessage::createMethodCall ("org.freedesktop.ScreenSaver",
+                                                                "/ScreenSaver",
+                                                                "org.freedesktop.ScreenSaver",
+                                                                "Lock");
+            QDBusConnection::sessionBus().asyncCall (call);
+        } else {
+            kDebug() << "lock: DBus org.freedesktop.ScreenSaver not available.";
+        }
+    } else if (operation == "switchUser") {
+        if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.krunner")) {
+            QDBusMessage call = QDBusMessage::createMethodCall ("org.kde.krunner",
+                                                                "/App",
+                                                                "org.kde.krunner.App",
+                                                                "switchUser");
+            QDBusConnection::sessionBus().asyncCall (call);
+        } else {
+            kDebug() << "switch user: DBus org.kde.krunner not available.";
+        }
+    } else if (operation == "setProfile") {
         if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
             QDBusMessage call = QDBusMessage::createMethodCall ("org.kde.Solid.PowerManagement",
                                                                 "/org/kde/Solid/PowerManagement",
@@ -98,7 +116,7 @@ void PowerManagementJob::start()
             call.setArguments(QList<QVariant>() << QVariant::fromValue(profile));
             QDBusConnection::sessionBus().asyncCall (call);
         } else {
-            kDebug() << "DBus org.kde.Solid.PowerMangement not available.";
+            kDebug() << "set profile: DBus org.kde.Solid.PowerMangement not available.";
         }
     }
 

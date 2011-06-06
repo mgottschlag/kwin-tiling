@@ -29,10 +29,12 @@ Item {
     property int percent
     property bool pluggedIn
     property alias screenBrightness: values.screenBrightness
+    property alias currentProfile: values.currentProfile
 
     signal sleepClicked
     signal hibernateClicked
-    signal changeBrightness
+    signal brightnessChanged
+    signal profileChanged
 
     function addProfile(profile) {
         profiles.addItem(profile);
@@ -102,6 +104,7 @@ Item {
             bottom: parent.bottom
         }
         property int screenBrightness
+        property string currentProfile
 
         Text {
             id: batteryValue
@@ -131,6 +134,10 @@ Item {
                 topMargin: 5
                 right: parent.right
             }
+            onTextChanged: {
+                currentProfile = text;
+                profileChanged();
+            }
         }
 
         PlasmaWidgets.Slider {
@@ -149,7 +156,7 @@ Item {
             }
             onValueChanged: {
                 screenBrightness = value;
-                changeBrightness();
+                brightnessChanged();
             }
         }
 
