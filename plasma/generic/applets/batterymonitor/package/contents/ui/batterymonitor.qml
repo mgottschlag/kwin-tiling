@@ -53,10 +53,16 @@ Item {
                 operation = service.operationDescription("hibernate");
                 service.startOperationCall(operation);
             }
-            onChangeBrightness: {
+            onBrightnessChanged: {
                 service = pmSource.serviceForSource("PowerDevil");
                 operation = service.operationDescription("setBrightness");
                 operation.brightness = screenBrightness;
+                service.startOperationCall(operation);
+            }
+            onProfileChanged: {
+                service = pmSource.serviceForSource("PowerDevil");
+                operation = service.operationDescription("setProfile");
+                operation.profile = currentProfile;
                 service.startOperationCall(operation);
             }
             Component.onCompleted: {

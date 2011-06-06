@@ -1,6 +1,6 @@
 add_subdirectory(analog-clock)
 add_subdirectory(activitybar)
-add_subdirectory(battery)
+add_subdirectory(batterymonitor)
 add_subdirectory(calendar)
 add_subdirectory(devicenotifier)
 add_subdirectory(digital-clock)
