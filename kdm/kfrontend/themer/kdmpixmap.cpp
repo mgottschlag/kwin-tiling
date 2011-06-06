@@ -23,11 +23,11 @@
 #include "kdmthemer.h"
 
 #include <kstandarddirs.h>
-#include <ksvgrenderer.h>
 
 #include <QDirIterator>
 #include <QPainter>
 #include <QSignalMapper>
+#include <QSvgRenderer>
 
 #include <math.h>
 
@@ -208,7 +208,7 @@ KdmPixmap::loadSvg(PixmapStruct::PixmapClass &pClass)
         return true;
     if (pClass.fullpath.isEmpty())
         return false;
-    pClass.svgRenderer = new KSvgRenderer(pClass.fullpath, this);
+    pClass.svgRenderer = new QSvgRenderer(pClass.fullpath, this);
     if (!pClass.svgRenderer->isValid()) {
         delete pClass.svgRenderer;
         pClass.svgRenderer = 0;

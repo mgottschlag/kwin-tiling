@@ -831,7 +831,7 @@ void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine:
         d->pimEvents.insert(uid, pimData);
 
         QList<QVariant> occurrenceList = pimData.value("Occurrences").toList();
-        foreach (QVariant occurrence, occurrenceList) {
+        foreach (const QVariant &occurrence, occurrenceList) {
             QDate occStartDate = occurrence.toHash().value("OccurrenceStartDate").value<KDateTime>().date();
             if (pimData.value("EventMultiDay").toBool() == true) {
                 QDate occEndDate = occurrence.toHash().value("OccurrenceEndDate").value<KDateTime>().date();
