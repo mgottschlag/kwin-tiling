@@ -88,7 +88,7 @@ ResultItem::ResultItem(const SharedResultData *sharedData, const Plasma::QueryMa
     m_highlightAnim = new QPropertyAnimation(this, "highlightState", this);
     m_highlightAnim->setStartValue(0);
     m_highlightAnim->setEndValue(1);
-    m_highlightAnim->setDuration(150);
+    m_highlightAnim->setDuration(50);
     m_highlightAnim->setEasingCurve(QEasingCurve::OutCubic);
     setMatch(match);
 }
@@ -589,7 +589,7 @@ void ResultItem::calculateSize(int sceneWidth)
         text.append(QLatin1Char( '\n' )).append(description());
     }
 
-    QFontMetrics fm(font());
+    const QFontMetrics fm(font());
     const int maxHeight = fm.height() * 4;
     const int minHeight = KIconLoader::SizeMedium;
 

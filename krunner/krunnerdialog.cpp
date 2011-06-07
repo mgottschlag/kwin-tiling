@@ -482,7 +482,7 @@ void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
         if (m_resizing) {
             if (m_vertResize) {
                 const int deltaY = e->globalY() - m_lastPressPos.y();
-                resize(width(), qMax(10, height() + deltaY));
+                resize(width(), qMax(80, height() + deltaY));
                 m_lastPressPos = e->globalPos();
             } else {
                 QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
