@@ -679,9 +679,8 @@ void TaskGroupItem::popupMenu()
 
     if (!m_popupDialog) {
         // Initialize popup dialog
-        m_popupDialog = new Plasma::Dialog();
+        m_popupDialog = new Plasma::Dialog(0, Qt::Popup);
         KWindowSystem::setType(m_popupDialog->winId(), NET::PopupMenu);
-        m_popupDialog->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
         connect(m_popupDialog, SIGNAL(dialogVisible(bool)), this, SLOT(popupVisibilityChanged(bool)));
         connect(m_popupDialog, SIGNAL(dialogVisible(bool)), m_applet, SLOT(setPopupDialog(bool)));
         connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(handleActiveWindowChanged(WId)));
