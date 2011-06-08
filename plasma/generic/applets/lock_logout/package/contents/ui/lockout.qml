@@ -57,29 +57,31 @@ Item {
         service.startOperationCall(operation);
     }
 
-    ListView {
+    Flow {
         id: iconView
         anchors.fill: parent
-        orientation: width>height ? ListView.Horizontal : ListView.Vertical
-        model: [ // iconname,               operation,      visible
-            [ "system-lock-screen",       "lock",          show_lock         ],
-            [ "system-switch-user",       "switchUser",    show_switchUser   ],
-            [ "system-shutdown",          "leave",         show_leave        ],
-            [ "system-suspend",           "suspend",       show_suspend      ],
-            [ "system-suspend-hibernate", "hibernate",     show_hibernate    ]
-        ]
-        delegate: Item {
-            id: iconDelegate
-            visible: modelData[2]
-            width: visible ? iconButton.width : 0
-            height: visible ? iconButton.height : 0
+        flow: width>height ? Flow.LeftToRight : Flow.TopToBottom
+        Repeater {
+            model: [ // iconname,               operation,      visible
+                [ "system-lock-screen",       "lock",          show_lock         ],
+                [ "system-switch-user",       "switchUser",    show_switchUser   ],
+                [ "system-shutdown",          "leave",         show_leave        ],
+                [ "system-suspend",           "suspend",       show_suspend      ],
+                [ "system-suspend-hibernate", "hibernate",     show_hibernate    ]
+            ]
+            delegate: Item {
+                id: iconDelegate
+                visible: modelData[2]
+                width: visible ? iconButton.width : 0
+                height: visible ? iconButton.height : 0
 
-            PlasmaWidgets.IconWidget {
-                id: iconButton
-                icon: QIcon(modelData[0])
-                width: iconView.orientation==ListView.Horizontal ? lockout.width/count : lockout.width
-                height: iconView.orientation==ListView.Vertical ? lockout.height/count : lockout.height
-                onClicked: clickHandler(modelData[1])
+                PlasmaWidgets.IconWidget {
+                    id: iconButton
+                    icon: QIcon(modelData[0])
+                    width: iconView.flow==Flow.LeftToRight ? lockout.width/count : lockout.width
+                    height: iconView.flow==Flow.TopToBottom ? lockout.height/count : lockout.height
+                    onClicked: clickHandler(modelData[1])
+                }
             }
         }
     }
