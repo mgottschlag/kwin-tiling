@@ -94,40 +94,40 @@ void TimeSource::updateTime()
         }
     }
 
-    bool updateDailies = false;
-    QDateTime dt = KDateTime::currentDateTime(tz).dateTime();
-
-    if (m_solarPosition || m_moonPosition) {
-        QDate prev = data()["Date"].toDate();
-        updateDailies = prev != dt.date();
-    }
-
-    if (!m_userDateTime) {
-        setData(I18N_NOOP("Time"), dt.time());
-        setData(I18N_NOOP("Date"), dt.date());
-    } else {
-        dt = QDateTime(data()["Date"].toDate(), data()["Time"].toTime());
-    }
-
     int offset = tz.currentOffset();
     if (m_offset != offset) {
         m_offset = offset;
         setData(I18N_NOOP("Offset"), m_offset);
     }
 
-    if (m_solarPosition) {
-        if (updateDailies) {
-            addDailySolarPositionData(dt);
+    QDateTime dt = m_userDateTime ? data()["DateTime"].toDateTime()
+                                  : KDateTime::currentDateTime(tz).dateTime();
+
+    if (m_solarPosition || m_moonPosition) {
+        const QDate prev = data()["Date"].toDate();
+        const bool updateDailies = prev != dt.date();
+
+        if (m_solarPosition) {
+            if (updateDailies) {
+                addDailySolarPositionData(dt);
+            }
+
+            addSolarPositionData(dt);
         }
-        addSolarPositionData(dt);
+
+        if (m_moonPosition) {
+            if (updateDailies) {
+                addDailyMoonPositionData(dt);
+            }
+
+            addMoonPositionData(dt);
+        }
     }
 
-    if (m_moonPosition) {
-        addMoonPositionData(dt);
-
-        if (updateDailies) {
-            addDailyMoonPositionData(dt);
-        }
+    if (!m_userDateTime) {
+        setData(I18N_NOOP("Time"), dt.time());
+        setData(I18N_NOOP("Date"), dt.date());
+        setData(I18N_NOOP("DateTime"), dt);
     }
 }
 
@@ -165,6 +165,7 @@ QString TimeSource::parseName(const QString &name)
             } else if (key == datetime) {
                 QDateTime dt = QDateTime::fromString(value, Qt::ISODate);
                 if (dt.isValid()) {
+                    setData(I18N_NOOP("DateTime"), dt);
                     setData(I18N_NOOP("Date"), dt.date());
                     setData(I18N_NOOP("Time"), dt.time());
                     m_userDateTime = true;

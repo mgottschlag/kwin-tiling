@@ -19,6 +19,7 @@
 #include "panelshadows.h"
 
 #include <QWidget>
+#include <QPainter>
 
 #ifdef Q_WS_X11
 #include <QX11Info>
@@ -32,11 +33,17 @@ class PanelShadows::Private
 public:
     Private(PanelShadows *shadows)
         : q(shadows)
+        , m_managePixmaps(false)
     {
+    }
+    ~Private()
+    {
+        clearPixmaps();
     }
 
     void clearPixmaps();
     void setupPixmaps();
+    void initPixmap(const QString &element);
     void updateShadow(const QWidget *window);
     void clearShadow(const QWidget *window);
     void updateShadows();
@@ -46,6 +53,7 @@ public:
     QList<QPixmap> m_shadowPixmaps;
     QVector<unsigned long> m_data;
     QSet<const QWidget *> m_windows;
+    bool m_managePixmaps;
 };
 
 PanelShadows::PanelShadows(QObject *parent)
@@ -99,17 +107,35 @@ void PanelShadows::Private::updateShadows()
     }
 }
 
+void PanelShadows::Private::initPixmap(const QString &element)
+{
+#ifdef Q_WS_X11
+    QPixmap pix = q->pixmap(element);
+    if (pix.handle() == 0) {
+        Pixmap xPix = XCreatePixmap(QX11Info::display(), QX11Info::appRootWindow(), pix.width(), pix.height(), 32);
+        QPixmap tempPix = QPixmap::fromX11Pixmap(xPix, QPixmap::ExplicitlyShared);
+        tempPix.fill(Qt::transparent);
+        QPainter p(&tempPix);
+        p.drawPixmap(QPoint(0, 0), pix);
+        m_shadowPixmaps << tempPix;
+        m_managePixmaps = true;
+    } else {
+        m_shadowPixmaps << pix;
+    }
+#endif
+}
+
 void PanelShadows::Private::setupPixmaps()
 {
     clearPixmaps();
-    m_shadowPixmaps << q->pixmap("shadow-top");
-    m_shadowPixmaps << q->pixmap("shadow-topright");
-    m_shadowPixmaps << q->pixmap("shadow-right");
-    m_shadowPixmaps << q->pixmap("shadow-bottomright");
-    m_shadowPixmaps << q->pixmap("shadow-bottom");
-    m_shadowPixmaps << q->pixmap("shadow-bottomleft");
-    m_shadowPixmaps << q->pixmap("shadow-left");
-    m_shadowPixmaps << q->pixmap("shadow-topleft");
+    initPixmap("shadow-top");
+    initPixmap("shadow-topright");
+    initPixmap("shadow-right");
+    initPixmap("shadow-bottomright");
+    initPixmap("shadow-bottom");
+    initPixmap("shadow-bottomleft");
+    initPixmap("shadow-left");
+    initPixmap("shadow-topleft");
 
     foreach (const QPixmap &pixmap, m_shadowPixmaps) {
         m_data << pixmap.handle();
@@ -146,6 +172,14 @@ void PanelShadows::Private::setupPixmaps()
 
 void PanelShadows::Private::clearPixmaps()
 {
+#ifdef Q_WS_X11
+    if (m_managePixmaps) {
+        foreach (const QPixmap &pixmap, m_shadowPixmaps) {
+            XFreePixmap(QX11Info::display(), pixmap.handle());
+        }
+        m_managePixmaps = false;
+    }
+#endif
     m_shadowPixmaps.clear();
     m_data.clear();
 }

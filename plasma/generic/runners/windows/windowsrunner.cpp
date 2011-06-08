@@ -399,7 +399,7 @@ Plasma::QueryMatch WindowsRunner::windowMatch(const KWindowInfo& info, WindowAct
 {
     Plasma::QueryMatch match(this);
     match.setType(type);
-    match.setData(QString::number((int)action) + "_" + QString::number(info.win()));
+    match.setData(QString(QString::number((int)action) + "_" + QString::number(info.win())));
     match.setIcon(m_icons[info.win()]);
     match.setText(info.name());
     QString desktopName;

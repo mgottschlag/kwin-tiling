@@ -403,6 +403,17 @@ void cancelShutdown(void);
 int TTYtoVT(const char *tty);
 int activateVT(int vt);
 
+#ifdef _POSIX_MONOTONIC_CLOCK
+# define updateNow() \
+    do { \
+        struct timespec ts; \
+        clock_gettime(CLOCK_MONOTONIC, &ts); \
+        now = ts.tv_sec; \
+    } while (0)
+#else
+# define updateNow() time(&now)
+#endif
+
 /* in ctrl.c */
 void openCtrl(struct display *d);
 void closeCtrl(struct display *d);

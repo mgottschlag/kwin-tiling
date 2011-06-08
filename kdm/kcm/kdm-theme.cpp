@@ -161,7 +161,7 @@ void KDMThemeWidget::selectTheme(const QString &path)
 
 void KDMThemeWidget::load()
 {
-    selectTheme(config->group("X-*-Greeter").readEntry("Theme", themeDir + "oxygen"));
+    selectTheme(config->group("X-*-Greeter").readEntry("Theme", QString(themeDir + "oxygen")));
 }
 
 void KDMThemeWidget::save()
@@ -218,7 +218,7 @@ void KDMThemeWidget::updateInfoView(ThemeData *theme)
             ((theme->description.length() > 0) ?
                 i18n("<qt><strong>Description:</strong> %1</qt>",
                      theme->description) : ""));
-        preview->setPixmap(theme->path + '/' + theme->screenShot);
+        preview->setPixmap(QString(theme->path + QLatin1Char('/') + theme->screenShot));
         preview->setText(theme->screenShot.isEmpty() ?
             "Screenshot not available" : QString());
     }

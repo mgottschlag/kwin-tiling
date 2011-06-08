@@ -139,13 +139,13 @@ void DesktopPathConfig::load()
 void DesktopPathConfig::defaults()
 {
     // Desktop Paths - keep defaults in sync with kglobalsettings.cpp
-    urDesktop->setUrl( QDir::homePath() + "/Desktop" );
-    urAutostart->setUrl( KGlobal::dirs()->localkdedir() + "Autostart/" );
-    urDocument->setUrl( QDir::homePath() + "/Documents" );
-    urDownload->setUrl( QDir::homePath() + "/Downloads" );
-    urMovie->setUrl( QDir::homePath() + "/Movies" );
-    urPicture->setUrl( QDir::homePath() + "/Pictures" );
-    urMusic->setUrl( QDir::homePath() + "/Music" );
+    urDesktop->setUrl( QString(QDir::homePath() + "/Desktop") );
+    urAutostart->setUrl( QString(KGlobal::dirs()->localkdedir() + "Autostart/") );
+    urDocument->setUrl( QString(QDir::homePath() + "/Documents") );
+    urDownload->setUrl( QString(QDir::homePath() + "/Downloads") );
+    urMovie->setUrl( QString(QDir::homePath() + "/Movies") );
+    urPicture->setUrl( QString(QDir::homePath() + "/Pictures") );
+    urMusic->setUrl( QString(QDir::homePath() + "/Music") );
 }
 
 // the following method is copied from kdelibs/kdecore/config/kconfiggroup.cpp
@@ -226,7 +226,7 @@ void DesktopPathConfig::save()
             if ( newAutostartURL.equals( autostartURL, KUrl::CompareWithoutTrailingSlash ) )
             {
                 // Hack. It could be in a subdir inside desktop. Hmmm... Argl.
-                urAutostart->setUrl( urlDesktop + "Autostart/" );
+                urAutostart->setUrl( QString(urlDesktop + "Autostart/") );
                 kDebug() << "Autostart is moved with the desktop";
                 autostartMoved = true;
             }
@@ -248,7 +248,7 @@ void DesktopPathConfig::save()
             const QString userDirsFile(KGlobal::dirs()->localxdgconfdir() + QLatin1String("user-dirs.dirs"));
             KConfig xdgUserConf( userDirsFile, KConfig::SimpleConfig );
             KConfigGroup g( &xdgUserConf, "" );
-            g.writeEntry( "XDG_DESKTOP_DIR", "\"" + translatePath( urlDesktop ) + "\"" );
+            g.writeEntry( "XDG_DESKTOP_DIR", QString("\"" + translatePath( urlDesktop ) + "\"") );
             pathChanged = true;
         }
     }
@@ -311,7 +311,7 @@ bool DesktopPathConfig::xdgSavePath(KUrlRequester* ur, const KUrl& currentUrl, c
             const QString userDirsFile(KGlobal::dirs()->localxdgconfdir() + QLatin1String("user-dirs.dirs"));
             KConfig xdgUserConf(userDirsFile, KConfig::SimpleConfig);
             KConfigGroup g(&xdgUserConf, "");
-            g.writeEntry(xdgKey, "\"" + translatePath(path) + "\"");
+            g.writeEntry(xdgKey, QString("\"" + translatePath(path) + "\""));
             return true;
         }
     }

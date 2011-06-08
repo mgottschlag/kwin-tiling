@@ -59,7 +59,7 @@
 
 <para>&kmenuedit; allows editing of &kde; application launchers: &kickoff;, classic &kmenu; or Lancelot Launcher.</para>
 
-<para>&kmenuedit; can be started either by &RMB; clicking the application lancher 
+<para>&kmenuedit; can be started either by &RMB; clicking the application launcher 
 button on the panel and choosing <guimenuitem>Edit
 Applications...</guimenuitem>, or 
 by typing <userinput>kmenuedit</userinput> in the &krunner; line.</para>

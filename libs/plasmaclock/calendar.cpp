@@ -46,6 +46,7 @@
 //Plasma
 #include <Plasma/Label>
 #include <Plasma/LineEdit>
+#include <Plasma/Separator>
 #include <Plasma/SpinBox>
 #include <Plasma/TextBrowser>
 #include <Plasma/ToolButton>
@@ -74,9 +75,11 @@ class CalendarPrivate
               forward(0),
               calendarTable(0),
               dateText(0),
+              eventsDisplay(0),
               jumpToday(0),
               monthMenu(0),
-              weekSpinBox(0)
+              weekSpinBox(0),
+              separator(0)
         {
         }
 
@@ -93,10 +96,13 @@ class CalendarPrivate
         ToolButton *jumpToday;
         QMenu *monthMenu;
         Plasma::SpinBox *weekSpinBox;
+        Plasma::Separator *separator;
+        QGraphicsLinearLayout *layout;
 };
 
 Calendar::Calendar(const QDate &date, QGraphicsWidget *parent)
-    : QGraphicsWidget(parent), d(new CalendarPrivate())
+    : QGraphicsWidget(parent),
+      d(new CalendarPrivate())
 {
     init(date);
 }
@@ -117,10 +123,10 @@ void Calendar::init(const QDate &initialDate)
 {
     setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(Qt::Horizontal, this);
-    QGraphicsLinearLayout *calendarLayout = new QGraphicsLinearLayout(Qt::Vertical, layout);
-    QGraphicsLinearLayout *hLayout = new QGraphicsLinearLayout(layout);
-    QGraphicsLinearLayout *layoutTools = new QGraphicsLinearLayout(layout);
+    d->layout = new QGraphicsLinearLayout(Qt::Horizontal, this);
+    QGraphicsLinearLayout *calendarLayout = new QGraphicsLinearLayout(Qt::Vertical, d->layout);
+    QGraphicsLinearLayout *hLayout = new QGraphicsLinearLayout(d->layout);
+    QGraphicsLinearLayout *layoutTools = new QGraphicsLinearLayout(d->layout);
 
     d->calendarTable = new CalendarTable(this);
     d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -184,13 +190,10 @@ void Calendar::init(const QDate &initialDate)
     connect(d->weekSpinBox, SIGNAL(valueChanged(int)), this, SLOT(goToWeek(int)));
     layoutTools->addItem(d->weekSpinBox);
 
-    d->eventsDisplay = new Plasma::TextBrowser(this);
-
     calendarLayout->addItem(hLayout);
     calendarLayout->addItem(d->calendarTable);
     calendarLayout->addItem(layoutTools);
-    layout->addItem(calendarLayout);
-    layout->addItem(d->eventsDisplay);
+    d->layout->addItem(calendarLayout);
 
     setDate(initialDate);
     displayEvents();
@@ -290,6 +293,11 @@ QStringList Calendar::holidaysRegions() const
     return calendarTable()->holidaysRegions();
 }
 
+bool Calendar::isDisplayingDateDetails() const
+{
+    return calendarTable()->displayHolidays() || calendarTable()->displayEvents();
+}
+
 bool Calendar::dateHasDetails(const QDate &date) const
 {
     return calendarTable()->dateHasDetails(date);
@@ -343,6 +351,7 @@ void Calendar::applyConfigurationInterface()
 void Calendar::configAccepted(KConfigGroup cg)
 {
     calendarTable()->configAccepted(cg);
+    displayEvents();
 }
 
 void Calendar::manualDateChange()
@@ -365,6 +374,24 @@ void Calendar::dateUpdated()
 
 void Calendar::displayEvents(const QDate &date)
 {
+    if (!isDisplayingDateDetails()) {
+        if (d->eventsDisplay) {
+            kDebug() << "deleting events display!";
+            delete d->eventsDisplay;
+            d->eventsDisplay = 0;
+            delete d->separator;
+            d->separator = 0;
+        }
+        return;
+    } else if (!d->eventsDisplay) {
+        d->separator = new Plasma::Separator(this);
+        d->separator->setOrientation(Qt::Vertical);
+        d->layout->addItem(d->separator);
+
+        d->eventsDisplay = new Plasma::TextBrowser(this);
+        d->layout->addItem(d->eventsDisplay);
+    }
+
     QString html;
     QList<QDate> datesToProcess;
 
@@ -375,7 +402,7 @@ void Calendar::displayEvents(const QDate &date)
         QDate end = calendarTable()->endDate();
 
         if (dt.isValid() && end.isValid()) {
-            while (dt<=end) {
+            while (dt <= end) {
                 datesToProcess << dt;
                 dt = dt.addDays(1);
             }

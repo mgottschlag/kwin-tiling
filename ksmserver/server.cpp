@@ -820,6 +820,8 @@ void KSMServer::newConnection( int /*socket*/ )
 {
     IceAcceptStatus status;
     IceConn iceConn = IceAcceptConnection( ((KSMListener*)sender())->listenObj, &status);
+    if( iceConn == NULL )
+        return;
     IceSetShutdownNegotiation( iceConn, False );
     IceConnectStatus cstatus;
     while ((cstatus = IceConnectionStatus (iceConn))==IceConnectPending) {
@@ -832,6 +834,7 @@ void KSMServer::newConnection( int /*socket*/ )
         else
             kDebug( 1218 ) << "ICE Connection rejected!";
         (void )IceCloseConnection (iceConn);
+        return;
     }
 
     // don't leak the fd

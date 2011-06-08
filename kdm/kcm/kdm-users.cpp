@@ -104,7 +104,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent)
 #endif
 
     m_userPixDir = config->group("X-*-Greeter").readEntry("FaceDir",
-            KStandardDirs::installPath("data") + "kdm/faces") + '/';
+            QString(KStandardDirs::installPath("data") + "kdm/faces" + '/'));
 
     if (!getpwnam("nobody"))
         KMessageBox::sorry(this, i18n(

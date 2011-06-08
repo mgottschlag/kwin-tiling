@@ -189,7 +189,8 @@ Task::Status Task::status() const
 void Task::resetHiddenStatus()
 {
      if (d->status == NeedsAttention) {
-        setOrder(First);
+        //tasks don't get moved anymore
+        setOrder(Normal);
         if (hidden() & AutoHidden) {
             setHidden(hidden() ^ AutoHidden);
         }

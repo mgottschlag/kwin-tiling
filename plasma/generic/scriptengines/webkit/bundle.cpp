@@ -340,7 +340,7 @@ bool Bundle::installPackage(const QString &archivePath, const QString &packageRo
         m_tempDir->setAutoRemove(false);
         QString pluginName = "dashboard_" + m_bundleId;
         //kDebug() << "valid, so going to move it in to" << pluginName;
-        KIO::CopyJob* job = KIO::move(m_tempDir->name(), packageRoot + pluginName, KIO::HideProgressInfo);
+        KIO::CopyJob* job = KIO::move(m_tempDir->name(), QString(packageRoot + pluginName), KIO::HideProgressInfo);
         m_isValid = job->exec();
 
         if (m_isValid) {

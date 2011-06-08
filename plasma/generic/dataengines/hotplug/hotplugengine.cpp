@@ -213,7 +213,7 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device, bool added)
         if (!device.description().isEmpty()) {
             data.insert("text", device.description());
         } else {
-            data.insert("text", device.vendor() + ' ' + device.product());
+            data.insert("text", QString(device.vendor() + QLatin1Char(' ') + device.product()));
         }
         data.insert("icon", device.icon());
         data.insert("emblems", device.emblems());

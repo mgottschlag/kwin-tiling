@@ -10,7 +10,7 @@ ENDIF("${CMAKE_SYSTEM}" MATCHES "Linux")
 
 set(HAVE_NETWORKMANAGER FALSE)
 if(NETWORKMANAGER_FOUND)
-  macro_ensure_version_range("0.7.0" ${NETWORKMANAGER_VERSION} "0.9.0" NM_0_7)
+  macro_ensure_version_range("0.7.0" ${NETWORKMANAGER_VERSION} "0.8.10" NM_0_7)
   if (NM_0_7)
     message(STATUS "Will build networkmanager-0.7")
     set(HAVE_NETWORKMANAGER TRUE)

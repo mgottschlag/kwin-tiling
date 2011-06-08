@@ -286,7 +286,7 @@ void SearchLaunch::availableScreenRegionChanged()
     QRect maxRect;
     int maxArea = 0;
     //we don't want the bounding rect (that could include panels too), but the maximumone representing the desktop
-    foreach (QRect rect, corona()->availableScreenRegion(screen()).rects()) {
+    foreach (const QRect &rect, corona()->availableScreenRegion(screen()).rects()) {
         int area = rect.width() * rect.height();
         if (area > maxArea) {
             maxRect = rect;

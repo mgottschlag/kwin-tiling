@@ -160,6 +160,7 @@ Workspace::Workspace(bool restore)
     , transSlider(NULL)
     , transButton(NULL)
     , forceUnredirectCheck(true)
+    , m_finishingCompositing(false)
 {
     (void) new KWinAdaptor(this);
 
@@ -1682,7 +1683,7 @@ void Workspace::setNumberOfDesktops(int n)
  */
 void Workspace::sendClientToDesktop(Client* c, int desk, bool dont_activate)
 {
-    if (desk < 1 || desk > numberOfDesktops())
+    if ((desk < 1 && desk != NET::OnAllDesktops) || desk > numberOfDesktops())
         return;
     int old_desktop = c->desktop();
     bool was_on_desktop = c->isOnDesktop(desk) || c->isOnAllDesktops();

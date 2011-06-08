@@ -795,6 +795,7 @@ void CalendarTablePrivate::populateCalendar()
             // Just fetch the days displayed in the grid
             eventsQuery = "events" + QString(':') + viewStartDate.toString(Qt::ISODate) +
                           QString(':') + viewEndDate.toString(Qt::ISODate);
+            kDebug() << "connecting to .. " << eventsQuery;
             calendarEngine()->connectSource(eventsQuery, q);
         } else {
             eventsQuery.clear();
@@ -830,7 +831,7 @@ void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine:
         d->pimEvents.insert(uid, pimData);
 
         QList<QVariant> occurrenceList = pimData.value("Occurrences").toList();
-        foreach (QVariant occurrence, occurrenceList) {
+        foreach (const QVariant &occurrence, occurrenceList) {
             QDate occStartDate = occurrence.toHash().value("OccurrenceStartDate").value<KDateTime>().date();
             if (pimData.value("EventMultiDay").toBool() == true) {
                 QDate occEndDate = occurrence.toHash().value("OccurrenceEndDate").value<KDateTime>().date();
@@ -844,6 +845,8 @@ void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine:
             }
         }
     }
+
+    emit eventsChanged();
     update();
 }
 
