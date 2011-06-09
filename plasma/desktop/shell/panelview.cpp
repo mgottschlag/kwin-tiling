@@ -196,8 +196,6 @@ private:
     QPixmap m_buffer;
 };
 
-PanelShadows *PanelView::s_shadows = 0;
-
 PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     : Plasma::View(panel, id, parent),
       m_panelController(0),

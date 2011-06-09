@@ -285,7 +285,6 @@ private:
     bool m_triggerEntered : 1;
     bool m_respectStatus : 1;
 
-    static PanelShadows *s_shadows;
     static const int STRUTSTIMERDELAY = 200;
     static const int AUTOUNHIDE_CHECK_DELAY = 3000;
 };
