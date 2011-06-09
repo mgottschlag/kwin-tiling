@@ -137,9 +137,11 @@ void PanelShadows::Private::setupPixmaps()
     initPixmap("shadow-left");
     initPixmap("shadow-topleft");
 
+#ifdef Q_WS_X11
     foreach (const QPixmap &pixmap, m_shadowPixmaps) {
         m_data << pixmap.handle();
     }
+#endif
 
     QSize marginHint = q->elementSize("shadow-hint-top-margin");
     if (marginHint.isValid()) {
