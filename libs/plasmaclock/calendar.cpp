@@ -348,11 +348,6 @@ void Calendar::createConfigurationInterface(KConfigDialog *parent)
     calendarTable()->createConfigurationInterface(parent);
 }
 
-void Calendar::applyConfigurationInterface()
-{
-    calendarTable()->applyConfigurationInterface();
-}
-
 void Calendar::configAccepted(KConfigGroup cg)
 {
     calendarTable()->configAccepted(cg);
