@@ -197,13 +197,9 @@ void FlipScrollView::viewRoot()
 QModelIndex FlipScrollView::indexAt(const QPoint& point) const
 {
     const int items = model()->rowCount(d->currentRoot());
-    const int rowIndex = (point.y() - verticalOffset()) / itemHeight();
+    const int rowIndex = (point.y() + verticalOffset()) / itemHeight();
 
-    QRect itemRect = rect();
-    itemRect.setTop(itemRect.top() + verticalOffset());
-    itemRect.setLeft(ItemDelegate::HEADER_LEFT_MARGIN);
-
-    if (rowIndex < items && itemRect.contains(point)) {
+    if (rowIndex < items) {
         return model()->index(rowIndex, 0, d->currentRoot());
     } else {
         return QModelIndex();
