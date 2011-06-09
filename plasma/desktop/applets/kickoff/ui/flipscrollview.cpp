@@ -42,7 +42,6 @@ class FlipScrollView::Private
 public:
     Private(FlipScrollView *view)
             : q(view)
-            , backArrowHover(false)
             , flipAnimTimeLine(new QTimeLine())
             , animLeftToRight(true)
             , itemHeight(-1) {
@@ -142,7 +141,6 @@ public:
     }
 
     FlipScrollView * const q;
-    bool backArrowHover;
     QPersistentModelIndex hoveredIndex;
     QPersistentModelIndex watchedIndexForDrag;
 
@@ -199,13 +197,9 @@ void FlipScrollView::viewRoot()
 QModelIndex FlipScrollView::indexAt(const QPoint& point) const
 {
     const int items = model()->rowCount(d->currentRoot());
-    const int rowIndex = (point.y() - verticalOffset()) / itemHeight();
+    const int rowIndex = (point.y() + verticalOffset()) / itemHeight();
 
-    QRect itemRect = rect();
-    itemRect.setTop(itemRect.top() + verticalOffset());
-    itemRect.setLeft(ItemDelegate::HEADER_LEFT_MARGIN);
-
-    if (rowIndex < items && itemRect.contains(point)) {
+    if (rowIndex < items) {
         return model()->index(rowIndex, 0, d->currentRoot());
     } else {
         return QModelIndex();
@@ -430,7 +424,6 @@ void FlipScrollView::leaveEvent(QEvent *event)
     Q_UNUSED(event);
     d->hoveredIndex = QModelIndex();
     setCurrentIndex(QModelIndex());
-    d->backArrowHover = false;
 }
 
 void FlipScrollView::paintItems(QPainter &painter, QPaintEvent *event, QModelIndex &root)
@@ -533,10 +526,6 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
     QStyle::State state = 0;
     if (currentRoot.isValid()) {
         state |= QStyle::State_Enabled;
-    }
-
-    if (d->backArrowHover) {
-        state |= QStyle::State_MouseOver;
     }
 
     if (currentRoot.isValid() || previousRoot.isValid()) {

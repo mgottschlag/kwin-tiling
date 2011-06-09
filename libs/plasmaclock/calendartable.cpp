@@ -913,7 +913,7 @@ void CalendarTable::createConfigurationInterface(KConfigDialog *parent)
     connect(d->calendarConfigUi.displayEvents, SIGNAL(stateChanged(int)), parent, SLOT(settingsModified()));
 }
 
-void CalendarTable::applyConfigurationInterface()
+void CalendarTable::configAccepted(KConfigGroup cg)
 {
     setCalendar(d->calendarConfigUi.calendarComboBox->itemData(d->calendarConfigUi.calendarComboBox->currentIndex()).toString());
     setDisplayEvents(d->calendarConfigUi.displayEvents->isChecked());
@@ -935,11 +935,7 @@ void CalendarTable::applyConfigurationInterface()
     }
     setDisplayHolidays(displayHolidays);
 #endif
-}
 
-void CalendarTable::configAccepted(KConfigGroup cg)
-{
-    applyConfigurationInterface();
     writeConfiguration(cg);
 }
 
