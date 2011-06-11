@@ -649,7 +649,7 @@ processCtrl(const char *string, int len, int fd, struct display *d)
                 if (bp != *ap && !*bp) {
                     if (**ap == '+') {
                         sdr.start += now;
-                    } else if (nowMonotonic) {
+                    } else if (nowMonotonic && sdr.start) {
                         sdr.start -= time(0);
                         sdr.start += now;
                     }
@@ -665,7 +665,7 @@ processCtrl(const char *string, int len, int fd, struct display *d)
                     } else {
                         if (**ap == '+') {
                             sdr.timeout += sdr.start ? sdr.start : now;
-                        } else if (nowMonotonic) {
+                        } else if (nowMonotonic && sdr.timeout) {
                             sdr.timeout -= time(0);
                             sdr.timeout += now;
                         }
