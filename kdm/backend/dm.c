@@ -337,7 +337,8 @@ updateNow(void)
     if (nowMonotonic) {
         struct timespec ts;
         clock_gettime(CLOCK_MONOTONIC, &ts);
-        now = ts.tv_sec;
+        /* Linux' monotonic clock starts at zero, but this is assumed to mean "long ago". */
+        now = ts.tv_sec + 10000;
     } else
 #endif
         time(&now);
