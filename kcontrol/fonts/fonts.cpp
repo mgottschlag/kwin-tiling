@@ -13,6 +13,7 @@
 #include <QDir>
 #include <QLabel>
 #include <QPushButton>
+#include <QSpinBox>
 #include <QtCore/QSettings>
 
 
@@ -625,14 +626,11 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
    lay->addWidget( aaSettingsButton, 0, 2 );
    connect(cbAA, SIGNAL(activated(int)), SLOT(slotUseAntiAliasing()));
 #endif
-   label = new QLabel( i18n( "Force fonts DPI:" ), this );
-   label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-   lay->addWidget( label, 1, 0 );
-   comboForceDpi = new QComboBox( this );
-   label->setBuddy( comboForceDpi );
-   comboForceDpi->insertItem( DPINone, i18nc("Force fonts DPI", "Disabled" )); // change DPISetti ng type if order changes
-   comboForceDpi->insertItem( DPI96, i18n( "96 DPI" ));
-   comboForceDpi->insertItem( DPI120, i18n( "120 DPI" ));
+   checkboxForceDpi = new QCheckBox( i18n( "Force fonts DPI:" ), this );
+   lay->addWidget( checkboxForceDpi, 1, 0 );
+   spinboxDpi = new QSpinBox( this );
+   spinboxDpi->setRange(1, 1000);
+   spinboxDpi->setSingleStep(24); // The common DPI values 72, 96 and 120 are multiples of 24
    QString whatsthis = i18n(
        "<p>This option forces a specific DPI value for fonts. It may be useful"
        " when the real DPI of the hardware is not detected properly and it"
@@ -644,9 +642,13 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
        " ServerLocalArgs= in $KDEDIR/share/config/kdm/kdmrc). When fonts do not render"
        " properly with real DPI value better fonts should be used or configuration"
        " of font hinting should be checked.</p>" );
-   comboForceDpi->setWhatsThis(whatsthis);
-   connect( comboForceDpi, SIGNAL( activated( int )), SLOT( changed()));
-   lay->addWidget( comboForceDpi, 1, 1 );
+   spinboxDpi->setWhatsThis(whatsthis);
+   checkboxForceDpi->setChecked(false);
+   spinboxDpi->setEnabled(false);
+   connect( spinboxDpi, SIGNAL( valueChanged(int)), SLOT( changed()));
+   connect( checkboxForceDpi, SIGNAL( toggled(bool)), SLOT( changed()));
+   connect( checkboxForceDpi, SIGNAL( toggled(bool)), spinboxDpi, SLOT( setEnabled(bool)));
+   lay->addWidget( spinboxDpi, 1, 1 );
 
    layout->addStretch(1);
 
@@ -681,7 +683,8 @@ void KFonts::defaults()
   cbAA->setCurrentIndex( useAA );
   aaSettings->defaults();
 #endif
-  comboForceDpi->setCurrentIndex( DPINone );
+  checkboxForceDpi->setChecked( false );
+  spinboxDpi->setValue( 96 );
   emit changed(true);
 }
 
@@ -701,9 +704,15 @@ void KFonts::load()
   KConfig _cfgfonts( "kcmfonts" );
   KConfigGroup cfgfonts(&_cfgfonts, "General");
   int dpicfg = cfgfonts.readEntry( "forceFontDPI", 0 );
-  DPISetting dpi = dpicfg == 120 ? DPI120 : dpicfg == 96 ? DPI96 : DPINone;
-  comboForceDpi->setCurrentIndex( dpi );
-  dpi_original = dpi;
+  if (dpicfg <= 0) {
+    checkboxForceDpi->setChecked(false);
+    spinboxDpi->setValue(96);
+    dpi_original = 0;
+  } else {
+    checkboxForceDpi->setChecked(true);
+    spinboxDpi->setValue(dpicfg);
+    dpi_original = dpicfg;
+  };
 #ifdef HAVE_FONTCONFIG
   if( cfgfonts.readEntry( "dontChangeAASettings", true )) {
       useAA_original = useAA = AASystem;
@@ -727,16 +736,15 @@ void KFonts::save()
 
   KConfig _cfgfonts( "kcmfonts" );
   KConfigGroup cfgfonts(&_cfgfonts, "General");
-  DPISetting dpi = static_cast< DPISetting >( comboForceDpi->currentIndex());
-  const int dpi2value[] = { 0, 96, 120 };
-  cfgfonts.writeEntry( "forceFontDPI", dpi2value[ dpi ] );
+  int dpi = ( checkboxForceDpi->isChecked() ? spinboxDpi->value() : 0 );
+  cfgfonts.writeEntry( "forceFontDPI", dpi );
 #ifdef HAVE_FONTCONFIG
   cfgfonts.writeEntry( "dontChangeAASettings", cbAA->currentIndex() == AASystem );
 #endif
   cfgfonts.sync();
   // if the setting is reset in the module, remove the dpi value,
   // otherwise don't explicitly remove it and leave any possible system-wide value
-  if( dpi == DPINone && dpi_original != DPINone ) {
+  if( dpi == 0 && dpi_original != 0 ) {
       KProcess proc;
       proc << "xrdb" << "-quiet" << "-remove" << "-nocpp";
       proc.start();
@@ -777,7 +785,7 @@ void KFonts::save()
   if( aaSave || (useAA != useAA_original) || dpi != dpi_original) {
     KMessageBox::information(this,
       i18n(
-        "<p>Some changes such as anti-aliasing will only affect newly started applications.</p>"
+        "<p>Some changes such as anti-aliasing or DPI will only affect newly started applications.</p>"
       ), i18n("Font Settings Changed"), "FontSettingsChanged");
     useAA_original = useAA;
     dpi_original = dpi;
