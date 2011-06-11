@@ -599,11 +599,9 @@ manageSession(void)
           gcont:
             cmd = ctrlGreeterWait(True);
 #ifdef XDMCP
-          recmd:
-            if (cmd == G_DChoose) {
+            while (cmd == G_DChoose) {
               choose:
                 cmd = doChoose();
-                goto recmd;
             }
             if (cmd == G_DGreet)
                 continue;
