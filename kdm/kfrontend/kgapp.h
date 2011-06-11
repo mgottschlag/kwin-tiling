@@ -37,6 +37,7 @@ class GreeterApp : public QApplication {
   public:
     GreeterApp(int &argc, char **argv);
     void markBusy();
+    void enableSendInteract() { sendInteract = true; }
     virtual bool x11EventFilter(XEvent *);
 
   public Q_SLOTS:
@@ -50,7 +51,7 @@ class GreeterApp : public QApplication {
 
   private:
     int pingInterval, pingTimerId;
-    bool regrabPtr, regrabKbd, initalBusy;
+    bool regrabPtr, regrabKbd, initalBusy, sendInteract;
     QPoint mouseStartPos, dialogStartPos;
     QWidget *dragWidget;
 };
