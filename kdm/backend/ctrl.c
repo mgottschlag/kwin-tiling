@@ -647,8 +647,12 @@ processCtrl(const char *string, int len, int fd, struct display *d)
                 }
                 sdr.start = strtol(*ap, &bp, 10);
                 if (bp != *ap && !*bp) {
-                    if (**ap == '+')
+                    if (**ap == '+') {
                         sdr.start += now;
+                    } else if (nowMonotonic) {
+                        sdr.start -= time(0);
+                        sdr.start += now;
+                    }
                     if (!*++ap)
                         goto miss;
                     sdr.timeout = strtol(*ap, &bp, 10);
@@ -659,8 +663,12 @@ processCtrl(const char *string, int len, int fd, struct display *d)
                     if (sdr.timeout < 0) {
                         sdr.timeout = TO_INF;
                     } else {
-                        if (**ap == '+')
+                        if (**ap == '+') {
                             sdr.timeout += sdr.start ? sdr.start : now;
+                        } else if (nowMonotonic) {
+                            sdr.timeout -= time(0);
+                            sdr.timeout += now;
+                        }
                         if (!*++ap)
                             goto miss;
                         if (!strcmp(*ap, "force")) {
