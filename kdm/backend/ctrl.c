@@ -656,11 +656,11 @@ processCtrl(const char *string, int len, int fd, struct display *d)
                         fLog(d, fd, "bad", "invalid timeout %\"s", ar[3]);
                         goto bust;
                     }
-                    if (**ap == '+')
-                        sdr.timeout += sdr.start ? sdr.start : now;
                     if (sdr.timeout < 0) {
                         sdr.timeout = TO_INF;
                     } else {
+                        if (**ap == '+')
+                            sdr.timeout += sdr.start ? sdr.start : now;
                         if (!*++ap)
                             goto miss;
                         if (!strcmp(*ap, "force")) {
