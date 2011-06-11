@@ -334,6 +334,7 @@ strCat(char **bp, const char *str)
 static void
 sdCat(char **bp, SdRec *sdr)
 {
+    int delta = nowMonotonic ? time(0) - now : 0;
     if (sdr->how == SHUT_HALT)
         strCat(bp, "halt,");
     else
@@ -341,11 +342,11 @@ sdCat(char **bp, SdRec *sdr)
     if (sdr->start == TO_INF)
         strCat(bp, "0,");
     else
-        *bp += sprintf(*bp, "%d,", sdr->start);
+        *bp += sprintf(*bp, "%d,", sdr->start ? sdr->start + delta : 0);
     if (sdr->timeout == TO_INF)
         strCat(bp, "-1,");
     else
-        *bp += sprintf(*bp, "%d,", sdr->timeout);
+        *bp += sprintf(*bp, "%d,", sdr->timeout ? sdr->timeout + delta : 0);
     if (sdr->force == SHUT_ASK)
         strCat(bp, "ask");
     else if (sdr->force == SHUT_FORCE)
