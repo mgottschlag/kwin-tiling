@@ -20,7 +20,6 @@
 
 class QCheckBox;
 class QComboBox;
-class QSpinBox;
 class KDoubleNumInput;
 class FontAASettings;
 
@@ -117,9 +116,9 @@ private:
     FontAASettings *aaSettings;
 #endif
 
-    int dpi_original;
-    QCheckBox *checkboxForceDpi;
-    QSpinBox* spinboxDpi;
+    enum DPISetting { DPINone, DPI96, DPI120 };
+    DPISetting dpi_original;
+    QComboBox* comboForceDpi;
     QList<FontUseItem *> fontUseList;
 };
 

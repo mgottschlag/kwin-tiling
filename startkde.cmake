@@ -130,9 +130,13 @@ fi
 
 . krandrstartup 2>/dev/null
 
-if test "$kcmfonts_general_forcefontdpi" -ne 0; then
+if test "$kcmfonts_general_forcefontdpi" -eq 120; then
     xrdb -quiet -merge -nocpp <<EOF
-Xft.dpi: $kcmfonts_general_forcefontdpi
+Xft.dpi: 120
+EOF
+elif test "$kcmfonts_general_forcefontdpi" -eq 96; then
+    xrdb -quiet -merge -nocpp <<EOF
+Xft.dpi: 96
 EOF
 fi
 
