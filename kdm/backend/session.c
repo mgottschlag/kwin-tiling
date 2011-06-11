@@ -579,6 +579,7 @@ manageSession(void)
         /* NOTREACHED */
 #endif
 
+    updateNow();
     tdiff = now - td->hstent->lastExit - td->openDelay;
     if (autoLogon(tdiff)) {
         if (!verify(conv_auto, False))
