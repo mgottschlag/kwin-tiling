@@ -115,15 +115,11 @@ int main()
     FILE* keys = fopen( filename, "r" );
     if( keys == NULL )
         return 2;
-    bool need_update = true;
     for(;;)
         {
         char keyline[ 1024 ];
         if( fgets( keyline, 1023, keys ) == NULL )
-            {
-            need_update = false;
-            break;
-            }
+            return 0;
         if( char* nl = strchr( keyline, '\n' ))
             *nl = '\0';
         char line[ 1024 ];
@@ -166,10 +162,5 @@ int main()
         }
     fclose( keys );
     fclose( config );
-    if( need_update )
-        {
-        int ret = system( "kdostartupconfig4" );
-        return WEXITSTATUS( ret );
-        }
-    return 0;
+    return WEXITSTATUS( system( "kdostartupconfig4" ) );
     }
