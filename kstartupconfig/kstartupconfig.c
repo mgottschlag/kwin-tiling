@@ -113,7 +113,6 @@ int main()
     for(;;)
         {
         char* nl;
-        int ok = 0;
         char keyline[ 1024 ];
         char line[ 1024 ];
 
@@ -130,32 +129,28 @@ int main()
         for(;;)
             {
             if( fgets( line, 1023, config ) == NULL )
-                break;
+                goto doit2;
             if( (nl = strchr( line, '\n' )) )
                 *nl = '\0';
             if( *line == '\0' )
-                break;
+                goto doit2;
             if( *line == '*' )
-                {
-                ok = 1;
                 break;
-                }
             if( *line == '!' )
                 {
                 if( access( line + 1, R_OK ) == 0 )
-                    break; /* file now exists -> update */
+                    goto doit2; /* file now exists -> update */
                 }
             else
                 {
                 if( stat( line, &st ) != 0 )
-                    break;
+                    goto doit2;
                 if( st.st_mtime > config_time )
-                    break;
+                    goto doit2;
                 }
             }
-        if( !ok )
-            break;
         }
+  doit2:
     fclose( keys );
     fclose( config );
   doit:
