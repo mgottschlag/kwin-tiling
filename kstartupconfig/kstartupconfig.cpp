@@ -114,10 +114,7 @@ int main()
     strlcat( filename, "/share/config/startupconfigkeys", 1024 );
     FILE* keys = fopen( filename, "r" );
     if( keys == NULL )
-        {
-        fclose( config );
         return 2;
-        }
     bool need_update = true;
     for(;;)
         {
