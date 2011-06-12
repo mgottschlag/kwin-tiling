@@ -128,7 +128,7 @@ if test -n "$kcminputrc_mouse_cursortheme" -o -n "$kcminputrc_mouse_cursorsize" 
     fi
 fi
 
-. krandrstartup 2>/dev/null
+. krandrstartup
 
 if test "$kcmfonts_general_forcefontdpi" -eq 120; then
     xrdb -quiet -merge -nocpp <<EOF
