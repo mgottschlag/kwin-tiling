@@ -77,7 +77,13 @@ Otherwise kdostartupconfig is launched to create or update all the necessary fil
 
 int main()
     {
+    time_t config_time;
+    FILE* config;
+    FILE* keys;
+    struct stat st;
     char kdehome[ 1024 ];
+    char filename[ 1024 ];
+
     if( getenv( "KDEHOME" ))
         strlcpy( kdehome, getenv( "KDEHOME" ), 1024 );
     else if( getenv( "HOME" ))
@@ -87,7 +93,6 @@ int main()
         }
     else
         return 1;
-    char filename[ 1024 ];
     strlcpy( filename, kdehome, 1024 );
     strlcat( filename, "/share/config/startupconfig", 1024 );
     if( access( filename, R_OK ) != 0 )
@@ -97,14 +102,13 @@ int main()
         }
     strlcpy( filename, kdehome, 1024 );
     strlcat( filename, "/share/config/startupconfigfiles", 1024 );
-    struct stat st;
     if( stat( filename, &st ) != 0 )
         {
         int ret = system( "kdostartupconfig4" );
         return WEXITSTATUS( ret );
         }
-    time_t config_time = st.st_mtime;
-    FILE* config = fopen( filename, "r" );
+    config_time = st.st_mtime;
+    config = fopen( filename, "r" );
     if( config == NULL )
         {
         int ret = system( "kdostartupconfig4" );
@@ -112,45 +116,46 @@ int main()
         }
     strlcpy( filename, kdehome, 1024 );
     strlcat( filename, "/share/config/startupconfigkeys", 1024 );
-    FILE* keys = fopen( filename, "r" );
+    keys = fopen( filename, "r" );
     if( keys == NULL )
         return 2;
     for(;;)
         {
+        char* nl;
+        int ok = 0;
         char keyline[ 1024 ];
+        char line[ 1024 ];
+
         if( fgets( keyline, 1023, keys ) == NULL )
             return 0;
-        if( char* nl = strchr( keyline, '\n' ))
+        if( (nl = strchr( keyline, '\n' )) )
             *nl = '\0';
-        char line[ 1024 ];
         if( fgets( line, 1023, config ) == NULL )
             break;
-        if( char* nl = strchr( line, '\n' ))
+        if( (nl = strchr( line, '\n' )) )
             *nl = '\0';
         if( strcmp( keyline, line ) != 0 )
             break;
-        bool ok = false;
         for(;;)
             {
             if( fgets( line, 1023, config ) == NULL )
                 break;
-            if( char* nl = strchr( line, '\n' ))
+            if( (nl = strchr( line, '\n' )) )
                 *nl = '\0';
             if( *line == '\0' )
                 break;
             if( *line == '*' )
                 {
-                ok = true;
+                ok = 1;
                 break;
                 }
             if( *line == '!' )
                 {
                 if( access( line + 1, R_OK ) == 0 )
-                    break; // file now exists -> update
+                    break; /* file now exists -> update */
                 }
             else
                 {
-                struct stat st;
                 if( stat( line, &st ) != 0 )
                     break;
                 if( st.st_mtime > config_time )

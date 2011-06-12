@@ -1,6 +1,6 @@
 ########### kstartupconfig ###############
 
-set(kstartupconfig_SRCS kstartupconfig.cpp )
+set(kstartupconfig_SRCS kstartupconfig.c )
 
 kde4_add_executable(kstartupconfig4 NOGUI ${kstartupconfig_SRCS})
 
