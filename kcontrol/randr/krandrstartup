@@ -6,10 +6,7 @@
 if test "$krandrrc_display_applyonstartup" = "true"; then
     if test -n "$krandrrc_display_startupcommands"; then
         # new way of simply storing the commands
-        echo -e "$krandrrc_display_startupcommands" | \
-        while read command; do
-            eval "$command"
-        done
+        eval "$krandrrc_display_startupcommands"
     else
         # backwards compatibility
         # 4 screens is hopefully enough
