@@ -128,7 +128,7 @@ if test -n "$kcminputrc_mouse_cursortheme" -o -n "$kcminputrc_mouse_cursorsize" 
     fi
 fi
 
-. krandrstartup 2>/dev/null
+. krandrstartup
 
 if test "$kcmfonts_general_forcefontdpi" -eq 120; then
     xrdb -quiet -merge -nocpp <<EOF
@@ -188,11 +188,7 @@ for prefix in `echo "$libpath" | sed -n -e 's,/lib[^/]*/,/env/,p'`; do
 done
 
 # Set the path for Qt plugins provided by KDE
-if test -n "$QT_PLUGIN_PATH"; then
-  QT_PLUGIN_PATH="$QT_PLUGIN_PATH:`kde4-config --path qtplugins`"
-else
-  QT_PLUGIN_PATH="`kde4-config --path qtplugins`"
-fi
+QT_PLUGIN_PATH=${QT_PLUGIN_PATH+$QT_PLUGIN_PATH:}`kde4-config --path qtplugins`
 export QT_PLUGIN_PATH
 
 # Activate the kde font directories.

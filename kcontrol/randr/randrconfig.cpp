@@ -292,7 +292,7 @@ void RandRConfig::saveStartup()
 		if (primaryOutputIndex > 0)
 		{
 			QString primaryOutput = primaryDisplayBox->itemText(primaryOutputIndex);
-			commands += QString("xrandr --output \"%1\" --primary")
+			commands += QString("xrandr --output %1 --primary")
 			    .arg( KShell::quoteArg( primaryOutput ));
 		}
 		else
