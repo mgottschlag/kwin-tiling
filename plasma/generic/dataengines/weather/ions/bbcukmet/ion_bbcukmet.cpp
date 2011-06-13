@@ -920,30 +920,30 @@ QVector<QString> UKMETIon::forecasts(const QString& source)
     for (int i = 0; i < m_weatherData[source].forecasts.size(); ++i) {
 
         if (m_weatherData[source].forecasts[i]->period.contains("Saturday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Saturday", i18n("Sat"));
+            m_weatherData[source].forecasts[i]->period.replace("Saturday", i18nc("Short for Saturday", "Sat"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Sunday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Sunday", i18n("Sun"));
+            m_weatherData[source].forecasts[i]->period.replace("Sunday", i18nc("Short for Sunday", "Sun"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Monday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Monday", i18n("Mon"));
+            m_weatherData[source].forecasts[i]->period.replace("Monday", i18nc("Short for Monday", "Mon"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Tuesday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Tuesday", i18n("Tue"));
+            m_weatherData[source].forecasts[i]->period.replace("Tuesday", i18nc("Short for Tuesday", "Tue"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Wednesday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Wednesday", i18n("Wed"));
+            m_weatherData[source].forecasts[i]->period.replace("Wednesday", i18nc("Short for Wednesday", "Wed"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Thursday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Thursday", i18n("Thu"));
+            m_weatherData[source].forecasts[i]->period.replace("Thursday", i18nc("Short for Thursday", "Thu"));
         }
         if (m_weatherData[source].forecasts[i]->period.contains("Friday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Friday", i18n("Fri"));
+            m_weatherData[source].forecasts[i]->period.replace("Friday", i18nc("Short for Friday", "Fri"));
         }
 
         forecastData.append(QString("%1|%2|%3|%4|%5|%6") \
