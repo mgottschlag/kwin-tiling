@@ -430,10 +430,10 @@ QStringList RandROutput::startupCommands() const
 	if (!m_connected)
 		return QStringList();
 	if (!isActive())
-		return QStringList() << QString( "xrandr --output \"%1\" --off" ).arg( KShell::quoteArg( m_name ));
+		return QStringList() << QString( "xrandr --output %1 --off" ).arg( KShell::quoteArg( m_name ));
 	if (m_crtc->id() == None)
 	     return QStringList();	
-	QString command = QString( "xrandr --output \"%1\"" ).arg( KShell::quoteArg( m_name ));
+	QString command = QString( "xrandr --output %1" ).arg( KShell::quoteArg( m_name ));
 	// if the outputs are unified, do not save size and rotation
 	// this allow us to set back the size and rotation being used
 	// when the outputs are not unified.

@@ -77,7 +77,13 @@ Otherwise kdostartupconfig is launched to create or update all the necessary fil
 
 int main()
     {
+    time_t config_time;
+    FILE* config;
+    FILE* keys;
+    struct stat st;
     char kdehome[ 1024 ];
+    char filename[ 1024 ];
+
     if( getenv( "KDEHOME" ))
         strlcpy( kdehome, getenv( "KDEHOME" ), 1024 );
     else if( getenv( "HOME" ))
@@ -87,92 +93,66 @@ int main()
         }
     else
         return 1;
-    char filename[ 1024 ];
     strlcpy( filename, kdehome, 1024 );
     strlcat( filename, "/share/config/startupconfig", 1024 );
     if( access( filename, R_OK ) != 0 )
-        {
-        int ret = system( "kdostartupconfig4" );
-        return WEXITSTATUS( ret );
-        }
+        goto doit;
     strlcpy( filename, kdehome, 1024 );
     strlcat( filename, "/share/config/startupconfigfiles", 1024 );
-    struct stat st;
     if( stat( filename, &st ) != 0 )
-        {
-        int ret = system( "kdostartupconfig4" );
-        return WEXITSTATUS( ret );
-        }
-    time_t config_time = st.st_mtime;
-    FILE* config = fopen( filename, "r" );
+        goto doit;
+    config_time = st.st_mtime;
+    config = fopen( filename, "r" );
     if( config == NULL )
-        {
-        int ret = system( "kdostartupconfig4" );
-        return WEXITSTATUS( ret );
-        }
+        goto doit;
     strlcpy( filename, kdehome, 1024 );
     strlcat( filename, "/share/config/startupconfigkeys", 1024 );
-    FILE* keys = fopen( filename, "r" );
+    keys = fopen( filename, "r" );
     if( keys == NULL )
-        {
-        fclose( config );
         return 2;
-        }
-    bool need_update = true;
     for(;;)
         {
+        char* nl;
         char keyline[ 1024 ];
-        if( fgets( keyline, 1023, keys ) == NULL )
-            {
-            need_update = false;
-            break;
-            }
-        if( char* nl = strchr( keyline, '\n' ))
-            *nl = '\0';
         char line[ 1024 ];
+
+        if( fgets( keyline, 1023, keys ) == NULL )
+            return 0;
+        if( (nl = strchr( keyline, '\n' )) )
+            *nl = '\0';
         if( fgets( line, 1023, config ) == NULL )
             break;
-        if( char* nl = strchr( line, '\n' ))
+        if( (nl = strchr( line, '\n' )) )
             *nl = '\0';
         if( strcmp( keyline, line ) != 0 )
             break;
-        bool ok = false;
         for(;;)
             {
             if( fgets( line, 1023, config ) == NULL )
-                break;
-            if( char* nl = strchr( line, '\n' ))
+                goto doit2;
+            if( (nl = strchr( line, '\n' )) )
                 *nl = '\0';
             if( *line == '\0' )
-                break;
+                goto doit2;
             if( *line == '*' )
-                {
-                ok = true;
                 break;
-                }
             if( *line == '!' )
                 {
                 if( access( line + 1, R_OK ) == 0 )
-                    break; // file now exists -> update
+                    goto doit2; /* file now exists -> update */
                 }
             else
                 {
-                struct stat st;
                 if( stat( line, &st ) != 0 )
-                    break;
+                    goto doit2;
                 if( st.st_mtime > config_time )
-                    break;
+                    goto doit2;
                 }
             }
-        if( !ok )
-            break;
         }
+  doit2:
     fclose( keys );
     fclose( config );
-    if( need_update )
-        {
-        int ret = system( "kdostartupconfig4" );
-        return WEXITSTATUS( ret );
-        }
-    return 0;
+  doit:
+    return WEXITSTATUS( system( "kdostartupconfig4" ) );
     }

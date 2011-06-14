@@ -146,6 +146,8 @@ from the copyright holder.
 #define G_DChoose  3    /* run chooser */
 #endif
 
+#define G_Interact 4    /* greeter got user input. possible crash is probably not spontaneous. */
+
 #define G_Shutdown      101 /* 5*int, string; async */
 # define SHUT_REBOOT      1     /* how */
 # define SHUT_HALT        2

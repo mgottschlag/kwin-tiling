@@ -74,7 +74,7 @@ sigAlarm(int)
 
 GreeterApp::GreeterApp(int &argc, char **argv) :
     inherited(argc, argv),
-    regrabPtr(false), regrabKbd(false), initalBusy(true),
+    regrabPtr(false), regrabKbd(false), initalBusy(true), sendInteract(false),
     dragWidget(0)
 {
     pingInterval = _isLocal ? 0 : _pingInterval;
@@ -203,6 +203,14 @@ GreeterApp::x11EventFilter(XEvent * ev)
             break;
         }
         break;
+    default:
+        return false;
+    }
+    if (sendInteract) {
+        sendInteract = false;
+        // We assume that no asynchronous communication is going on
+        // before the first user interaction.
+        gSendInt(G_Interact);
     }
     return false;
 }
@@ -479,6 +487,7 @@ main(int argc ATTR_UNUSED, char **argv)
             }
         }
         QObject::connect(dialog, SIGNAL(ready()), &app, SLOT(markReady()));
+        app.enableSendInteract();
         debug("entering event loop\n");
         rslt = dialog->exec();
         debug("left event loop\n");

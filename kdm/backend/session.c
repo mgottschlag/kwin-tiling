@@ -409,16 +409,12 @@ void
 openGreeter()
 {
     char *name, **env;
-    static time_t lastStart;
     int cmd;
     Cursor xcursor;
 
     gSet(&grttalk);
     if (grtproc.pid > 0)
         return;
-    updateNow();
-    if (now < lastStart + 10) /* XXX should use some readiness indicator instead */
-        sessionExit(EX_UNMANAGE_DPY);
     ASPrintf(&name, "greeter for display %s", td->name);
     debug("starting %s\n", name);
 
@@ -447,8 +443,6 @@ openGreeter()
         sessionExit(EX_UNMANAGE_DPY);
     }
     debug("%s ready\n", name);
-    updateNow();
-    lastStart = now;
 }
 
 int
@@ -550,7 +544,7 @@ manageSession(void)
 {
     int ex, cmd;
     volatile int clientPid = -1;
-    volatile time_t tdiff = 0;
+    time_t tdiff, startt;
 
     debug("manageSession %s\n", td->name);
     if ((ex = Setjmp(abortSession))) {
@@ -579,12 +573,16 @@ manageSession(void)
         /* NOTREACHED */
 #endif
 
+    updateNow();
     tdiff = now - td->hstent->lastExit - td->openDelay;
     if (autoLogon(tdiff)) {
-        if (!verify(conv_auto, False))
+        if (!verify(conv_auto, False)) {
+            startt = now;
             goto gcont;
+        }
     } else {
       regreet:
+        startt = now;
         openGreeter();
 #ifdef XDMCP
         if (((td->displayType & d_location) == dLocal) &&
@@ -598,12 +596,14 @@ manageSession(void)
                           G_GreetTimed : G_Greet);
           gcont:
             cmd = ctrlGreeterWait(True);
+            if (cmd == G_Interact) {
+                startt = 0;
+                goto gcont;
+            }
 #ifdef XDMCP
-          recmd:
-            if (cmd == G_DChoose) {
+            while (cmd == G_DChoose) {
               choose:
                 cmd = doChoose();
-                goto recmd;
             }
             if (cmd == G_DGreet)
                 continue;
@@ -616,6 +616,9 @@ manageSession(void)
                 logError("Received unknown command %d from greeter\n", cmd);
                 closeGreeter(True);
             }
+            updateNow();
+            if (now < startt + 120) /* Greeter crashed spontaneously. Avoid endless loop. */
+                sessionExit(EX_UNMANAGE_DPY);
             goto regreet;
         }
     }

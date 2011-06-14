@@ -514,6 +514,9 @@ void AbstractTaskItem::paint(QPainter *painter,
                              const QStyleOptionGraphicsItem *option,
                              QWidget *widget)
 {
+    if (!m_abstractItem) {
+        return;
+    }
     //kDebug() << "painting" << (QObject*)this << text();
     painter->setRenderHint(QPainter::Antialiasing);
 

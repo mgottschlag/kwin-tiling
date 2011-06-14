@@ -35,6 +35,7 @@ DEALINGS IN THE SOFTWARE.
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
+#include <kshell.h>
 
 
 #if defined _WIN32 || defined _WIN64
@@ -129,7 +130,7 @@ int main( int argc, char **argv )
                 startupconfig << file.replace( ' ', '_' ).toLower()
                     << "_" << group.replace( ' ', '_' ).toLower()
                     << "_" << key.replace( ' ', '_' ).toLower()
-                    << "=\"" << value.replace( "\"", "\\\"" ) << "\"\n";
+                    << "=" << KShell::quoteArg( value ) << "\n";
                 }
             }
         else
@@ -143,7 +144,7 @@ int main( int argc, char **argv )
             startupconfig << file.replace( ' ', '_' ).toLower()
                 << "_" << group.replace( ' ', '_' ).toLower()
                 << "_" << key.replace( ' ', '_' ).toLower()
-                << "=\"" << value.replace( "\"", "\\\"" ) << "\"\n";
+                << "=" << KShell::quoteArg( value ) << "\n";
             }
         startupconfigfiles << line << endl;
         // use even currently non-existing paths in $KDEDIRS
