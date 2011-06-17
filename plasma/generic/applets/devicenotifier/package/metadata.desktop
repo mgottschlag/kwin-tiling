@@ -148,11 +148,12 @@ Comment[zh_TW]=通知與存取新裝置
 
 Icon=device-notifier
 Type=Service
-X-KDE-ServiceTypes=Plasma/Applet,Plasma/PopupApplet
+X-KDE-ServiceTypes=Plasma/Applet
+#,Plasma/PopupApplet
 
 X-Plasma-API=declarativeappletscript
 X-Plasma-MainScript=ui/devicenotifier.qml
-X-Plasma-DefaultSize=300,200
+X-Plasma-DefaultSize=290,340
 
 X-KDE-PluginInfo-Author=Viranch Mehta
 X-KDE-PluginInfo-Email=viranch.mehta@gmail.com
