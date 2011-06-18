@@ -30,6 +30,7 @@
 #include <solid/deviceinterface.h>
 #include <solid/predicate.h>
 
+#include <Plasma/Service>
 #include <Plasma/DataEngine>
 #include "devicesignalmapmanager.h"
 #include "devicesignalmapper.h"
@@ -45,6 +46,7 @@ class SolidDeviceEngine : public Plasma::DataEngine
 public:
     SolidDeviceEngine( QObject* parent, const QVariantList& args);
     ~SolidDeviceEngine();
+    Plasma::Service *serviceForSource (const QString& source);
 
 protected:
     bool sourceRequestEvent(const QString &name);
@@ -76,7 +78,5 @@ private Q_SLOTS:
     void deviceChanged(const QString& udi, const QString &property, const QVariant &value);
     void sourceWasRemoved(const QString &source);
 };
-
-K_EXPORT_PLASMA_DATAENGINE(soliddevice, SolidDeviceEngine)
 
 #endif

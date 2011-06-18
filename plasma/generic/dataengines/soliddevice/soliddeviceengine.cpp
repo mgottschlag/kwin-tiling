@@ -17,6 +17,7 @@
  */
 
 #include "soliddeviceengine.h"
+#include "soliddeviceservice.h"
 
 #include <KDebug>
 #include <KDiskFreeSpaceInfo>
@@ -41,6 +42,11 @@ SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
 
 SolidDeviceEngine::~SolidDeviceEngine()
 {
+}
+
+Plasma::Service* SolidDeviceEngine::serviceForSource(const QString& source)
+{
+    return new SolidDeviceService (this, source);
 }
 
 void SolidDeviceEngine::listenForNewDevices()
@@ -610,5 +616,7 @@ void SolidDeviceEngine::deviceChanged(const QString& udi, const QString &propert
     setData(udi, property, value);
     updateSourceEvent(udi);
 }
+
+K_EXPORT_PLASMA_DATAENGINE(soliddevice, SolidDeviceEngine)
 
 #include "soliddeviceengine.moc"
