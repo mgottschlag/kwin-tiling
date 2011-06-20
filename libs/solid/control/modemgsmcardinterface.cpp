@@ -59,28 +59,28 @@ QString Solid::Control::ModemGsmCardInterface::getImsi() const
     return_SOLID_CALL(Ifaces::ModemGsmCardInterface *, d->backendObject(), QString(), getImsi());
 }
 
-void Solid::Control::ModemGsmCardInterface::sendPuk(const QString & puk, const QString & pin) const
+QDBusPendingReply<> Solid::Control::ModemGsmCardInterface::sendPuk(const QString & puk, const QString & pin) const
 {
     Q_D(const ModemGsmCardInterface);
-    SOLID_CALL(Ifaces::ModemGsmCardInterface *, d->backendObject(), sendPuk(puk, pin));
+    return_SOLID_CALL(Ifaces::ModemGsmCardInterface *, d->backendObject(), QDBusPendingReply<>(), sendPuk(puk, pin));
 }
 
-void Solid::Control::ModemGsmCardInterface::sendPin(const QString & pin) const
+QDBusPendingReply<> Solid::Control::ModemGsmCardInterface::sendPin(const QString & pin) const
 {
     Q_D(const ModemGsmCardInterface);
-    SOLID_CALL(Ifaces::ModemGsmCardInterface *, d->backendObject(), sendPin(pin));
+    return_SOLID_CALL(Ifaces::ModemGsmCardInterface *, d->backendObject(), QDBusPendingReply<>(), sendPin(pin));
 }
 
-void Solid::Control::ModemGsmCardInterface::enablePin(const QString & pin, const bool enabled) const
+QDBusPendingReply<> Solid::Control::ModemGsmCardInterface::enablePin(const QString & pin, const bool enabled) const
 {
     Q_D(const ModemGsmCardInterface);
-    SOLID_CALL(Ifaces::ModemGsmCardInterface *, d->backendObject(), enablePin(pin, enabled));
+    return_SOLID_CALL(Ifaces::ModemGsmCardInterface *, d->backendObject(), QDBusPendingReply<>(), enablePin(pin, enabled));
 }
 
-void Solid::Control::ModemGsmCardInterface::changePin(const QString & oldPin, const QString & newPin) const
+QDBusPendingReply<> Solid::Control::ModemGsmCardInterface::changePin(const QString & oldPin, const QString & newPin) const
 {
     Q_D(const ModemGsmCardInterface);
-    SOLID_CALL(Ifaces::ModemGsmCardInterface *, d->backendObject(), changePin(oldPin, newPin));
+    return_SOLID_CALL(Ifaces::ModemGsmCardInterface *, d->backendObject(), QDBusPendingReply<>(), changePin(oldPin, newPin));
 }
 
 Solid::Control::ModemInterface::Band Solid::Control::ModemGsmCardInterface::getSupportedBands() const
