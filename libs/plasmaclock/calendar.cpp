@@ -486,8 +486,8 @@ void Calendar::nextYear()
 void Calendar::monthsPopup()
 {
     d->monthMenu->clear();
-    int year = calendar()->year(date());
-    int monthsInYear = calendar()->monthsInYear(date());
+    const int year = calendar()->year(date());
+    const int monthsInYear = calendar()->monthsInYear(date());
 
     for (int i = 1; i <= monthsInYear; i++){
         QAction *tmpAction = new QAction(calendar()->monthName(i, year), d->monthMenu);
