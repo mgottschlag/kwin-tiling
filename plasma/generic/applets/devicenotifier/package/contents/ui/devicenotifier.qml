@@ -23,32 +23,46 @@ import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 
 Item {
     id: devicenotifier
-    property bool removable
-    property bool nonRemovable
-    property bool all
+    property int deviceTypeConfig: 0
 
     PlasmaCore.DataSource {
-        id: dataSource
+        id: hpSource
         engine: "hotplug"
         connectedSources: sources
-        interval: 500
+        interval: 0
+        /*onSourcesChanged: {
+            for (i=0; i<sources.length; i++) {
+                if (sdSource.data[sources[i]]["Removable"]) connectSource(sources[i]);
+            }
+        }*/
+    }
+
+    PlasmaCore.DataSource {
+        id: sdSource
+        engine: "soliddevice"
+        connectedSources: hpSource.sources
+        interval: 0
     }
 
     Component.onCompleted: {
-        plasmoid.addEventListener ('ConfigChanged', configChanged)
+        plasmoid.addEventListener ('ConfigChanged', configChanged);
+        plasmoid.popupIcon = QIcon("device-notifier");
     }
 
     function configChanged() {
-        removable = plasmoid.readConfig("removableDevices")
-        nonRemovable = plasmoid.readConfig("nonRemovableDevices")
-        all = plasmoid.readConfig("allDevices")
+        if (plasmoid.readConfig("removableDevices"))
+            deviceTypeConfig = 0;
+        else if (plasmoid.readConfig("nonRemovableDevices"))
+            deviceTypeConfig = 1;
+        else if(plasmoid.readConfig("allDevices"))
+            deviceTypeConfig = 2;
+        else
+            deviceTypeConfig = -1;
     }
 
     Text {
         id: header
-        // FIXME: The following "count" is not accessible
-        // text: deviceView.deviceList.count>0 ? "Available Devices" : "No Devices Available"
-        text: "Available Devices"
+        text: deviceList.count>0 ? "Available Devices" : "No Devices Available"
         anchors { top: parent.top; left: parent.left; right: parent.right }
         horizontalAlignment: Text.AlignHCenter
     }
@@ -64,12 +78,46 @@ Item {
         anchors { top : separator.bottom; topMargin: 3 }
         Repeater {
             id: deviceList
-            model: dataSource.sources
+            model: hpSource.sources
             DeviceItem {
                 id: deviceItem
                 width: devicenotifier.width
-                deviceIcon: QIcon(dataSource.data[modelData]["icon"])
-                deviceName: dataSource.data[modelData]["text"]
+                udi: modelData
+                deviceIcon: QIcon(hpSource.data[modelData]["icon"])
+                deviceName: hpSource.data[modelData]["text"]
+                percentFreeSpace: sdSource.data[modelData]["File Path"]=="" ? 0 : Number(sdSource.data[modelData]["Free Space"])*100/Number(sdSource.data[modelData]["Size"])
+                Component.onCompleted: {
+                    //var fs = Number(sdSource.data[modelData]["Size"]);
+                    //print (modelData+": "+fs.toString());
+                    var types = sdSource.data[modelData]["Device Types"];
+                    if (types.indexOf("Storage Access")>=0) {
+                        if (sdSource.data[modelData]["Accessible"]) {
+                            operationName = "unmount";
+                            leftActionIcon = QIcon("media-eject");
+                        }
+                        else {
+                            operationName = "mount";
+                            leftActionIcon = QIcon("emblem-mounted");
+                        }
+                    }
+                    else if (types.indexOf("Storage Volume")>=0 && types.indexOf("OpticalDisc")>=0) {
+                        operationName = "unmount";
+                        leftActionIcon = QIcon("media-eject");
+                    }
+                }
+                onLeftActionTriggered: {
+                    service = sdSource.serviceForSource (modelData);
+                    operation = service.operationDescription (operationName);
+                    service.startOperationCall (operation);
+                    if (operationName=="mount") {
+                        operationName = "unmount";
+                        leftActionIcon = QIcon("media-eject");
+                    }
+                    else if (operationName=="unmount") {
+                        operationName = "mount";
+                        leftActionIcon = QIcon("emblem-mounted");
+                    }
+                }
             }
         }
     }

@@ -27,6 +27,7 @@
 #include <KLocale>
 #include <KStandardDirs>
 #include <KDesktopFile>
+#include <kdesktopfileactions.h>
 #include <Plasma/DataContainer>
 
 //solid specific includes
@@ -37,6 +38,9 @@
 #include <Solid/StorageVolume>
 
 //#define HOTPLUGENGINE_TIMING
+
+typedef QList<Plasma::DataEngine::Data> PlasmaDataList;
+Q_DECLARE_METATYPE(PlasmaDataList)
 
 HotplugEngine::HotplugEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent, args),
@@ -218,6 +222,19 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device, bool added)
         data.insert("icon", device.icon());
         data.insert("emblems", device.emblems());
         data.insert("predicateFiles", interestingDesktopFiles);
+
+        PlasmaDataList actions;
+        foreach(const QString& desktop, interestingDesktopFiles) {
+            Plasma::DataEngine::Data action;
+            QString actionUrl = KStandardDirs::locate("data", "solid/actions/" + desktop);
+            QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(actionUrl, true);
+            action.insert("predicate", desktop);
+            action.insert("text", services[0].text());
+            action.insert("icon", services[0].icon());
+            actions << action;
+        }
+        data.insert("actions", QVariant::fromValue(actions));
+
         data.insert("isEncryptedContainer", isEncryptedContainer);
 
         setData(device.udi(), data);

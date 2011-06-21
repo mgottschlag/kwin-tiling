@@ -21,16 +21,66 @@ import Qt 4.7
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 
 Item {
+    id: deviceDelegate
+    property string udi
     property alias deviceIcon: device.icon
     property alias deviceName: device.text
+    property alias leftActionIcon: leftAction.icon
+    property string operationName
+    property alias percentFreeSpace: deviceMeter.value
+    signal leftActionTriggered
+
     height: device.height
 
-    PlasmaWidgets.IconWidget {
-        id: device
-        anchors { top: parent.top; left: parent.left }
-        drawBackground: true
-        orientation: QtHorizontal
-        text: dataSource.data[modelData]["text"]
-        width: parent.width
+    Item {
+        id: leftActionContainer
+        //z: deviceContainer.z+1
+        anchors {
+            right: parent.right
+            rightMargin: 10
+            verticalCenter: deviceContainer.verticalCenter
+        }
+        width: leftAction.width
+        height: leftAction.height
+        PlasmaWidgets.IconWidget {
+            id: leftAction
+            width: 22
+            height: 22
+        }
+        MouseArea {
+            anchors.fill: parent
+            onClicked: leftActionTriggered()
+        }
     }
+
+    Item {
+        id: deviceContainer
+        width: parent.width
+        height: device.height
+        anchors { top: parent.top; left: parent.left }
+        PlasmaWidgets.IconWidget {
+            id: device
+            anchors.fill: parent
+            drawBackground: true
+            orientation: QtHorizontal
+            width: parent.width
+        }
+    }
+
+    Item {
+        id: meterContainer
+        anchors { bottom: deviceContainer.bottom; bottomMargin: 5; left: deviceContainer.left; leftMargin: 45; right: deviceContainer.right; rightMargin: 35 }
+        height: 12
+        PlasmaWidgets.Meter {
+            id: deviceMeter
+            minimum: 0
+            maximum: 100
+            //visible: value>0
+            meterType: PlasmaWidgets.Meter.BarMeterHorizontal
+            anchors.fill: parent
+            svg: "widgets/bar_meter_horizontal"
+        }
+    }
+
+    MouseArea{}
 }

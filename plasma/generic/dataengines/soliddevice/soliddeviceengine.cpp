@@ -180,6 +180,9 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 
         updateHardDiskTemperature(name);
     }
+    else {
+        setData(name, I18N_NOOP("Removable"), false);
+    }
     if (device.is<Solid::OpticalDrive>()) {
         Solid::OpticalDrive *opticaldrive = device.as<Solid::OpticalDrive>();
         if (!opticaldrive) {

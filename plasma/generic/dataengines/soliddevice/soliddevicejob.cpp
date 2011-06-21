@@ -23,14 +23,11 @@
 #include <solid/opticaldisc.h>
 #include <solid/storageaccess.h>
 #include <solid/opticaldrive.h>
-#include <solid/deviceinterface.h>
 
 #include <KDebug>
 
 void SolidDeviceJob::start()
 {
-    kDebug() << m_dest << " is going to be " << operationName() << "ed";
-
     Solid::Device device (m_dest);
     QString operation = operationName();
     
