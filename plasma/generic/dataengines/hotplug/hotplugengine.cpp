@@ -18,6 +18,7 @@
 */
 
 #include "hotplugengine.h"
+#include "hotplugservice.h"
 
 #include <QTimer>
 
@@ -82,6 +83,11 @@ void HotplugEngine::init()
     m_encryptedPredicate = Solid::Predicate("StorageVolume", "usage", "Encrypted");
 
     processNextStartupDevice();
+}
+
+Plasma::Service* HotplugEngine::serviceForSource(const QString& source)
+{
+    return new HotplugService (this, source);
 }
 
 void HotplugEngine::processNextStartupDevice()
@@ -259,5 +265,7 @@ void HotplugEngine::onDeviceRemoved(const QString &udi)
     removeSource(udi);
     scheduleSourcesUpdated();
 }
+
+K_EXPORT_PLASMA_DATAENGINE(hotplug, HotplugEngine)
 
 #include "hotplugengine.moc"
