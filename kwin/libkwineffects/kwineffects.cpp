@@ -547,7 +547,7 @@ WindowQuadList WindowQuadList::makeRegularGrid(int xSubdivisions, int ySubdivisi
     return ret;
 }
 
-void WindowQuadList::makeArrays(float** vertices, float** texcoords) const
+void WindowQuadList::makeArrays(float** vertices, float** texcoords, const QSizeF& size, bool yInverted) const
 {
     *vertices = new float[ count() * 6 * 2 ];
     *texcoords = new float[ count() * 6 * 2 ];
@@ -569,18 +569,33 @@ void WindowQuadList::makeArrays(float** vertices, float** texcoords) const
         *vpos++ = at(i)[ 1 ].x();
         *vpos++ = at(i)[ 1 ].y();
 
-        *tpos++ = at(i)[ 1 ].tx;
-        *tpos++ = at(i)[ 1 ].ty;
-        *tpos++ = at(i)[ 0 ].tx;
-        *tpos++ = at(i)[ 0 ].ty;
-        *tpos++ = at(i)[ 3 ].tx;
-        *tpos++ = at(i)[ 3 ].ty;
-        *tpos++ = at(i)[ 3 ].tx;
-        *tpos++ = at(i)[ 3 ].ty;
-        *tpos++ = at(i)[ 2 ].tx;
-        *tpos++ = at(i)[ 2 ].ty;
-        *tpos++ = at(i)[ 1 ].tx;
-        *tpos++ = at(i)[ 1 ].ty;
+        if (yInverted) {
+            *tpos++ = at(i)[ 1 ].tx / size.width();
+            *tpos++ = at(i)[ 1 ].ty / size.height();
+            *tpos++ = at(i)[ 0 ].tx / size.width();
+            *tpos++ = at(i)[ 0 ].ty / size.height();
+            *tpos++ = at(i)[ 3 ].tx / size.width();
+            *tpos++ = at(i)[ 3 ].ty / size.height();
+            *tpos++ = at(i)[ 3 ].tx / size.width();
+            *tpos++ = at(i)[ 3 ].ty / size.height();
+            *tpos++ = at(i)[ 2 ].tx / size.width();
+            *tpos++ = at(i)[ 2 ].ty / size.height();
+            *tpos++ = at(i)[ 1 ].tx / size.width();
+            *tpos++ = at(i)[ 1 ].ty / size.height();
+        } else {
+            *tpos++ = at(i)[ 1 ].tx / size.width();
+            *tpos++ = 1.0f - at(i)[ 1 ].ty / size.height();
+            *tpos++ = at(i)[ 0 ].tx / size.width();
+            *tpos++ = 1.0f - at(i)[ 0 ].ty / size.height();
+            *tpos++ = at(i)[ 3 ].tx / size.width();
+            *tpos++ = 1.0f - at(i)[ 3 ].ty / size.height();
+            *tpos++ = at(i)[ 3 ].tx / size.width();
+            *tpos++ = 1.0f - at(i)[ 3 ].ty / size.height();
+            *tpos++ = at(i)[ 2 ].tx / size.width();
+            *tpos++ = 1.0f - at(i)[ 2 ].ty / size.height();
+            *tpos++ = at(i)[ 1 ].tx / size.width();
+            *tpos++ = 1.0f - at(i)[ 1 ].ty / size.height();
+        }
     }
 }
 
@@ -890,8 +905,8 @@ void WindowMotionManager::calculate(int time)
         else {
             // Still moving
             trans->calculate(time);
-            const short fx = trans->target().x() <= window->x() ? -1 : 1;
-            const short fy = trans->target().y() <= window->y() ? -1 : 1;
+            const short fx = trans->target().x() <= trans->startValue().x() ? -1 : 1;
+            const short fy = trans->target().y() <= trans->startValue().y() ? -1 : 1;
             if (trans->distance().x()*fx/0.5 < 1.0 && trans->velocity().x()*fx/0.2 < 1.0 &&
                 trans->distance().y()*fy/0.5 < 1.0 && trans->velocity().y()*fy/0.2 < 1.0) {
                 // Hide tiny oscillations

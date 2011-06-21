@@ -39,13 +39,13 @@ namespace Ifaces
 
         virtual QString getImsi() = 0;
 
-        virtual void sendPuk(const QString & puk, const QString & pin) = 0;
+        virtual QDBusPendingReply<> sendPuk(const QString & puk, const QString & pin) = 0;
 
-        virtual void sendPin(const QString & pin) = 0;
+        virtual QDBusPendingReply<> sendPin(const QString & pin) = 0;
 
-        virtual void enablePin(const QString & pin, const bool enabled) = 0;
+        virtual QDBusPendingReply<> enablePin(const QString & pin, const bool enabled) = 0;
 
-        virtual void changePin(const QString & oldPin, const QString & newPin) = 0;
+        virtual QDBusPendingReply<> changePin(const QString & oldPin, const QString & newPin) = 0;
 
         virtual Solid::Control::ModemInterface::Band getSupportedBands() const = 0;
 
