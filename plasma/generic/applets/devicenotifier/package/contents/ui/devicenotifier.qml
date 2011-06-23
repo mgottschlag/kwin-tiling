@@ -62,7 +62,7 @@ Item {
 
     Text {
         id: header
-        text: deviceList.count>0 ? "Available Devices" : "No Devices Available"
+        text: notifierDialog.model.length>0 ? "Available Devices" : "No Devices Available"
         anchors { top: parent.top; left: parent.left; right: parent.right }
         horizontalAlignment: Text.AlignHCenter
     }
@@ -73,50 +73,70 @@ Item {
         anchors { topMargin: 3 }
     }
 
-    Column {
-        id: deviceView
-        anchors { top : separator.bottom; topMargin: 3 }
-        Repeater {
-            id: deviceList
-            model: hpSource.sources
-            DeviceItem {
-                id: deviceItem
-                width: devicenotifier.width
-                udi: modelData
-                icon: QIcon(hpSource.data[modelData]["icon"])
-                deviceName: hpSource.data[modelData]["text"]
-                percentFreeSpace: Number(sdSource.data[modelData]["Free Space"])*100/Number(sdSource.data[modelData]["Size"]);
-                mounted: true
+    ListView {
+        id: notifierDialog
+        anchors {
+            top : separator.bottom
+            topMargin: 10
+            bottom: devicenotifier.bottom
+        }
+        model: hpSource.sources
+        delegate: deviceItem
+        highlight: deviceHighlighter
+    }
 
-                Component.onCompleted: {
-                    mounted = isMounted(modelData);
-                    if (mounted) {
-                        operationName = "unmount";
-                        emblemIcon = QIcon("emblem-mounted");
-                        leftActionIcon = QIcon("media-eject");
-                    }
-                    else {
-                        operationName = "mount";
-                        emblemIcon = QIcon("emblem-unmounted");
-                        leftActionIcon = QIcon("emblem-mounted");
-                    }
+    Component {
+        id: deviceItem
+
+        DeviceItem {
+            width: devicenotifier.width
+            udi: modelData
+            icon: QIcon(hpSource.data[modelData]["icon"])
+            deviceName: hpSource.data[modelData]["text"]
+            percentFreeSpace: Number(sdSource.data[modelData]["Free Space"])*100/Number(sdSource.data[modelData]["Size"]);
+            mounted: true
+
+            Component.onCompleted: {
+                mounted = isMounted(modelData);
+                if (mounted) {
+                    operationName = "unmount";
+                    emblemIcon = QIcon("emblem-mounted");
+                    leftActionIcon = QIcon("media-eject");
                 }
-
-                onLeftActionTriggered: {
-                    service = sdSource.serviceForSource (modelData);
-                    operation = service.operationDescription (operationName);
-                    service.startOperationCall (operation);
-                    if (operationName=="mount") {
-                        operationName = "unmount";
-                        leftActionIcon = QIcon("media-eject");
-                    }
-                    else if (operationName=="unmount") {
-                        operationName = "mount";
-                        leftActionIcon = QIcon("emblem-mounted");
-                    }
+                else {
+                    operationName = "mount";
+                    emblemIcon = QIcon("emblem-unmounted");
+                    leftActionIcon = QIcon("emblem-mounted");
                 }
-
             }
+
+            onLeftActionTriggered: {
+                service = sdSource.serviceForSource (modelData);
+                operation = service.operationDescription (operationName);
+                service.startOperationCall (operation);
+                mounted = isMounted(modelData)
+                if (operationName=="mount" && mounted) {
+                    operationName = "unmount";
+                    leftActionIcon = QIcon("media-eject");
+                }
+                else if (operationName=="unmount" && !mounted) {
+                    operationName = "mount";
+                    leftActionIcon = QIcon("emblem-mounted");
+                }
+            }
+        }
+    }
+
+    Component {
+        id: deviceHighlighter
+
+        PlasmaCore.FrameSvgItem {
+            width: devicenotifier.width
+            //height: 72
+            imagePath: "widgets/frame"
+            prefix: "raised"
+            opacity: 0
+            Behavior on opacity { NumberAnimation { duration: 150 } }
         }
     }
 

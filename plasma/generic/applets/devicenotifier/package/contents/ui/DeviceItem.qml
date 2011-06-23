@@ -22,7 +22,7 @@ import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 import org.kde.qtextracomponents 0.1
 
 Item {
-    id: deviceDelegate
+    id: deviceItem
     property string udi
     property alias icon: deviceIcon.icon
     property alias deviceName: deviceLabel.text
@@ -30,12 +30,12 @@ Item {
     property alias leftActionIcon: leftAction.icon
     property string operationName
     property bool mounted
-    property alias percentFreeSpace: deviceMeter.value
+    property alias percentFreeSpace: freeSpaceBar.value
     signal leftActionTriggered
 
     property int deviceIconMargin: 10
     height: deviceIcon.height+(deviceIconMargin*2)
-
+    
     QIconItem {
         id: deviceIcon
         width: 32
@@ -48,19 +48,20 @@ Item {
             bottom: parent.bottom
             bottomMargin: deviceIconMargin
         }
-    }
 
-    QIconItem {
-        id: emblem
-        width: 16
-        height: 16
-        anchors {
-            left: parent.left
-            leftMargin: 12
-            bottom: parent.bottom
-            bottomMargin: 12
+        QIconItem {
+            id: emblem
+            width: 16
+            height: 16
+            anchors {
+                left: parent.left
+                leftMargin: 2
+                bottom: parent.bottom
+                bottomMargin: 2
+            }
         }
     }
+
 
     Text {
         id: deviceLabel
@@ -76,7 +77,7 @@ Item {
         id: deviceStatus
         anchors {
             top: deviceLabel.bottom
-            bottom: deviceMeter.top
+            bottom: freeSpaceBar.top
             left: deviceLabel.left
         }
         text: "2 actions for this device"
@@ -88,7 +89,7 @@ Item {
     }
 
     PlasmaWidgets.Meter {
-        id: deviceMeter
+        id: freeSpaceBar
         height: 12
         anchors {
             bottom: parent.bottom
@@ -115,7 +116,7 @@ Item {
             verticalCenter: deviceIcon.verticalCenter
         }
         Rectangle {
-            id: highlighter
+            id: leftActionHighlight
             color: "white"
             anchors.fill: parent
             opacity: 0
@@ -126,16 +127,31 @@ Item {
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
-        onEntered: deviceStatus.opacity=1
-        onExited: deviceStatus.opacity=0
+        onEntered: {
+            deviceStatus.opacity = 1;
+            notifierDialog.currentIndex = index;
+            notifierDialog.highlightItem.opacity = 1;
+        }
+        onExited: {
+            deviceStatus.opacity = 0;
+            notifierDialog.highlightItem.opacity = 0;
+            leftActionHighlight.opacity = 0;
+        }
         onPositionChanged: {
             if (mouse.x>=leftAction.x && mouse.x<=leftAction.x+leftAction.width
              && mouse.y>=leftAction.y && mouse.y<=leftAction.y+leftAction.height)
             {
-                highlighter.opacity = 0.3;
+                leftActionHighlight.opacity = 0.3;
             }
             else {
-                highlighter.opacity=0;
+                leftActionHighlight.opacity = 0;
+            }
+        }
+        onClicked: {
+            if (mouse.x>=leftAction.x && mouse.x<=leftAction.x+leftAction.width
+             && mouse.y>=leftAction.y && mouse.y<=leftAction.y+leftAction.height)
+            {
+                leftActionTriggered();
             }
         }
     }
