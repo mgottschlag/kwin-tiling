@@ -23,64 +23,74 @@ import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 Item {
     id: deviceDelegate
     property string udi
-    property alias deviceIcon: device.icon
-    property alias deviceName: device.text
+    property alias icon: deviceIcon.icon
+    property alias deviceName: deviceLabel.text
+    property alias emblemIcon: emblem.icon
     property alias leftActionIcon: leftAction.icon
     property string operationName
     property alias percentFreeSpace: deviceMeter.value
     signal leftActionTriggered
 
-    height: device.height
+    height: deviceIcon.height
 
-    Item {
-        id: leftActionContainer
-        //z: deviceContainer.z+1
+    PlasmaWidgets.IconWidget {
+        id: deviceIcon
+        anchors.fill: parent
+        drawBackground: true
+        orientation: QtHorizontal
+        width: parent.width
+        maximumIconSize: "32x32"
+        MouseArea{
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: { deviceMeter.visible=true; print("enter");}
+            onExited: deviceMeter.visible=false;
+        }
+    }
+    PlasmaWidgets.IconWidget {
+        id: emblem
+        anchors {
+            left: parent.left
+            leftMargin: 12
+            bottom: parent.bottom
+            bottomMargin: 12
+        }
+        width: 16; height: 16
+    }
+    Text {
+        id: deviceLabel
+        anchors {
+            top: parent.top
+            topMargin: 5
+            left: deviceIcon.right
+            leftMargin: -3
+        }
+    }
+    PlasmaWidgets.Meter {
+        id: deviceMeter
+        minimum: 0
+        maximum: 100
+        anchors {
+            bottom: parent.bottom
+            bottomMargin: 5
+            left: deviceIcon.right
+            leftMargin: -5
+            right: parent.right
+            rightMargin: 35
+        }
+        height: 12
+        //visible: value>0
+        meterType: PlasmaWidgets.Meter.BarMeterHorizontal
+        svg: "widgets/bar_meter_horizontal"
+    }
+    PlasmaWidgets.IconWidget {
+        id: leftAction
+        width: 22
+        height: 22
         anchors {
             right: parent.right
             rightMargin: 10
-            verticalCenter: deviceContainer.verticalCenter
-        }
-        width: leftAction.width
-        height: leftAction.height
-        PlasmaWidgets.IconWidget {
-            id: leftAction
-            width: 22
-            height: 22
-        }
-        MouseArea {
-            anchors.fill: parent
-            onClicked: leftActionTriggered()
+            verticalCenter: deviceIcon.verticalCenter
         }
     }
-
-    Item {
-        id: deviceContainer
-        width: parent.width
-        height: device.height
-        anchors { top: parent.top; left: parent.left }
-        PlasmaWidgets.IconWidget {
-            id: device
-            anchors.fill: parent
-            drawBackground: true
-            orientation: QtHorizontal
-            width: parent.width
-        }
-    }
-
-    Item {
-        id: meterContainer
-        anchors { bottom: deviceContainer.bottom; bottomMargin: 5; left: deviceContainer.left; leftMargin: 45; right: deviceContainer.right; rightMargin: 35 }
-        height: 12
-        PlasmaWidgets.Meter {
-            id: deviceMeter
-            minimum: 0
-            maximum: 100
-            //visible: value>0
-            meterType: PlasmaWidgets.Meter.BarMeterHorizontal
-            anchors.fill: parent
-            svg: "widgets/bar_meter_horizontal"
-        }
-    }
-
-    MouseArea{}
 }

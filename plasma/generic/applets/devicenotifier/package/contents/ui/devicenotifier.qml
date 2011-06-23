@@ -83,7 +83,7 @@ Item {
                 id: deviceItem
                 width: devicenotifier.width
                 udi: modelData
-                deviceIcon: QIcon(hpSource.data[modelData]["icon"])
+                icon: QIcon(hpSource.data[modelData]["icon"])
                 deviceName: hpSource.data[modelData]["text"]
                 percentFreeSpace: sdSource.data[modelData]["File Path"]=="" ? 0 : Number(sdSource.data[modelData]["Free Space"])*100/Number(sdSource.data[modelData]["Size"])
                 Component.onCompleted: {
@@ -93,15 +93,18 @@ Item {
                     if (types.indexOf("Storage Access")>=0) {
                         if (sdSource.data[modelData]["Accessible"]) {
                             operationName = "unmount";
+                            emblemIcon = QIcon("emblem-mounted");
                             leftActionIcon = QIcon("media-eject");
                         }
                         else {
                             operationName = "mount";
+                            emblemIcon = QIcon("emblem-unmounted");
                             leftActionIcon = QIcon("emblem-mounted");
                         }
                     }
                     else if (types.indexOf("Storage Volume")>=0 && types.indexOf("OpticalDisc")>=0) {
                         operationName = "unmount";
+                        emblemIcon = QIcon("emblem-mounted");
                         leftActionIcon = QIcon("media-eject");
                     }
                 }

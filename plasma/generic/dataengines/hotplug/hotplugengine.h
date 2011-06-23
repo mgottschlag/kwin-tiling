@@ -51,7 +51,6 @@ class HotplugEngine : public Plasma::DataEngine
         void onDeviceAdded(Solid::Device &dev, bool added = true);
         void findPredicates();
         QStringList predicatesForDevice(Solid::Device &device) const;
-        void insertDeviceActions();
 
     private Q_SLOTS:
         void processNextStartupDevice();
