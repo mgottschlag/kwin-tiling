@@ -19,6 +19,7 @@
 
 import Qt 4.7
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
+import org.kde.qtextracomponents 0.1
 
 Item {
     id: deviceDelegate
@@ -28,62 +29,83 @@ Item {
     property alias emblemIcon: emblem.icon
     property alias leftActionIcon: leftAction.icon
     property string operationName
+    property bool mounted
     property alias percentFreeSpace: deviceMeter.value
     signal leftActionTriggered
 
-    height: deviceIcon.height
+    property int deviceIconMargin: 10
+    height: deviceIcon.height+(deviceIconMargin*2)
 
-    PlasmaWidgets.IconWidget {
+    QIconItem {
         id: deviceIcon
-        anchors.fill: parent
-        drawBackground: true
-        orientation: QtHorizontal
-        width: parent.width
-        maximumIconSize: "32x32"
-        MouseArea{
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: { deviceMeter.visible=true; print("enter");}
-            onExited: deviceMeter.visible=false;
+        width: 32
+        height: 32
+        anchors {
+            left: parent.left
+            leftMargin: 10
+            top: parent.top
+            topMargin: deviceIconMargin
+            bottom: parent.bottom
+            bottomMargin: deviceIconMargin
         }
     }
-    PlasmaWidgets.IconWidget {
+
+    QIconItem {
         id: emblem
+        width: 16
+        height: 16
         anchors {
             left: parent.left
             leftMargin: 12
             bottom: parent.bottom
             bottomMargin: 12
         }
-        width: 16; height: 16
     }
+
     Text {
         id: deviceLabel
         anchors {
             top: parent.top
             topMargin: 5
             left: deviceIcon.right
-            leftMargin: -3
+            leftMargin: 5
         }
     }
+
+    Text {
+        id: deviceStatus
+        anchors {
+            top: deviceLabel.bottom
+            bottom: deviceMeter.top
+            left: deviceLabel.left
+        }
+        text: "2 actions for this device"
+        font.italic: true
+        font.pointSize: 8
+        opacity: 0
+
+        Behavior on opacity { NumberAnimation { duration: 150 } }
+    }
+
     PlasmaWidgets.Meter {
         id: deviceMeter
-        minimum: 0
-        maximum: 100
+        height: 12
         anchors {
             bottom: parent.bottom
             bottomMargin: 5
-            left: deviceIcon.right
-            leftMargin: -5
+            left: deviceLabel.left
+            leftMargin: -2
             right: parent.right
             rightMargin: 35
         }
-        height: 12
-        //visible: value>0
+        opacity: mounted ? deviceStatus.opacity : 0
+        minimum: 0
+        maximum: 100
         meterType: PlasmaWidgets.Meter.BarMeterHorizontal
         svg: "widgets/bar_meter_horizontal"
     }
-    PlasmaWidgets.IconWidget {
+
+    QIconItem {
         id: leftAction
         width: 22
         height: 22
@@ -92,5 +114,30 @@ Item {
             rightMargin: 10
             verticalCenter: deviceIcon.verticalCenter
         }
+        Rectangle {
+            id: highlighter
+            color: "white"
+            anchors.fill: parent
+            opacity: 0
+            Behavior on opacity { NumberAnimation { duration: 150 } }
+        }
     }
+
+    MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        onEntered: deviceStatus.opacity=1
+        onExited: deviceStatus.opacity=0
+        onPositionChanged: {
+            if (mouse.x>=leftAction.x && mouse.x<=leftAction.x+leftAction.width
+             && mouse.y>=leftAction.y && mouse.y<=leftAction.y+leftAction.height)
+            {
+                highlighter.opacity = 0.3;
+            }
+            else {
+                highlighter.opacity=0;
+            }
+        }
+    }
+
 }

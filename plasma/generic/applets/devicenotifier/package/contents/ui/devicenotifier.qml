@@ -85,29 +85,23 @@ Item {
                 udi: modelData
                 icon: QIcon(hpSource.data[modelData]["icon"])
                 deviceName: hpSource.data[modelData]["text"]
-                percentFreeSpace: sdSource.data[modelData]["File Path"]=="" ? 0 : Number(sdSource.data[modelData]["Free Space"])*100/Number(sdSource.data[modelData]["Size"])
+                percentFreeSpace: Number(sdSource.data[modelData]["Free Space"])*100/Number(sdSource.data[modelData]["Size"]);
+                mounted: true
+
                 Component.onCompleted: {
-                    //var fs = Number(sdSource.data[modelData]["Size"]);
-                    //print (modelData+": "+fs.toString());
-                    var types = sdSource.data[modelData]["Device Types"];
-                    if (types.indexOf("Storage Access")>=0) {
-                        if (sdSource.data[modelData]["Accessible"]) {
-                            operationName = "unmount";
-                            emblemIcon = QIcon("emblem-mounted");
-                            leftActionIcon = QIcon("media-eject");
-                        }
-                        else {
-                            operationName = "mount";
-                            emblemIcon = QIcon("emblem-unmounted");
-                            leftActionIcon = QIcon("emblem-mounted");
-                        }
-                    }
-                    else if (types.indexOf("Storage Volume")>=0 && types.indexOf("OpticalDisc")>=0) {
+                    mounted = isMounted(modelData);
+                    if (mounted) {
                         operationName = "unmount";
                         emblemIcon = QIcon("emblem-mounted");
                         leftActionIcon = QIcon("media-eject");
                     }
+                    else {
+                        operationName = "mount";
+                        emblemIcon = QIcon("emblem-unmounted");
+                        leftActionIcon = QIcon("emblem-mounted");
+                    }
                 }
+
                 onLeftActionTriggered: {
                     service = sdSource.serviceForSource (modelData);
                     operation = service.operationDescription (operationName);
@@ -121,7 +115,26 @@ Item {
                         leftActionIcon = QIcon("emblem-mounted");
                     }
                 }
+
             }
+        }
+    }
+
+    function isMounted (udi) {
+        var types = sdSource.data[udi]["Device Types"];
+        if (types.indexOf("Storage Access")>=0) {
+            if (sdSource.data[udi]["Accessible"]) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else if (types.indexOf("Storage Volume")>=0 && types.indexOf("OpticalDisc")>=0) {
+            return true;
+        }
+        else {
+            return false;
         }
     }
 }
