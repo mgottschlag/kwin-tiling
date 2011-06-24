@@ -58,29 +58,25 @@ void SolidDeviceEngine::listenForNewDevices()
 
 bool SolidDeviceEngine::sourceRequestEvent(const QString &name)
 {
-
-    //create a predicate to check for validity
-    Solid::Predicate predicate;
-    Solid::Device device;
-
     if (name.startsWith('/')) {
-        device = Solid::Device(name);
-    } else {
-        predicate = Solid::Predicate::fromString(name);
-    }
-
-    if(predicate.isValid()  && !m_predicatemap.contains(name)) {
-        foreach (const Solid::Device &device, Solid::Device::listFromQuery(predicate)) {
-            m_predicatemap[name] << device.udi();
+        Solid::Device device = Solid::Device(name);
+        if (device.isValid()) {
+            if (m_devicemap.contains(name) ) {
+                return true;
+            } else {
+                m_devicemap[name] = device;
+                return populateDeviceData(name);
+            }
         }
-        setData(name, m_predicatemap[name]);
-        return true;
-    } else if (device.isValid()) {
-        if (m_devicemap.contains(name) ) {
+    } else {
+        Solid::Predicate predicate = Solid::Predicate::fromString(name);
+        if (predicate.isValid()  && !m_predicatemap.contains(name)) {
+            foreach (const Solid::Device &device, Solid::Device::listFromQuery(predicate)) {
+                m_predicatemap[name] << device.udi();
+            }
+
+            setData(name, m_predicatemap[name]);
             return true;
-        } else {
-            m_devicemap[name] = device;
-            return populateDeviceData(name);
         }
     }
 
