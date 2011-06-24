@@ -131,11 +131,9 @@ Item {
                 mounted = isMounted(modelData);
                 if (mounted) {
                     operationName = "unmount";
-                    //leftActionIcon = QIcon("media-eject");
                 }
                 else {
                     operationName = "mount";
-                    //leftActionIcon = QIcon("emblem-mounted");
                 }
                 print(hpSource.data[modelData])
                 var actions = hpSource.data[modelData]["actions"];
