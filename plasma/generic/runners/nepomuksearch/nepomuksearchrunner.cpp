@@ -20,6 +20,7 @@
 #include "queryclientwrapper.h"
 
 #include <QMenu>
+#include <QMimeData>
 
 #include <KIcon>
 #include <KRun>
@@ -186,6 +187,24 @@ QList<QAction*> Nepomuk::SearchRunner::actionsForMatch(const Plasma::QueryMatch 
     ret << m_konqActions;
 
     return ret;
+}
+
+QMimeData * Nepomuk::SearchRunner::mimeDataForMatch(const Plasma::QueryMatch *match)
+{
+    Nepomuk::Resource res = match->data().value<Nepomuk::Resource>();
+
+    QUrl url = KUrl(res.property(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url")).toString());
+
+    if (!url.isValid()) {
+        return 0;
+    }
+
+    QMimeData *result = new QMimeData();
+    QList<QUrl> urls;
+    urls << url;
+    kDebug() << urls;
+    result->setUrls(urls);
+    return result;
 }
 
 K_EXPORT_PLASMA_RUNNER(nepomuksearchrunner, Nepomuk::SearchRunner)

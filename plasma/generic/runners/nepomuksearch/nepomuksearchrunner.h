@@ -49,6 +49,7 @@ namespace Nepomuk {
 
     protected Q_SLOTS:
         void init();
+        QMimeData *mimeDataForMatch(const Plasma::QueryMatch *match);
 
     private:
 
