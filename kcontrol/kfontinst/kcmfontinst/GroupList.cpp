@@ -211,7 +211,6 @@ CGroupList::CGroupList(QWidget *parent)
     }
     itsSpecialGroups[CGroupListItem::UNCLASSIFIED]=
                 new CGroupListItem(CGroupListItem::UNCLASSIFIED, this);
-    itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
     // Locate groups.xml file - normall will be ~/.config/fontgroups.xml
     QString path(KGlobal::dirs()->localxdgconfdir());
 
@@ -463,6 +462,8 @@ bool CGroupList::load(const QString &file)
                     if(!item)
                     {
                         item=new CGroupListItem(name);
+                        if(!itsGroups.contains(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]))
+                            itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
                         itsGroups.append(item);
                         rv=true;
                     }
@@ -533,7 +534,8 @@ void CGroupList::clear()
         itsGroups.removeFirst(); // Remove personal
         itsGroups.removeFirst(); // Remove system
     }
-    itsGroups.removeFirst(); // Remove unclassif...
+    if(itsGroups.contains(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]))
+        itsGroups.removeFirst(); // Remove unclassif...
     qDeleteAll(itsGroups);
     itsGroups.clear();
     itsGroups.append(itsSpecialGroups[CGroupListItem::ALL]);
@@ -542,7 +544,7 @@ void CGroupList::clear()
         itsGroups.append(itsSpecialGroups[CGroupListItem::PERSONAL]);
         itsGroups.append(itsSpecialGroups[CGroupListItem::SYSTEM]);
     }
-    itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
+    // Dont add 'Unclassif' until we have some user groups
 }
 
 QModelIndex CGroupList::index(CGroupListItem::EType t)
@@ -554,6 +556,8 @@ void CGroupList::createGroup(const QString &name)
 {
     if(!exists(name))
     {
+        if(!itsGroups.contains(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]))
+            itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
         itsGroups.append(new CGroupListItem(name));
         itsModified=true;
         save();
@@ -577,6 +581,13 @@ bool CGroupList::removeGroup(const QModelIndex &idx)
         {
             itsModified=true;
             itsGroups.removeAll(grp);
+    
+            int stdGroups=1 +// All
+                          (itsSpecialGroups[CGroupListItem::SYSTEM] ? 2 : 0)+ // Personal, System
+                          1; // Unclassified
+
+            if(stdGroups==itsGroups.count() && itsGroups.contains(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]))
+                itsGroups.removeAll(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
             delete grp;
             save();
             sort(0, itsSortOrder);
