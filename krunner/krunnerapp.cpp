@@ -263,7 +263,7 @@ void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
         m_tasks = new KSystemActivityDialog;
         connect(m_tasks, SIGNAL(finished()),
                 this, SLOT(taskDialogFinished()));
-    } else if (m_tasks->filterText() == filterText &&
+    } else if ((filterText.isEmpty() || m_tasks->filterText() == filterText) &&
                KWindowSystem::activeWindow() == m_tasks->winId()) {
         m_tasks->hide();
         return;
