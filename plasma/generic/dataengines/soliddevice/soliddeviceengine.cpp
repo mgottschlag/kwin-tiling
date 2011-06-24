@@ -181,8 +181,13 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         updateHardDiskTemperature(name);
     }
     else {
-        setData(name, I18N_NOOP("Removable"), false);
+        // Fixes removable property, needs better fix though
+        Solid::Device parentDevice = device.parent();
+        Solid::StorageDrive *drive = parentDevice.as<Solid::StorageDrive>();
+        setData(name, I18N_NOOP("Removable"), ( drive && (drive->isHotpluggable() || drive->isRemovable()) ));
     }
+
+    
     if (device.is<Solid::OpticalDrive>()) {
         Solid::OpticalDrive *opticaldrive = device.as<Solid::OpticalDrive>();
         if (!opticaldrive) {

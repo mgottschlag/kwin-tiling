@@ -23,18 +23,16 @@ import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 
 Item {
     id: devicenotifier
-    property int deviceTypeConfig: 0
+    property bool removableDevices: true
+    property bool nonRemovableDevices: false
+    property bool allDevices: false
 
     PlasmaCore.DataSource {
         id: hpSource
         engine: "hotplug"
-        connectedSources: sources
+        connectedSources: []
         interval: 0
-        /*onSourcesChanged: {
-            for (i=0; i<sources.length; i++) {
-                if (sdSource.data[sources[i]]["Removable"]) connectSource(sources[i]);
-            }
-        }*/
+        onSourcesChanged: populateDevices()
     }
 
     PlasmaCore.DataSource {
@@ -42,6 +40,7 @@ Item {
         engine: "soliddevice"
         connectedSources: hpSource.sources
         interval: 0
+        onSourcesChanged: populateDevices()
     }
 
     Component.onCompleted: {
@@ -50,14 +49,33 @@ Item {
     }
 
     function configChanged() {
-        if (plasmoid.readConfig("removableDevices"))
-            deviceTypeConfig = 0;
-        else if (plasmoid.readConfig("nonRemovableDevices"))
-            deviceTypeConfig = 1;
-        else if(plasmoid.readConfig("allDevices"))
-            deviceTypeConfig = 2;
-        else
-            deviceTypeConfig = -1;
+        removableDevices = plasmoid.readConfig("removableDevices");
+        nonRemovableDevices = plasmoid.readConfig("nonRemovableDevices");
+        allDevices = plasmoid.readConfig("allDevices");
+        populateDevices();
+    }
+
+    function populateDevices() {
+        var connected = hpSource.connectedSources;
+        for (i=0; i<connected.length; i++)
+            hpSource.disconnectSource(connected[i]);
+        var sources = hpSource.sources;
+        for (i=0; i<sources.length; i++) {
+            if (removableDevices) { //Removable only
+                if (!sdSource.data[sources[i]]["Removable"]) {
+                    continue;
+                }
+            }
+            else if (nonRemovableDevices) { //Non removable only
+                if (sdSource.data[sources[i]]["Removable"]) {
+                    continue;
+                }
+            }
+
+            if (hpSource.connectedSources.indexOf(sources[i])<0) {
+                hpSource.connectSource (sources[i]);
+            }
+        }
     }
 
     Text {
@@ -80,7 +98,7 @@ Item {
             topMargin: 10
             bottom: devicenotifier.bottom
         }
-        model: hpSource.sources
+        model: hpSource.connectedSources
         delegate: deviceItem
         highlight: deviceHighlighter
     }
@@ -93,21 +111,35 @@ Item {
             udi: modelData
             icon: QIcon(hpSource.data[modelData]["icon"])
             deviceName: hpSource.data[modelData]["text"]
-            percentFreeSpace: Number(sdSource.data[modelData]["Free Space"])*100/Number(sdSource.data[modelData]["Size"]);
+            percentUsage: {
+                var freeSpace = Number(sdSource.data[modelData]["Free Space"]);
+                var size = Number(sdSource.data[modelData]["Size"]);
+                var used = size-freeSpace;
+                return used*100/size;
+            }
             mounted: true
+            emblemIcon: QIcon(sdSource.data[modelData]["Emblems"][0])
+            leftActionIcon: {
+                var emblem = sdSource.data[modelData]["Emblems"][0];
+                if (emblem == "emblem-mounted")
+                    return QIcon("media-eject");
+                else if (emblem == "emblem-unmounted")
+                    return QIcon("emblem-mounted");
+            }
 
             Component.onCompleted: {
                 mounted = isMounted(modelData);
                 if (mounted) {
                     operationName = "unmount";
-                    emblemIcon = QIcon("emblem-mounted");
-                    leftActionIcon = QIcon("media-eject");
+                    //leftActionIcon = QIcon("media-eject");
                 }
                 else {
                     operationName = "mount";
-                    emblemIcon = QIcon("emblem-unmounted");
-                    leftActionIcon = QIcon("emblem-mounted");
+                    //leftActionIcon = QIcon("emblem-mounted");
                 }
+                var actions = hpSource.data[modelData]["actions"];
+                for (i=0; i<actions.length; i++)
+                    print (actions[i]["icon"];
             }
 
             onLeftActionTriggered: {
@@ -117,11 +149,9 @@ Item {
                 mounted = isMounted(modelData)
                 if (operationName=="mount" && mounted) {
                     operationName = "unmount";
-                    leftActionIcon = QIcon("media-eject");
                 }
                 else if (operationName=="unmount" && !mounted) {
                     operationName = "mount";
-                    leftActionIcon = QIcon("emblem-mounted");
                 }
             }
         }
@@ -132,7 +162,6 @@ Item {
 
         PlasmaCore.FrameSvgItem {
             width: devicenotifier.width
-            //height: 72
             imagePath: "widgets/frame"
             prefix: "raised"
             opacity: 0

@@ -30,7 +30,7 @@ Item {
     property alias leftActionIcon: leftAction.icon
     property string operationName
     property bool mounted
-    property alias percentFreeSpace: freeSpaceBar.value
+    property alias percentUsage: freeSpaceBar.value
     signal leftActionTriggered
 
     property int deviceIconMargin: 10
