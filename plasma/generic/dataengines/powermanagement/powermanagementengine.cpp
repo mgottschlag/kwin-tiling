@@ -330,12 +330,19 @@ void PowermanagementEngine::availableProfilesChanged()
 
     StringStringMap profiles = reply.value();
 
+    QVariantMap variantProfiles;
+    StringStringMap::const_iterator i = profiles.constBegin();
+    while (i != profiles.constEnd()) {
+        variantProfiles.insert(i.key(), i.value());
+        ++i;
+    }
+
     if (profiles.isEmpty()) {
         kDebug() << "No available profiles!";
         return;
     }
 
-    setData("PowerDevil", "Available profiles", QVariant::fromValue(profiles));
+    setData("PowerDevil", "Available profiles", variantProfiles);
 }
 
 void PowermanagementEngine::screenBrightnessChanged(int brightness)
