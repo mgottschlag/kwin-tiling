@@ -254,6 +254,7 @@ void KRunnerApp::showTaskManager()
 {
     showTaskManagerWithFilter(QString());
 }
+
 void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
 {
 #ifndef Q_WS_WIN
@@ -262,7 +263,12 @@ void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
         m_tasks = new KSystemActivityDialog;
         connect(m_tasks, SIGNAL(finished()),
                 this, SLOT(taskDialogFinished()));
+    } else if (m_tasks->filterText() == filterText &&
+               KWindowSystem::activeWindow() == m_tasks->winId()) {
+        m_tasks->hide();
+        return;
     }
+
     m_tasks->run();
     m_tasks->setFilterText(filterText);
 #endif
