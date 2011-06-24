@@ -28,6 +28,7 @@
 #include "Utils.h"
 #include <KDE/KDebug>
 #include <QtXml/QDomDocument>
+#include <QtCore/QTextCodec>
 #include <kio/global.h>
 #include <kde_file.h>
 #include <sys/types.h>
@@ -89,6 +90,7 @@ static void cleanup()
 Helper::Helper()
 {
     KFI_DBUG;
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
     registerSignalHandler(signalHander);
     qAddPostRoutine(cleanup);
     theFontFolder.init(true, true);
