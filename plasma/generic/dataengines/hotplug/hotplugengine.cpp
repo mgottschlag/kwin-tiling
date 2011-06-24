@@ -40,9 +40,6 @@
 
 //#define HOTPLUGENGINE_TIMING
 
-typedef QList<Plasma::DataEngine::Data> PlasmaDataList;
-Q_DECLARE_METATYPE(PlasmaDataList)
-
 HotplugEngine::HotplugEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent, args),
       m_dirWatch(new KDirWatch(this))
@@ -229,7 +226,7 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device, bool added)
         data.insert("emblems", device.emblems());
         data.insert("predicateFiles", interestingDesktopFiles);
 
-        PlasmaDataList actions;
+        QVariantList actions;
         foreach(const QString& desktop, interestingDesktopFiles) {
             Plasma::DataEngine::Data action;
             QString actionUrl = KStandardDirs::locate("data", "solid/actions/" + desktop);
@@ -239,7 +236,7 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device, bool added)
             action.insert("icon", services[0].icon());
             actions << action;
         }
-        data.insert("actions", QVariant::fromValue(actions));
+        data.insert("actions", actions);
 
         data.insert("isEncryptedContainer", isEncryptedContainer);
 

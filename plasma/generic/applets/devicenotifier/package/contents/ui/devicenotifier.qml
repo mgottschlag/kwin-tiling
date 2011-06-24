@@ -137,9 +137,10 @@ Item {
                     operationName = "mount";
                     //leftActionIcon = QIcon("emblem-mounted");
                 }
+                print(hpSource.data[modelData])
                 var actions = hpSource.data[modelData]["actions"];
                 for (i=0; i<actions.length; i++)
-                    print (actions[i]["icon"];
+                    print (actions[i]["icon"]);
             }
 
             onLeftActionTriggered: {
