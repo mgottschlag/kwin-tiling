@@ -44,7 +44,6 @@
 #include <QtGui/QStyle>
 #include <QtGui/QCloseEvent>
 #include <QtCore/QTimer>
-#include <QtCore/QEventLoop>
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 #include <fontconfig/fontconfig.h>
@@ -120,8 +119,7 @@ CJobRunner::CJobRunner(QWidget *parent, int xid)
              itsAutoSkip(false),
              itsCancelClicked(false),
              itsModified(false),
-             itsTempDir(0L),
-             itsLoop(0L)
+             itsTempDir(0L)
 {
     setModal(true);
 
@@ -313,8 +311,11 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, bool destIsSystem)
     QTimer::singleShot(constInterfaceCheck, this, SLOT(checkInterface()));
     itsActionLabel->startAnimation();
     int rv=KDialog::exec();
-    delete itsTempDir;
-    itsTempDir=0L;
+    if(itsTempDir)
+    {
+        delete itsTempDir;
+        itsTempDir=0L;
+    }
     return rv;
 }
 
@@ -422,15 +423,20 @@ void CJobRunner::dbusStatus(int pid, int status)
         return;
     }
 
+    itsLastDBusStatus=status;
+
     if(itsCancelClicked)
     {
         itsActionLabel->stopAnimation();
         setPage(PAGE_CANCEL);
+        return;
+        /*
         if(RESP_CANCEL==itsResponse)
             itsIt=itsEnd;
         itsCancelClicked=false;
         setPage(PAGE_PROGRESS);
         itsActionLabel->startAnimation();
+        */
     }
 
     // itsIt will equal itsEnd if user decided to cancel the current op
@@ -476,46 +482,42 @@ void CJobRunner::dbusStatus(int pid, int status)
                 else
                 {
                     setPage(PAGE_SKIP, errorString(status));
-                    switch(itsResponse)
-                    {
-                        case RESP_CONTINUE:
-                            cont=true;
-                            break;
-                        case RESP_AUTO:
-                            cont=itsAutoSkip=true;
-                            break;
-                        case RESP_CANCEL:
-                            break;
-                    }
-                    setPage(PAGE_PROGRESS);
+                    return;
                 }
             }
         }
 
-        itsActionLabel->startAnimation();
-        if(cont)
-        {
-            if(CMD_INSTALL==itsCmd && Item::TYPE1_FONT==(*itsIt).type) // Did we error on a pfa/pfb? if so, exclude the afm/pfm...
-            {
-                ++itsIt;
+        contineuToNext(cont);
+    }
+}
 
-                // Skip afm/pfm
-                if(itsIt!=itsEnd && (*itsIt).fileName==currentName && (Item::TYPE1_AFM==(*itsIt).type || Item::TYPE1_PFM==(*itsIt).type))
-                    ++itsIt;
-                // Skip pfm/afm
-                if(itsIt!=itsEnd && (*itsIt).fileName==currentName && (Item::TYPE1_AFM==(*itsIt).type || Item::TYPE1_PFM==(*itsIt).type))
-                    ++itsIt;
-            }
-            else
+void CJobRunner::contineuToNext(bool cont)
+{
+    itsActionLabel->startAnimation();
+    if(cont)
+    {
+        if(CMD_INSTALL==itsCmd && Item::TYPE1_FONT==(*itsIt).type) // Did we error on a pfa/pfb? if so, exclude the afm/pfm...
+        {
+            QString currentName((*itsIt).fileName);
+
+            ++itsIt;
+
+            // Skip afm/pfm
+            if(itsIt!=itsEnd && (*itsIt).fileName==currentName && (Item::TYPE1_AFM==(*itsIt).type || Item::TYPE1_PFM==(*itsIt).type))
+                ++itsIt;
+            // Skip pfm/afm
+            if(itsIt!=itsEnd && (*itsIt).fileName==currentName && (Item::TYPE1_AFM==(*itsIt).type || Item::TYPE1_PFM==(*itsIt).type))
                 ++itsIt;
         }
         else
-        {
-            itsUrls.empty();
-            itsIt=itsEnd=itsUrls.constEnd();
-        }
-        doNext();
+            ++itsIt;
     }
+    else
+    {
+        itsUrls.empty();
+        itsIt=itsEnd=itsUrls.constEnd();
+    }
+    doNext();
 }
 
 void CJobRunner::slotButtonClicked(int button)
@@ -527,30 +529,29 @@ void CJobRunner::slotButtonClicked(int button)
                 itsCancelClicked=true;
             break;
         case PAGE_SKIP:
+            setPage(PAGE_PROGRESS);
             switch(button)
             {
                 case User1:
-                    itsResponse=RESP_CONTINUE;
+                    contineuToNext(true);
                     break;
                 case User2:
-                    itsResponse=RESP_AUTO;
+                    itsAutoSkip=true;
+                    contineuToNext(true);
                     break;
                 default:
-                    itsResponse=RESP_CANCEL;
+                    contineuToNext(false);
+                    break;
             }
-            itsLoop->quit();
             break;
         case PAGE_CANCEL:
-            switch(button)
-            {
-                case Yes:
-                    itsResponse=RESP_CANCEL;
-                    break;
-                case No:
-                default:
-                    itsResponse=RESP_CONTINUE;
-            }
-            itsLoop->quit();
+            if(Yes==button)
+                itsIt=itsEnd;
+            itsCancelClicked=false;
+            setPage(PAGE_PROGRESS);
+            itsActionLabel->startAnimation();
+            // Now continue...
+            dbusStatus(getpid(), itsLastDBusStatus);
             break;
         case PAGE_COMPLETE:
             if(itsDontShowFinishedMsg)
@@ -587,9 +588,6 @@ void CJobRunner::setPage(int page, const QString &msg)
             setButtons(Cancel|User1|User2);
             setButtonText(User1, i18n("Skip"));
             setButtonText(User2, i18n("AutoSkip"));
-            if(!itsLoop)
-                itsLoop=new QEventLoop(this);
-            itsLoop->exec();
             break;
         case PAGE_ERROR:
             itsErrorLabel->setText(i18n("<h3>Error</h3>")+QLatin1String("<p>")+msg+QLatin1String("</p>"));
@@ -597,9 +595,6 @@ void CJobRunner::setPage(int page, const QString &msg)
             break;
         case PAGE_CANCEL:
             setButtons(Yes|No);
-            if(!itsLoop)
-                itsLoop=new QEventLoop(this);
-            itsLoop->exec();
             break;
         case PAGE_COMPLETE:
             if(!itsDontShowFinishedMsg || itsDontShowFinishedMsg->isChecked())
