@@ -29,7 +29,7 @@ void HotplugJob::start()
     QString udi (m_dest);
     QString operation = operationName();
     
-    if (operation == "activateAction") {
+    if (operation == "invokeAction") {
         QString action = parameters()["predicate"].toString();
 
         QStringList desktopFiles;

@@ -46,6 +46,7 @@ Item {
     Component.onCompleted: {
         plasmoid.addEventListener ('ConfigChanged', configChanged);
         plasmoid.popupIcon = QIcon("device-notifier");
+        configChanged();
     }
 
     function configChanged() {
@@ -53,6 +54,8 @@ Item {
         nonRemovableDevices = plasmoid.readConfig("nonRemovableDevices");
         allDevices = plasmoid.readConfig("allDevices");
         populateDevices();
+        notifierDialog.currentIndex = -1;
+        notifierDialog.currentExpanded = -1;
     }
 
     function populateDevices() {
@@ -101,57 +104,42 @@ Item {
         model: hpSource.connectedSources
         delegate: deviceItem
         highlight: deviceHighlighter
+
+        property int currentExpanded: -1
+        Component.onCompleted: currentIndex=-1
     }
 
     Component {
         id: deviceItem
 
         DeviceItem {
+            id: wrapper
             width: devicenotifier.width
             udi: modelData
-            icon: QIcon(hpSource.data[modelData]["icon"])
-            deviceName: hpSource.data[modelData]["text"]
+            icon: hpSource.data[udi]["icon"]
+            deviceName: hpSource.data[udi]["text"]
+            emblemIcon: sdSource.data[udi]["Emblems"][0]
+            
             percentUsage: {
-                var freeSpace = Number(sdSource.data[modelData]["Free Space"]);
-                var size = Number(sdSource.data[modelData]["Size"]);
+                var freeSpace = Number(sdSource.data[udi]["Free Space"]);
+                var size = Number(sdSource.data[udi]["Size"]);
                 var used = size-freeSpace;
                 return used*100/size;
             }
-            mounted: true
-            emblemIcon: QIcon(sdSource.data[modelData]["Emblems"][0])
             leftActionIcon: {
-                var emblem = sdSource.data[modelData]["Emblems"][0];
-                if (emblem == "emblem-mounted")
+                if (emblemIcon == "emblem-mounted") {
                     return QIcon("media-eject");
-                else if (emblem == "emblem-unmounted")
+                } else if (emblemIcon == "emblem-unmounted") {
                     return QIcon("emblem-mounted");
-            }
-
-            Component.onCompleted: {
-                mounted = isMounted(modelData);
-                if (mounted) {
-                    operationName = "unmount";
                 }
-                else {
-                    operationName = "mount";
-                }
-                print(hpSource.data[modelData])
-                var actions = hpSource.data[modelData]["actions"];
-                for (i=0; i<actions.length; i++)
-                    print (actions[i]["icon"]);
             }
+            mounted: emblemIcon=="emblem-mounted"
 
             onLeftActionTriggered: {
-                service = sdSource.serviceForSource (modelData);
+                operationName = mounted ? "unmount" : "mount";
+                service = sdSource.serviceForSource (udi);
                 operation = service.operationDescription (operationName);
                 service.startOperationCall (operation);
-                mounted = isMounted(modelData)
-                if (operationName=="mount" && mounted) {
-                    operationName = "unmount";
-                }
-                else if (operationName=="unmount" && !mounted) {
-                    operationName = "mount";
-                }
             }
         }
     }
