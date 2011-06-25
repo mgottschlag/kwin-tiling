@@ -31,7 +31,6 @@
 class QLabel;
 class QProgressBar;
 class QStackedWidget;
-class QEventLoop;
 class QCloseEvent;
 class QCheckBox;
 class KJob;
@@ -106,6 +105,7 @@ class CJobRunner : public KDialog
 
     private:
 
+    void    contineuToNext(bool cont);
     void    closeEvent(QCloseEvent *e);
     void    setPage(int page, const QString &msg=QString());
     QString fileName(const KUrl &url);
@@ -130,8 +130,7 @@ class CJobRunner : public KDialog
     QString                 itsCurrentFile;
     CActionLabel            *itsActionLabel;
     QStackedWidget          *itsStack;
-    int                     itsResponse;
-    QEventLoop              *itsLoop;
+    int                     itsLastDBusStatus;
     QCheckBox               *itsDontShowFinishedMsg;
 };
 
