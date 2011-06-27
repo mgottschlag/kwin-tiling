@@ -903,7 +903,6 @@ QImage CFcEngine::draw(const QString &name, quint32 style, int faceNo, const QCo
                         {
                             int fontHeight=xftFont->ascent+xftFont->descent;
 
-                            y-=8;
                             xft()->drawAllGlyphs(xftFont, fontHeight, x, y, w, h, 0);
                             rv=true;
                             closeFont(xftFont);
