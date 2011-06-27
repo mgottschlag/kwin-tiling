@@ -83,6 +83,13 @@ static QString getChars(FT_Face face)
 {
     QString newStr;
 
+    for(int cmap=0; cmap<face->num_charmaps; ++cmap)
+        if(face->charmaps[cmap] && FT_ENCODING_ADOBE_CUSTOM==face->charmaps[cmap]->encoding)
+        {
+            FT_Select_Charmap(face, FT_ENCODING_ADOBE_CUSTOM);
+            break;
+        }
+
     for(unsigned int i=1; i<65535; ++i)
         if(FT_Get_Char_Index(face, i))
         {
