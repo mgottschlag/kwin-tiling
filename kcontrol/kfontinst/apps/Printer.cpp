@@ -36,6 +36,12 @@
 #include <KDE/KApplication>
 #include <kdeprintdialog.h>
 
+#if defined(Q_WS_X11) || defined(Q_WS_QWS)
+#include <fontconfig/fontconfig.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#endif
+
 #ifdef HAVE_LOCALE_H
 #include <locale.h>
 #endif
@@ -71,6 +77,88 @@ static bool sufficientSpace(int y, int titleFontHeight, const int *sizes, int pa
                   constMarginLineBefore+constMarginLineAfter;
     return (y+required)<pageHeight;
 }
+
+#if defined(Q_WS_X11) || defined(Q_WS_QWS)
+static QString getChars(FT_Face face)
+{
+    QString newStr;
+
+    for(unsigned int i=1; i<65535; ++i)
+        if(FT_Get_Char_Index(face, i))
+        {
+            newStr+=QChar(i);
+            if(newStr.length()>255)
+                break;
+        }
+    
+    return newStr;
+}
+
+static QString usableStr(FT_Face face, const QString &str)
+{
+    unsigned int slen=str.length(),
+                 ch;
+    QString      newStr;
+
+    for(ch=0; ch<slen; ++ch)
+        if(FT_Get_Char_Index(face, str[ch].unicode()))
+            newStr+=str[ch];
+    return newStr;
+}
+
+static QString usableStr(QFont &font, const QString &str)
+{
+    FT_Face face=font.freetypeFace();
+    return face ? usableStr(face, str) : str;
+}
+
+static bool hasStr(QFont &font, const QString &str)
+{
+    FT_Face face=font.freetypeFace();
+
+    if(!face)
+        return true;
+
+    for(int ch=0; ch<str.length(); ++ch)
+        if(!FT_Get_Char_Index(face, str[ch].unicode()))
+            return false;
+    return true;
+}
+
+static QString previewString(QFont &font, const QString &text, bool onlyDrawChars)
+{
+    FT_Face face=font.freetypeFace();
+
+    if(!face)
+        return text;
+
+    QString valid(usableStr(face, text));
+    bool    drawChars=onlyDrawChars ||
+                      (!hasStr(font, CFcEngine::getLowercaseLetters()) &&
+                       !hasStr(font, CFcEngine::getUppercaseLetters()));
+                       
+    return valid.length()<(text.length()/2) || drawChars ? getChars(face) : valid; 
+}
+#else
+static QString usableStr(QFont &font, const QString &str)
+{
+    Q_UNUSED(font)
+    return str;
+}
+
+static bool hasStr(QFont &font, const QString &str)
+{
+    Q_UNUSED(font)
+    return true;
+}
+
+static QString previewString(QFont &font, const QString &text, bool onlyDrawChars)
+{
+    Q_UNUSED(font)
+    Q_UNUSED(onlyDrawChars)
+    return text;
+}
+#endif
 
 static void printItems(const QList<Misc::TFont> &items, int size, QWidget *parent)
 {
@@ -131,9 +219,10 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
         for(it=items.begin(); it!=end; ++it)
         {
             unsigned int s=0;
+            QFont        font;
+
 #ifdef KFI_PRINT_APP_FONTS
             QString      family;
-            QFont        font;
 
             if(-1!=appFont[(*it).family])
             {
@@ -164,49 +253,71 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
             y+=constMarginLineBefore;
             painter.drawLine(margin, y, margin+pageWidth, y);
             y+=constMarginLineAfter;
+            
+            bool onlyDrawChars=false;
 
             if(0==size)
             {
 #ifdef KFI_PRINT_APP_FONTS
                 if(family.isEmpty())
 #endif
-                    painter.setFont(CFcEngine::getQFont((*it).family, (*it).styleInfo,
-                                                        CFcEngine::constDefaultAlphaSize));
+                    font=CFcEngine::getQFont((*it).family, (*it).styleInfo,
+                                             CFcEngine::constDefaultAlphaSize);
 #ifdef KFI_PRINT_APP_FONTS
                 else
-                {
                     font.setPointSize(CFcEngine::constDefaultAlphaSize);
-                    painter.setFont(font);
-                }
 #endif
+                painter.setFont(font);
 
-                y+=CFcEngine::constDefaultAlphaSize;
-                painter.drawText(margin, y, CFcEngine::getLowercaseLetters());
-                y+=constMarginFont+CFcEngine::constDefaultAlphaSize;
-                painter.drawText(margin, y, CFcEngine::getUppercaseLetters());
-                y+=constMarginFont+CFcEngine::constDefaultAlphaSize;
-                painter.drawText(margin, y, CFcEngine::getPunctuation());
-                y+=constMarginFont+constMarginLineBefore;
-                painter.drawLine(margin, y, margin+pageWidth, y);
-                y+=constMarginLineAfter;
+                bool lc=hasStr(font, CFcEngine::getLowercaseLetters()),
+                     uc=hasStr(font, CFcEngine::getUppercaseLetters());
+
+                onlyDrawChars=!lc && !uc;
+                
+                if(lc || uc)
+                    y+=CFcEngine::constDefaultAlphaSize;
+                
+                if(lc)
+                {
+                    painter.drawText(margin, y, CFcEngine::getLowercaseLetters());
+                    y+=constMarginFont+CFcEngine::constDefaultAlphaSize;
+                }
+                
+                if(uc)
+                {
+                    painter.drawText(margin, y, CFcEngine::getUppercaseLetters());
+                    y+=constMarginFont+CFcEngine::constDefaultAlphaSize;
+                }
+                
+                if(lc || uc)
+                {
+                    QString validPunc(usableStr(font, CFcEngine::getPunctuation()));
+                    if(validPunc.length()>=(CFcEngine::getPunctuation().length()/2))
+                    {
+                        painter.drawText(margin, y, CFcEngine::getPunctuation());
+                        y+=constMarginFont+constMarginLineBefore;
+                    }
+                    painter.drawLine(margin, y, margin+pageWidth, y);
+                    y+=constMarginLineAfter;
+                }
             }
+            
             for(; sizes[s]; ++s)
             {
                 y+=sizes[s];
 #ifdef KFI_PRINT_APP_FONTS
                 if(family.isEmpty())
 #endif
-                    painter.setFont(CFcEngine::getQFont((*it).family, (*it).styleInfo, sizes[s]));
+                    font=CFcEngine::getQFont((*it).family, (*it).styleInfo, sizes[s]);
 #ifdef KFI_PRINT_APP_FONTS
                 else
-                {
                     font.setPointSize(sizes[s]);
-                    painter.setFont(font);
-                }
 #endif
+                painter.setFont(font);
+
                 if(sufficientSpace(y, pageHeight, sizes[s]))
                 {
-                    painter.drawText(margin, y, str);
+                    painter.drawText(margin, y, previewString(font, str, onlyDrawChars));
                     if(sizes[s+1])
                         y+=constMarginFont;
                 }
@@ -284,7 +395,7 @@ int main(int argc, char **argv)
         {
             QStringList                fl(args->getOptionList("pfont"));
             QStringList::ConstIterator it(fl.begin()),
-                                          end(fl.end());
+                                       end(fl.end());
 
             for(; it!=end; ++it)
             {
