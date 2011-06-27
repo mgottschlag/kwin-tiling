@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <errno.h>
 #include <signal.h>
 #include <math.h>
+#include <alloca.h>
 
 int screen_number = 0;
 int number_of_screens = 1;
@@ -101,8 +102,9 @@ int main( int argc, char* argv[] )
                     }
                 // Calculate the array size: part before the dot + length of the screen
                 // string (which is log10 + 1) + 1 for the dot itself + 8 for "DISPLAY=" + \0
-                char envir[breakpos + (int)log10(number_of_screens) + 11];
-                char server_name[breakpos + 1];
+                // We use alloca and casts to allow non-gcc build
+                char *envir; envir = (char*) alloca((breakpos + (int)log10((double)number_of_screens) + 11) * sizeof(*envir));
+                char *server_name; server_name = (char*) alloca((breakpos + 1)*sizeof(char*));
                 strncpy(server_name, display_name, breakpos);
                 server_name[breakpos] = '\0';
 
