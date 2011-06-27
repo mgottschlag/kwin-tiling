@@ -19,7 +19,7 @@
 
 import Qt 4.7
 import org.kde.plasma.core 0.1 as PlasmaCore
-import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
+import org.kde.qtextracomponents 0.1
 
 Item {
     id: lockout
@@ -51,12 +51,6 @@ Item {
         count = show_lock+show_switchUser+show_leave+show_suspend+show_hibernate;
     }
 
-    function clickHandler(what) {
-        var service = dataEngine.serviceForSource("PowerDevil");
-        var operation = service.operationDescription(what);
-        service.startOperationCall(operation);
-    }
-
     Flow {
         id: iconView
         anchors.fill: parent
@@ -75,15 +69,25 @@ Item {
                 width: visible ? iconButton.width : 0
                 height: visible ? iconButton.height : 0
 
-                PlasmaWidgets.IconWidget {
+                QIconItem {
                     id: iconButton
                     icon: QIcon(modelData[0])
                     width: iconView.flow==Flow.LeftToRight ? lockout.width/count : lockout.width
                     height: iconView.flow==Flow.TopToBottom ? lockout.height/count : lockout.height
-                    onClicked: clickHandler(modelData[1])
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: clickHandler(modelData[1])
+                    }
                 }
             }
         }
+    }
+
+    function clickHandler(what) {
+        var service = dataEngine.serviceForSource("PowerDevil");
+        var operation = service.operationDescription(what);
+        service.startOperationCall(operation);
     }
 }
 
