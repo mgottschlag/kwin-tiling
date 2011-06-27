@@ -35,6 +35,7 @@
 #include <KDE/KIO/NetAccess>
 #include <KDE/KGlobal>
 #include <KDE/KLocale>
+#include <kxutils.h>
 #include <math.h>
 #include <X11/Xlib.h>
 #include <X11/Xft/Xft.h>
@@ -215,7 +216,7 @@ class CFcEngine::Xft
                        bool oneLine=false, int max=-1, QRect *used=0L) const;
     bool drawAllChars(XftFont *xftFont, int fontHeight, int &x, int &y, int w, int h,
                       bool oneLine=false, int max=-1, QRect *used=0L) const;
-    QImage toImage(int w=0, int h=0) const;
+    QImage toImage() const;
 
     private:
 
@@ -511,33 +512,9 @@ bool CFcEngine::Xft::drawAllChars(XftFont *xftFont, int fontHeight, int &x, int 
     return rv;
 }
 
-QImage CFcEngine::Xft::toImage(int w, int h) const
+QImage CFcEngine::Xft::toImage() const
 {
-    int imgW=w ? w : itsPix.currentW,
-        imgH=h ? h : itsPix.currentH;
-
-    if(!XftDrawPicture(itsDraw))
-        return QImage();
-
-    XImage *xi = XGetImage(QX11Info::display(), itsPix.x11, 0, 0, imgW, imgH, AllPlanes, ZPixmap);
-
-    if (!xi)
-        return QImage();
-
-    QImage image(imgW, imgH, QImage::Format_RGB32);
-    bool   xOk=32==xi->bits_per_pixel;
-
-    if(xOk)
-        memcpy(image.bits(), xi->data, xi->bytes_per_line*xi->height);
-
-    if (xi->data)
-    {
-        free(xi->data);
-        xi->data = 0;
-    }
-    XDestroyImage(xi);
-
-    return xOk ? image : QImage();
+    return XftDrawPicture(itsDraw) ? KXUtils::createPixmapFromHandle(itsPix.x11).toImage() : QImage();
 }
     
 inline int point2Pixel(int point)
