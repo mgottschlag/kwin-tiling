@@ -24,17 +24,17 @@ import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 Item {
     id: dialog
     width: 387
-    height: 135
+    height: 180
 
     property int percent
     property bool pluggedIn
-    property alias screenBrightness: values.screenBrightness
-    property alias currentProfile: values.currentProfile
+    property alias screenBrightness: brightnessSlider.value
+    property alias currentProfileIndex: profiles.currentIndex
 
     signal sleepClicked
     signal hibernateClicked
-    signal brightnessChanged
-    signal profileChanged
+    signal brightnessChanged(int screenBrightness)
+    signal profileChanged(string profile)
 
     function addProfile(profile) {
         profiles.addItem(profile);
@@ -103,8 +103,6 @@ Item {
             topMargin: 10
             bottom: parent.bottom
         }
-        property int screenBrightness
-        property string currentProfile
 
         Text {
             id: batteryValue
@@ -134,10 +132,7 @@ Item {
                 topMargin: 5
                 right: parent.right
             }
-            onTextChanged: {
-                currentProfile = text;
-                profileChanged();
-            }
+            onTextChanged: profileChanged(text)
         }
 
         PlasmaWidgets.Slider {
@@ -145,50 +140,44 @@ Item {
             orientation: Qt.Horizontal
             minimum: 0
             maximum: 100
-            value: parent.screenBrightness
-            /* FIXME: this is non-existant property */
+            /* TODO: implement this property */
             //tickInterval: 10
             anchors {
                 left: parent.left
                 top: adapterValue.bottom
-                topMargin: -5
+                //topMargin: -5
                 right: parent.right
             }
-            onValueChanged: {
-                screenBrightness = value;
-                brightnessChanged();
-            }
+            onValueChanged: brightnessChanged(value)
         }
 
-        PlasmaWidgets.IconWidget {
+        IconButton {
             id: sleepButton
             icon: QIcon("system-suspend")
-            drawBackground: true
-            //textBackgroundColor: Qt.transparent
-            textBackgroundColor: "#00000000"
             text: "Sleep"
             orientation: Qt.Horizontal
+            iconWidth: 32
+            iconHeight: 32
+            width: parent.width/2
             anchors {
                 left: parent.left
                 top: brightnessSlider.bottom
-                topMargin: -40
                 bottom: parent.bottom
             }
             onClicked: sleepClicked()
         }
 
-        PlasmaWidgets.IconWidget {
+        IconButton {
             id: hibernateButton
             icon: QIcon("system-suspend-hibernate")
-            drawBackground: true
-            //textBackgroundColor: Qt.transparent
-            textBackgroundColor: "#00000000"
             text: "Hibernate"
             orientation: Qt.Horizontal
+            iconWidth: 32
+            iconHeight: 32
+            width: parent.width/2
             anchors {
                 right: parent.right
                 top: brightnessSlider.bottom
-                topMargin: -40
                 bottom: parent.bottom
             }
             onClicked: hibernateClicked()

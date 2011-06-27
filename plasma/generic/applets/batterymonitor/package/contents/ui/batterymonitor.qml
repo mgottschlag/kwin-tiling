@@ -20,7 +20,6 @@
 
 import Qt 4.7
 import org.kde.plasma.core 0.1 as PlasmaCore
-import "core"
 
 Item {
     id: batterymonitor
@@ -32,6 +31,10 @@ Item {
         engine: "powermanagement"
         connectedSources: ["AC Adapter", "Battery", "Battery0", "PowerDevil"]
         interval: 0
+        Component.onCompleted: {
+            myprofiles = pmSource.data["PowerDevil"]["Available profiles"];
+            print (myprofiles["Performance"]);
+        }
     }
 
     PlasmaCore.Dialog {
@@ -62,15 +65,8 @@ Item {
             onProfileChanged: {
                 service = pmSource.serviceForSource("PowerDevil");
                 operation = service.operationDescription("setProfile");
-                operation.profile = currentProfile;
+                operation.profile = profile;
                 service.startOperationCall(operation);
-            }
-            Component.onCompleted: {
-                var profiles = pmSource.data["PowerDevil"]["Available profiles"];
-                for (var i in profiles) {
-                    print(i);
-                    print(profiles[i]);
-                }
             }
         }
         Component.onCompleted: {
