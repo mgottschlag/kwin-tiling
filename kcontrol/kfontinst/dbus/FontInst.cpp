@@ -90,9 +90,14 @@ static void registerSignalHandler(SignalHandler handler)
 
 void signalHander(int)
 {
-    registerSignalHandler(0L);
-    theFolders[isSystem ? FontInst::FOLDER_SYS : FontInst::FOLDER_USER].saveDisabled();
-    registerSignalHandler(signalHander);
+    static bool inHandler=false;
+    
+    if(!inHandler)
+    {
+        inHandler=true;
+        theFolders[isSystem ? FontInst::FOLDER_SYS : FontInst::FOLDER_USER].saveDisabled();
+        inHandler=false;
+    }
 }
 
 FontInst::FontInst()
