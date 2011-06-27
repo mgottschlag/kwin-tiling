@@ -118,13 +118,6 @@ Item {
             rightMargin: 10
             verticalCenter: deviceIcon.verticalCenter
         }
-        Rectangle {
-            id: leftActionHighlight
-            color: "white"
-            anchors.fill: parent
-            opacity: 0
-            Behavior on opacity { NumberAnimation { duration: 150 } }
-        }
     }
 
     MouseArea {
@@ -142,18 +135,8 @@ Item {
         }
         onExited: {
             notifierDialog.highlightItem.opacity = expanded ? 1 : 0;
-            leftActionHighlight.opacity = 0;
-            notifierDialog.currentIndex = -1;
-        }
-        onPositionChanged: {
-            if (mouse.x>=leftAction.x && mouse.x<=leftAction.x+leftAction.width
-             && mouse.y>=leftAction.y && mouse.y<=leftAction.y+leftAction.height)
-            {
-                leftActionHighlight.opacity = 0.3;
-            }
-            else {
-                leftActionHighlight.opacity = 0;
-            }
+            if (!expanded)
+                notifierDialog.currentIndex = -1;
         }
         onClicked: {
             if (mouse.x>=leftAction.x && mouse.x<=leftAction.x+leftAction.width
@@ -198,8 +181,8 @@ Item {
 
         PlasmaCore.FrameSvgItem {
             width: actionsList.width
-            imagePath: "widgets/frame"
-            prefix: "raised"
+            imagePath: "widgets/viewitem"
+            prefix: "hover"
             opacity: 0
             Behavior on opacity { NumberAnimation { duration: 150 } }
         }

@@ -64,20 +64,20 @@ Item {
             hpSource.disconnectSource(connected[i]);
         var sources = hpSource.sources;
         for (i=0; i<sources.length; i++) {
+            sdSource.connectSource(sources[i]);
             if (removableDevices) { //Removable only
                 if (!sdSource.data[sources[i]]["Removable"]) {
+                    hpSource.disconnectSource(sources[i]);
                     continue;
                 }
             }
             else if (nonRemovableDevices) { //Non removable only
                 if (sdSource.data[sources[i]]["Removable"]) {
+                    hpSource.disconnectSource(sources[i]);
                     continue;
                 }
             }
-
-            if (hpSource.connectedSources.indexOf(sources[i])<0) {
-                hpSource.connectSource (sources[i]);
-            }
+            hpSource.connectSource (sources[i]);
         }
     }
 
@@ -149,8 +149,8 @@ Item {
 
         PlasmaCore.FrameSvgItem {
             width: devicenotifier.width
-            imagePath: "widgets/frame"
-            prefix: "raised"
+            imagePath: "widgets/viewitem"
+            prefix: "hover"
             opacity: 0
             Behavior on opacity { NumberAnimation { duration: 150 } }
         }
