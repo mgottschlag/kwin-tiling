@@ -77,9 +77,14 @@ static void registerSignalHandler(SignalHandler handler)
 
 static void signalHander(int)
 {
-    registerSignalHandler(0L);
-    theFontFolder.saveDisabled();
-    registerSignalHandler(signalHander);
+    static bool inHandler=false;
+    
+    if(!inHandler)
+    {
+        inHandler=true;
+        theFontFolder.saveDisabled();
+        inHandler=false;
+    }
 }
 
 static void cleanup()
