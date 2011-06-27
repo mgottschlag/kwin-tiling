@@ -27,12 +27,10 @@
 #include <QDir>
 #include <QEvent>
 #include <QFileInfo>
-#include <Qt3Support/Q3Header>
+#include <QHeaderView>
 #include <QPainter>
 #include <QRegExp>
-//Added by qt3to4:
 #include <QPixmap>
-#include <Q3PtrList>
 #include <QFrame>
 #include <QDropEvent>
 #include <QMenu>
@@ -54,8 +52,6 @@
 #include <kconfig.h>
 #include <kconfiggroup.h>
 #include <kstandarddirs.h>
-#include <k3multipledrag.h>
-#include <k3urldrag.h>
 #include <kio/netaccess.h>
 
 #include "treeview.h"
@@ -69,75 +65,117 @@
 #define COPY_FILE   'c'
 #define COPY_SEPARATOR 'S'
 
-TreeItem::TreeItem(Q3ListViewItem *parent, Q3ListViewItem *after, const QString& menuId, bool __init)
-    :Q3ListViewItem(parent, after), _hidden(false), _init(__init), _layoutDirty(false), _menuId(menuId),
-     m_folderInfo(0), m_entryInfo(0) {}
+static const char *s_internalMimeType = "application/x-kmenuedit-internal";
 
-TreeItem::TreeItem(Q3ListView *parent, Q3ListViewItem *after, const QString& menuId, bool __init)
-    : Q3ListViewItem(parent, after), _hidden(false), _init(__init), _layoutDirty(false), _menuId(menuId),
-     m_folderInfo(0), m_entryInfo(0) {}
+class SeparatorWidget : public QWidget
+{
+public:
+    SeparatorWidget()
+        : QWidget(0)
+    {
+    }
+
+protected:
+    void paintEvent(QPaintEvent *event)
+    {
+        QPainter p(this);
+        // Draw Separator
+        int h = (height() / 2) -1;
+//        if (isSelected()) {
+//            p->setPen( palette().color( QPalette::HighlightedText ) );
+//        } else {
+//            p->setPen( palette().color( QPalette::Text ) );
+//        }
+
+        p.drawLine(2, h, width() - 4, h);
+    }
+};
+
+
+TreeItem::TreeItem(QTreeWidgetItem *parent, QTreeWidgetItem *after, const QString& menuId, bool _m_init)
+    : QTreeWidgetItem(parent, after),
+      m_hidden(false),
+      m_init(_m_init),
+      m_layoutDirty(false),
+      m_menuId(menuId),
+      m_folderInfo(0),
+      m_entryInfo(0)
+{
+}
+
+TreeItem::TreeItem(QTreeWidget *parent, QTreeWidgetItem *after, const QString& menuId, bool _m_init)
+    : QTreeWidgetItem(parent, after),
+      m_hidden(false),
+      m_init(_m_init),
+      m_layoutDirty(false),
+      m_menuId(menuId),
+      m_folderInfo(0),
+      m_entryInfo(0)
+{
+    load();
+}
+
+TreeItem::~TreeItem()
+{
+}
 
 void TreeItem::setName(const QString &name)
 {
-    _name = name;
+    if (m_name == name) {
+        return;
+    }
+
+    m_name = name;
     update();
 }
 
-void TreeItem::setHidden(bool b)
+void TreeItem::setHiddenInMenu(bool b)
 {
-    if (_hidden == b) return;
-    _hidden = b;
+    if (m_hidden == b) {
+        return;
+    }
+
+    m_hidden = b;
     update();
 }
 
 void TreeItem::update()
 {
-    QString s = _name;
-    if (_hidden)
+    QString s = m_name;
+    if (m_hidden) {
        s += i18n(" [Hidden]");
+    }
+
     setText(0, s);
-}
-
-void TreeItem::setOpen(bool o)
-{
-    if (o)
-       load();
-
-    Q3ListViewItem::setOpen(o);
 }
 
 void TreeItem::load()
 {
-    if (m_folderInfo && !_init)
-    {
-       _init = true;
-       TreeView *tv = static_cast<TreeView *>(listView());
+    if (m_folderInfo && !m_init) {
+       m_init = true;
+       TreeView *tv = static_cast<TreeView *>(treeWidget());
        tv->fillBranch(m_folderInfo, this);
     }
 }
 
-void TreeItem::paintCell ( QPainter * p, const QColorGroup & cg, int column, int width, int align )
+bool TreeItem::isLayoutDirty() const
 {
-    Q3ListViewItem::paintCell(p, cg, column, width, align);
-
-    if (!m_folderInfo && !m_entryInfo)
-    {
-       // Draw Separator
-       int h = (height() / 2) -1;
-       if (isSelected())
-           p->setPen( cg.color( QPalette::HighlightedText ) );
-       else
-           p->setPen( cg.color( QPalette::Text ) );
-       p->drawLine(0, h,
-                   width, h);
+    if (m_layoutDirty) {
+        return true;
     }
-}
 
-void TreeItem::setup()
-{
-    Q3ListViewItem::setup();
-    if (!m_folderInfo && !m_entryInfo)
-       setHeight(8);
+    for (int i = 0; i < childCount(); ++i) {
+        TreeItem *item = dynamic_cast<TreeItem *>(child(i));
+        if (!item) {
+            continue;
+        }
+
+        if (item->isLayoutDirty()) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 static QPixmap appIcon(const QString &iconName)
@@ -155,56 +193,38 @@ static QPixmap appIcon(const QString &iconName)
 
 
 TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
-    : K3ListView(parent), m_ac(ac), m_rmb(0), m_clipboard(0),
+    : QTreeWidget(parent), m_ac(ac), m_rmb(0), m_clipboard(0),
       m_clipboardFolderInfo(0), m_clipboardEntryInfo(0),
       m_layoutDirty(false)
 {
+    m_dropMimeTypes << s_internalMimeType << KUrl::List::mimeDataTypes();
+    qRegisterMetaType<TreeItem *>("TreeItem");
     setObjectName(name);
     setAllColumnsShowFocus(true);
     setRootIsDecorated(true);
-    setSorting(-1);
-    setAcceptDrops(true);
-    setDropVisualizer(true);
+    setSortingEnabled(false);
     setDragEnabled(true);
+    setAcceptDrops(true);
     setMinimumWidth(240);
 
-    addColumn("");
+    setHeaderLabels(QStringList() << QString(""));
     header()->hide();
 
-    connect(this, SIGNAL(dropped(QDropEvent*, Q3ListViewItem*, Q3ListViewItem*)),
-	    SLOT(slotDropped(QDropEvent*, Q3ListViewItem*, Q3ListViewItem*)));
-
-    connect(this, SIGNAL(clicked( Q3ListViewItem* )),
-	    SLOT(itemSelected( Q3ListViewItem* )));
-
-    connect(this,SIGNAL(selectionChanged ( Q3ListViewItem * )),
-            SLOT(itemSelected( Q3ListViewItem* )));
-
-    connect(this, SIGNAL(rightButtonPressed(Q3ListViewItem*, const QPoint&, int)),
-	    SLOT(slotRMBPressed(Q3ListViewItem*, const QPoint&)));
+    connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
+            SLOT(itemSelected(QTreeWidgetItem*)));
 
     // connect actions
     connect(m_ac->action("newitem"), SIGNAL(activated()), SLOT(newitem()));
     connect(m_ac->action("newsubmenu"), SIGNAL(activated()), SLOT(newsubmenu()));
     connect(m_ac->action("newsep"), SIGNAL(activated()), SLOT(newsep()));
 
-    m_menuFile = new MenuFile( KStandardDirs::locateLocal("xdgconf-menu", "applications-kmenuedit.menu"));
+    m_menuFile = new MenuFile(KStandardDirs::locateLocal("xdgconf-menu", "applications-kmenuedit.menu"));
     m_rootFolder = new MenuFolderInfo;
     m_separator = new MenuSeparatorInfo;
-    m_drag = 0;
-#if 0
-    //	Read menu format configuration information
-    KSharedConfig::Ptr pConfig = KSharedConfig::openConfig("kickerrc");
-    KConfigGroup cg(pConfig, "menus");
-    m_detailedMenuEntries = cg.readEntry("DetailedMenuEntries", true);
-    if (m_detailedMenuEntries)
-    {
-        m_detailedEntriesNamesFirst = cg.readEntry("DetailedEntriesNamesFirst", false);
-    }
-#endif
 }
 
-TreeView::~TreeView() {
+TreeView::~TreeView()
+{
     cleanupClipboard();
     delete m_rootFolder;
     delete m_separator;
@@ -339,75 +359,75 @@ QString TreeView::findName(KDesktopFile *df, bool deleted)
     return name;
 }
 
-TreeItem *TreeView::createTreeItem(TreeItem *parent, Q3ListViewItem *after, MenuFolderInfo *folderInfo, bool _init)
+TreeItem *TreeView::createTreeItem(TreeItem *parent, QTreeWidgetItem *after, MenuFolderInfo *folderInfo, bool m_init)
 {
-   TreeItem *item;
-   if (parent == 0)
-     item = new TreeItem(this, after, QString(), _init);
-   else
-     item = new TreeItem(parent, after, QString(), _init);
+    TreeItem *item;
+    if (parent) {
+        item = new TreeItem(parent, after, QString(), m_init);
+    } else {
+        item = new TreeItem(this, after, QString(), m_init);
+    }
 
-   item->setMenuFolderInfo(folderInfo);
-   item->setName(folderInfo->caption);
-   item->setPixmap(0, appIcon(folderInfo->icon));
-   item->setDirectoryPath(folderInfo->fullId);
-   item->setHidden(folderInfo->hidden);
-   item->setExpandable(true);
-   return item;
+    item->setMenuFolderInfo(folderInfo);
+    item->setName(folderInfo->caption);
+    item->setIcon(0, appIcon(folderInfo->icon));
+    item->setDirectoryPath(folderInfo->fullId);
+    item->setHiddenInMenu(folderInfo->hidden);
+    item->load();
+    return item;
 }
 
-TreeItem *TreeView::createTreeItem(TreeItem *parent, Q3ListViewItem *after, MenuEntryInfo *entryInfo, bool _init)
+TreeItem *TreeView::createTreeItem(TreeItem *parent, QTreeWidgetItem *after, MenuEntryInfo *entryInfo, bool m_init)
 {
-   bool hidden = entryInfo->hidden;
+    bool hidden = entryInfo->hidden;
 
-   TreeItem* item;
-   if (parent == 0)
-     item = new TreeItem(this, after, entryInfo->menuId(), _init);
-   else
-     item = new TreeItem(parent, after, entryInfo->menuId(),_init);
+    TreeItem* item;
+    if (parent) {
+        item = new TreeItem(parent, after, entryInfo->menuId(),m_init);
+    } else {
+        item = new TreeItem(this, after, entryInfo->menuId(), m_init);
+    }
 
-   QString	name;
+    QString name;
 
-   if (m_detailedMenuEntries && entryInfo->description.length() != 0)
-   {
-      if (m_detailedEntriesNamesFirst)
-      {
-         name = entryInfo->caption + " (" + entryInfo->description + ')';
-      }
-      else
-      {
-         name = entryInfo->description + " (" + entryInfo->caption + ')';
-      }
-   }
-   else
-   {
-      name = entryInfo->caption;
-   }
-   item->setMenuEntryInfo(entryInfo);
-   item->setName(name);
-   item->setPixmap(0, appIcon(entryInfo->icon));
+    if (m_detailedMenuEntries && entryInfo->description.length() != 0) {
+        if (m_detailedEntriesNamesFirst) {
+            name = entryInfo->caption + " (" + entryInfo->description + ')';
+        } else {
+            name = entryInfo->description + " (" + entryInfo->caption + ')';
+        }
+    } else {
+        name = entryInfo->caption;
+    }
 
-   item->setHidden(hidden);
-   return item;
+    //kDebug() << parent << after << name;
+    item->setMenuEntryInfo(entryInfo);
+    item->setName(name);
+    item->setIcon(0, appIcon(entryInfo->icon));
+    item->setHiddenInMenu(hidden);
+    item->load();
+
+    return item;
 }
 
-TreeItem *TreeView::createTreeItem(TreeItem *parent, Q3ListViewItem *after, MenuSeparatorInfo *, bool _init)
+TreeItem *TreeView::createTreeItem(TreeItem *parent, QTreeWidgetItem *after, MenuSeparatorInfo *, bool init)
 {
-   TreeItem* item;
-   if (parent == 0)
-     item = new TreeItem(this, after, QString(), _init);
-   else
-     item = new TreeItem(parent, after, QString(),_init);
+    TreeItem* item;
+    if (parent) {
+        item = new TreeItem(parent, after, QString(), init);
+    } else {
+        item = new TreeItem(this, after, QString(), init);
+    }
 
-   return item;
+    setItemWidget(item, 0, new SeparatorWidget);
+    return item;
 }
 
 void TreeView::fillBranch(MenuFolderInfo *folderInfo, TreeItem *parent)
 {
     QString relPath = parent ? parent->directory() : QString();
-    Q3PtrListIterator<MenuInfo> it( folderInfo->initialLayout );
     TreeItem *after = 0;
-    for (MenuInfo *info; (info = it.current()); ++it)
+    foreach (MenuInfo *info, folderInfo->initialLayout)
     {
        MenuEntryInfo *entry = dynamic_cast<MenuEntryInfo*>(info);
        if (entry)
@@ -431,24 +451,49 @@ void TreeView::fillBranch(MenuFolderInfo *folderInfo, TreeItem *parent)
     }
 }
 
-void TreeView::closeAllItems(Q3ListViewItem *item)
+void TreeView::closeAllItems(QTreeWidgetItem *item)
 {
-    if (!item) return;
-    while(item)
-    {
-       item->setOpen(false);
-       closeAllItems(item->firstChild());
-       item = item->nextSibling();
+    item->setExpanded(false);
+    for (int i = 0; i < item->childCount(); ++i) {
+        closeAllItems(item->child(i));
     }
+}
+
+TreeItem *TreeView::expandPath(TreeItem *item, const QString &path)
+{
+   int i = path.indexOf("/");
+   QString subMenu = path.left(i+1);
+   QString restMenu = path.mid(i+1);
+
+   for (int i = 0; i < item->childCount(); ++i) {
+       TreeItem *item = dynamic_cast<TreeItem *>(item->child(i));
+       if (!item) {
+           continue;
+       }
+
+       MenuFolderInfo *folderInfo = item->folderInfo();
+       if (folderInfo && (folderInfo->id == subMenu)) {
+           item->setExpanded(true);
+           if (!restMenu.isEmpty()) {
+               return expandPath(item, restMenu);
+           } else {
+               return item;
+           }
+       }
+   }
+
+   return 0;
 }
 
 void TreeView::selectMenu(const QString &menu)
 {
-   closeAllItems(firstChild());
+   for (int i = 0; i < topLevelItemCount(); ++i) {
+       closeAllItems(topLevelItem(i));
+   }
 
    if (menu.length() <= 1)
    {
-      setCurrentItem(firstChild());
+      setCurrentItem(topLevelItem(0));
       clearSelection();
       return; // Root menu
    }
@@ -460,125 +505,137 @@ void TreeView::selectMenu(const QString &menu)
        restMenu += '/';
 
    TreeItem *item = 0;
-   do
-   {
-      int i = restMenu.indexOf("/");
-      QString subMenu = restMenu.left(i+1);
-      restMenu = restMenu.mid(i+1);
+   int i = restMenu.indexOf("/");
+   QString subMenu = restMenu.left(i+1);
+   restMenu = restMenu.mid(i+1);
 
-      item = (TreeItem*)(item ? item->firstChild() : firstChild());
-      while(item)
-      {
-         MenuFolderInfo *folderInfo = item->folderInfo();
-         if (folderInfo && (folderInfo->id == subMenu))
-         {
-            item->setOpen(true);
-            break;
-         }
-         item = (TreeItem*) item->nextSibling();
-      }
+   for (int i = 0; i < topLevelItemCount(); ++i) {
+       item = dynamic_cast<TreeItem *>(topLevelItem(i));
+       if (!item) {
+           continue;
+       }
+
+       MenuFolderInfo *folderInfo = item->folderInfo();
+       if (folderInfo && (folderInfo->id == subMenu)) {
+           if (!restMenu.isEmpty()) {
+               item = expandPath(item, restMenu);
+           }
+           break;
+       }
    }
-   while( item && !restMenu.isEmpty());
 
    if (item)
    {
       setCurrentItem(item);
-      ensureItemVisible(item);
+      scrollToItem(item);
    }
 }
 
 void TreeView::selectMenuEntry(const QString &menuEntry)
 {
-   TreeItem *item = (TreeItem *) selectedItem();
-   if (!item)
-   {
-      item = (TreeItem *) currentItem();
-      while (item && item->isDirectory())
-          item = (TreeItem*) item->nextSibling();
-   }
-   else
-       item = (TreeItem *) item->firstChild();
+    TreeItem *item = static_cast<TreeItem *>(selectedItem());
+    if (!item) {
+        item = static_cast<TreeItem *>(currentItem());
+    }
 
-   while(item)
-   {
-      MenuEntryInfo *entry = item->entryInfo();
-      if (entry )
-      {
-          kDebug()<<" entry->menuId() :"<<entry->menuId();
-          if ( entry->menuId() == menuEntry )
-          {
-              setCurrentItem(item);
-              ensureItemVisible(item);
-              return;
-          }
-      }
-      item = (TreeItem*) item->nextSibling();
-   }
+    if (!item) {
+        return;
+    }
+
+    QTreeWidgetItem *parent = item->parent();
+    if (parent) {
+        for (int i = 0; i < parent->childCount(); ++i) {
+            TreeItem *item = dynamic_cast<TreeItem *>(parent->child(i));
+            if (!item || item->isDirectory()) {
+                continue;
+            }
+
+            MenuEntryInfo *entry = item->entryInfo();
+            if (entry && entry->menuId() == menuEntry) {
+                setCurrentItem(item);
+                scrollToItem(item);
+                return;
+            }
+        }
+    } else {
+        // top level
+        for (int i = 0; i < topLevelItemCount(); ++i) {
+            TreeItem *item = dynamic_cast<TreeItem *>(topLevelItem(i));
+            if (!item || item->isDirectory()) {
+                continue;
+            }
+
+            MenuEntryInfo *entry = item->entryInfo();
+            if (entry && entry->menuId() == menuEntry) {
+                setCurrentItem(item);
+                scrollToItem(item);
+                return;
+            }
+        }
+    }
 }
 
-void TreeView::itemSelected(Q3ListViewItem *item)
+void TreeView::itemSelected(QTreeWidgetItem *item)
 {
-    TreeItem *_item = (TreeItem*)item;
+    TreeItem *_item = static_cast<TreeItem*>(item);
     bool selected = false;
     bool dselected = false;
     if (_item) {
         selected = true;
-        dselected = _item->isHidden();
+        dselected = _item->isHiddenInMenu();
     }
 
     m_ac->action("edit_cut")->setEnabled(selected);
     m_ac->action("edit_copy")->setEnabled(selected);
 
-    if (m_ac->action("delete"))
+    if (m_ac->action("delete")) {
         m_ac->action("delete")->setEnabled(selected && !dselected);
+    }
 
-    if(!item)
-    {
+    if (!item) {
         emit disableAction();
         return;
     }
 
-    if (_item->isDirectory())
+    if (_item->isDirectory()) {
        emit entrySelected(_item->folderInfo());
-    else
+    } else {
        emit entrySelected(_item->entryInfo());
+    }
 }
 
 void TreeView::currentChanged(MenuFolderInfo *folderInfo)
 {
     TreeItem *item = (TreeItem*)selectedItem();
-    if (item == 0) return;
-    if (folderInfo == 0) return;
+    if (item == 0 || folderInfo == 0) {
+        return;
+    }
 
     item->setName(folderInfo->caption);
-    item->setPixmap(0, appIcon(folderInfo->icon));
+    item->setIcon(0, appIcon(folderInfo->icon));
 }
 
 void TreeView::currentChanged(MenuEntryInfo *entryInfo)
 {
     TreeItem *item = (TreeItem*)selectedItem();
-    if (item == 0) return;
-    if (entryInfo == 0) return;
+    if (item == 0 || entryInfo == 0) {
+        return;
+    }
 
-    QString	name;
+    QString name;
 
-    if (m_detailedMenuEntries && entryInfo->description.length() != 0)
-    {
-        if (m_detailedEntriesNamesFirst)
-	 {
+    if (m_detailedMenuEntries && entryInfo->description.length() != 0) {
+        if (m_detailedEntriesNamesFirst) {
             name = entryInfo->caption + " (" + entryInfo->description + ')';
-        }
-	 else
-        {
+        } else {
             name = entryInfo->description + " (" + entryInfo->caption + ')';
         }
-    }
-    else
-    {
+    } else {
         name = entryInfo->caption;
     }
+
     item->setName(name);
-    item->setPixmap(0, appIcon(entryInfo->icon));
+    item->setIcon(0, appIcon(entryInfo->icon));
 }
 
 QStringList TreeView::fileList(const QString& rPath)
@@ -658,18 +715,39 @@ QStringList TreeView::dirList(const QString& rPath)
     return dirlist;
 }
 
-bool TreeView::acceptDrag(QDropEvent* e) const
+Qt::DropActions TreeView::supportedDropActions() const
 {
-    if (e->provides("application/x-kmenuedit-internal") &&
-           (e->source() == const_cast<TreeView *>(this)))
-       return true;
-    KUrl::List urls;
-    if (K3URLDrag::decode(e, urls) && (urls.count() == 1) &&
-        urls[0].isLocalFile() && urls[0].path().endsWith(".desktop"))
-       return true;
-    return false;
+    return Qt::CopyAction | Qt::MoveAction;
 }
 
+QStringList TreeView::mimeTypes() const
+{
+    return m_dropMimeTypes;
+}
+
+void TreeView::startDrag(Qt::DropActions supportedActions)
+{
+    QList<QTreeWidgetItem *> items;
+    items << selectedItem();
+    QMimeData *data = mimeData(items);
+    if (!data) {
+        return;
+    }
+
+    QDrag *drag = new QDrag(this);
+    drag->setPixmap(selectedItem()->icon(0).pixmap(24, 24));
+    drag->setMimeData(data);
+    drag->exec(supportedActions, Qt::MoveAction);
+}
+
+QMimeData *TreeView::mimeData(const QList<QTreeWidgetItem *> items) const
+{
+    if (items.isEmpty()) {
+        return 0;
+    }
+
+    return new MenuItemMimeData(dynamic_cast<TreeItem *>(items.first()));
+}
 
 static QString createDesktopFile(const QString &file, QString *menuId, QStringList *excludeList)
 {
@@ -722,261 +800,246 @@ static QString createDirectoryFile(const QString &file, QStringList *excludeList
 }
 
 
-void TreeView::slotDropped (QDropEvent * e, Q3ListViewItem *parent, Q3ListViewItem*after)
+bool TreeView::dropMimeData(QTreeWidgetItem *item, int index, const QMimeData *data, Qt::DropAction action)
 {
-   if(!e) return;
-
    // get destination folder
-   TreeItem *parentItem = static_cast<TreeItem*>(parent);
-   QString folder = parentItem ? parentItem->directory() : QString();
-   MenuFolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : m_rootFolder;
+    TreeItem *titem = item ? dynamic_cast<TreeItem*>(item) : 0;
+    if (item && !titem) {
+        return false;
+    }
 
-   if (e->source() != this)
-   {
-     // External drop
-     KUrl::List urls;
-     if (!K3URLDrag::decode(e, urls) || (urls.count() != 1) || !urls[0].isLocalFile())
-        return;
-     QString path = urls[0].path();
-     if (!path.endsWith(".desktop"))
-        return;
+    TreeItem *parentItem = 0;
+    QTreeWidgetItem *after = titem;
+    // find the parent item and which item the dropped item should go after
+    if (titem) {
+        if (titem->isDirectory()) {
+            parentItem = titem;
+            after = titem->child(index);
+            if (!after) {
+                after = titem->child(titem->childCount() - 1);
+            }
+        } else {
+            parentItem = dynamic_cast<TreeItem *>(titem->parent());
+            if (titem->parent() && !parentItem) {
+                return false;
+            }
+        }
+    } else if (index > 0) {
+        after = topLevelItem(index);
+        if (!after) {
+            after = topLevelItem(topLevelItemCount() - 1);
+        }
+    }
 
-     QString menuId;
-     QString result = createDesktopFile(path, &menuId, &m_newMenuIds);
-     KDesktopFile orig_df(path);
-     KDesktopFile *df = orig_df.copyTo(result);
-     df->desktopGroup().deleteEntry("Categories"); // Don't set any categories!
+    QString folder = parentItem ? parentItem->directory() : "/";
+    MenuFolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : m_rootFolder;
+    kDebug() << "think we're dropping on" << (parentItem ? parentItem->text(0) : "Top Level") <<  index;
 
-     KService::Ptr s(new KService(df));
-     s->setMenuId(menuId);
+    if (!data->hasFormat(s_internalMimeType)) {
+        // External drop
+        if (!KUrl::List::canDecode(data)) {
+            return false;
+        }
 
-     MenuEntryInfo *entryInfo = new MenuEntryInfo(s, df);
+        KUrl::List urls = KUrl::List::fromMimeData(data);;
+        if (urls.isEmpty() || !urls[0].isLocalFile()) {
+            return false;
+        }
 
-     QString oldCaption = entryInfo->caption;
-     QString newCaption = parentFolderInfo->uniqueItemCaption(oldCaption, oldCaption);
-     entryInfo->setCaption(newCaption);
+        //FIXME: this should really support multiple DnD
+        QString path = urls[0].path();
+        if (!path.endsWith(".desktop")) {
+            return false;
+        }
 
-     // Add file to menu
-     // m_menuFile->addEntry(folder, menuId);
-     m_menuFile->pushAction(MenuFile::ADD_ENTRY, folder, menuId);
+        QString menuId;
+        QString result = createDesktopFile(path, &menuId, &m_newMenuIds);
+        KDesktopFile orig_df(path);
+        KDesktopFile *df = orig_df.copyTo(result);
+        df->desktopGroup().deleteEntry("Categories"); // Don't set any categories!
 
-     // create the TreeItem
-     if(parentItem)
-        parentItem->setOpen(true);
+        KService::Ptr s(new KService(df));
+        s->setMenuId(menuId);
 
-     // update fileInfo data
-     parentFolderInfo->add(entryInfo);
+        MenuEntryInfo *entryInfo = new MenuEntryInfo(s, df);
 
-     TreeItem *newItem = createTreeItem(parentItem, after, entryInfo, true);
+        QString oldCaption = entryInfo->caption;
+        QString newCaption = parentFolderInfo->uniqueItemCaption(oldCaption, oldCaption);
+        entryInfo->setCaption(newCaption);
 
-     setSelected ( newItem, true);
-     itemSelected( newItem);
+        // Add file to menu
+        // m_menuFile->addEntry(folder, menuId);
+        m_menuFile->pushAction(MenuFile::ADD_ENTRY, folder, menuId);
 
-     m_drag = 0;
-     setLayoutDirty(parentItem);
-     return;
-   }
+        // create the TreeItem
+        if (parentItem) {
+            parentItem->setExpanded(true);
+        }
 
-   // is there content in the clipboard?
-   if (!m_drag) return;
+        // update fileInfo data
+        parentFolderInfo->add(entryInfo);
 
-   if (m_dragItem == after) return; // Nothing to do
+        TreeItem *newItem = createTreeItem(parentItem, after, entryInfo, true);
+        setCurrentItem(newItem);
 
-   int command = m_drag;
-   if (command == MOVE_FOLDER)
-   {
-      MenuFolderInfo *folderInfo = m_dragInfo;
-      if (e->action() == QDropEvent::Copy)
-      {
-         // Ugh.. this is hard :)
-         // * Create new .directory file
-         // Add
-      }
-      else
-      {
-          TreeItem *tmpItem = static_cast<TreeItem*>(parentItem);
-          while (  tmpItem )
-          {
-              if (  tmpItem == m_dragItem )
-              {
-                  m_drag = 0;
-                  return;
-              }
-              tmpItem = static_cast<TreeItem*>(tmpItem->parent() );
-          }
+        setLayoutDirty(parentItem);
+        return true;
+    }
 
-         // Remove MenuFolderInfo
-         TreeItem *oldParentItem = static_cast<TreeItem*>(m_dragItem->parent());
-         MenuFolderInfo *oldParentFolderInfo = oldParentItem ? oldParentItem->folderInfo() : m_rootFolder;
-         oldParentFolderInfo->take(folderInfo);
+    QVariant p(data->data(s_internalMimeType));
+    const MenuItemMimeData *itemData = dynamic_cast<const MenuItemMimeData *>(data);
+    if (!itemData) {
+        return false;
+    }
 
-         // Move menu
-         QString oldFolder = folderInfo->fullId;
-         QString folderName = folderInfo->id;
-         QString newFolder = m_menuFile->uniqueMenuName(folder, folderName, parentFolderInfo->existingMenuIds());
-         folderInfo->id = newFolder;
+    TreeItem *dragItem = itemData->item();
+    if (!dragItem || dragItem == after) {
+        return false; // Nothing to do
+    }
 
-         // Add file to menu
-         //m_menuFile->moveMenu(oldFolder, folder + newFolder);
-         m_menuFile->pushAction(MenuFile::MOVE_MENU, oldFolder, folder + newFolder);
+    //kDebug() << "an internal drag of" << dragItem->text(0) << (parentItem ? parentItem->text(0) : "Top level");
+    if (dragItem->isDirectory()) {
+        MenuFolderInfo *folderInfo = dragItem->folderInfo();
+        if (action == Qt::CopyAction) {
+            // FIXME:
+            // * Create new .directory file
+        } else {
+            TreeItem *tmpItem = static_cast<TreeItem*>(parentItem);
+            while (tmpItem) {
+                if (tmpItem == dragItem) {
+                    return false;
+                }
 
-         // Make sure caption is unique
-         QString newCaption = parentFolderInfo->uniqueMenuCaption(folderInfo->caption);
-         if (newCaption != folderInfo->caption)
-         {
-            folderInfo->setCaption(newCaption);
-         }
+                tmpItem = static_cast<TreeItem*>(tmpItem->parent());
+            }
 
-	 // create the TreeItem
-	 if(parentItem)
-	   parentItem->setOpen(true);
+            // Remove MenuFolderInfo
+            TreeItem *oldParentItem = static_cast<TreeItem*>(dragItem->parent());
+            MenuFolderInfo *oldParentFolderInfo = oldParentItem ? oldParentItem->folderInfo() : m_rootFolder;
+            oldParentFolderInfo->take(folderInfo);
 
-         // update fileInfo data
-         folderInfo->updateFullId(parentFolderInfo->fullId);
-         folderInfo->setInUse(true);
-         parentFolderInfo->add(folderInfo);
+            // Move menu
+            QString oldFolder = folderInfo->fullId;
+            QString folderName = folderInfo->id;
+            QString newFolder = m_menuFile->uniqueMenuName(folder, folderName, parentFolderInfo->existingMenuIds());
+            folderInfo->id = newFolder;
 
-         if ((parentItem != oldParentItem) || !after)
-         {
-            if (oldParentItem)
-               oldParentItem->takeItem(m_dragItem);
-            else
-               takeItem(m_dragItem);
-            if (parentItem)
-               parentItem->insertItem(m_dragItem);
-            else
-               insertItem(m_dragItem);
-         }
-         m_dragItem->moveItem(after);
-         m_dragItem->setName(folderInfo->caption);
-         m_dragItem->setDirectoryPath(folderInfo->fullId);
-         setSelected(m_dragItem, true);
-         itemSelected(m_dragItem);
-      }
-   }
-   else if (command == MOVE_FILE)
-   {
-      MenuEntryInfo *entryInfo = m_dragItem->entryInfo();
-      QString menuId = entryInfo->menuId();
+            // Add file to menu
+            //m_menuFile->moveMenu(oldFolder, folder + newFolder);
+            kDebug() << "moving" << dragItem->text(0) << "to" << folder + newFolder;
+            m_menuFile->pushAction(MenuFile::MOVE_MENU, oldFolder, folder + newFolder);
 
-      if (e->action() == QDropEvent::Copy)
-      {
+            // Make sure caption is unique
+            QString newCaption = parentFolderInfo->uniqueMenuCaption(folderInfo->caption);
+            if (newCaption != folderInfo->caption) {
+                folderInfo->setCaption(newCaption);
+            }
 
-         // Need to copy file and then add it
-         KDesktopFile *df = copyDesktopFile(entryInfo, &menuId, &m_newMenuIds); // Duplicate
-//UNDO-ACTION: NEW_MENU_ID (menuId)
+            // create the TreeItem
+            if (parentItem) {
+                parentItem->setExpanded(true);
+            }
 
-         KService::Ptr s(new KService(df));
-         s->setMenuId(menuId);
+            // update fileInfo data
+            folderInfo->updateFullId(parentFolderInfo->fullId);
+            folderInfo->setInUse(true);
+            parentFolderInfo->add(folderInfo);
 
-         entryInfo = new MenuEntryInfo(s, df);
+            if (parentItem != oldParentItem) {
+                if (oldParentItem) {
+                    oldParentItem->takeChild(oldParentItem->indexOfChild(dragItem));
+                } else {
+                    takeTopLevelItem(indexOfTopLevelItem(dragItem));
+                }
+            }
 
-         QString oldCaption = entryInfo->caption;
-         QString newCaption = parentFolderInfo->uniqueItemCaption(oldCaption, oldCaption);
-         entryInfo->setCaption(newCaption);
-      }
-      else
-      {
-         del(m_dragItem, false);
-         QString oldCaption = entryInfo->caption;
-         QString newCaption = parentFolderInfo->uniqueItemCaption(oldCaption);
-         entryInfo->setCaption(newCaption);
-         entryInfo->setInUse(true);
-      }
-      // Add file to menu
-      // m_menuFile->addEntry(folder, menuId);
-      m_menuFile->pushAction(MenuFile::ADD_ENTRY, folder, menuId);
+            if (parentItem) {
+                parentItem->insertChild(after ? parentItem->indexOfChild(after) + 1 : parentItem->childCount(), dragItem);
+            } else {
+                insertTopLevelItem(after ? indexOfTopLevelItem(after) : topLevelItemCount(), dragItem);
+            }
 
-      // create the TreeItem
-      if(parentItem)
-         parentItem->setOpen(true);
+            dragItem->setName(folderInfo->caption);
+            dragItem->setDirectoryPath(folderInfo->fullId);
+            setCurrentItem(dragItem);
+        }
+    } else if (dragItem->isEntry()) {
+        MenuEntryInfo *entryInfo = dragItem->entryInfo();
+        QString menuId = entryInfo->menuId();
 
-      // update fileInfo data
-      parentFolderInfo->add(entryInfo);
+        if (action == Qt::CopyAction) {
+            // Need to copy file and then add it
+            KDesktopFile *df = copyDesktopFile(entryInfo, &menuId, &m_newMenuIds); // Duplicate
+            //UNDO-ACTION: NEW_MENU_ID (menuId)
 
-      TreeItem *newItem = createTreeItem(parentItem, after, entryInfo, true);
+            KService::Ptr s(new KService(df));
+            s->setMenuId(menuId);
 
-      setSelected ( newItem, true);
-      itemSelected( newItem);
-   }
-   else if (command == COPY_SEPARATOR)
-   {
-      if (e->action() != QDropEvent::Copy)
-         del(m_dragItem, false);
+            entryInfo = new MenuEntryInfo(s, df);
 
-      TreeItem *newItem = createTreeItem(parentItem, after, m_separator, true);
+            QString oldCaption = entryInfo->caption;
+            QString newCaption = parentFolderInfo->uniqueItemCaption(oldCaption, oldCaption);
+            entryInfo->setCaption(newCaption);
+        } else {
+            del(dragItem, false);
+            QString oldCaption = entryInfo->caption;
+            QString newCaption = parentFolderInfo->uniqueItemCaption(oldCaption);
+            entryInfo->setCaption(newCaption);
+            entryInfo->setInUse(true);
+        }
 
-      setSelected ( newItem, true);
-      itemSelected( newItem);
-   }
-   else
-   {
-      // Error
-   }
-   m_drag = 0;
-   setLayoutDirty(parentItem);
+        // Add file to menu
+        // m_menuFile->addEntry(folder, menuId);
+        m_menuFile->pushAction(MenuFile::ADD_ENTRY, folder, menuId);
+
+        // create the TreeItem
+        if (parentItem) {
+            parentItem->setExpanded(true);
+        }
+
+        // update fileInfo data
+        parentFolderInfo->add(entryInfo);
+
+        TreeItem *newItem = createTreeItem(parentItem, after, entryInfo);
+        setCurrentItem(newItem);
+    } else  {
+        // copying a separator
+        if (action != Qt::CopyAction) {
+            del(dragItem, false);
+        }
+
+        TreeItem *newItem = createTreeItem(parentItem, after, m_separator);
+        setCurrentItem(newItem);
+    }
+
+    kDebug() << "setting the layout to be dirty at" << parentItem;
+    setLayoutDirty(parentItem);
+    return true;
 }
 
 
-void TreeView::startDrag()
+QTreeWidgetItem *TreeView::selectedItem()
 {
-  Q3DragObject *drag = dragObject();
+    QList<QTreeWidgetItem *> selection = selectedItems();
 
-  if (!drag)
-     return;
+    if (selection.isEmpty()) {
+        return 0;
+    }
 
-  drag->dragMove();
+    return selection.first();
 }
 
-Q3DragObject *TreeView::dragObject()
+void TreeView::contextMenuEvent(QContextMenuEvent *event)
 {
-    m_dragPath.clear();
-    TreeItem *item = (TreeItem*)selectedItem();
-    if(item == 0) return 0;
-
-    K3MultipleDrag *drag = new K3MultipleDrag( this );
-
-    if (item->isDirectory())
-    {
-       m_drag = MOVE_FOLDER;
-       m_dragInfo = item->folderInfo();
-       m_dragItem = item;
+    if (m_rmb && itemAt(event->pos())) {
+        m_rmb->exec(event->pos());
     }
-    else if (item->isEntry())
-    {
-       m_drag = MOVE_FILE;
-       m_dragInfo = 0;
-       m_dragItem = item;
-       QString menuId = item->menuId();
-       m_dragPath = item->entryInfo()->service->entryPath();
-       if (!m_dragPath.isEmpty())
-          m_dragPath = KStandardDirs::locate("apps", m_dragPath);
-       if (!m_dragPath.isEmpty())
-       {
-          KUrl url;
-          url.setPath(m_dragPath);
-          drag->addDragObject( new K3URLDrag(url, 0));
-       }
-    }
-    else
-    {
-       m_drag = COPY_SEPARATOR;
-       m_dragInfo = 0;
-       m_dragItem = item;
-    }
-
-    drag->addDragObject( new Q3StoredDrag("application/x-kmenuedit-internal", 0));
-    if ( item->pixmap(0) )
-        drag->setPixmap(*item->pixmap(0));
-    return drag;
 }
 
-void TreeView::slotRMBPressed(Q3ListViewItem*, const QPoint& p)
+void TreeView::dropEvent(QDropEvent *event)
 {
-    TreeItem *item = (TreeItem*)selectedItem();
-    if(item == 0) return;
-
-    if(m_rmb) m_rmb->exec(p);
+    // this prevents QTreeWidget from interfering with our moves
+    QTreeView::dropEvent(event);
 }
 
 void TreeView::newsubmenu()
@@ -1037,17 +1100,15 @@ void TreeView::newsubmenu()
    folderInfo->fullId = parentFolderInfo->fullId + folderInfo->id;
 
    // create the TreeItem
-   if(parentItem)
-      parentItem->setOpen(true);
+   if (parentItem)
+      parentItem->setExpanded(true);
 
    // update fileInfo data
    parentFolderInfo->add(folderInfo);
 
    TreeItem *newItem = createTreeItem(parentItem, item, folderInfo, true);
 
-   setSelected ( newItem, true);
-   itemSelected( newItem);
-
+   setCurrentItem(newItem);
    setLayoutDirty(parentItem);
 }
 
@@ -1106,16 +1167,14 @@ void TreeView::newitem()
 
    // create the TreeItem
    if(parentItem)
-      parentItem->setOpen(true);
+      parentItem->setExpanded(true);
 
    // update fileInfo data
    parentFolderInfo->add(entryInfo);
 
    TreeItem *newItem = createTreeItem(parentItem, item, entryInfo, true);
 
-   setSelected ( newItem, true);
-   itemSelected( newItem);
-
+   setCurrentItem(newItem);
    setLayoutDirty(parentItem);
 }
 
@@ -1140,13 +1199,11 @@ void TreeView::newsep()
 
    // create the TreeItem
    if(parentItem)
-      parentItem->setOpen(true);
+      parentItem->setExpanded(true);
 
    TreeItem *newItem = createTreeItem(parentItem, item, m_separator, true);
 
-   setSelected ( newItem, true);
-   itemSelected( newItem);
-
+   setCurrentItem(newItem);
    setLayoutDirty(parentItem);
 }
 
@@ -1159,9 +1216,8 @@ void TreeView::cut()
     m_ac->action("delete")->setEnabled(false);
 
     // Select new current item
-    setSelected( currentItem(), true );
-    // Switch the UI to show that item
-    itemSelected( selectedItem() );
+    // TODO: is this completely redundant?
+    setCurrentItem(currentItem());
 }
 
 void TreeView::copy()
@@ -1287,7 +1343,7 @@ void TreeView::paste()
          }
          // create the TreeItem
          if(parentItem)
-             parentItem->setOpen(true);
+             parentItem->setExpanded(true);
 
          // update fileInfo data
          folderInfo->fullId = parentFolderInfo->fullId + folderInfo->id;
@@ -1296,8 +1352,7 @@ void TreeView::paste()
 
          TreeItem *newItem = createTreeItem(parentItem, item, folderInfo);
 
-         setSelected ( newItem, true);
-         itemSelected( newItem);
+         setCurrentItem(newItem);
       }
 
       m_clipboard = COPY_FOLDER; // Next one copies.
@@ -1336,26 +1391,24 @@ void TreeView::paste()
 
       // create the TreeItem
       if(parentItem)
-         parentItem->setOpen(true);
+         parentItem->setExpanded(true);
 
       // update fileInfo data
       parentFolderInfo->add(entryInfo);
 
       TreeItem *newItem = createTreeItem(parentItem, item, entryInfo, true);
 
-      setSelected ( newItem, true);
-      itemSelected( newItem);
+      setCurrentItem(newItem);
    }
    else
    {
       // create separator
       if(parentItem)
-         parentItem->setOpen(true);
+         parentItem->setExpanded(true);
 
       TreeItem *newItem = createTreeItem(parentItem, item, m_separator, true);
 
-      setSelected ( newItem, true);
-      itemSelected( newItem);
+      setCurrentItem(newItem);
    }
    setLayoutDirty(parentItem);
 }
@@ -1373,9 +1426,8 @@ void TreeView::del()
     m_ac->action("edit_copy")->setEnabled(false);
     m_ac->action("delete")->setEnabled(false);
     // Select new current item
-    setSelected( currentItem(), true );
-    // Switch the UI to show that item
-    itemSelected( selectedItem() );
+    // TODO: is this completely redundant?
+    setCurrentItem(currentItem());
 }
 
 void TreeView::del(TreeItem *item, bool deleteInfo)
@@ -1450,6 +1502,7 @@ void TreeView::del(TreeItem *item, bool deleteInfo)
         // Remove separator
         delete item;
     }
+
     setLayoutDirty(parentItem);
 }
 
@@ -1465,64 +1518,71 @@ void TreeView::cleanupClipboard() {
     m_clipboard = 0;
 }
 
-static QStringList extractLayout(TreeItem *item)
+static QStringList extractLayout(QTreeWidget *tree, QTreeWidgetItem *parent)
 {
+    QStringList layout;
+    if (!parent && !tree) {
+        return layout;
+    }
+
     bool firstFolder = true;
     bool firstEntry = true;
-    QStringList layout;
-    for(;item; item = static_cast<TreeItem*>(item->nextSibling()))
-    {
-       if (item->isDirectory())
-       {
-          if (firstFolder)
-          {
-             firstFolder = false;
-             layout << ":M"; // Add new folders here...
-          }
-          layout << (item->folderInfo()->id);
-       }
-       else if (item->isEntry())
-       {
-          if (firstEntry)
-          {
-             firstEntry = false;
-             layout << ":F"; // Add new entries here...
-          }
-          layout << (item->entryInfo()->menuId());
-       }
-       else
-       {
-          layout << ":S";
-       }
+    int max = parent ? parent->childCount() : tree->topLevelItemCount();
+    for (int i = 0; i < max; ++i) {
+        TreeItem *item = dynamic_cast<TreeItem *>(parent ? parent->child(i) : tree->topLevelItem(i));
+        if (!item) {
+            continue;
+        }
+
+        if (item->isDirectory()) {
+            if (firstFolder) {
+                firstFolder = false;
+                layout << ":M"; // Add new folders here...
+            }
+            layout << (item->folderInfo()->id);
+        } else if (item->isEntry()) {
+            if (firstEntry) {
+                firstEntry = false;
+                layout << ":F"; // Add new entries here...
+            }
+            layout << (item->entryInfo()->menuId());
+        } else {
+            layout << ":S";
+        }
     }
+
     return layout;
 }
 
-QStringList TreeItem::layout()
+void TreeItem::saveLayout(MenuFile *menuFile)
 {
-    QStringList layout = extractLayout(static_cast<TreeItem*>(firstChild()));
-    _layoutDirty = false;
-    return layout;
+    if (m_layoutDirty) {
+        QStringList layout = extractLayout(0, this);
+        menuFile->setLayout(folderInfo()->fullId, layout);
+        m_layoutDirty = false;
+    }
+
+    for (int i = 0; i < childCount(); ++i) {
+        TreeItem *item = dynamic_cast<TreeItem *>(child(i));
+        if (item) {
+            item->saveLayout(menuFile);
+        }
+    }
 }
 
 void TreeView::saveLayout()
 {
-    if (m_layoutDirty)
-    {
-       QStringList layout = extractLayout(static_cast<TreeItem*>(firstChild()));
+    if (m_layoutDirty) {
+       QStringList layout = extractLayout(this, 0);
        m_menuFile->setLayout(m_rootFolder->fullId, layout);
        m_layoutDirty = false;
     }
 
-    Q3PtrList<Q3ListViewItem> lst;
-    Q3ListViewItemIterator it( this );
-    while ( it.current() ) {
-       TreeItem *item = static_cast<TreeItem*>(it.current());
-       if ( item->isLayoutDirty() )
-       {
-          m_menuFile->setLayout(item->folderInfo()->fullId, item->layout());
-       }
-       ++it;
+    for (int i = 0; i < topLevelItemCount(); ++i) {
+        TreeItem *item = dynamic_cast<TreeItem *>(topLevelItem(i));
+        if (item) {
+            item->saveLayout(m_menuFile);
+        }
     }
 }
 
@@ -1561,14 +1621,18 @@ void TreeView::setLayoutDirty(TreeItem *parentItem)
 
 bool TreeView::isLayoutDirty()
 {
-    Q3PtrList<Q3ListViewItem> lst;
-    Q3ListViewItemIterator it( this );
-    while ( it.current() ) {
-       if ( static_cast<TreeItem*>(it.current())->isLayoutDirty() )
-          return true;
-       ++it;
-    }
-    return false;
+   for (int i = 0; i < topLevelItemCount(); ++i) {
+       TreeItem *item = dynamic_cast<TreeItem *>(topLevelItem(i));
+       if (!item) {
+           continue;
+       }
+
+       if (item->isLayoutDirty()) {
+           return true;
+       }
+   }
+
+   return false;
 }
 
 bool TreeView::dirty()
@@ -1643,7 +1707,45 @@ void TreeView::updateTreeView(bool showHidden)
 
 void TreeView::sendReloadMenu()
 {
-    QDBusMessage message =
-        QDBusMessage::createSignal("/kickoff", "org.kde.plasma", "reloadMenu");
+    QDBusMessage message = QDBusMessage::createSignal("/kickoff", "org.kde.plasma", "reloadMenu");
     QDBusConnection::sessionBus().send(message);
 }
+
+MenuItemMimeData::MenuItemMimeData(TreeItem *item)
+    : QMimeData(),
+      m_item(item)
+{
+}
+
+TreeItem *MenuItemMimeData::item() const
+{
+    return m_item;
+}
+
+QStringList MenuItemMimeData::formats() const
+{
+    QStringList formats;
+    if (!m_item) {
+        return formats;
+    }
+
+    formats << s_internalMimeType;
+    return formats;
+}
+
+bool MenuItemMimeData::hasFormat(const QString &mimeType) const
+{
+    return m_item && mimeType == s_internalMimeType;
+}
+
+QVariant MenuItemMimeData::retrieveData(const QString &mimeType, QVariant::Type type) const
+{
+    Q_UNUSED(type);
+
+    if (m_item && mimeType == s_internalMimeType) {
+        return qVariantFromValue<TreeItem*>(m_item);
+    }
+
+    return QVariant();
+}
+
