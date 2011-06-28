@@ -46,6 +46,7 @@
 #include <QtGui/QMenu>
 #include <QtCore/QTimer>
 #include <QtGui/QApplication>
+#include <QtDBus/QDBusServiceWatcher>
 #include <stdlib.h>
 #include <unistd.h>
 #include <utime.h>
@@ -450,11 +451,14 @@ CFontList::CFontList(QWidget *parent)
 {
     FontInst::registerTypes();
 
+    QDBusServiceWatcher *watcher = new QDBusServiceWatcher(QLatin1String(OrgKdeFontinstInterface::staticInterfaceName()),
+                                                           QDBusConnection::sessionBus(),
+                                                           QDBusServiceWatcher::WatchForOwnerChange, this);
+
+    connect(watcher, SIGNAL(serviceOwnerChanged(QString, QString, QString)), SLOT(dbusServiceOwnerChanged(QString, QString, QString)));
     connect(CJobRunner::dbus(), SIGNAL(fontsAdded(const KFI::Families &)), SLOT(fontsAdded(const KFI::Families &)));
     connect(CJobRunner::dbus(), SIGNAL(fontsRemoved(const KFI::Families &)), SLOT(fontsRemoved(const KFI::Families &)));
     connect(CJobRunner::dbus(), SIGNAL(fontList(int, const QList<KFI::Families> &)), SLOT(fontList(int, const QList<KFI::Families> &)));
-    connect(CJobRunner::dbus()->connection().interface(), SIGNAL(serviceOwnerChanged(QString, QString, QString)),
-            SLOT(dbusServiceOwnerChanged(QString, QString, QString)));
 }
 
 CFontList::~CFontList()
@@ -469,7 +473,7 @@ void CFontList::dbusServiceOwnerChanged(const QString &name, const QString &from
     Q_UNUSED(from);
     Q_UNUSED(to);
 
-    if(name==OrgKdeFontinstInterface::staticInterfaceName())
+    if(name==QLatin1String(OrgKdeFontinstInterface::staticInterfaceName()))
         load();
 }
 

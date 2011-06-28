@@ -44,6 +44,7 @@
 #include <QtGui/QStyle>
 #include <QtGui/QCloseEvent>
 #include <QtCore/QTimer>
+#include <QtDBus/QDBusServiceWatcher>
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 #include <fontconfig/fontconfig.h>
@@ -203,8 +204,11 @@ CJobRunner::CJobRunner(QWidget *parent, int xid)
         itsStack->insertWidget(PAGE_COMPLETE, page);
     }
     
-    connect(dbus()->connection().interface(), SIGNAL(serviceOwnerChanged(QString, QString, QString)),
-           SLOT(dbusServiceOwnerChanged(QString, QString, QString)));
+    QDBusServiceWatcher *watcher = new QDBusServiceWatcher(QLatin1String(OrgKdeFontinstInterface::staticInterfaceName()),
+                                                           QDBusConnection::sessionBus(),
+                                                           QDBusServiceWatcher::WatchForOwnerChange, this);
+
+    connect(watcher, SIGNAL(serviceOwnerChanged(QString, QString, QString)), SLOT(dbusServiceOwnerChanged(QString, QString, QString)));
     connect(dbus(), SIGNAL(status(int, int)), SLOT(dbusStatus(int, int)));
     setMinimumSize(420, 160);
 }
@@ -404,7 +408,7 @@ void CJobRunner::checkInterface()
 
 void CJobRunner::dbusServiceOwnerChanged(const QString &name, const QString &from, const QString &to)
 {
-    if(to.isEmpty() && !from.isEmpty() && name==OrgKdeFontinstInterface::staticInterfaceName() && itsIt!=itsEnd)
+    if(to.isEmpty() && !from.isEmpty() && name==QLatin1String(OrgKdeFontinstInterface::staticInterfaceName()) && itsIt!=itsEnd)
     {
         setPage(PAGE_ERROR, i18n("Backend died, but has been restarted. Please try again."));
         itsActionLabel->stopAnimation();
