@@ -931,19 +931,23 @@ void CKCmFontInst::setStatusBar()
 
         if(disabled||partial)
         {
-            text+=i18n(" (<img src=\"%1\" />%2 <img src=\"%3\" />%4 <img src=\"%5\" />%6)",
-                       KIconLoader::global()->iconPath("dialog-ok", -KIconLoader::SizeSmall),
-                       enabled,
-                       KIconLoader::global()->iconPath("dialog-cancel", -KIconLoader::SizeSmall),
-                       disabled,
-                       partialIcon(),
-                       partial);
-            itsStatusLabel->setToolTip(i18n("<table>"
-                                            "<tr><td>Enabled fonts:</td><td>%1</td></tr>"
-                                            "<tr><td>Disabled fonts:</td><td>%2</td></tr>"
-                                            "<tr><td>Partially enabled fonts:</td><td>%3</td></tr>"
-                                            "<tr><td>Total fonts:</td><td>%4</td></tr>"
-                                            "</table>", enabled, disabled, partial, enabled+disabled+partial));
+            text+=QString(" (<img src=\"%1\" />%2").arg(KIconLoader::global()->iconPath("dialog-ok", -KIconLoader::SizeSmall)).arg(enabled)
+                 +QString(" <img src=\"%1\" />%2").arg(KIconLoader::global()->iconPath("dialog-cancel", -KIconLoader::SizeSmall)).arg(disabled);
+            if(partial)
+                text+=QString(" <img src=\"%1\" />%2").arg(partialIcon()).arg(partial);
+            text+=QLatin1Char(')');
+            itsStatusLabel->setToolTip(partial
+                                        ? i18n("<table>"
+                                               "<tr><td align=\"right\">Enabled:</td><td>%1</td></tr>"
+                                               "<tr><td align=\"right\">Disabled:</td><td>%2</td></tr>"
+                                               "<tr><td align=\"right\">Partially enabled:</td><td>%3</td></tr>"
+                                               "<tr><td align=\"right\">Total:</td><td>%4</td></tr>"
+                                               "</table>", enabled, disabled, partial, enabled+disabled+partial)
+                                        : i18n("<table>"
+                                               "<tr><td align=\"right\">Enabled:</td><td>%1</td></tr>"
+                                               "<tr><td align=\"right\">Disabled:</td><td>%2</td></tr>"
+                                               "<tr><td align=\"right\">Total:</td><td>%3</td></tr>"
+                                               "</table>", enabled, disabled, enabled+disabled));
         }
 
         itsStatusLabel->setText(disabled||partial ? "<p>"+text+"</p>" : text);
