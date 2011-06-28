@@ -984,6 +984,9 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
     QModelIndex    index(mapToSource(idx));
     CFontModelItem *mi=static_cast<CFontModelItem *>(index.internalPointer());
 
+    if(!mi)
+        return QVariant();
+
     switch(role)
     {
         case Qt::ToolTipRole:
