@@ -8,7 +8,7 @@ X-DocPath=kcontrol/fontinst/index.html
 X-KDE-Library=kcm_fontinst
 X-KDE-ParentApp=kcontrol
 
-Name=Font Installer
+Name=Font Management
 Name[af]=Skrif tipe Installeerder
 Name[ar]=مثبت الخطوط
 Name[ast]=Instalador de tribes de lletra
@@ -27,7 +27,7 @@ Name[cy]=Gosodydd Ffontiau
 Name[da]=Skrifttypeinstallation
 Name[de]=Schriftarteninstallation
 Name[el]=Εγκαταστάτης γραμματοσειρών
-Name[en_GB]=Font Installer
+Name[en_GB]=Font Management
 Name[eo]=Tiparinstalilo
 Name[es]=Instalador de tipos de letra
 Name[et]=Fontide paigaldaja
