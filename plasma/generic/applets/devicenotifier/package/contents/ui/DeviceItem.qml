@@ -74,6 +74,8 @@ Item {
         }
     }
 
+    PlasmaCore.Theme { id: theme }
+
     Text {
         id: deviceStatus
         anchors {
@@ -86,7 +88,8 @@ Item {
         }
         font.italic: true
         font.pointSize: 8
-        opacity: notifierDialog.currentIndex==index || expanded ? 1 : 0;
+        color: "#99"+(theme.textColor.toString().substr(1))
+        opacity: mouseArea.containsMouse || expanded ? 1 : 0;
 
         Behavior on opacity { NumberAnimation { duration: 150 } }
     }
@@ -121,11 +124,13 @@ Item {
     }
 
     MouseArea {
+        id: mouseArea
         anchors {
             top: parent.top
             left: parent.left
             right: parent.right
             bottom: freeSpaceBar.bottom
+            // to remove the gap between device items
             bottomMargin: -actionsList.anchors.topMargin
         }
         hoverEnabled: true
@@ -135,8 +140,6 @@ Item {
         }
         onExited: {
             notifierDialog.highlightItem.opacity = expanded ? 1 : 0;
-            if (!expanded)
-                notifierDialog.currentIndex = -1;
         }
         onClicked: {
             if (mouse.x>=leftAction.x && mouse.x<=leftAction.x+leftAction.width
@@ -157,12 +160,11 @@ Item {
             right: leftAction.right
         }
         model: hpSource.data[udi]["actions"];
-        property int actionVerticalMargins: 4
+        property int actionVerticalMargins: 5
         property int actionIconHeight: 30
-        height: expanded ? ((actionIconHeight+(2*actionVerticalMargins))*model.length)+(spacing*(model.length-1))+anchors.topMargin : 0
+        height: expanded ? ((actionIconHeight+(2*actionVerticalMargins))*model.length)+anchors.topMargin : 0
         visible: expanded
         delegate: actionItem
-        spacing: 2
         highlight: actionHighlighter
     }
     
