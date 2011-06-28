@@ -216,7 +216,7 @@ class CFcEngine::Xft
                        bool oneLine=false, int max=-1, QRect *used=0L) const;
     bool drawAllChars(XftFont *xftFont, int fontHeight, int &x, int &y, int w, int h,
                       bool oneLine=false, int max=-1, QRect *used=0L) const;
-    QImage toImage() const;
+    QImage toImage(int w, int h) const;
 
     private:
 
@@ -389,6 +389,12 @@ bool CFcEngine::Xft::drawGlyph(XftFont *xftFont, FT_UInt i, int &x, int &y, int 
 
     XftGlyphExtents(QX11Info::display(), xftFont, &i, 1, &extents);
 
+    if(0==extents.width || 0==extents.height)
+    {
+        r=QRect(0, 0, 0, 0);
+        return true;
+    }
+
     if(x+extents.width+2>w)
     {
         if(oneLine)
@@ -401,8 +407,8 @@ bool CFcEngine::Xft::drawGlyph(XftFont *xftFont, FT_UInt i, int &x, int &y, int 
     if(y<h)
     {
         XftDrawGlyphs(itsDraw, &itsTxtColor, xftFont, x, y, &i, 1);
-        x+=extents.width+2;
         r=QRect(x-extents.x, y-extents.y, extents.width+constBorder, extents.height);
+        x+=extents.width+2;
 
         return true;
     }
@@ -421,7 +427,7 @@ bool CFcEngine::Xft::drawAllGlyphs(XftFont *xftFont, int fontHeight, int &x, int
         if(face)
         {
             int   space(fontHeight/10),
-                  drawn(1);
+                  drawn(0);
             QRect r;
 
             if(!space)
@@ -469,7 +475,7 @@ bool CFcEngine::Xft::drawAllChars(XftFont *xftFont, int fontHeight, int &x, int 
         if(face)
         {
             int   space(fontHeight/10),
-                  drawn(1);
+                  drawn(0);
             QRect r;
 
             if(!space)
@@ -478,6 +484,7 @@ bool CFcEngine::Xft::drawAllChars(XftFont *xftFont, int fontHeight, int &x, int 
             rv=true;
             y+=fontHeight;
 
+            FT_Select_Charmap(face, FT_ENCODING_UNICODE);
             for(int cmap=0; cmap<face->num_charmaps; ++cmap)
                 if(face->charmaps[cmap] && FT_ENCODING_ADOBE_CUSTOM==face->charmaps[cmap]->encoding)
                 {
@@ -520,9 +527,9 @@ bool CFcEngine::Xft::drawAllChars(XftFont *xftFont, int fontHeight, int &x, int 
     return rv;
 }
 
-QImage CFcEngine::Xft::toImage() const
+QImage CFcEngine::Xft::toImage(int w, int h) const
 {
-    return XftDrawPicture(itsDraw) ? KXUtils::createPixmapFromHandle(itsPix.x11).toImage() : QImage();
+    return XftDrawPicture(itsDraw) ? KXUtils::createPixmapFromHandle(itsPix.x11).toImage().copy(0, 0, w, h) : QImage();
 }
     
 inline int point2Pixel(int point)
@@ -667,14 +674,14 @@ QImage CFcEngine::drawPreview(const QString &name, quint32 style, int faceNo, co
                               y=constOffset;
                         QRect used;
 
-                        rv=xft()->drawAllGlyphs(xftFont, fSize, x, y, constInitialWidth, h, true, text.length()+1, &used);
+                        rv=xft()->drawAllGlyphs(xftFont, fSize, x, y, constInitialWidth, h, true, text.length(), &used);
                         if(rv)
                             usedWidth=used.width();
                     }
 
                     if(rv)
                     {
-                        img=xft()->toImage();
+                        img=xft()->toImage(constInitialWidth, h);
                         if(!img.isNull())
                         {
                             if(origHeight)
@@ -748,7 +755,6 @@ QImage CFcEngine::draw(const QString &name, quint32 style, int faceNo, const QCo
                                     ? i18nc("First letter of the alphabet (in upper then lower case)", "Aa")
                                     : i18nc("All letters of the alphabet (in upper/lower case pairs), followed by numbers",
                                             "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789"));
-
                     //
                     // Calculate size of text...
                     int fSize=h;
@@ -795,7 +801,7 @@ QImage CFcEngine::draw(const QString &name, quint32 style, int faceNo, const QCo
                             ? valid.length()!=text.length()
                             : valid.length()<(text.length()/2))
                             xft()->drawAllChars(xftFont, fSize, x, y, imgWidth, imgHeight, true,
-                                                itsScalable ? 4 : -1, itsScalable ? &used : NULL);
+                                                itsScalable ? 2 : -1, itsScalable ? &used : NULL);
                         else
                         {
                             QVector<uint> ucs4(valid.toUcs4());
@@ -888,14 +894,13 @@ QImage CFcEngine::draw(const QString &name, quint32 style, int faceNo, const QCo
                         {
                             int fontHeight=xftFont->ascent+xftFont->descent;
 
-                            xft()->drawAllGlyphs(xftFont, fontHeight, x, y, w, h, 0);
+                            xft()->drawAllGlyphs(xftFont, fontHeight, x, y, w, h, false);
                             rv=true;
                             closeFont(xftFont);
                         }
                     }
                     else if((xftFont=getFont(alphaSize()*2)))
                     {
-                        QRect r;
                         rv=xft()->drawChar32Centre(xftFont, (*(range.begin())).from,
                                                    imgWidth, imgHeight);
                         closeFont(xftFont);
@@ -940,7 +945,7 @@ QImage CFcEngine::draw(const QString &name, quint32 style, int faceNo, const QCo
 
                 if(rv)
                 {
-                    img=xft()->toImage();
+                    img=xft()->toImage(imgWidth, imgHeight);
                     if(!img.isNull() && line1Pos)
                     {
                         QPainter p(&img);
@@ -950,9 +955,10 @@ QImage CFcEngine::draw(const QString &name, quint32 style, int faceNo, const QCo
                         if(line2Pos)
                             p.drawLine(0, line2Pos, w-1, line2Pos);
                     }
+                        
                     if(!img.isNull())
                     {
-                        if(itsScalable && !used.isEmpty() && used.width()<imgWidth && used.height()<imgHeight)
+                        if(itsScalable && !used.isEmpty() && (used.width()<imgWidth || used.height()<imgHeight))
                             img=img.copy(used);
                         if(needAlpha)
                             setTransparentBackground(img, txt);
