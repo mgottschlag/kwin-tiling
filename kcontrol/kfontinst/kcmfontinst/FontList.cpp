@@ -809,11 +809,11 @@ void CFontList::addFonts(const FamilyCont &families, bool sys)
 //     bool emitLayout=!itsSlowUpdates || itsFamilies.isEmpty();
 // 
 //     if(emitLayout)
-        emit layoutAboutToBeChanged();
+//         emit layoutAboutToBeChanged();
 
     FamilyCont::ConstIterator family(families.begin()),
                               end(families.end());
-//     int                       famRowFrom=itsFamilies.count();
+    int                       famRowFrom=itsFamilies.count();
     QSet<CFamilyItem *>       modifiedFamilies;
 
     for(; family!=end; ++family)
@@ -824,16 +824,16 @@ void CFontList::addFonts(const FamilyCont &families, bool sys)
 
             if(famItem)
             {
-//                 int rowFrom=famItem->fonts().count();
+                int rowFrom=famItem->fonts().count();
                 if(famItem->addFonts((*family).styles(), sys))
                 {
-//                     int rowTo=famItem->fonts().count()-1;
-// 
-//                     if(rowFrom>=rowTo)
-//                     {
-//                         beginInsertRows(createIndex(famItem->rowNumber(), 0, famItem), rowFrom, rowTo);
-//                         endInsertRows();
-//                     }
+                    int rowTo=famItem->fonts().count();
+
+                    if(rowTo!=rowFrom)
+                    {
+                        beginInsertRows(createIndex(famItem->rowNumber(), 0, famItem), rowFrom, rowTo);
+                        endInsertRows();
+                    }
 
                     modifiedFamilies.insert(famItem);
                 }
@@ -848,12 +848,12 @@ void CFontList::addFonts(const FamilyCont &families, bool sys)
         }
     }
 
-//     int famRowTo=itsFamilies.count()-1;
-//     if(famRowFrom>=famRowTo)
-//     {
-//         beginInsertRows(QModelIndex(), famRowFrom, famRowTo);
-//         endInsertRows();
-//     }
+    int famRowTo=itsFamilies.count();
+    if(famRowTo!=famRowFrom)
+    {
+        beginInsertRows(QModelIndex(), famRowFrom, famRowTo);
+        endInsertRows();
+    }
 
     if(!modifiedFamilies.isEmpty())
     {
@@ -865,17 +865,16 @@ void CFontList::addFonts(const FamilyCont &families, bool sys)
     }
 
 //     if(emitLayout)
-        emit layoutChanged();
+//         emit layoutChanged();
 }
 
 void CFontList::removeFonts(const FamilyCont &families, bool sys)
 {
 //     if(!itsSlowUpdates)
-        emit layoutAboutToBeChanged();
+//         emit layoutAboutToBeChanged();
 
     FamilyCont::ConstIterator family(families.begin()),
                               end(families.end());
-//     int                       famRowFrom=itsFamilies.count();
     QSet<CFamilyItem *>       modifiedFamilies;
 
     for(; family!=end; ++family)
@@ -891,8 +890,6 @@ void CFontList::removeFonts(const FamilyCont &families, bool sys)
 
                 for(; it!=end; ++it)
                 {
-// if(itsSlowUpdates)
-// printf("REMOVE FONT:%s %d\n", (*family).name().toLatin1().constData(), (*it).value());
                     CFontItem *fontItem=famItem->findFont((*it).value(), sys);
 
                     if(fontItem)
@@ -909,38 +906,30 @@ void CFontList::removeFonts(const FamilyCont &families, bool sys)
                                 if(1!=famItem->fonts().count())
                                 {
                                     row=fontItem->rowNumber();
-//                                     beginRemoveRows(createIndex(famItem->rowNumber(), 0, famItem), row, row);
+                                    beginRemoveRows(createIndex(famItem->rowNumber(), 0, famItem), row, row);
                                 }
                                 famItem->removeFont(fontItem, false);
-//                                 printf("FONT REMOVED\n");
-//                                 if(-1!=row)
-//                                     endRemoveRows();
+                                if(-1!=row)
+                                    endRemoveRows();
                             }
                             else
                                 fontItem->refresh();
                         }
                     }
-//                     else
-//                     printf("Failed to find font\n");
                 }
 
                 if(famItem->fonts().isEmpty())
                 {
-// printf("REMOVE FAMILY\n");
                     int row=famItem->rowNumber();
-//                     beginRemoveRows(QModelIndex(), row, row);
+                    beginRemoveRows(QModelIndex(), row, row);
                     itsFamilyHash.remove(famItem->name());
                     itsFamilies.removeAt(row);
-//                     endRemoveRows();
+                    endRemoveRows();
                 }
                 else
                     modifiedFamilies.insert(famItem);
             }
-//             else
-//             printf("Failed to find family\n");
         }
-//         else
-//         printf("Supplied list has no styles?\n");
     }
 
     if(!modifiedFamilies.isEmpty())
@@ -953,7 +942,7 @@ void CFontList::removeFonts(const FamilyCont &families, bool sys)
     }
 
 //     if(!itsSlowUpdates)
-        emit layoutChanged();
+//         emit layoutChanged();
 }
 
 CFamilyItem * CFontList::findFamily(const QString &familyName)
@@ -1698,6 +1687,8 @@ void CFontListView::selectionChanged(const QItemSelection &selected,
                                      const QItemSelection &deselected)
 {
     QAbstractItemView::selectionChanged(selected, deselected);
+    if(itsModel->slowUpdates())
+        return;
 
     //
     // Go throgh current selection, and for any 'font' items that are selected,
@@ -1844,7 +1835,7 @@ void CFontListView::view()
         for(; it!=end; ++it)
         {
             QString file;
-            int     index;
+            int     index(0);
 
             if(!(*it)->isEnabled())
             {

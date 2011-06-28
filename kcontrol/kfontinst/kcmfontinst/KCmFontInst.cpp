@@ -1215,13 +1215,15 @@ void CKCmFontInst::doCmd(CJobRunner::ECommand cmd, const CJobRunner::ItemList &u
     connect(&runner, SIGNAL(configuring()), itsFontList, SLOT(unsetSlowUpdates()));
     runner.exec(cmd, urls, system);
     itsFontList->setSlowUpdates(false);
+    refreshFontList();
+    if(CJobRunner::CMD_DELETE==cmd)
+        itsFontListView->clearSelection();
     CFcEngine::setDirty();
     setStatusBar();
     delete itsTempDir;
     itsTempDir=NULL;
     itsFontListView->repaint();
     removeDeletedFontsFromGroups();
-    refreshFamilies();
 }
 
 }
