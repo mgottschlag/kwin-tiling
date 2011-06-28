@@ -33,6 +33,7 @@ Item {
     QIconItem {
         id: iconItem
         scale: mouseArea.pressed ? 0.9 : 1
+        smooth: true
         Component.onCompleted: {
             if (orientation==Qt.Horizontal) {
                 anchors.verticalCenter = parent.verticalCenter;

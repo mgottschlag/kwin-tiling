@@ -74,8 +74,11 @@ Item {
                     icon: QIcon(modelData[0])
                     width: iconView.flow==Flow.LeftToRight ? lockout.width/count : lockout.width
                     height: iconView.flow==Flow.TopToBottom ? lockout.height/count : lockout.height
+                    scale: mouseArea.pressed ? 0.9 : 1
+                    smooth: true
 
                     MouseArea {
+                        id: mouseArea
                         anchors.fill: parent
                         onClicked: clickHandler(modelData[1])
                     }
