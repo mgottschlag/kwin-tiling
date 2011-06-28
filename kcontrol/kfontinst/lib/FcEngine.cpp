@@ -35,7 +35,6 @@
 #include <KDE/KIO/NetAccess>
 #include <KDE/KGlobal>
 #include <KDE/KLocale>
-#include <kxutils.h>
 #include <math.h>
 #include <X11/Xlib.h>
 #include <X11/Xft/Xft.h>
@@ -529,7 +528,31 @@ bool CFcEngine::Xft::drawAllChars(XftFont *xftFont, int fontHeight, int &x, int 
 
 QImage CFcEngine::Xft::toImage(int w, int h) const
 {
-    return XftDrawPicture(itsDraw) ? KXUtils::createPixmapFromHandle(itsPix.x11).toImage().copy(0, 0, w, h) : QImage();
+    if(!XftDrawPicture(itsDraw))
+        return QImage();
+
+    XImage *xi = XGetImage(QX11Info::display(), itsPix.x11, 0, 0, itsPix.currentW, itsPix.currentH, AllPlanes, ZPixmap);
+
+    if (!xi)
+        return QImage();
+
+    QImage image(itsPix.currentW, itsPix.currentH, QImage::Format_RGB32);
+    bool   xOk=32==xi->bits_per_pixel;
+
+    if(xOk)
+        memcpy(image.bits(), xi->data, xi->bytes_per_line*xi->height);
+
+    if (xi->data)
+    {
+        free(xi->data);
+        xi->data = 0;
+    }
+    XDestroyImage(xi);
+
+    return xOk ? image : QImage().copy(0, 0, w, h);
+
+// KXUtils::createPixmapFromHandle does not work with raster graphics system :-(
+//     return XftDrawPicture(itsDraw) ? KXUtils::createPixmapFromHandle(itsPix.x11).toImage().copy(0, 0, w, h) : QImage();
 }
     
 inline int point2Pixel(int point)
