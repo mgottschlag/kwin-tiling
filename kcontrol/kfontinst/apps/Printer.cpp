@@ -350,7 +350,7 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
     delete dialog;
 }
 
-static KAboutData aboutData("kfontprint", 0, ki18n("Font Printer"), "1.0", ki18n("Simple font printer"),
+static KAboutData aboutData("kfontprint", KFI_CATALOGUE, ki18n("Font Printer"), "1.0", ki18n("Simple font printer"),
                             KAboutData::License_GPL, ki18n("(C) Craig Drummond, 2007"));
 
 int main(int argc, char **argv)
