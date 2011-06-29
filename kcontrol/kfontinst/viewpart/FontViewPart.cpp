@@ -362,6 +362,8 @@ void CFontViewPart::previewStatus(bool st)
             checkInstallable();
             if(KFI_KIO_FONTS_PROTOCOL==url().protocol())
                 printable=!Misc::isHidden(url());
+            else if(!FC::decode(url()).family.isEmpty())
+                printable=!Misc::isHidden(FC::getFile(url()));
 #ifdef KFI_PRINT_APP_FONTS
             else
             {
