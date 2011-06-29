@@ -273,7 +273,7 @@ void CFontViewPart::timeout()
     }
     else
     {
-        QString path(url().path());
+        QString path(localFilePath());
 
         // Is this a application/vnd.kde.fontspackage file? If so, extract 1 scalable font...
         if((package=Misc::isPackage(path)))
@@ -333,7 +333,7 @@ void CFontViewPart::timeout()
         FcInitReinitialize();
 
     itsPreview->showFont(!package && itsFontDetails.family.isEmpty()
-                            ? url().path()
+                            ? localFilePath()
                             : fontFile.isEmpty()
                                 ? itsFontDetails.family
                                 : fontFile,
