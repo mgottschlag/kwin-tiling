@@ -59,7 +59,7 @@ Q_SIGNALS:
 
 protected:
     void resizeEvent(QResizeEvent *event);
-    void hideEvent(QHideEvent *event);
+    void closeEvent(QCloseEvent *event);
 
 private:
     Plasma::Applet *m_applet;
