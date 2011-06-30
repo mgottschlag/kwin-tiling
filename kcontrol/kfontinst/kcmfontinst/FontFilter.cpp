@@ -218,7 +218,7 @@ void CFontFilter::wsChanged()
             itsCurrentCriteria=CRIT_WS;
             setReadOnly(true);
             setCriteria(itsCurrentCriteria);
-            setText(act->text());
+            setText(QString(act->text()).replace("&", ""));
             setClickMessage(text());
         }
     }
