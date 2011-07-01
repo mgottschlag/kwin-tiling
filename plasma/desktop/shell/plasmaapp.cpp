@@ -674,6 +674,9 @@ void PlasmaApp::screenRemoved(int id)
         }
     }
 
+#if 0
+    NOTE: CURRENTLY UNSAFE DUE TO HOW KEPHAL (or rather, it seems, Qt?) PROCESSES EVENTS
+          DURING XRANDR EVENTS. REVISIT IN 4.8!
     Kephal::Screen *primary = Kephal::Screens::self()->primaryScreen();
     QList<Kephal::Screen *> screens = Kephal::Screens::self()->screens();
     screens.removeAll(primary);
@@ -708,6 +711,16 @@ void PlasmaApp::screenRemoved(int id)
 
         panel->updateStruts();
     }
+#else
+    QMutableListIterator<PanelView*> pIt(m_panels);
+    while (pIt.hasNext()) {
+        PanelView *panel = pIt.next();
+        if (panel->screen() == id) {
+            pIt.remove();
+            delete panel;
+        }
+    }
+#endif
 }
 
 void PlasmaApp::screenAdded(Kephal::Screen *screen)
