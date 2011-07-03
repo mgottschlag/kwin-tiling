@@ -78,7 +78,7 @@ int FontInstInterface::uninstall(const QString &name, bool fromSystem)
 int FontInstInterface::reconfigure()
 {
     KFI_DBUG;
-    itsInterface->reconfigure(getpid());
+    itsInterface->reconfigure(getpid(), false);
     return waitForResponse();
 }
 

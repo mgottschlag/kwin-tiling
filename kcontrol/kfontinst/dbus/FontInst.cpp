@@ -498,16 +498,16 @@ void FontInst::removeFile(const QString &family, quint32 style, const QString &f
     emit status(pid, result);
 }
 
-void FontInst::reconfigure(int pid)
+void FontInst::reconfigure(int pid, bool force)
 {
-    KFI_DBUG << pid;
+    KFI_DBUG << pid << force;
     bool sysModified(theFolders[FOLDER_SYS].isModified());
 
     saveDisabled();
 
     KFI_DBUG << theFolders[FOLDER_USER].isModified() << sysModified;
-    if(!isSystem && theFolders[FOLDER_USER].isModified())
-        theFolders[FOLDER_USER].configure();
+    if(!isSystem && (force || theFolders[FOLDER_USER].isModified()))
+        theFolders[FOLDER_USER].configure(force);
 
     if(sysModified)
     {
@@ -529,6 +529,11 @@ void FontInst::reconfigure(int pid)
 
     updateFontList();
     emit status(pid, isSystem ? constSystemReconfigured : STATUS_OK);
+}
+
+QString FontInst::folderName(bool sys)
+{
+    return theFolders[sys || isSystem ? FOLDER_SYS : FOLDER_USER].location();
 }
 
 void FontInst::saveDisabled()

@@ -271,6 +271,8 @@ void CJobRunner::getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAn
 
 int CJobRunner::exec(ECommand cmd, const ItemList &urls, bool destIsSystem)
 {
+    itsAutoSkip=itsCancelClicked=itsModified=false;
+
     switch(cmd)
     {
         case CMD_INSTALL:
@@ -287,6 +289,7 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, bool destIsSystem)
             break;
         case CMD_UPDATE:
             setCaption(i18n("Updating"));
+            itsModified=true;
             break;
         case CMD_REMOVE_FILE:
             setCaption(i18n("Removing"));
@@ -309,7 +312,6 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, bool destIsSystem)
     itsCmd=cmd;
     itsCurrentFile=QString();
     itsStatusLabel->setText(QString());
-    itsAutoSkip=itsCancelClicked=itsModified=false;
     setPage(PAGE_PROGRESS);
     QTimer::singleShot(0, this, SLOT(doNext()));
     QTimer::singleShot(constInterfaceCheck, this, SLOT(checkInterface()));
@@ -329,8 +331,9 @@ void CJobRunner::doNext()
     {
         if(itsModified)
         {
+            // Force reconfig if command was already set to update...
+            dbus()->reconfigure(getpid(), CMD_UPDATE==itsCmd);
             itsCmd=CMD_UPDATE;
-            dbus()->reconfigure(getpid());
             itsStatusLabel->setText(i18n("Updating font configuration. Please wait..."));
             itsProgress->setValue(itsProgress->maximum());
             emit configuring();

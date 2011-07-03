@@ -328,11 +328,11 @@ void Folder::add(const Family &family)
     }
 }
     
-void Folder::configure()
+void Folder::configure(bool force)
 {
 KFI_DBUG << "EMPTY MODIFIED " << itsModifiedDirs.isEmpty();
 
-    if(!itsModifiedDirs.isEmpty())
+    if(force || !itsModifiedDirs.isEmpty())
     {
         saveDisabled();
 

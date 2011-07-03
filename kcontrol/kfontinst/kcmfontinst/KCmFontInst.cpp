@@ -68,6 +68,7 @@
 #include <KDE/KPluginLoader>
 #include <KDE/KStandardAction>
 #include <KDE/KZip>
+#include <KDE/KNS3/DownloadDialog>
 
 #define CFG_GROUP                  "Main Settings"
 #define CFG_PREVIEW_SPLITTER_SIZES "PreviewSplitterSizes"
@@ -178,7 +179,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
               itsProgress(NULL),
               itsUpdateDialog(NULL),
               itsTempDir(NULL),
-              itsPrintProc(NULL)
+              itsPrintProc(NULL),
+              itsDownloadFontsAct(NULL)
 {
     setButtons(Help);
 
@@ -224,12 +226,14 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     // Toolbar...
     KAction     *duplicateFontsAct=new KAction(KIcon("system-search"), i18n("Scan for Duplicate Fonts..."), this);
                 //*validateFontsAct=new KAction(KIcon("checkmark"), i18n("Validate Fonts..."), this);
-                //*downloadFontsAct=new KAction(KIcon("go-down"), i18n("Download Fonts..."), this);
 
+    if(!Misc::root())
+        itsDownloadFontsAct=new KAction(KIcon("get-hot-new-stuff"), i18n("Get New Fonts..."), this);
     itsToolsMenu=new KActionMenu(KIcon("system-run"), i18n("Tools"), this);
     itsToolsMenu->addAction(duplicateFontsAct);
     //itsToolsMenu->addAction(validateFontsAct);
-    //itsToolsMenu->addAction(downloadFontsAct);
+    if(itsDownloadFontsAct)
+        itsToolsMenu->addAction(itsDownloadFontsAct);
     itsToolsMenu->setDelayed(false);
     toolbar->addAction(itsToolsMenu);
     itsFilter=new CFontFilter(toolbarWidget);
@@ -400,7 +404,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     connect(itsDeleteFontControl, SIGNAL(clicked()), SLOT(deleteFonts()));
     connect(duplicateFontsAct, SIGNAL(triggered(bool)), SLOT(duplicateFonts()));
     //connect(validateFontsAct, SIGNAL(triggered(bool)), SLOT(validateFonts()));
-    //connect(downloadFontsAct, SIGNAL(triggered(bool)), SLOT(downloadFonts()));
+    if(itsDownloadFontsAct)
+        connect(itsDownloadFontsAct, SIGNAL(triggered(bool)), SLOT(downloadFonts()));
     connect(itsPreview, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(previewMenu(const QPoint &)));
     connect(itsPreviewList, SIGNAL(showMenu(const QPoint &)), SLOT(previewMenu(const QPoint &)));
 
@@ -541,6 +546,9 @@ void CKCmFontInst::groupSelected(const QModelIndex &index)
             itsGroupList->removeFromGroup(grp, *it);
         grp->setValidated();
     }
+
+    if(itsDownloadFontsAct)
+        itsDownloadFontsAct->setEnabled(grp->isPersonal());
 }
 
 void CKCmFontInst::print(bool all)
@@ -837,9 +845,34 @@ void CKCmFontInst::duplicateFonts()
 //{
 //}
 
-//void CKCmFontInst::downloadFonts()
-//{
-//}
+void CKCmFontInst::downloadFonts()
+{
+    KNS3::DownloadDialog *newStuff = new KNS3::DownloadDialog("kfontinst.knsrc", this);
+    newStuff->exec();
+
+    if(newStuff->changedEntries().count())  // We have new fonts, so need to reconfigure fontconfig...
+    {
+        // Ask dbus helper for the current fonts folder name...
+        // We then sym-link our knewstuff3 download folder into the fonts folder...
+        if(CJobRunner::dbus())
+        {
+            QDBusPendingReply<QString> reply=CJobRunner::dbus()->folderName(false);
+
+            reply.waitForFinished();
+            if (!reply.isError())
+            {
+                QString destFolder=reply.argumentAt<0>()+"kfontinst";
+    
+                if(!QFile::exists(destFolder))
+                    QFile::link(KStandardDirs::locateLocal("data", "kfontinst"), destFolder);
+            }
+        }
+
+        doCmd(CJobRunner::CMD_UPDATE, CJobRunner::ItemList());
+    }
+    
+    delete newStuff;
+}
 
 void CKCmFontInst::print()
 {

@@ -83,6 +83,7 @@ class CKCmFontInst : public KCModule
     void    disableGroup();
     void    changeText();
     void    duplicateFonts();
+    void    downloadFonts();
     void    print();
     void    printGroup();
     void    listingPercent(int p);
@@ -134,6 +135,7 @@ class CKCmFontInst : public KCModule
     CJobRunner       *itsRunner;
     QMenu            *itsPreviewMenu,
                      *itsPreviewListMenu;
+    KAction          *itsDownloadFontsAct;
 };
 
 }
