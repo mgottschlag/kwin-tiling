@@ -177,16 +177,18 @@ QString capitaliseFoundry(const QString &foundry)
 {
     QString f(foundry.toLower());
 
-    if(f==QString::fromLatin1("ibm"))
-        return QString::fromLatin1("IBM");
-    else if(f==QString::fromLatin1("urw"))
-        return QString::fromLatin1("URW");
-    else if(f==QString::fromLatin1("itc"))
-        return QString::fromLatin1("ITC");
-    else if(f==QString::fromLatin1("nec"))
-        return QString::fromLatin1("NEC");
-    else if(f==QString::fromLatin1("b&h"))
-        return QString::fromLatin1("B&H");
+    if(f==QLatin1String("ibm"))
+        return QLatin1String("IBM");
+    else if(f==QLatin1String("urw"))
+        return QLatin1String("URW");
+    else if(f==QLatin1String("itc"))
+        return QLatin1String("ITC");
+    else if(f==QLatin1String("nec"))
+        return QLatin1String("NEC");
+    else if(f==QLatin1String("b&h"))
+        return QLatin1String("B&H");
+    else if(f==QLatin1String("dec"))
+        return QLatin1String("DEC");
     else
     {
         QChar   *ch(f.data());
