@@ -382,20 +382,29 @@ void FontInst::move(const QString &family, quint32 style, bool toSystem, int pid
     {
         FamilyCont::ConstIterator fam;
         StyleCont::ConstIterator  st;
-        if(findFont(family, style, toSystem ? FOLDER_USER : FOLDER_SYS, fam, st))
+        EFolder                   from=toSystem ? FOLDER_USER : FOLDER_SYS,
+                                  to=toSystem ? FOLDER_SYS : FOLDER_USER;
+
+        if(findFont(family, style, from, fam, st))
         {
             FileCont::ConstIterator it((*st).files().begin()),
                                     end((*st).files().end());
             QStringList files;
 
             for(; it!=end; ++it)
+            {
                 files.append((*it).path());
+                theFolders[from].addModifiedDir(Misc::getDir((*it).path()));
+                // Actual 'to' folder does not really matter, as we only want to call fc-cache
+                // ...actual folders only matter for xreating fonts.dir, etc, and we wont be doing this...
+                theFolders[to].addModifiedDir(theFolders[to].location());
+            }
 
             QVariantMap args;
             args["method"] = "move";
             args["files"] = files;
             args["toSystem"] = toSystem;
-            args["dest"] = theFolders[toSystem ? FOLDER_SYS : FOLDER_USER].location();
+            args["dest"] = theFolders[to].location();
             args["uid"] = getuid();
             args["gid"] = getgid();
             int result=performAction(args);

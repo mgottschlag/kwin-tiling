@@ -57,12 +57,13 @@ class CJobRunner : public KDialog
             OTHER_FONT
         };
 
-        Item(const KUrl &u=KUrl(), const QString &n=QString());
+        Item(const KUrl &u=KUrl(), const QString &n=QString(), bool dis=false);
         Item(const QString &file, const QString &family, quint32 style, bool system);
         QString displayName() const { return name.isEmpty() ? prettyUrl() : name; }
         QString name,
                 fileName;  // Only required so that we can sort an ItemList so that afm/pfms follow after pfa/pfbs
         EType   type;
+        bool    isDisabled;
 
         bool operator<(const Item &o) const;
     };

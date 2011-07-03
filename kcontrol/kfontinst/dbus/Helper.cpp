@@ -268,6 +268,9 @@ int Helper::move(const QVariantMap &args)
                     else
                         result=KIO::ERR_WRITE_ACCESS_DENIED;
                 }
+                
+                if(toSystem)
+                    theFontFolder.addModifiedDir(theFontFolder.location());
             }
             else
                 result=KIO::ERR_WRITE_ACCESS_DENIED;

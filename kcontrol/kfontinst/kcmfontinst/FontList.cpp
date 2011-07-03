@@ -82,7 +82,7 @@ static void addFont(CFontItem *font, CJobRunner::ItemList &urls, QStringList &fo
         ( (getEnabled && font->isEnabled()) ||
           (getDisabled && !font->isEnabled()) ) )
     {
-        urls.append(CJobRunner::Item(font->url(), font->name()));
+        urls.append(CJobRunner::Item(font->url(), font->name(), !font->isEnabled()));
         fontNames.append(font->name());
         usedFonts.insert(font);
         if(fonts)

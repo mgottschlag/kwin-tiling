@@ -269,6 +269,26 @@ void CJobRunner::getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAn
     }
 }
 
+static void addEnableActions(CJobRunner::ItemList &urls)
+{
+    CJobRunner::ItemList                modified;
+    CJobRunner::ItemList::ConstIterator it(urls.constBegin()),
+                                        end(urls.constEnd());
+                            
+    for(; it!=end; ++it)
+    {
+        if((*it).isDisabled)
+        {
+            CJobRunner::Item item(*it);
+            item.fileName=QLatin1String("--");
+            modified.append(item);
+        }
+        modified.append(*it);
+    }
+    
+    urls=modified;
+}
+
 int CJobRunner::exec(ECommand cmd, const ItemList &urls, bool destIsSystem)
 {
     itsAutoSkip=itsCancelClicked=itsModified=false;
@@ -303,6 +323,8 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, bool destIsSystem)
     itsUrls=urls;
     if(CMD_INSTALL==cmd)
         qSort(itsUrls.begin(), itsUrls.end());  // Sort list of fonts so that we have type1 fonts followed by their metrics...
+    else if(CMD_MOVE==cmd)
+        addEnableActions(itsUrls);
     itsIt=itsUrls.constBegin();
     itsEnd=itsUrls.constEnd();
     itsPrev=itsEnd;
@@ -382,7 +404,19 @@ void CJobRunner::doNext()
                 break;
             case CMD_MOVE:
                 decode(*itsIt, font, system);
-                dbus()->move(font.family, font.styleInfo, itsDestIsSystem, getpid(), false);
+                // To 'Move' a disabled font, we first need to enable it. To accomplish this, JobRunner creates a 'fake' entry
+                // with the filename "--"
+                if((*itsIt).fileName==QLatin1String("--"))
+                {
+                    setCaption(i18n("Enabling"));
+                    dbus()->enable(font.family, font.styleInfo, system, getpid(), false);
+                }
+                else
+                {
+                    if(itsPrev!=itsEnd && (*itsPrev).fileName==QLatin1String("--"))
+                        setCaption(i18n("Moving"));
+                    dbus()->move(font.family, font.styleInfo, itsDestIsSystem, getpid(), false);
+                }
                 break;
             case CMD_REMOVE_FILE:
                 decode(*itsIt, font, system);
@@ -684,8 +718,8 @@ QString CJobRunner::errorString(int value) const
     }
 }
 
-CJobRunner::Item::Item(const KUrl &u, const QString &n)
-                : KUrl(u), name(n), fileName(Misc::getFile(u.path()))
+CJobRunner::Item::Item(const KUrl &u, const QString &n, bool dis)
+                : KUrl(u), name(n), fileName(Misc::getFile(u.path())), isDisabled(dis)
 {
     type=Misc::checkExt(fileName, "pfa") || Misc::checkExt(fileName, "pfb")
             ? TYPE1_FONT
