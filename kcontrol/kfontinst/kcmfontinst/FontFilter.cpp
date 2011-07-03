@@ -70,6 +70,37 @@ QRect CFontFilterStyle::subElementRect(SubElement element, const QStyleOption *o
     return CFontFilterProxyStyle::subElementRect(element, option, widget);
 }
 
+struct SortAction
+{
+    SortAction(QAction *a) : action(a)        { }
+    bool operator<(const SortAction &o) const { return action->text().localeAwareCompare(o.action->text())<0; }
+    QAction *action;
+};
+
+static void sortActions(KSelectAction *group)
+{
+    if(group->actions().count()>1)
+    {
+        QList<QAction *>                actions=group->actions();
+        QList<QAction *>::ConstIterator it(actions.constBegin()),
+                                        end(actions.constEnd());
+        QList<SortAction>               sorted;
+
+        for(; it!=end; ++it)
+        {
+            sorted.append(SortAction(*it));
+            group->removeAction(*it);
+        }
+
+        qSort(sorted);
+        QList<SortAction>::ConstIterator s(sorted.constBegin()),
+                                         sEnd(sorted.constEnd());
+
+        for(; s!=sEnd; ++s)
+            group->addAction((*s).action);
+    }
+}
+
 CFontFilter::CFontFilter(QWidget *parent)
            : KLineEdit(parent)
 {
@@ -121,40 +152,66 @@ CFontFilter::CFontFilter(QWidget *parent)
         wsAct->setChecked(false);
         wsAct->setData(i);
     }
-    connect(wsMenu, SIGNAL(triggered(const QString &)), SLOT(wsChanged()));
+    sortActions(wsMenu);
+    connect(wsMenu, SIGNAL(triggered(const QString &)), SLOT(wsChanged(const QString &)));
 
     setCriteria(CRIT_FAMILY);
     setStyle(new CFontFilterStyle(this, itsMenuButton->width()));
 }
 
-void CFontFilter::setFoundries(const QSet<QString> &foundries)
+void CFontFilter::setFoundries(const QSet<QString> &currentFoundries)
 {
-    QAction     *act(((KSelectAction *)itsActions[CRIT_FOUNDRY])->currentAction());
-    QString     prev(act && act->isChecked() ? act->text() : QString());
-    QStringList list(foundries.toList());
+    QAction                         *act(((KSelectAction *)itsActions[CRIT_FOUNDRY])->currentAction());
+    QString                         prev(act && act->isChecked() ? act->text() : QString());
+    bool                            changed(false);
+    QList<QAction *>                prevFoundries(((KSelectAction *)itsActions[CRIT_FOUNDRY])->actions());
+    QList<QAction *>::ConstIterator fIt(prevFoundries.constBegin()),
+                                    fEnd(prevFoundries.constEnd());
+    QSet<QString>                   foundries(currentFoundries);
 
-    list.sort();
-
-    // Add foundries to menu - replacing '&' with '&&', as '&' is taken to be
-    // a shortcut!
-    QStringList::ConstIterator it(list.begin()),
-                               end(list.end());
-
-    for(; it!=end; ++it)
+    // Determine which of 'foundries' are new ones, and which old ones need to be removed...
+    for(; fIt!=fEnd; ++fIt)
     {
-        QString foundry(*it);
-
-        foundry.replace("&", "&&");
-        ((KSelectAction *)itsActions[CRIT_FOUNDRY])->addAction(foundry);
+        if(foundries.contains((*fIt)->text()))
+            foundries.remove((*fIt)->text());
+        else
+        {
+            ((KSelectAction *)itsActions[CRIT_FOUNDRY])->removeAction(*fIt);
+            (*fIt)->deleteLater();
+            changed=true;
+        }
     }
 
-    if(!prev.isEmpty())
+    if(foundries.count())
     {
-        act=((KSelectAction *)itsActions[CRIT_FOUNDRY])->action(prev);
-        if(act)
-            ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setCurrentAction(act);
-        else
-            ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setCurrentItem(0);
+        // Add foundries to menu - replacing '&' with '&&', as '&' is taken to be
+        // a shortcut!
+        QSet<QString>::ConstIterator it(foundries.begin()),
+                                     end(foundries.end());
+
+        for(; it!=end; ++it)
+        {
+            QString foundry(*it);
+
+            foundry.replace("&", "&&");
+            ((KSelectAction *)itsActions[CRIT_FOUNDRY])->addAction(foundry);
+        }
+        changed=true;
+    }
+
+    if(changed)
+    {
+        sortActions((KSelectAction *)itsActions[CRIT_FOUNDRY]);
+        if(!prev.isEmpty())
+        {
+            act=((KSelectAction *)itsActions[CRIT_FOUNDRY])->action(prev);
+            if(act)
+                ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setCurrentAction(act);
+            else
+                ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setCurrentItem(0);
+        }
+    
+        itsActions[CRIT_FOUNDRY]->setVisible(((KSelectAction *)itsActions[CRIT_FOUNDRY])->actions().count());
     }
 }
 
@@ -194,7 +251,7 @@ void CFontFilter::filterChanged()
     }
 }
 
-void CFontFilter::wsChanged()
+void CFontFilter::wsChanged(const QString &writingSystemName)
 {
     QAction *act(((KSelectAction *)itsActions[CRIT_WS])->currentAction());
 
@@ -218,7 +275,7 @@ void CFontFilter::wsChanged()
             itsCurrentCriteria=CRIT_WS;
             setReadOnly(true);
             setCriteria(itsCurrentCriteria);
-            setText(QString(act->text()).replace("&", ""));
+            setText(writingSystemName);
             setClickMessage(text());
         }
     }

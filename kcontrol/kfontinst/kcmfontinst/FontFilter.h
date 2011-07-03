@@ -58,7 +58,7 @@ class CFontFilter : public KLineEdit
     CFontFilter(QWidget *parent);
     virtual ~CFontFilter() { }
 
-    void setFoundries(const QSet<QString> &foundries);
+    void setFoundries(const QSet<QString> &currentFoundries);
 
     QSize sizeHint() const;
 
@@ -69,7 +69,7 @@ class CFontFilter : public KLineEdit
     private Q_SLOTS:
 
     void filterChanged();
-    void wsChanged();
+    void wsChanged(const QString &writingSystemName);
     void foundryChanged(const QString &foundry);
 
     private:
