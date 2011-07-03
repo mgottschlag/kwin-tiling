@@ -44,6 +44,7 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QDir>
 #include <QtCore/QEvent>
+#include <QtCore/QTimer>
 #include <stdlib.h>
 #include <unistd.h>
 #include <utime.h>
@@ -842,11 +843,6 @@ CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
     itsExportAct=itsMenu->addAction(KIcon("document-export"), i18n("Export..."),
                                     this, SIGNAL(zip()));
 
-    itsActionMenu=new QMenu(this);
-    itsActionMenu->addAction(KIcon("go-jump"), i18n("Move Here"), this, SIGNAL(moveFonts()));
-    itsActionMenu->addSeparator();
-    itsActionMenu->addAction(KIcon("process-stop"), i18n("Cancel"));
-
     setWhatsThis(model->whatsThis());
     header()->setWhatsThis(whatsThis());
     connect(this, SIGNAL(addFamilies(const QModelIndex &,  const QSet<QString> &)),
@@ -902,6 +898,11 @@ void CGroupListView::rename()
 
     if(index.isValid())
         edit(index);
+}
+
+void CGroupListView::emitMoveFonts()
+{
+    emit moveFonts();
 }
 
 void CGroupListView::contextMenuEvent(QContextMenuEvent *ev)
@@ -988,7 +989,7 @@ void CGroupListView::dropEvent(QDropEvent *event)
                  (static_cast<CGroupListItem *>(to.internalPointer()))->isPersonal()) ||
                 ((static_cast<CGroupListItem *>(from.internalPointer()))->isPersonal() &&
                  (static_cast<CGroupListItem *>(to.internalPointer()))->isSystem()))
-                itsActionMenu->popup(QCursor::pos());
+                QTimer::singleShot(0, this, SLOT(emitMoveFonts()));
             else if((static_cast<CGroupListItem *>(from.internalPointer()))->isCustom() &&
                     !(static_cast<CGroupListItem *>(to.internalPointer()))->isCustom())
                 emit removeFamilies(from, families);

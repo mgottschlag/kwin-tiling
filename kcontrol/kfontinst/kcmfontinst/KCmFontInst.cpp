@@ -733,14 +733,19 @@ void CKCmFontInst::moveFonts()
             case 1:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
                         i18n("<p>Do you really want to "
-                                "move</p><p>\'<b>%1</b>\'?</p>", fontNames.first()),
+                             "move</p><p>\'<b>%1</b>\'</p><p>from <i>%2</i> to <i>%3</i>?</p>",
+                             fontNames.first(),
+                             itsGroupListView->isSystem() ? i18n(KFI_KIO_FONTS_SYS) : i18n(KFI_KIO_FONTS_USER),
+                             itsGroupListView->isSystem() ? i18n(KFI_KIO_FONTS_USER) : i18n(KFI_KIO_FONTS_SYS)),
                         i18n("Move Font"), KGuiItem(i18n("Move")));
             break;
             default:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
                         i18np("Do you really want to move this font?",
-                                "Do you really want to move these %1 fonts?",
-                                fontNames.count()),
+                              "<p>Do you really want to move these %1 fonts from <i>%2</i> to <i>%3</i>?",
+                              fontNames.count(),
+                              itsGroupListView->isSystem() ? i18n(KFI_KIO_FONTS_SYS) : i18n(KFI_KIO_FONTS_USER),
+                              itsGroupListView->isSystem() ? i18n(KFI_KIO_FONTS_USER) : i18n(KFI_KIO_FONTS_SYS)),
                         fontNames, i18n("Move Fonts"), KGuiItem(i18n("Move")));
         }
 
