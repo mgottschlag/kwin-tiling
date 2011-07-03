@@ -69,6 +69,7 @@ class CKCmFontInst : public KCModule
 
     QString quickHelp() const;
     void    previewMenu(const QPoint &pos);
+    void    splitterMoved();
     void    fontsSelected(const QModelIndexList &list);
     void    groupSelected(const QModelIndex &index);
     void    addFonts();
@@ -136,6 +137,8 @@ class CKCmFontInst : public KCModule
     QMenu            *itsPreviewMenu,
                      *itsPreviewListMenu;
     KAction          *itsDownloadFontsAct;
+    QWidget          *itsPreviewWidget;
+    bool             itsPreviewHidden;
 };
 
 }

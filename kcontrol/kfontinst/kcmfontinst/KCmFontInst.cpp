@@ -266,13 +266,13 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     groupsLayout->addItem(new QSpacerItem(itsDisableGroupControl->width(), KDialog::spacingHint(),
                           QSizePolicy::Expanding, QSizePolicy::Fixed), 1, 4);
 
-    QWidget    *previewWidget = new QWidget(this);
-    QBoxLayout *previewWidgetLayout = new QBoxLayout(QBoxLayout::TopToBottom, previewWidget);
+    itsPreviewWidget = new QWidget(this);
+    QBoxLayout *previewWidgetLayout = new QBoxLayout(QBoxLayout::TopToBottom, itsPreviewWidget);
     previewWidgetLayout->setMargin(0);
     previewWidgetLayout->setSpacing(0);
     
     // Preview
-    QFrame     *previewFrame=new QFrame(previewWidget);
+    QFrame     *previewFrame=new QFrame(itsPreviewWidget);
     QBoxLayout *previewFrameLayout=new QBoxLayout(QBoxLayout::LeftToRight, previewFrame);
 
     previewFrameLayout->setMargin(0);
@@ -289,7 +289,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     itsPreview->engine()->readConfig(itsConfig);
 
     // List-style preview...
-    itsPreviewList = new CPreviewListView(itsPreview->engine(), previewWidget);
+    itsPreviewList = new CPreviewListView(itsPreview->engine(), itsPreviewWidget);
     previewWidgetLayout->addWidget(itsPreviewList);
     itsPreviewList->setVisible(false);
 
@@ -306,7 +306,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
                                                   i18n("Delete all selected fonts")),
                                          fontControlWidget);
 
-    itsPreviewSplitter->addWidget(previewWidget);
+    itsPreviewSplitter->addWidget(itsPreviewWidget);
     itsPreviewSplitter->setCollapsible(1, true);
 
     itsStatusLabel = new QLabel(fontControlWidget);
@@ -344,6 +344,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     defaultSizes+=300;
     defaultSizes+=220;
     itsPreviewSplitter->setSizes(cg.readEntry(CFG_PREVIEW_SPLITTER_SIZES, defaultSizes));
+    itsPreviewHidden=itsPreviewSplitter->sizes().at(1)<8;
 
     defaultSizes.clear();
     defaultSizes+=110;
@@ -408,6 +409,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
         connect(itsDownloadFontsAct, SIGNAL(triggered(bool)), SLOT(downloadFonts()));
     connect(itsPreview, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(previewMenu(const QPoint &)));
     connect(itsPreviewList, SIGNAL(showMenu(const QPoint &)), SLOT(previewMenu(const QPoint &)));
+    connect(itsPreviewSplitter, SIGNAL(splitterMoved(int, int)), SLOT(splitterMoved()));
 
     selectMainGroup();
     itsFontList->load();
@@ -451,29 +453,42 @@ void CKCmFontInst::previewMenu(const QPoint &pos)
         itsPreviewListMenu->popup(itsPreviewList->mapToGlobal(pos));
 }
 
+void CKCmFontInst::splitterMoved()
+{
+    if(itsPreviewWidget->width()>8 && itsPreviewHidden)
+    {
+        itsPreviewHidden=false;
+        fontsSelected(itsFontListView->getSelectedItems());
+    }
+    else if(!itsPreviewHidden && itsPreviewWidget->width()<8)
+        itsPreviewHidden=true;
+}
+
 void CKCmFontInst::fontsSelected(const QModelIndexList &list)
 {
-    itsDeleteFontControl->setEnabled(false);
-
-    if(list.count())
+    if(!itsPreviewHidden)
     {
-        if(list.count()<2)
+        if(list.count())
         {
-            CFontModelItem *mi=static_cast<CFontModelItem *>(list.last().internalPointer());
-            CFontItem      *font=mi->parent()
-                                    ? static_cast<CFontItem *>(mi)
-                                    : (static_cast<CFamilyItem *>(mi))->regularFont();
+            if(list.count()<2)
+            {
+                CFontModelItem *mi=static_cast<CFontModelItem *>(list.last().internalPointer());
+                CFontItem      *font=mi->parent()
+                                        ? static_cast<CFontItem *>(mi)
+                                        : (static_cast<CFamilyItem *>(mi))->regularFont();
 
-            if(font)
-                itsPreview->showFont(font->isEnabled() ? font->family() : font->fileName(),
-                                     font->styleInfo(), font->index());
+                if(font)
+                    itsPreview->showFont(font->isEnabled() ? font->family() : font->fileName(),
+                                         font->styleInfo(), font->index());
+            }
+            else
+                itsPreviewList->showFonts(list);
         }
-        else
-            itsPreviewList->showFonts(list);
+        itsPreviewList->setVisible(list.count()>1);
+        itsPreview->parentWidget()->setVisible(list.count()<2);
     }
+
     itsDeleteFontControl->setEnabled(list.count());
-    itsPreviewList->setVisible(list.count()>1);
-    itsPreview->parentWidget()->setVisible(list.count()<2);
 }
 
 void CKCmFontInst::addFonts()
@@ -830,8 +845,7 @@ void CKCmFontInst::changeText()
     {
         itsPreview->engine()->setPreviewString(newStr);
 
-        if(itsPreview->width()>6)
-            itsPreview->showFont();
+        itsPreview->showFont();
         itsPreviewList->refreshPreviews();
     }
 }

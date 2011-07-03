@@ -315,7 +315,6 @@ class CFontListView : public QTreeView
     CFontListView(QWidget *parent, CFontList *model);
     virtual ~CFontListView() { }
 
-    QModelIndexList selectedItems() const  { return selectedIndexes(); }
     void            getFonts(CJobRunner::ItemList &urls, QStringList &fontNames, QSet<Misc::TFont> *fonts,
                              bool selected, bool getEnabled=true, bool getDisabled=true);
     QSet<QString>   getFiles();
@@ -325,6 +324,7 @@ class CFontListView : public QTreeView
     void            selectedStatus(bool &enabled, bool &disabled);
     QModelIndexList allFonts();
     void            selectFirstFont();
+    QModelIndexList getSelectedItems();
 
     Q_SIGNALS:
 

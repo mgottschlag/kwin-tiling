@@ -1609,7 +1609,7 @@ void CFontListView::stats(int &enabled, int &disabled, int &partial)
 
 void CFontListView::selectedStatus(bool &enabled, bool &disabled)
 {
-    QModelIndexList selected(selectedItems());
+    QModelIndexList selected(selectedIndexes());
     QModelIndex     index;
 
     enabled=disabled=false;
@@ -1673,7 +1673,7 @@ QModelIndexList CFontListView::allFonts()
 
 void CFontListView::selectFirstFont()
 {
-    if(0==selectedItems().count())
+    if(0==selectedIndexes().count())
         for(int i=0; i<NUM_COLS; ++i)
         {
             QModelIndex idx(itsProxy->index(0, i, QModelIndex()));
@@ -1698,7 +1698,11 @@ void CFontListView::selectionChanged(const QItemSelection &selected,
     QAbstractItemView::selectionChanged(selected, deselected);
     if(itsModel->slowUpdates())
         return;
+    emit itemsSelected(getSelectedItems());
+}
 
+QModelIndexList CFontListView::getSelectedItems()
+{
     //
     // Go throgh current selection, and for any 'font' items that are selected,
     // ensure 'family' item is not...
@@ -1770,7 +1774,7 @@ void CFontListView::selectionChanged(const QItemSelection &selected,
         }
     }
 
-    emit itemsSelected(sel);
+    return sel;
 }
 
 void CFontListView::itemCollapsed(const QModelIndex &idx)
