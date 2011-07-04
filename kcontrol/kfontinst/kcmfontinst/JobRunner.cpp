@@ -66,6 +66,17 @@ FontInstInterface * CJobRunner::dbus()
     return theInterface;
 }
 
+QString CJobRunner::folderName(bool sys)
+{
+    if(!theInterface)
+        return QString();
+
+    QDBusPendingReply<QString> reply=theInterface->folderName(sys);
+
+    reply.waitForFinished();
+    return reply.isError() ? QString() : reply.argumentAt<0>();
+}
+            
 void CJobRunner::startDbusService()
 {
     if (!QDBusConnection::sessionBus().interface()->isServiceRegistered(OrgKdeFontinstInterface::staticInterfaceName()))
@@ -704,7 +715,11 @@ QString CJobRunner::errorString(int value) const
         case FontInst::STATUS_NO_SYS_CONNECTION:
             return i18n("Failed to start the system daemon.<br><i>%1</i>", urlStr);
         case KIO::ERR_FILE_ALREADY_EXIST:
-            return i18n("<i>%1</i> already exists.", urlStr);
+        {
+            QString name(Misc::modifyName(Misc::getFile((*itsIt).fileName))),
+                    destFolder(Misc::getDestFolder(folderName(itsDestIsSystem), name));
+            return i18n("<i>%1</i> already exists.", destFolder+name);
+        }
         case KIO::ERR_DOES_NOT_EXIST:
             return i18n("<i>%1</i> does not exist.", urlStr);
         case KIO::ERR_WRITE_ACCESS_DENIED:

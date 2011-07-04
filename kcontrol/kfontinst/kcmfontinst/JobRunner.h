@@ -85,6 +85,7 @@ class CJobRunner : public KDialog
     ~CJobRunner();
 
     static FontInstInterface * dbus();
+    static QString             folderName(bool sys);
     static void startDbusService();
 
     static KUrl encode(const QString &family, quint32 style, bool system);

@@ -239,8 +239,8 @@ int Helper::move(const QVariantMap &args)
         // Move fonts!
         for(it=files.constBegin(); it!=end && FontInst::STATUS_OK==result; ++it)
         {
-            QString name(Utils::modifyName(Misc::getFile(*it))),
-                    destFolder(Utils::getDestFolder(dest, name));
+            QString name(Misc::modifyName(Misc::getFile(*it))),
+                    destFolder(Misc::getDestFolder(dest, name));
 
             if(!Misc::dExists(destFolder))
             {

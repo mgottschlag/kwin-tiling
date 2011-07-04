@@ -867,18 +867,14 @@ void CKCmFontInst::downloadFonts()
     {
         // Ask dbus helper for the current fonts folder name...
         // We then sym-link our knewstuff3 download folder into the fonts folder...
-        if(CJobRunner::dbus())
+        QString destFolder=CJobRunner::folderName(false);
+                
+        if(!destFolder.isEmpty())
         {
-            QDBusPendingReply<QString> reply=CJobRunner::dbus()->folderName(false);
-
-            reply.waitForFinished();
-            if (!reply.isError())
-            {
-                QString destFolder=reply.argumentAt<0>()+"kfontinst";
+            destFolder+="kfontinst";
     
-                if(!QFile::exists(destFolder))
-                    QFile::link(KStandardDirs::locateLocal("data", "kfontinst"), destFolder);
-            }
+            if(!QFile::exists(destFolder))
+                QFile::link(KStandardDirs::locateLocal("data", "kfontinst"), destFolder);
         }
 
         doCmd(CJobRunner::CMD_UPDATE, CJobRunner::ItemList());

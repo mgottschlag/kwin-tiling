@@ -210,8 +210,8 @@ void FontInst::install(const QString &file, bool createAfm, bool toSystem, int p
 
         if(STATUS_OK==result)
         {
-            QString name(Utils::modifyName(Misc::getFile(file))),
-                    destFolder(Utils::getDestFolder(theFolders[folder].location(), name));
+            QString name(Misc::modifyName(Misc::getFile(file))),
+                    destFolder(Misc::getDestFolder(theFolders[folder].location(), name));
 
             result=Utils::FILE_AFM!=type && Utils::FILE_PFM!=type && Misc::fExists(destFolder+name) ? (int)KIO::ERR_FILE_ALREADY_EXIST : (int)STATUS_OK;
             if(STATUS_OK==result)
