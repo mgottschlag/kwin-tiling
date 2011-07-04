@@ -133,7 +133,7 @@ CFontFilter::CFontFilter(QWidget *parent)
     connect(foundryMenu, SIGNAL(triggered(const QString &)), SLOT(foundryChanged(const QString &)));
 
     addAction(CRIT_FONTCONFIG, i18n("FontConfig Match"), false);
-    addAction(CRIT_FILENAME, i18n("File"), false);
+    addAction(CRIT_FILENAME, i18n("File Name"), false);
     addAction(CRIT_LOCATION, i18n("File Location"), false);
 
     KSelectAction *wsMenu=new KSelectAction(KIcon(itsPixmaps[CRIT_WS]), i18n("Writing System"), this);
