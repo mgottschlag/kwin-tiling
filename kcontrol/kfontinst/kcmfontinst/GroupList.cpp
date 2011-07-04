@@ -830,12 +830,14 @@ CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
 
     itsDeleteAct=itsMenu->addAction(KIcon("list-remove"), i18n("Remove"),
                                     this, SIGNAL(del()));
+    itsMenu->addSeparator();
     itsEnableAct=itsMenu->addAction(KIcon("enablefont"), i18n("Enable"),
                                     this, SIGNAL(enable()));
     itsDisableAct=itsMenu->addAction(KIcon("disablefont"), i18n("Disable"),
                                      this, SIGNAL(disable()));
     itsMenu->addSeparator();
-    itsRenameAct=itsMenu->addAction(i18n("Rename..."), this, SLOT(rename()));
+    itsRenameAct=itsMenu->addAction(KIcon("edit-rename"), i18n("Rename..."),
+                                    this, SLOT(rename()));
     itsMenu->addSeparator();
     itsPrintAct=itsMenu->addAction(KIcon("document-print"), i18n("Print..."),
                                    this, SIGNAL(print()));
