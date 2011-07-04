@@ -22,6 +22,8 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 
 Item {
+    width: 200
+    height: 300
     id: devicenotifier
     property bool removableDevices: true
     property bool nonRemovableDevices: false
