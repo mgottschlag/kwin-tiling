@@ -191,8 +191,6 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
     QPrinter     printer;
     QPrintDialog *dialog = KdePrint::createPrintDialog(&printer, parent);
 
-    dialog->setWindowTitle(i18n("Print"));
-
     if(dialog->exec())
     {
         QPainter   painter;
