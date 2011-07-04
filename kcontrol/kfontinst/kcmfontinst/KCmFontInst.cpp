@@ -563,7 +563,7 @@ void CKCmFontInst::groupSelected(const QModelIndex &index)
     }
 
     if(itsDownloadFontsAct)
-        itsDownloadFontsAct->setEnabled(grp->isPersonal());
+        itsDownloadFontsAct->setEnabled(grp->isPersonal() || grp->isAll());
 }
 
 void CKCmFontInst::print(bool all)
