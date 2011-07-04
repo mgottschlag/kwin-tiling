@@ -374,7 +374,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
             itsPreview, SLOT(setUnicodeRange(const QList<CFcEngine::TRange> &)));
     connect(changeTextAct, SIGNAL(triggered(bool)), SLOT(changeText()));
     connect(itsFilter, SIGNAL(textChanged(const QString &)), itsFontListView, SLOT(filterText(const QString &)));
-    connect(itsFilter, SIGNAL(criteriaChanged(int, qulonglong)), itsFontListView, SLOT(filterCriteria(int, qulonglong)));
+    connect(itsFilter, SIGNAL(criteriaChanged(int, qulonglong, const QStringList &)), 
+            itsFontListView, SLOT(filterCriteria(int, qulonglong, const QStringList &)));
     connect(itsGroupListView, SIGNAL(del()), SLOT(removeGroup()));
     connect(itsGroupListView, SIGNAL(print()), SLOT(printGroup()));
     connect(itsGroupListView, SIGNAL(enable()), SLOT(enableGroup()));
@@ -493,14 +494,7 @@ void CKCmFontInst::fontsSelected(const QModelIndexList &list)
 
 void CKCmFontInst::addFonts()
 {
-    QString filter("application/x-font-ttf "
-                   "application/x-font-otf "
-                   "application/x-font-type1 "
-                   "application/x-font-pcf "
-                   "application/x-font-bdf "
-                   "application/vnd.kde.fontspackage");
-
-    KUrl::List list=KFileDialog::getOpenUrls(KUrl(), filter, this, i18n("Add Fonts"));
+    KUrl::List list=KFileDialog::getOpenUrls(KUrl(), CFontList::fontMimeTypes.join(" "), this, i18n("Add Fonts"));
 
     if(list.count())
     {

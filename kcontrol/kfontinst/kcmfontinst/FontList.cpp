@@ -64,6 +64,13 @@
 namespace KFI
 {
 
+const QStringList CFontList::fontMimeTypes(QStringList() << "application/x-font-ttf"
+                                                         << "application/x-font-otf"
+                                                         << "application/x-font-type1"
+                                                         << "application/x-font-pcf"
+                                                         << "application/x-font-bdf"
+                                                         << "application/vnd.kde.fontspackage");
+
 static const int constMaxSlowed = 250;
 
 static void decompose(const QString &name, QString &family, QString &style)
@@ -1166,6 +1173,22 @@ bool CFontListSortFilterProxy::acceptFont(CFontItem *fnt, bool checkFontText) co
                             fontMatch=true;
                     break;
                 }
+                case CFontFilter::CRIT_FILETYPE:
+                {
+                    FileCont::ConstIterator    it(fnt->files().begin()),
+                                               end(fnt->files().end());
+                    QStringList::ConstIterator mimeEnd(itsFilterTypes.constEnd());
+
+                    for(; it!=end && !fontMatch; ++it)
+                    {
+                        QStringList::ConstIterator mime(itsFilterTypes.constBegin());
+                        
+                        for(; mime!=mimeEnd; ++mime)
+                            if(Misc::checkExt((*it).path(), *mime))
+                                fontMatch=true;
+                    }
+                    break;
+                }
                 case CFontFilter::CRIT_WS:
                     fontMatch=fnt->writingSystems()&itsFilterWs;
                     break;
@@ -1299,12 +1322,13 @@ void CFontListSortFilterProxy::setFilterText(const QString &text)
     }
 }
 
-void CFontListSortFilterProxy::setFilterCriteria(CFontFilter::ECriteria crit, qulonglong ws)
+void CFontListSortFilterProxy::setFilterCriteria(CFontFilter::ECriteria crit, qulonglong ws, const QStringList &ft)
 {
-    if(crit!=itsFilterCriteria || ws!=itsFilterWs)
+    if(crit!=itsFilterCriteria || ws!=itsFilterWs || ft!=itsFilterTypes)
     {
         itsFilterWs=ws;
         itsFilterCriteria=crit;
+        itsFilterTypes=ft;
         if(CFontFilter::CRIT_LOCATION==itsFilterCriteria)
             setFilterText(itsFilterText);
         itsTimer->stop();
@@ -1570,9 +1594,9 @@ void CFontListView::filterText(const QString &text)
     itsProxy->setFilterText(text);
 }
 
-void CFontListView::filterCriteria(int crit, qulonglong ws)
+void CFontListView::filterCriteria(int crit, qulonglong ws, const QStringList &ft)
 {
-    itsProxy->setFilterCriteria((CFontFilter::ECriteria)crit, ws);
+    itsProxy->setFilterCriteria((CFontFilter::ECriteria)crit, ws, ft);
 }
 
 void CFontListView::stats(int &enabled, int &disabled, int &partial)
@@ -1955,19 +1979,20 @@ void CFontListView::dropEvent(QDropEvent *event)
         QList<QUrl>                urls(event->mimeData()->urls());
         QList<QUrl>::ConstIterator it(urls.begin()),
                                    end(urls.end());
+        QStringList::ConstIterator mtEnd(CFontList::fontMimeTypes.constEnd());
         QSet<KUrl>                 kurls;
 
         for(; it!=end; ++it)
         {
-            KMimeType::Ptr mime=KMimeType::findByUrl(*it, 0, false, true);
+            KMimeType::Ptr             mime=KMimeType::findByUrl(*it, 0, false, true);
+            QStringList::ConstIterator mt(CFontList::fontMimeTypes.constBegin());
 
-            if(mime->is("application/x-font-ttf") ||
-               mime->is("application/x-font-otf") ||
-               mime->is("application/x-font-type1") ||
-               mime->is("application/vnd.kde.fontspackage") ||
-               mime->is("application/x-font-pcf") ||
-               mime->is("application/x-font-bdf"))
-                kurls.insert(*it);
+            for(; mt!=mtEnd; ++mt)
+                if(mime->is(*mt))
+                {
+                    kurls.insert(*it);
+                    break;
+                }
         }
 
         if(kurls.count())
