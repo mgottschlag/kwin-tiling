@@ -6,7 +6,7 @@
 ]>
 
 <article lang="&language;">
-<title>Font Installer</title>
+<title>Font Management</title>
 <articleinfo>
 <authorgroup>
 <author>&Craig.Drummond; &Craig.Drummond.Mail;</author>
@@ -14,8 +14,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-11-20</date>
-<releaseinfo>&kde; 4.4</releaseinfo>
+<date>2011-07-04</date>
+<releaseinfo>&kde; 4.8</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -25,7 +25,7 @@
 </articleinfo>
 
 <sect1 id="fontinst">
-<title>Font Installer</title>
+<title>Font Management</title>
 
 <para>This module is responsible for installing, un-installing, previewing and managing your fonts.</para>
 
@@ -37,7 +37,7 @@
     <listitem><para><quote>All Fonts</quote> This will display all fonts, both personal and system-wide.</para></listitem>
     <listitem><para><quote>Personal Fonts</quote> The fonts shown will be your personal fonts, and will not be available to other users.</para></listitem>
     <listitem><para><quote>System Fonts</quote> The fonts shown will be those available to all users. Installing a font system-wide, or removing a system-wide font, will require administrator privileges.</para></listitem>
-    <listitem><para><quote>Unclassified</quote> This will list all fonts that have not been placed into any user-defined groups.</para></listitem>
+    <listitem><para><quote>Unclassified</quote> This will list all fonts that have not been placed into any user-defined groups. This group will only appear if you have some user-defined groups.</para></listitem>
 </orderedlist>
 <para>To add a font to a group, drag it from the list of fonts onto a group. To remove a font from a group, drag the font onto the <quote>All Fonts</quote> group.</para>
 <para>Below this list you find buttons to create a new group, remove a group and enable or disable the fonts in the current group.</para>
@@ -48,29 +48,10 @@
 <para>Users with many fonts may find it useful to only have certain fonts enabled (or active) at certain times. To facilitate this, this module will allow you to disable individual fonts, or whole groups of fonts. Disabling a font does not remove the font from the system, it simply hides it so that it no longer appears within applications. Re-enabling a font will then allow it to be used.</para>
 </sect3>
 
-<sect3 id="font-duplicates">
-<title>Duplicate Fonts</title>
-<para>If you have lots of fonts installed on your system it is possible that you may have duplicates.</para> 
-<para>Click on the tools icon above the group list and select the <guilabel>Scan For Duplicate Fonts...</guilabel> tool, a simple tool that will scan your system looking for fonts that have multiple files associated with them. For example, if you have <quote>times.ttf</quote> and <quote>times.TTF</quote> installed in <quote>/usr/local/share/fonts</quote> the underlying font mechanism (called <quote>FontConfig</quote>) will only see one of these. So, if you un-installed the font, it would re-appear, as only one of the files would have been removed. Running this tool will produce a dialog listing each font that has multiple files, and the corresponding list of files. To select a file for deletion, click on the column containing the trash can icon.</para>
-</sect3>
-
-<sect3 id="font-filter">
-<title>Font Filtering</title>
-<para>A text field on top of the font preview allows you to filter the list of fonts. You can filter fonts based upon different categories:</para>
-        <orderedlist>
-        <listitem><para>Family.</para></listitem>
-        <listitem><para>Style.</para></listitem>
-        <listitem><para>FontConfig match. This allows you to enter a family name, and see the family that fontconfig would actually use.</para></listitem>
-        <listitem><para>Font file.</para></listitem>
-        <listitem><para>Font file location.</para></listitem>
-        <listitem><para>Writing system.</para></listitem>
-        </orderedlist>
-</sect3>
-
 </sect2>
 
 <sect2 id="font-list">
-<title>Font</title>
+<title>Font List</title>
 <para>
 The main display is a list of the installed fonts, grouped via the fonts' family name - the number in square brackets represents the number of installed styles for that family. e.g. The <quote>Times</quote> font may be listed as:
 <itemizedlist>
@@ -91,6 +72,32 @@ The main display is a list of the installed fonts, grouped via the fonts' family
 
 <para>Click with the &RMB; to open a context menu with some additional actions like <guilabel>Enable</guilabel>, <guilabel>Disable</guilabel>, <guilabel>Print</guilabel>, <ulink url="help:/kfontviewer/index.html"><guilabel>Open in Font Viewer</guilabel></ulink> and <guilabel>Reload</guilabel>.</para>
 
+<sect3 id="font-filter">
+<title>Font Filtering</title>
+<para>A text field on top of the font preview allows you to filter the list of fonts. You can filter fonts based upon different categories:</para>
+        <orderedlist>
+        <listitem><para>Family.</para></listitem>
+        <listitem><para>Style.</para></listitem>
+        <listitem><para>Foundry.</para></listitem>
+        <listitem><para>FontConfig match. This allows you to enter a family name, and see the family that fontconfig would actually use.</para></listitem>
+        <listitem><para>Font file type.</para></listitem>
+        <listitem><para>Font file name.</para></listitem>
+        <listitem><para>Font file location.</para></listitem>
+        <listitem><para>Writing system.</para></listitem>
+        </orderedlist>
+</sect3>
+
+<sect3 id="get-new-fonts">
+<title>Get New Fonts</title>
+<para>New fonts may be installed from local files, or downloaded from <quote>kde-look.org</quote>. The <quote>Get New Fonts</quote> entry in the tool button (located above the group list), allows you to install fonts from <quote>kde-look.org</quote>. The fonts donwloaded in this manner will be installed into your <quote>Personal Fonts</quote> group. To install system-wide, you will need to move them to the <quote>System Fonts</quote> group - this may be achieved by dragging the fonts over the <quote>System Fonts</quote> group entry.</para>
+</sect3>
+
+</sect2>
+
+<sect2 id="font-duplicates">
+<title>Duplicate Fonts</title>
+<para>If you have lots of fonts installed on your system it is possible that you may have duplicates.</para> 
+<para>Click on the tools icon above the group list and select the <guilabel>Scan For Duplicate Fonts...</guilabel> tool, a simple tool that will scan your system looking for fonts that have multiple files associated with them. For example, if you have <quote>times.ttf</quote> and <quote>times.TTF</quote> installed in <quote>/usr/local/share/fonts</quote> the underlying font mechanism (called <quote>FontConfig</quote>) will only see one of these. So, if you un-installed the font, it would re-appear, as only one of the files would have been removed. Running this tool will produce a dialog listing each font that has multiple files, and the corresponding list of files. To select a file for deletion, click on the column containing the trash can icon.</para>
 </sect2>
 
 <sect2 id="font-preview">
