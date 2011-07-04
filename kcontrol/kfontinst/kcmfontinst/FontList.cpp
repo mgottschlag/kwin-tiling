@@ -613,14 +613,16 @@ QVariant CFontList::headerData(int section, Qt::Orientation orientation,
                 {
                     case COL_FONT:
                         return i18n("Font");
+                    case COL_STATUS:
+                        return i18n("Status");
                     default:
                         break;
                 }
                 break;
-            case Qt::DecorationRole:
-                if(COL_STATUS==section)
-                    return SmallIcon("fontstatus");
-                break;
+//             case Qt::DecorationRole:
+//                 if(COL_STATUS==section)
+//                     return SmallIcon("fontstatus");
+//                 break;
             case Qt::TextAlignmentRole:
                 return Qt::AlignLeft;
             case Qt::ToolTipRole:
