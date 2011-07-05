@@ -24,8 +24,8 @@
 </copyright>
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2010-10-05</date>
-<releaseinfo>1.0 (&kde; 4.6)</releaseinfo>
+<date>2011-06-25</date>
+<releaseinfo>1.0 (&kde; 4.7)</releaseinfo>
 
 <abstract>
 <para>
@@ -214,7 +214,10 @@ Workspace Behavior (Virtual Desktops, Screen Edges, Workspace)
 Network Settings (Proxy, Connection Preferences, Service Discovery)
 </para></listitem>
 <listitem><para>
-Sharing (Windows Shares, Samba)
+Sharing (Windows Shares)
+</para></listitem>
+<listitem><para>
+SSL Preferences
 </para></listitem>
 </itemizedlist>
 </para>
@@ -244,7 +247,7 @@ Information Sources
 Input Devices (Keyboard, Mouse, Joystick, Remote Controls)
 </para></listitem>
 <listitem><para>
-Power Management
+Power Management (Global settings, Power Profiles)
 </para></listitem>
 <listitem><para>
 Removable Devices
@@ -269,9 +272,6 @@ Font Installer
 </para></listitem>
 <listitem><para>
 Login Screen
-</para></listitem>
-<listitem><para>
-Permissions (PolicyKit Authorization)
 </para></listitem>
 <listitem><para>
 Startup and Shutdown (Autostart, Service Manager, Session Management)
