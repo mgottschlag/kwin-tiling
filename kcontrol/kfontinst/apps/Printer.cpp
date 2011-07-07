@@ -21,7 +21,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <config-workspace.h>
+#include "config-fontinst.h"
 #include "FcEngine.h"
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTextStream>
@@ -171,7 +171,7 @@ static QString previewString(QFont &font, const QString &text, bool onlyDrawChar
 static void printItems(const QList<Misc::TFont> &items, int size, QWidget *parent)
 {
 #ifdef HAVE_LOCALE_H
-    char *oldLocale=setlocale(LC_NUMERIC, "C"),
+    char *oldLocale=setlocale(LC_NUMERIC, "C");
 #endif
 
     QList<Misc::TFont>::ConstIterator it(items.begin()),
