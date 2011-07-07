@@ -7,7 +7,7 @@ include_directories(
 set(kfontinst_bin_SRCS ${libkfontinstjobrunner_SRCS} ${libkfontinstdbusiface_SRCS} Installer.cpp )
 # qt4_add_dbus_interface(kfontinst_bin_SRCS ../dbus/org.kde.fontinst.xml FontInstInterfaceBase)
 
-set(kfontprint_bin_SRCS Printer.cpp )
+set(kfontprint_bin_SRCS ${libkfontinstactionlabel_SRCS} Printer.cpp )
 set(kfontview_bin_SRCS Viewer.cpp )
 
 kde4_add_executable(kfontinst_bin ${kfontinst_bin_SRCS})

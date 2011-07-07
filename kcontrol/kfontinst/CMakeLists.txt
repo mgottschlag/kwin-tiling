@@ -31,8 +31,9 @@ if (X11_Xft_FOUND)
     set(libkfontinstview_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/viewpart/FontPreview.cpp
                               ${CMAKE_CURRENT_SOURCE_DIR}/viewpart/PreviewSelectAction.cpp
                               ${CMAKE_CURRENT_SOURCE_DIR}/viewpart/CharTip.cpp )
+    set(libkfontinstactionlabel_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/kcmfontinst/ActionLabel.cpp)
     set(libkfontinstjobrunner_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/kcmfontinst/JobRunner.cpp
-                                   ${CMAKE_CURRENT_SOURCE_DIR}/kcmfontinst/ActionLabel.cpp
+                                   ${libkfontinstactionlabel_SRCS}
                                    ${CMAKE_CURRENT_SOURCE_DIR}/kcmfontinst/FontsPackage.cpp)
 
     add_subdirectory( lib ) 

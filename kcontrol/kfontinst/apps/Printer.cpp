@@ -22,18 +22,23 @@
  */
 
 #include "config-fontinst.h"
+#include "Printer.h"
 #include "FcEngine.h"
+#include "ActionLabel.h"
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTextStream>
+#include <QtCore/QFile>
 #include <QtGui/QPainter>
 #include <QtGui/QFont>
 #include <QtGui/QFontDatabase>
 #include <QtGui/QFontMetrics>
 #include <QtGui/QWidget>
-#include <QtCore/QFile>
 #include <QtGui/QPrinter>
 #include <QtGui/QPrintDialog>
-
+#include <QtGui/QFrame>
+#include <QtGui/QGridLayout>
+#include <QtGui/QProgressBar>
+#include <QtGui/QCloseEvent>
 #include <KDE/KCmdLineArgs>
 #include <KDE/KAboutData>
 #include <KDE/KApplication>
@@ -170,188 +175,251 @@ static QString previewString(QFont &font, const QString &text, bool onlyDrawChar
 }
 #endif
 
-static void printItems(const QList<Misc::TFont> &items, int size, QWidget *parent)
+CPrintThread::CPrintThread(QPrinter *printer, const QList<Misc::TFont> &items, int size, QObject *parent)
+            : QThread(parent)
+            , itsPrinter(printer)
+            , itsItems(items)
+            , itsSize(size)
+            , itsCancelled(false)
 {
-#ifdef HAVE_LOCALE_H
-    char *oldLocale=setlocale(LC_NUMERIC, "C");
-#endif
+}
 
-    QList<Misc::TFont>::ConstIterator it(items.begin()),
-                                      end(items.end());
-#ifdef KFI_PRINT_APP_FONTS
-    QHash<QString, int>               appFont;
+CPrintThread::~CPrintThread()
+{
+}
 
-    // Check for font files...
-    for(; it!=end; ++it)
+void CPrintThread::cancel()
+{
+    itsCancelled=true;
+}
+
+void CPrintThread::run()
+{
+    QPainter   painter;
+    QFont      sans("sans", 12, QFont::Bold);
+    bool       changedFontEmbeddingSetting(false);
+    QString    str(CFcEngine(false).getPreviewString());
+
+    if(!itsPrinter->fontEmbeddingEnabled())
     {
-        if('/'==(*it).family[0] && KFI_NO_STYLE_INFO==(*it).styleInfo &&
-           Misc::fExists((*it).family))
-            appFont[(*it).family]=QFontDatabase::addApplicationFont((*it).family);
-        else
-            appFont[(*it).family]=-1;
+        itsPrinter->setFontEmbeddingEnabled(true);
+        changedFontEmbeddingSetting=true;
     }
-#endif
-    QPrinter     printer;
-    QPrintDialog *dialog = KdePrint::createPrintDialog(&printer, parent);
 
-    if(dialog->exec())
+    itsPrinter->setResolution(72);
+    painter.begin(itsPrinter);
+
+    int       margin=(int)((2/2.54)*painter.device()->logicalDpiY()), // 2 cm margins
+              pageWidth=painter.device()->width()-(2*margin),
+              pageHeight=painter.device()->height()-(2*margin),
+              y=margin,
+              oneSize[2]={itsSize, 0};
+    const int *sizes=oneSize;
+    bool      firstFont(true);
+
+    if(0==itsSize)
+        sizes=CFcEngine::constScalableSizes;
+
+    painter.setClipping(true);
+    painter.setClipRect(margin, margin, pageWidth, pageHeight);
+
+    QList<Misc::TFont>::ConstIterator it(itsItems.constBegin()),
+                                      end(itsItems.constEnd());
+
+    for(int i=0; it!=end && !itsCancelled; ++it, ++i)
     {
-        QPainter   painter;
-        QFont      sans("sans", 12, QFont::Bold);
-        bool       changedFontEmbeddingSetting(false);
-        QString    str(CFcEngine(false).getPreviewString());
+        QString name(FC::createName((*it).family, (*it).styleInfo));
+        emit progress(i, name);
 
-        if(!printer.fontEmbeddingEnabled())
-        {
-            printer.setFontEmbeddingEnabled(true);
-            changedFontEmbeddingSetting=true;
-        }
-
-        printer.setResolution(72);
-        painter.begin(&printer);
-
-        int       margin=(int)((2/2.54)*painter.device()->logicalDpiY()), // 2 cm margins
-                  pageWidth=painter.device()->width()-(2*margin),
-                  pageHeight=painter.device()->height()-(2*margin),
-                  y=margin,
-                  oneSize[2]={size, 0};
-        const int *sizes=oneSize;
-        bool      firstFont(true);
-
-        if(0==size)
-            sizes=CFcEngine::constScalableSizes;
-
-        painter.setClipping(true);
-        painter.setClipRect(margin, margin, pageWidth, pageHeight);
-
-        for(it=items.begin(); it!=end; ++it)
-        {
-            unsigned int s=0;
-            QFont        font;
+        unsigned int s=0;
+        QFont        font;
 
 #ifdef KFI_PRINT_APP_FONTS
-            QString      family;
+        QString      family;
 
-            if(-1!=appFont[(*it).family])
-            {
-                family=QFontDatabase::applicationFontFamilies(appFont[(*it).family]).first();
-                font=QFont(family);
-            }
+        if(-1!=appFont[(*it).family])
+        {
+            family=QFontDatabase::applicationFontFamilies(appFont[(*it).family]).first();
+            font=QFont(family);
+        }
 #endif
-            painter.setFont(sans);
+        painter.setFont(sans);
 
-            if(!firstFont && !sufficientSpace(y, painter.fontMetrics().height(), sizes, pageHeight, size))
-            {
-                printer.newPage();
-                y=margin;
-            }
-            painter.setFont(sans);
-            y+=painter.fontMetrics().height();
+        if(!firstFont && !sufficientSpace(y, painter.fontMetrics().height(), sizes, pageHeight, itsSize))
+        {
+            itsPrinter->newPage();
+            y=margin;
+        }
+        painter.setFont(sans);
+        y+=painter.fontMetrics().height();
+        painter.drawText(margin, y, name);
 
+        y+=constMarginLineBefore;
+        painter.drawLine(margin, y, margin+pageWidth, y);
+        y+=constMarginLineAfter;
+        
+        bool              onlyDrawChars=false;
+        Qt::TextElideMode em=Qt::LeftToRight==QApplication::layoutDirection() ? Qt::ElideRight : Qt::ElideLeft;
+
+        if(0==itsSize)
+        {
 #ifdef KFI_PRINT_APP_FONTS
             if(family.isEmpty())
 #endif
-                painter.drawText(margin, y, FC::createName((*it).family, (*it).styleInfo));
+                font=CFcEngine::getQFont((*it).family, (*it).styleInfo, CFcEngine::constDefaultAlphaSize);
 #ifdef KFI_PRINT_APP_FONTS
             else
-                painter.drawText(margin, y, family);
+                font.setPointSize(CFcEngine::constDefaultAlphaSize);
 #endif
+            painter.setFont(font);
 
-            y+=constMarginLineBefore;
-            painter.drawLine(margin, y, margin+pageWidth, y);
-            y+=constMarginLineAfter;
+            QFontMetrics fm(font, painter.device());
+            bool         lc=hasStr(font, CFcEngine::getLowercaseLetters()),
+                            uc=hasStr(font, CFcEngine::getUppercaseLetters());
+
+            onlyDrawChars=!lc && !uc;
             
-            bool              onlyDrawChars=false;
-            Qt::TextElideMode em=Qt::LeftToRight==QApplication::layoutDirection() ? Qt::ElideRight : Qt::ElideLeft;
-
-            if(0==size)
+            if(lc || uc)
+                y+=CFcEngine::constDefaultAlphaSize;
+            
+            if(lc)
             {
-#ifdef KFI_PRINT_APP_FONTS
-                if(family.isEmpty())
-#endif
-                    font=CFcEngine::getQFont((*it).family, (*it).styleInfo,
-                                             CFcEngine::constDefaultAlphaSize);
-#ifdef KFI_PRINT_APP_FONTS
-                else
-                    font.setPointSize(CFcEngine::constDefaultAlphaSize);
-#endif
-                painter.setFont(font);
-
-                QFontMetrics fm(font, painter.device());
-                bool         lc=hasStr(font, CFcEngine::getLowercaseLetters()),
-                             uc=hasStr(font, CFcEngine::getUppercaseLetters());
-
-                onlyDrawChars=!lc && !uc;
-                
-                if(lc || uc)
-                    y+=CFcEngine::constDefaultAlphaSize;
-                
-                if(lc)
-                {
-                    painter.drawText(margin, y, fm.elidedText(CFcEngine::getLowercaseLetters(), em, pageWidth));
-                    y+=constMarginFont+CFcEngine::constDefaultAlphaSize;
-                }
-                
-                if(uc)
-                {
-                    painter.drawText(margin, y, fm.elidedText(CFcEngine::getUppercaseLetters(), em, pageWidth));
-                    y+=constMarginFont+CFcEngine::constDefaultAlphaSize;
-                }
-                
-                if(lc || uc)
-                {
-                    QString validPunc(usableStr(font, CFcEngine::getPunctuation()));
-                    if(validPunc.length()>=(CFcEngine::getPunctuation().length()/2))
-                    {
-                        painter.drawText(margin, y, fm.elidedText(CFcEngine::getPunctuation(), em, pageWidth));
-                        y+=constMarginFont+constMarginLineBefore;
-                    }
-                    painter.drawLine(margin, y, margin+pageWidth, y);
-                    y+=constMarginLineAfter;
-                }
+                painter.drawText(margin, y, fm.elidedText(CFcEngine::getLowercaseLetters(), em, pageWidth));
+                y+=constMarginFont+CFcEngine::constDefaultAlphaSize;
             }
             
-            for(; sizes[s]; ++s)
+            if(uc)
             {
+                painter.drawText(margin, y, fm.elidedText(CFcEngine::getUppercaseLetters(), em, pageWidth));
+                y+=constMarginFont+CFcEngine::constDefaultAlphaSize;
+            }
+            
+            if(lc || uc)
+            {
+                QString validPunc(usableStr(font, CFcEngine::getPunctuation()));
+                if(validPunc.length()>=(CFcEngine::getPunctuation().length()/2))
+                {
+                    painter.drawText(margin, y, fm.elidedText(CFcEngine::getPunctuation(), em, pageWidth));
+                    y+=constMarginFont+constMarginLineBefore;
+                }
+                painter.drawLine(margin, y, margin+pageWidth, y);
+                y+=constMarginLineAfter;
+            }
+        }
+        
+        for(; sizes[s]; ++s)
+        {
                 y+=sizes[s];
 #ifdef KFI_PRINT_APP_FONTS
-                if(family.isEmpty())
+            if(family.isEmpty())
 #endif
-                    font=CFcEngine::getQFont((*it).family, (*it).styleInfo, sizes[s]);
+                font=CFcEngine::getQFont((*it).family, (*it).styleInfo, sizes[s]);
 #ifdef KFI_PRINT_APP_FONTS
-                else
-                    font.setPointSize(sizes[s]);
+            else
+                font.setPointSize(sizes[s]);
 #endif
-                painter.setFont(font);
-                
-                QFontMetrics fm(font, painter.device());
+            painter.setFont(font);
+            
+            QFontMetrics fm(font, painter.device());
 
-                if(sufficientSpace(y, pageHeight, sizes[s]))
-                {
-                    painter.drawText(margin, y, fm.elidedText(previewString(font, str, onlyDrawChars), em, pageWidth));
-                    if(sizes[s+1])
-                        y+=constMarginFont;
-                }
-                else
-                    break;
+            if(sufficientSpace(y, pageHeight, sizes[s]))
+            {
+                painter.drawText(margin, y, fm.elidedText(previewString(font, str, onlyDrawChars), em, pageWidth));
+                if(sizes[s+1])
+                    y+=constMarginFont;
             }
-            y+=(s<1 || sizes[s-1]<25 ? 14 : 28);
-            firstFont=false;
+            else
+                break;
         }
-
-        painter.end();
-
-        //
-        // Did we change the users font settings? If so, reset to their previous values...
-        if(changedFontEmbeddingSetting)
-            printer.setFontEmbeddingEnabled(false);
+        y+=(s<1 || sizes[s-1]<25 ? 14 : 28);
+        firstFont=false;
     }
-#ifdef HAVE_LOCALE_H
-    if(oldLocale)
-        setlocale(LC_NUMERIC, oldLocale);
-#endif
+    emit progress(itsItems.count(), QString());
+    painter.end();
+
+    //
+    // Did we change the users font settings? If so, reset to their previous values...
+    if(changedFontEmbeddingSetting)
+        itsPrinter->setFontEmbeddingEnabled(false);
+}
+
+CPrinter::CPrinter(QWidget *parent)
+        : KDialog(parent)
+{
+    setCaption("Printing");
+    setButtons(Cancel);
+
+    QFrame *page = new QFrame(this);
+    QGridLayout *layout=new QGridLayout(page);
+    layout->setMargin(KDialog::marginHint());
+    layout->setSpacing(KDialog::spacingHint());
+    itsStatusLabel=new QLabel(page);
+    itsProgress=new QProgressBar(page);
+    layout->addWidget(itsActionLabel = new CActionLabel(this), 0, 0, 2, 1);
+    layout->addWidget(itsStatusLabel, 0, 1);
+    layout->addWidget(itsProgress, 1, 1);
+    itsProgress->setRange(0, 100);
+    layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 2, 0);
+    setMainWidget(page);
+    setMinimumSize(420, 80);
+}
+
+CPrinter::~CPrinter()
+{
+}
+
+void CPrinter::print(const QList<Misc::TFont> &items, int size)
+{
+    #ifdef HAVE_LOCALE_H
+        char *oldLocale=setlocale(LC_NUMERIC, "C");
+    #endif
+                
+    QPrinter     printer;
+    QPrintDialog *dialog = KdePrint::createPrintDialog(&printer, parentWidget());
+
+    if(dialog->exec())
+    {
+        CPrintThread *thread = new CPrintThread(&printer, items, size, this);
+
+        itsProgress->setRange(0, items.count());
+        itsProgress->setValue(0);
+        progress(0, i18n("Starting..."));
+        connect(thread, SIGNAL(progress(int, const QString &)), SLOT(progress(int, const QString &)));
+        connect(thread, SIGNAL(finished()), SLOT(accept()));
+        connect(this, SIGNAL(cancelled()), thread, SLOT(cancel()));
+        itsActionLabel->startAnimation();
+        thread->start();
+        exec();
+        delete thread;
+    }
 
     delete dialog;
+    
+    #ifdef HAVE_LOCALE_H
+    if(oldLocale)
+        setlocale(LC_NUMERIC, oldLocale);
+    #endif
+}
+
+void CPrinter::progress(int p, const QString &label)
+{
+    if(!label.isEmpty())
+        itsStatusLabel->setText(label);
+    itsProgress->setValue(p);
+}
+
+void CPrinter::slotButtonClicked(int button)
+{
+    Q_UNUSED(button)
+    itsStatusLabel->setText(i18n("Cancelling..."));
+    emit cancelled();
+}
+
+void CPrinter::closeEvent(QCloseEvent *e)
+{
+    Q_UNUSED(e)
+    e->ignore();
+    slotButtonClicked(0);
 }
 
 static KAboutData aboutData("kfontprint", KFI_CATALOGUE, ki18n("Font Printer"), "1.0", ki18n("Simple font printer"),
@@ -422,7 +490,7 @@ int main(int argc, char **argv)
         if(fonts.count())
         {
             KLocale::setMainCatalog(KFI_CATALOGUE);
-            printItems(fonts, size, createParent(args->getOption("embed").toInt(0, 16)));
+            CPrinter(createParent(args->getOption("embed").toInt(0, 16))).print(fonts, size);
 
             return 0;
         }
@@ -430,3 +498,5 @@ int main(int argc, char **argv)
 
     return -1;
 }
+
+#include "Printer.moc"
