@@ -21,6 +21,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include <config-workspace.h>
 #include "FcEngine.h"
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTextStream>

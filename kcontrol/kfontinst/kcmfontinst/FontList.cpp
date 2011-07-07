@@ -59,7 +59,6 @@
 #include "Family.h"
 #include "Style.h"
 #include "File.h"
-#include <config-workspace.h>
 
 namespace KFI
 {

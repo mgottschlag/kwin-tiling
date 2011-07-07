@@ -47,7 +47,6 @@
 #include "Family.h"
 #include "Style.h"
 #include "File.h"
-#include "config-workspace.h"
 
 #define MAX_IPC_SIZE     (1024*32)
 #define KFI_DBUG         kDebug(7000) << '(' << time(NULL) << ')'

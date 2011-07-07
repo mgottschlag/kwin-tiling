@@ -24,7 +24,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <config-workspace.h>
 #include "GroupList.h"
 #include "JobRunner.h"
 #include <QtCore/QSet>
