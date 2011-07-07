@@ -552,10 +552,9 @@ void Interface::matchCountChanged(int count)
 
     if (show) {
         //kDebug() << "showing!" << minimumSizeHint();
-
-        //fitWindow();
-
         if (!m_resultsView->isVisible()) {
+            fitWindow();
+
             // Next 2 lines are a workaround to allow arrow
             // keys navigation in krunner's result list.
             // Patch submited in bugreport #211578
