@@ -9,6 +9,13 @@ X-KDE-Library=kcm_fontinst
 X-KDE-ParentApp=kcontrol
 
 Name=Font Management
+Name[ia]=Gestion de font
+Name[ko]=글꼴 관리
+Name[nl]=Lettertypenbeheer
+Name[pt]=Gestão dos Tipos de Letra
+Name[pt_BR]=Gerenciamento de fontes
+Name[sv]=Teckensnittshantering
+Name[x-test]=xxFont Managementxx
 
 Comment=Install, manage, and preview fonts
 Comment[af]=Installeer, bestuur en bekyk skriftipes
