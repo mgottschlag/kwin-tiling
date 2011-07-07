@@ -26,7 +26,9 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTextStream>
 #include <QtGui/QPainter>
+#include <QtGui/QFont>
 #include <QtGui/QFontDatabase>
+#include <QtGui/QFontMetrics>
 #include <QtGui/QWidget>
 #include <QtCore/QFile>
 #include <QtGui/QPrinter>
@@ -259,7 +261,8 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
             painter.drawLine(margin, y, margin+pageWidth, y);
             y+=constMarginLineAfter;
             
-            bool onlyDrawChars=false;
+            bool              onlyDrawChars=false;
+            Qt::TextElideMode em=Qt::LeftToRight==QApplication::layoutDirection() ? Qt::ElideRight : Qt::ElideLeft;
 
             if(0==size)
             {
@@ -274,8 +277,9 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
 #endif
                 painter.setFont(font);
 
-                bool lc=hasStr(font, CFcEngine::getLowercaseLetters()),
-                     uc=hasStr(font, CFcEngine::getUppercaseLetters());
+                QFontMetrics fm(font, painter.device());
+                bool         lc=hasStr(font, CFcEngine::getLowercaseLetters()),
+                             uc=hasStr(font, CFcEngine::getUppercaseLetters());
 
                 onlyDrawChars=!lc && !uc;
                 
@@ -284,13 +288,13 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
                 
                 if(lc)
                 {
-                    painter.drawText(margin, y, CFcEngine::getLowercaseLetters());
+                    painter.drawText(margin, y, fm.elidedText(CFcEngine::getLowercaseLetters(), em, pageWidth));
                     y+=constMarginFont+CFcEngine::constDefaultAlphaSize;
                 }
                 
                 if(uc)
                 {
-                    painter.drawText(margin, y, CFcEngine::getUppercaseLetters());
+                    painter.drawText(margin, y, fm.elidedText(CFcEngine::getUppercaseLetters(), em, pageWidth));
                     y+=constMarginFont+CFcEngine::constDefaultAlphaSize;
                 }
                 
@@ -299,7 +303,7 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
                     QString validPunc(usableStr(font, CFcEngine::getPunctuation()));
                     if(validPunc.length()>=(CFcEngine::getPunctuation().length()/2))
                     {
-                        painter.drawText(margin, y, CFcEngine::getPunctuation());
+                        painter.drawText(margin, y, fm.elidedText(CFcEngine::getPunctuation(), em, pageWidth));
                         y+=constMarginFont+constMarginLineBefore;
                     }
                     painter.drawLine(margin, y, margin+pageWidth, y);
@@ -319,10 +323,12 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
                     font.setPointSize(sizes[s]);
 #endif
                 painter.setFont(font);
+                
+                QFontMetrics fm(font, painter.device());
 
                 if(sufficientSpace(y, pageHeight, sizes[s]))
                 {
-                    painter.drawText(margin, y, previewString(font, str, onlyDrawChars));
+                    painter.drawText(margin, y, fm.elidedText(previewString(font, str, onlyDrawChars), em, pageWidth));
                     if(sizes[s+1])
                         y+=constMarginFont;
                 }
