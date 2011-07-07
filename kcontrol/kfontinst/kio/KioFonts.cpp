@@ -275,7 +275,7 @@ void CKioFonts::put(const KUrl &url, int /*permissions*/, KIO::JobFlags /*flags*
             }
 
             handleResp(itsInterface->install(tempFile, Misc::root() || FOLDER_SYS==folder),
-                       url.fileName(), tempFile);
+                       url.fileName(), tempFile, FOLDER_SYS==folder);
             QFile::remove(tempFile);
         }
         else
@@ -777,7 +777,7 @@ Family CKioFonts::getFont(const KUrl &url, EFolder folder)
     return itsInterface->stat(name, FOLDER_SYS==folder);
 }
 
-void CKioFonts::handleResp(int resp, const QString &file, const QString &tempFile)
+void CKioFonts::handleResp(int resp, const QString &file, const QString &tempFile, bool destIsSystem)
 {
     switch(resp)
     {
@@ -802,6 +802,13 @@ void CKioFonts::handleResp(int resp, const QString &file, const QString &tempFil
         case FontInst::STATUS_PARTIAL_DELETE:
             error(KIO::ERR_SLAVE_DEFINED, i18n("Could not remove all files associated with %1", file));
             break;
+        case KIO::ERR_FILE_ALREADY_EXIST:
+        {
+            QString name(Misc::modifyName(file)),
+                    destFolder(Misc::getDestFolder(itsInterface->folderName(destIsSystem), name));
+            error(KIO::ERR_SLAVE_DEFINED, i18n("<i>%1</i> already exists.", destFolder+name));
+            break;
+        }
         case FontInst::STATUS_OK:
             finished();
             break;

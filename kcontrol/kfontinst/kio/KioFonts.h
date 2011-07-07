@@ -70,7 +70,7 @@ class CKioFonts : public KIO::SlaveBase
     void    createUDSEntry(KIO::UDSEntry &entry, EFolder folder);
     bool    createUDSEntry(KIO::UDSEntry &entry, EFolder folder, const Family &family, const Style &style);
     Family  getFont(const KUrl &url, EFolder folder);
-    void    handleResp(int resp, const QString &file, const QString &tempFile=QString());
+    void    handleResp(int resp, const QString &file, const QString &tempFile=QString(), bool destIsSystem=false);
 
     private:
 

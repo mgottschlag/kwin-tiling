@@ -108,6 +108,17 @@ Family FontInstInterface::stat(const QString &file, bool system)
     return rv;
 }
 
+QString FontInstInterface::folderName(bool sys)
+{
+    if(!itsInterface)
+        return QString();
+
+    QDBusPendingReply<QString> reply=itsInterface->folderName(sys);
+
+    reply.waitForFinished();
+    return reply.isError() ? QString() : reply.argumentAt<0>();
+}
+
 int FontInstInterface::waitForResponse()
 {
     KFI_DBUG;
