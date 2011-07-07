@@ -150,8 +150,6 @@ private:
     const SharedResultData *m_sharedData;
     bool m_mouseHovered : 1;
     bool m_mimeDataFailed : 1;
-
-    static int s_fontHeight;
 };
 
 #endif
