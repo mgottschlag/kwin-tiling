@@ -1419,11 +1419,12 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
                                        this, SIGNAL(enable()));
     itsDisableAct=itsMenu->addAction(KIcon("disablefont"), i18n("Disable"),
                                         this, SIGNAL(disable()));
-    itsMenu->addSeparator();
-    itsPrintAct=itsMenu->addAction(KIcon("document-print"), i18n("Print..."),
-                                      this, SIGNAL(print()));
-    itsViewAct=itsMenu->addAction(KIcon("kfontview"), i18n("Open in Font Viewer"),
-                                      this, SLOT(view()));
+    if(!Misc::app(KFI_VIEWER).isEmpty() || !Misc::app(KFI_VIEWER).isEmpty())
+        itsMenu->addSeparator();
+    itsPrintAct=Misc::app(KFI_VIEWER).isEmpty() ? 0L : itsMenu->addAction(KIcon("document-print"), i18n("Print..."),
+                                                                          this, SIGNAL(print()));
+    itsViewAct=Misc::app(KFI_VIEWER).isEmpty() ? 0L : itsMenu->addAction(KIcon("kfontview"), i18n("Open in Font Viewer"),
+                                                                         this, SLOT(view()));
     itsMenu->addSeparator();
     itsMenu->addAction(KIcon("view-refresh"), i18n("Reload"), model, SLOT(load()));
 }
@@ -1897,7 +1898,7 @@ void CFontListView::view()
             args << FC::encode((*it)->family(), (*it)->styleInfo(), file, index).url();
         }
 
-        QProcess::startDetached(KFI_VIEWER, args);
+        QProcess::startDetached(Misc::app(KFI_VIEWER), args);
     }
 }
 
@@ -2047,8 +2048,10 @@ void CFontListView::contextMenuEvent(QContextMenuEvent *ev)
 
     itsEnableAct->setEnabled(dis);
     itsDisableAct->setEnabled(en);
-    itsPrintAct->setEnabled(en|dis);
-    itsViewAct->setEnabled(en|dis);
+    if(itsPrintAct)
+        itsPrintAct->setEnabled(en|dis);
+    if(itsViewAct)
+        itsViewAct->setEnabled(en|dis);
     itsMenu->popup(ev->globalPos());
 }
 

@@ -470,6 +470,15 @@ QString modifyName(const QString &fname)
             : rv.left(dotPos+1)+rv.mid(dotPos+1).toLower();
 }
 
+QString app(const QString &name, const char *path)
+{
+    static QMap<QString, QString> apps;
+    
+    if(!apps.contains(name))
+        apps[name]=KStandardDirs::findExe(name, path ? KStandardDirs::installPath(path) : QString());
+    return apps[name];
+}
+
 } // Misc::
 
 } // KFI::

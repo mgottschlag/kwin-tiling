@@ -21,7 +21,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "../config-fontinst.h"
 #include "DuplicatesDialog.h"
 #include "ActionLabel.h"
 #include "Misc.h"
@@ -37,6 +36,7 @@
 #include <KDE/KFileItem>
 #include <KDE/KPropertiesDialog>
 #include <KDE/KShell>
+#include <KDE/KStandardDirs>
 #include <QtGui/QLabel>
 #include <QtCore/QTimer>
 #include <QtGui/QGridLayout>
@@ -421,8 +421,9 @@ CFontFileListView::CFontFileListView(QWidget *parent)
     setAlternatingRowColors(true);
 
     itsMenu=new QMenu(this);
-    itsMenu->addAction(KIcon("kfontview"), i18n("Open in Font Viewer"),
-                       this, SLOT(openViewer()));
+    if(!Misc::app(KFI_VIEWER).isEmpty())
+        itsMenu->addAction(KIcon("kfontview"), i18n("Open in Font Viewer"),
+                           this, SLOT(openViewer()));
     itsMenu->addAction(KIcon("document-properties"), i18n("Properties"),
                        this, SLOT(properties()));
     itsMenu->addSeparator();
@@ -539,7 +540,7 @@ void CFontFileListView::openViewer()
 
             args << (*it);
 
-            QProcess::startDetached(KFI_VIEWER, args);
+            QProcess::startDetached(Misc::app(KFI_VIEWER), args);
         }
     }
 }

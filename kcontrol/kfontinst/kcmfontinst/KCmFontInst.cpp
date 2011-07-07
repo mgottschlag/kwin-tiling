@@ -566,95 +566,88 @@ void CKCmFontInst::print(bool all)
     // In order to support printing of newly installed/enabled fonts, the actual printing
     // is carried out by the kfontinst helper app. This way we know Qt's font list will be
     // up to date.
-    if(!itsPrintProc || QProcess::NotRunning==itsPrintProc->state())
+    if((!itsPrintProc || QProcess::NotRunning==itsPrintProc->state()) && !Misc::app(KFI_PRINTER).isEmpty())
     {
-        QString exe(KStandardDirs::findExe(QLatin1String(KFI_PRINTER), KStandardDirs::installPath("libexec")));
+        QSet<Misc::TFont> fonts;
 
-        if(exe.isEmpty())
-            KMessageBox::error(this, i18n("Failed to locate font printer."));
-        else
+        itsFontListView->getPrintableFonts(fonts, !all);
+
+        if(fonts.count())
         {
-            QSet<Misc::TFont> fonts;
+            CPrintDialog dlg(this);
+            KConfigGroup cg(&itsConfig, CFG_GROUP);
 
-            itsFontListView->getPrintableFonts(fonts, !all);
-
-            if(fonts.count())
+            if(dlg.exec(cg.readEntry(CFG_FONT_SIZE, 1)))
             {
-                CPrintDialog dlg(this);
-                KConfigGroup cg(&itsConfig, CFG_GROUP);
+                static const int constSizes[]={0, 12, 18, 24, 36, 48};
+                QSet<Misc::TFont>::ConstIterator it(fonts.begin()),
+                                                 end(fonts.end());
+                KTemporaryFile                   tmpFile;
+                bool                             useFile(fonts.count()>16),
+                                                 startProc(true);
+                QStringList                      args;
 
-                if(dlg.exec(cg.readEntry(CFG_FONT_SIZE, 1)))
+                if(!itsPrintProc)
+                    itsPrintProc=new QProcess(this);
+                else
+                    itsPrintProc->kill();
+
+                //
+                // If we have lots of fonts to print, pass kfontinst a tempory groups file to print
+                // instead of passing font by font...
+                if(useFile)
                 {
-                    static const int constSizes[]={0, 12, 18, 24, 36, 48};
-                    QSet<Misc::TFont>::ConstIterator it(fonts.begin()),
-                                                    end(fonts.end());
-                    KTemporaryFile                   tmpFile;
-                    bool                             useFile(fonts.count()>16),
-                                                    startProc(true);
-                    QStringList                      args;
-
-                    if(!itsPrintProc)
-                        itsPrintProc=new QProcess(this);
-                    else
-                        itsPrintProc->kill();
-
-                    //
-                    // If we have lots of fonts to print, pass kfontinst a tempory groups file to print
-                    // instead of passing font by font...
-                    if(useFile)
+                    if(tmpFile.open())
                     {
-                        if(tmpFile.open())
-                        {
-                            QTextStream str(&tmpFile);
-
-                            for(; it!=end; ++it)
-                                str << (*it).family << endl
-                                    << (*it).styleInfo << endl;
-
-                            args << "--embed" << QString().sprintf("0x%x", (unsigned int)window()->winId())
-                                << "--caption" << KGlobal::caption().toUtf8()
-                                << "--icon" << "preferences-desktop-font-installer"
-                                << "--size" << QString().setNum(constSizes[dlg.chosenSize() < 6 ? dlg.chosenSize() : 2])
-                                << "--listfile" << tmpFile.fileName()
-                                << "--deletefile";
-                        }
-                        else
-                        {
-                            KMessageBox::error(this, i18n("Failed to save list of fonts to print."));
-                            startProc=false;
-                        }
-                    }
-                    else
-                    {
-                        args << "--embed" << QString().sprintf("0x%x", (unsigned int)window()->winId())
-                            << "--caption" << KGlobal::caption().toUtf8()
-                            << "--icon" << "preferences-desktop-font-installer"
-                            << "--size" << QString().setNum(constSizes[dlg.chosenSize()<6 ? dlg.chosenSize() : 2]);
+                        QTextStream str(&tmpFile);
 
                         for(; it!=end; ++it)
-                            args << "--pfont" << QString((*it).family.toUtf8()+','+QString().setNum((*it).styleInfo));
-                    }
+                            str << (*it).family << endl
+                                << (*it).styleInfo << endl;
 
-                    if(startProc)
+                        args << "--embed" << QString().sprintf("0x%x", (unsigned int)window()->winId())
+                             << "--caption" << KGlobal::caption().toUtf8()
+                             << "--icon" << "preferences-desktop-font-installer"
+                             << "--size" << QString().setNum(constSizes[dlg.chosenSize() < 6 ? dlg.chosenSize() : 2])
+                             << "--listfile" << tmpFile.fileName()
+                             << "--deletefile";
+                    }
+                    else
                     {
-                        itsPrintProc->start(exe, args);
-
-                        if(itsPrintProc->waitForStarted(1000))
-                        {
-                            if(useFile)
-                                tmpFile.setAutoRemove(false);
-                        }
-                        else
-                            KMessageBox::error(this, i18n("Failed to start font printer."));
+                        KMessageBox::error(this, i18n("Failed to save list of fonts to print."));
+                        startProc=false;
                     }
-                    cg.writeEntry(CFG_FONT_SIZE, dlg.chosenSize());
                 }
+                else
+                {
+                    args << "--embed" << QString().sprintf("0x%x", (unsigned int)window()->winId())
+                         << "--caption" << KGlobal::caption().toUtf8()
+                         << "--icon" << "preferences-desktop-font-installer"
+                         << "--size" << QString().setNum(constSizes[dlg.chosenSize()<6 ? dlg.chosenSize() : 2]);
+
+                    for(; it!=end; ++it)
+                        args << "--pfont" << QString((*it).family.toUtf8()+','+QString().setNum((*it).styleInfo));
+                }
+
+                if(startProc)
+                {
+                    itsPrintProc->start(Misc::app(KFI_PRINTER), args);
+
+                    if(itsPrintProc->waitForStarted(1000))
+                    {
+                        if(useFile)
+                            tmpFile.setAutoRemove(false);
+                    }
+                    else
+                        KMessageBox::error(this, i18n("Failed to start font printer."));
+                }
+                cg.writeEntry(CFG_FONT_SIZE, dlg.chosenSize());
             }
-            else
-                KMessageBox::information(this, i18n("There are no printable fonts.\n"
-                                                    "You can only print non-bitmap and enabled fonts."),
-                                         i18n("Cannot Print"));
         }
+        else
+            KMessageBox::information(this, i18n("There are no printable fonts.\n"
+                                                "You can only print non-bitmap and enabled fonts."),
+                                           i18n("Cannot Print"));
     }
 }
 
@@ -735,8 +728,8 @@ void CKCmFontInst::moveFonts()
             break;
             default:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
-                        i18np("<p>Do you really want to move this font from <i>%2</i> to <i>%3</i>?</p>",
-                              "<p>Do you really want to move these %1 fonts from <i>%2</i> to <i>%3</i>?</p>",
+                        i18np("Do you really want to move this font?",
+                              "<p>Do you really want to move these %1 fonts from <i>%2</i> to <i>%3</i>?",
                               fontNames.count(),
                               itsGroupListView->isSystem() ? i18n(KFI_KIO_FONTS_SYS) : i18n(KFI_KIO_FONTS_USER),
                               itsGroupListView->isSystem() ? i18n(KFI_KIO_FONTS_USER) : i18n(KFI_KIO_FONTS_SYS)),

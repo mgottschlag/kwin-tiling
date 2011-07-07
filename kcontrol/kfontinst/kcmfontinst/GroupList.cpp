@@ -837,9 +837,15 @@ CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
     itsMenu->addSeparator();
     itsRenameAct=itsMenu->addAction(KIcon("edit-rename"), i18n("Rename..."),
                                     this, SLOT(rename()));
-    itsMenu->addSeparator();
-    itsPrintAct=itsMenu->addAction(KIcon("document-print"), i18n("Print..."),
-                                   this, SIGNAL(print()));
+    
+    if(!Misc::app(KFI_PRINTER).isEmpty())
+    {
+        itsMenu->addSeparator();
+        itsPrintAct=itsMenu->addAction(KIcon("document-print"), i18n("Print..."),
+                                       this, SIGNAL(print()));
+    }
+    else
+        itsPrintAct=0L;
     itsMenu->addSeparator();
     itsExportAct=itsMenu->addAction(KIcon("document-export"), i18n("Export..."),
                                     this, SIGNAL(zip()));
@@ -872,7 +878,8 @@ void CGroupListView::controlMenu(bool del, bool en, bool dis, bool p, bool exp)
     itsRenameAct->setEnabled(del);
     itsEnableAct->setEnabled(en);
     itsDisableAct->setEnabled(dis);
-    itsPrintAct->setEnabled(p);
+    if(itsPrintAct)
+        itsPrintAct->setEnabled(p);
     itsExportAct->setEnabled(exp);
 }
 

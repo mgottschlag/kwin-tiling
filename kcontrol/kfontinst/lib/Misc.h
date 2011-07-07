@@ -103,6 +103,7 @@ namespace Misc
     {
         return folder+file[0].toLower()+'/';
     }
+    extern KDE_EXPORT QString app(const QString &name, const char *path=0L);
 }
 
 }
