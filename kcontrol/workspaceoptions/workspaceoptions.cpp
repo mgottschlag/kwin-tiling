@@ -303,12 +303,12 @@ void WorkspaceOptionsModule::save()
     if (m_currentlyFixedDashboard != fixedDashboard) {
         // confirm with th euser that this is really the change they want if going from
         // separate-dashboard back to dashboard-follows-desktop
-        const QString message = i18n("Turning off the show independant widget set feature will "
+        const QString message = i18n("Turning off the show independent widget set feature will "
                                      "result in all widgets that were on the dashboard to be removed. "
                                      "Are you sure you wish to make this change?");
         if (!m_currentlyFixedDashboard ||
-            KMessageBox::Yes == KMessageBox::warningYesNo(this, message, i18n("Turn off independant widgets?"),
-                                                          KGuiItem(i18n("Turn off independant widgets")),
+            KMessageBox::Yes == KMessageBox::warningYesNo(this, message, i18n("Turn off independent widgets?"),
+                                                          KGuiItem(i18n("Turn off independent widgets")),
                                                           KStandardGuiItem::cancel())) {
             QDBusInterface interface("org.kde.plasma-desktop", "/App");
             interface.call(QDBus::NoBlock, "setFixedDashboard", fixedDashboard);
