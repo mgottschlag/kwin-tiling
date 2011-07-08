@@ -216,10 +216,9 @@ void CPrintThread::run()
     itsPrinter->setResolution(72);
     painter.begin(itsPrinter);
 
-    int       margin=(int)((2/2.54)*painter.device()->logicalDpiY()), // 2 cm margins
-              pageWidth=painter.device()->width()-(2*margin),
-              pageHeight=painter.device()->height()-(2*margin),
-              y=margin,
+    int       pageWidth=painter.device()->width(),
+              pageHeight=painter.device()->height(),
+              y=0,
               oneSize[2]={itsSize, 0};
     const int *sizes=oneSize;
     bool      firstFont(true);
@@ -228,7 +227,7 @@ void CPrintThread::run()
         sizes=CFcEngine::constScalableSizes;
 
     painter.setClipping(true);
-    painter.setClipRect(margin, margin, pageWidth, pageHeight);
+    painter.setClipRect(0, 0, pageWidth, pageHeight);
 
     QList<Misc::TFont>::ConstIterator it(itsItems.constBegin()),
                                       end(itsItems.constEnd());
@@ -257,14 +256,14 @@ void CPrintThread::run()
         if(!firstFont && !sufficientSpace(y, &painter, font, sizes, pageHeight, itsSize))
         {
             itsPrinter->newPage();
-            y=margin;
+            y=0;
         }
         painter.setFont(sans);
         y+=painter.fontMetrics().height();
-        painter.drawText(margin, y, name);
+        painter.drawText(0, y, name);
 
         y+=constMarginLineBefore;
-        painter.drawLine(margin, y, margin+pageWidth, y);
+        painter.drawLine(0, y, pageWidth, y);
         y+=constMarginLineAfter;
         
         bool              onlyDrawChars=false;
@@ -286,13 +285,13 @@ void CPrintThread::run()
             
             if(lc)
             {
-                painter.drawText(margin, y, fm.elidedText(CFcEngine::getLowercaseLetters(), em, pageWidth));
+                painter.drawText(0, y, fm.elidedText(CFcEngine::getLowercaseLetters(), em, pageWidth));
                 y+=constMarginFont+CFcEngine::constDefaultAlphaSize;
             }
             
             if(uc)
             {
-                painter.drawText(margin, y, fm.elidedText(CFcEngine::getUppercaseLetters(), em, pageWidth));
+                painter.drawText(0, y, fm.elidedText(CFcEngine::getUppercaseLetters(), em, pageWidth));
                 y+=constMarginFont+CFcEngine::constDefaultAlphaSize;
             }
             
@@ -301,10 +300,10 @@ void CPrintThread::run()
                 QString validPunc(usableStr(font, CFcEngine::getPunctuation()));
                 if(validPunc.length()>=(CFcEngine::getPunctuation().length()/2))
                 {
-                    painter.drawText(margin, y, fm.elidedText(CFcEngine::getPunctuation(), em, pageWidth));
+                    painter.drawText(0, y, fm.elidedText(CFcEngine::getPunctuation(), em, pageWidth));
                     y+=constMarginFont+constMarginLineBefore;
                 }
-                painter.drawLine(margin, y, margin+pageWidth, y);
+                painter.drawLine(0, y, pageWidth, y);
                 y+=constMarginLineAfter;
             }
         }
@@ -319,7 +318,7 @@ void CPrintThread::run()
 
             if(sufficientSpace(y, pageHeight, fm))
             {
-                painter.drawText(margin, y, fm.elidedText(previewString(font, str, onlyDrawChars), em, pageWidth));
+                painter.drawText(0, y, fm.elidedText(previewString(font, str, onlyDrawChars), em, pageWidth));
                 if(sizes[s+1])
                     y+=constMarginFont;
             }
