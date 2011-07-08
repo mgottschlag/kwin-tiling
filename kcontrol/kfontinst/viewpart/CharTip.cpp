@@ -166,6 +166,8 @@ void CCharTip::showTip()
     if(!itsParent->underMouse())
         return;
 
+    static const int constPixSize=96;
+
     EUnicodeCategory cat(getCategory(itsItem.ucs4));
     QString          details("<table>");
 
@@ -217,7 +219,7 @@ void CCharTip::showTip()
 
     QImage img=itsParent->engine()->draw(itsParent->itsFontName, itsParent->itsStyleInfo,
                                          itsParent->itsCurrentFace-1, palette().text().color(), bgnd,
-                                         (int)(itsItem.width()*2.5), (int)(itsItem.height()*2.5), false, range, NULL);
+                                         constPixSize, constPixSize, false, range, NULL);
 
     if(!img.isNull())
         itsPixmapLabel->setPixmap(QPixmap::fromImage(img));
