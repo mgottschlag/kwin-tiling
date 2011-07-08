@@ -340,7 +340,7 @@ void CPrintThread::run()
 CPrinter::CPrinter(QWidget *parent)
         : KDialog(parent)
 {
-    setCaption("Printing");
+    setCaption("Print");
     setButtons(Cancel);
 
     QFrame *page = new QFrame(this);
@@ -377,7 +377,7 @@ void CPrinter::print(const QList<Misc::TFont> &items, int size)
 
         itsProgress->setRange(0, items.count());
         itsProgress->setValue(0);
-        progress(0, i18n("Starting..."));
+        progress(0, QString());
         connect(thread, SIGNAL(progress(int, const QString &)), SLOT(progress(int, const QString &)));
         connect(thread, SIGNAL(finished()), SLOT(accept()));
         connect(this, SIGNAL(cancelled()), thread, SLOT(cancel()));
