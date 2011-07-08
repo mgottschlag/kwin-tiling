@@ -416,7 +416,7 @@ void CPrinter::closeEvent(QCloseEvent *e)
     slotButtonClicked(0);
 }
 
-static KAboutData aboutData("kfontprint", KFI_CATALOGUE, ki18n("Font Printer"), "1.0", ki18n("Simple font printer"),
+static KAboutData aboutData("kfontprint", KFI_CATALOGUE, ki18n("Font Printer"), "1.1", ki18n("Simple font printer"),
                             KAboutData::License_GPL, ki18n("(C) Craig Drummond, 2007"));
 
 int main(int argc, char **argv)
