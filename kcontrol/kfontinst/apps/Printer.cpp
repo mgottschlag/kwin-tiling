@@ -64,25 +64,32 @@ static const int constMarginLineBefore=1;
 static const int constMarginLineAfter=2;
 static const int constMarginFont=4;
 
-inline bool sufficientSpace(int y, int pageHeight, int size)
+inline bool sufficientSpace(int y, int pageHeight, const QFontMetrics &fm)
 {
-    return (y+constMarginFont+size)<pageHeight;
+    return (y+constMarginFont+fm.height())<pageHeight;
 }
 
-static bool sufficientSpace(int y, int titleFontHeight, const int *sizes, int pageHeight, int size)
+static bool sufficientSpace(int y, QPainter *painter, QFont font, const int *sizes, int pageHeight, int size)
 {
-    int required=titleFontHeight+constMarginLineBefore+constMarginLineAfter;
+    int titleFontHeight=painter->fontMetrics().height(),
+        required=titleFontHeight+constMarginLineBefore+constMarginLineAfter;
 
     for(unsigned int s=0; sizes[s]; ++s)
     {
-        required+=sizes[s];
+        font.setPointSize(sizes[s]);
+        required+=QFontMetrics(font, painter->device()).height();
         if(sizes[s+1])
             required+=constMarginFont;
     }
 
     if(0==size)
-        required+=(3*(constMarginFont+CFcEngine::constDefaultAlphaSize))+
+    {
+        font.setPointSize(CFcEngine::constDefaultAlphaSize);
+        int fontHeight=QFontMetrics(font, painter->device()).height();
+
+        required+=(3*(constMarginFont+fontHeight))+
                   constMarginLineBefore+constMarginLineAfter;
+    }
     return (y+required)<pageHeight;
 }
 
@@ -209,10 +216,9 @@ void CPrintThread::run()
     itsPrinter->setResolution(72);
     painter.begin(itsPrinter);
 
-    int       margin=(int)((2/2.54)*painter.device()->logicalDpiY()), // 2 cm margins
-              pageWidth=painter.device()->width()-(2*margin),
-              pageHeight=painter.device()->height()-(2*margin),
-              y=margin,
+    int       pageWidth=painter.device()->width(),
+              pageHeight=painter.device()->height(),
+              y=0,
               oneSize[2]={itsSize, 0};
     const int *sizes=oneSize;
     bool      firstFont(true);
@@ -221,7 +227,7 @@ void CPrintThread::run()
         sizes=CFcEngine::constScalableSizes;
 
     painter.setClipping(true);
-    painter.setClipRect(margin, margin, pageWidth, pageHeight);
+    painter.setClipRect(0, 0, pageWidth, pageHeight);
 
     QList<Misc::TFont>::ConstIterator it(itsItems.constBegin()),
                                       end(itsItems.constEnd());
@@ -242,20 +248,22 @@ void CPrintThread::run()
             family=QFontDatabase::applicationFontFamilies(appFont[(*it).family]).first();
             font=QFont(family);
         }
+#else
+        font=CFcEngine::getQFont((*it).family, (*it).styleInfo, CFcEngine::constDefaultAlphaSize);
 #endif
         painter.setFont(sans);
 
-        if(!firstFont && !sufficientSpace(y, painter.fontMetrics().height(), sizes, pageHeight, itsSize))
+        if(!firstFont && !sufficientSpace(y, &painter, font, sizes, pageHeight, itsSize))
         {
             itsPrinter->newPage();
-            y=margin;
+            y=0;
         }
         painter.setFont(sans);
         y+=painter.fontMetrics().height();
-        painter.drawText(margin, y, name);
+        painter.drawText(0, y, name);
 
         y+=constMarginLineBefore;
-        painter.drawLine(margin, y, margin+pageWidth, y);
+        painter.drawLine(0, y, pageWidth, y);
         y+=constMarginLineAfter;
         
         bool              onlyDrawChars=false;
@@ -263,19 +271,12 @@ void CPrintThread::run()
 
         if(0==itsSize)
         {
-#ifdef KFI_PRINT_APP_FONTS
-            if(family.isEmpty())
-#endif
-                font=CFcEngine::getQFont((*it).family, (*it).styleInfo, CFcEngine::constDefaultAlphaSize);
-#ifdef KFI_PRINT_APP_FONTS
-            else
-                font.setPointSize(CFcEngine::constDefaultAlphaSize);
-#endif
+            font.setPointSize(CFcEngine::constDefaultAlphaSize);
             painter.setFont(font);
 
             QFontMetrics fm(font, painter.device());
             bool         lc=hasStr(font, CFcEngine::getLowercaseLetters()),
-                            uc=hasStr(font, CFcEngine::getUppercaseLetters());
+                         uc=hasStr(font, CFcEngine::getUppercaseLetters());
 
             onlyDrawChars=!lc && !uc;
             
@@ -284,13 +285,13 @@ void CPrintThread::run()
             
             if(lc)
             {
-                painter.drawText(margin, y, fm.elidedText(CFcEngine::getLowercaseLetters(), em, pageWidth));
+                painter.drawText(0, y, fm.elidedText(CFcEngine::getLowercaseLetters(), em, pageWidth));
                 y+=constMarginFont+CFcEngine::constDefaultAlphaSize;
             }
             
             if(uc)
             {
-                painter.drawText(margin, y, fm.elidedText(CFcEngine::getUppercaseLetters(), em, pageWidth));
+                painter.drawText(0, y, fm.elidedText(CFcEngine::getUppercaseLetters(), em, pageWidth));
                 y+=constMarginFont+CFcEngine::constDefaultAlphaSize;
             }
             
@@ -299,32 +300,25 @@ void CPrintThread::run()
                 QString validPunc(usableStr(font, CFcEngine::getPunctuation()));
                 if(validPunc.length()>=(CFcEngine::getPunctuation().length()/2))
                 {
-                    painter.drawText(margin, y, fm.elidedText(CFcEngine::getPunctuation(), em, pageWidth));
+                    painter.drawText(0, y, fm.elidedText(CFcEngine::getPunctuation(), em, pageWidth));
                     y+=constMarginFont+constMarginLineBefore;
                 }
-                painter.drawLine(margin, y, margin+pageWidth, y);
+                painter.drawLine(0, y, pageWidth, y);
                 y+=constMarginLineAfter;
             }
         }
         
         for(; sizes[s]; ++s)
         {
-                y+=sizes[s];
-#ifdef KFI_PRINT_APP_FONTS
-            if(family.isEmpty())
-#endif
-                font=CFcEngine::getQFont((*it).family, (*it).styleInfo, sizes[s]);
-#ifdef KFI_PRINT_APP_FONTS
-            else
-                font.setPointSize(sizes[s]);
-#endif
+            y+=sizes[s];
+            font.setPointSize(sizes[s]);
             painter.setFont(font);
             
             QFontMetrics fm(font, painter.device());
 
-            if(sufficientSpace(y, pageHeight, sizes[s]))
+            if(sufficientSpace(y, pageHeight, fm))
             {
-                painter.drawText(margin, y, fm.elidedText(previewString(font, str, onlyDrawChars), em, pageWidth));
+                painter.drawText(0, y, fm.elidedText(previewString(font, str, onlyDrawChars), em, pageWidth));
                 if(sizes[s+1])
                     y+=constMarginFont;
             }
@@ -346,7 +340,7 @@ void CPrintThread::run()
 CPrinter::CPrinter(QWidget *parent)
         : KDialog(parent)
 {
-    setCaption("Printing");
+    setCaption("Print");
     setButtons(Cancel);
 
     QFrame *page = new QFrame(this);
@@ -371,7 +365,7 @@ CPrinter::~CPrinter()
 void CPrinter::print(const QList<Misc::TFont> &items, int size)
 {
     #ifdef HAVE_LOCALE_H
-        char *oldLocale=setlocale(LC_NUMERIC, "C");
+    char *oldLocale=setlocale(LC_NUMERIC, "C");
     #endif
                 
     QPrinter     printer;
@@ -383,7 +377,7 @@ void CPrinter::print(const QList<Misc::TFont> &items, int size)
 
         itsProgress->setRange(0, items.count());
         itsProgress->setValue(0);
-        progress(0, i18n("Starting..."));
+        progress(0, QString());
         connect(thread, SIGNAL(progress(int, const QString &)), SLOT(progress(int, const QString &)));
         connect(thread, SIGNAL(finished()), SLOT(accept()));
         connect(this, SIGNAL(cancelled()), thread, SLOT(cancel()));
@@ -411,7 +405,7 @@ void CPrinter::progress(int p, const QString &label)
 void CPrinter::slotButtonClicked(int button)
 {
     Q_UNUSED(button)
-    itsStatusLabel->setText(i18n("Cancelling..."));
+    itsStatusLabel->setText(i18n("Canceling..."));
     emit cancelled();
 }
 
@@ -422,7 +416,7 @@ void CPrinter::closeEvent(QCloseEvent *e)
     slotButtonClicked(0);
 }
 
-static KAboutData aboutData("kfontprint", KFI_CATALOGUE, ki18n("Font Printer"), "1.0", ki18n("Simple font printer"),
+static KAboutData aboutData("kfontprint", KFI_CATALOGUE, ki18n("Font Printer"), "1.1", ki18n("Simple font printer"),
                             KAboutData::License_GPL, ki18n("(C) Craig Drummond, 2007"));
 
 int main(int argc, char **argv)

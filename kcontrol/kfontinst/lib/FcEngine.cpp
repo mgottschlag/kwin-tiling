@@ -898,7 +898,7 @@ QImage CFcEngine::draw(const QString &name, quint32 style, int faceNo, const QCo
                             closeFont(xftFont);
                         }
                     }
-                    else if((xftFont=getFont(alphaSize()*2)))
+                    else if((xftFont=getFont(int(imgWidth*0.85))))
                     {
                         rv=xft()->drawChar32Centre(xftFont, (*(range.begin())).from,
                                                    imgWidth, imgHeight);
