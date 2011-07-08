@@ -69,35 +69,24 @@ inline bool sufficientSpace(int y, int pageHeight, const QFontMetrics &fm)
     return (y+constMarginFont+fm.height())<pageHeight;
 }
 
-#ifdef KFI_PRINT_APP_FONTS
 static bool sufficientSpace(int y, QPainter *painter, QFont font, const int *sizes, int pageHeight, int size)
-#else
-static bool sufficientSpace(int y, QPainter *painter, const Misc::TFont &font, const int *sizes, int pageHeight, int size)
-#endif
 {
     int titleFontHeight=painter->fontMetrics().height(),
         required=titleFontHeight+constMarginLineBefore+constMarginLineAfter;
 
     for(unsigned int s=0; sizes[s]; ++s)
     {
-#ifdef KFI_PRINT_APP_FONTS
         font.setPointSize(sizes[s]);
         required+=QFontMetrics(font, painter->device()).height();
-#else
-        required+=QFontMetrics(CFcEngine::getQFont(font.family, font.styleInfo, sizes[s]), painter->device()).height();
-#endif
         if(sizes[s+1])
             required+=constMarginFont;
     }
 
     if(0==size)
     {
-#ifdef KFI_PRINT_APP_FONTS
         font.setPointSize(CFcEngine::constDefaultAlphaSize);
         int fontHeight=QFontMetrics(font, painter->device()).height();
-#else
-        int fontHeight=QFontMetrics(CFcEngine::getQFont(font.family, font.styleInfo, CFcEngine::constDefaultAlphaSize), painter->device()).height();
-#endif
+
         required+=(3*(constMarginFont+fontHeight))+
                   constMarginLineBefore+constMarginLineAfter;
     }
@@ -260,14 +249,12 @@ void CPrintThread::run()
             family=QFontDatabase::applicationFontFamilies(appFont[(*it).family]).first();
             font=QFont(family);
         }
+#else
+        font=CFcEngine::getQFont((*it).family, (*it).styleInfo, CFcEngine::constDefaultAlphaSize);
 #endif
         painter.setFont(sans);
 
-#ifdef KFI_PRINT_APP_FONTS
         if(!firstFont && !sufficientSpace(y, &painter, font, sizes, pageHeight, itsSize))
-#else
-        if(!firstFont && !sufficientSpace(y, &painter, *it, sizes, pageHeight, itsSize))
-#endif
         {
             itsPrinter->newPage();
             y=margin;
@@ -285,19 +272,12 @@ void CPrintThread::run()
 
         if(0==itsSize)
         {
-#ifdef KFI_PRINT_APP_FONTS
-            if(family.isEmpty())
-#endif
-                font=CFcEngine::getQFont((*it).family, (*it).styleInfo, CFcEngine::constDefaultAlphaSize);
-#ifdef KFI_PRINT_APP_FONTS
-            else
-                font.setPointSize(CFcEngine::constDefaultAlphaSize);
-#endif
+            font.setPointSize(CFcEngine::constDefaultAlphaSize);
             painter.setFont(font);
 
             QFontMetrics fm(font, painter.device());
             bool         lc=hasStr(font, CFcEngine::getLowercaseLetters()),
-                            uc=hasStr(font, CFcEngine::getUppercaseLetters());
+                         uc=hasStr(font, CFcEngine::getUppercaseLetters());
 
             onlyDrawChars=!lc && !uc;
             
@@ -331,15 +311,8 @@ void CPrintThread::run()
         
         for(; sizes[s]; ++s)
         {
-                y+=sizes[s];
-#ifdef KFI_PRINT_APP_FONTS
-            if(family.isEmpty())
-#endif
-                font=CFcEngine::getQFont((*it).family, (*it).styleInfo, sizes[s]);
-#ifdef KFI_PRINT_APP_FONTS
-            else
-                font.setPointSize(sizes[s]);
-#endif
+            y+=sizes[s];
+            font.setPointSize(sizes[s]);
             painter.setFont(font);
             
             QFontMetrics fm(font, painter.device());
@@ -393,7 +366,7 @@ CPrinter::~CPrinter()
 void CPrinter::print(const QList<Misc::TFont> &items, int size)
 {
     #ifdef HAVE_LOCALE_H
-        char *oldLocale=setlocale(LC_NUMERIC, "C");
+    char *oldLocale=setlocale(LC_NUMERIC, "C");
     #endif
                 
     QPrinter     printer;
