@@ -64,25 +64,43 @@ static const int constMarginLineBefore=1;
 static const int constMarginLineAfter=2;
 static const int constMarginFont=4;
 
-inline bool sufficientSpace(int y, int pageHeight, int size)
+inline bool sufficientSpace(int y, int pageHeight, const QFontMetrics &fm)
 {
-    return (y+constMarginFont+size)<pageHeight;
+    return (y+constMarginFont+fm.height())<pageHeight;
 }
 
-static bool sufficientSpace(int y, int titleFontHeight, const int *sizes, int pageHeight, int size)
+#ifdef KFI_PRINT_APP_FONTS
+static bool sufficientSpace(int y, QPainter *painter, QFont font, const int *sizes, int pageHeight, int size)
+#else
+static bool sufficientSpace(int y, QPainter *painter, const Misc::TFont &font, const int *sizes, int pageHeight, int size)
+#endif
 {
-    int required=titleFontHeight+constMarginLineBefore+constMarginLineAfter;
+    int titleFontHeight=painter->fontMetrics().height(),
+        required=titleFontHeight+constMarginLineBefore+constMarginLineAfter;
 
     for(unsigned int s=0; sizes[s]; ++s)
     {
-        required+=sizes[s];
+#ifdef KFI_PRINT_APP_FONTS
+        font.setPointSize(sizes[s]);
+        required+=QFontMetrics(font, painter->device()).height();
+#else
+        required+=QFontMetrics(CFcEngine::getQFont(font.family, font.styleInfo, sizes[s]), painter->device()).height();
+#endif
         if(sizes[s+1])
             required+=constMarginFont;
     }
 
     if(0==size)
-        required+=(3*(constMarginFont+CFcEngine::constDefaultAlphaSize))+
+    {
+#ifdef KFI_PRINT_APP_FONTS
+        font.setPointSize(CFcEngine::constDefaultAlphaSize);
+        int fontHeight=QFontMetrics(font, painter->device()).height();
+#else
+        int fontHeight=QFontMetrics(CFcEngine::getQFont(font.family, font.styleInfo, CFcEngine::constDefaultAlphaSize), painter->device()).height();
+#endif
+        required+=(3*(constMarginFont+fontHeight))+
                   constMarginLineBefore+constMarginLineAfter;
+    }
     return (y+required)<pageHeight;
 }
 
@@ -245,7 +263,11 @@ void CPrintThread::run()
 #endif
         painter.setFont(sans);
 
-        if(!firstFont && !sufficientSpace(y, painter.fontMetrics().height(), sizes, pageHeight, itsSize))
+#ifdef KFI_PRINT_APP_FONTS
+        if(!firstFont && !sufficientSpace(y, &painter, font, sizes, pageHeight, itsSize))
+#else
+        if(!firstFont && !sufficientSpace(y, &painter, *it, sizes, pageHeight, itsSize))
+#endif
         {
             itsPrinter->newPage();
             y=margin;
@@ -322,7 +344,7 @@ void CPrintThread::run()
             
             QFontMetrics fm(font, painter.device());
 
-            if(sufficientSpace(y, pageHeight, sizes[s]))
+            if(sufficientSpace(y, pageHeight, fm))
             {
                 painter.drawText(margin, y, fm.elidedText(previewString(font, str, onlyDrawChars), em, pageWidth));
                 if(sizes[s+1])
