@@ -340,7 +340,7 @@ void CPrintThread::run()
 CPrinter::CPrinter(QWidget *parent)
         : KDialog(parent)
 {
-    setCaption("Print");
+    setCaption(i18n("Print"));
     setButtons(Cancel);
 
     QFrame *page = new QFrame(this);
