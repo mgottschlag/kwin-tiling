@@ -11,6 +11,7 @@ X-DocPath=kcontrol/cursortheme/index.html
 
 Name=Cursor Theme
 Name[ast]=Tema de cursores
+Name[bg]=Тема за курсора
 Name[bs]=Tema pokazivača
 Name[ca]=Tema de cursor
 Name[ca@valencia]=Tema de cursor
@@ -64,6 +65,7 @@ Name[zh_TW]=游標主題
 
 Comment=Customize the mouse cursor appearance
 Comment[ast]=Personalizar l'apariencia del cursor del mur
+Comment[bg]=Настройки на изгледа на курсора на мишката
 Comment[bs]=Prilagodite izgled pokazivača miša
 Comment[ca]=Personalitza l'aparença del cursor del ratolí
 Comment[ca@valencia]=Personalitza l'aparença del cursor del ratolí

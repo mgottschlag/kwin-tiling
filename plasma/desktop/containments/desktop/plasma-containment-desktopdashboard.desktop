@@ -3,6 +3,7 @@
 Name=Desktop Dashboard
 Name[ar]=لوحة ودجات سطح المكتب
 Name[ast]=Tableru de mandos
+Name[bg]=Табло на работния плот
 Name[bs]=instrument-tabla površi
 Name[ca]=Tauler de l'escriptori
 Name[ca@valencia]=Tauler de l'escriptori
@@ -60,6 +61,7 @@ Name[zh_CN]=桌面部件板
 Name[zh_TW]=桌面資訊看板
 Comment=Widget Dashboard
 Comment[ast]=Tableru de mandos
+Comment[bg]=Табло за джаджи
 Comment[bs]=Instrument-tabla grafičkih kontrola
 Comment[ca]=Tauler d'estris
 Comment[ca@valencia]=Tauler d'estris
