@@ -33,10 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <qtimer.h>
 #include <qx11info_x11.h>
 
-#include <randrdisplay.h>
-#include <randrscreen.h>
-#include <randroutput.h>
-
 K_PLUGIN_FACTORY(RandrMonitorModuleFactory,
                  registerPlugin<RandrMonitorModule>();
     )
@@ -48,6 +44,7 @@ RandrMonitorModule::RandrMonitorModule( QObject* parent, const QList<QVariant>& 
     {
     setModuleName( "randrmonitor" );
     initRandr();
+    QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT(resumedFromSuspend()));
     }
 
 RandrMonitorModule::~RandrMonitorModule()
@@ -159,20 +156,22 @@ void RandrMonitorModule::switchDisplay()
     {
     QList< RandROutput* > outputs;
     RandRDisplay display;
-    for( int scr = 0;
-         scr < display.numScreens();
-         ++scr )
-        {
-        foreach( RandROutput* output, display.screen( scr )->outputs())
-            {
-            if( !output->isConnected())
-                continue;
-            if( !outputs.contains( output ))
-                outputs.append( output );
-            }
-        }
-    if( outputs.count() <= 1 ) // just one, do nothing
+    outputs = connectedOutputs( display );
+    if( outputs.count() == 0 ) // nothing connected, do nothing
         return;
+    if( outputs.count() == 1 ) // just one, enable it
+        {
+        enableOutput( outputs[0], true );
+        for( int scr = 0; scr < display.numScreens(); ++scr )
+            {
+            foreach( RandROutput* output, display.screen( scr )->outputs())
+                {
+                if( !output->isConnected())
+                    enableOutput( output, false ); // switch off every output that's not connected
+                }
+            }
+        return;
+        }
     if( outputs.count() == 2 ) // alternative between one, second, both
         {
         if( outputs[ 0 ]->isActive() && !outputs[ 1 ]->isActive())
@@ -196,9 +195,71 @@ void RandrMonitorModule::switchDisplay()
     KToolInvocation::kdeinitExec( "kcmshell4", QStringList() << "display" );
     }
 
+void RandrMonitorModule::resumedFromSuspend()
+    {
+    RandRDisplay display;
+    QList< RandROutput* > m_connectedOutputs, m_validCrtcOutputs;
+    m_connectedOutputs = connectedOutputs( display );
+    m_validCrtcOutputs = validCrtcOutputs( display );
+    if( m_connectedOutputs.count() == 0 )
+        return;
+    // We have at least one connected output.
+    // We check all outputs with valid crtc if they are still connected.
+    // If not, we are going to disable them.
+    QList<RandROutput*> outputsToDisable;
+    foreach( RandROutput* output, m_validCrtcOutputs )
+        {
+        if( !output->isConnected() )
+            outputsToDisable.append( output );
+        }
+    // If no active output is still connected we are going to enable the first connected output.
+    if( outputsToDisable.size() == m_validCrtcOutputs.size() )
+        enableOutput( m_connectedOutputs[0], true);
+    // Now we can disable the disconnected outputs
+    foreach( RandROutput* output, outputsToDisable)
+        {
+        enableOutput( output, false );
+        }
+    }
+
 void RandrMonitorModule::enableOutput( RandROutput* output, bool enable )
     { // a bit lame, but I don't know how to do this easily with this codebase :-/
     KProcess::execute( QStringList() << "xrandr" << "--output" << output->name() << ( enable ? "--auto" : "--off" ));
+    }
+
+QList< RandROutput* > RandrMonitorModule::connectedOutputs( RandRDisplay &display )
+    {
+    return outputs( display, true, false, false );
+    }
+
+QList< RandROutput* > RandrMonitorModule::activeOutputs( RandRDisplay &display )
+    {
+    return outputs( display, false, true, false );
+    }
+
+QList< RandROutput* > RandrMonitorModule::validCrtcOutputs( RandRDisplay &display )
+    {
+    return outputs( display, false, false, true );
+    }
+
+QList< RandROutput* > RandrMonitorModule::outputs( RandRDisplay &display, bool connected, bool active, bool validCrtc )
+    {
+    QList< RandROutput* > outputs;
+    for( int scr = 0; scr < display.numScreens(); ++scr )
+        {
+        foreach( RandROutput* output, display.screen( scr )->outputs() )
+            {
+            if( !output->isConnected() && connected )
+                continue;
+            if( !output->isActive() && active )
+                continue;
+            if( !output->crtc()->isValid() && validCrtc )
+                continue;
+            if( !outputs.contains( output ) )
+                outputs.append( output );
+            }
+        }
+    return outputs;
     }
 
 bool RandrMonitorHelper::x11Event( XEvent* e )
