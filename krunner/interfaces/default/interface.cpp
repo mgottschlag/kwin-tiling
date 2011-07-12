@@ -75,7 +75,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     connect(&m_hideResultsTimer, SIGNAL(timeout()), this, SLOT(hideResultsArea()));
 
     m_reenableHoverEventsTimer.setSingleShot(true);
-    m_reenableHoverEventsTimer.setInterval(10);
+    m_reenableHoverEventsTimer.setInterval(50);
     connect(&m_reenableHoverEventsTimer, SIGNAL(timeout()), this, SLOT(reenableHoverEvents()));
 
     m_layout = new QVBoxLayout(this);
