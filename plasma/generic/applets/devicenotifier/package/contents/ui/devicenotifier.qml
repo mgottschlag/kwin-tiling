@@ -48,7 +48,6 @@ Item {
     Component.onCompleted: {
         plasmoid.addEventListener ('ConfigChanged', configChanged);
         plasmoid.popupIcon = QIcon("device-notifier");
-        //configChanged();
     }
 
     function configChanged() {
@@ -63,7 +62,6 @@ Item {
     function addDevice(source) {
         if (hpSource.connectedSources.indexOf(source)>=0)
             return;
-        print ("===="+source);
         sdSource.connectSource (source);
         if (removableDevices) { //Removable only
             if (!sdSource.data[source]["Removable"]) {
