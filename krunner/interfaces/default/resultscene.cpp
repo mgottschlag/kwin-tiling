@@ -275,6 +275,7 @@ void ResultScene::focusInEvent(QFocusEvent *focusEvent)
     switch (focusEvent->reason()) {
     case Qt::TabFocusReason:
     case Qt::BacktabFocusReason:
+    case Qt::OtherFocusReason:
         // on tab focus in, we want to actually select the second item
         // since the first item is always "passively" selected by default
         if (!currentFocus || currentFocus == m_items.first()) {
@@ -283,6 +284,8 @@ void ResultScene::focusInEvent(QFocusEvent *focusEvent)
                 setFocusItem(newFocus);
                 emit ensureVisibility(newFocus);
             }
+        } else if (currentFocus) {
+            setFocusItem(currentFocus);
         }
         break;
     default:
