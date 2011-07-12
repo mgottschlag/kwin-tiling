@@ -147,7 +147,9 @@ Item {
             {
                 leftActionTriggered();
             }
-            notifierDialog.currentExpanded = expanded ? -1 : index;
+            else {
+                notifierDialog.currentExpanded = expanded ? -1 : index;
+            }
         }
     }
 
@@ -159,7 +161,7 @@ Item {
             left: deviceIcon.right
             right: leftAction.right
         }
-        model: hpSource.data[udi]["actions"];
+        model: hpSource.data[udi]["actions"]
         property int actionVerticalMargins: 5
         property int actionIconHeight: 30
         height: expanded ? ((actionIconHeight+(2*actionVerticalMargins))*model.length)+anchors.topMargin : 0

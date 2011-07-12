@@ -34,7 +34,8 @@ Item {
         engine: "hotplug"
         connectedSources: []
         interval: 0
-        onSourcesChanged: populateDevices()
+        onSourceAdded: addDevice(source)
+        onSourceRemoved: disconnectSource (source)
     }
 
     PlasmaCore.DataSource {
@@ -42,13 +43,12 @@ Item {
         engine: "soliddevice"
         connectedSources: hpSource.sources
         interval: 0
-        onSourcesChanged: populateDevices()
     }
 
     Component.onCompleted: {
         plasmoid.addEventListener ('ConfigChanged', configChanged);
         plasmoid.popupIcon = QIcon("device-notifier");
-        configChanged();
+        //configChanged();
     }
 
     function configChanged() {
@@ -60,26 +60,39 @@ Item {
         notifierDialog.currentExpanded = -1;
     }
 
+    function addDevice(source) {
+        if (hpSource.connectedSources.indexOf(source)>=0)
+            return;
+        print ("===="+source);
+        sdSource.connectSource (source);
+        if (removableDevices) { //Removable only
+            if (!sdSource.data[source]["Removable"]) {
+                return;
+            }
+        }
+        else if (nonRemovableDevices) { //Non removable only
+            if (sdSource.data[source]["Removable"]) {
+                return;
+            }
+        }
+        hpSource.connectSource(source);
+        i = notifierDialog.model.indexOf (source);
+        notifierDialog.currentExpanded = i;
+        notifierDialog.currentIndex = i;
+        notifierDialog.highlightItem.opacity = 1;
+    }
+
     function populateDevices() {
+        // remove devices that might not belong to the newly
+        // configured device type to show
         var connected = hpSource.connectedSources;
         for (i=0; i<connected.length; i++)
             hpSource.disconnectSource(connected[i]);
+
+        // add each device again
         var sources = hpSource.sources;
         for (i=0; i<sources.length; i++) {
-            sdSource.connectSource(sources[i]);
-            if (removableDevices) { //Removable only
-                if (!sdSource.data[sources[i]]["Removable"]) {
-                    hpSource.disconnectSource(sources[i]);
-                    continue;
-                }
-            }
-            else if (nonRemovableDevices) { //Non removable only
-                if (sdSource.data[sources[i]]["Removable"]) {
-                    hpSource.disconnectSource(sources[i]);
-                    continue;
-                }
-            }
-            hpSource.connectSource (sources[i]);
+            addDevice(sources[i]);
         }
     }
 
@@ -134,6 +147,7 @@ Item {
                 } else if (emblemIcon == "emblem-unmounted") {
                     return QIcon("emblem-mounted");
                 }
+                else return QIcon("");
             }
             mounted: emblemIcon=="emblem-mounted"
 
