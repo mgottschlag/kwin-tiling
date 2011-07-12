@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007-2009 by Shawn Starr <shawn.starr@rogers.com>       *
+ *   Copyright (C) 2007-2011 by Shawn Starr <shawn.starr@rogers.com>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -185,6 +185,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappi
     forecastList["a few wet flurries or rain showers"] = RainSnow;
     forecastList["a mix of sun and cloud"] = PartlyCloudyDay;
     forecastList["cloudy with sunny periods"] = PartlyCloudyDay;
+    forecastList["mainly sunny"] = ClearDay;
     forecastList["sunny"] = ClearDay;
     forecastList["blizzard"] = Snow;
     forecastList["clear"] = ClearNight;
