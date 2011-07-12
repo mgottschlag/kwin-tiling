@@ -74,6 +74,10 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_hideResultsTimer.setSingleShot(true);
     connect(&m_hideResultsTimer, SIGNAL(timeout()), this, SLOT(hideResultsArea()));
 
+    m_reenableHoverEventsTimer.setSingleShot(true);
+    m_reenableHoverEventsTimer.setInterval(10);
+    connect(&m_reenableHoverEventsTimer, SIGNAL(timeout()), this, SLOT(reenableHoverEvents()));
+
     m_layout = new QVBoxLayout(this);
     m_layout->setMargin(0);
 
@@ -572,8 +576,15 @@ void Interface::matchCountChanged(int count)
     }
 }
 
+void Interface::reenableHoverEvents()
+{
+    //kDebug() << "reenabling hover events, for better or worse";
+    m_resultData.processHoverEvents = true;
+}
+
 void Interface::fitWindow()
 {
+    m_resultData.processHoverEvents = false;
     QSize s = m_defaultSize;
     const int resultsHeight = m_resultsScene->viewableHeight() + 2;
     int spacing = m_layout->spacing();
@@ -598,6 +609,7 @@ void Interface::fitWindow()
     }
 
     resize(s);
+    m_reenableHoverEventsTimer.start();
 }
 
 void Interface::hideResultsArea()
