@@ -4,7 +4,6 @@
 [KdmGreeterTheme]
 Greeter=horos.xml
 Name=Horos
-Name[bg]=Horos
 Name[bs]=Horos
 Name[ca]=Horos
 Name[ca@valencia]=Horos
@@ -19,6 +18,7 @@ Name[fi]=Horos
 Name[fr]=Horos
 Name[he]=Horos
 Name[hi]=होरोस
+Name[hr]=Horos
 Name[hu]=Horos
 Name[ia]=Horos
 Name[is]=Horos

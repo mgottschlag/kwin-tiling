@@ -1,6 +1,5 @@
 [Desktop Entry]
 Name=Activities
-Name[bg]=Дейности
 Name[bs]=motor aktivnosti
 Name[ca]=Activitats
 Name[ca@valencia]=Activitats
@@ -40,7 +39,6 @@ Name[x-test]=xxActivitiesxx
 Name[zh_CN]=活动
 Name[zh_TW]=活動
 Comment=Shows the activity manager
-Comment[bg]=Управление на дейностите
 Comment[bs]=Prikazuje menadžer aktivnosti
 Comment[ca]=Mostra el gestor d'activitats
 Comment[ca@valencia]=Mostra el gestor d'activitats
@@ -50,6 +48,7 @@ Comment[de]=Zeigt die Aktivitätenverwaltung an
 Comment[es]=Muestra el gestor de actividades
 Comment[et]=Tegevuste halduri näitamine
 Comment[fr]=Gestionnaire d'activité
+Comment[hr]=Prikazuje upravitelja aktivnosti
 Comment[ia]=Monstra le gerente de activitate
 Comment[is]=Birtir virknistjóra
 Comment[kk]=Белсенділік менеджері көрсетеді

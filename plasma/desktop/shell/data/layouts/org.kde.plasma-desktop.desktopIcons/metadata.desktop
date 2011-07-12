@@ -1,7 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Desktop Icons
-Name[bg]=Настолни икони
 Name[bs]=sesije radne površi
 Name[ca]=Icones de l'escriptori
 Name[ca@valencia]=Icones de l'escriptori
@@ -11,6 +10,7 @@ Name[de]=Arbeitflächen-Symbole
 Name[es]=Iconos de escritorio
 Name[et]=Töölauaikoonid
 Name[fr]=Icônes du bureau
+Name[hr]=Ikone radne površine
 Name[ia]=Icones de scriptorio
 Name[is]=Táknmyndir á skjáborði
 Name[kk]=Үстел таңбашасы
