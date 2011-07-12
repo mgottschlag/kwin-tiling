@@ -169,6 +169,15 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         kDebug() << "creating all items took" << t.elapsed();
     }
 
+    // we keep track of what was previously focused so if the user changes focus
+    // and more items come in ... we don't reset that on them unecessarily
+    // see the keepFocus bool down below
+    ResultItem *currentFocus = currentlyFocusedItem();
+    QString lastFocusId;
+    if (currentFocus && currentFocus->isValid()) {
+        lastFocusId = currentFocus->id();
+    }
+
     QList<Plasma::QueryMatch> matches = m;
     qSort(matches.begin(), matches.end());
     QListIterator<Plasma::QueryMatch> mit(matches);
@@ -194,8 +203,9 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         }
     }
 
-    clearSelection();
-    if (matches.count() > 0) {
+    const bool keepFocus = currentFocus && currentFocus->isValid() && currentFocus->id() == lastFocusId;
+    if (!keepFocus) {
+        clearSelection();
         ResultItem *first = m_items.at(0);
         setFocusItem(first);
         first->setSelected(true);
