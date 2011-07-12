@@ -57,7 +57,7 @@
 #include "interfaces/default/resultscene.h"
 #include "interfaces/default/resultitem.h"
 #include "interfaces/default/krunnerhistorycombobox.h"
-#include "interfaces/default/resultsview.h"
+#include "interfaces/default/resultview.h"
 #include "toolbutton.h"
 
 static const int MIN_WIDTH = 420;

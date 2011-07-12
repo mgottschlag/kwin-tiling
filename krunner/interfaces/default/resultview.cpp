@@ -30,7 +30,7 @@
 
 
 #include "resultscene.h"
-#include "resultsview.h"
+#include "resultview.h"
 #include "resultitem.h"
 
 ResultsView::ResultsView(ResultScene *scene, SharedResultData *resultData, QWidget *parent)
@@ -202,4 +202,4 @@ void ResultsView::paintEvent(QPaintEvent *event)
      painter.drawPixmap(event->rect(), backBuffer, event->rect());
 }
 
-#include "resultsview.moc"
+#include "resultview.moc"
