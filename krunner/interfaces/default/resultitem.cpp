@@ -109,6 +109,7 @@ QGraphicsWidget* ResultItem::arrangeTabOrder(QGraphicsWidget* last)
             currentWidget = button;
         }
     }
+
     return currentWidget;
 }
 
@@ -419,6 +420,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
 void ResultItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 {
+    //kDebug() << "in on" << m_match.text() << m_sharedData->processHoverEvents;
     if (!m_sharedData->processHoverEvents || !m_match.isValid()) {
         return;
     }
@@ -509,10 +511,8 @@ QVariant ResultItem::itemChange(GraphicsItemChange change, const QVariant &value
 {
     if (change == QGraphicsItem::ItemSceneHasChanged) {
         calculateSize();
-    } else if (change == QGraphicsItem::ItemSelectedHasChanged) {
-        if (!isSelected()) {
-            m_highlightCheckTimer.start();
-        }
+    } else if (change == QGraphicsItem::ItemSelectedHasChanged && !isSelected()) {
+        m_highlightCheckTimer.start();
     }
 
     return QGraphicsWidget::itemChange(change, value);
