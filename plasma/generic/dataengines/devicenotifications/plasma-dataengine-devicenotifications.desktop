@@ -2,6 +2,7 @@
 Name=Device Notifications
 Name[ar]=تنبيهات الأجهزة
 Name[ast]=Notificaciones de preséu
+Name[bg]=Уведомления от устройства
 Name[bn]=ডিভাইস বিজ্ঞপ্তি
 Name[bs]=Obavještenja o uređajima
 Name[ca]=Notificacions dels dispositius
@@ -60,6 +61,7 @@ Name[zh_TW]=裝置通知
 Comment=Passive device notifications for the user.
 Comment[ar]=إشعارات مرئية غير متفاعلة للمستخدم
 Comment[ast]=Notificaciones pasives de preseos pal usuariu.
+Comment[bg]=Пасивни уведомления от устройствата за потребителя.
 Comment[bs]=Pasivna obavještenja o uređajima za korisnika.
 Comment[ca]=Notificacions passives de dispositius per a l'usuari.
 Comment[ca@valencia]=Notificacions passives de dispositius per a l'usuari.

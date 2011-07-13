@@ -62,6 +62,7 @@ Name[zh_TW]=剩餘空間通知
 Comment=Warns when running out of space on your home folder
 Comment[ar]=يحذر عندما توشك مساحة مجلد المنزل على النفاذ
 Comment[ast]=Avisa cuando te quedes ensin espaciu na carpeta personal
+Comment[bg]=Предупреждение при твърде малко пространство в домашната директория
 Comment[bs]=Upozorava kada vam ponestaje prostora u domaćoj fascikli
 Comment[ca]=Avisa quan s'exhaureix l'espai de la carpeta personal
 Comment[ca@valencia]=Avisa quan s'exhaureix l'espai de la carpeta personal

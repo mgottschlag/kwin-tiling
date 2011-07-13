@@ -2,6 +2,7 @@
 Name=Panel for Netbooks
 Name[ar]=لوحة للحاسب المحمول الشبكي
 Name[ast]=Panel pa netbooks
+Name[bg]=Панел за нетбук
 Name[bn]=নেটবুক-এর জন্য প্যানেল
 Name[bs]=panel za netbuke
 Name[ca]=Plafó per a ordinadors ultraportàtils
@@ -67,6 +68,7 @@ Comment[af]='n Plekhouer vir 'n paneel
 Comment[ar]=حاوية للوحة
 Comment[ast]=Un contenedor pa un panel
 Comment[be@latin]=Jomišča dla paneli
+Comment[bg]=Контейнер за панел
 Comment[bs]=Sadržalac za panel
 Comment[ca]=Un contenidor per un plafó
 Comment[ca@valencia]=Un contenidor per un plafó

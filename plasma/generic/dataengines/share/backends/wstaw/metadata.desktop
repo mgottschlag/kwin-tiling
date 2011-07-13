@@ -54,6 +54,7 @@ Name[x-test]=xxwstaw.orgxx
 Name[zh_CN]=wstaw.org
 Name[zh_TW]=wstaw.org
 Comment=Allows images to be shared using the wstaw.org service
+Comment[bg]=Позволява споделянето на изображения чрез wstaw.org
 Comment[bs]=Dopušta dijeljenje slika preko servisa wstaw.org
 Comment[ca]=Permet la compartició d'imatges utilitzant el servei wstaw.org
 Comment[ca@valencia]=Permet la compartició d'imatges utilitzant el servei wstaw.org

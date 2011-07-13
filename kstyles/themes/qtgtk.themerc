@@ -2,6 +2,7 @@
 Name=GTK+ Style
 Name[ar]=نمط GTK+
 Name[ast]=Estilu GTK+
+Name[bg]=Стил GTK+
 Name[bs]=GTK+ stil
 Name[ca]=Estil GTK+
 Name[ca@valencia]=Estil GTK+
@@ -69,6 +70,7 @@ Name[zh_TW]=GTK+ 風格
 Comment=Style that uses the GTK+ theming engine
 Comment[ar]=نمط يستخدم محرك سمات GTK+
 Comment[ast]=Estilu qu'usa'l motor de temes de GTK+
+Comment[bg]=Стил, използващ ядрото за изгледи на GTK+
 Comment[bs]=Stil koji koristi tematski motor GTK+-a
 Comment[ca]=Estil que utilitza el motor de temes GTK+
 Comment[ca@valencia]=Estil que utilitza el motor de temes GTK+

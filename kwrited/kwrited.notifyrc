@@ -3,6 +3,7 @@ IconName=utilities-terminal
 Comment=Local system message service
 Comment[ar]=خدمة رسائل النظام المحلية
 Comment[ast]=Serviciu de mensaxes del sistema llocal
+Comment[bg]=Локална услуга за системни съобщения
 Comment[bn]=স্থানীয় সিস্টেম বার্তা সার্ভিস
 Comment[bs]=Servis poruka na lokalnom sistemu
 Comment[ca]=Servei de missatges del sistema local

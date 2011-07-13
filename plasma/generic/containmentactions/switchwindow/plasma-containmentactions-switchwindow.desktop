@@ -2,6 +2,7 @@
 Name=Switch Window
 Name[ar]=بدّل النافذة
 Name[ast]=Camudar ventana
+Name[bg]=Превключване на прозорци
 Name[bs]=prebacivanje prozora
 Name[ca]=Canvi de finestra
 Name[ca@valencia]=Canvi de finestra
@@ -68,6 +69,7 @@ Icon=preferences-system-windows
 Comment=Show a list of windows to switch to
 Comment[ar]=أظهر لائحة بالنوافذ للانتقال لإحداها
 Comment[ast]=Amosar una llista de ventanes a les que camudar
+Comment[bg]=Списък с прозорци за превключване
 Comment[bs]=Pokazuje spisak prozora za prebacivanje
 Comment[ca]=Mostra una llista de les finestres per a canviar
 Comment[ca@valencia]=Mostra una llista de les finestres per a canviar
