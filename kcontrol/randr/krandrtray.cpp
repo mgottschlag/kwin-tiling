@@ -585,6 +585,9 @@ void KRandRSystemTray::slotPrefs()
 	    kcm->addModule( "display" );
 	    kcm->setAttribute(Qt::WA_DeleteOnClose);
 	    m_kcm = kcm;
+	} else if (KWindowSystem::activeWindow() == m_kcm.data()->winId()) {
+	    m_kcm.data()->hide();
+	    return;
 	}
 
 	KWindowSystem::setOnDesktop(m_kcm.data()->winId(), KWindowSystem::currentDesktop());
