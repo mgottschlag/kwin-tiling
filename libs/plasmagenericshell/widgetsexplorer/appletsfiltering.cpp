@@ -365,6 +365,18 @@ void FilteringWidget::downloadWidgets(const QString &type)
         // we don't need to delete the default Applet::packageStructure as that
         // belongs to the applet
        Plasma::Applet::packageStructure()->createNewWidgetBrowser();
+        /**
+          for reference in a libplasma2 world, the above line equates to this:
+
+          KNS3::DownloadDialog *knsDialog = m_knsDialog.data();
+          if (!knsDialog) {
+          m_knsDialog = knsDialog = new KNS3::DownloadDialog("plasmoids.knsrc", parent);
+          connect(knsDialog, SIGNAL(accepted()), this, SIGNAL(newWidgetBrowserFinished()));
+          }
+
+          knsDialog->show();
+          knsDialog->raise();
+         */
     }
 }
 
