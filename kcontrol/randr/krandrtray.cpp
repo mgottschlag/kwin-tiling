@@ -590,5 +590,6 @@ void KRandRSystemTray::slotPrefs()
 	KWindowSystem::setOnDesktop(m_kcm.data()->winId(), KWindowSystem::currentDesktop());
 	m_kcm.data()->show();
 	m_kcm.data()->raise();
+	KWindowSystem::forceActiveWindow(m_kcm.data()->winId());
 }
 // vim:noet:sts=8:sw=8:
