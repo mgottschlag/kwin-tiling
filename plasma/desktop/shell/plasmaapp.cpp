@@ -121,7 +121,7 @@ PlasmaApp::PlasmaApp()
       m_unlockCorona(false)
 {
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor start" << "(line:" << __LINE__ << ")";
-    PlasmaApp::suspendStartup(true);
+    suspendStartup(true);
 
     if (KGlobalSettings::isMultiHead()) {
         KGlobal::locale()->setLanguage(plasmaLocale, KGlobal::config().data());
