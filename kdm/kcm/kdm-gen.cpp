@@ -67,10 +67,13 @@ KDMGeneralWidget::KDMGeneralWidget(QWidget *parent)
 
     fl = new QFormLayout(box);
 
-    useThemeCheck = new QCheckBox(i18n("&Use themed greeter"), box);
+    useThemeCheck = new QCheckBox(i18n("&Use themed greeter\n(Warning: poor accessibility)"), box);
     connect(useThemeCheck, SIGNAL(toggled(bool)), SLOT(slotUseThemeChanged()));
     useThemeCheck->setWhatsThis(i18n(
-        "Enable this if you would like to use a themed Login Manager."));
+        "Enable this if you would like to use a themed Login Manager.<br>"
+        "Note that the themed greeter is challenged accessibility-wise (keyboard usage), "
+        "and themes may lack support for features like a user list or alternative "
+        "authentication methods."));
     fl->addRow(useThemeCheck);
 
     guicombo = new KBackedComboBox(box);
