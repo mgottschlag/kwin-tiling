@@ -45,22 +45,6 @@ class QMimeData;
 class HistoryItem;
 class KlipperSessionManager;
 
-class KlipperEmptyDetector : public QWidget
-{
-Q_OBJECT
-public:
-    KlipperEmptyDetector();
-signals:
-    void changed( QClipboard::Mode m );
-protected:
-#ifdef Q_WS_X11
-    virtual bool x11Event( XEvent* e );
-#endif
-private:
-    int m_xfixes_event_base;
-    unsigned int m_xa_clipboard;
-};
-
 class Klipper : public QObject
 {
   Q_OBJECT
@@ -241,7 +225,6 @@ private:
     QString cycleText() const;
     KlipperSessionManager* m_session_managed;
     KActionCollection *m_collection;
-    KlipperEmptyDetector m_empty_detector;
 };
 
 #endif
