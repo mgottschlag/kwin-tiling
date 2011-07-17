@@ -668,7 +668,7 @@ void Klipper::newClipData( QClipboard::Mode mode )
         return;
     }
 
-    if( blockFetchingNewData())
+    if( mode == QClipboard::Selection && blockFetchingNewData())
         return;
 
     checkClipData( mode == QClipboard::Selection ? true : false );
