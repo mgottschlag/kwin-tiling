@@ -675,18 +675,6 @@ void Klipper::newClipData( QClipboard::Mode mode )
 
 }
 
-void Klipper::clipboardSignalArrived( bool selectionMode )
-{
-    if ( m_locklevel ) {
-        return;
-    }
-    if( blockFetchingNewData())
-        return;
-
-    updateTimestamp();
-    checkClipData( selectionMode );
-}
-
 // Protection against too many clipboard data changes. Lyx responds to clipboard data
 // requests with setting new clipboard data, so if Lyx takes over clipboard,
 // Klipper notices, requests this data, this triggers "new" clipboard contents

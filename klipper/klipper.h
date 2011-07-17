@@ -119,8 +119,6 @@ protected:
     void removeFromHistory( const QString& text );
     void setEmptyClipboard();
 
-    void clipboardSignalArrived( bool selectionMode );
-
     /**
      * Check data in clipboard, and if it passes these checks,
      * store the data in the clipboard history.
@@ -153,13 +151,6 @@ protected Q_SLOTS:
 private Q_SLOTS:
     void newClipData( QClipboard::Mode );
     void slotClearClipboard();
-
-    void slotSelectionChanged() {
-        clipboardSignalArrived( true );
-    }
-    void slotClipboardChanged() {
-        clipboardSignalArrived( false );
-    }
 
     void slotQuit();
     void slotStartHideTimer();
