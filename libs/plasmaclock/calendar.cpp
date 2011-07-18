@@ -407,7 +407,6 @@ void Calendar::displayEvents(const QDate &date)
 
         if (dt.isValid() && end.isValid()) {
             while (dt <= end) {
-                kDebug() << "adding" << date;
                 d->addDateDetailsToDisplay(html, dt);
                 dt = dt.addDays(1);
             }
@@ -420,7 +419,6 @@ void Calendar::displayEvents(const QDate &date)
 bool CalendarPrivate::addDateDetailsToDisplay(QString &html, const QDate &date)
 {
     if (!calendarTable->dateHasDetails(date)) {
-        kDebug() << date << "has no details, returningfalse";
         return false;
     }
 
@@ -441,7 +439,7 @@ void Calendar::refreshWidgets()
 {
     d->month->setText(calendar()->monthName(calendar()->month(date()), calendar()->year(date())));
     d->month->setMinimumSize(static_cast<QToolButton*>(d->month->widget())->sizeHint());
-    d->year->setText(calendar()->yearString(date()));
+    d->year->setText(calendar()->formatDate(date(), KLocale::Year, KLocale::LongNumber));
     d->dateText->setText(calendar()->formatDate(date(),  KLocale::ShortDate));
 
     // Block the signals to prevent changing the date again
@@ -454,7 +452,7 @@ void Calendar::refreshWidgets()
     // Block the signals to prevent changing the date again
     d->weekSpinBox->blockSignals(true);
     d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
-    d->weekSpinBox->setValue(calendar()->weekNumber(date()));
+    d->weekSpinBox->setValue(calendar()->week(date(), KLocale::IsoWeekNumber));
     d->weekSpinBox->blockSignals(false);
 }
 
@@ -521,7 +519,7 @@ void Calendar::monthTriggered()
 
 void Calendar::goToWeek(int newWeek)
 {
-    int currWeek = calendar()->weekNumber(date());
+    int currWeek = calendar()->week(date(), KLocale::IsoWeekNumber);
     int daysInWeek = calendar()->daysInWeek(date());
 
     setDate(calendar()->addDays(date(), (newWeek - currWeek) * daysInWeek));
