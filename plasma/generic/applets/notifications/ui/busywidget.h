@@ -49,6 +49,10 @@ public:
     BusyWidget(Plasma::PopupApplet *parent, const Manager *manager);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     void setState(State state);
+    void suppressToolTips(bool suppress);
+
+public slots:
+    void toolTipAboutToShow();
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
@@ -58,6 +62,7 @@ protected slots:
 
 private:
     QString expanderElement() const;
+    void getJobCounts(int &runningJobs, int &pausedJobs, int &completedJobs);
 
     KIcon m_icon;
     State m_state;
@@ -68,6 +73,7 @@ private:
     Plasma::Animation *m_fadeOutAnimation;
     QSequentialAnimationGroup *m_fadeGroup;
     int m_total;
+    bool m_suppressToolTips;
 };
 
 
