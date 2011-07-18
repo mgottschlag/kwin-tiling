@@ -83,6 +83,8 @@ class CalendarPrivate
         {
         }
 
+        bool addDateDetailsToDisplay(QString &html, const QDate &date);
+
         ToolButton *back;
         Plasma::Label *spacer0;
         Plasma::ToolButton *month;
@@ -398,47 +400,40 @@ void Calendar::displayEvents(const QDate &date)
     }
 
     QString html;
-    QList<QDate> datesToProcess;
 
-    if (dateHasDetails(date)) {
-        datesToProcess << date;
-    } else {
+    if (d->addDateDetailsToDisplay(html, date) < 1) {
         QDate dt = calendarTable()->date();
         QDate end = calendarTable()->endDate();
 
         if (dt.isValid() && end.isValid()) {
             while (dt <= end) {
-                datesToProcess << dt;
+                kDebug() << "adding" << date;
+                d->addDateDetailsToDisplay(html, dt);
                 dt = dt.addDays(1);
             }
         }
     }
 
-    int processedDetails = 0;
-    const int detailsMax = 5;
+    d->eventsDisplay->setText(html);
+}
 
-    foreach (const QDate &d, datesToProcess) {
-        if (dateHasDetails(d)) {
-            html+= "<b>"+d.toString()+"</b>";
-            html+= "<ul>";
-
-            QStringList details = dateDetails(d);
-            foreach (const QString &detail, details) {
-                if (processedDetails<detailsMax) {
-                    html+= "<li>"+detail+"</li>";
-                    processedDetails++;
-                }
-            }
-
-            html+= "</ul>";
-        }
-
-        if (processedDetails>=detailsMax) {
-            break;
-        }
+bool CalendarPrivate::addDateDetailsToDisplay(QString &html, const QDate &date)
+{
+    if (!calendarTable->dateHasDetails(date)) {
+        kDebug() << date << "has no details, returningfalse";
+        return false;
     }
 
-    d->eventsDisplay->setText(html);
+    html += "<b>" + date.toString() + "</b>";
+    html += "<ul>";
+
+    const QStringList details = calendarTable->dateDetails(date);
+    foreach (const QString &detail, details) {
+        html+= "<li>" + detail + "</li>";
+    }
+
+    html += "</ul>";
+    return true;
 }
 
 // Update the nav widgets to show the current date in the CalendarTable
