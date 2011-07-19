@@ -94,7 +94,7 @@ void KRandRSystemTray::slotPrepareMenu()
 		for (int s = 0; s < m_display->numScreens(); s++) 
 		{
 			m_display->setCurrentScreen(s);
-			if (s == m_display->screenIndexOfWidget(associatedWidget())) 
+			if (s == QX11Info::appScreen())
 			{
 				/*lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
 				menu->setItemEnabled(lastIndex, false);*/
