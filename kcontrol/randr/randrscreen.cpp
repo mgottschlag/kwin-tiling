@@ -636,15 +636,8 @@ void RandRScreen::slotUnifyOutputs(bool unified)
 			return;
 		}
 
-		QSize s = m_unifiedRect.size();
-
-		// if the last size we used is not available, use the first one
-		// from the list
-		if (sizes.indexOf(s) == -1)
-			s = sizes[0];
-
 		m_unifiedRect.setTopLeft(QPoint(0,0));
-		m_unifiedRect.setSize(s);
+		m_unifiedRect.setSize(sizes.first());
 		unifyOutputs();
 	}
 }
