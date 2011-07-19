@@ -52,6 +52,18 @@ namespace Nepomuk {
         QMimeData *mimeDataForMatch(const Plasma::QueryMatch *match);
 
     private:
+        /**
+         * Returns a list of all actions in the given QMenu
+         * This method flattens the hierarchy of the menu by prefixing the
+         * text of all actions in a submenu with the submenu title.
+         *
+         * @param menu the QMenu storing the actions
+         * @param prefix text to display before the text of all actions in the menu
+         * @param parent QObject to be passed as parent of all the actions in the list
+         *
+         * @since 4.4
+         */
+        QList<QAction*> actionsFromMenu(QMenu *menu, const QString &prefix = QString(), QObject *parent = 0);
 
         QMutex m_mutex;
         QWaitCondition m_waiter;
