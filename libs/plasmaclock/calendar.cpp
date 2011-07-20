@@ -83,6 +83,8 @@ class CalendarPrivate
         {
         }
 
+        bool addDateDetailsToDisplay(QString &html, const QDate &date);
+
         ToolButton *back;
         Plasma::Label *spacer0;
         Plasma::ToolButton *month;
@@ -398,47 +400,38 @@ void Calendar::displayEvents(const QDate &date)
     }
 
     QString html;
-    QList<QDate> datesToProcess;
 
-    if (dateHasDetails(date)) {
-        datesToProcess << date;
-    } else {
+    if (d->addDateDetailsToDisplay(html, date) < 1) {
         QDate dt = calendarTable()->date();
         QDate end = calendarTable()->endDate();
 
         if (dt.isValid() && end.isValid()) {
             while (dt <= end) {
-                datesToProcess << dt;
+                d->addDateDetailsToDisplay(html, dt);
                 dt = dt.addDays(1);
             }
         }
     }
 
-    int processedDetails = 0;
-    const int detailsMax = 5;
+    d->eventsDisplay->setText(html);
+}
 
-    foreach (const QDate &d, datesToProcess) {
-        if (dateHasDetails(d)) {
-            html+= "<b>"+d.toString()+"</b>";
-            html+= "<ul>";
-
-            QStringList details = dateDetails(d);
-            foreach (const QString &detail, details) {
-                if (processedDetails<detailsMax) {
-                    html+= "<li>"+detail+"</li>";
-                    processedDetails++;
-                }
-            }
-
-            html+= "</ul>";
-        }
-
-        if (processedDetails>=detailsMax) {
-            break;
-        }
+bool CalendarPrivate::addDateDetailsToDisplay(QString &html, const QDate &date)
+{
+    if (!calendarTable->dateHasDetails(date)) {
+        return false;
     }
 
-    d->eventsDisplay->setText(html);
+    html += "<b>" + date.toString() + "</b>";
+    html += "<ul>";
+
+    const QStringList details = calendarTable->dateDetails(date);
+    foreach (const QString &detail, details) {
+        html+= "<li>" + detail + "</li>";
+    }
+
+    html += "</ul>";
+    return true;
 }
 
 // Update the nav widgets to show the current date in the CalendarTable
@@ -446,7 +439,7 @@ void Calendar::refreshWidgets()
 {
     d->month->setText(calendar()->monthName(calendar()->month(date()), calendar()->year(date())));
     d->month->setMinimumSize(static_cast<QToolButton*>(d->month->widget())->sizeHint());
-    d->year->setText(calendar()->yearString(date()));
+    d->year->setText(calendar()->formatDate(date(), KLocale::Year, KLocale::LongNumber));
     d->dateText->setText(calendar()->formatDate(date(),  KLocale::ShortDate));
 
     // Block the signals to prevent changing the date again
@@ -459,7 +452,7 @@ void Calendar::refreshWidgets()
     // Block the signals to prevent changing the date again
     d->weekSpinBox->blockSignals(true);
     d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
-    d->weekSpinBox->setValue(calendar()->weekNumber(date()));
+    d->weekSpinBox->setValue(calendar()->week(date(), KLocale::IsoWeekNumber));
     d->weekSpinBox->blockSignals(false);
 }
 
@@ -526,7 +519,7 @@ void Calendar::monthTriggered()
 
 void Calendar::goToWeek(int newWeek)
 {
-    int currWeek = calendar()->weekNumber(date());
+    int currWeek = calendar()->week(date(), KLocale::IsoWeekNumber);
     int daysInWeek = calendar()->daysInWeek(date());
 
     setDate(calendar()->addDays(date(), (newWeek - currWeek) * daysInWeek));

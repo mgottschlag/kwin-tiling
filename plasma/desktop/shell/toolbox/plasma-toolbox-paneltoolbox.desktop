@@ -1,6 +1,7 @@
 [Desktop Entry]
 Comment=Default panel toolbox for the Plasma desktop shell
 Comment[ast]=Barra ferramientes panel por defeutu de la shell d'escritoriu Plasma
+Comment[bg]=Стандартен набор инструменти на панела за настолната обвивка Plasma
 Comment[bs]=Podrazumijevana alatnica panela za plazma školjku površi
 Comment[ca]=Caixa d'eines per defecte del plafó per a l'àrea de treball de l'escriptori Plasma
 Comment[ca@valencia]=Caixa d'eines per defecte del plafó per a l'àrea de treball de l'escriptori Plasma
@@ -48,6 +49,7 @@ Comment[zh_TW]=預設的 Plasma 桌面 shell 的面板工具盒
 Icon=plasma
 Name=Panel toolbox
 Name[ast]=Caxa de ferramientes del panel
+Name[bg]=Панел с инструменти
 Name[bs]=Alatnica panela
 Name[ca]=Caixa d'eines del plafó
 Name[ca@valencia]=Caixa d'eines del plafó

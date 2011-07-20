@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Simplest Image Hosting
 Name[ast]=Simplest Image Hosting
+Name[bg]=Simplest Image Hosting
 Name[bs]=Simplest imejdž hosting
 Name[ca]=Simplest Image Hosting
 Name[ca@valencia]=Simplest Image Hosting
@@ -48,6 +49,7 @@ Name[x-test]=xxSimplest Image Hostingxx
 Name[zh_CN]=Simplest Image Hosting
 Name[zh_TW]=Simplest Image Hosting
 Comment=Allows images to be shared using the Simplest Image Hosting service
+Comment[bg]=Позволява споделяне на изображения чрез услугата Simplest Image Hosting
 Comment[bs]=Dijeljenje slika preko servisa Simplest image hosting
 Comment[ca]=Permet la compartició d'imatges utilitzant el servei «Simplest Image Hosting»
 Comment[ca@valencia]=Permet la compartició d'imatges utilitzant el servei «Simplest Image Hosting»
@@ -58,6 +60,7 @@ Comment[el]=Επιτρέπει  στις εικόνες να γίνουν κοι
 Comment[en_GB]=Allows images to be shared using the Simplest Image Hosting service
 Comment[es]=Permite compartir imágenes a través del servicio de Simplest Image Hosting
 Comment[et]=Piltide jagamine Simplest Image Hosting teenuse kaudu
+Comment[fi]=Mahdollistaa kuvien jakamisen Simplest Image Hosting -palvelussa
 Comment[fr]=Permet le partage d'image à l'aide du service Simplest Image Hosting
 Comment[hr]=Omogućuje dijeljenje slika koristeći servis Simplest Image Hosting
 Comment[ia]=Il permitte imagines de esser compartite  per usar le servicio Simplest Image Hosting

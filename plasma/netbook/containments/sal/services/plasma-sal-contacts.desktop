@@ -2,6 +2,7 @@
 Name=Contacts
 Name[ar]=المراسلون
 Name[ast]=Contautos
+Name[bg]=Контакти
 Name[bs]=kontakti
 Name[ca]=Contactes
 Name[ca@valencia]=Contactes
@@ -68,6 +69,7 @@ Name[zh_TW]=聯絡人
 Comment=List all your contacts
 Comment[ar]=اسرد جميع مراسليك
 Comment[ast]=Llistar tolos contautos
+Comment[bg]=Списък с контактите ви
 Comment[bs]=Nabraja sve vaše kontakte
 Comment[ca]=Llista tots els contactes
 Comment[ca@valencia]=Llista tots els contactes

@@ -2,6 +2,7 @@
 Name=Terminate Applications
 Name[ar]=أنهِ تطبيقات
 Name[ast]=Zarrar aplicaciones
+Name[bg]=Прекъсване на програми
 Name[bn]=অ্যাপলিকেশন থামাও
 Name[bs]=obustavljanje programa
 Name[ca]=Finalitza aplicacions
@@ -69,6 +70,7 @@ Name[zh_TW]=終端機應用程式
 Comment=Stop applications that are currently running
 Comment[ar]=أوقف برامجاً قيد الشغيل حالياً
 Comment[ast]=Parar aplicaciones que tan executándose
+Comment[bg]=Спиране на работещи в момента програми
 Comment[bs]=Zaustavlja programe trenutno u pogonu
 Comment[ca]=Atura aplicacions que estan actualment en execució
 Comment[ca@valencia]=Atura aplicacions que estan actualment en execució

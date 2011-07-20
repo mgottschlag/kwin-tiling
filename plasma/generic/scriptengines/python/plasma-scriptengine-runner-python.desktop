@@ -2,6 +2,7 @@
 Name=Python Runner
 Name[ar]=مشغل بايثون
 Name[ast]=Llanzador Python
+Name[bg]=Стартер с Python
 Name[bs]=Python izvođač
 Name[ca]=Executor en Python
 Name[ca@valencia]=Executor en Python
@@ -62,6 +63,7 @@ Name[zh_TW]=Python 執行器
 Comment=Plasma Runner support for Python
 Comment[ar]=دعم مشغل بلازما لبايثون
 Comment[ast]=Implementación de llanzador Plasma pa Python
+Comment[bg]=Поддръжка за създаване на стартери на Plasma с Python
 Comment[bs]=Podrška plazma izvođača za Python
 Comment[ca]=Implementació de l'executor del Plasma per al Python
 Comment[ca@valencia]=Implementació de l'executor del Plasma per al Python

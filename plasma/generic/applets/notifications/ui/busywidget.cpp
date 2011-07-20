@@ -53,7 +53,8 @@ BusyWidget::BusyWidget(Plasma::PopupApplet *parent, const Manager *manager)
       m_svg(new Plasma::Svg(this)),
       m_systray(parent),
       m_manager(manager),
-      m_total(0)
+      m_total(0),
+      m_suppressToolTips(false)
 {
     setAcceptsHoverEvents(true);
     m_svg->setImagePath("icons/notification");
@@ -96,6 +97,7 @@ BusyWidget::BusyWidget(Plasma::PopupApplet *parent, const Manager *manager)
                 this, SLOT(updateTask()));
     }
 
+    Plasma::ToolTipManager::self()->registerWidget(this);
     updateTask();
 }
 
@@ -217,11 +219,9 @@ QString BusyWidget::expanderElement() const
     }
 }
 
-void BusyWidget::updateTask()
+void BusyWidget::getJobCounts(int &runningJobs, int &pausedJobs, int &completedJobs)
 {
-    int runningJobs = 0;
-    int pausedJobs = 0;
-    int completedJobs = 0;
+    runningJobs = pausedJobs = completedJobs = 0;
     foreach (const Job *job, m_manager->jobs()) {
         switch (job->state()) {
             case Job::Running:
@@ -234,6 +234,13 @@ void BusyWidget::updateTask()
                 break;
         }
     }
+
+}
+
+void BusyWidget::updateTask()
+{
+    int runningJobs, pausedJobs, completedJobs;
+    getJobCounts(runningJobs, pausedJobs, completedJobs);
 
     int total = m_manager->jobs().count();
 
@@ -267,6 +274,26 @@ void BusyWidget::updateTask()
         setState(BusyWidget::Info);
         setLabel(QString::number(total));
     }
+
+    if (Plasma::ToolTipManager::self()->isVisible(this)) {
+        toolTipAboutToShow();
+    }
+}
+
+void BusyWidget::suppressToolTips(bool suppress)
+{
+    m_suppressToolTips = suppress;
+}
+
+void BusyWidget::toolTipAboutToShow()
+{
+    if (m_suppressToolTips) {
+        Plasma::ToolTipManager::self()->setContent(this, Plasma::ToolTipContent());
+        return;
+    }
+
+    int runningJobs, pausedJobs, completedJobs;
+    getJobCounts(runningJobs, pausedJobs, completedJobs);
 
     //make a nice plasma tooltip
     QString tooltipContent;

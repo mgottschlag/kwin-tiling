@@ -728,8 +728,8 @@ void CKCmFontInst::moveFonts()
             break;
             default:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
-                        i18np("Do you really want to move this font?",
-                              "<p>Do you really want to move these %1 fonts from <i>%2</i> to <i>%3</i>?",
+                        i18np("<p>Do you really want to move this font from <i>%2</i> to <i>%3</i>?</p>",
+                              "<p>Do you really want to move these %1 fonts from <i>%2</i> to <i>%3</i>?</p>",
                               fontNames.count(),
                               itsGroupListView->isSystem() ? i18n(KFI_KIO_FONTS_SYS) : i18n(KFI_KIO_FONTS_USER),
                               itsGroupListView->isSystem() ? i18n(KFI_KIO_FONTS_USER) : i18n(KFI_KIO_FONTS_SYS)),

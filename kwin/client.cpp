@@ -251,6 +251,8 @@ void Client::releaseWindow(bool on_shutdown)
     assert(!deleting);
     deleting = true;
     Deleted* del = Deleted::create(this);
+    if (moveResizeMode)
+        emit clientFinishUserMovedResized(this);
     emit windowClosed(this, del);
     finishCompositing();
     workspace()->discardUsedWindowRules(this, true);   // Remove ForceTemporarily rules
@@ -316,6 +318,8 @@ void Client::destroyClient()
     assert(!deleting);
     deleting = true;
     Deleted* del = Deleted::create(this);
+    if (moveResizeMode)
+        emit clientFinishUserMovedResized(this);
     emit windowClosed(this, del);
     finishCompositing();
     workspace()->discardUsedWindowRules(this, true);   // Remove ForceTemporarily rules
@@ -500,8 +504,9 @@ void Client::repaintDecorationPending()
         // The scene will update the decoration pixmaps in the next painting pass
         // if it has not been already repainted before
         const QRegion r = paintRedirector->scheduledRepaintRegion();
-        if (!r.isEmpty())
-            Workspace::self()->addRepaint(r.translated(x() - padding_left, y() - padding_top));
+        if (!r.isEmpty()) {
+            addRepaint(r.translated(-padding_left,-padding_top));
+        }
     }
 }
 

@@ -686,6 +686,7 @@ void Toplevel::addDamage(int x, int y, int w, int h)
     damageRatio = float(damageArea) / float(rect().width()*rect().height());
     repaints_region += r;
     emit damaged(this, r);
+#ifdef KWIN_HAVE_OPENGL_COMPOSITING
     // discard lanczos texture
     if (effect_window) {
         QVariant cachedTextureVariant = effect_window->data(LanczosCacheRole);
@@ -696,6 +697,7 @@ void Toplevel::addDamage(int x, int y, int w, int h)
             effect_window->setData(LanczosCacheRole, QVariant());
         }
     }
+#endif
     workspace()->checkCompositeTimer();
 }
 
@@ -707,6 +709,7 @@ void Toplevel::addDamageFull()
     repaints_region = rect();
     damageRatio = 1.0;
     emit damaged(this, rect());
+#ifdef KWIN_HAVE_OPENGL_COMPOSITING
     // discard lanczos texture
     if (effect_window) {
         QVariant cachedTextureVariant = effect_window->data(LanczosCacheRole);
@@ -717,6 +720,7 @@ void Toplevel::addDamageFull()
             effect_window->setData(LanczosCacheRole, QVariant());
         }
     }
+#endif
     workspace()->checkCompositeTimer();
 }
 
@@ -744,12 +748,17 @@ void Toplevel::addRepaint(int x, int y, int w, int h)
     workspace()->checkCompositeTimer();
 }
 
+void Toplevel::addRepaint(const QRegion& r)
+{
+    if (!compositing())
+        return;
+    repaints_region += r;
+    workspace()->checkCompositeTimer();
+}
+
 void Toplevel::addRepaintFull()
 {
-    repaints_region = rect();
-    if (hasShadow()) {
-        repaints_region = repaints_region.united(shadow()->shadowRegion());
-    }
+    repaints_region = decorationRect();
     workspace()->checkCompositeTimer();
 }
 
@@ -838,11 +847,6 @@ bool Client::shouldUnredirect() const
     return false;
 }
 
-void Client::addRepaintFull()
-{
-    repaints_region = decorationRect();
-    workspace()->checkCompositeTimer();
-}
 
 //****************************************
 // Unmanaged
@@ -881,10 +885,5 @@ bool Deleted::shouldUnredirect() const
     return false;
 }
 
-void Deleted::addRepaintFull()
-{
-    repaints_region = decorationRect();
-    workspace()->checkCompositeTimer();
-}
 
 } // namespace

@@ -48,7 +48,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef KWIN_BUILD_TABBOX
 #include "tabbox.h"
 #endif
+#ifdef KWIN_BUILD_DESKTOPCHANGEOSD
 #include "desktopchangeosd.h"
+#endif
 #include "atoms.h"
 #include "placement.h"
 #include "notifications.h"
@@ -128,7 +130,9 @@ Workspace::Workspace(bool restore)
 #ifdef KWIN_BUILD_TABBOX
     , tab_box(0)
 #endif
+#ifdef KWIN_BUILD_DESKTOPCHANGEOSD
     , desktop_change_osd(0)
+#endif
     , popup(0)
     , advanced_popup(0)
     , trans_popup(0)
@@ -232,7 +236,9 @@ Workspace::Workspace(bool restore)
 
     client_keys = new KActionCollection(this);
     initShortcuts();
+#ifdef KWIN_BUILD_DESKTOPCHANGEOSD
     desktop_change_osd = new DesktopChangeOSD(this);
+#endif
     m_outline = new Outline();
 
     init();
@@ -354,7 +360,6 @@ void Workspace::init()
 
     loadDesktopSettings();
     updateDesktopLayout();
-    desktop_change_osd->numberDesktopsChanged();
     // Extra NETRootInfo instance in Client mode is needed to get the values of the properties
     NETRootInfo client_info(display(), NET::ActiveWindow | NET::CurrentDesktop);
     int initial_desktop;
@@ -482,7 +487,9 @@ Workspace::~Workspace()
             it != unmanaged.constEnd();
             ++it)
         (*it)->release();
+#ifdef KWIN_BUILD_DESKTOPCHANGEOSD
     delete desktop_change_osd;
+#endif
     delete m_outline;
     discardPopup();
     XDeleteProperty(display(), rootWindow(), atoms->kwin_running);
@@ -923,10 +930,7 @@ void Workspace::slotReconfigure()
     KGlobal::config()->reparseConfiguration();
     unsigned long changed = options->updateSettings();
 
-#ifdef KWIN_BUILD_TABBOX
-    tab_box->reconfigure();
-#endif
-    desktop_change_osd->reconfigure();
+    emit configChanged();
     initPositioning->reinitCascading(0);
     discardPopup();
     forEachClient(CheckIgnoreFocusStealingProcedure());
@@ -1330,10 +1334,6 @@ bool Workspace::setCurrentDesktop(int new_desktop)
     //    s += QString::number( desktop_focus_chain[i] ) + ", ";
     //kDebug( 1212 ) << s << "}\n";
 
-    // Not for the very first time, only if something changed and there are more than 1 desktops
-    if (old_desktop != 0 && old_desktop != new_desktop && numberOfDesktops() > 1)
-        desktop_change_osd->desktopChanged(old_desktop);
-
     if (compositing())
         addRepaintFull();
 
@@ -1549,9 +1549,6 @@ void Workspace::setNumberOfDesktops(int n)
         desktop_focus_chain[i] = i + 1;
 
     tilingLayouts.resize(numberOfDesktops() + 1);
-
-    // reset the desktop change osd
-    desktop_change_osd->numberDesktopsChanged();
 
     saveDesktopSettings();
     emit numberDesktopsChanged(old_number_of_desktops);

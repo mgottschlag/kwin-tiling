@@ -2,6 +2,7 @@
 Name=Python wallpaper
 Name[ar]=خلفية شاشة مكتوبة باستخدام بايثون
 Name[ast]=Fondu d'escritoriu en Python
+Name[bg]=Тапети с Python
 Name[bn]=পাইথন ওয়ালপেপার
 Name[bs]=Python pozadinska slika
 Name[ca]=Fons d'escriptori en Python
@@ -63,6 +64,7 @@ Name[zh_TW]=Python 桌布
 Comment=Plasma wallpaper support for Python
 Comment[ar]=دعم خلفية شاشة بلازما لبايثون
 Comment[ast]=Fondos de pantalla de Plasma pa Python
+Comment[bg]=Поддръжка за работа с тапети на Plasma с Python
 Comment[bs]=Podrška plazma pozadinskih slika za Python
 Comment[ca]=Implementació de fons d'escriptori del Plasma per al Python
 Comment[ca@valencia]=Implementació de fons d'escriptori del Plasma per al Python
