@@ -674,11 +674,6 @@ void RandRScreen::slotOutputChanged(RROutput id, int changes)
 	// if there is less than 2 outputs connected, there is no need to unify
 	if (connected <= 1)
 		return;
-
-	// wait some time before checking the output configuration as some randr 
-	// clients do operations in more than one step
-	if(m_outputsUnified)
-		unifyOutputs();
 }
 
 #include "randrscreen.moc"
