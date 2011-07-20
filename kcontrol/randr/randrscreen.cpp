@@ -38,7 +38,8 @@ RandRScreen::RandRScreen(int screenIndex)
 	m_activeCount = 0;
 
 	loadSettings();
-	load();
+	KConfig cfg("krandrrc");
+	load(cfg, true);
 
 	m_originalPrimaryOutput = primaryOutput();
 
@@ -417,7 +418,7 @@ QRect RandRScreen::rect() const
 	return m_rect;
 }
 
-void RandRScreen::load(KConfig &config)
+void RandRScreen::load(KConfig& config, bool skipOutputs)
 {
 	KConfigGroup group = config.group("Screen_" + QString::number(m_index));
 	m_outputsUnified = group.readEntry("OutputsUnified", false);
@@ -427,6 +428,10 @@ void RandRScreen::load(KConfig &config)
 	m_unifiedRotation = group.readEntry("UnifiedRotation", (int) RandR::Rotate0);
 
 //	slotUnifyOutputs(m_outputsUnified);
+
+	if (skipOutputs) {
+		return;
+	}
 
 	foreach(RandROutput *output, m_outputs)
 	{
