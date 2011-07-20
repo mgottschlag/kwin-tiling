@@ -399,7 +399,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 			}
 		}
 		// if there is more than one output connected, give the option to unify the outputs
-		if (screen->connectedCount() != 1)
+		if (screen->connectedCount() != 1 && !screen->unifiedSizes().isEmpty())
 		{
 			menu->addSeparator();
 			action = menu->addAction( i18n("Unify Outputs"), screen, SLOT(slotUnifyOutputs(bool)) );
