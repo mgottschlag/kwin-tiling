@@ -27,6 +27,7 @@
 #include <KPluginFactory>
 #include <KPluginLoader>
 #include <KDebug>
+#include <KApplication>
 #include <config-randr.h>
 
 #include "randr.h"
@@ -77,6 +78,8 @@ KRandRModule::KRandRModule(QWidget *parent, const QVariantList&)
 	//topLayout->addStretch(1);
 
 	setButtons(KCModule::Apply);
+
+	kapp->installX11EventFilter( this );
 }
 
 KRandRModule::~KRandRModule(void)
@@ -139,6 +142,14 @@ void KRandRModule::apply()
 	else
 #endif
 		m_legacyConfig->apply();
+}
+
+bool KRandRModule::x11Event(XEvent* e)
+{
+	if (m_display->canHandle(e)) {
+		m_display->handleEvent(e);
+	}
+	return QWidget::x11Event(e);
 }
 
 

@@ -82,6 +82,7 @@ protected slots:
 signals:
 	void updateView();
 	void optionChanged();
+	void connectedChanged(bool);
 
 
 private:

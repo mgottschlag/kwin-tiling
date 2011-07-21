@@ -194,6 +194,7 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 	if(changes & RandR::ChangeConnection) {
 		kDebug() << "Output connection status changed.";
 		setEnabled(m_output->isConnected());
+		emit connectedChanged(m_output->isConnected());
 	}
 	
 	if(changes & RandR::ChangeRate) {
