@@ -53,6 +53,8 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	connect( identifyOutputsButton, SIGNAL( clicked()), SLOT( identifyOutputs()));
 	connect( &identifyTimer, SIGNAL( timeout()), SLOT( clearIndicators()));
 	connect( &compressUpdateViewTimer, SIGNAL( timeout()), SLOT( slotDelayedUpdateView()));
+	connect(unifyOutputs, SIGNAL(toggled(bool)), SLOT(unifiedOutputChanged(bool)));
+
 	identifyTimer.setSingleShot( true );
 	compressUpdateViewTimer.setSingleShot( true );
 
@@ -74,14 +76,20 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 #ifdef HAS_RANDR_1_3
         if (RandR::has_1_3)
         {
-            primaryDisplaySelector->setVisible(true);
+            primaryDisplayBox->setVisible(true);
+            label->setVisible(true);
         }
         else
 #endif //HAS_RANDR_1_3
         {
-            primaryDisplaySelector->setVisible(false);
+            primaryDisplayBox->setVisible(false);
+            label->setVisible(false);
         }
 
+	KConfig config("krandrrc");
+	if (config.hasGroup("Screen_0") && config.group("Screen_0").readEntry("OutputsUnified", false)) {
+		unifyOutputs->setChecked(true);
+	}
 	// create the scene
 	m_scene = new QGraphicsScene(m_display->currentScreen()->rect());	
 	screenView->setScene(m_scene);
@@ -126,7 +134,7 @@ void RandRConfig::load(void)
 	OutputConfigList preceding;
 	foreach(RandROutput *output, outputs)
 	{
-		OutputConfig *config = new OutputConfig(this, output, preceding);
+		OutputConfig *config = new OutputConfig(this, output, preceding, unifyOutputs->isChecked());
 		m_configs.append( config );
 		preceding.append( config );
 		
@@ -174,6 +182,11 @@ void RandRConfig::save()
 	if (!m_display->isValid())
 		return;
 
+	KConfig config("krandrrc");
+	if (config.hasGroup("Screen_0")) {
+		config.group("Screen_0").writeEntry("OutputsUnified", unifyOutputs->isChecked());
+		config.sync();
+	}
 	apply();
 }
 
@@ -312,6 +325,14 @@ void RandRConfig::disableStartup()
 	KMessageBox::information( window(), i18n( "Default desktop setup has been reset." ));
 }
 
+void RandRConfig::unifiedOutputChanged(bool checked)
+{
+	Q_FOREACH(OutputConfig *config, m_configs) {
+		config->setUnifyOutput(checked);
+		config->updateSizeList();
+	}
+	slotChanged();
+}
 
 bool RandRConfig::eventFilter(QObject *obj, QEvent *event)
 {

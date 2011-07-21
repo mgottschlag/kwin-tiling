@@ -148,6 +148,40 @@ void Nepomuk::SearchRunner::run( const Plasma::RunnerContext&, const Plasma::Que
     }
 }
 
+QList<QAction*> Nepomuk::SearchRunner::actionsFromMenu(QMenu *menu, const QString &prefix, QObject *parent)
+{
+    Q_ASSERT(menu);
+
+    QList<QAction*> ret;
+    foreach (QAction *action, menu->actions()) {
+        if (QMenu *submenu = action->menu()) {
+            //Flatten hierarchy and prefix submenu text to all actions in submenu
+            ret << actionsFromMenu(submenu, action->text(), parent);
+        } else if (!action->isSeparator() && action->isEnabled()) {
+            QString text = action->text();
+            if (action->isCheckable()) {
+                if (action->isChecked()) {
+                    text = QString("(%1) %2").arg(QChar(0x2613)).arg(text);
+                } else {
+                    text = QString("( ) %1").arg(text);
+                }
+            }
+
+            if (!prefix.isEmpty()) {
+                text = QString("%1: %2").arg(prefix).arg(text);
+            }
+            text = text.replace(QRegExp("&([\\S])"), "\\1");
+
+            QAction *a = new QAction(action->icon(), text, parent);
+
+            QObject::connect(a, SIGNAL(triggered(bool)), action, SIGNAL(triggered(bool)));
+            ret << a;
+        }
+    }
+    return ret;
+}
+
+
 QList<QAction*> Nepomuk::SearchRunner::actionsForMatch(const Plasma::QueryMatch &match)
 {
     //Unlike other runners, the actions generated here are likely to see
@@ -182,7 +216,7 @@ QList<QAction*> Nepomuk::SearchRunner::actionsForMatch(const Plasma::QueryMatch 
     //Add user defined actions
     m_actions->addServiceActionsTo(&dummy);
 
-    m_konqActions = Plasma::actionsFromMenu(&dummy);
+    m_konqActions = actionsFromMenu(&dummy);
 
     ret << m_konqActions;
 

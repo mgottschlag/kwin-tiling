@@ -174,8 +174,8 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 
 	//FIXME: handling these events incorrectly, causing an X11 I/O error...
 	// Disable for now.
-	kWarning() << "FIXME: Output event ignored!";
-	return;
+// 	kWarning() << "FIXME: Output event ignored!";
+// 	return;
 	
 	RRCrtc currentCrtc = m_crtc->id();
 	if (event->crtc != currentCrtc)
@@ -200,6 +200,7 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 	{
 		changed |= RandR::ChangeConnection;
 		m_connected = (event->connection == RR_Connected);
+		loadSettings(false);
 		if (!m_connected && currentCrtc != None)
 			setCrtc(None);
 	}

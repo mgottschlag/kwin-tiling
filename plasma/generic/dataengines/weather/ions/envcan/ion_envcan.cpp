@@ -185,6 +185,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappi
     forecastList["a few wet flurries or rain showers"] = RainSnow;
     forecastList["a mix of sun and cloud"] = PartlyCloudyDay;
     forecastList["cloudy with sunny periods"] = PartlyCloudyDay;
+    forecastList["partly cloudy"] = PartlyCloudyDay;
     forecastList["mainly sunny"] = FewCloudsDay;
     forecastList["sunny"] = ClearDay;
     forecastList["blizzard"] = Snow;

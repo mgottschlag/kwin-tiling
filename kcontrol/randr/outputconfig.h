@@ -36,7 +36,7 @@ class OutputConfig : public QWidget, public Ui::OutputConfigBase
 {
 	Q_OBJECT
 public:
-	OutputConfig(QWidget *parent, RandROutput *output, OutputConfigList preceding);
+	OutputConfig(QWidget *parent, RandROutput *output, OutputConfigList preceding, bool unified);
 	~OutputConfig();
 	
 	/** Enumeration describing two related outputs (i.e. VGA LeftOf TMDS) */
@@ -62,9 +62,10 @@ public:
 	RandROutput *output(void) const;
 
 	bool hasPendingChanges( const QPoint& normalizePos ) const;
-	
+	void setUnifyOutput(bool unified);
 public slots:
 	void load();
+	void updateSizeList(void);
 
 protected slots:
 	void setConfigDirty(void);
@@ -72,7 +73,6 @@ protected slots:
 	void updatePositionList(void);
 	void updatePositionListDelayed(void);
 	void updateRotationList(void);
-	void updateSizeList(void);
 	void updateRateList(void);
 	void updateRateList(int resolutionIndex);
 	
@@ -88,6 +88,7 @@ private:
 	static bool isRelativeTo( QRect rect, QRect to, Relation rel );
 	int m_changes;
 	bool m_changed;
+	bool m_unified;
 	QPoint m_pos;
 	QTimer updatePositionListTimer;
 	

@@ -94,7 +94,7 @@ void KRandRSystemTray::slotPrepareMenu()
 		for (int s = 0; s < m_display->numScreens(); s++) 
 		{
 			m_display->setCurrentScreen(s);
-			if (s == m_display->screenIndexOfWidget(associatedWidget())) 
+			if (s == QX11Info::appScreen())
 			{
 				/*lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
 				menu->setItemEnabled(lastIndex, false);*/
@@ -399,7 +399,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 			}
 		}
 		// if there is more than one output connected, give the option to unify the outputs
-		if (screen->connectedCount() != 1)
+		if (screen->connectedCount() != 1 && !screen->unifiedSizes().isEmpty())
 		{
 			menu->addSeparator();
 			action = menu->addAction( i18n("Unify Outputs"), screen, SLOT(slotUnifyOutputs(bool)) );
