@@ -34,6 +34,8 @@
 
 #include <QtGui/QStackedWidget>
 #include <QtGui/QMenu>
+#include <QtGui/QSortFilterProxyModel>
+#include <QtGui/QStandardItemModel>
 #include <QtCore/QHash>
 
 #include <QDBusConnection>
@@ -169,6 +171,11 @@ void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::initGUI()
     menu->addAction( i18n("Remove Component"), q, SLOT(removeComponent()));
 
     ui.menu_button->setMenu(menu);
+
+    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(q);
+    proxyModel->setSourceModel(new QStandardItemModel(0, 1, proxyModel));
+    proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+    ui.components->setModel(proxyModel);
 }
 
 
@@ -225,7 +232,6 @@ void KGlobalShortcutsEditor::addCollection(
 
         // Add to the component combobox
         d->ui.components->addItem(friendlyName);
-        // TODO: compare case insensitive and natural and ...
         d->ui.components->model()->sort(0);
 
         // Add to our component registry
