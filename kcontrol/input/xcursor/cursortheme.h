@@ -54,7 +54,7 @@ class CursorTheme
         };
 
         CursorTheme() {}
-        CursorTheme(const QString &title, const QString &description);
+        CursorTheme(const QString &title, const QString &description = QString());
         virtual ~CursorTheme() {}
 
         const QString title() const        { return m_title; }
