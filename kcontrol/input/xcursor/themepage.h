@@ -47,7 +47,7 @@ class ThemePage : public QWidget, private Ui::ThemePage
         void changed(bool);
 
     private slots:
-        void currentChanged(const QModelIndex &, const QModelIndex &);
+        void selectionChanged();
         void getNewClicked();
         void installClicked();
         void removeClicked();
@@ -55,6 +55,7 @@ class ThemePage : public QWidget, private Ui::ThemePage
     private:
         void selectRow(int) const;
         void selectRow(const QModelIndex &index) const { selectRow(index.row()); }
+        QModelIndex selectedIndex() const;
         bool installThemes(const QString &file);
         bool applyTheme(const CursorTheme *theme);
         bool iconsIsWritable() const;
