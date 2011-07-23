@@ -65,6 +65,7 @@ KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
 	OutputMap outputs = m_display->currentScreen()->outputs();
 	foreach(RandROutput *output, outputs)
 	{
+		connect(output, SIGNAL(outputChanged(RROutput,int)), this, SLOT(slotPrepareMenu()));
 		connect(output, SIGNAL(outputChanged(RROutput,int)), this, SLOT(updateToolTip()));
 	}
 }
