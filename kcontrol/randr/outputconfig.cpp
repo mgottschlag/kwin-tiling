@@ -366,11 +366,11 @@ void OutputConfig::updatePositionListDelayed()
         }
 
 	if (m_unified) {
-		positionLabel->setVisible(false);
-		positionCombo->setVisible(false);
-		positionOutputCombo->setVisible(false);
-		absolutePosX->setVisible(false);
-		absolutePosY->setVisible(false);
+		positionLabel->setEnabled(false);
+		positionCombo->setEnabled(false);
+		positionOutputCombo->setEnabled(false);
+		absolutePosX->setEnabled(false);
+		absolutePosY->setEnabled(false);
 	}
 	// FIXME: get this from Kconfig again
 	/*if(m_output->relation(0) != m_output) {
