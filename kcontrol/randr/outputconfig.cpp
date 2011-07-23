@@ -57,8 +57,8 @@ OutputConfig::OutputConfig(QWidget* parent, RandROutput* output, OutputConfigLis
 	connect(orientationCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(updateView()));
 	connect(positionCombo,    SIGNAL(currentIndexChanged(int)), this, SIGNAL(updateView()));
 	connect(positionOutputCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(updateView()));
-	connect(absolutePosX, SIGNAL(textChanged(const QString&)), this, SIGNAL(updateView()));
-	connect(absolutePosY, SIGNAL(textChanged(const QString&)), this, SIGNAL(updateView()));
+	connect(absolutePosX, SIGNAL(valueChanged(int)), this, SIGNAL(updateView()));
+	connect(absolutePosY, SIGNAL(valueChanged(int)), this, SIGNAL(updateView()));
 	// make sure to update option for relative position when other outputs get enabled/disabled
 	foreach( OutputConfig* config, precedingOutputConfigs )
 		connect( config, SIGNAL( updateView()), this, SLOT( updatePositionList()));
@@ -83,7 +83,7 @@ QPoint OutputConfig::position(void) const
 		return QPoint();
 	int index = positionCombo->currentIndex();
 	if((Relation)positionCombo->itemData(index).toInt() == Absolute)
-		return QPoint(absolutePosX->text().toInt(), absolutePosY->text().toInt());
+		return QPoint(absolutePosX->value(), absolutePosY->value());
 	
 	foreach(OutputConfig *config, precedingOutputConfigs) {
 		if( config->output()->id()
@@ -288,8 +288,8 @@ void OutputConfig::positionComboChanged(int item)
 		int posX = m_output->rect().topLeft().x();
 		int posY = m_output->rect().topLeft().y();
 		
-		absolutePosX->setText(QString::number(posX));
-		absolutePosY->setText(QString::number(posY));
+		absolutePosX->setValue(posX);
+		absolutePosY->setValue(posY);
 	}
 }
 
