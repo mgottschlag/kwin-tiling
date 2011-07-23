@@ -261,7 +261,7 @@ void InteractiveConsole::openScriptFile()
     mimetypes << "application/javascript";
     m_fileDialog->setMimeFilter(mimetypes);
 
-    connect(m_fileDialog, SIGNAL(finished()), this, SLOT(openScriptUrlSelected()));
+    connect(m_fileDialog, SIGNAL(okClicked()), this, SLOT(openScriptUrlSelected()));
     m_fileDialog->show();
 }
 
