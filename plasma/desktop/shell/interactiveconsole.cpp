@@ -261,11 +261,11 @@ void InteractiveConsole::openScriptFile()
     mimetypes << "application/javascript";
     m_fileDialog->setMimeFilter(mimetypes);
 
-    connect(m_fileDialog, SIGNAL(okClicked()), this, SLOT(openScriptUrlSelected()));
+    connect(m_fileDialog, SIGNAL(finished(int)), this, SLOT(openScriptUrlSelected(int)));
     m_fileDialog->show();
 }
 
-void InteractiveConsole::openScriptUrlSelected()
+void InteractiveConsole::openScriptUrlSelected(int result)
 {
     if (!m_fileDialog) {
         return;
@@ -275,7 +275,7 @@ void InteractiveConsole::openScriptUrlSelected()
     m_fileDialog->deleteLater();
     m_fileDialog = 0;
 
-    if (url.isEmpty()) {
+    if (result == QDialog::Rejected || url.isEmpty()) {
         return;
     }
 
@@ -389,18 +389,18 @@ void InteractiveConsole::saveScript()
     mimetypes << "application/javascript";
     m_fileDialog->setMimeFilter(mimetypes);
 
-    connect(m_fileDialog, SIGNAL(finished()), this, SLOT(saveScriptUrlSelected()));
+    connect(m_fileDialog, SIGNAL(finished(int)), this, SLOT(saveScriptUrlSelected(int)));
     m_fileDialog->show();
 }
 
-void InteractiveConsole::saveScriptUrlSelected()
+void InteractiveConsole::saveScriptUrlSelected(int result)
 {
     if (!m_fileDialog) {
         return;
     }
 
     KUrl url = m_fileDialog->selectedUrl();
-    if (url.isEmpty()) {
+    if (result == QDialog::Rejected || url.isEmpty()) {
         return;
     }
 
