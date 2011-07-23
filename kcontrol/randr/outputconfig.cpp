@@ -325,7 +325,6 @@ void OutputConfig::updatePositionListDelayed()
 
 	OutputConfigList cleanList;
 	foreach(OutputConfig *config, precedingOutputConfigs) {
-		RandROutput* output = config->output();
 		if( config->resolution().isEmpty()) {
 			continue; // ignore disabled outputs
 		}
