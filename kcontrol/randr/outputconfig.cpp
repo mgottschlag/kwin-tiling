@@ -184,6 +184,7 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 	if(changes & RandR::ChangeRect) {
 		QRect r = m_output->rect();
 		kDebug() << "Output rect changed:" << r;
+        updatePositionList();
 	}
 	
 	if(changes & RandR::ChangeRotation) {
@@ -318,8 +319,7 @@ void OutputConfig::updatePositionListDelayed()
 	positionOutputCombo->setEnabled( enable );
 	absolutePosX->setEnabled( enable );
 	absolutePosY->setEnabled( enable );
-	// when updating, use previously set value, otherwise read it from the output
-	QRect rect = positionCombo->count() > 0 ? QRect( position(), resolution()) : m_output->rect();
+
 	positionCombo->clear();
 	positionOutputCombo->clear();
 
@@ -354,7 +354,7 @@ void OutputConfig::updatePositionListDelayed()
 		positionOutputCombo->addItem(QIcon(output->icon()), output->name(), (int)output->id());
 		if (!m_unified) {
 			for( int rel = -1; rel < 5; ++rel ) {
-				if( isRelativeTo( rect, QRect( config->position(), config->resolution()), (Relation) rel )) {
+				if( isRelativeTo( m_output->rect(), QRect( config->position(), config->resolution()), (Relation) rel )) {
 					positionCombo->setCurrentIndex( positionCombo->findData( rel ));
 				}
 			}
