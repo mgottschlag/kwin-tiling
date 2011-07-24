@@ -116,7 +116,7 @@ KCMXinerama::KCMXinerama(QWidget *parent, const QVariantList &)
     QGridLayout *layout = new QGridLayout(this);
     m_noXineramaMessage = new QWidget();
     QLabel *labelicon = new QLabel(m_noXineramaMessage);
-    labelicon->setPixmap(KIcon("dialog-information").pixmap(128, 128));
+    labelicon->setPixmap(KIcon("preferences-desktop-display-multiple").pixmap(128, 128), KIconLoader::global(), QStringList() << "" << "dialog-error");
     layout->addWidget(labelicon, 0, 1, Qt::AlignHCenter);
     QLabel *labeltext = new QLabel(i18n("You do not appear to have a single desktop spread across multiple monitors."), m_noXineramaMessage);
     layout->addWidget(labeltext,1, 1, Qt::AlignHCenter);
