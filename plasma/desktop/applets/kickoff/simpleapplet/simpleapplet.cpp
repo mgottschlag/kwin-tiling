@@ -462,7 +462,7 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     formatLabel->setBuddy(d->formatComboBox);
     d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name Only"), MenuLauncherApplet::Name);
     d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Description Only"), MenuLauncherApplet::Description);
-    d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name Description"), MenuLauncherApplet::NameDescription);
+    d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name (Description)"), MenuLauncherApplet::NameDescription);
     d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Description (Name)"), MenuLauncherApplet::DescriptionName);
     d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name - Description"), MenuLauncherApplet::NameDashDescription);
     d->setCurrentItem(d->formatComboBox, d->formattype);
