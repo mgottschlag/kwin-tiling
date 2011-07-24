@@ -30,7 +30,6 @@
 
 class QPropertyAnimation;
 
-class KSelectionOwner;
 class KColorScheme;
 class KWindowInfo;
 class KCModuleProxy;
@@ -109,7 +108,6 @@ class Pager : public Plasma::Applet
         void slotAddDesktop();
         void slotRemoveDesktop();
 #endif
-        void lostDesktopLayoutOwner();
         void dragSwitch();
 
     protected:
@@ -162,7 +160,6 @@ class Pager : public Plasma::Applet
         QAction *m_addDesktopAction;
         QAction *m_removeDesktopAction;
         QList<KWindowInfo> m_windowInfo;
-        KSelectionOwner* m_desktopLayoutOwner;
         Plasma::FrameSvg *m_background;
         KColorScheme *m_colorScheme;
         bool m_verticalFormFactor;
