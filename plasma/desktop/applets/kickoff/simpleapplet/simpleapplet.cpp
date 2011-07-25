@@ -331,11 +331,6 @@ void MenuLauncherApplet::init()
         receivedArgs = true;
     }
 
-    Q_ASSERT(! d->switcher);
-    d->switcher = new QAction(i18n("Switch to Application Launcher Style"), this);
-    d->actions.append(d->switcher);
-    connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
-
     configChanged();
 
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ExtensionHandler, "desktop", new Kickoff::ServiceItemHandler);
@@ -346,6 +341,11 @@ void MenuLauncherApplet::init()
         d->actions.append(menueditor);
         connect(menueditor, SIGNAL(triggered(bool)), this, SLOT(startMenuEditor()));
     }
+
+    Q_ASSERT(! d->switcher);
+    d->switcher = new QAction(i18n("Switch to Application Launcher Style"), this);
+    d->actions.append(d->switcher);
+    connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
 
     if (receivedArgs) {
         KConfigGroup cg = config();
