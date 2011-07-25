@@ -48,6 +48,8 @@ public:
 	void apply();
 	void update();
 
+	virtual bool x11Event(XEvent* e);
+
 public slots:
 	void slotUpdateView();
 	void slotDelayedUpdateView();
@@ -60,6 +62,7 @@ protected slots:
 	void saveStartup();
 	void disableStartup();
 	void unifiedOutputChanged(bool checked);
+	void outputConnectedChanged(bool);
 
 signals:
 	void changed(bool change);

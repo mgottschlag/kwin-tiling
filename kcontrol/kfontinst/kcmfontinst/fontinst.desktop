@@ -9,8 +9,10 @@ X-KDE-Library=kcm_fontinst
 X-KDE-ParentApp=kcontrol
 
 Name=Font Management
+Name[bg]=Управление на шрифтове
 Name[hr]=Upravljanje pismima
 Name[ia]=Gestion de font
+Name[is]=Leturstjórn
 Name[ko]=글꼴 관리
 Name[lt]=Šriftų tvarkymas
 Name[nb]=Skriftadministrering

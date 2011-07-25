@@ -144,7 +144,10 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
     QFontMetrics fm1(boldfont);
     QFontMetrics fm2(normalfont);
 
-    int textAreaHeight = fm1.lineSpacing() + fm2.lineSpacing();
+    int textAreaHeight = fm1.lineSpacing();
+    if (!secondRow.isEmpty()) {
+        textAreaHeight += fm2.lineSpacing();
+    }
 
     x = option.rect.left() + option.decorationSize.width() + decorationMargin;
     int y1 = option.rect.top() + (option.rect.height() - textAreaHeight) / 2;

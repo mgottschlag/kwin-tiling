@@ -367,7 +367,7 @@ void LockOut::createConfigurationInterface(KConfigDialog *parent)
 #ifndef Q_OS_WIN
     QWidget *widget = new QWidget(parent);
     ui.setupUi(widget);
-    parent->addPage(widget, i18n("Please select one or more items on the list below"), Applet::icon());
+    parent->addPage(widget, i18n("Actions"), Applet::icon());
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     

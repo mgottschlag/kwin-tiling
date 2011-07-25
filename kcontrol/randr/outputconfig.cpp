@@ -57,8 +57,8 @@ OutputConfig::OutputConfig(QWidget* parent, RandROutput* output, OutputConfigLis
 	connect(orientationCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(updateView()));
 	connect(positionCombo,    SIGNAL(currentIndexChanged(int)), this, SIGNAL(updateView()));
 	connect(positionOutputCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(updateView()));
-	connect(absolutePosX, SIGNAL(textChanged(const QString&)), this, SIGNAL(updateView()));
-	connect(absolutePosY, SIGNAL(textChanged(const QString&)), this, SIGNAL(updateView()));
+	connect(absolutePosX, SIGNAL(valueChanged(int)), this, SIGNAL(updateView()));
+	connect(absolutePosY, SIGNAL(valueChanged(int)), this, SIGNAL(updateView()));
 	// make sure to update option for relative position when other outputs get enabled/disabled
 	foreach( OutputConfig* config, precedingOutputConfigs )
 		connect( config, SIGNAL( updateView()), this, SLOT( updatePositionList()));
@@ -83,7 +83,7 @@ QPoint OutputConfig::position(void) const
 		return QPoint();
 	int index = positionCombo->currentIndex();
 	if((Relation)positionCombo->itemData(index).toInt() == Absolute)
-		return QPoint(absolutePosX->text().toInt(), absolutePosY->text().toInt());
+		return QPoint(absolutePosX->value(), absolutePosY->value());
 	
 	foreach(OutputConfig *config, precedingOutputConfigs) {
 		if( config->output()->id()
@@ -184,6 +184,7 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 	if(changes & RandR::ChangeRect) {
 		QRect r = m_output->rect();
 		kDebug() << "Output rect changed:" << r;
+        updatePositionList();
 	}
 	
 	if(changes & RandR::ChangeRotation) {
@@ -194,6 +195,7 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 	if(changes & RandR::ChangeConnection) {
 		kDebug() << "Output connection status changed.";
 		setEnabled(m_output->isConnected());
+		emit connectedChanged(m_output->isConnected());
 	}
 	
 	if(changes & RandR::ChangeRate) {
@@ -286,8 +288,8 @@ void OutputConfig::positionComboChanged(int item)
 		int posX = m_output->rect().topLeft().x();
 		int posY = m_output->rect().topLeft().y();
 		
-		absolutePosX->setText(QString::number(posX));
-		absolutePosY->setText(QString::number(posY));
+		absolutePosX->setValue(posX);
+		absolutePosY->setValue(posY);
 	}
 }
 
@@ -317,14 +319,12 @@ void OutputConfig::updatePositionListDelayed()
 	positionOutputCombo->setEnabled( enable );
 	absolutePosX->setEnabled( enable );
 	absolutePosY->setEnabled( enable );
-	// when updating, use previously set value, otherwise read it from the output
-	QRect rect = positionCombo->count() > 0 ? QRect( position(), resolution()) : m_output->rect();
+
 	positionCombo->clear();
 	positionOutputCombo->clear();
 
 	OutputConfigList cleanList;
 	foreach(OutputConfig *config, precedingOutputConfigs) {
-		RandROutput* output = config->output();
 		if( config->resolution().isEmpty()) {
 			continue; // ignore disabled outputs
 		}
@@ -353,7 +353,7 @@ void OutputConfig::updatePositionListDelayed()
 		positionOutputCombo->addItem(QIcon(output->icon()), output->name(), (int)output->id());
 		if (!m_unified) {
 			for( int rel = -1; rel < 5; ++rel ) {
-				if( isRelativeTo( rect, QRect( config->position(), config->resolution()), (Relation) rel )) {
+				if( isRelativeTo( m_output->rect(), QRect( config->position(), config->resolution()), (Relation) rel )) {
 					positionCombo->setCurrentIndex( positionCombo->findData( rel ));
 				}
 			}
@@ -366,11 +366,11 @@ void OutputConfig::updatePositionListDelayed()
         }
 
 	if (m_unified) {
-		positionLabel->setVisible(false);
-		positionCombo->setVisible(false);
-		positionOutputCombo->setVisible(false);
-		absolutePosX->setVisible(false);
-		absolutePosY->setVisible(false);
+		positionLabel->setEnabled(false);
+		positionCombo->setEnabled(false);
+		positionOutputCombo->setEnabled(false);
+		absolutePosX->setEnabled(false);
+		absolutePosY->setEnabled(false);
 	}
 	// FIXME: get this from Kconfig again
 	/*if(m_output->relation(0) != m_output) {

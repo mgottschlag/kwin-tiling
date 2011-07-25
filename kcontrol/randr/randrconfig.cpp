@@ -146,6 +146,7 @@ void RandRConfig::load(void)
 			w->setExpanded(true);
 			kDebug() << "Output rect:" << output->rect();
 		}
+		connect(config, SIGNAL(connectedChanged(bool)), this, SLOT(outputConnectedChanged(bool)));
 		m_outputList.append(w);
 		
 		o = new OutputGraphicsItem(config);
@@ -175,6 +176,16 @@ void RandRConfig::load(void)
 	}
 #endif //HAS_RANDR_1_3
 	slotUpdateView();
+}
+
+void RandRConfig::outputConnectedChanged(bool connected)
+{
+	OutputConfig *config = static_cast <OutputConfig *> (sender());
+	int index = m_configs.indexOf(config);
+	QString description = connected
+			? i18n("%1 (Connected)", config->output()->name())
+			: config->output()->name();
+	m_outputList.at(index)->setCaption(description);
 }
 
 void RandRConfig::save()
@@ -453,6 +464,12 @@ void RandRConfig::insufficientVirtualSize()
         else
             KMessageBox::sorry( this, i18n( "Changing configuration failed. Please adjust your xorg.conf manually." ));
         }
+}
+
+bool RandRConfig::x11Event(XEvent* e)
+{
+    kDebug() << "PAPAPAPA";
+    return QWidget::x11Event(e);
 }
 
 #include "randrconfig.moc"

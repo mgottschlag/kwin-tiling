@@ -22,6 +22,13 @@
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
+        <widget class="QCheckBox" name="unifyOutputs">
+         <property name="text">
+          <string>Unify Outputs</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QWidget" name="outputList" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
@@ -41,34 +48,21 @@
         <layout class="QGridLayout" name="gridLayout">
          <item row="1" column="0">
           <widget class="QLabel" name="label">
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>100</height>
-            </size>
-           </property>
            <property name="text">
             <string>Primary output:</string>
+           </property>
+           <property name="buddy">
+            <cstring>primaryDisplayBox</cstring>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QComboBox" name="primaryDisplayBox"/>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Unify Outputs</string>
-           </property>
-           <property name="buddy">
-            <cstring>unifyOutputs</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="unifyOutputs">
-           <property name="text">
-            <string/>
+          <widget class="QComboBox" name="primaryDisplayBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
           </widget>
          </item>
@@ -95,6 +89,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>unifyOutputs</tabstop>
+  <tabstop>primaryDisplayBox</tabstop>
+  <tabstop>identifyOutputsButton</tabstop>
+  <tabstop>saveAsDefaultButton</tabstop>
+  <tabstop>screenView</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

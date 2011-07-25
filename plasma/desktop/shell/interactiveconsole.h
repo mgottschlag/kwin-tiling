@@ -75,8 +75,8 @@ private Q_SLOTS:
     void scriptFileDataRecvd(KIO::Job *job, const QByteArray &data);
     void scriptFileDataReq(KIO::Job *job, QByteArray &data);
     void reenableEditor(KJob *job);
-    void saveScriptUrlSelected();
-    void openScriptUrlSelected();
+    void saveScriptUrlSelected(int result);
+    void openScriptUrlSelected(int result);
     void loadScriptFromUrl(const KUrl &url);
     void populateTemplatesMenu();
     void loadTemplate(QAction *);
