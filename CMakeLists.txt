@@ -16,10 +16,13 @@ set(KDE_MIN_VERSION "4.6.90")
 set(SOPRANO_MIN_VERSION "2.5.63")
 find_package(KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package(Strigi REQUIRED)
-find_package(QImageBlitz REQUIRED)
 find_package(ZLIB REQUIRED)
-
 find_package(DBusMenuQt 0.6.0 REQUIRED)
+
+macro_optional_find_package(QImageBlitz)
+if (QIMAGEBLITZ_FOUND)
+   set(HAVE_QIMAGEBLITZ true)
+endif (QIMAGEBLITZ_FOUND)
 
 if(Q_WS_X11)
   if(NOT X11_XTest_FOUND)
@@ -58,9 +61,9 @@ if(SIP_FOUND AND SIP_VERSION STRLESS "040701")
   message(STATUS "The version of SIP found is too old. 4.7.1 or later is needed.")
   set(SIP_FOUND)
 endif(SIP_FOUND AND SIP_VERSION STRLESS "040701")
- 
+
 include(SIPMacros)
- 
+
 macro_optional_find_package(PyQt4)
 if(PYQT4_FOUND AND PYQT4_VERSION STRLESS "040400")
   message(STATUS "The version of PyQt found is too old. 4.4.0 or later is required.")
@@ -98,14 +101,7 @@ configure_file(config-workspace.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-works
 
 add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DHAVE_CONFIG_H=1)
 add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
-include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
-
-include_directories(
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/kdm
-  ${CMAKE_CURRENT_SOURCE_DIR}/libs
-  ${CMAKE_CURRENT_SOURCE_DIR}/libs/kworkspace
-)
+include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${CMAKE_SOURCE_DIR}/libs)
 
 add_definitions(-DDISABLE_NEPOMUK_LEGACY)
 
@@ -114,56 +110,57 @@ add_subdirectory(cmake)
 add_subdirectory(libs)
 
 # system settings (kcontrol replacement)
-macro_optional_add_subdirectory( systemsettings )
+if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
+   macro_optional_add_subdirectory( systemsettings )
+endif(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
 
 # core apps
 if(NOT WIN32)
-  macro_optional_add_subdirectory( kcheckpass )
-  macro_optional_add_subdirectory( kscreensaver )
-  macro_optional_add_subdirectory( kwin )
-  macro_optional_add_subdirectory( ksmserver )
-  macro_optional_add_subdirectory( kcminit )
-  macro_optional_add_subdirectory( ksplash )
-  macro_optional_add_subdirectory( khotkeys )
-  macro_optional_add_subdirectory( ksysguard )
-  macro_optional_add_subdirectory( powerdevil )
-  macro_optional_add_subdirectory( kwrited )
-  macro_optional_add_subdirectory( qguiplatformplugin_kde )
+   macro_optional_add_subdirectory( kcheckpass )
+   macro_optional_add_subdirectory( kwin )
+   macro_optional_add_subdirectory( ksmserver )
+   macro_optional_add_subdirectory( ksplash )
+   macro_optional_add_subdirectory( powerdevil )
+   macro_optional_add_subdirectory( qguiplatformplugin_kde )
+   macro_optional_add_subdirectory( ksysguard )
 endif(NOT WIN32)
 
-if (Q_WS_X11)
-  macro_optional_add_subdirectory( kinfocenter )
-endif (Q_WS_X11)
+if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
+   macro_optional_add_subdirectory(kcontrol)
+   macro_optional_add_subdirectory(klipper)
+   macro_optional_add_subdirectory(kmenuedit)
+   macro_optional_add_subdirectory(krunner)
+   macro_optional_add_subdirectory(solid)
+   macro_optional_add_subdirectory(kstartupconfig)
+   macro_optional_add_subdirectory(freespacenotifier)
 
-macro_optional_add_subdirectory( klipper )
-macro_optional_add_subdirectory( krunner )
-macro_optional_add_subdirectory( solid )
-macro_optional_add_subdirectory( kmenuedit )
-macro_optional_add_subdirectory( plasma )
-macro_optional_add_subdirectory( kstartupconfig )
-macro_optional_add_subdirectory( statusnotifierwatcher )
-macro_optional_add_subdirectory( freespacenotifier )
+   # data
+   macro_optional_add_subdirectory(doc)
+
+   if (Q_WS_X11)
+      macro_optional_add_subdirectory(kinfocenter)
+   endif (Q_WS_X11)
+
+   if(NOT WIN32)
+      macro_optional_add_subdirectory(kscreensaver)
+      macro_optional_add_subdirectory(kcminit)
+      macro_optional_add_subdirectory(khotkeys)
+      macro_optional_add_subdirectory(kwrited)
+      macro_optional_add_subdirectory(ksystraycmd)
+      # data
+      macro_optional_add_subdirectory(cursors)
+   endif(NOT WIN32)
+
+   if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
+      add_subdirectory( kdm )
+   else(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
+      message(STATUS "Xau lib or Xdmcp lib was missing. kdm will not compile")
+   endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
+endif(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
+
+macro_optional_add_subdirectory(plasma)
+macro_optional_add_subdirectory(statusnotifierwatcher)
 macro_optional_add_subdirectory(kstyles)
-
-
-# apps we need to figure out what to do with
-macro_optional_add_subdirectory( kcontrol )
-if(NOT WIN32)
-  macro_optional_add_subdirectory( ksystraycmd )
-endif(NOT WIN32)
-# data
-if(NOT WIN32)
-  macro_optional_add_subdirectory( cursors )
-endif(NOT WIN32)
-macro_optional_add_subdirectory( doc )
-macro_optional_add_subdirectory( wallpapers )
-
-if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
-  add_subdirectory( kdm )
-else(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
-  message(STATUS "Xau lib or Xdmcp lib was missing. kdm will not compile")
-endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
-
 
 ########### install files ###############
 if(NOT WIN32)
