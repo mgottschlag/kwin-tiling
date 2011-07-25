@@ -271,15 +271,15 @@ void InteractiveConsole::openScriptUrlSelected(int result)
         return;
     }
 
-    KUrl url = m_fileDialog->selectedUrl();
-    m_fileDialog->deleteLater();
-    m_fileDialog = 0;
-
-    if (result == QDialog::Rejected || url.isEmpty()) {
-        return;
+    if (result == QDialog::Accepted) {
+        const KUrl url = m_fileDialog->selectedUrl();
+        if (!url.isEmpty()) {
+            loadScriptFromUrl(url);
+        }
     }
 
-    loadScriptFromUrl(url);
+    m_fileDialog->deleteLater();
+    m_fileDialog = 0;
 }
 
 void InteractiveConsole::loadScriptFromUrl(const KUrl &url)
@@ -399,12 +399,15 @@ void InteractiveConsole::saveScriptUrlSelected(int result)
         return;
     }
 
-    KUrl url = m_fileDialog->selectedUrl();
-    if (result == QDialog::Rejected || url.isEmpty()) {
-        return;
+    if (result == QDialog::Accepted) {
+        const KUrl url = m_fileDialog->selectedUrl();
+        if (!url.isEmpty()) {
+            saveScript(url);
+        }
     }
 
-    saveScript(url);
+    m_fileDialog->deleteLater();
+    m_fileDialog = 0;
 }
 
 void InteractiveConsole::saveScript(const KUrl &url)
