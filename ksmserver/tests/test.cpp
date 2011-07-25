@@ -3,7 +3,7 @@
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kiconloader.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 
 int
 main(int argc, char *argv[])
