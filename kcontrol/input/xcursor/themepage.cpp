@@ -62,7 +62,9 @@ ThemePage::ThemePage(QWidget *parent)
     : QWidget(parent)
 {
     setupUi(this);
-    installKnsButton->setIcon( KIcon("get-hot-new-stuff") );
+    installKnsButton->setIcon(KIcon("get-hot-new-stuff"));
+    installButton->setIcon(KIcon("document-import"));
+    removeButton->setIcon(KIcon("edit-delete"));
 
     model = new CursorThemeModel(this);
 
@@ -76,7 +78,7 @@ ThemePage::ThemePage(QWidget *parent)
     view->setModel(proxy);
     view->setItemDelegate(new ItemDelegate(this));
     view->setIconSize(QSize(size, size));
-    view->setSelectionMode( QAbstractItemView::SingleSelection );
+    view->setSelectionMode(QAbstractItemView::SingleSelection);
 
     // Make sure we find out about selection changes
     connect(view->selectionModel(),
