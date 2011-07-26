@@ -36,7 +36,7 @@
 #include <Plasma/Context>
 #include <Plasma/Corona>
 
-#include <kactivityconsumer.h>
+#include <kworkspace/kactivityconsumer.h>
 
 #include "plasmaapp.h"
 

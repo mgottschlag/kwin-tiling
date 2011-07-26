@@ -49,7 +49,7 @@
 #include <Plasma/Animator>
 
 #include <kephal/screens.h>
-#include <kactivityconsumer.h>
+#include <kworkspace/kactivityconsumer.h>
 
 #include <taskmanager/task.h>
 
