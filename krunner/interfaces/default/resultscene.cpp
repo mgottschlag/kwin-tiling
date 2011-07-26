@@ -279,10 +279,15 @@ void ResultScene::focusInEvent(QFocusEvent *focusEvent)
         // on tab focus in, we want to actually select the second item
         // since the first item is always "passively" selected by default
         if (!currentFocus || currentFocus == m_items.first()) {
-            ResultItem *newFocus = m_items[1];
-            if (newFocus->isVisible()) {
-                setFocusItem(newFocus);
-                emit ensureVisibility(newFocus);
+            ResultItem *newFocus = m_items[0];
+            if (newFocus->firstTabItem() != newFocus) {
+                setFocusItem(newFocus->firstTabItem());
+            } else {
+                newFocus = m_items[1];
+                if (newFocus->isVisible()) {
+                    setFocusItem(newFocus);
+                    emit ensureVisibility(newFocus);
+                }
             }
         } else if (currentFocus) {
             setFocusItem(currentFocus);

@@ -88,7 +88,20 @@ ResultItem::~ResultItem()
 {
 }
 
-QGraphicsWidget* ResultItem::arrangeTabOrder(QGraphicsWidget* last)
+QGraphicsWidget *ResultItem::firstTabItem()
+{
+    if (m_configButton) {
+        return m_configButton;
+    }
+
+    if (m_actionsWidget) {
+        return m_actionsWidget;
+    }
+
+    return this;
+}
+
+QGraphicsWidget *ResultItem::arrangeTabOrder(QGraphicsWidget* last)
 {
     QGraphicsWidget *sceneWidget = static_cast<QGraphicsWidget*>(parent());
     sceneWidget->setTabOrder(last, this);

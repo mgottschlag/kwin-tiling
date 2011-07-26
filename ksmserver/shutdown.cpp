@@ -66,7 +66,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <ktemporaryfile.h>
 #include <kconfiggroup.h>
 #include <knotification.h>
-#include <kdisplaymanager.h>
+#include <kworkspace/kdisplaymanager.h>
 #include "server.h"
 #include "global.h"
 #include "client.h"

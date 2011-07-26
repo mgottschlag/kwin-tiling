@@ -78,7 +78,7 @@
 #include <kephal/screens.h>
 
 #include <plasmagenericshell/backgrounddialog.h>
-#include "kactivitycontroller.h"
+#include "kworkspace/kactivitycontroller.h"
 
 #include "activity.h"
 #include "appadaptor.h"
@@ -87,7 +87,7 @@
 #include "desktopcorona.h"
 #include "desktopview.h"
 #include "interactiveconsole.h"
-#include "kactivityinfo.h"
+#include "kworkspace/kactivityinfo.h"
 #include "panelshadows.h"
 #include "panelview.h"
 #include "plasma-shell-desktop.h"

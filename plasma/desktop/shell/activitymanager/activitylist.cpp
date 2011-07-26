@@ -21,7 +21,7 @@
 
 #include "activity.h"
 #include "plasmaapp.h"
-#include "kactivitycontroller.h"
+#include "kworkspace/kactivitycontroller.h"
 
 #include <QHash>
 

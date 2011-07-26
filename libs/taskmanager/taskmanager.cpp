@@ -48,7 +48,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 
 #include <kephal/screens.h>
-#include <kactivityconsumer.h>
+#include <kworkspace/kactivityconsumer.h>
 
 namespace TaskManager
 {

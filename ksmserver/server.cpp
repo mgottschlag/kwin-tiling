@@ -84,7 +84,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "server.moc"
 
-#include <kdisplaymanager.h>
+#include <kworkspace/kdisplaymanager.h>
 #include <QX11Info>
 #include <krandom.h>
 #include <klauncher_iface.h>

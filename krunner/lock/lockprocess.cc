@@ -27,7 +27,7 @@
 
 #include <kephal/screens.h>
 
-#include <kdisplaymanager.h>
+#include <kworkspace/kdisplaymanager.h>
 
 #include <KStandardDirs>
 #include <KApplication>

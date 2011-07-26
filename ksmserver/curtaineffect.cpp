@@ -29,8 +29,11 @@
 #include <QPixmap>
 #include <QPainter>
 #include <QTimer>
+#include "config-workspace.h"
 
+#ifdef HAVE_QIMAGEBLITZ
 #include <qimageblitz.h>
+#endif
 
 CurtainEffect::CurtainEffect(QWidget *parent, QPixmap *pixmap)
     : LogoutEffect(parent, pixmap)
@@ -48,8 +51,10 @@ void CurtainEffect::nextFrame()
 {
     QImage image = QPixmap::grabWindow(QApplication::desktop()->winId(), 0, currentY,
                                        parent->width(), 10 ).toImage();
+#ifdef HAVE_QIMAGEBLITZ
     Blitz::intensity(image, -0.4);
     Blitz::grayscale(image);
+#endif
 
     QPainter painter(pixmap);
     painter.drawImage(0, currentY, image);

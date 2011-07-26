@@ -19,8 +19,6 @@
 #ifndef KRUNNERAPP_H
 #define KRUNNERAPP_H
 
-#include <kworkspace.h>
-
 #include <kuniqueapplication.h>
 #ifdef Q_WS_X11
 #include "saverengine.h"
@@ -48,7 +46,6 @@ public:
     static KRunnerApp* self();
     ~KRunnerApp();
 
-    void logout( KWorkSpace::ShutdownConfirm confirm, KWorkSpace::ShutdownType sdtype );
     // The action collection of the active widget
     KActionCollection* actionCollection();
 

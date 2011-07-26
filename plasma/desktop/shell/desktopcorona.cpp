@@ -49,8 +49,8 @@
 #include <scripting/layouttemplatepackagestructure.h>
 
 #include "activity.h"
-#include "kactivitycontroller.h"
-#include "kactivityinfo.h"
+#include "kworkspace/kactivitycontroller.h"
+#include "kworkspace/kactivityinfo.h"
 #include "panelview.h"
 #include "plasmaapp.h"
 #include "plasma-shell-desktop.h"

@@ -1,4 +1,7 @@
+
+if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
 add_subdirectory( kcm )
+endif(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
 add_subdirectory( tests )
 
 include_directories(

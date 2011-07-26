@@ -94,6 +94,7 @@ public:
     bool mouseHovered() const;
     void calculateSize();
     void calculateSize(int sceneWidth);
+    QGraphicsWidget *firstTabItem();
     QGraphicsWidget* arrangeTabOrder(QGraphicsWidget* last);
 
     void highlight(bool yes);
