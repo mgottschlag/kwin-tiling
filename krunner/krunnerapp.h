@@ -19,7 +19,7 @@
 #ifndef KRUNNERAPP_H
 #define KRUNNERAPP_H
 
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 
 #include <kuniqueapplication.h>
 #ifdef Q_WS_X11

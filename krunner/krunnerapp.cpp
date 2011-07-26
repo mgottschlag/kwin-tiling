@@ -47,7 +47,7 @@
 #include "panelshadows.h"
 
 #include "appadaptor.h"
-#include "kworkspace.h"
+#include "kworkspace/kworkspace.h"
 #include "ksystemactivitydialog.h"
 #include "interfaces/default/interface.h"
 #include "interfaces/quicksand/qs_dialog.h"

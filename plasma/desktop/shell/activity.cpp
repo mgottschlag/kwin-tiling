@@ -19,7 +19,7 @@
 
 #include "desktopcorona.h"
 #include "plasma-shell-desktop.h"
-#include "kactivitycontroller.h"
+#include "kworkspace/kactivitycontroller.h"
 #include "activitymanager/kidenticongenerator.h"
 
 #include <QPixmap>
