@@ -206,7 +206,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_resultsView->hide();
 
     m_delayedQueryTimer.setSingleShot(true);
-    m_delayedQueryTimer.setInterval(100);
+    m_delayedQueryTimer.setInterval(50);
     connect(&m_delayedQueryTimer, SIGNAL(timeout()), this, SLOT(delayedQueryLaunch()));
 
     QTimer::singleShot(0, this, SLOT(resetInterface()));
