@@ -513,7 +513,13 @@ void Interface::runDefaultResultItem()
 
 void Interface::queryTextEdited(const QString &query)
 {
-    m_delayedRun = false;
+    if (query.isEmpty() || query.trimmed() != m_runnerManager->query()) {
+        // if the query is empty and the query is NOT what we are currently looking for ... then
+        // reset m_delayedRun. it does happen, however, that a search is being made already for the
+        // query text and this method gets called again, in which case we do NOT want to reset
+        // m_delayedRun
+        m_delayedRun = false;
+    }
 
     if (query.isEmpty() && !m_runnerManager->singleMode()) {
         m_delayedQueryTimer.stop();
