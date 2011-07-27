@@ -64,14 +64,13 @@ void KrunnerHistoryComboBox::setLineEdit(QLineEdit *e)
 
 void KrunnerHistoryComboBox::connectLineEdit()
 {
-    if (!lineEdit()) {
-        return;
-    }
-
     disconnect(this, SIGNAL(currentIndexChanged(QString)), this, SLOT(currentIndexChanged(QString)));
     connect(this, SIGNAL(currentIndexChanged(QString)), this, SLOT(currentIndexChanged(QString)));
-    lineEdit()->disconnect(this);
-    connect(lineEdit(), SIGNAL(textEdited(QString)), this, SIGNAL(queryTextEdited(QString)));
+
+    if (lineEdit()) {
+        disconnect(lineEdit(), SIGNAL(textEdited(QString)), this, SIGNAL(queryTextEdited(QString)));
+        connect(lineEdit(), SIGNAL(textEdited(QString)), this, SIGNAL(queryTextEdited(QString)));
+    }
 }
 
 void KrunnerHistoryComboBox::focusOutEvent(QFocusEvent *e)
