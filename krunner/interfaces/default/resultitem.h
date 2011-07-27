@@ -42,6 +42,7 @@ struct SharedResultData
 {
     bool processHoverEvents;
     bool mouseHovering;
+    Plasma::RunnerManager *runnerManager;
 };
 
 class ResultItemSignaller : public QObject
@@ -70,7 +71,7 @@ class ResultItem : public QGraphicsWidget
     Q_PROPERTY(qreal highlightState READ highlightState WRITE setHighlightState)
 
 public:
-    ResultItem(const SharedResultData *sharedData, const Plasma::QueryMatch &match, Plasma::RunnerManager *runnerManager, QGraphicsWidget *parent);
+    ResultItem(const SharedResultData *sharedData, QGraphicsWidget *parent);
     ~ResultItem();
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);

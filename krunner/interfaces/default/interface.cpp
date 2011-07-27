@@ -70,6 +70,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 {
     m_resultData.processHoverEvents = true;
     m_resultData.mouseHovering = false;
+    m_resultData.runnerManager = runnerManager;
 
     m_hideResultsTimer.setSingleShot(true);
     connect(&m_hideResultsTimer, SIGNAL(timeout()), this, SLOT(hideResultsArea()));

@@ -150,9 +150,8 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     if (m_items.isEmpty()) {
         QTime t;
         t.start();
-        Plasma::QueryMatch dummy(0);
         for (int i = 0; i < maxItemsAllowed; ++i) {
-            ResultItem *item = new ResultItem(m_resultData, dummy, m_runnerManager, 0);
+            ResultItem *item = new ResultItem(m_resultData, 0);
             item->setContentsMargins(m_itemMarginLeft, m_itemMarginTop,
                                      m_itemMarginRight, m_itemMarginBottom);
             item->hide();

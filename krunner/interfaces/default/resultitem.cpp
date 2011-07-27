@@ -52,7 +52,7 @@
 
 void shadowBlur(QImage &image, int radius, const QColor &color);
 
-ResultItem::ResultItem(const SharedResultData *sharedData, const Plasma::QueryMatch &match, Plasma::RunnerManager *runnerManager, QGraphicsWidget *parent)
+ResultItem::ResultItem(const SharedResultData *sharedData, QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_match(0),
       m_configButton(0),
@@ -61,7 +61,6 @@ ResultItem::ResultItem(const SharedResultData *sharedData, const Plasma::QueryMa
       m_configWidget(0),
       m_actionsWidget(0),
       m_actionsLayout(0),
-      m_runnerManager(runnerManager),
       m_sharedData(sharedData),
       m_mouseHovered(false),
       m_mimeDataFailed(false)
@@ -81,7 +80,6 @@ ResultItem::ResultItem(const SharedResultData *sharedData, const Plasma::QueryMa
     m_highlightAnim->setEndValue(1);
     m_highlightAnim->setDuration(50);
     m_highlightAnim->setEasingCurve(QEasingCurve::OutCubic);
-    setMatch(match);
 }
 
 ResultItem::~ResultItem()
@@ -189,7 +187,7 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
 void ResultItem::setupActions()
 {
     //kDebug();
-    QList<QAction*> actionList = m_runnerManager->actionsForMatch(m_match);
+    QList<QAction*> actionList = m_sharedData->runnerManager->actionsForMatch(m_match);
 
     if (!actionList.isEmpty()) {
         m_actionsWidget = new QGraphicsWidget(this);
@@ -454,7 +452,7 @@ void ResultItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (!m_mimeDataFailed &&
         event->buttons() == Qt::LeftButton &&
         (event->pos() - event->buttonDownPos(Qt::LeftButton)).manhattanLength() >= KGlobalSettings::dndEventDelay()) {
-        QMimeData *mime = m_runnerManager->mimeDataForMatch(m_match);
+        QMimeData *mime = m_sharedData->runnerManager->mimeDataForMatch(m_match);
         //kDebug() << mime << m_match.text() << m_match.id() << m_match.data();
         if (mime) {
             QDrag *drag = new QDrag(event->widget());
