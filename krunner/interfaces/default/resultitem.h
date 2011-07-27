@@ -139,7 +139,6 @@ private:
     Plasma::ToolButton *m_configButton;
 
     QIcon m_icon;
-    QBrush m_bgBrush;
     QPixmap m_fadeout;
     QTimer m_highlightCheckTimer;
     qreal m_highlight;
@@ -147,7 +146,6 @@ private:
     QGraphicsProxyWidget *m_configWidget;
     QGraphicsWidget *m_actionsWidget;
     QGraphicsLinearLayout *m_actionsLayout;
-    Plasma::RunnerManager *m_runnerManager;
     QPropertyAnimation *m_highlightAnim;
     const SharedResultData *m_sharedData;
     bool m_mouseHovered : 1;
