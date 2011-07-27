@@ -377,20 +377,6 @@ void ResultScene::selectNextItem()
     }
 }
 
-bool ResultScene::launchQuery(const QString &term)
-{
-    bool temp = !(term.trimmed().isEmpty() || m_runnerManager->query() == term.trimmed());
-    m_runnerManager->launchQuery(term);
-    return temp;
-}
-
-bool ResultScene::launchQuery(const QString &term, const QString &runner)
-{
-    bool temp = !(term.trimmed().isEmpty() || m_runnerManager->query() == term.trimmed() ) || (!runner.isEmpty());
-    m_runnerManager->launchQuery(term, runner);
-    return temp;
-}
-
 void ResultScene::clearQuery()
 {
     //m_selectionBar->setTargetItem(0);

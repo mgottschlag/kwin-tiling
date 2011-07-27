@@ -533,14 +533,12 @@ void Interface::queryTextEdited(const QString &query)
 void Interface::delayedQueryLaunch()
 {
     const QString query = (m_runnerManager->singleMode() ? m_singleRunnerSearchTerm->userText()
-                                                         : static_cast<KLineEdit*>(m_searchTerm->lineEdit())->userText());
-    QString runnerId;
-    if (m_runnerManager->singleMode()) {
-        runnerId = m_runnerManager->singleModeRunnerId();
-    }
+                                                         : static_cast<KLineEdit*>(m_searchTerm->lineEdit())->userText()).trimmed();
+    const QString runnerId = m_runnerManager->singleMode() ? m_runnerManager->singleModeRunnerId() : QString();
 
     if (!query.isEmpty() || m_runnerManager->singleMode()) {
-        m_queryRunning = m_resultsScene->launchQuery(query, runnerId) || m_queryRunning; //lazy OR?
+        m_queryRunning = m_runnerManager->query() != query || !runnerId.isEmpty();
+        m_runnerManager->launchQuery(query, runnerId);
     }
 
     if (!m_queryRunning && m_delayedRun) {
