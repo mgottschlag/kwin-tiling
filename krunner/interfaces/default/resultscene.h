@@ -55,7 +55,7 @@ class ResultScene : public QGraphicsScene
 
     public slots:
         void setQueryMatches(const QList<Plasma::QueryMatch> &matches);
-        void clearQuery();
+        void queryCleared();
 
     signals:
         void itemActivated(ResultItem *item);

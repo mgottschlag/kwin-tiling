@@ -377,12 +377,11 @@ void ResultScene::selectNextItem()
     }
 }
 
-void ResultScene::clearQuery()
+void ResultScene::queryCleared()
 {
     //m_selectionBar->setTargetItem(0);
     setFocusItem(0);
     clearSelection();
-    m_runnerManager->reset();
 }
 
 ResultItem* ResultScene::defaultResultItem() const

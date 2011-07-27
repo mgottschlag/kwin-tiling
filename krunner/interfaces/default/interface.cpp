@@ -378,8 +378,9 @@ void Interface::resetInterface()
     m_delayedRun = false;
     m_searchTerm->setCurrentItem(QString(), true, 0);
     m_singleRunnerSearchTerm->clear();
+    m_resultsScene->queryCleared();
     if (!m_running) {
-        m_resultsScene->clearQuery();
+        m_runnerManager->reset();
     }
     resetResultsArea();
     m_minimumHeight = height();
