@@ -150,9 +150,8 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     if (m_items.isEmpty()) {
         QTime t;
         t.start();
-        Plasma::QueryMatch dummy(0);
         for (int i = 0; i < maxItemsAllowed; ++i) {
-            ResultItem *item = new ResultItem(m_resultData, dummy, m_runnerManager, 0);
+            ResultItem *item = new ResultItem(m_resultData, 0);
             item->setContentsMargins(m_itemMarginLeft, m_itemMarginTop,
                                      m_itemMarginRight, m_itemMarginBottom);
             item->hide();
@@ -377,26 +376,11 @@ void ResultScene::selectNextItem()
     }
 }
 
-bool ResultScene::launchQuery(const QString &term)
-{
-    bool temp = !(term.trimmed().isEmpty() || m_runnerManager->query() == term.trimmed());
-    m_runnerManager->launchQuery(term);
-    return temp;
-}
-
-bool ResultScene::launchQuery(const QString &term, const QString &runner)
-{
-    bool temp = !(term.trimmed().isEmpty() || m_runnerManager->query() == term.trimmed() ) || (!runner.isEmpty());
-    m_runnerManager->launchQuery(term, runner);
-    return temp;
-}
-
-void ResultScene::clearQuery()
+void ResultScene::queryCleared()
 {
     //m_selectionBar->setTargetItem(0);
     setFocusItem(0);
     clearSelection();
-    m_runnerManager->reset();
 }
 
 ResultItem* ResultScene::defaultResultItem() const
@@ -408,15 +392,6 @@ ResultItem* ResultScene::defaultResultItem() const
 
     kDebug() << (QObject*) m_items[0] << m_items.count();
     return m_items[0];
-}
-
-void ResultScene::run(ResultItem *item) const
-{
-    if (!item) {
-        return;
-    }
-
-    item->run(m_runnerManager);
 }
 
 void ResultScene::updateItemMargins()
