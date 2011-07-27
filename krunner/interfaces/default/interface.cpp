@@ -490,7 +490,7 @@ void Interface::run(ResultItem *item)
     // in a way that will cause the results scene to be cleared and
     // the RunnerManager to be cleared of context as a result
     close();
-    m_resultsScene->run(item);
+    item->run(m_runnerManager);
     m_running = false;
 
     resetInterface();

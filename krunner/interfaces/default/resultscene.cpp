@@ -395,15 +395,6 @@ ResultItem* ResultScene::defaultResultItem() const
     return m_items[0];
 }
 
-void ResultScene::run(ResultItem *item) const
-{
-    if (!item) {
-        return;
-    }
-
-    item->run(m_runnerManager);
-}
-
 void ResultScene::updateItemMargins()
 {
     m_selectionBar->getContentsMargins(&m_itemMarginLeft, &m_itemMarginTop,
