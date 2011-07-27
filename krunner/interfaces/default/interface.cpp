@@ -551,7 +551,7 @@ void Interface::delayedQueryLaunch()
 void Interface::matchCountChanged(int count)
 {
     m_queryRunning = false;
-    bool show = count > 0;
+    const bool show = count > 0;
     m_hideResultsTimer.stop();
 
     if (show && m_delayedRun) {
