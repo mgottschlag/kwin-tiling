@@ -105,7 +105,7 @@ void LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
         connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(associateDestroyed(QObject*)));
 
         if (wasEmpty) {
-            emit show(true);
+            emit show(false);
         }
     }
 }
@@ -133,7 +133,7 @@ void LauncherItemPrivate::associateDestroyed(QObject *obj)
     associates.remove(obj);
 
     if (associates.isEmpty()) {
-        emit q->show(false);
+        emit q->show(true);
     }
 }
 
