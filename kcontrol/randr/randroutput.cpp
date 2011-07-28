@@ -599,7 +599,7 @@ bool RandROutput::tryCrtc(RandRCrtc *crtc, int changes)
 bool RandROutput::applyProposed(int changes, bool confirm)
 {
 	// If disabled, save anyway to ensure it's saved
-	if (!isActive())
+	if (!isConnected())
 	{
 		KConfig cfg("krandrrc");
 		save(cfg);
