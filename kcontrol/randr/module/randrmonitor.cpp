@@ -110,7 +110,7 @@ void RandrMonitorModule::processX11Event( XEvent* e )
             if( newMonitors == currentMonitors )
                 return;
             if( QDBusConnection::sessionBus().interface()->isServiceRegistered(
-                "org.kde.internal.KSettingsWidget-kcm_display" ))
+                "org.kde.internal.KSettingsWidget-kcm_randr" ))
                 { // already running
                 return;
                 }
