@@ -342,6 +342,10 @@ void GroupManagerPrivate::removeTask(TaskPtr task)
         return;
     }
 
+    foreach (LauncherItem *launcher, launchers) {
+        launcher->removeItemIfAssociated(item);
+    }
+
     if (item->parentGroup()) {
         item->parentGroup()->remove(item);
     }
