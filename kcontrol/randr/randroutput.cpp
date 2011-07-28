@@ -185,7 +185,7 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 		if (currentCrtc != None)
 			m_crtc->loadSettings(true);
 			//m_screen->crtc(m_currentCrtc)->loadSettings(true);
-		setCrtc(m_screen->crtc(event->crtc));
+		setCrtc(m_screen->crtc(event->crtc), false);
 		if (currentCrtc != None)
 			m_crtc->loadSettings(true);
 	}
