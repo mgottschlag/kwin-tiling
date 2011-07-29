@@ -24,7 +24,7 @@
        <item>
         <widget class="QCheckBox" name="unifyOutputs">
          <property name="text">
-          <string>Unify Outputs</string>
+          <string>Unify outputs</string>
          </property>
         </widget>
        </item>
