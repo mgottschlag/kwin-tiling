@@ -62,6 +62,8 @@ void OutputGraphicsItem::configUpdated()
 	m_text->setVisible( true );
 	setRect( m_config->rect());
 	setBrush(QColor(0, 255, 0, 128));
+	setObjectName(m_config->output()->name());
+	
 	// An example of this description text with radeonhd on randr 1.2:
 	// DVI-I_2/digital
 	// 1680x1050 (60.0 Hz)
@@ -283,6 +285,18 @@ void OutputGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 bool OutputGraphicsItem::isConnected()
 {
 	return (m_top != NULL || m_bottom != NULL || m_left != NULL || m_right != NULL);
+}
+
+void OutputGraphicsItem::setPrimary(bool primary)
+{
+	QPen p=pen();
+	p.setWidth(primary ? rect().width()/100 : 0);
+	setPen(p);
+}
+
+bool OutputGraphicsItem::isPrimary() const
+{
+	return pen().width()>0;
 }
 
 #include "outputgraphicsitem.moc"

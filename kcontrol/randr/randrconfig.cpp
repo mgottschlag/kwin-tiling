@@ -120,6 +120,7 @@ void RandRConfig::load(void)
 	{
 		// disconnect while we repopulate the combo box
 		disconnect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(changed()));
+		disconnect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updatePrimaryDisplay()));
 		primaryDisplayBox->clear();
 		primaryDisplayBox->addItem(i18nc("No display selected", "None"));
 	}
@@ -170,6 +171,7 @@ void RandRConfig::load(void)
 	if (RandR::has_1_3)
 	{
 		connect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(changed()));
+		connect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updatePrimaryDisplay()));
 	}
 #endif //HAS_RANDR_1_3
 	slotUpdateView();
@@ -283,6 +285,17 @@ void RandRConfig::apply()
 	update();
 }
 
+void RandRConfig::updatePrimaryDisplay()
+{
+	QString primary=primaryDisplayBox->currentText();
+	foreach( QGraphicsItem* item, m_scene->items()) {
+		OutputGraphicsItem* itemo = dynamic_cast< OutputGraphicsItem* >( item );
+		if(itemo && (itemo->objectName()==primary)!=itemo->isPrimary()) {
+			itemo->setPrimary(itemo->objectName()==primary);
+		}
+	}
+}
+
 void RandRConfig::update()
 {
 	// TODO: implement
@@ -390,6 +403,7 @@ void RandRConfig::slotDelayedUpdateView()
 		if( OutputGraphicsItem* itemo = dynamic_cast< OutputGraphicsItem* >( item ))
 			itemo->configUpdated();
 	}
+	updatePrimaryDisplay();
 	screenView->update();
 }
 

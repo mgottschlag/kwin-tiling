@@ -53,6 +53,7 @@ public:
 public slots:
 	void slotUpdateView();
 	void slotDelayedUpdateView();
+	void updatePrimaryDisplay();
 
 protected slots:
 	void slotAdjustOutput(OutputGraphicsItem *o);
