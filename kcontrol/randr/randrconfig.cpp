@@ -40,8 +40,6 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	m_display = display;
 	Q_ASSERT(m_display);
 	
-	m_changed = false;
-
 	if (!m_display->isValid()) {
 		// FIXME: this needs much better handling of this error...
 		return;
@@ -288,15 +286,12 @@ void RandRConfig::apply()
 
 void RandRConfig::slotChanged(void)
 {
-	m_changed = true;
-	
 	emit changed(true);
 }
 
 void RandRConfig::update()
 {
 	// TODO: implement
-	m_changed = false;
 	emit changed(false);
 }
 
@@ -367,8 +362,6 @@ void RandRConfig::slotUpdateView()
 {
 	compressUpdateViewTimer.start( 0 );
 }
-
-#include <typeinfo>
 
 void RandRConfig::slotDelayedUpdateView()
 {
