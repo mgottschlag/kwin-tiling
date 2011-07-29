@@ -89,7 +89,7 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 		unifyOutputs->setChecked(true);
 	}
 	// create the scene
-	m_scene = new QGraphicsScene(m_display->currentScreen()->rect());	
+	m_scene = new QGraphicsScene(m_display->currentScreen()->rect(), screenView);
 	screenView->setScene(m_scene);
 	screenView->installEventFilter(this);
 
@@ -99,7 +99,6 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 RandRConfig::~RandRConfig()
 {
 	clearIndicators();
-	delete m_scene;
 }
 
 void RandRConfig::load(void)
