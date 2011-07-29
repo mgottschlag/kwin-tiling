@@ -55,7 +55,6 @@ public slots:
 	void slotDelayedUpdateView();
 
 protected slots:
-	void slotChanged(void);
 	void slotAdjustOutput(OutputGraphicsItem *o);
 	void identifyOutputs();
 	void clearIndicators();
@@ -65,7 +64,7 @@ protected slots:
 	void outputConnectedChanged(bool);
 
 signals:
-	void changed(bool change);
+	void changed(bool change=true);
 
 protected:
 	virtual bool eventFilter(QObject *obj, QEvent *event);

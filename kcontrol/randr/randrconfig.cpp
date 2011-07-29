@@ -120,7 +120,7 @@ void RandRConfig::load(void)
 	if (RandR::has_1_3)
 	{
 		// disconnect while we repopulate the combo box
-		disconnect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SLOT(slotChanged()));
+		disconnect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(changed()));
 		primaryDisplayBox->clear();
 		primaryDisplayBox->addItem(i18nc("No display selected", "None"));
 	}
@@ -154,7 +154,7 @@ void RandRConfig::load(void)
 		        this, SLOT(slotAdjustOutput(OutputGraphicsItem*)));
 
 		connect(config, SIGNAL(updateView()), this, SLOT(slotUpdateView()));
-		connect(config, SIGNAL(optionChanged()), this, SLOT(slotChanged()));
+		connect(config, SIGNAL(optionChanged()), this, SIGNAL(changed()));
 
 #ifdef HAS_RANDR_1_3
 		if (RandR::has_1_3 && output->isConnected())
@@ -170,7 +170,7 @@ void RandRConfig::load(void)
 #ifdef HAS_RANDR_1_3
 	if (RandR::has_1_3)
 	{
-		connect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SLOT(slotChanged()));
+		connect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(changed()));
 	}
 #endif //HAS_RANDR_1_3
 	slotUpdateView();
@@ -284,11 +284,6 @@ void RandRConfig::apply()
 	update();
 }
 
-void RandRConfig::slotChanged(void)
-{
-	emit changed(true);
-}
-
 void RandRConfig::update()
 {
 	// TODO: implement
@@ -337,7 +332,8 @@ void RandRConfig::unifiedOutputChanged(bool checked)
 		config->setUnifyOutput(checked);
 		config->updateSizeList();
 	}
-	slotChanged();
+	
+	emit changed(true);
 }
 
 bool RandRConfig::eventFilter(QObject *obj, QEvent *event)
