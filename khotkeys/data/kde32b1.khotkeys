@@ -1419,6 +1419,7 @@ Name[el]=Εκτελείται κλήση D-Bus qdbus 'org.kde.krunner /App displ
 Name[en_GB]=Perform D-Bus call 'qdbus org.kde.krunner /App display'
 Name[es]=Ejecuta una llamada D-Bus 'qdbus org.kde.krunner /App display'
 Name[et]=D-Busi väljakutse 'qdbus org.kde.krunner /App display' sooritamine
+Name[eu]=Burutu 'qdbus org.kde.krunner /App display' D-Bus deia
 Name[fi]=Suorita D-Bus-kutsu ”qdbus org.kde.krunner /App display”
 Name[fr]=Effectue des appels D-Bus « qdbus org.kde.krunner /App display »
 Name[he]=ביצוע הקריאה 'qdbus org.kde.krunner /App display' מסוג D-Bus 
