@@ -144,7 +144,7 @@ QString PredicateItem::prettyName() const
     QString prettyProperty = SolidActionData::instance()->propertyName( ifaceType, property );
     switch( compOperator ) {
         case Solid::Predicate::Equals:
-            compName = i18n("The devices property %1 must equal %2", prettyProperty, value.toString());
+            compName = i18n("The device property %1 must equal %2", prettyProperty, value.toString());
             break;
         case Solid::Predicate::Mask:
             compName = i18n("The device property %1 must contain %2", prettyProperty, value.toString());
