@@ -420,7 +420,11 @@ void GroupManagerPrivate::currentActivityChanged(QString newActivity)
     currentActivity = newActivity;
 
     foreach (LauncherItem *item, launchers) {
-        rootGroups[currentActivity][currentDesktop]->add(item);
+        if (item->shouldShow()) {
+            rootGroups[currentActivity][currentDesktop]->add(item);
+        } else {
+            rootGroups[currentActivity][currentDesktop]->remove(item);
+        }
     }
 
     if (onlyGroupWhenFull) {
@@ -458,7 +462,11 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
     currentDesktop = newDesktop;
 
     foreach (LauncherItem *item, launchers) {
-        rootGroups[currentActivity][currentDesktop]->add(item);
+        if (item->shouldShow()) {
+            rootGroups[currentActivity][currentDesktop]->add(item);
+        } else {
+            rootGroups[currentActivity][currentDesktop]->remove(item);
+        }
     }
 
     if (onlyGroupWhenFull) {
