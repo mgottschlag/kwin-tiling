@@ -1185,10 +1185,32 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
         configDialog = new BackgroundDialog(resolution, containment, view, 0, id, nullManager);
         configDialog->setAttribute(Qt::WA_DeleteOnClose);
 
-        Activity *activity = m_corona->activity(containment->context()->currentActivityId());
-        Q_ASSERT(activity);
-        connect(configDialog, SIGNAL(containmentPluginChanged(Plasma::Containment*)),
-                activity, SLOT(replaceContainment(Plasma::Containment*)));
+
+        // if our containment is a dashboard containment only, then we don't
+        // want to mess with activities OR allow the user to change the containment type
+        // doing so causes the dashboard view to lose its containment and renders it useless
+        bool isDashboardContainment = fixedDashboard();
+        if (isDashboardContainment) {
+            bool found = false;
+            foreach (DesktopView *view, m_desktops) {
+                if (view->dashboardContainment() == containment) {
+                    found = true;
+                    break;
+                }
+            }
+
+            isDashboardContainment = found;
+        }
+
+        if (isDashboardContainment) {
+            configDialog->setLayoutChangeable(false);
+        } else {
+            Activity *activity = m_corona->activity(containment->context()->currentActivityId());
+            Q_ASSERT(activity);
+            connect(configDialog, SIGNAL(containmentPluginChanged(Plasma::Containment*)),
+                    activity, SLOT(replaceContainment(Plasma::Containment*)));
+        }
+
         connect(configDialog, SIGNAL(destroyed(QObject*)), nullManager, SLOT(deleteLater()));
     }
 
