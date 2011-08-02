@@ -120,7 +120,14 @@ void LauncherItem::removeItemIfAssociated(AbstractGroupableItem *item)
 
 bool LauncherItem::shouldShow() const
 {
-    return d->associates.isEmpty();
+    foreach (QObject *obj, d->associates) {
+        TaskItem *item = static_cast<TaskItem *>(obj);
+        if (item && item->isOnCurrentDesktop() && item->task().data()->isOnCurrentActivity()) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void LauncherItemPrivate::associateDestroyed(QObject *obj)
