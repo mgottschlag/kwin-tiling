@@ -102,7 +102,7 @@ class Pager : public Plasma::Applet
         void numberOfDesktopsChanged(int num);
         void desktopNamesChanged();
         void stackingOrderChanged();
-        void windowChanged(WId id, unsigned long *dirty);
+        void windowChanged(WId id, const unsigned long *dirty);
         void showingDesktopChanged(bool showing);
 #ifdef Q_WS_X11
         void slotAddDesktop();

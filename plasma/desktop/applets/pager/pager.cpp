@@ -150,7 +150,7 @@ void Pager::init()
     connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)), this, SLOT(numberOfDesktopsChanged(int)));
     connect(KWindowSystem::self(), SIGNAL(desktopNamesChanged()), this, SLOT(desktopNamesChanged()));
     connect(KWindowSystem::self(), SIGNAL(stackingOrderChanged()), this, SLOT(stackingOrderChanged()));
-    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned long*)), this, SLOT(windowChanged(WId,unsigned long*)));
+    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,const unsigned long*)), this, SLOT(windowChanged(WId,const unsigned long*)));
     connect(KWindowSystem::self(), SIGNAL(showingDesktopChanged(bool)), this, SLOT(showingDesktopChanged(bool)));
     connect(Kephal::Screens::self(), SIGNAL(screenAdded(Kephal::Screen *)), SLOT(desktopsSizeChanged()));
     connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)), SLOT(desktopsSizeChanged()));
@@ -743,7 +743,7 @@ void Pager::stackingOrderChanged()
     }
 }
 
-void Pager::windowChanged(WId id, unsigned long* dirty)
+void Pager::windowChanged(WId id, const unsigned long* dirty)
 {
     Q_UNUSED(id)
 
