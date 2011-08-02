@@ -25,7 +25,7 @@
 
 #include "plasmagenericshell_export.h"
 
-class PLASMAGENERICSHELL_EXPORT PanelShadows : Plasma::Svg
+class PLASMAGENERICSHELL_EXPORT PanelShadows : public Plasma::Svg
 {
     Q_OBJECT
 
@@ -34,6 +34,8 @@ public:
 
     void addWindow(const QWidget *window);
     void removeWindow(const QWidget *window);
+
+    void getMargins(int &top, int &right, int &bottom, int &left);
 
 private Q_SLOTS:
 
