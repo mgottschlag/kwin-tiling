@@ -255,25 +255,6 @@ instead of allowing it to be empty.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Replay actions on an item selected from
-history</guilabel></term>
-<listitem><para>If this is switched on, selecting an item from the history
-causes &klipper; to display the actions pop-up on that item, if 
-appropriate.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><guilabel>Remove white space when executing actions</guilabel></term>
-<listitem><para>If selected, any white space (spaces, tabs, &etc;) at the
-beginning and end of the clipboard contents will be removed before passing the
-clipboard contents to an application. This is useful, for example, if the
-clipboard contains a &URL; with spaces which, if opened by a web browser, would
-cause an error.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
 <term><guilabel>Ignore images</guilabel></term>
 <listitem><para>When an area of the screen is selected with mouse or keyboard, 
 this is called the <quote>selection</quote>. If this option is selected, only text 
@@ -337,6 +318,25 @@ in the clipboard history.</para></listitem>
 <title>Actions Options</title>
 
 <variablelist>
+<varlistentry>
+<term><guilabel>Replay actions on an item selected from
+history</guilabel></term>
+<listitem><para>If this is switched on, selecting an item from the history
+causes &klipper; to display the actions pop-up on that item, if 
+appropriate.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Remove white space when executing actions</guilabel></term>
+<listitem><para>If selected, any white space (spaces, tabs, &etc;) at the
+beginning and end of the clipboard contents will be removed before passing the
+clipboard contents to an application. This is useful, for example, if the
+clipboard contains a &URL; with spaces which, if opened by a web browser, would
+cause an error.</para>
+</listitem>
+</varlistentry>
+
 <varlistentry>
 <term>Editing Expressions/Actions</term>
 <listitem><para>On the <guilabel>Actions</guilabel> page, double-click
