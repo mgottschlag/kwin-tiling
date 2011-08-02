@@ -672,15 +672,10 @@ void GroupManagerPrivate::checkLauncherVisibility(LauncherItem *launcher)
         return;
     }
 
-    typedef QHash<int, TaskGroup *> Metagroup;
-    foreach (Metagroup metagroup, rootGroups) {
-        foreach (TaskGroup *rootGroup, metagroup) {
-            if (launcher->shouldShow()) {
-                rootGroup->add(launcher);
-            } else {
-                rootGroup->remove(launcher);
-            }
-        }
+    if (launcher->shouldShow()) {
+        rootGroups[currentActivity][currentDesktop]->add(launcher);
+    } else {
+        rootGroups[currentActivity][currentDesktop]->remove(launcher);
     }
 }
 
