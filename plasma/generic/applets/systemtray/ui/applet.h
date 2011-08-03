@@ -93,7 +93,6 @@ private:
     QDateTime m_lastActivity;
 
     Plasma::FrameSvg *m_background;
-    Plasma::FrameSvg *m_separator;
     Plasma::Svg *m_icons;
 
     Ui::AutoHideConfig m_autoHideUi;
