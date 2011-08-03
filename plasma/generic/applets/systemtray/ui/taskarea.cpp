@@ -128,7 +128,7 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
     d->hiddenTasksLayout->setHorizontalSpacing(0);
 
     d->hiddenRelayoutTimer->setSingleShot(true);
-    d->delayedUpdateTimer->setInterval(250);
+    d->delayedUpdateTimer->setInterval(50);
     connect(d->hiddenRelayoutTimer, SIGNAL(timeout()), this, SLOT(relayoutHiddenTasks()));
 
     d->delayedUpdateTimer->setSingleShot(true);
@@ -322,6 +322,8 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
                 d->sizeHintChanged = true;
                 d->delayedUpdateTimer->start();
             }
+
+            d->hiddenRelayoutTimer->start();
         }
 
         widget->show();
@@ -424,13 +426,20 @@ void TaskArea::relayoutHiddenTasks()
         d->hiddenTasksLayout->setRowFixedHeight(i, 0);
     }
 
-    QHash<SystemTray::Task*, HiddenTaskLabel *>::const_iterator i = d->hiddenTasks.constBegin();
+    QHashIterator<SystemTray::Task *, HiddenTaskLabel *> it(d->hiddenTasks);
+    QMultiMap<QString, SystemTray::Task *> sorted;
+    while (it.hasNext()) {
+        it.next();
+        sorted.insertMulti(it.value()->text(), it.key());
+    }
+
+    QMapIterator<QString, SystemTray::Task *> sortedIt(sorted);
     int row = 0;
-    while (i != d->hiddenTasks.constEnd()) {
-        d->hiddenTasksLayout->addItem(i.key()->widget(d->host), row, 0);
-        d->hiddenTasksLayout->addItem(i.value(), row, 1);
+    while (sortedIt.hasNext()) {
+        sortedIt.next();
+        d->hiddenTasksLayout->addItem(sortedIt.value()->widget(d->host), row, 0);
+        d->hiddenTasksLayout->addItem(d->hiddenTasks.value(sortedIt.value()), row, 1);
         d->hiddenTasksLayout->setRowFixedHeight(row, 24);
-        ++i;
         ++row;
     }
 
@@ -446,8 +455,6 @@ void TaskArea::adjustHiddentTasksWidget()
 int TaskArea::leftEasement() const
 {
     if (d->firstTasksLayout->count() > 0) {
-//        d->firstTasksLayout->invalidate();
-//        d->firstTasksLayout->updateGeometry();
         QGraphicsLayoutItem *item = d->firstTasksLayout->itemAt(d->firstTasksLayout->count() - 1);
 
         if (d->topLayout->orientation() == Qt::Vertical) {
@@ -465,8 +472,6 @@ int TaskArea::leftEasement() const
 int TaskArea::rightEasement() const
 {
     if (d->lastTasksLayout->count() > 0) {
-//        d->lastTasksLayout->invalidate();
-//        d->lastTasksLayout->updateGeometry();
         QGraphicsLayoutItem *item = d->lastTasksLayout->itemAt(0);
 
         if (d->topLayout->orientation() == Qt::Vertical) {
