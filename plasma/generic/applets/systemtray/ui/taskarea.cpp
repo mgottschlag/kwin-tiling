@@ -514,6 +514,7 @@ void TaskArea::updateUnhideToolIcon()
         data.setSubText(i18n("Hide icons"));
     } else {
         data.setSubText(i18n("Show hidden icons"));
+        d->itemBackground->hide();
     }
     Plasma::ToolTipManager::self()->setContent(d->unhider, data);
 
