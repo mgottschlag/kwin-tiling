@@ -263,7 +263,9 @@ void BusyWidget::updateTask()
     if (total > m_total) {
         m_fadeGroup->start();
     }
+
     m_total = total;
+    m_systray->setStatus(m_total > 0 ? Plasma::ActiveStatus : Plasma::PassiveStatus);
 
     if (!total) {
         setState(BusyWidget::Empty);
