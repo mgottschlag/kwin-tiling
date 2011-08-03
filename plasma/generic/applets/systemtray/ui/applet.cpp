@@ -214,24 +214,6 @@ void Applet::popupEvent(bool)
     m_taskArea->updateUnhideToolIcon();
 }
 
-bool Applet::isPopupShowing() const
-{
-    if (PopupApplet::isPopupShowing()) {
-        return true;
-    }
-
-    foreach (Task *task, s_manager->tasks()) {
-        Plasma::Applet *applet = qobject_cast<Plasma::Applet*>(task->widget(const_cast<Applet *>(this), false));
-        if (applet) {
-            if (applet->isPopupShowing()) {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
 void Applet::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {

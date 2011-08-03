@@ -60,7 +60,6 @@ public:
     Manager *manager() const;
     QSet<Task::Category> shownCategories() const;
     bool isFirstRun();
-    bool isPopupShowing() const;
 
 protected:
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
