@@ -405,6 +405,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         m_visibleItemsInterface = new QWidget();
 
         m_autoHideUi.setupUi(m_autoHideInterface.data());
+        m_autoHideUi.icons->header()->setResizeMode(QHeaderView::ResizeToContents);
 
         m_visibleItemsUi.setupUi(m_visibleItemsInterface.data());
 
@@ -528,7 +529,6 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         connect(itemCombo, SIGNAL(currentIndexChanged(int)), parent, SLOT(settingsModified()));
         connect(button, SIGNAL(keySequenceChanged(QKeySequence)), parent, SLOT(settingsModified()));
     }
-
 
     const QString itemCategories = i18nc("Categories of items in the systemtray that will be shown or hidden", "Shown Item Categories");
 
