@@ -185,7 +185,7 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 		if (currentCrtc != None)
 			m_crtc->loadSettings(true);
 			//m_screen->crtc(m_currentCrtc)->loadSettings(true);
-		setCrtc(m_screen->crtc(event->crtc));
+		setCrtc(m_screen->crtc(event->crtc), false);
 		if (currentCrtc != None)
 			m_crtc->loadSettings(true);
 	}
@@ -599,7 +599,7 @@ bool RandROutput::tryCrtc(RandRCrtc *crtc, int changes)
 bool RandROutput::applyProposed(int changes, bool confirm)
 {
 	// If disabled, save anyway to ensure it's saved
-	if (!isActive())
+	if (!isConnected())
 	{
 		KConfig cfg("krandrrc");
 		save(cfg);

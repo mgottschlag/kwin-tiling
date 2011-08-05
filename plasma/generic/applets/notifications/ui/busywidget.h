@@ -62,7 +62,7 @@ protected slots:
 
 private:
     QString expanderElement() const;
-    void getJobCounts(int &runningJobs, int &pausedJobs, int &completedJobs);
+    void getJobCounts(int &runningJobs, int &pausedJobs, int &completedJobs, int &jobSpeed);
 
     KIcon m_icon;
     State m_state;

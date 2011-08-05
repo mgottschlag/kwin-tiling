@@ -133,7 +133,7 @@ void Notifications::init()
     lay->addItem(m_busyWidget);
 
     configChanged();
-    setStatus(Plasma::ActiveStatus);
+    setStatus(Plasma::PassiveStatus);
 }
 
 void Notifications::configChanged()

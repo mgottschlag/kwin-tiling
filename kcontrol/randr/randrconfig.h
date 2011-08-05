@@ -53,9 +53,9 @@ public:
 public slots:
 	void slotUpdateView();
 	void slotDelayedUpdateView();
+	void updatePrimaryDisplay();
 
 protected slots:
-	void slotChanged(void);
 	void slotAdjustOutput(OutputGraphicsItem *o);
 	void identifyOutputs();
 	void clearIndicators();
@@ -65,7 +65,7 @@ protected slots:
 	void outputConnectedChanged(bool);
 
 signals:
-	void changed(bool change);
+	void changed(bool change=true);
 
 protected:
 	virtual bool eventFilter(QObject *obj, QEvent *event);
@@ -73,7 +73,6 @@ protected:
 private:
         void insufficientVirtualSize();
 	RandRDisplay *m_display;
-	bool m_changed;
 	bool m_firstLoad;
 	
 	SettingsContainer *m_container;

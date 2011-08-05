@@ -52,6 +52,8 @@ public:
     ~BackgroundDialog();
 
     void reloadConfig();
+    void setLayoutChangeable(bool changeable);
+    bool isLayoutChangeable() const;
 
 signals:
     void containmentPluginChanged(Plasma::Containment *c);

@@ -40,8 +40,6 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	m_display = display;
 	Q_ASSERT(m_display);
 	
-	m_changed = false;
-
 	if (!m_display->isValid()) {
 		// FIXME: this needs much better handling of this error...
 		return;
@@ -91,7 +89,7 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 		unifyOutputs->setChecked(true);
 	}
 	// create the scene
-	m_scene = new QGraphicsScene(m_display->currentScreen()->rect());	
+	m_scene = new QGraphicsScene(m_display->currentScreen()->rect(), screenView);
 	screenView->setScene(m_scene);
 	screenView->installEventFilter(this);
 
@@ -101,7 +99,6 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 RandRConfig::~RandRConfig()
 {
 	clearIndicators();
-	delete m_scene;
 }
 
 void RandRConfig::load(void)
@@ -122,7 +119,8 @@ void RandRConfig::load(void)
 	if (RandR::has_1_3)
 	{
 		// disconnect while we repopulate the combo box
-		disconnect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SLOT(slotChanged()));
+		disconnect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(changed()));
+		disconnect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updatePrimaryDisplay()));
 		primaryDisplayBox->clear();
 		primaryDisplayBox->addItem(i18nc("No display selected", "None"));
 	}
@@ -156,7 +154,7 @@ void RandRConfig::load(void)
 		        this, SLOT(slotAdjustOutput(OutputGraphicsItem*)));
 
 		connect(config, SIGNAL(updateView()), this, SLOT(slotUpdateView()));
-		connect(config, SIGNAL(optionChanged()), this, SLOT(slotChanged()));
+		connect(config, SIGNAL(optionChanged()), this, SIGNAL(changed()));
 
 #ifdef HAS_RANDR_1_3
 		if (RandR::has_1_3 && output->isConnected())
@@ -172,7 +170,8 @@ void RandRConfig::load(void)
 #ifdef HAS_RANDR_1_3
 	if (RandR::has_1_3)
 	{
-		connect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SLOT(slotChanged()));
+		connect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(changed()));
+		connect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updatePrimaryDisplay()));
 	}
 #endif //HAS_RANDR_1_3
 	slotUpdateView();
@@ -286,17 +285,20 @@ void RandRConfig::apply()
 	update();
 }
 
-void RandRConfig::slotChanged(void)
+void RandRConfig::updatePrimaryDisplay()
 {
-	m_changed = true;
-	
-	emit changed(true);
+	QString primary=primaryDisplayBox->currentText();
+	foreach( QGraphicsItem* item, m_scene->items()) {
+		OutputGraphicsItem* itemo = dynamic_cast< OutputGraphicsItem* >( item );
+		if(itemo && (itemo->objectName()==primary)!=itemo->isPrimary()) {
+			itemo->setPrimary(itemo->objectName()==primary);
+		}
+	}
 }
 
 void RandRConfig::update()
 {
 	// TODO: implement
-	m_changed = false;
 	emit changed(false);
 }
 
@@ -342,7 +344,8 @@ void RandRConfig::unifiedOutputChanged(bool checked)
 		config->setUnifyOutput(checked);
 		config->updateSizeList();
 	}
-	slotChanged();
+	
+	emit changed(true);
 }
 
 bool RandRConfig::eventFilter(QObject *obj, QEvent *event)
@@ -367,8 +370,6 @@ void RandRConfig::slotUpdateView()
 {
 	compressUpdateViewTimer.start( 0 );
 }
-
-#include <typeinfo>
 
 void RandRConfig::slotDelayedUpdateView()
 {
@@ -402,6 +403,7 @@ void RandRConfig::slotDelayedUpdateView()
 		if( OutputGraphicsItem* itemo = dynamic_cast< OutputGraphicsItem* >( item ))
 			itemo->configUpdated();
 	}
+	updatePrimaryDisplay();
 	screenView->update();
 }
 

@@ -50,10 +50,7 @@ TaskItem::TaskItem(QObject *parent, TaskPtr task)
     : AbstractGroupableItem(parent),
       d(new Private)
 {
-    d->task = task.data();
-    connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
-            this, SIGNAL(changed(::TaskManager::TaskChanges)));
-    connect(task.data(), SIGNAL(destroyed(QObject*)), this, SLOT(taskDestroyed())); //this item isn't useful anymore if the Task was closed
+    setTaskPointer(task);
 }
 
 
@@ -65,7 +62,6 @@ TaskItem::TaskItem(QObject *parent, StartupPtr task)
     connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)), this, SIGNAL(changed(::TaskManager::TaskChanges)));
     connect(task.data(), SIGNAL(destroyed(QObject*)), this, SLOT(taskDestroyed())); //this item isn't useful anymore if the Task was closed
 }
-
 
 TaskItem::~TaskItem()
 {
@@ -97,10 +93,16 @@ void TaskItem::setTaskPointer(TaskPtr task)
         }
 
         d->task = task.data();
-        connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
-                this, SIGNAL(changed(::TaskManager::TaskChanges)));
-        connect(task.data(), SIGNAL(destroyed()), this, SLOT(deleteLater()));
-        emit gotTaskPointer();
+
+        if (task) {
+            connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)), this, SIGNAL(changed(::TaskManager::TaskChanges)));
+            connect(task.data(), SIGNAL(destroyed(QObject*)), this, SLOT(taskDestroyed()));
+            emit gotTaskPointer();
+        }
+    }
+
+    if (!d->task) {
+        deleteLater();
     }
 }
 

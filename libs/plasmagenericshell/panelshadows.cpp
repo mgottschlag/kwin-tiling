@@ -28,14 +28,21 @@
 #include <fixx11h.h>
 #endif
 
+#include <KDebug>
+
 class PanelShadows::Private
 {
 public:
     Private(PanelShadows *shadows)
-        : q(shadows)
-        , m_managePixmaps(false)
+        : q(shadows),
+          m_managePixmaps(false),
+          top(0),
+          right(0),
+          bottom(0),
+          left(0)
     {
     }
+
     ~Private()
     {
         clearPixmaps();
@@ -51,9 +58,13 @@ public:
 
     PanelShadows *q;
     QList<QPixmap> m_shadowPixmaps;
-    QVector<unsigned long> m_data;
+    QVector<unsigned long> data;
     QSet<const QWidget *> m_windows;
     bool m_managePixmaps;
+    int top;
+    int right;
+    int bottom;
+    int left;
 };
 
 PanelShadows::PanelShadows(QObject *parent)
@@ -139,37 +150,49 @@ void PanelShadows::Private::setupPixmaps()
 
 #ifdef Q_WS_X11
     foreach (const QPixmap &pixmap, m_shadowPixmaps) {
-        m_data << pixmap.handle();
+        data << pixmap.handle();
     }
 #endif
 
     QSize marginHint = q->elementSize("shadow-hint-top-margin");
+    kDebug() << "top margin hint is:" << marginHint;
     if (marginHint.isValid()) {
-        m_data << marginHint.height();
+        top = marginHint.height();
     } else {
-        m_data << m_shadowPixmaps[0].height(); // top
+        top = m_shadowPixmaps[0].height(); // top
     }
 
     marginHint = q->elementSize("shadow-hint-right-margin");
+    kDebug() << "right margin hint is:" << marginHint;
     if (marginHint.isValid()) {
-        m_data << marginHint.width();
+        right = marginHint.width();
     } else {
-        m_data << m_shadowPixmaps[2].width(); // right
+        right = m_shadowPixmaps[2].width(); // right
     }
 
     marginHint = q->elementSize("shadow-hint-bottom-margin");
     if (marginHint.isValid()) {
-        m_data << marginHint.height();
+        bottom = marginHint.height();
     } else {
-        m_data << m_shadowPixmaps[4].height(); // bottom
+        bottom = m_shadowPixmaps[4].height(); // bottom
     }
 
     marginHint = q->elementSize("shadow-hint-left-margin");
     if (marginHint.isValid()) {
-        m_data << marginHint.width();
+        left = marginHint.width();
     } else {
-        m_data << m_shadowPixmaps[6].width(); // left
+        left = m_shadowPixmaps[6].width(); // left
     }
+
+    data << top << right << bottom << left;
+}
+
+void PanelShadows::getMargins(int &top, int &right, int &bottom, int &left)
+{
+    top = d->top;
+    right = d->right;
+    bottom = d->bottom;
+    left = d->left;
 }
 
 void PanelShadows::Private::clearPixmaps()
@@ -183,13 +206,13 @@ void PanelShadows::Private::clearPixmaps()
     }
 #endif
     m_shadowPixmaps.clear();
-    m_data.clear();
+    data.clear();
 }
 
 void PanelShadows::Private::updateShadow(const QWidget *window)
 {
 #ifdef Q_WS_X11
-    if (m_data.isEmpty()) {
+    if (data.isEmpty()) {
         setupPixmaps();
     }
 
@@ -198,7 +221,7 @@ void PanelShadows::Private::updateShadow(const QWidget *window)
 
     //kDebug() << "going to set the shadow of" << winId() << "to" << data;
     XChangeProperty(dpy, window->winId(), atom, XA_CARDINAL, 32, PropModeReplace,
-                    reinterpret_cast<const unsigned char *>(m_data.constData()), m_data.size());
+                    reinterpret_cast<const unsigned char *>(data.constData()), data.size());
 #endif
 }
 

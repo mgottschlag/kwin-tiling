@@ -46,6 +46,8 @@ public:
 	void setBottom(OutputGraphicsItem *output);
 
 	bool isConnected();
+	bool isPrimary() const;
+	void setPrimary(bool);
     
 protected:
 	void disconnect();

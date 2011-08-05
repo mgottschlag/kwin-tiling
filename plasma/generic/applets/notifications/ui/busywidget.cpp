@@ -219,12 +219,13 @@ QString BusyWidget::expanderElement() const
     }
 }
 
-void BusyWidget::getJobCounts(int &runningJobs, int &pausedJobs, int &completedJobs)
+void BusyWidget::getJobCounts(int &runningJobs, int &pausedJobs, int &completedJobs, int &jobSpeed)
 {
-    runningJobs = pausedJobs = completedJobs = 0;
+    runningJobs = pausedJobs = completedJobs = jobSpeed = 0;
     foreach (const Job *job, m_manager->jobs()) {
         switch (job->state()) {
             case Job::Running:
+                jobSpeed += job->numericSpeed();
                 ++runningJobs;
                 break;
             case Job::Suspended:
@@ -239,8 +240,8 @@ void BusyWidget::getJobCounts(int &runningJobs, int &pausedJobs, int &completedJ
 
 void BusyWidget::updateTask()
 {
-    int runningJobs, pausedJobs, completedJobs;
-    getJobCounts(runningJobs, pausedJobs, completedJobs);
+    int runningJobs, pausedJobs, completedJobs, jobSpeed;
+    getJobCounts(runningJobs, pausedJobs, completedJobs, jobSpeed);
 
     int total = m_manager->jobs().count();
 
@@ -262,7 +263,9 @@ void BusyWidget::updateTask()
     if (total > m_total) {
         m_fadeGroup->start();
     }
+
     m_total = total;
+    m_systray->setStatus(m_total > 0 ? Plasma::ActiveStatus : Plasma::PassiveStatus);
 
     if (!total) {
         setState(BusyWidget::Empty);
@@ -292,13 +295,15 @@ void BusyWidget::toolTipAboutToShow()
         return;
     }
 
-    int runningJobs, pausedJobs, completedJobs;
-    getJobCounts(runningJobs, pausedJobs, completedJobs);
+    int runningJobs, pausedJobs, completedJobs, jobSpeed;
+    getJobCounts(runningJobs, pausedJobs, completedJobs, jobSpeed);
 
     //make a nice plasma tooltip
     QString tooltipContent;
     if (runningJobs > 0) {
-        tooltipContent += i18np("%1 running job", "%1 running jobs", runningJobs);
+        tooltipContent += i18ncp("Number of jobs and the speed at which they are downloading",
+                                 "%1 running job (%2/s)", "%1 running jobs (%2/s)", runningJobs,
+                                 KGlobal::locale()->formatByteSize(jobSpeed));
         if (pausedJobs > 0 || completedJobs > 0 || !m_manager->notifications().isEmpty()) {
             tooltipContent += "<br>";
         }
