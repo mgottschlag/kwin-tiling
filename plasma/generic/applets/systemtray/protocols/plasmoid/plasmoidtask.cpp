@@ -151,15 +151,16 @@ void PlasmoidTask::setupApplet(const QString &plugin, int id)
 
     applet->setFlag(QGraphicsItem::ItemIsMovable, false);
 
-    connect(applet, SIGNAL(destroyed(QObject*)), this, SLOT(appletDestroyed(QObject*)));
+    connect(applet, SIGNAL(appletDestroyed(Plasma::Applet*)), this, SLOT(appletDestroyed(Plasma::Applet*)));
     applet->setBackgroundHints(Plasma::Applet::NoBackground);
 
     applet->setPreferredSize(KIconLoader::SizeSmallMedium+2, KIconLoader::SizeSmallMedium+2);
     kDebug() << applet->name() << " Applet loaded";
 }
 
-void PlasmoidTask::appletDestroyed(QObject *)
+void PlasmoidTask::appletDestroyed(Plasma::Applet *)
 {
+    emit destroyed(this);
     forget(m_host);
     deleteLater();
 }
