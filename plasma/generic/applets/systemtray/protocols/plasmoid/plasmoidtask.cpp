@@ -160,6 +160,7 @@ void PlasmoidTask::setupApplet(const QString &plugin, int id)
 
 void PlasmoidTask::appletDestroyed(QObject *)
 {
+    forget(m_host);
     deleteLater();
 }
 
