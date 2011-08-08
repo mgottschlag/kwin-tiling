@@ -112,7 +112,7 @@ void LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
 
 void LauncherItem::removeItemIfAssociated(AbstractGroupableItem *item)
 {
-    disconnect(item, SIGNAL(destroyed(QObect*)), this, SLOT(associateDestroyed(QObject*)));
+    disconnect(item, SIGNAL(destroyed(QObject*)), this, SLOT(associateDestroyed(QObject*)));
 
     // now let's just pretend it was destroyed
     d->associateDestroyed(item);
