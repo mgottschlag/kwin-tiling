@@ -17,7 +17,7 @@ if(NETWORKMANAGER_FOUND)
     add_subdirectory(networkmanager-0.7)
   endif (NM_0_7)
 endif (NETWORKMANAGER_FOUND)
-macro_log_feature(HAVE_NETWORKMANAGER "NetworkManager" "A daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager" FALSE "0.7.0" "Needed for building Network Management support in Solid.")
+macro_log_feature(HAVE_NETWORKMANAGER "NetworkManager" "A daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager" FALSE "0.7.0" "Needed for building Network Management support in Solid. Max version supported is 0.8.10")
 
 set(HAVE_MODEMMANAGER FALSE)
 if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
