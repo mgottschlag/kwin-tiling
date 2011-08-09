@@ -25,17 +25,18 @@
 #include <QGraphicsLinearLayout>
 #include <QTimer>
 
-#include <klineedit.h>
-#include <kmenu.h>
-#include <kpushbutton.h>
+#include <KAuthorized>
+#include <KLineEdit>
+#include <KMenu>
+#include <KPushButton>
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
 #include <knewstuff3/downloaddialog.h>
 
-#include <plasma/theme.h>
-#include <plasma/corona.h>
-#include <plasma/widgets/lineedit.h>
-#include <plasma/widgets/pushbutton.h>
+#include <Plasma/Theme>
+#include <Plasma/Corona>
+#include <Plasma/LineEdit>
+#include <Plasma/PushButton>
 #include <Plasma/TabBar>
 #include <Plasma/Package>
 
@@ -56,39 +57,38 @@ FilterBar::FilterBar(Qt::Orientation orientation, QGraphicsItem *parent)
     m_textSearch->setClearButtonShown(true);
     connect(m_textSearch, SIGNAL(textChanged(QString)), this, SIGNAL(searchTermChanged(QString)));
 
-    /*
-    m_categoriesTabs = new Plasma::TabBar(this);
-    connect(m_categoriesTabs, SIGNAL(currentChanged(int)), this, SIGNAL(filterChanged(int)));
-    m_categoriesTabs->setAttribute(Qt::WA_NoSystemBackground);
-    m_categoriesTabs->nativeWidget()->setUsesScrollButtons(true);
-    m_categoriesTabs->addTab(i18n("Running"));
-    m_categoriesTabs->addTab(i18n("Stopped"));
-    */
-
     m_addWidgetsButton = new Plasma::PushButton(this);
     m_addWidgetsButton->setText(i18n("Add Widgets"));
     m_addWidgetsButton->setIcon(KIcon("plasma"));
     connect(m_addWidgetsButton, SIGNAL(clicked()), this, SIGNAL(addWidgetsRequested()));
 
-    m_newActivityButton = new Plasma::PushButton(this);
-    m_newActivityButton->setText(i18n("Create Activity"));
-    m_newActivityButton->setIcon(KIcon("list-add"));
-    m_newActivityMenu = new KMenu();
-    connect(m_newActivityMenu, SIGNAL(aboutToShow()), this, SLOT(populateActivityMenu()));
-    connect(m_newActivityMenu, SIGNAL(triggered(QAction*)), this, SLOT(createActivity(QAction*)));
-    m_newActivityButton->nativeWidget()->setMenu(m_newActivityMenu);
-    //m_newWidgetsButton->setMinimumWidth(m_newWidgetsButton->effectiveSizeHint(Qt::PreferredSize).width());
+    if (PlasmaApp::self()->corona()->immutability() != Plasma::SystemImmutable &&
+        KAuthorized::authorize("plasma-desktop/add_activities")) {
+        m_newActivityButton = new Plasma::PushButton(this);
+        m_newActivityButton->setText(i18n("Create Activity"));
+        m_newActivityButton->setIcon(KIcon("list-add"));
+        m_newActivityMenu = new KMenu();
+        connect(m_newActivityMenu, SIGNAL(aboutToShow()), this, SLOT(populateActivityMenu()));
+        connect(m_newActivityMenu, SIGNAL(triggered(QAction*)), this, SLOT(createActivity(QAction*)));
+        m_newActivityButton->nativeWidget()->setMenu(m_newActivityMenu);
+    } else {
+        m_newActivityButton = 0;
+        m_newActivityMenu = 0;
+    }
 
     //layout
     m_linearLayout = new QGraphicsLinearLayout(this);
     m_linearLayout->addItem(m_textSearch);
-    //m_linearLayout->addItem(m_categoriesTabs);
     m_linearLayout->addStretch(10);
-    m_linearLayout->addItem(m_newActivityButton);
+    if (m_newActivityButton) {
+        m_linearLayout->addItem(m_newActivityButton);
+    }
     m_linearLayout->addItem(m_addWidgetsButton);
 
-    QTimer::singleShot(0, this, SLOT(registerToCoronaChanges()));
     setOrientation(orientation);
+    connect(PlasmaApp::self()->corona(), SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
+            this, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
+    immutabilityChanged(PlasmaApp::self()->corona()->immutability());
 }
 
 FilterBar::~FilterBar()
@@ -137,12 +137,11 @@ void FilterBar::setOrientation(Qt::Orientation orientation)
 
 void FilterBar::setMenuPos()
 {
-    QPoint position(0, 0);
-    Plasma::Corona *corona = qobject_cast<Plasma::Corona*>(scene());
-    if (corona) {
-        position = corona->popupPosition(m_newActivityButton,
-                m_newActivityMenu->geometry().size());
+    if (!m_newActivityButton) {
+        return;
     }
+
+    QPoint position = PlasmaApp::self()->corona()->popupPosition(m_newActivityButton, m_newActivityMenu->geometry().size());
     m_newActivityMenu->move(position);
 }
 
@@ -154,6 +153,10 @@ void FilterBar::setFocus()
 
 void FilterBar::populateActivityMenu()
 {
+    if (!m_newActivityButton) {
+        return;
+    }
+
     QTimer::singleShot(0, this, SLOT(setMenuPos()));
     if (!m_newActivityMenu->actions().isEmpty()) {
         // already populated.
@@ -219,6 +222,10 @@ void FilterBar::populateActivityMenu()
 
 void FilterBar::createActivity(QAction *action)
 {
+    if (!m_newActivityButton) {
+        return;
+    }
+
     QVariant::Type type = action->data().type();
     if (type == QVariant::String) {
         QString plugin = action->data().toString();
@@ -239,24 +246,20 @@ void FilterBar::createActivity(QAction *action)
     }
 }
 
-void FilterBar::registerToCoronaChanges()
+void FilterBar::immutabilityChanged(Plasma::ImmutabilityType immutability)
 {
-    Plasma::Corona *corona = qobject_cast<Plasma::Corona*>(scene());
-    if (corona) {
-        connect(corona, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)), this, SLOT(coronaImmutabilityChanged(Plasma::ImmutabilityType)));
-        coronaImmutabilityChanged(corona->immutability());
+    bool visible = immutability == Plasma::Mutable;
+    m_addWidgetsButton->setVisible(visible);
+    if (visible) {
+        m_linearLayout->addItem(m_addWidgetsButton);
+    } else {
+        m_linearLayout->removeItem(m_addWidgetsButton);
     }
-}
 
-void FilterBar::coronaImmutabilityChanged(Plasma::ImmutabilityType immutability)
-{
-    m_newActivityButton->setVisible(immutability == Plasma::Mutable);
-    m_addWidgetsButton->setVisible(immutability == Plasma::Mutable);
     if (immutability == Plasma::UserImmutable) {
-        Plasma::Corona *corona = qobject_cast<Plasma::Corona*>(scene());
-        if (corona) {
+        if (!m_unlockButton) {
             m_unlockButton = new Plasma::PushButton(this);
-            m_unlockButton->setAction(corona->action("lock widgets"));
+            m_unlockButton->setAction(PlasmaApp::self()->corona()->action("lock widgets"));
             m_linearLayout->addItem(m_unlockButton);
         }
     } else if (m_unlockButton) {
