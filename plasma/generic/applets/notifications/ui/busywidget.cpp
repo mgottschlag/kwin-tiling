@@ -244,19 +244,22 @@ void BusyWidget::updateTask()
     getJobCounts(runningJobs, pausedJobs, completedJobs, jobSpeed);
 
     int total = m_manager->jobs().count();
+    int activeNotifications = 0;
+    bool hasOldNotifications = false;
 
     foreach (Notification *notification, m_manager->notifications()) {
         if (qobject_cast<CompletedJobNotification *>(notification)) {
             ++completedJobs;
-        } else if (!notification->isExpired()) {
-            ++total;
+        } else if (notification->isExpired()) {
+            hasOldNotifications = true;
+        } else {
+            ++activeNotifications;
         }
     }
 
-    total += completedJobs;
+    total += completedJobs + activeNotifications;
 
-
-    if (!(total + m_manager->notifications().count())) {
+    if (total + m_manager->notifications().count() < 0) {
         m_systray->hidePopup();
     }
 
@@ -265,7 +268,14 @@ void BusyWidget::updateTask()
     }
 
     m_total = total;
-    m_systray->setStatus(m_total > 0 ? Plasma::ActiveStatus : Plasma::PassiveStatus);
+
+    if (activeNotifications > 0) {
+        m_systray->setStatus(Plasma::NeedsAttentionStatus);
+    } else if (m_total > 0 || hasOldNotifications) {
+        m_systray->setStatus(Plasma::ActiveStatus);
+    } else {
+        m_systray->setStatus(Plasma::PassiveStatus);
+    }
 
     if (!total) {
         setState(BusyWidget::Empty);
