@@ -119,6 +119,8 @@ Item {
         model: hpSource.connectedSources
         delegate: deviceItem
         highlight: deviceHighlighter
+        highlightMoveDuration: 250
+        highlightMoveSpeed: 1
 
         property int currentExpanded: -1
         Component.onCompleted: currentIndex=-1
