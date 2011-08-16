@@ -118,27 +118,17 @@ public:
 
     void createCalendarExtender()
     {
-        if (!q->extender()->hasItem("calendar")) {
-            Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(q->extender());
-            eItem->setName("calendar");
-            q->initExtenderItem(eItem);
-        }
-    }
+        const bool hasExtender = q->extender()->hasItem("calendar");
 
-    void createToday()
-    {
-        QString tmpStr = "isHoliday" + QString(':') + calendarWidget->holidaysRegions().join(QString(','))
-                                     + QString(':') + QDate::currentDate().toString(Qt::ISODate);
-        bool isHoliday = q->dataEngine("calendar")->query(tmpStr).value(tmpStr).toBool();
-
-        Plasma::ExtenderItem *todayExtender = q->extender()->item("today");
-
-        if (!todayExtender && isHoliday) {
-            Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(q->extender());
-            eItem->setName("today");
-            q->initExtenderItem(eItem);
-        } else if (todayExtender && !isHoliday) {
-            todayExtender->destroy();
+        if (q->config().readEntry("ShowCalendarPopup", true)) {
+            if (!hasExtender) {
+                Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(q->extender());
+                eItem->setName("calendar");
+                q->initExtenderItem(eItem);
+            }
+        } else {
+            q->extender()->deleteLater();
+            calendarWidget = 0;
         }
     }
 
@@ -319,11 +309,13 @@ void ClockApplet::updateClockApplet()
 
 void ClockApplet::updateClockApplet(const Plasma::DataEngine::Data &data)
 {
-    bool updateSelectedDate = (d->calendarWidget->currentDate() == d->calendarWidget->date());
-    d->calendarWidget->setCurrentDate(data["Date"].toDate());
+    if (d->calendarWidget) {
+        bool updateSelectedDate = (d->calendarWidget->currentDate() == d->calendarWidget->date());
+        d->calendarWidget->setCurrentDate(data["Date"].toDate());
 
-    if (updateSelectedDate){
-        d->calendarWidget->setDate(d->calendarWidget->currentDate());
+        if (updateSelectedDate){
+            d->calendarWidget->setDate(d->calendarWidget->currentDate());
+        }
     }
 
     const QTime t = d->lastTimeSeen;
@@ -357,7 +349,9 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     parent->addPage(generalWidget, i18nc("General configuration page", "General"), Applet::icon());
     d->generalUi.interval->setValue(d->announceInterval);
 
-    d->calendarWidget->createConfigurationInterface(parent);
+    if (d->calendarWidget) {
+        d->calendarWidget->createConfigurationInterface(parent);
+    }
 
     QWidget *widget = new QWidget();
     d->timezonesUi.setupUi(widget);
@@ -395,6 +389,8 @@ void ClockApplet::clockConfigChanged()
 
 void ClockApplet::configChanged()
 {
+    d->createCalendarExtender();
+
     if (isUserConfiguring()) {
         configAccepted();
     }
@@ -412,7 +408,7 @@ void ClockApplet::configChanged()
     if (isUserConfiguring()) {
         constraintsEvent(Plasma::SizeConstraint);
         update();
-    } else {
+    } else if (d->calendarWidget) {
         // d->calendarWidget->configAccepted(cg); is called in configAccepted(), 
         // as is setCurrentTimezone
         // so we only need to do this in the case where the user hasn't been
@@ -446,7 +442,9 @@ void ClockApplet::configAccepted()
     setCurrentTimezone(d->defaultTimezone);
     changeEngineTimezone(cur, d->defaultTimezone);
 
-    d->calendarWidget->configAccepted(cg);
+    if (d->calendarWidget) {
+        d->calendarWidget->configAccepted(cg);
+    }
 
     cg.writeEntry("announceInterval", d->generalUi.interval->value());
 
@@ -569,47 +567,39 @@ void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 {
     if (item->name() == "calendar") {
+        if (!d->calendarWidget) {
+            d->calendarWidget = new Plasma::Calendar();
+            d->calendarWidget->setAutomaticUpdateEnabled(false);
+            d->calendarWidget->setMinimumSize(QSize(230, 220));
+        }
+
         item->setTitle(i18n("Calendar"));
         item->setIcon("view-pim-calendar");
         item->setWidget(d->calendarWidget);
-    } else if (item->name() == "today") {
-        item->setTitle(i18n("Today"));
-        item->setIcon("view-pim-calendar");
-        d->label = new Plasma::Label();
-        item->setWidget(d->label);
     }
 }
 
 void ClockApplet::init()
 {
-    Plasma::ToolTipManager::self()->registerWidget(this);
-
-    d->calendarWidget = new Plasma::Calendar();
-    d->calendarWidget->setAutomaticUpdateEnabled(false);
-    d->calendarWidget->setMinimumSize(QSize(230, 220));
-    d->createCalendarExtender();
-
-    extender();
-
     configChanged();
-    QTimer::singleShot(0, this, SLOT(createToday()));
+    Plasma::ToolTipManager::self()->registerWidget(this);
 }
 
 void ClockApplet::focusInEvent(QFocusEvent* event)
 {
     Q_UNUSED(event);
-    d->calendarWidget->setFlag(QGraphicsItem::ItemIsFocusable);
-    d->calendarWidget->setFocus();
+    if (d->calendarWidget) {
+        d->calendarWidget->setFlag(QGraphicsItem::ItemIsFocusable);
+        d->calendarWidget->setFocus();
+    }
 }
 
 void ClockApplet::popupEvent(bool show)
 {
-    if (!show) {
-        return;
+    if (show && d->calendarWidget) {
+        Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
+        d->calendarWidget->setDate(data["Date"].toDate());
     }
-
-    Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
-    d->calendarWidget->setDate(data["Date"].toDate());
 }
 
 void ClockApplet::constraintsEvent(Plasma::Constraints constraints)
@@ -633,8 +623,10 @@ void ClockApplet::setCurrentTimezone(const QString &tz)
     d->forceTzDisplay = d->timezone != d->defaultTimezone;
     d->setPrettyTimezone();
 
-    Plasma::DataEngine::Data data = dataEngine("time")->query(d->timezone);
-    d->calendarWidget->setDate(data["Date"].toDate());
+    if (d->calendarWidget) {
+        Plasma::DataEngine::Data data = dataEngine("time")->query(d->timezone);
+        d->calendarWidget->setDate(data["Date"].toDate());
+    }
 
     KConfigGroup cg = config();
     cg.writeEntry("timezone", d->timezone);
@@ -697,7 +689,7 @@ void ClockApplet::updateClipboardMenu()
     d->clipboardMenu->addAction(sep1);
 
     KLocale tempLocale(*KGlobal::locale());
-    tempLocale.setCalendar(calendar()->calendarType());
+    tempLocale.setCalendarSystem(calendar()->calendarSystem());
     d->clipboardMenu->addAction(tempLocale.formatDateTime(dateTime, KLocale::LongDate));
     d->clipboardMenu->addAction(tempLocale.formatDateTime(dateTime, KLocale::LongDate, true));
     d->clipboardMenu->addAction(tempLocale.formatDateTime(dateTime, KLocale::ShortDate));
@@ -713,9 +705,9 @@ void ClockApplet::updateClipboardMenu()
     d->clipboardMenu->addAction(sep2);
 
     QMenu *calendarMenu = d->clipboardMenu->addMenu( i18nc( "@item:inmenu Submenu for alternative calendar dates", "Other Calendars" ) );
-    QStringList calendars = KCalendarSystem::calendarSystems();
-    foreach ( const QString &cal, calendars ) {
-        if (cal != calendar()->calendarType()) {
+    QList<KLocale::CalendarSystem> calendars = KCalendarSystem::calendarSystemsList();
+    foreach (const KLocale::CalendarSystem &cal, calendars) {
+        if (cal != calendar()->calendarSystem()) {
             KCalendarSystem *tempCal = KCalendarSystem::create(cal);
             QString text = tempCal->formatDate(dateTime.date(), KLocale::LongDate) + " (" + KCalendarSystem::calendarLabel(cal) + ')';
             calendarMenu->addAction(text);
@@ -736,7 +728,11 @@ void ClockApplet::copyToClipboard(QAction* action)
 
 const KCalendarSystem *ClockApplet::calendar() const
 {
-    return d->calendarWidget->calendar();
+    if (d->calendarWidget) {
+        return d->calendarWidget->calendar();
+    } else {
+        return KGlobal::locale()->calendar();
+    }
 }
 
 #include "clockapplet.moc"
