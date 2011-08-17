@@ -602,8 +602,8 @@ void MenuLauncherApplet::showMenu(bool pressed)
         menuview->setContextMenuPolicy(Qt::CustomContextMenu);
         connect(menuview, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
         connect(menuview, SIGNAL(aboutToHide()), this, SLOT(menuHiding()));
-        connect(menuview, SIGNAL(customContextMenuRequested(QMenu*, const QPoint&)),
-                this, SLOT(customContextMenuRequested(QMenu*, const QPoint&)));
+        connect(menuview, SIGNAL(customContextMenuRequested(QMenu*,QPoint)),
+                this, SLOT(customContextMenuRequested(QMenu*,QPoint)));
         //connect(menuview, SIGNAL(afterBeingHidden()), menuview, SLOT(deleteLater()));
 
         //Kickoff::MenuView::ModelOptions options = d->viewtypes.count() < 2 ? Kickoff::MenuView::MergeFirstLevel : Kickoff::MenuView::None;

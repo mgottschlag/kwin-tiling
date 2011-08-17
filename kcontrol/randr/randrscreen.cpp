@@ -128,8 +128,8 @@ void RandRScreen::loadSettings(bool notify)
 		{
 			kDebug() << "Creating CRTC object for XID" << m_resources->crtcs[i];
 			RandRCrtc *c = new RandRCrtc(this, m_resources->crtcs[i]);
-			connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SIGNAL(configChanged()));
-			connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SLOT(save()));
+			connect(c, SIGNAL(crtcChanged(RRCrtc,int)), this, SIGNAL(configChanged()));
+			connect(c, SIGNAL(crtcChanged(RRCrtc,int)), this, SLOT(save()));
 			c->loadSettings(notify);
 			m_crtcs[m_resources->crtcs[i]] = c;
 			changed = true;
@@ -145,8 +145,8 @@ void RandRScreen::loadSettings(bool notify)
 		{
 			kDebug() << "Creating output object for XID" << m_resources->outputs[i];
 			RandROutput *o = new RandROutput(this, m_resources->outputs[i]);
-			connect(o, SIGNAL(outputChanged(RROutput, int)), this,
-				      SLOT(slotOutputChanged(RROutput, int)));
+			connect(o, SIGNAL(outputChanged(RROutput,int)), this,
+				      SLOT(slotOutputChanged(RROutput,int)));
 			m_outputs[m_resources->outputs[i]] = o;
 			if (o->isConnected())
 				m_connectedCount++;

@@ -318,10 +318,10 @@ void WetterComIon::findPlace(const QString& place, const QString& source)
     m_searchJobList.insert(m_job, source);
 
     if (m_job) {
-        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(m_job, SIGNAL(result(KJob *)), this,
-                SLOT(setup_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(setup_slotDataArrived(KIO::Job*,QByteArray)));
+        connect(m_job, SIGNAL(result(KJob*)), this,
+                SLOT(setup_slotJobFinished(KJob*)));
     }
 }
 
@@ -492,10 +492,10 @@ void WetterComIon::fetchForecast(const QString& source)
     m_forecastJobList.insert(m_job, source);
 
     if (m_job) {
-        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(forecast_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(m_job, SIGNAL(result(KJob *)), this,
-                SLOT(forecast_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(forecast_slotDataArrived(KIO::Job*,QByteArray)));
+        connect(m_job, SIGNAL(result(KJob*)), this,
+                SLOT(forecast_slotJobFinished(KJob*)));
     }
 }
 

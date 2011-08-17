@@ -99,7 +99,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_activityButton->setDefaultAction(showSystemActivityAction);
 
     updateSystemActivityToolTip();
-    connect(showSystemActivityAction, SIGNAL(globalShortcutChanged(const QKeySequence &)), this, SLOT(updateSystemActivityToolTip()));
+    connect(showSystemActivityAction, SIGNAL(globalShortcutChanged(QKeySequence)), this, SLOT(updateSystemActivityToolTip()));
     connect(showSystemActivityAction, SIGNAL(triggered(bool)), this, SLOT(resetAndClose()));
     bottomLayout->addWidget(m_activityButton);
 
@@ -160,7 +160,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     connect(m_resultsScene, SIGNAL(viewableHeightChanged()), this, SLOT(fitWindow()));
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
-    connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
+    connect(m_resultsScene, SIGNAL(itemActivated(ResultItem*)), this, SLOT(run(ResultItem*)));
 
     connect(m_searchTerm, SIGNAL(queryTextEdited(QString)), this, SLOT(queryTextEdited(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));

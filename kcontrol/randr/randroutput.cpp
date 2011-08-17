@@ -679,8 +679,8 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
 	         << "on output" << m_name;
 
 	if(m_crtc && m_crtc->isValid()) {
-		disconnect(m_crtc, SIGNAL(crtcChanged(RRCrtc, int)), 
-		           this, SLOT(slotCrtcChanged(RRCrtc, int)));
+		disconnect(m_crtc, SIGNAL(crtcChanged(RRCrtc,int)), 
+		           this, SLOT(slotCrtcChanged(RRCrtc,int)));
 				 
 		m_crtc->removeOutput(m_id);
 		if( applyNow )
@@ -691,8 +691,8 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
 		return true;
 
 	m_crtc->addOutput(m_id);
-	connect(m_crtc, SIGNAL(crtcChanged(RRCrtc, int)),
-	        this, SLOT(slotCrtcChanged(RRCrtc, int)));
+	connect(m_crtc, SIGNAL(crtcChanged(RRCrtc,int)),
+	        this, SLOT(slotCrtcChanged(RRCrtc,int)));
 		   
 	return true;
 }

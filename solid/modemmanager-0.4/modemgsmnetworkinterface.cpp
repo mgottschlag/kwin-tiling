@@ -37,10 +37,10 @@ MMModemGsmNetworkInterface::MMModemGsmNetworkInterface(const QString & path, MMM
     d->modemGsmNetworkIface.connection().connect(MMModemManager::DBUS_SERVICE,
         path, QLatin1String("org.freedesktop.DBus.Properties"),
         QLatin1String("MmPropertiesChanged"), QLatin1String("sa{sv}"),
-        this, SLOT(propertiesChanged(const QString &,const QVariantMap &)));
+        this, SLOT(propertiesChanged(QString,QVariantMap)));
 
-    connect( &d->modemGsmNetworkIface, SIGNAL(RegistrationInfo(uint, const QString &, const QString &)),
-                this, SLOT(slotRegistrationInfoChanged(uint, const QString &, const QString &)));
+    connect( &d->modemGsmNetworkIface, SIGNAL(RegistrationInfo(uint,QString,QString)),
+                this, SLOT(slotRegistrationInfoChanged(uint,QString,QString)));
     connect( &d->modemGsmNetworkIface, SIGNAL(SignalQuality(uint)),
                 this, SIGNAL(signalQualityChanged(uint)));
 }

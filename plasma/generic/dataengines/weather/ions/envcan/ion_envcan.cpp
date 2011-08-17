@@ -495,9 +495,9 @@ void EnvCanadaIon::getXMLSetup()
     KIO::TransferJob *job = KIO::get(KUrl("http://dd.weatheroffice.ec.gc.ca/citypage_weather/xml/siteList.xml"), KIO::NoReload, KIO::HideProgressInfo);
 
     m_xmlSetup.clear();
-    connect(job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-            SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
-    connect(job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
+    connect(job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+            SLOT(setup_slotDataArrived(KIO::Job*,QByteArray)));
+    connect(job, SIGNAL(result(KJob*)), this, SLOT(setup_slotJobFinished(KJob*)));
 }
 
 // Gets specific city XML data
@@ -530,9 +530,9 @@ void EnvCanadaIon::getXMLData(const QString& source)
     m_jobXml.insert(newJob, new QXmlStreamReader);
     m_jobList.insert(newJob, source);
 
-    connect(newJob, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-            SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
-    connect(newJob, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
+    connect(newJob, SIGNAL(data(KIO::Job*,QByteArray)), this,
+            SLOT(slotDataArrived(KIO::Job*,QByteArray)));
+    connect(newJob, SIGNAL(result(KJob*)), this, SLOT(slotJobFinished(KJob*)));
 }
 
 void EnvCanadaIon::setup_slotDataArrived(KIO::Job *job, const QByteArray &data)

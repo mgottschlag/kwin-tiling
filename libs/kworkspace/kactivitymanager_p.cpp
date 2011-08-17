@@ -37,8 +37,8 @@ KActivityManager::KActivityManager()
             QDBusConnection::sessionBus()
             )
 {
-    connect(&m_watcher, SIGNAL(serviceOwnerChanged(const QString &, const QString &, const QString &)),
-            this, SLOT(serviceOwnerChanged(const QString &, const QString &, const QString &)));
+    connect(&m_watcher, SIGNAL(serviceOwnerChanged(QString,QString,QString)),
+            this, SLOT(serviceOwnerChanged(QString,QString,QString)));
 }
 
 KActivityManager * KActivityManager::self()

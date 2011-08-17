@@ -198,12 +198,12 @@ void DeviceNotifier::init()
     setPopupIcon(DEFAULT_ICON_NAME);
 
     //connect to engine when a device is plugged in
-    connect(m_hotplugEngine, SIGNAL(sourceAdded(const QString&)),
-            this, SLOT(onSourceAdded(const QString&)));
-    connect(m_hotplugEngine, SIGNAL(sourceRemoved(const QString&)),
-            this, SLOT(onSourceRemoved(const QString&)));
-    connect(m_deviceNotificationsEngine, SIGNAL(sourceAdded(const QString&)),
-            this, SLOT(newNotification(const QString&)));
+    connect(m_hotplugEngine, SIGNAL(sourceAdded(QString)),
+            this, SLOT(onSourceAdded(QString)));
+    connect(m_hotplugEngine, SIGNAL(sourceRemoved(QString)),
+            this, SLOT(onSourceRemoved(QString)));
+    connect(m_deviceNotificationsEngine, SIGNAL(sourceAdded(QString)),
+            this, SLOT(newNotification(QString)));
 
     setStatus(Plasma::PassiveStatus);
     //feed the list with what is already reported by the engine

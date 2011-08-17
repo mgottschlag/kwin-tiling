@@ -98,10 +98,10 @@ Solid::Control::ModemInterface::Mode Solid::Control::ModemGsmCardInterface::getS
 void Solid::Control::ModemGsmCardInterface::makeConnections(QObject * source)
 {
     if (source) {
-        QObject::connect(source, SIGNAL(supportedBandsChanged(const Solid::Control::ModemInterface::Band)),
-                this, SIGNAL(supportedBandsChanged(const Solid::Control::ModemInterface::Band)));
-        QObject::connect(source, SIGNAL(supportedModesChanged(const Solid::Control::ModemInterface::Mode)),
-                this, SIGNAL(supportedModesChanged(const Solid::Control::ModemInterface::Mode)));
+        QObject::connect(source, SIGNAL(supportedBandsChanged(Solid::Control::ModemInterface::Band)),
+                this, SIGNAL(supportedBandsChanged(Solid::Control::ModemInterface::Band)));
+        QObject::connect(source, SIGNAL(supportedModesChanged(Solid::Control::ModemInterface::Mode)),
+                this, SIGNAL(supportedModesChanged(Solid::Control::ModemInterface::Mode)));
     }
 }
 

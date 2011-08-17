@@ -269,8 +269,8 @@ PlasmaApp::PlasmaApp()
     KGlobal::setAllowQuit(true);
     KGlobal::ref();
 
-    connect(m_mapper, SIGNAL(mapped(const QString &)),
-            this, SLOT(addRemotePlasmoid(const QString &)));
+    connect(m_mapper, SIGNAL(mapped(QString)),
+            this, SLOT(addRemotePlasmoid(QString)));
     connect(Plasma::AccessManager::self(),
             SIGNAL(finished(Plasma::AccessAppletJob*)),
             this, SLOT(plasmoidAccessFinished(Plasma::AccessAppletJob*)));

@@ -106,19 +106,19 @@ KDMGeneralWidget::KDMGeneralWidget(QWidget *parent)
     stdFontChooser->setWhatsThis(i18n(
         "This changes the font which is used for all the text in the login manager "
         "except for the greeting and failure messages."));
-    connect(stdFontChooser, SIGNAL(fontSelected(const QFont &)), SIGNAL(changed()));
+    connect(stdFontChooser, SIGNAL(fontSelected(QFont)), SIGNAL(changed()));
     fl->addRow(i18nc("... font", "&General:"), stdFontChooser);
 
     failFontChooser = new KFontRequester(box);
     failFontChooser->setWhatsThis(i18n(
         "This changes the font which is used for failure messages in the login manager."));
-    connect(failFontChooser, SIGNAL(fontSelected(const QFont &)), SIGNAL(changed()));
+    connect(failFontChooser, SIGNAL(fontSelected(QFont)), SIGNAL(changed()));
     fl->addRow(i18nc("font for ...", "&Failure:"), failFontChooser);
 
     greetingFontChooser = new KFontRequester(box);
     greetingFontChooser->setWhatsThis(i18n(
         "This changes the font which is used for the login manager's greeting."));
-    connect(greetingFontChooser, SIGNAL(fontSelected(const QFont &)), SIGNAL(changed()));
+    connect(greetingFontChooser, SIGNAL(fontSelected(QFont)), SIGNAL(changed()));
     fl->addRow(i18nc("font for ...", "Gree&ting:"), greetingFontChooser);
 
     aacb = new QCheckBox(i18n("Use anti-aliasing for fonts"), box);

@@ -63,8 +63,8 @@ SolidActions::SolidActions(QWidget* parent, const QVariantList&)
     connect( mainUi.PbAddAction, SIGNAL(clicked()), this, SLOT(slotShowAddDialog()) );
     connect( mainUi.PbEditAction, SIGNAL(clicked()), this, SLOT(editAction()) );
     connect( mainUi.PbDeleteAction, SIGNAL(clicked()), this, SLOT(deleteAction()) );
-    connect( mainUi.TvActions->selectionModel(), SIGNAL(currentChanged(const QModelIndex, const QModelIndex)), this, SLOT(toggleEditDelete()) );
-    connect( mainUi.TvActions, SIGNAL(doubleClicked(const QModelIndex)), this, SLOT(editAction()) );
+    connect( mainUi.TvActions->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), this, SLOT(toggleEditDelete()) );
+    connect( mainUi.TvActions, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(editAction()) );
 
     // Prepare + connect up with Edit dialog
     editUi = new ActionEditor(this);

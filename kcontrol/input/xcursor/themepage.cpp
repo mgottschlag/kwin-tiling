@@ -82,7 +82,7 @@ ThemePage::ThemePage(QWidget *parent)
 
     // Make sure we find out about selection changes
     connect(view->selectionModel(),
-            SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(selectionChanged()));
 
     // Disable the install button if we can't install new themes to ~/.icons,

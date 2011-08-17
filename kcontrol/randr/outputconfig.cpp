@@ -43,8 +43,8 @@ OutputConfig::OutputConfig(QWidget* parent, RandROutput* output, OutputConfigLis
 	        this, SLOT(updatePositionList()));
 	connect(sizeCombo, SIGNAL(currentIndexChanged(int)),
 	        this, SLOT(updateRotationList()));
-	connect(m_output, SIGNAL(outputChanged(RROutput, int)),
-	        this,     SLOT(outputChanged(RROutput, int)));
+	connect(m_output, SIGNAL(outputChanged(RROutput,int)),
+	        this,     SLOT(outputChanged(RROutput,int)));
 		  
 	load();
 
@@ -61,10 +61,10 @@ OutputConfig::OutputConfig(QWidget* parent, RandROutput* output, OutputConfigLis
 	connect(absolutePosY, SIGNAL(valueChanged(int)), this, SIGNAL(updateView()));
 	// make sure to update option for relative position when other outputs get enabled/disabled
 	foreach( OutputConfig* config, precedingOutputConfigs )
-		connect( config, SIGNAL( updateView()), this, SLOT( updatePositionList()));
+		connect( config, SIGNAL(updateView()), this, SLOT(updatePositionList()));
 
 	updatePositionListTimer.setSingleShot( true );
-	connect( &updatePositionListTimer, SIGNAL( timeout()), SLOT( updatePositionListDelayed()));
+	connect( &updatePositionListTimer, SIGNAL(timeout()), SLOT(updatePositionListDelayed()));
 
 }
 

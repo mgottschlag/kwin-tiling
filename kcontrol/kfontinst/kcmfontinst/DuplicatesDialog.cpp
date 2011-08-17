@@ -433,7 +433,7 @@ CFontFileListView::CFontFileListView(QWidget *parent)
                                   this, SLOT(mark()));
 
     connect(this, SIGNAL(itemSelectionChanged()), SLOT(selectionChanged()));
-    connect(this, SIGNAL(itemClicked(QTreeWidgetItem *, int)), SLOT(clicked(QTreeWidgetItem *, int)));
+    connect(this, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(clicked(QTreeWidgetItem*,int)));
 }
 
 QSet<QString> CFontFileListView::getMarkedFiles()

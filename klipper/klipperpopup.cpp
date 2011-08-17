@@ -102,7 +102,7 @@ KlipperPopup::KlipperPopup( History* history )
 
     m_popupProxy = new PopupProxy( this, menu_height, menu_width );
 
-    connect( this, SIGNAL( aboutToShow() ), SLOT( slotAboutToShow() ) );
+    connect( this, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()) );
 }
 
 KlipperPopup::~KlipperPopup() {

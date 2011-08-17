@@ -48,15 +48,15 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	setupUi(this);
 	layout()->setMargin(0);
 
-	connect( identifyOutputsButton, SIGNAL( clicked()), SLOT( identifyOutputs()));
-	connect( &identifyTimer, SIGNAL( timeout()), SLOT( clearIndicators()));
-	connect( &compressUpdateViewTimer, SIGNAL( timeout()), SLOT( slotDelayedUpdateView()));
+	connect( identifyOutputsButton, SIGNAL(clicked()), SLOT(identifyOutputs()));
+	connect( &identifyTimer, SIGNAL(timeout()), SLOT(clearIndicators()));
+	connect( &compressUpdateViewTimer, SIGNAL(timeout()), SLOT(slotDelayedUpdateView()));
 	connect(unifyOutputs, SIGNAL(toggled(bool)), SLOT(unifiedOutputChanged(bool)));
 
 	identifyTimer.setSingleShot( true );
 	compressUpdateViewTimer.setSingleShot( true );
 
-	connect( saveAsDefaultButton, SIGNAL( clicked()), SLOT( saveStartup()));
+	connect( saveAsDefaultButton, SIGNAL(clicked()), SLOT(saveStartup()));
 	QMenu* saveMenu = new QMenu(saveAsDefaultButton);
 	saveMenu->addAction(i18n("Save as Default"),this, SLOT(saveStartup()));
 	saveMenu->addAction(i18n("Reset"),this, SLOT(disableStartup()));

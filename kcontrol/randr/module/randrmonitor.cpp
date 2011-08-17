@@ -77,7 +77,7 @@ void RandrMonitorModule::initRandr()
     // HACK: see poll()
     QTimer* timer = new QTimer( this );
     timer->start( 10000 ); // 10 s
-    connect( timer, SIGNAL( timeout()), this, SLOT( poll()));
+    connect( timer, SIGNAL(timeout()), this, SLOT(poll()));
 #endif
     helper = new RandrMonitorHelper( this );
     kapp->installX11EventFilter( helper );
@@ -87,7 +87,7 @@ void RandrMonitorModule::initRandr()
     KAction* act = coll->addAction( "display" );
     act->setText( i18n( "Switch Display" ));
     act->setGlobalShortcut( KShortcut( Qt::Key_Display ));
-    connect( act, SIGNAL( triggered( bool )), SLOT( switchDisplay()));
+    connect( act, SIGNAL(triggered(bool)), SLOT(switchDisplay()));
     }
 
 void RandrMonitorModule::poll()

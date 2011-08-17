@@ -294,7 +294,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QVariantList& args)
 
   connect(systemBell, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(customBell, SIGNAL(clicked()), this, SLOT(configChanged()));
-  connect(soundEdit, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
+  connect(soundEdit, SIGNAL(textChanged(QString)), this, SLOT(configChanged()));
 
   // -----------------------------------------------------
 

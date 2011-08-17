@@ -113,10 +113,10 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     }
 
     Kephal::Screens *screens = Kephal::Screens::self();
-    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
-            this, SLOT(screenResized(Kephal::Screen *)));
-    connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)),
-            this, SLOT(screenMoved(Kephal::Screen *)));
+    connect(screens, SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)),
+            this, SLOT(screenResized(Kephal::Screen*)));
+    connect(screens, SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)),
+            this, SLOT(screenMoved(Kephal::Screen*)));
 }
 
 DesktopView::~DesktopView()

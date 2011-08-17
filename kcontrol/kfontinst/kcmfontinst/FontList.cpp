@@ -463,10 +463,10 @@ CFontList::CFontList(QWidget *parent)
                                                            QDBusConnection::sessionBus(),
                                                            QDBusServiceWatcher::WatchForOwnerChange, this);
 
-    connect(watcher, SIGNAL(serviceOwnerChanged(QString, QString, QString)), SLOT(dbusServiceOwnerChanged(QString, QString, QString)));
-    connect(CJobRunner::dbus(), SIGNAL(fontsAdded(const KFI::Families &)), SLOT(fontsAdded(const KFI::Families &)));
-    connect(CJobRunner::dbus(), SIGNAL(fontsRemoved(const KFI::Families &)), SLOT(fontsRemoved(const KFI::Families &)));
-    connect(CJobRunner::dbus(), SIGNAL(fontList(int, const QList<KFI::Families> &)), SLOT(fontList(int, const QList<KFI::Families> &)));
+    connect(watcher, SIGNAL(serviceOwnerChanged(QString,QString,QString)), SLOT(dbusServiceOwnerChanged(QString,QString,QString)));
+    connect(CJobRunner::dbus(), SIGNAL(fontsAdded(KFI::Families)), SLOT(fontsAdded(KFI::Families)));
+    connect(CJobRunner::dbus(), SIGNAL(fontsRemoved(KFI::Families)), SLOT(fontsRemoved(KFI::Families)));
+    connect(CJobRunner::dbus(), SIGNAL(fontList(int,QList<KFI::Families>)), SLOT(fontList(int,QList<KFI::Families>)));
 }
 
 CFontList::~CFontList()
@@ -1404,7 +1404,7 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
     setDragDropMode(QAbstractItemView::DragDrop);
     header()->setClickable(true);
     header()->setSortIndicatorShown(true);
-    connect(this, SIGNAL(collapsed(const QModelIndex &)), SLOT(itemCollapsed(const QModelIndex &)));
+    connect(this, SIGNAL(collapsed(QModelIndex)), SLOT(itemCollapsed(QModelIndex)));
     connect(header(), SIGNAL(sectionClicked(int)), SLOT(setSortColumn(int)));
     connect(itsProxy, SIGNAL(refresh()), SIGNAL(refresh()));
     connect(itsModel, SIGNAL(listingPercent(int)), SLOT(listingPercent(int)));

@@ -459,7 +459,7 @@ void KSMServer::completeShutdownOrCheckpoint()
 
     if ( state == Shutdown ) {
         KNotification *n = KNotification::event( "exitkde" , QString() , QPixmap() , 0l ,  KNotification::DefaultEvent  ); // KDE says good bye
-        connect(n, SIGNAL( closed() ) , this, SLOT(logoutSoundFinished()) );
+        connect(n, SIGNAL(closed()) , this, SLOT(logoutSoundFinished()) );
         kDebug( 1218 ) << "Starting logout event";
 	state = WaitingForKNotify;
         createLogoutEffectWidget();
@@ -490,7 +490,7 @@ void KSMServer::startKilling()
     kDebug( 1218 ) << " We killed all clients. We have now clients.count()=" <<
     clients.count() << endl;
     completeKilling();
-    QTimer::singleShot( 10000, this, SLOT( timeoutQuit() ) );
+    QTimer::singleShot( 10000, this, SLOT(timeoutQuit()) );
 }
 
 void KSMServer::completeKilling()
@@ -527,7 +527,7 @@ void KSMServer::killWM()
     }
     if( iswm ) {
         completeKillingWM();
-        QTimer::singleShot( 5000, this, SLOT( timeoutWMQuit() ) );
+        QTimer::singleShot( 5000, this, SLOT(timeoutWMQuit()) );
     }
     else
         killingCompleted();
@@ -644,7 +644,7 @@ void KSMServer::startKillingSubSession()
     kDebug( 1218 ) << " We killed some clients. We have now clients.count()=" <<
     clients.count() << endl;
     completeKillingSubSession();
-    QTimer::singleShot( 10000, this, SLOT( signalSubSessionClosed() ) );
+    QTimer::singleShot( 10000, this, SLOT(signalSubSessionClosed()) );
 }
 
 void KSMServer::completeKillingSubSession()

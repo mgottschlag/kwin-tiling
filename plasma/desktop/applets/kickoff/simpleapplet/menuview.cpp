@@ -70,8 +70,8 @@ public:
             KMenu *childMenu = new KMenu(parent);
             childMenu->installEventFilter(q);
             childMenu->setContextMenuPolicy(Qt::CustomContextMenu);
-            connect(childMenu, SIGNAL(customContextMenuRequested(const QPoint&)),
-                    q, SLOT(contextMenuRequested(const QPoint&)));
+            connect(childMenu, SIGNAL(customContextMenuRequested(QPoint)),
+                    q, SLOT(contextMenuRequested(QPoint)));
             action = childMenu->menuAction();
             buildBranch(childMenu, model, index);
         } else {
@@ -153,8 +153,8 @@ MenuView::MenuView(QWidget *parent, const QString &title, const QIcon &icon)
 
     installEventFilter(this);
 
-    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
-            this, SLOT(contextMenuRequested(const QPoint&)));
+    connect(this, SIGNAL(customContextMenuRequested(QPoint)),
+            this, SLOT(contextMenuRequested(QPoint)));
 }
 
 MenuView::~MenuView()
@@ -354,10 +354,10 @@ void MenuView::addModel(QAbstractItemModel *model, MenuView::ModelOptions option
         d->buildBranch(this, model, root);
     }
 
-//connect(model, SIGNAL(rowsAboutToBeInserted(QModelIndex, int, int)), this, SLOT(rowsInserted(QModelIndex, int, int)));
-    connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(rowsInserted(QModelIndex, int, int)));
-    connect(model, SIGNAL(rowsAboutToBeRemoved(QModelIndex, int, int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex, int, int)));
-    connect(model, SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(dataChanged(QModelIndex, QModelIndex)));
+//connect(model, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int)));
+    connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int)));
+    connect(model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int)));
+    connect(model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
     connect(model, SIGNAL(modelReset()), this, SLOT(modelReset()));
 }
 

@@ -37,16 +37,16 @@ NMGsmNetworkInterface::NMGsmNetworkInterface(const QString & path, NMNetworkMana
       modemGsmCardIface(0), modemGsmNetworkIface(0)
 {
     Q_D(NMGsmNetworkInterface);
-    connect( &d->gsmIface, SIGNAL(PropertiesChanged(const QVariantMap &)),
-                this, SLOT(gsmPropertiesChanged(const QVariantMap &)));
+    connect( &d->gsmIface, SIGNAL(PropertiesChanged(QVariantMap)),
+                this, SLOT(gsmPropertiesChanged(QVariantMap)));
 }
 
 NMGsmNetworkInterface::NMGsmNetworkInterface(NMGsmNetworkInterfacePrivate & dd, NMNetworkManager * manager, QObject * parent) : NMSerialNetworkInterface(dd, manager, parent),
       modemGsmCardIface(0), modemGsmNetworkIface(0)
 {
     Q_D(NMGsmNetworkInterface);
-    connect( &d->gsmIface, SIGNAL(PropertiesChanged(const QVariantMap &)),
-                this, SLOT(gsmPropertiesChanged(const QVariantMap &)));
+    connect( &d->gsmIface, SIGNAL(PropertiesChanged(QVariantMap)),
+                this, SLOT(gsmPropertiesChanged(QVariantMap)));
 }
 
 NMGsmNetworkInterface::~NMGsmNetworkInterface()
@@ -86,7 +86,7 @@ Solid::Control::ModemGsmCardInterface * NMGsmNetworkInterface::getModemCardIface
     }
     if (modemGsmCardIface == 0) {
         modemGsmCardIface = qobject_cast<Solid::Control::ModemGsmCardInterface*> (Solid::Control::ModemManager::findModemInterface(correctUdi, Solid::Control::ModemInterface::GsmCard));
-        connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), this, SLOT(modemRemoved(const QString &)));
+        connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(QString)), this, SLOT(modemRemoved(QString)));
     }
 
     return modemGsmCardIface;
@@ -101,7 +101,7 @@ Solid::Control::ModemGsmNetworkInterface * NMGsmNetworkInterface::getModemNetwor
     if (modemGsmNetworkIface == 0) {
         modemGsmNetworkIface = qobject_cast<Solid::Control::ModemGsmNetworkInterface*> (Solid::Control::ModemManager::findModemInterface(correctUdi, Solid::Control::ModemInterface::GsmNetwork));
         if (modemGsmNetworkIface) {
-            connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), this, SLOT(modemRemoved(const QString &)));
+            connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(QString)), this, SLOT(modemRemoved(QString)));
         }
     }
 

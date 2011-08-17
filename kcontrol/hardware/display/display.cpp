@@ -71,7 +71,7 @@ void KCMDisplay::addTab( const QString &name, const QString &label )
     top->addWidget( kcm );
     m_tabs->addTab( page, label );
 
-    connect( kcm, SIGNAL( changed(bool) ), SLOT( moduleChanged(bool) ) );
+    connect( kcm, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)) );
     m_modules.insert(kcm, false);
   }
   else

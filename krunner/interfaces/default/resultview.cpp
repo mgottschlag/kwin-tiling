@@ -62,9 +62,9 @@ ResultsView::ResultsView(ResultScene *scene, SharedResultData *resultData, QWidg
     connect(m_arrowSvg, SIGNAL(repaintNeeded()), this, SLOT(updateArrowsIcons()));
     updateArrowsIcons();
 
-    connect(verticalScrollBar(), SIGNAL(rangeChanged(int, int)), this, SLOT(updateArrowsVisibility()));
+    connect(verticalScrollBar(), SIGNAL(rangeChanged(int,int)), this, SLOT(updateArrowsVisibility()));
     connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(updateArrowsVisibility()));
-    connect(m_resultScene, SIGNAL(ensureVisibility(QGraphicsItem *)), this, SLOT(ensureVisibility(QGraphicsItem *)));
+    connect(m_resultScene, SIGNAL(ensureVisibility(QGraphicsItem*)), this, SLOT(ensureVisibility(QGraphicsItem*)));
 }
 
 ResultsView::~ResultsView()

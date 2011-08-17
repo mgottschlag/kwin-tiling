@@ -50,9 +50,9 @@ Gesture::Gesture( bool enabled_P, QObject* parent_P )
     kDebug() << enabled_P;
     (void) new DeleteObject( this, parent_P );
     nostroke_timer.setSingleShot( true );
-    connect( &nostroke_timer, SIGNAL( timeout()), SLOT( stroke_timeout()));
-    connect( windows_handler, SIGNAL( active_window_changed( WId )),
-        SLOT( active_window_changed( WId )));
+    connect( &nostroke_timer, SIGNAL(timeout()), SLOT(stroke_timeout()));
+    connect( windows_handler, SIGNAL(active_window_changed(WId)),
+        SLOT(active_window_changed(WId)));
     }
 
 
@@ -126,12 +126,12 @@ void Gesture::register_handler( QObject* receiver_P, const char* slot_P )
     // connect directly because we want to be sure that all triggers submitted
     // their scores back to this object before executing the best match we
     // could find.
-    connect( this, SIGNAL( handle_gesture( const StrokePoints& )),
+    connect( this, SIGNAL(handle_gesture(StrokePoints)),
             receiver_P, slot_P,
             Qt::DirectConnection
             );
-    connect( receiver_P, SIGNAL( gotScore( ActionData* const,  const qreal ) ),
-             this, SLOT( handleScore( ActionData* const, const qreal ) ),
+    connect( receiver_P, SIGNAL(gotScore(ActionData*const,qreal)),
+             this, SLOT(handleScore(ActionData*const,qreal)),
             Qt::DirectConnection
             );
     if( handlers.count() == 1 )
@@ -144,11 +144,11 @@ void Gesture::unregister_handler( QObject* receiver_P, const char* slot_P )
         return;
     handlers.remove( receiver_P );
 
-    disconnect( this, SIGNAL( handle_gesture( const StrokePoints& )),
+    disconnect( this, SIGNAL(handle_gesture(StrokePoints)),
             receiver_P, slot_P
             );
-    disconnect( receiver_P, SIGNAL( gotScore( ActionData* const, const qreal ) ),
-                this, SLOT( handleScore( ActionData* const, const qreal ) )
+    disconnect( receiver_P, SIGNAL(gotScore(ActionData*const,qreal)),
+                this, SLOT(handleScore(ActionData*const,qreal))
             );
     if( handlers.count() == 0 )
         update_grab();

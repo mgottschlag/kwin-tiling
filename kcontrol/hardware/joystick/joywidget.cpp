@@ -97,8 +97,8 @@ JoyWidget::JoyWidget(QWidget *parent)
   KUrlCompletion *kc = new KUrlCompletion(KUrlCompletion::FileCompletion);
   device->setCompletionObject(kc);
   device->setAutoDeleteCompletionObject(true);
-  connect(device, SIGNAL(activated(const QString &)), this, SLOT(deviceChanged(const QString &)));
-  connect(device, SIGNAL(returnPressed(const QString &)), this, SLOT(deviceChanged(const QString &)));
+  connect(device, SIGNAL(activated(QString)), this, SLOT(deviceChanged(QString)));
+  connect(device, SIGNAL(returnPressed(QString)), this, SLOT(deviceChanged(QString)));
   devHbox->setStretchFactor(device, 3);
 
   QHBoxLayout *hbox = new QHBoxLayout;

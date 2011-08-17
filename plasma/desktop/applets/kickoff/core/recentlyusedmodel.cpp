@@ -150,8 +150,8 @@ RecentlyUsedModel::RecentlyUsedModel(QObject *parent, RecentType recenttype, int
         d->loadRecentApplications();
 
         // listen for changes to the list of recent applications
-        connect(RecentApplications::self(), SIGNAL(applicationAdded(KService::Ptr, int)),
-                this, SLOT(recentApplicationAdded(KService::Ptr, int)));
+        connect(RecentApplications::self(), SIGNAL(applicationAdded(KService::Ptr,int)),
+                this, SLOT(recentApplicationAdded(KService::Ptr,int)));
         connect(RecentApplications::self(), SIGNAL(applicationRemoved(KService::Ptr)),
                 this, SLOT(recentApplicationRemoved(KService::Ptr)));
         connect(RecentApplications::self(), SIGNAL(cleared()),

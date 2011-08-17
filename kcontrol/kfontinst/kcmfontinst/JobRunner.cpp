@@ -219,8 +219,8 @@ CJobRunner::CJobRunner(QWidget *parent, int xid)
                                                            QDBusConnection::sessionBus(),
                                                            QDBusServiceWatcher::WatchForOwnerChange, this);
 
-    connect(watcher, SIGNAL(serviceOwnerChanged(QString, QString, QString)), SLOT(dbusServiceOwnerChanged(QString, QString, QString)));
-    connect(dbus(), SIGNAL(status(int, int)), SLOT(dbusStatus(int, int)));
+    connect(watcher, SIGNAL(serviceOwnerChanged(QString,QString,QString)), SLOT(dbusServiceOwnerChanged(QString,QString,QString)));
+    connect(dbus(), SIGNAL(status(int,int)), SLOT(dbusStatus(int,int)));
     setMinimumSize(420, 160);
 }
 

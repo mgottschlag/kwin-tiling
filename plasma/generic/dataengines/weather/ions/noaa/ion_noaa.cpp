@@ -161,9 +161,9 @@ void NOAAIon::getXMLSetup() const
     KIO::TransferJob *job = KIO::get(KUrl("http://www.weather.gov/data/current_obs/index.xml"), KIO::NoReload, KIO::HideProgressInfo);
 
     if (job) {
-        connect(job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
+        connect(job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(setup_slotDataArrived(KIO::Job*,QByteArray)));
+        connect(job, SIGNAL(result(KJob*)), this, SLOT(setup_slotJobFinished(KJob*)));
     } else {
         kDebug() << "Could not create place name list transfer job";
     }
@@ -194,9 +194,9 @@ void NOAAIon::getXMLData(const QString& source)
     m_jobList.insert(m_job, source);
 
     if (m_job) {
-        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(slotDataArrived(KIO::Job*,QByteArray)));
+        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(slotJobFinished(KJob*)));
     }
 }
 
@@ -835,9 +835,9 @@ void NOAAIon::getForecast(const QString& source)
     m_jobList.insert(m_job, source);
 
     if (m_job) {
-        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(forecast_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(forecast_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(forecast_slotDataArrived(KIO::Job*,QByteArray)));
+        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(forecast_slotJobFinished(KJob*)));
     }
 }
 

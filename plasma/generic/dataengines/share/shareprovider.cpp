@@ -178,8 +178,8 @@ void ShareProvider::openFile(KIO::Job *job)
     // finished opening the file, now try to read it's content
     KIO::FileJob *fjob = static_cast<KIO::FileJob*>(job);
     fjob->read(fjob->size());
-    connect(fjob, SIGNAL(data(KIO::Job*, const QByteArray&)),
-            this, SLOT(finishedContentData(KIO::Job*, const QByteArray&)));
+    connect(fjob, SIGNAL(data(KIO::Job*,QByteArray)),
+            this, SLOT(finishedContentData(KIO::Job*,QByteArray)));
 }
 
 void ShareProvider::finishedContentData(KIO::Job *job, const QByteArray &data)
@@ -289,11 +289,11 @@ void ShareProvider::publish()
         }
     }
 
-    connect(tf, SIGNAL(data(KIO::Job*, const QByteArray&)),
-            this, SLOT(readPublishData(KIO::Job*, const QByteArray&)));
+    connect(tf, SIGNAL(data(KIO::Job*,QByteArray)),
+            this, SLOT(readPublishData(KIO::Job*,QByteArray)));
     connect(tf, SIGNAL(result(KJob*)), this, SLOT(finishedPublish(KJob*)));
-    connect(tf, SIGNAL(redirection(KIO::Job*, const KUrl&)),
-            this, SLOT(redirected(KIO::Job*, const KUrl&)));
+    connect(tf, SIGNAL(redirection(KIO::Job*,KUrl)),
+            this, SLOT(redirected(KIO::Job*,KUrl)));
 }
 
 void ShareProvider::redirected(KIO::Job *job, const KUrl &to)

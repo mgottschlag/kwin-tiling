@@ -133,11 +133,11 @@ void Calendar::init(const QDate &initialDate)
 
     d->calendarTable = new CalendarTable(this);
     d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated()));
-    connect(d->calendarTable, SIGNAL(dateHovered(const QDate &)), this, SIGNAL(dateHovered(const QDate &)));
-    connect(d->calendarTable, SIGNAL(dateSelected(const QDate &)), this, SLOT(displayEvents(const QDate &)));
+    connect(d->calendarTable, SIGNAL(dateChanged(QDate)), this, SLOT(dateUpdated()));
+    connect(d->calendarTable, SIGNAL(dateHovered(QDate)), this, SIGNAL(dateHovered(QDate)));
+    connect(d->calendarTable, SIGNAL(dateSelected(QDate)), this, SLOT(displayEvents(QDate)));
     connect(d->calendarTable, SIGNAL(eventsChanged()), this, SLOT(displayEvents()));
-    connect(this, SIGNAL(dateHovered(const QDate &)), this, SLOT(displayEvents(const QDate &)));
+    connect(this, SIGNAL(dateHovered(QDate)), this, SLOT(displayEvents(QDate)));
 
     d->back = new Plasma::ToolButton(this);
     d->back->setText("<");

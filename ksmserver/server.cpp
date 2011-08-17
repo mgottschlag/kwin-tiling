@@ -127,8 +127,8 @@ KProcess* KSMServer::startApplication( const QStringList& cmd, const QString& cl
         KProcess* process = new KProcess( this );
         *process << command;
         // make it auto-delete
-        connect( process, SIGNAL( error( QProcess::ProcessError )), process, SLOT( deleteLater()));
-        connect( process, SIGNAL( finished( int, QProcess::ExitStatus )), process, SLOT( deleteLater()));
+        connect( process, SIGNAL(error(QProcess::ProcessError)), process, SLOT(deleteLater()));
+        connect( process, SIGNAL(finished(int,QProcess::ExitStatus)), process, SLOT(deleteLater()));
         process->start();
         return process;
     } else {
@@ -624,8 +624,8 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     KGlobal::dirs()->addResourceType( "windowmanagers", "data", "ksmserver/windowmanagers" );
     selectWm( windowManager );
 
-    connect( &startupSuspendTimeoutTimer, SIGNAL( timeout()), SLOT( startupSuspendTimeout()));
-    connect( &pendingShutdown, SIGNAL( timeout()), SLOT( pendingShutdownTimeout()));
+    connect( &startupSuspendTimeoutTimer, SIGNAL(timeout()), SLOT(startupSuspendTimeout()));
+    connect( &pendingShutdown, SIGNAL(timeout()), SLOT(pendingShutdownTimeout()));
 
     only_local = _only_local;
 #ifdef HAVE__ICETRANSNOLISTEN
@@ -700,7 +700,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
         fcntl( IceGetListenConnectionNumber( listenObjs[i] ), F_SETFD, FD_CLOEXEC );
         con = new KSMListener( listenObjs[i] );
         listener.append( con );
-        connect( con, SIGNAL( activated(int) ), this, SLOT( newConnection(int) ) );
+        connect( con, SIGNAL(activated(int)), this, SLOT(newConnection(int)) );
     }
 
     signal(SIGHUP, sighandler);
@@ -708,9 +708,9 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     signal(SIGINT, sighandler);
     signal(SIGPIPE, SIG_IGN);
 
-    connect( &protectionTimer, SIGNAL( timeout() ), this, SLOT( protectionTimeout() ) );
-    connect( &restoreTimer, SIGNAL( timeout() ), this, SLOT( tryRestoreNext() ) );
-    connect( qApp, SIGNAL( aboutToQuit() ), this, SLOT( cleanUp() ) );
+    connect( &protectionTimer, SIGNAL(timeout()), this, SLOT(protectionTimeout()) );
+    connect( &restoreTimer, SIGNAL(timeout()), this, SLOT(tryRestoreNext()) );
+    connect( qApp, SIGNAL(aboutToQuit()), this, SLOT(cleanUp()) );
 }
 
 KSMServer::~KSMServer()
@@ -751,7 +751,7 @@ void KSMServer::cleanUp()
 void* KSMServer::watchConnection( IceConn iceConn )
 {
     KSMConnection* conn = new KSMConnection( iceConn );
-    connect( conn, SIGNAL( activated(int) ), this, SLOT( processData(int) ) );
+    connect( conn, SIGNAL(activated(int)), this, SLOT(processData(int)) );
     return (void*) conn;
 }
 

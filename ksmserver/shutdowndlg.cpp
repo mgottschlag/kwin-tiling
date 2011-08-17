@@ -75,7 +75,7 @@ KSMShutdownFeedback::KSMShutdownFeedback()
     setAttribute( Qt::WA_PaintOnScreen );
     setGeometry( QApplication::desktop()->geometry() );
     m_pixmap = QPixmap( size() );
-    QTimer::singleShot( 10, this, SLOT( slotPaintEffect() ) );
+    QTimer::singleShot( 10, this, SLOT(slotPaintEffect()) );
 }
 
 

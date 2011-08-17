@@ -852,10 +852,10 @@ CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
 
     setWhatsThis(model->whatsThis());
     header()->setWhatsThis(whatsThis());
-    connect(this, SIGNAL(addFamilies(const QModelIndex &,  const QSet<QString> &)),
-            model, SLOT(addToGroup(const QModelIndex &,  const QSet<QString> &)));
-    connect(this, SIGNAL(removeFamilies(const QModelIndex &,  const QSet<QString> &)),
-            model, SLOT(removeFromGroup(const QModelIndex &,  const QSet<QString> &)));
+    connect(this, SIGNAL(addFamilies(QModelIndex,QSet<QString>)),
+            model, SLOT(addToGroup(QModelIndex,QSet<QString>)));
+    connect(this, SIGNAL(removeFamilies(QModelIndex,QSet<QString>)),
+            model, SLOT(removeFromGroup(QModelIndex,QSet<QString>)));
 }
 
 CGroupListItem::EType CGroupListView::getType()

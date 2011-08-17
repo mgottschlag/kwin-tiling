@@ -44,7 +44,7 @@ FreeSpaceNotifier::FreeSpaceNotifier( QObject* parent )
     // If we are running, notifications are enabled
     FreeSpaceNotifierSettings::setEnableNotification( true );
 
-    connect( &timer, SIGNAL( timeout() ), SLOT( checkFreeDiskSpace() ) );
+    connect( &timer, SIGNAL(timeout()), SLOT(checkFreeDiskSpace()) );
     timer.start( 1000 * 60 /* 1 minute */ );
 }
 
@@ -90,10 +90,10 @@ void FreeSpaceNotifier::checkFreeDiskSpace()
             notification->setActions( QStringList() << i18nc( "Opens a file manager like dolphin", "Open File Manager" ) << i18nc( "Closes the notification", "Do Nothing" ) << i18nc( "Allows the user to configure the warning notification being shown", "Configure Warning" ) );
             //notification->setPixmap( ... ); // TODO: Maybe add a picture here?
 
-            connect( notification, SIGNAL( action1Activated() ), SLOT( openFileManager() ) );
-            connect( notification, SIGNAL( action2Activated() ), SLOT( cleanupNotification() ) );
-            connect( notification, SIGNAL( action3Activated() ), SLOT( showConfiguration() ) );
-            connect( notification, SIGNAL( closed() ),           SLOT( cleanupNotification() ) );
+            connect( notification, SIGNAL(action1Activated()), SLOT(openFileManager()) );
+            connect( notification, SIGNAL(action2Activated()), SLOT(cleanupNotification()) );
+            connect( notification, SIGNAL(action3Activated()), SLOT(showConfiguration()) );
+            connect( notification, SIGNAL(closed()),           SLOT(cleanupNotification()) );
 
             notification->setComponentData( KComponentData( "freespacenotifier" ) );
             notification->sendEvent();
@@ -122,7 +122,7 @@ void FreeSpaceNotifier::showConfiguration()
     preferences.setupUi( generalSettingsDlg );
 
     dialog->addPage( generalSettingsDlg, i18nc( "The settings dialog main page name, as in 'general settings'", "General" ), "system-run" );
-    connect( dialog, SIGNAL( finished() ), this, SLOT( configDialogClosed() ) );
+    connect( dialog, SIGNAL(finished()), this, SLOT(configDialogClosed()) );
     dialog->setAttribute( Qt::WA_DeleteOnClose );
     dialog->show();
 }
@@ -135,7 +135,7 @@ void FreeSpaceNotifier::cleanupNotification()
     if( lastAvailTimer == NULL )
     {
         lastAvailTimer = new QTimer( this );
-        connect( lastAvailTimer, SIGNAL( timeout() ), SLOT( resetLastAvailable() ) );
+        connect( lastAvailTimer, SIGNAL(timeout()), SLOT(resetLastAvailable()) );
     }
     lastAvailTimer->start( 1000 * 60 * 60 /* 1 hour*/ );
 }

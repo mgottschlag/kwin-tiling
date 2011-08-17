@@ -127,15 +127,15 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent)
     minlab->setBuddy(leminuid);
     leminuid->setSizePolicy(sp_ign_fix);
     leminuid->setValidator(valid);
-    connect(leminuid, SIGNAL(textChanged(const QString &)), SIGNAL(changed()));
-    connect(leminuid, SIGNAL(textChanged(const QString &)), SLOT(slotMinMaxChanged()));
+    connect(leminuid, SIGNAL(textChanged(QString)), SIGNAL(changed()));
+    connect(leminuid, SIGNAL(textChanged(QString)), SLOT(slotMinMaxChanged()));
     QLabel *maxlab = new QLabel(i18nc("UIDs", "Above:"), minGroup);
     lemaxuid = new KLineEdit(minGroup);
     maxlab->setBuddy(lemaxuid);
     lemaxuid->setSizePolicy(sp_ign_fix);
     lemaxuid->setValidator(valid);
-    connect(lemaxuid, SIGNAL(textChanged(const QString &)), SIGNAL(changed()));
-    connect(lemaxuid, SIGNAL(textChanged(const QString &)), SLOT(slotMinMaxChanged()));
+    connect(lemaxuid, SIGNAL(textChanged(QString)), SIGNAL(changed()));
+    connect(lemaxuid, SIGNAL(textChanged(QString)), SLOT(slotMinMaxChanged()));
     QGridLayout *grid = new QGridLayout(minGroup);
     grid->addWidget(minlab, 0, 0);
     grid->addWidget(leminuid, 0, 1);
@@ -186,9 +186,9 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent)
         "KDM will show all checked users. Entries denoted with '@' are user groups. "
         "Checking a group is like checking all users in that group."));
     wstack->addWidget(optinlv);
-    connect(optinlv, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
-            SLOT(slotUpdateOptIn(QTreeWidgetItem *)));
-    connect(optinlv, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
+    connect(optinlv, SIGNAL(itemClicked(QTreeWidgetItem*,int)),
+            SLOT(slotUpdateOptIn(QTreeWidgetItem*)));
+    connect(optinlv, SIGNAL(itemClicked(QTreeWidgetItem*,int)),
             SIGNAL(changed()));
     optoutlv = new QTreeWidget(this);
     optoutlv->setRootIsDecorated(false);
@@ -197,9 +197,9 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent)
         "KDM will show all non-checked non-system users. Entries denoted with '@' "
         "are user groups. Checking a group is like checking all users in that group."));
     wstack->addWidget(optoutlv);
-    connect(optoutlv, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
-            SLOT(slotUpdateOptOut(QTreeWidgetItem *)));
-    connect(optoutlv, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
+    connect(optoutlv, SIGNAL(itemClicked(QTreeWidgetItem*,int)),
+            SLOT(slotUpdateOptOut(QTreeWidgetItem*)));
+    connect(optoutlv, SIGNAL(itemClicked(QTreeWidgetItem*,int)),
             SIGNAL(changed()));
 
     faceGroup = new QGroupBox(i18nc(

@@ -40,10 +40,10 @@ WindowsHandler::WindowsHandler( bool enable_signal_P, QObject* parent_P )
     {
     if( signals_enabled )
         {
-        connect( KWindowSystem::self(), SIGNAL( windowAdded( WId )), SLOT( window_added_slot( WId )));
-        connect( KWindowSystem::self(), SIGNAL( windowRemoved( WId )), SLOT( window_removed_slot( WId )));
-        connect( KWindowSystem::self(), SIGNAL( activeWindowChanged( WId )),
-            SLOT( active_window_changed_slot( WId )));
+        connect( KWindowSystem::self(), SIGNAL(windowAdded(WId)), SLOT(window_added_slot(WId)));
+        connect( KWindowSystem::self(), SIGNAL(windowRemoved(WId)), SLOT(window_removed_slot(WId)));
+        connect( KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
+            SLOT(active_window_changed_slot(WId)));
         }
     }
 

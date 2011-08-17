@@ -60,12 +60,12 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList &)
         d->isNetworkingEnabled = !(NM_STATE_UNKNOWN == d->nmState || NM_STATE_ASLEEP == d->nmState);
         d->NetworkingEnabledPropertyAvailable = false;
     }
-    connect( &d->iface, SIGNAL(DeviceAdded(const QDBusObjectPath &)),
-                this, SLOT(deviceAdded(const QDBusObjectPath &)));
-    connect( &d->iface, SIGNAL(DeviceRemoved(const QDBusObjectPath &)),
-                this, SLOT(deviceRemoved(const QDBusObjectPath &)));
-    connect( &d->iface, SIGNAL(PropertiesChanged(const QVariantMap &)),
-                this, SLOT(propertiesChanged(const QVariantMap &)));
+    connect( &d->iface, SIGNAL(DeviceAdded(QDBusObjectPath)),
+                this, SLOT(deviceAdded(QDBusObjectPath)));
+    connect( &d->iface, SIGNAL(DeviceRemoved(QDBusObjectPath)),
+                this, SLOT(deviceRemoved(QDBusObjectPath)));
+    connect( &d->iface, SIGNAL(PropertiesChanged(QVariantMap)),
+                this, SLOT(propertiesChanged(QVariantMap)));
     connect( &d->iface, SIGNAL(StateChanged(uint)),
                 this, SLOT(stateChanged(uint)));
 

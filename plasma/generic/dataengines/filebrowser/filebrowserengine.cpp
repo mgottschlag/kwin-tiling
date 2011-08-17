@@ -37,11 +37,11 @@ FileBrowserEngine::FileBrowserEngine(QObject* parent, const QVariantList& args) 
 
     m_dirWatch = new KDirWatch(this);
     connect(m_dirWatch, SIGNAL(created(
-        const QString &)), this, SLOT(dirCreated(const QString &)));
+        const QString &)), this, SLOT(dirCreated(QString)));
     connect(m_dirWatch, SIGNAL(deleted(
-        const QString &)), this, SLOT(dirDeleted(const QString &)));
+        const QString &)), this, SLOT(dirDeleted(QString)));
     connect(m_dirWatch, SIGNAL(dirty(
-        const QString &)), this, SLOT(dirDirty(const QString &)));
+        const QString &)), this, SLOT(dirDirty(QString)));
 }
 
 FileBrowserEngine::~FileBrowserEngine()

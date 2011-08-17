@@ -73,10 +73,10 @@ void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
                 this, SLOT(refreshWorkingArea()));
         refreshWorkingArea();
 
-        connect(this, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)),
-                this, SLOT(onAppletAdded(Plasma::Applet *, const QPointF &)));
-        connect(this, SIGNAL(appletRemoved(Plasma::Applet *)),
-                this, SLOT(onAppletRemoved(Plasma::Applet *)));
+        connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
+                this, SLOT(onAppletAdded(Plasma::Applet*,QPointF)));
+        connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
+                this, SLOT(onAppletRemoved(Plasma::Applet*)));
 
         foreach (Applet *applet, applets()) {
             m_layout->addItem(applet, true, false);

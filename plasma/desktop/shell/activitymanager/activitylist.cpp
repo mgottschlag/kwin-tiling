@@ -65,8 +65,8 @@ ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
     //TODO:
     //-do something about sorting and filtering (most recent first?)
 
-    connect(m_activityController, SIGNAL(activityAdded(const QString &)), this, SLOT(activityAdded(const QString &)));
-    connect(m_activityController, SIGNAL(activityRemoved(const QString &)), this, SLOT(activityRemoved(const QString &)));
+    connect(m_activityController, SIGNAL(activityAdded(QString)), this, SLOT(activityAdded(QString)));
+    connect(m_activityController, SIGNAL(activityRemoved(QString)), this, SLOT(activityRemoved(QString)));
 
     updateList();
 }

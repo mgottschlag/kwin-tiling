@@ -50,8 +50,8 @@ ResultScene::ResultScene(SharedResultData *resultData, Plasma::RunnerManager *ma
 {
     setItemIndexMethod(NoIndex);
 
-    connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
-            this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
+    connect(m_runnerManager, SIGNAL(matchesChanged(QList<Plasma::QueryMatch>)),
+            this, SLOT(setQueryMatches(QList<Plasma::QueryMatch>)));
 
     m_clearTimer.setSingleShot(true);
     m_clearTimer.setInterval(200);

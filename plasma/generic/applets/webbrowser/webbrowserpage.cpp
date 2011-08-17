@@ -33,10 +33,10 @@ WebBrowserPage::WebBrowserPage(WebBrowser *parent)
     //settings()->setAttribute(QWebSettings::JavaEnabled, true);
     settings()->setAttribute(QWebSettings::PluginsEnabled, true);
 
-    connect(networkAccessManager(), SIGNAL(finished(QNetworkReply*)), this, SLOT(networkAccessFinished(QNetworkReply *)));
+    connect(networkAccessManager(), SIGNAL(finished(QNetworkReply*)), this, SLOT(networkAccessFinished(QNetworkReply*)));
     connect(this, SIGNAL(loadFinished(bool)), this, SLOT(pageLoadFinished(bool)));
-    connect(wallet(), SIGNAL(saveFormDataRequested(const QString &, const QUrl &)),
-            m_browser, SLOT(saveFormDataRequested(const QString &, const QUrl &)));
+    connect(wallet(), SIGNAL(saveFormDataRequested(QString,QUrl)),
+            m_browser, SLOT(saveFormDataRequested(QString,QUrl)));
 }
   
 QWebPage *WebBrowserPage::createWindow(WebWindowType type)

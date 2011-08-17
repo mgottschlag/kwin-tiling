@@ -154,8 +154,8 @@ CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList
 
     CPreviewSelectAction *displayTypeAction=new CPreviewSelectAction(this, CPreviewSelectAction::BlocksAndScripts);
     actionCollection()->addAction("displayType", displayTypeAction);
-    connect(displayTypeAction, SIGNAL(range(const QList<CFcEngine::TRange> &)),
-            SLOT(displayType(const QList<CFcEngine::TRange> &)));
+    connect(displayTypeAction, SIGNAL(range(QList<CFcEngine::TRange>)),
+            SLOT(displayType(QList<CFcEngine::TRange>)));
 
     QAction *zoomIn=actionCollection()->addAction(KStandardAction::ZoomIn, itsPreview, SLOT(zoomIn())),
             *zoomOut=actionCollection()->addAction(KStandardAction::ZoomOut, itsPreview, SLOT(zoomOut()));
@@ -168,8 +168,8 @@ CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList
     itsExtension->enablePrint(false);
 
     FontInst::registerTypes();
-    connect(itsInterface, SIGNAL(status(int, int)), SLOT(dbusStatus(int, int)));
-    connect(itsInterface, SIGNAL(fontStat(int, const KFI::Family &)), SLOT(fontStat(int, const KFI::Family &)));
+    connect(itsInterface, SIGNAL(status(int,int)), SLOT(dbusStatus(int,int)));
+    connect(itsInterface, SIGNAL(fontStat(int,KFI::Family)), SLOT(fontStat(int,KFI::Family)));
 }
 
 CFontViewPart::~CFontViewPart()
@@ -405,7 +405,7 @@ void CFontViewPart::install()
              << "--icon" << "kfontview"
              << url().prettyUrl();
 
-        connect(itsProc, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(installlStatus()));
+        connect(itsProc, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(installlStatus()));
         itsProc->start(Misc::app(KFI_INSTALLER), args);
         itsInstallButton->setEnabled(false);
     }

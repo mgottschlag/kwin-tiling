@@ -145,7 +145,7 @@ CFontFilter::CFontFilter(QWidget *parent)
     itsMenu->addAction(itsActions[CRIT_FOUNDRY]);
     foundryMenu->setData((int)CRIT_FOUNDRY);
     foundryMenu->setVisible(false);
-    connect(foundryMenu, SIGNAL(triggered(const QString &)), SLOT(foundryChanged(const QString &)));
+    connect(foundryMenu, SIGNAL(triggered(QString)), SLOT(foundryChanged(QString)));
 
     addAction(CRIT_FONTCONFIG, i18n("FontConfig Match"), false);
     
@@ -177,7 +177,7 @@ CFontFilter::CFontFilter(QWidget *parent)
         }
 
     sortActions(ftMenu);
-    connect(ftMenu, SIGNAL(triggered(const QString &)), SLOT(ftChanged(const QString &)));
+    connect(ftMenu, SIGNAL(triggered(QString)), SLOT(ftChanged(QString)));
     itsCurrentFileTypes.clear();
 
     addAction(CRIT_FILENAME, i18n("File Name"), false);
@@ -200,7 +200,7 @@ CFontFilter::CFontFilter(QWidget *parent)
         wsAct->setData(i);
     }
     sortActions(wsMenu);
-    connect(wsMenu, SIGNAL(triggered(const QString &)), SLOT(wsChanged(const QString &)));
+    connect(wsMenu, SIGNAL(triggered(QString)), SLOT(wsChanged(QString)));
 
     setCriteria(CRIT_FAMILY);
     setStyle(new CFontFilterStyle(this, itsMenuButton->width()));

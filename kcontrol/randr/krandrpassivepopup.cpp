@@ -33,7 +33,7 @@ KRandrPassivePopup::KRandrPassivePopup( QWidget *parent, Qt::WFlags f )
     : KPassivePopup( parent, f )
     {
     update_timer.setSingleShot( true );
-    connect( &update_timer, SIGNAL( timeout()), SLOT( slotPositionSelf()));
+    connect( &update_timer, SIGNAL(timeout()), SLOT(slotPositionSelf()));
     }
     
 KRandrPassivePopup* KRandrPassivePopup::message( const QString &caption, const QString &text,
@@ -100,7 +100,7 @@ bool KRandrPassivePopup::eventFilter( QObject* o, QEvent* e )
     {
     if( e->type() == QEvent::Move && o->isWidgetType()
 	&& watched_widgets.contains( static_cast< QWidget* >( o )))
-        QTimer::singleShot( 0, this, SLOT( slotPositionSelf()));
+        QTimer::singleShot( 0, this, SLOT(slotPositionSelf()));
     return false;
     }
 

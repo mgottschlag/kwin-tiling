@@ -130,7 +130,7 @@ KRequestShutdownHelper::KRequestShutdownHelper()
     SmcSetProperties( conn, 5, p );
     notifier = new QSocketNotifier( IceConnectionNumber( SmcGetIceConnection( conn )),
         QSocketNotifier::Read, this );
-    connect( notifier, SIGNAL( activated( int )), SLOT( processData()));
+    connect( notifier, SIGNAL(activated(int)), SLOT(processData()));
 #endif
     }
 

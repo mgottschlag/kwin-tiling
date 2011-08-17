@@ -160,8 +160,8 @@ void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::initGUI()
     q->layout()->addWidget(stack);
 
     // Connect our components
-    connect(ui.components, SIGNAL(activated(const QString&)),
-            q, SLOT(activateComponent(const QString&)));
+    connect(ui.components, SIGNAL(activated(QString)),
+            q, SLOT(activateComponent(QString)));
 
     // Build the menu
     QMenu *menu = new QMenu(q);

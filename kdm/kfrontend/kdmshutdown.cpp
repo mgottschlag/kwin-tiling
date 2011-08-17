@@ -497,8 +497,8 @@ KDMSlimShutdown::KDMSlimShutdown(QWidget *_parent)
                                       "%1 (current)", targetList[i]) :
                                 targetList[i]))->setData(i);
         btnReboot->setDelayedMenu(targets);
-        connect(targets, SIGNAL(triggered(QAction *)),
-                SLOT(slotReboot(QAction *)));
+        connect(targets, SIGNAL(triggered(QAction*)),
+                SLOT(slotReboot(QAction*)));
     }
 
     buttonlay->addStretch(1);

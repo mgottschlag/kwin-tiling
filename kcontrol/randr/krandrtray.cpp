@@ -133,7 +133,7 @@ void KRandRSystemTray::slotPrepareMenu()
 	actPrefs->setIcon( KIcon( "configure" ) );
 	actPrefs->setText( i18n( "Configure Display..." ) );
 
-	connect( actPrefs, SIGNAL( triggered( bool ) ), SLOT( slotPrefs() ) );
+	connect( actPrefs, SIGNAL(triggered(bool)), SLOT(slotPrefs()) );
 	m_menu->addAction( actPrefs );
 
 	m_menu->addMenu(/*SmallIcon("help-contents"),KStandardGuiItem::help().text(),*/ m_help->menu());

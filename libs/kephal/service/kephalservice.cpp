@@ -115,8 +115,8 @@ void KephalService::init()
 //X     }
 //X 
     activateConfiguration();
-    connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output *)), this, SLOT(outputDisconnected(Kephal::Output *)));
-    connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnected(Kephal::Output *)));
+    connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output*)), this, SLOT(outputDisconnected(Kephal::Output*)));
+    connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output*)), this, SLOT(outputConnected(Kephal::Output*)));
 
 //X     kDebug() << "will check for possible positions...";
 //X     foreach (Output * output, Outputs::self()->outputs()) {

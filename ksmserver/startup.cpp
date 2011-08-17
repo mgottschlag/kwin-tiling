@@ -109,9 +109,9 @@ void KSMServer::restoreSession( const QString &sessionName )
     int count =  configSessionGroup.readEntry( "count", 0 );
     appsToStart = count;
     upAndRunning( "ksmserver" );
-    connect( klauncherSignals, SIGNAL( autoStart0Done()), SLOT( autoStart0Done()));
-    connect( klauncherSignals, SIGNAL( autoStart1Done()), SLOT( autoStart1Done()));
-    connect( klauncherSignals, SIGNAL( autoStart2Done()), SLOT( autoStart2Done()));
+    connect( klauncherSignals, SIGNAL(autoStart0Done()), SLOT(autoStart0Done()));
+    connect( klauncherSignals, SIGNAL(autoStart1Done()), SLOT(autoStart1Done()));
+    connect( klauncherSignals, SIGNAL(autoStart2Done()), SLOT(autoStart2Done()));
 
     // find all commands to launch the wm in the session
     QList<QStringList> wmStartCommands;
@@ -144,9 +144,9 @@ void KSMServer::startDefaultSession()
 #endif
     sessionGroup = "";
     upAndRunning( "ksmserver" );
-    connect( klauncherSignals, SIGNAL( autoStart0Done()), SLOT( autoStart0Done()));
-    connect( klauncherSignals, SIGNAL( autoStart1Done()), SLOT( autoStart1Done()));
-    connect( klauncherSignals, SIGNAL( autoStart2Done()), SLOT( autoStart2Done()));
+    connect( klauncherSignals, SIGNAL(autoStart0Done()), SLOT(autoStart0Done()));
+    connect( klauncherSignals, SIGNAL(autoStart1Done()), SLOT(autoStart1Done()));
+    connect( klauncherSignals, SIGNAL(autoStart2Done()), SLOT(autoStart2Done()));
 
     launchWM( QList< QStringList >() << wmCommands );
 }
@@ -159,9 +159,9 @@ void KSMServer::launchWM( const QList< QStringList >& wmStartCommands )
     // it some time before launching other processes. Results in a
     // visually more appealing startup.
     wmProcess = startApplication( wmStartCommands[ 0 ], QString(), QString(), true );
-    connect( wmProcess, SIGNAL( error( QProcess::ProcessError )), SLOT( wmProcessChange()));
-    connect( wmProcess, SIGNAL( finished( int, QProcess::ExitStatus )), SLOT( wmProcessChange()));
-    QTimer::singleShot( 4000, this, SLOT( autoStart0() ) );
+    connect( wmProcess, SIGNAL(error(QProcess::ProcessError)), SLOT(wmProcessChange()));
+    connect( wmProcess, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(wmProcessChange()));
+    QTimer::singleShot( 4000, this, SLOT(autoStart0()) );
 }
 
 void KSMServer::clientSetProgram( KSMClient* client )
@@ -227,7 +227,7 @@ void KSMServer::autoStart0Done()
 {
     if( state != AutoStart0 )
         return;
-    disconnect( klauncherSignals, SIGNAL( autoStart0Done()), this, SLOT( autoStart0Done()));
+    disconnect( klauncherSignals, SIGNAL(autoStart0Done()), this, SLOT(autoStart0Done()));
     if( !checkStartupSuspend())
         return;
     kDebug( 1218 ) << "Autostart 0 done";
@@ -238,9 +238,9 @@ void KSMServer::autoStart0Done()
     kcminitSignals = new QDBusInterface("org.kde.kcminit", "/kcminit", "org.kde.KCMInit", QDBusConnection::sessionBus(), this );
     if( !kcminitSignals->isValid())
         kWarning() << "kcminit not running?" ;
-    connect( kcminitSignals, SIGNAL( phase1Done()), SLOT( kcmPhase1Done()));
+    connect( kcminitSignals, SIGNAL(phase1Done()), SLOT(kcmPhase1Done()));
     state = KcmInitPhase1;
-    QTimer::singleShot( 10000, this, SLOT( kcmPhase1Timeout())); // protection
+    QTimer::singleShot( 10000, this, SLOT(kcmPhase1Timeout())); // protection
 
     org::kde::KCMInit kcminit("org.kde.kcminit", "/kcminit" , QDBusConnection::sessionBus());
     kcminit.runPhase1();
@@ -251,7 +251,7 @@ void KSMServer::kcmPhase1Done()
     if( state != KcmInitPhase1 )
         return;
     kDebug( 1218 ) << "Kcminit phase 1 done";
-    disconnect( kcminitSignals, SIGNAL( phase1Done()), this, SLOT( kcmPhase1Done()));
+    disconnect( kcminitSignals, SIGNAL(phase1Done()), this, SLOT(kcmPhase1Done()));
     autoStart1();
 }
 
@@ -279,7 +279,7 @@ void KSMServer::autoStart1Done()
 {
     if( state != AutoStart1 )
         return;
-    disconnect( klauncherSignals, SIGNAL( autoStart1Done()), this, SLOT( autoStart1Done()));
+    disconnect( klauncherSignals, SIGNAL(autoStart1Done()), this, SLOT(autoStart1Done()));
     if( !checkStartupSuspend())
         return;
     kDebug( 1218 ) << "Autostart 1 done";
@@ -377,8 +377,8 @@ void KSMServer::autoStart2()
 
     runUserAutostart();
 
-    connect( kcminitSignals, SIGNAL( phase2Done()), SLOT( kcmPhase2Done()));
-    QTimer::singleShot( 10000, this, SLOT( kcmPhase2Timeout())); // protection
+    connect( kcminitSignals, SIGNAL(phase2Done()), SLOT(kcmPhase2Done()));
+    QTimer::singleShot( 10000, this, SLOT(kcmPhase2Timeout())); // protection
     org::kde::KCMInit kcminit("org.kde.kcminit", "/kcminit" , QDBusConnection::sessionBus());
     kcminit.runPhase2();
     if( !defaultSession())
@@ -414,7 +414,7 @@ void KSMServer::autoStart2Done()
 {
     if( state != FinishingStartup )
         return;
-    disconnect( klauncherSignals, SIGNAL( autoStart2Done()), this, SLOT( autoStart2Done()));
+    disconnect( klauncherSignals, SIGNAL(autoStart2Done()), this, SLOT(autoStart2Done()));
     kDebug( 1218 ) << "Autostart 2 done";
     waitAutoStart2 = false;
     finishStartup();
@@ -425,7 +425,7 @@ void KSMServer::kcmPhase2Done()
     if( state != FinishingStartup )
         return;
     kDebug( 1218 ) << "Kcminit phase 2 done";
-    disconnect( kcminitSignals, SIGNAL( phase2Done()), this, SLOT( kcmPhase2Done()));
+    disconnect( kcminitSignals, SIGNAL(phase2Done()), this, SLOT(kcmPhase2Done()));
     delete kcminitSignals;
     kcminitSignals = NULL;
     waitKcmInit2 = false;

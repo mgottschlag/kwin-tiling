@@ -352,7 +352,7 @@ void Applet::appendVisualization(const QString& source, QGraphicsWidget *visuali
     }
     m_visualizations[source] = visualization;
     mainLayout()->addItem(visualization);
-    connect(visualization, SIGNAL(destroyed(QObject *)), this, SLOT(visualizationDestroied(QObject *)));
+    connect(visualization, SIGNAL(destroyed(QObject*)), this, SLOT(visualizationDestroied(QObject*)));
 }
 
 QGraphicsWidget * Applet::visualization(const QString& source)

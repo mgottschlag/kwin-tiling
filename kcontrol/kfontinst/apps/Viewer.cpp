@@ -56,8 +56,8 @@ CViewer::CViewer()
         itsPrintAct->setEnabled(false);
 
         if(itsPreview->browserExtension())
-            connect(itsPreview->browserExtension(), SIGNAL(enableAction(const char *, bool)),
-                    this, SLOT(enableAction(const char *, bool)));
+            connect(itsPreview->browserExtension(), SIGNAL(enableAction(const char*,bool)),
+                    this, SLOT(enableAction(const char*,bool)));
 
         setCentralWidget(itsPreview->widget());
         createGUI(itsPreview);

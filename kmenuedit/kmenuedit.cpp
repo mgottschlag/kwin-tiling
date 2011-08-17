@@ -79,16 +79,16 @@ void KMenuEdit::setupActions()
 
     m_actionDelete = 0;
 
-    actionCollection()->addAction(KStandardAction::Save, this, SLOT( slotSave() ));
-    actionCollection()->addAction(KStandardAction::Quit, this, SLOT( close() ));
+    actionCollection()->addAction(KStandardAction::Save, this, SLOT(slotSave()));
+    actionCollection()->addAction(KStandardAction::Quit, this, SLOT(close()));
     actionCollection()->addAction(KStandardAction::Cut);
     actionCollection()->addAction(KStandardAction::Copy);
     actionCollection()->addAction(KStandardAction::Paste);
 
     action = new KAction( i18n("Restore to System Menu"), this );
     actionCollection()->addAction( "restore_system_menu", action );
-    connect( action, SIGNAL(triggered(bool) ), SLOT(slotRestoreMenu()) );
-    KStandardAction::preferences( this, SLOT( slotConfigure() ), actionCollection() );
+    connect( action, SIGNAL(triggered(bool)), SLOT(slotRestoreMenu()) );
+    KStandardAction::preferences( this, SLOT(slotConfigure()), actionCollection() );
 }
 
 void KMenuEdit::slotConfigure()
@@ -116,21 +116,21 @@ void KMenuEdit::setupView()
     m_basicTab = new BasicTab;
     m_splitter->addWidget(m_basicTab);
 
-    connect(m_tree, SIGNAL(entrySelected(MenuFolderInfo *)),
-            m_basicTab, SLOT(setFolderInfo(MenuFolderInfo *)));
-    connect(m_tree, SIGNAL(entrySelected(MenuEntryInfo *)),
-            m_basicTab, SLOT(setEntryInfo(MenuEntryInfo *)));
+    connect(m_tree, SIGNAL(entrySelected(MenuFolderInfo*)),
+            m_basicTab, SLOT(setFolderInfo(MenuFolderInfo*)));
+    connect(m_tree, SIGNAL(entrySelected(MenuEntryInfo*)),
+            m_basicTab, SLOT(setEntryInfo(MenuEntryInfo*)));
     connect(m_tree, SIGNAL(disableAction()),
-            m_basicTab, SLOT(slotDisableAction() ) );
+            m_basicTab, SLOT(slotDisableAction()) );
 
-    connect(m_basicTab, SIGNAL(changed(MenuFolderInfo *)),
-            m_tree, SLOT(currentChanged(MenuFolderInfo *)));
+    connect(m_basicTab, SIGNAL(changed(MenuFolderInfo*)),
+            m_tree, SLOT(currentChanged(MenuFolderInfo*)));
 
-    connect(m_basicTab, SIGNAL(changed(MenuEntryInfo *)),
-            m_tree, SLOT(currentChanged(MenuEntryInfo *)));
+    connect(m_basicTab, SIGNAL(changed(MenuEntryInfo*)),
+            m_tree, SLOT(currentChanged(MenuEntryInfo*)));
 
-    connect(m_basicTab, SIGNAL(findServiceShortcut(const KShortcut&, KService::Ptr &)),
-            m_tree, SLOT(findServiceShortcut(const KShortcut&, KService::Ptr &)));
+    connect(m_basicTab, SIGNAL(findServiceShortcut(KShortcut,KService::Ptr&)),
+            m_tree, SLOT(findServiceShortcut(KShortcut,KService::Ptr&)));
 
     // restore splitter sizes
     KSharedConfig::Ptr config = KGlobal::config();

@@ -34,8 +34,8 @@ SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
 
     listenForNewDevices();
     setMinimumPollingInterval(1000);
-    connect(this, SIGNAL(sourceRemoved(const QString&)),
-            this, SLOT(sourceWasRemoved(const QString&)));
+    connect(this, SIGNAL(sourceRemoved(QString)),
+            this, SLOT(sourceWasRemoved(QString)));
 }
 
 SolidDeviceEngine::~SolidDeviceEngine()
@@ -50,10 +50,10 @@ void SolidDeviceEngine::listenForNewDevices()
 
     //detect when new devices are added
     m_notifier = Solid::DeviceNotifier::instance();
-    connect(m_notifier, SIGNAL(deviceAdded(const QString&)),
-            this, SLOT(deviceAdded(const QString&)));
-    connect(m_notifier, SIGNAL(deviceRemoved(const QString&)),
-            this, SLOT(deviceRemoved(const QString&)));
+    connect(m_notifier, SIGNAL(deviceAdded(QString)),
+            this, SLOT(deviceAdded(QString)));
+    connect(m_notifier, SIGNAL(deviceRemoved(QString)),
+            this, SLOT(deviceRemoved(QString)));
 }
 
 bool SolidDeviceEngine::sourceRequestEvent(const QString &name)

@@ -50,7 +50,7 @@ BGMonitorArrangement::BGMonitorArrangement(QWidget *parent)
         m_pBGMonitor[screen] = previewWidget;
         previewWidget->setWhatsThis(i18n("This picture of a monitor contains a preview of what the current settings will look like on your desktop."));
 
-        connect(previewWidget, SIGNAL(imageDropped(const QString &)), this, SIGNAL(imageDropped(const QString &)));
+        connect(previewWidget, SIGNAL(imageDropped(QString)), this, SIGNAL(imageDropped(QString)));
         previewWidget->setFixedSize(180, 180);
     }
 

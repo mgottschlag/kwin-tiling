@@ -242,9 +242,9 @@ void UKMETIon::getXMLData(const QString& source)
     m_obsJobList.insert(m_job, source);
 
     if (m_job) {
-        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(observation_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(observation_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(observation_slotDataArrived(KIO::Job*,QByteArray)));
+        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(observation_slotJobFinished(KJob*)));
     }
 }
 
@@ -260,14 +260,14 @@ void UKMETIon::findPlace(const QString& place, const QString& source)
     m_jobList.insert(m_job, source);
 
     if (m_job) {
-        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(setup_slotDataArrived(KIO::Job*,QByteArray)));
+        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(setup_slotJobFinished(KJob*)));
 
 /*
         // Handle redirects for direct hit places.
-        connect(m_job, SIGNAL(redirection(KIO::Job *, const KUrl &)), this,
-                SLOT(setup_slotRedirected(KIO::Job *, const KUrl &)));
+        connect(m_job, SIGNAL(redirection(KIO::Job*,KUrl)), this,
+                SLOT(setup_slotRedirected(KIO::Job*,KUrl)));
 */
     }
 }
@@ -287,9 +287,9 @@ void UKMETIon::getFiveDayForecast(const QString& source)
     m_forecastJobList.insert(m_job, source);
 
     if (m_job) {
-        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(forecast_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(forecast_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(forecast_slotDataArrived(KIO::Job*,QByteArray)));
+        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(forecast_slotJobFinished(KJob*)));
     }
 }
 

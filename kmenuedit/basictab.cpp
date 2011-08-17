@@ -111,20 +111,20 @@ BasicTab::BasicTab( QWidget *parent )
     grid->addWidget(_execLabel, 3, 0);
 
     // connect line inputs
-    connect(_nameEdit, SIGNAL(textChanged(const QString&)),
+    connect(_nameEdit, SIGNAL(textChanged(QString)),
             SLOT(slotChanged()));
-    connect(_descriptionEdit, SIGNAL(textChanged(const QString&)),
+    connect(_descriptionEdit, SIGNAL(textChanged(QString)),
 	    SLOT(slotChanged()));
-    connect(_commentEdit, SIGNAL(textChanged(const QString&)),
+    connect(_commentEdit, SIGNAL(textChanged(QString)),
             SLOT(slotChanged()));
-    connect(_execEdit, SIGNAL(textChanged(const QString&)),
+    connect(_execEdit, SIGNAL(textChanged(QString)),
             SLOT(slotChanged()));
-    connect(_execEdit, SIGNAL(urlSelected(const KUrl&)),
+    connect(_execEdit, SIGNAL(urlSelected(KUrl)),
             SLOT(slotExecSelected()));
     connect(_launchCB, SIGNAL(clicked()), SLOT(launchcb_clicked()));
     connect(_systrayCB, SIGNAL(clicked()), SLOT(systraycb_clicked()));
-    connect(_onlyShowInKdeCB, SIGNAL( clicked() ), SLOT( onlyshowcb_clicked() ) );
-    connect( _hiddenEntryCB, SIGNAL( clicked() ), SLOT( hiddenentrycb_clicked() ) );
+    connect(_onlyShowInKdeCB, SIGNAL(clicked()), SLOT(onlyshowcb_clicked()) );
+    connect( _hiddenEntryCB, SIGNAL(clicked()), SLOT(hiddenentrycb_clicked()) );
     // add line inputs to the grid
     grid->addWidget(_nameEdit, 0, 1, 1, 1);
     grid->addWidget(_descriptionEdit, 1, 1, 1, 1);
@@ -164,7 +164,7 @@ BasicTab::BasicTab( QWidget *parent )
 
     _pathLabel->setBuddy(_pathEdit);
 
-    connect(_pathEdit, SIGNAL(textChanged(const QString&)),
+    connect(_pathEdit, SIGNAL(textChanged(QString)),
             SLOT(slotChanged()));
     advancedLayout->addWidget(_path_group);
 
@@ -189,7 +189,7 @@ BasicTab::BasicTab( QWidget *parent )
     _termOptEdit->setAcceptDrops(false);
     _termOptLabel->setBuddy(_termOptEdit);
 
-    connect(_termOptEdit, SIGNAL(textChanged(const QString&)),
+    connect(_termOptEdit, SIGNAL(textChanged(QString)),
             SLOT(slotChanged()));
     vbox->addWidget(hbox);
     advancedLayout->addWidget(_term_group);
@@ -217,7 +217,7 @@ BasicTab::BasicTab( QWidget *parent )
     _uidEdit->setAcceptDrops(false);
     _uidLabel->setBuddy(_uidEdit);
 
-    connect(_uidEdit, SIGNAL(textChanged(const QString&)),
+    connect(_uidEdit, SIGNAL(textChanged(QString)),
 	    SLOT(slotChanged()));
     vbox->addWidget(hbox);
     advancedLayout->addWidget(_uid_group);
@@ -235,8 +235,8 @@ BasicTab::BasicTab( QWidget *parent )
     QLabel *l = new QLabel( i18n("Current shortcut &key:"), general_group_keybind);
     l->setBuddy( _keyEdit );
     keybindLayout->addWidget(l);
-    connect( _keyEdit, SIGNAL(keySequenceChanged(const QKeySequence&)),
-             this, SLOT(slotCapturedKeySequence(const QKeySequence&)));
+    connect( _keyEdit, SIGNAL(keySequenceChanged(QKeySequence)),
+             this, SLOT(slotCapturedKeySequence(QKeySequence)));
     keybindLayout->addWidget(_keyEdit);
     advancedLayout->addWidget( general_group_keybind );
     

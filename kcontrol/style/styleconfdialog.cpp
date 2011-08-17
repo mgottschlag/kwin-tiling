@@ -31,8 +31,8 @@ StyleConfigDialog::StyleConfigDialog(QWidget* parent, QString styleName)
   setDefaultButton( Cancel );
 
   m_dirty = false;
-  connect( this, SIGNAL( defaultClicked() ), this, SIGNAL( defaults() ));
-  connect( this, SIGNAL( okClicked() ), this, SIGNAL( save() ));
+  connect( this, SIGNAL(defaultClicked()), this, SIGNAL(defaults()));
+  connect( this, SIGNAL(okClicked()), this, SIGNAL(save()));
 }
 
 bool StyleConfigDialog::isDirty() const

@@ -356,8 +356,8 @@ Plasma::Corona* PlasmaApp::corona()
 {
     if (!m_corona) {
         m_corona = new SaverCorona(this);
-        connect(m_corona, SIGNAL(screenOwnerChanged(int, int, Plasma::Containment*)),
-                this, SLOT(containmentScreenOwnerChanged(int, int, Plasma::Containment*)));
+        connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
+                this, SLOT(containmentScreenOwnerChanged(int,int,Plasma::Containment*)));
         connect(m_corona, SIGNAL(configSynced()), SLOT(syncConfig()));
         //kDebug() << "connected to containmentAdded";
         /*

@@ -134,12 +134,12 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_clip = kapp->clipboard();
 
     connect( m_clip, SIGNAL(changed(QClipboard::Mode)),
-             this, SLOT( newClipData( QClipboard::Mode) ) );
+             this, SLOT(newClipData(QClipboard::Mode)) );
 
-    connect( &m_overflowClearTimer, SIGNAL( timeout()), SLOT( slotClearOverflow()));
+    connect( &m_overflowClearTimer, SIGNAL(timeout()), SLOT(slotClearOverflow()));
 
     m_pendingCheckTimer.setSingleShot( true );
-    connect( &m_pendingCheckTimer, SIGNAL( timeout()), SLOT( slotCheckPending()));
+    connect( &m_pendingCheckTimer, SIGNAL(timeout()), SLOT(slotCheckPending()));
 
     m_history = new History( this );
 
@@ -154,27 +154,27 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_clearHistoryAction = m_collection->addAction( "clearHistoryAction" );
     m_clearHistoryAction->setIcon( KIcon("edit-clear-history") );
     m_clearHistoryAction->setText( i18n("C&lear Clipboard History") );
-    connect(m_clearHistoryAction, SIGNAL(triggered() ), SLOT( slotAskClearHistory() ));
+    connect(m_clearHistoryAction, SIGNAL(triggered()), SLOT(slotAskClearHistory()));
     //m_clearHistoryAction->setGroup( defaultGroup );
     m_configureAction = m_collection->addAction( "configureAction" );
     m_configureAction->setIcon( KIcon("configure") );
     m_configureAction->setText( i18n("&Configure Klipper...") );
-    connect(m_configureAction, SIGNAL(triggered(bool) ), SLOT( slotConfigure() ));
+    connect(m_configureAction, SIGNAL(triggered(bool)), SLOT(slotConfigure()));
     //m_configureAction->setGroup( defaultGroup );
     m_quitAction = m_collection->addAction( "quitAction" );
     m_quitAction->setIcon( KIcon("application-exit") );
     m_quitAction->setText( i18n("&Quit") );
-    connect(m_quitAction, SIGNAL(triggered(bool) ), SLOT( slotQuit() ));
+    connect(m_quitAction, SIGNAL(triggered(bool)), SLOT(slotQuit()));
     //quitAction->setGroup( "exit" );
 
     /*
      * Create URL grabber
      */
     m_myURLGrabber = new URLGrabber(m_history);
-    connect( m_myURLGrabber, SIGNAL( sigPopup( QMenu * )),
-            SLOT( showPopupMenu( QMenu * )) );
-    connect( m_myURLGrabber, SIGNAL( sigDisablePopup() ),
-            SLOT( disableURLGrabber() ) );
+    connect( m_myURLGrabber, SIGNAL(sigPopup(QMenu*)),
+            SLOT(showPopupMenu(QMenu*)) );
+    connect( m_myURLGrabber, SIGNAL(sigDisablePopup()),
+            SLOT(disableURLGrabber()) );
 
     /*
      * Load configuration settings
@@ -222,13 +222,13 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_toggleURLGrabAction->setText(i18n("Enable Clipboard Actions"));
     m_toggleURLGrabAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
 
-    connect( m_toggleURLGrabAction, SIGNAL( toggled( bool )),
-             this, SLOT( setURLGrabberEnabled( bool )));
+    connect( m_toggleURLGrabAction, SIGNAL(toggled(bool)),
+             this, SLOT(setURLGrabberEnabled(bool)));
 
     KlipperPopup* popup = history()->popup();
-    connect ( history(), SIGNAL( topChanged() ), SLOT( slotHistoryTopChanged() ) );
-    connect( popup, SIGNAL( aboutToHide() ), SLOT( slotStartHideTimer() ) );
-    connect( popup, SIGNAL( aboutToShow() ), SLOT( slotStartShowTimer() ) );
+    connect ( history(), SIGNAL(topChanged()), SLOT(slotHistoryTopChanged()) );
+    connect( popup, SIGNAL(aboutToHide()), SLOT(slotStartHideTimer()) );
+    connect( popup, SIGNAL(aboutToShow()), SLOT(slotStartShowTimer()) );
 
     popup->plugAction( m_toggleURLGrabAction );
     popup->plugAction( m_clearHistoryAction );
@@ -533,7 +533,7 @@ void Klipper::slotConfigure()
     }
 
     ConfigDialog *dlg = new ConfigDialog( 0, KlipperSettings::self(), this, m_collection, isApplet() );
-    connect(dlg, SIGNAL(settingsChanged(const QString&)), SLOT(loadSettings()));
+    connect(dlg, SIGNAL(settingsChanged(QString)), SLOT(loadSettings()));
 
     dlg->show();
 }

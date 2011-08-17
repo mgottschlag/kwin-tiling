@@ -82,10 +82,10 @@ Calendar::Private::Private( QAbstractItemModel *treeModel, QAbstractItemModel *m
            SLOT(onRowsMovedInTreeModel(QModelIndex,int,int,QModelIndex,int)) );
 
   /*
-  connect( m_monitor, SIGNAL(itemLinked(const Akonadi::Item,Akonadi::Collection)),
-           this, SLOT(itemAdded(const Akonadi::Item,Akonadi::Collection)) );
-  connect( m_monitor, SIGNAL(itemUnlinked(Akonadi::Item,Akonadi::Collection )),
-           this, SLOT(itemRemoved(Akonadi::Item,Akonadi::Collection )) );
+  connect( m_monitor, SIGNAL(itemLinked(Akonadi::Item,Akonadi::Collection)),
+           this, SLOT(itemAdded(Akonadi::Item,Akonadi::Collection)) );
+  connect( m_monitor, SIGNAL(itemUnlinked(Akonadi::Item,Akonadi::Collection)),
+           this, SLOT(itemRemoved(Akonadi::Item,Akonadi::Collection)) );
   */
 }
 

@@ -100,9 +100,9 @@ void KWindowListMenu::init()
   clear();
 
   QAction* unclutter = addAction( i18nc("Action that reorganizes the windows to try to have them less cluttered", "Unclutter Windows"),
-                              this, SLOT( slotUnclutterWindows() ) );
+                              this, SLOT(slotUnclutterWindows()) );
   QAction* cascade = addAction( i18nc("Action that reorganizes the windows so that they are in cascade", "Cascade Windows"),
-                            this, SLOT( slotCascadeWindows() ) );
+                            this, SLOT(slotCascadeWindows()) );
 
   // if we only have one desktop we won't be showing titles, so put a separator in
   if ( numberOfDesktops == 1 )
@@ -162,7 +162,7 @@ void KWindowListMenu::init()
         // Avoid creating unwanted accelerators.
         itemText.replace( '&', QLatin1String( "&&" ));
 
-        QAction* action = addAction( pm, itemText, this, SLOT( slotForceActiveWindow() ) );
+        QAction* action = addAction( pm, itemText, this, SLOT(slotForceActiveWindow()) );
         action->setData( (int)info->win() );
 
         if ( info->win() == activeWindow )

@@ -370,22 +370,22 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     // Connect signals...
     connect(itsPreview, SIGNAL(atMax(bool)), zoomIn, SLOT(setDisabled(bool)));
     connect(itsPreview, SIGNAL(atMin(bool)), zoomOut, SLOT(setDisabled(bool)));
-    connect(prevSel, SIGNAL(range(const QList<CFcEngine::TRange> &)),
-            itsPreview, SLOT(setUnicodeRange(const QList<CFcEngine::TRange> &)));
+    connect(prevSel, SIGNAL(range(QList<CFcEngine::TRange>)),
+            itsPreview, SLOT(setUnicodeRange(QList<CFcEngine::TRange>)));
     connect(changeTextAct, SIGNAL(triggered(bool)), SLOT(changeText()));
-    connect(itsFilter, SIGNAL(textChanged(const QString &)), itsFontListView, SLOT(filterText(const QString &)));
-    connect(itsFilter, SIGNAL(criteriaChanged(int, qulonglong, const QStringList &)), 
-            itsFontListView, SLOT(filterCriteria(int, qulonglong, const QStringList &)));
+    connect(itsFilter, SIGNAL(textChanged(QString)), itsFontListView, SLOT(filterText(QString)));
+    connect(itsFilter, SIGNAL(criteriaChanged(int,qulonglong,QStringList)), 
+            itsFontListView, SLOT(filterCriteria(int,qulonglong,QStringList)));
     connect(itsGroupListView, SIGNAL(del()), SLOT(removeGroup()));
     connect(itsGroupListView, SIGNAL(print()), SLOT(printGroup()));
     connect(itsGroupListView, SIGNAL(enable()), SLOT(enableGroup()));
     connect(itsGroupListView, SIGNAL(disable()), SLOT(disableGroup()));
     connect(itsGroupListView, SIGNAL(moveFonts()), SLOT(moveFonts()));
     connect(itsGroupListView, SIGNAL(zip()), SLOT(zipGroup()));
-    connect(itsGroupListView, SIGNAL(itemSelected(const QModelIndex &)),
-           SLOT(groupSelected(const QModelIndex &)));
-    connect(itsGroupListView, SIGNAL(info(const QString &)),
-           SLOT(showInfo(const QString &)));
+    connect(itsGroupListView, SIGNAL(itemSelected(QModelIndex)),
+           SLOT(groupSelected(QModelIndex)));
+    connect(itsGroupListView, SIGNAL(info(QString)),
+           SLOT(showInfo(QString)));
     connect(itsGroupList, SIGNAL(refresh()), SLOT(refreshFontList()));
     connect(itsFontList, SIGNAL(listingPercent(int)), SLOT(listingPercent(int)));
     connect(itsFontList, SIGNAL(layoutChanged()), SLOT(setStatusBar()));
@@ -393,9 +393,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     connect(itsFontListView, SIGNAL(print()), SLOT(print()));
     connect(itsFontListView, SIGNAL(enable()), SLOT(enableFonts()));
     connect(itsFontListView, SIGNAL(disable()), SLOT(disableFonts()));
-    connect(itsFontListView, SIGNAL(fontsDropped(const QSet<KUrl> &)),
-           SLOT(addFonts(const QSet<KUrl> &)));
-    connect(itsFontListView, SIGNAL(itemsSelected(const QModelIndexList &)), SLOT(fontsSelected(const QModelIndexList &)));
+    connect(itsFontListView, SIGNAL(fontsDropped(QSet<KUrl>)),
+           SLOT(addFonts(QSet<KUrl>)));
+    connect(itsFontListView, SIGNAL(itemsSelected(QModelIndexList)), SLOT(fontsSelected(QModelIndexList)));
     connect(itsFontListView, SIGNAL(refresh()), SLOT(setStatusBar()));
     connect(itsGroupListView, SIGNAL(unclassifiedChanged()), itsFontListView, SLOT(refreshFilter()));
     connect(createGroup, SIGNAL(clicked()), SLOT(addGroup()));
@@ -408,9 +408,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     //connect(validateFontsAct, SIGNAL(triggered(bool)), SLOT(validateFonts()));
     if(itsDownloadFontsAct)
         connect(itsDownloadFontsAct, SIGNAL(triggered(bool)), SLOT(downloadFonts()));
-    connect(itsPreview, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(previewMenu(const QPoint &)));
-    connect(itsPreviewList, SIGNAL(showMenu(const QPoint &)), SLOT(previewMenu(const QPoint &)));
-    connect(itsPreviewSplitter, SIGNAL(splitterMoved(int, int)), SLOT(splitterMoved()));
+    connect(itsPreview, SIGNAL(customContextMenuRequested(QPoint)), SLOT(previewMenu(QPoint)));
+    connect(itsPreviewList, SIGNAL(showMenu(QPoint)), SLOT(previewMenu(QPoint)));
+    connect(itsPreviewSplitter, SIGNAL(splitterMoved(int,int)), SLOT(splitterMoved()));
 
     selectMainGroup();
     itsFontList->load();
