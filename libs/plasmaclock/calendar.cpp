@@ -39,6 +39,7 @@
 #include <KIcon>
 #include <KLineEdit>
 #include <KLocale>
+#include <KTextBrowser>
 #include <KIntSpinBox>
 #include <KConfigDialog>
 #include <KConfigGroup>
@@ -422,12 +423,12 @@ bool CalendarPrivate::addDateDetailsToDisplay(QString &html, const QDate &date)
         return false;
     }
 
-    html += "<b>" + date.toString() + "</b>";
-    html += "<ul>";
+    html += "<b>" + calendarTable->calendar()->formatDate(date, KLocale::LongDate) + "</b>";
+    html += "<ul style='-qt-list-indent: 0;'>";
 
     const QStringList details = calendarTable->dateDetails(date);
     foreach (const QString &detail, details) {
-        html+= "<li>" + detail + "</li>";
+        html+= "<li style='margin-left: 2em;'>" + detail + "</li>";
     }
 
     html += "</ul>";
