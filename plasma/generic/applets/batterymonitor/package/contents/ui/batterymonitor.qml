@@ -31,10 +31,6 @@ Item {
         engine: "powermanagement"
         connectedSources: ["AC Adapter", "Battery", "Battery0", "PowerDevil"]
         interval: 0
-        Component.onCompleted: {
-            myprofiles = pmSource.data["PowerDevil"]["Available profiles"];
-            print (myprofiles["Performance"]);
-        }
     }
 
     PlasmaCore.Dialog {
@@ -63,10 +59,13 @@ Item {
                 service.startOperationCall(operation);
             }
             onProfileChanged: {
-                service = pmSource.serviceForSource("PowerDevil");
-                operation = service.operationDescription("setProfile");
-                operation.profile = profile;
-                service.startOperationCall(operation);
+                profileKey = findProfile(profile);
+                if (profileKey!="") {
+                    service = pmSource.serviceForSource("PowerDevil");
+                    operation = service.operationDescription("setProfile");
+                    operation.profile = profileKey;
+                    service.startOperationCall(operation);
+                }
             }
         }
         Component.onCompleted: {
@@ -74,9 +73,41 @@ Item {
         }
     }
 
+    function findProfile (profile) {
+        var profiles = pmSource.data["PowerDevil"]["Available profiles"];
+        for (var i in profiles) {
+            if (profiles[i] == profile)
+                return i;
+        }
+        return "";
+    }
+
+    function populateProfiles () {
+        var profiles = pmSource.data["PowerDevil"]["Available profiles"];
+        var currentProfile = pmSource.data["PowerDevil"]["Current profile"];
+
+        var ctr = 0;
+        var found = false;
+
+        dialogItem.clearProfiles();
+        for (var i in profiles) {
+            dialogItem.addProfile (profiles[i]);
+            if (profiles[i] == currentProfile) {
+                dialogItem.setProfile(ctr);
+                found = true;
+            }
+            ctr++;
+        }
+
+        if (!found) {
+            dialogItem.setProfile(-1);
+        }
+    }
+
     MouseArea {
         anchors.fill: parent
         onClicked: {
+            populateProfiles();
             dialog.visible=!dialog.visible
         }
     }
