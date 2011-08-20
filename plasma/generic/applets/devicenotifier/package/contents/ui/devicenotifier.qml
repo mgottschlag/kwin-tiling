@@ -32,9 +32,8 @@ Item {
     PlasmaCore.DataSource {
         id: hpSource
         engine: "hotplug"
-        connectedSources: []
+        connectedSources: sources
         interval: 0
-        onSourceAdded: addDevice(source)
         onSourceRemoved: disconnectSource (source)
     }
 
@@ -42,6 +41,7 @@ Item {
         id: sdSource
         engine: "soliddevice"
         connectedSources: hpSource.sources
+        onSourceAdded: addDevice(source)
         interval: 0
     }
 
@@ -54,7 +54,13 @@ Item {
         removableDevices = plasmoid.readConfig("removableDevices");
         nonRemovableDevices = plasmoid.readConfig("nonRemovableDevices");
         allDevices = plasmoid.readConfig("allDevices");
-        populateDevices();
+        if (allDevices) {
+            filterModel.filterRegExp = ""
+        } else if (removableDevices) {
+            filterModel.filterRegExp = "true"
+        } else {
+            filterModel.filterRegExp = "false"
+        }
         notifierDialog.currentIndex = -1;
         notifierDialog.currentExpanded = -1;
     }
@@ -62,7 +68,7 @@ Item {
     function addDevice(source) {
         if (hpSource.connectedSources.indexOf(source)>=0)
             return;
-        sdSource.connectSource (source);
+
         if (removableDevices) { //Removable only
             if (!sdSource.data[source]["Removable"]) {
                 return;
@@ -87,19 +93,6 @@ Item {
         popupIconTimer.restart();
     }
 
-    function populateDevices() {
-        // remove devices that might not belong to the newly
-        // configured device type to show
-        var connected = hpSource.connectedSources;
-        for (i=0; i<connected.length; i++)
-            hpSource.disconnectSource(connected[i]);
-
-        // add each device again
-        var sources = hpSource.sources;
-        for (i=0; i<sources.length; i++) {
-            addDevice(sources[i]);
-        }
-    }
 
     Timer {
         id: popupIconTimer
@@ -125,12 +118,22 @@ Item {
             top : separator.bottom
             topMargin: 10
             bottom: devicenotifier.bottom
+            left: parent.left
+            right: parent.right
         }
-        model: hpSource.connectedSources
+        model: PlasmaCore.SortFilterModel {
+            id: filterModel
+            sourceModel: PlasmaCore.DataModel {
+                dataSource: sdSource
+            }
+            filterRole: "Removable"
+            filterRegExp: "true"
+        }
         delegate: deviceItem
         highlight: deviceHighlighter
         highlightMoveDuration: 250
         highlightMoveSpeed: 1
+        clip: true        
 
         property int currentExpanded: -1
         Component.onCompleted: currentIndex=-1
@@ -142,14 +145,14 @@ Item {
         DeviceItem {
             id: wrapper
             width: devicenotifier.width
-            udi: modelData
+            udi: DataEngineSource
             icon: hpSource.data[udi]["icon"]
             deviceName: hpSource.data[udi]["text"]
-            emblemIcon: sdSource.data[udi]["Emblems"][0]
+            emblemIcon: Emblems[0]
             
             percentUsage: {
-                var freeSpace = Number(sdSource.data[udi]["Free Space"]);
-                var size = Number(sdSource.data[udi]["Size"]);
+                var freeSpace = Number(model["Free Space"]);
+                var size = Number(model["Size"]);
                 var used = size-freeSpace;
                 return used*100/size;
             }
@@ -165,10 +168,10 @@ Item {
 
             onLeftActionTriggered: {
                 operationName = mounted ? "unmount" : "mount";
-                service = sdSource.serviceForSource (udi);
-                operation = service.operationDescription (operationName);
-                service.startOperationCall (operation);
-                setPopupIcon ("dialog-ok", 2500);
+                service = sdSource.serviceForSource(udi);
+                operation = service.operationDescription(operationName);
+                service.startOperationCall(operation);
+                setPopupIcon("dialog-ok", 2500);
             }
         }
     }
