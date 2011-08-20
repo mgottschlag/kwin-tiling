@@ -78,6 +78,13 @@ Item {
         notifierDialog.currentExpanded = i;
         notifierDialog.currentIndex = i;
         notifierDialog.highlightItem.opacity = 1;
+        setPopupIcon ("preferences-desktop-notification", 7500);
+    }
+
+    function setPopupIcon (icon, timeout) {
+        plasmoid.popupIcon = QIcon (icon);
+        popupIconTimer.interval = timeout;
+        popupIconTimer.restart();
     }
 
     function populateDevices() {
@@ -92,6 +99,11 @@ Item {
         for (i=0; i<sources.length; i++) {
             addDevice(sources[i]);
         }
+    }
+
+    Timer {
+        id: popupIconTimer
+        onTriggered: plasmoid.popupIcon = QIcon("device-notifier");
     }
 
     Text {
@@ -156,6 +168,7 @@ Item {
                 service = sdSource.serviceForSource (udi);
                 operation = service.operationDescription (operationName);
                 service.startOperationCall (operation);
+                setPopupIcon ("dialog-ok", 2500);
             }
         }
     }
