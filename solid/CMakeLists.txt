@@ -10,12 +10,14 @@ ENDIF("${CMAKE_SYSTEM}" MATCHES "Linux")
 
 set(HAVE_NETWORKMANAGER FALSE)
 if(NETWORKMANAGER_FOUND)
-  macro_ensure_version_range("0.7.0" ${NETWORKMANAGER_VERSION} "0.8.10" NM_0_7)
-  if (NM_0_7)
+  if(${NETWORKMANAGER_VERSION} VERSION_GREATER "0.6.9999" AND
+     ${NETWORKMANAGER_VERSION} VERSION_LESS "0.8.1001")
     message(STATUS "Will build networkmanager-0.7")
     set(HAVE_NETWORKMANAGER TRUE)
     add_subdirectory(networkmanager-0.7)
-  endif (NM_0_7)
+  else()
+    message(STATUS "Sorry, networkmanager-0.7 will not be built since your NetworkManager version (${NETWORKMANAGER_VERSION}) is not currently supported")
+  endif()
 endif (NETWORKMANAGER_FOUND)
 macro_log_feature(HAVE_NETWORKMANAGER "NetworkManager" "A daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager" FALSE "0.7.0" "Needed for building Network Management support in Solid. Max version supported is 0.8.10")
 
