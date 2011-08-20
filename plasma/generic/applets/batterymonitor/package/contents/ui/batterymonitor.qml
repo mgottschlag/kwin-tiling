@@ -20,11 +20,24 @@
 
 import Qt 4.7
 import org.kde.plasma.core 0.1 as PlasmaCore
+import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 
 Item {
     id: batterymonitor
     width: 48
     height: 48
+
+    property bool show_charge: false
+    property bool show_multiple_batteries: false
+
+    Component.onCompleted: {
+        plasmoid.addEventListener('ConfigChanged', configChanged);
+    }
+
+    function configChanged() {
+        show_charge = plasmoid.readConfig("showBatteryString");
+        show_multiple_batteries = plasmoid.readConfig("showMultipleBatteries");
+    }
 
     PlasmaCore.DataSource {
         id: pmSource
@@ -105,7 +118,9 @@ Item {
     }
 
     MouseArea {
+        id: mouseArea
         anchors.fill: parent
+        hoverEnabled: true
         onClicked: {
             populateProfiles();
             dialog.visible=!dialog.visible
@@ -142,6 +157,32 @@ Item {
             return "Fill20";
         }
         return "";
+    }
+
+    Rectangle {
+        id: chargeInfo
+        width: 30
+        height: 20
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            verticalCenter: parent.verticalCenter
+        }
+        color: "white"
+        border.color: "white"
+        border.width: 2
+        radius: 3
+        opacity: mouseArea.containsMouse ? 0.7 : 0
+        Behavior on opacity { NumberAnimation { duration: 200 } }
+
+        Text {
+            text: pmSource.data["Battery0"]["Percent"]+"%"
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                verticalCenter: parent.verticalCenter
+            }
+            opacity: mouseArea.containsMouse ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: 200 } }
+        }
     }
 
     PlasmaCore.SvgItem {
