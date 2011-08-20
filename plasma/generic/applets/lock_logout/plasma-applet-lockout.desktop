@@ -156,7 +156,7 @@ Comment[zh_TW]=鎖定螢幕或登出
 
 Icon=system-shutdown
 Type=Service
-ServiceTypes=Plasma/Applet,Plasma/PopupApplet
+ServiceTypes=Plasma/Applet
 
 X-Plasma-API=declarativeappletscript
 X-Plasma-MainScript=ui/lockout.qml
