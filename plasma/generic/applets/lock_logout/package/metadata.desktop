@@ -108,7 +108,7 @@ Keywords=Lock, Logout, Sleep, Hibernate, Switch User
 Keywords[x-test]=xxLock, Logout, Sleep, Hibernate, Switch Userxx
 
 Type=Service
-ServiceTypes=Plasma/Applet,Plasma/PopupApplet
+ServiceTypes=Plasma/Applet
 Icon=system-shutdown
 
 X-Plasma-API=declarativeappletscript
