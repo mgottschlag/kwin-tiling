@@ -23,7 +23,7 @@ Comment[x-test]=xxSimple battery monitorxx
 
 Icon=battery
 Type=Service
-ServiceTypes=Plasma/Applet,Plasma/PopupApplet
+ServiceTypes=Plasma/Applet
 
 X-Plasma-API=declarativeappletscript
 X-Plasma-MainScript=ui/batterymonitor.qml
