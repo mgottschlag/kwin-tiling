@@ -30,6 +30,12 @@ if(Q_WS_X11)
   if(NOT X11_XTest_FOUND)
     macro_log_feature(X11_XTest_FOUND "libXtst" "X11 Testing Resource extension library" "http://xorg.freedesktop.org" FALSE "" "useful for automated testing of X clients.")
   endif(NOT X11_XTest_FOUND)
+  if(NOT X11_Xau_FOUND)
+    macro_log_feature(X11_Xau_FOUND "libXau" "X11 Authorization Protocol library" "http://xorg.freedesktop.org" FALSE "" "Needed by KDM.")
+  endif(NOT X11_Xau_FOUND)
+  if(NOT X11_Xdmcp_FOUND)
+    macro_log_feature(X11_Xdmcp_FOUND "libXdmcp" "X Display Manager Control Protocol library" "http://xorg.freedesktop.org" FALSE "" "Needed by KDM.")
+  endif(NOT X11_Xdmcp_FOUND)
   # Other X11 libraries that are used unconditionally elsewhere
   # without testing if they are found. With these log messages
   # you get a nice complaint about missing required packages
