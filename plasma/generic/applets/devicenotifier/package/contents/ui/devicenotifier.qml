@@ -97,7 +97,7 @@ Item {
     Text {
         id: header
         text: notifierDialog.model.length>0 ? "Available Devices" : "No Devices Available"
-        anchors { top: parent.top; left: parent.left; right: parent.right }
+        anchors { top: parent.top; topMargin: 3; left: parent.left; right: parent.right }
         horizontalAlignment: Text.AlignHCenter
     }
 
