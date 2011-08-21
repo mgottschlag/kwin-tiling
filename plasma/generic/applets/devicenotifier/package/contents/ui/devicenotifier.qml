@@ -22,9 +22,9 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 
 Item {
+    id: devicenotifier
     width: 290
     height: 340
-    id: devicenotifier
     property string devicesType: "removable"
 
     PlasmaCore.DataSource {
@@ -32,43 +32,45 @@ Item {
         engine: "hotplug"
         connectedSources: sources
         interval: 0
-        onSourceRemoved: disconnectSource (source)
     }
 
     PlasmaCore.DataSource {
         id: sdSource
         engine: "soliddevice"
         connectedSources: hpSource.sources
-        //onSourceAdded: expandDevice(source)
+        onSourceAdded: expandDevice(source)
         interval: 0
     }
 
     Component.onCompleted: {
         plasmoid.addEventListener ('ConfigChanged', configChanged);
-        plasmoid.popupIcon = QIcon("device-notifier");
     }
 
     function configChanged() {
-        if( plasmoid.readConfig("removableDevices") ) {
-            devicesType = "removable";
-            filterModel.filterRegExp = "true"
-        } else if( plasmoid.readConfig("nonRemovableDevices") ) {
-            devicesType = "nonRemovable";
-            filterModel.filterRegExp = "false"
-        } else /*if( plasmoid.readConfig("allDevices") )*/ {
+        var all = plasmoid.readConfig("allDevices");
+        var removable = plasmoid.readConfig("removableDevices");
+        if (all==true) {
             devicesType = "all";
-            filterModel.filterRegExp = ""
+            filterModel.filterRegExp = "";
+        } else if (removable==true) {
+            devicesType = "removable";
+            filterModel.filterRegExp = "true";
+        } else {
+            devicesType = "nonRemovable";
+            filterModel.filterRegExp = "false";
         }
         notifierDialog.currentIndex = -1;
         notifierDialog.currentExpanded = -1;
     }
 
     function expandDevice(udi) {
-        i = notifierDialog.model.indexOf (udi);
-        notifierDialog.currentExpanded = i;
-        notifierDialog.currentIndex = i;
-        notifierDialog.highlightItem.opacity = 1;
+        // FIXME: Get index of udi from filterModel
+        //i = notifierDialog.model.indexOf (udi);
+        //notifierDialog.currentExpanded = i;
+        //notifierDialog.currentIndex = i;
+        //notifierDialog.highlightItem.opacity = 1;
         setPopupIcon ("preferences-desktop-notification", 7500);
+        plasmoid.status = "NeedsAttentionStatus";
     }
 
     function setPopupIcon (icon, timeout) {
@@ -85,7 +87,7 @@ Item {
 
     Text {
         id: header
-        text: notifierDialog.model.length>0 ? "Available Devices" : "No Devices Available"
+        text: filterModel.count>0 ? "Available Devices" : "No Devices Available"
         anchors { top: parent.top; topMargin: 3; left: parent.left; right: parent.right }
         horizontalAlignment: Text.AlignHCenter
     }
@@ -111,8 +113,9 @@ Item {
                 dataSource: sdSource
             }
             filterRole: "Removable"
-            //filterRegExp: devicesType=="removable" ? true : (devicesType=="nonRemovable" ? false : "")
             filterRegExp: "true"
+            sortRole: "Removable"
+            sortOrder: Qt.DescendingOrder
         }
         delegate: deviceItem
         highlight: deviceHighlighter
