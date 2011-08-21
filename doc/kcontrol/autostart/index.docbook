@@ -33,13 +33,26 @@
 
 <para>The program scans <filename>~/.config/autostart/</filename>, your <filename class="directory">KDE  Autostart</filename> folder (<filename class="directory">$KDEHOME/Autostart</filename> as default), <filename class="directory">$KDEHOME/env</filename> and <filename class="directory">$KDEHOME/shutdown</filename> folders to check what programs and scripts are already there and displays them. It allows you to manage them easily. 
 </para>
-
+<!--Found this on forum.kde.org:
+The following folders are all checked for .desktop files:
+~/[.kde4|.kde]/Autostart 
+~/[.kde4|.kde]/share/autostart
+~/.config/autostart
+~/.local/share/autostart
+~/Desktop/autostart
+/etc/xdg/autostart
+/usr/share/autostart
+see also http://www.sharpley.org.uk/node/8
+-->
 <note><para>Note that you can change the location of your <filename class="directory">Autostart</filename> 
 folder in <menuchoice><guimenu>Account Details</guimenu> <guimenuitem>Paths</guimenuitem></menuchoice> 
 in the <guilabel>Common Appearance and Behaviour</guilabel> category of the &systemsettings; and set a different folder 
 than <filename class="directory">$KDEHOME/Autostart</filename>.</para></note>
 <!-- add info about system autostart desktop files, which are not handled here?
-eg /usr/share/autostart/kalarm.autostart.desktop installed with kalarm on my 11.04 system-->
+eg /usr/share/autostart/kalarm.autostart.desktop installed with kalarm on my 11.04 system
+kalarm has a settings option "Start at login" which handles the autostart
+how to prevent eg kopete from autostart at login?
+-->
 <sect2 id="current">
 <title>Files display</title>
 <para>The main part of the module displays the programs that are loaded when &kde; starts and scripts that are run when &kde; starts, shutdowns or before &kde; starts.</para>
