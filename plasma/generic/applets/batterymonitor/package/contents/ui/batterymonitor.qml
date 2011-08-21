@@ -164,22 +164,29 @@ Item {
         return "";
     }
 
+    PlasmaCore.SvgItem {
+        anchors.fill: parent
+        svg: iconSvg
+        elementId: pmSource.data["AC Adapter"]["Plugged in"] ? "AcAdapter" : ""
+    }
+
     Rectangle {
         id: chargeInfo
-        width: 30
-        height: 20
+        width: percent.paintedWidth+4    // 4 = left/right margins
+        height: percent.paintedHeight+4  // 4 = top/bottom margins
         anchors {
             horizontalCenter: parent.horizontalCenter
             verticalCenter: parent.verticalCenter
         }
         color: "white"
-        border.color: "white"
+        border.color: "grey"
         border.width: 2
         radius: 3
         opacity: mouseArea.containsMouse ? 0.7 : 0
         Behavior on opacity { NumberAnimation { duration: 200 } }
 
         Text {
+            id: percent
             text: pmSource.data["Battery0"]["Percent"]+"%"
             anchors {
                 horizontalCenter: parent.horizontalCenter
@@ -188,11 +195,5 @@ Item {
             opacity: mouseArea.containsMouse ? 1 : 0
             Behavior on opacity { NumberAnimation { duration: 200 } }
         }
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.fill: parent
-        svg: iconSvg
-        elementId: pmSource.data["AC Adapter"]["Plugged in"] ? "AcAdapter" : ""
     }
 }
