@@ -123,7 +123,12 @@ Item {
         hoverEnabled: true
         onClicked: {
             populateProfiles();
-            dialog.visible=!dialog.visible
+             if (!dialog.visible) {
+                var pos = dialog.popupPosition (batterymonitor, Qt.AlignCenter);
+                dialog.x = pos.x;
+                dialog.y = pos.y;
+            }
+            dialog.visible = !dialog.visible;
         }
     }
 
