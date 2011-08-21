@@ -181,7 +181,8 @@ Item {
         border.color: "grey"
         border.width: 2
         radius: 3
-        opacity: show_charge ? 0.7 : 0
+        visible: show_charge && pmSource.data["Battery"]["Has Battery"]
+        opacity: 0.7
 
         Text {
             id: percent
@@ -190,7 +191,7 @@ Item {
                 horizontalCenter: parent.horizontalCenter
                 verticalCenter: parent.verticalCenter
             }
-            opacity: show_charge ? 1 : 0
+            visible: parent.visible
         }
     }
 }
