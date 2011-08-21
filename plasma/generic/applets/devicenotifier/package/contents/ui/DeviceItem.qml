@@ -152,7 +152,15 @@ Item {
                 leftActionTriggered();
             }
             else {
-                notifierDialog.currentExpanded = expanded ? -1 : index;
+                var actions = hpSource.data[udi]["actions"];
+                if (actions.length==1) {
+                    service = hpSource.serviceForSource(udi);
+                    operation = service.operationDescription("invokeAction");
+                    operation.predicate = actions[0]["predicate"];
+                    service.startOperationCall(operation);
+                } else {
+                    notifierDialog.currentExpanded = expanded ? -1 : index;
+                }
             }
         }
     }
