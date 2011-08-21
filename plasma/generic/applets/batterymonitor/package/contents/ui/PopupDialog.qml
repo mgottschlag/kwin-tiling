@@ -107,7 +107,20 @@ Item {
 
         Text {
             id: batteryValue
-            text: percent+"%" + " (" + (percent<100 ? (pluggedIn ? "charging" : "discharging") : "charged") + ")"
+            text: {
+                if (percent == 0) {
+                    return "Not present";
+                }
+                var txt=percent+"% (";
+                if (percent<100) {
+                    if (pluggedIn) txt += "charging";
+                    else txt += "discharging";
+                } else {
+                    txt += "charged";
+                }
+                txt += ")"
+                return txt;
+            }
             font.bold: true
             anchors {
                 left: parent.left
