@@ -25,9 +25,7 @@ Item {
     width: 290
     height: 340
     id: devicenotifier
-    property bool removableDevices: true
-    property bool nonRemovableDevices: false
-    property bool allDevices: false
+    property string devicesType: "removable"
 
     PlasmaCore.DataSource {
         id: hpSource
@@ -41,7 +39,7 @@ Item {
         id: sdSource
         engine: "soliddevice"
         connectedSources: hpSource.sources
-        onSourceAdded: addDevice(source)
+        //onSourceAdded: expandDevice(source)
         interval: 0
     }
 
@@ -51,36 +49,22 @@ Item {
     }
 
     function configChanged() {
-        removableDevices = plasmoid.readConfig("removableDevices");
-        nonRemovableDevices = plasmoid.readConfig("nonRemovableDevices");
-        allDevices = plasmoid.readConfig("allDevices");
-        if (allDevices) {
-            filterModel.filterRegExp = ""
-        } else if (removableDevices) {
+        if( plasmoid.readConfig("removableDevices") ) {
+            devicesType = "removable";
             filterModel.filterRegExp = "true"
-        } else {
+        } else if( plasmoid.readConfig("nonRemovableDevices") ) {
+            devicesType = "nonRemovable";
             filterModel.filterRegExp = "false"
+        } else /*if( plasmoid.readConfig("allDevices") )*/ {
+            devicesType = "all";
+            filterModel.filterRegExp = ""
         }
         notifierDialog.currentIndex = -1;
         notifierDialog.currentExpanded = -1;
     }
 
-    function addDevice(source) {
-        if (hpSource.connectedSources.indexOf(source)>=0)
-            return;
-
-        if (removableDevices) { //Removable only
-            if (!sdSource.data[source]["Removable"]) {
-                return;
-            }
-        }
-        else if (nonRemovableDevices) { //Non removable only
-            if (sdSource.data[source]["Removable"]) {
-                return;
-            }
-        }
-        hpSource.connectSource(source);
-        i = notifierDialog.model.indexOf (source);
+    function expandDevice(udi) {
+        i = notifierDialog.model.indexOf (udi);
         notifierDialog.currentExpanded = i;
         notifierDialog.currentIndex = i;
         notifierDialog.highlightItem.opacity = 1;
@@ -127,6 +111,7 @@ Item {
                 dataSource: sdSource
             }
             filterRole: "Removable"
+            //filterRegExp: devicesType=="removable" ? true : (devicesType=="nonRemovable" ? false : "")
             filterRegExp: "true"
         }
         delegate: deviceItem
