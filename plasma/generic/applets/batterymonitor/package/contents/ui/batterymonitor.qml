@@ -150,18 +150,18 @@ Item {
     }
 
     function fillElement(p) {
-        if (p >= 100) {
+        if (p > 95) {
             return "Fill100";
         } else if (p > 80) {
             return "Fill80";
-        } else if (p > 60) {
+        } else if (p > 50) {
             return "Fill60";
-        } else if (p > 40) {
-            return "Fill40";
         } else if (p > 20) {
+            return "Fill40";
+        } else if (p > 10) {
             return "Fill20";
         }
-        return "";
+        return "Unavailable";
     }
 
     PlasmaCore.SvgItem {
