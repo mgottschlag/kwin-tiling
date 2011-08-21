@@ -145,7 +145,7 @@ Item {
     PlasmaCore.SvgItem {
         anchors.fill: parent
         svg: iconSvg
-        elementId: fillElement(pmSource.data["Battery0"]["Percent"]) 
+        elementId: pmSource.data["Battery"]["Has Battery"] ? fillElement(pmSource.data["Battery0"]["Percent"]) : "Unavailable"
     }
 
     function fillElement(p) {
@@ -160,7 +160,7 @@ Item {
         } else if (p > 10) {
             return "Fill20";
         }
-        return "Unavailable";
+        return "";
     }
 
     PlasmaCore.SvgItem {
