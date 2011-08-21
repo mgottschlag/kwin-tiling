@@ -83,8 +83,12 @@ Item {
             left: deviceLabel.left
         }
         text: {
-            var n = hpSource.data[udi]["actions"].length;
-            return n+" actions for this device";
+            var actions = hpSource.data[udi]["actions"];
+            if (actions.length>1) {
+                return actions.length+" actions for this device";
+            } else {
+                return actions[0]["text"];
+            }
         }
         font.italic: true
         font.pointSize: 8
