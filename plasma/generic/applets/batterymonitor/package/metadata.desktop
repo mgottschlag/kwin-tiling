@@ -22,6 +22,7 @@ Keywords[x-test]=xxPower Management, Battery, System, Energyxx
 
 Icon=battery
 Type=Service
+X-KDE-ServiceTypes=Plasma/Applet
 
 X-Plasma-API=declarativeappletscript
 X-Plasma-DefaultSize=100,100
@@ -34,3 +35,5 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-Name=org.kde.batterymonitor
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=http://vizZzion.org
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-EnabledByDefault=true

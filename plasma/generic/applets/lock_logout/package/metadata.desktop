@@ -108,8 +108,8 @@ Keywords=Lock, Logout, Sleep, Hibernate, Switch User
 Keywords[x-test]=xxLock, Logout, Sleep, Hibernate, Switch Userxx
 
 Type=Service
-ServiceTypes=Plasma/Applet
 Icon=system-shutdown
+X-KDE-ServiceTypes=Plasma/Applet
 
 X-Plasma-API=declarativeappletscript
 X-Plasma-MainScript=ui/lockout.qml
@@ -122,5 +122,6 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-Name=org.kde.lockout
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
-X-KDE-ServiceTypes=Plasma/Applet,Plasma/PopupApplet
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-EnabledByDefault=true
 
