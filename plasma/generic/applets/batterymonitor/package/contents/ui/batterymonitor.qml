@@ -120,10 +120,9 @@ Item {
     MouseArea {
         id: mouseArea
         anchors.fill: parent
-        hoverEnabled: true
         onClicked: {
-            populateProfiles();
-             if (!dialog.visible) {
+            if (!dialog.visible) {
+                populateProfiles();
                 var pos = dialog.popupPosition (batterymonitor, Qt.AlignCenter);
                 dialog.x = pos.x;
                 dialog.y = pos.y;
@@ -182,8 +181,7 @@ Item {
         border.color: "grey"
         border.width: 2
         radius: 3
-        opacity: mouseArea.containsMouse ? 0.7 : 0
-        Behavior on opacity { NumberAnimation { duration: 200 } }
+        opacity: show_charge ? 0.7 : 0
 
         Text {
             id: percent
@@ -192,8 +190,7 @@ Item {
                 horizontalCenter: parent.horizontalCenter
                 verticalCenter: parent.verticalCenter
             }
-            opacity: mouseArea.containsMouse ? 1 : 0
-            Behavior on opacity { NumberAnimation { duration: 200 } }
+            opacity: show_charge ? 1 : 0
         }
     }
 }
