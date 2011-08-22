@@ -50,7 +50,7 @@ settings in this dialog are disabled.</para>
 <note>
 <para>The applications <command>rdate</command> or <command>ntpdate</command> are used in  
 this module to fetch date and time from a time server. This happens when you log in to &kde;
-while beeing online or when you later connect to the Internet and access to time 
+while being online or when you later connect to the Internet and access to time 
 servers is possible.</para> 
 <para>Both applications are simple <acronym>NTP</acronym> clients that set a system's clock 
 to match the time obtained by communicating with one or more <acronym>NTP</acronym> servers. 
