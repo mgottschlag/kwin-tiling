@@ -110,7 +110,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
         m_batterySources.clear();
 
         if (listBattery.isEmpty()) {
-            setData("Battery", "Has Battery", false);
+            setData("Battery", "Has battery", false);
             return true;
         }
 
