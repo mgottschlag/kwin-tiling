@@ -48,6 +48,7 @@ Item {
 
     PlasmaCore.Dialog {
         id: dialog
+        windowFlags: Qt.Popup
         mainItem: PopupDialog {
             id: dialogItem
             percent: pmSource.data["Battery0"]["Percent"]
@@ -80,9 +81,6 @@ Item {
                     service.startOperationCall(operation);
                 }
             }
-        }
-        Component.onCompleted: {
-            setAttribute(Qt.WA_X11NetWmWindowTypeDock, true);
         }
     }
 
