@@ -197,7 +197,7 @@ Comment[x-test]=xxFont settingsxx
 Comment[zh_CN]=字体设置
 Comment[zh_TW]=字型設定
 
-X-KDE-Keywords=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title
+X-KDE-Keywords=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI
 X-KDE-Keywords[be]=шрыфты,памер шрыфту,стылі,знаказборы,знакавыя зборы,панель,панель кіравання,працоўныя сталы,працоўны стол,кіраўнік файлаў,панелі начынняў,панель начыння,меню,загаловак акна,загаловак,назва,fonts,font size,styles,charsets,character sets,panel,kicker,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title
 X-KDE-Keywords[bg]=Keywords=шрифт, шрифтове, размер, символи, знаци, системен панел, fonts, font size, styles, charsets, character sets, panel, kicker, control panel, desktops, FileManager, Toolbars, Menu, Window Title, Title
 X-KDE-Keywords[ca]=tipus de lletra,mida de tipus de lletra,estils,jocs de caràcters,plafó,kicker,plafó de control,escriptoris,Gestor de fitxers,Barres d'eines,Menú,Títol de finestra,Títol
