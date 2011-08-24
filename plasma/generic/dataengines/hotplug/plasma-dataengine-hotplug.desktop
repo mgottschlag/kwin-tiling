@@ -82,6 +82,7 @@ Comment[el]=Ανίχνευση συσκευών hot-plug καθώς εμφανί
 Comment[en_GB]=Tracks hot-pluggable devices as they appear and disappear.
 Comment[es]=Registra los dispositivos extraíbles cuando aparecen y desaparecen.
 Comment[et]=Töö ajal ühendatavate seadmete ilmumise ja kadumise jälgimine.
+Comment[eu]=martxan entxufatu daitezkeen gailuen jarraipena egiten du agertu eta desagertzen diren heinean.
 Comment[fi]=Jäljittää lennosta kytkeytyviä laitteita kun ne ilmaantuvat ja katoavat.
 Comment[fr]=Surveille l'apparition ou la disparition des périphériques connectables à chaud.
 Comment[fy]=Hâld hot-pluggeble aparaten yn de gaten as se ferskine of ferside gean.

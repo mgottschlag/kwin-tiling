@@ -67,6 +67,7 @@ Comment[el]=Μηχανή για τις πληροφορίες κατάσταση
 Comment[en_GB]=Engine for applications' status information, based on the Status Notifier protocol.
 Comment[es]=Motor para informar del estado de aplicaciones, basado en el protocolo Status Notifier.
 Comment[et]=Rakenduse olekuteabe mootor Status Notifieri protokolli alusel.
+Comment[eu]=Aplikazioen egoeraren informazioarentzako motorea, Status Notifier protokoloan oinarritua.
 Comment[fi]=Kone sovelusten tilatiedoille, perustuu tilailmoittajayhteyskäytäntöön.
 Comment[fr]=Moteur d'informations sur l'état des applications utilisant le protocole de notification d'état.
 Comment[he]=מנוע עבור מידע אודות מצב של יישומים, המתבסס על הפרוטוקול של Status Notifier.
