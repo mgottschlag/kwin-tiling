@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=SolidNetworkManager
+X-KDE-Library=solid_networkmanager09_fake
+InitialPreference=101
+Name=Fake NetworkManager 0.9
+Name[pt_BR]=NetworkManager 0.9 falso
+Comment=Fake backend to allow kdelibs to read NetworkManager daemon 0.9's status
+Comment[pt_BR]=Backend falso para permitir ao kdelibs ler o estado do daemon do NetworkManager
+Icon=networkmanager
