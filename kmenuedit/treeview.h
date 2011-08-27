@@ -199,6 +199,6 @@ private:
     TreeItem *m_item;
 };
 
-Q_DECLARE_METATYPE(TreeItem *);
+Q_DECLARE_METATYPE(TreeItem *)
 
 #endif
