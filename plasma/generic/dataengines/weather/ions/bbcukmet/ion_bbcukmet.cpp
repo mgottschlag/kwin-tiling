@@ -242,9 +242,9 @@ void UKMETIon::getXMLData(const QString& source)
     m_obsJobList.insert(m_job, source);
 
     if (m_job) {
-        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(observation_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(observation_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(observation_slotDataArrived(KIO::Job*,QByteArray)));
+        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(observation_slotJobFinished(KJob*)));
     }
 }
 
@@ -260,14 +260,14 @@ void UKMETIon::findPlace(const QString& place, const QString& source)
     m_jobList.insert(m_job, source);
 
     if (m_job) {
-        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(setup_slotDataArrived(KIO::Job*,QByteArray)));
+        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(setup_slotJobFinished(KJob*)));
 
 /*
         // Handle redirects for direct hit places.
-        connect(m_job, SIGNAL(redirection(KIO::Job *, const KUrl &)), this,
-                SLOT(setup_slotRedirected(KIO::Job *, const KUrl &)));
+        connect(m_job, SIGNAL(redirection(KIO::Job*,KUrl)), this,
+                SLOT(setup_slotRedirected(KIO::Job*,KUrl)));
 */
     }
 }
@@ -287,9 +287,9 @@ void UKMETIon::getFiveDayForecast(const QString& source)
     m_forecastJobList.insert(m_job, source);
 
     if (m_job) {
-        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(forecast_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(forecast_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(forecast_slotDataArrived(KIO::Job*,QByteArray)));
+        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(forecast_slotJobFinished(KJob*)));
     }
 }
 
@@ -920,30 +920,30 @@ QVector<QString> UKMETIon::forecasts(const QString& source)
     for (int i = 0; i < m_weatherData[source].forecasts.size(); ++i) {
 
         if (m_weatherData[source].forecasts[i]->period.contains("Saturday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Saturday", i18n("Sat"));
+            m_weatherData[source].forecasts[i]->period.replace("Saturday", i18nc("Short for Saturday", "Sat"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Sunday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Sunday", i18n("Sun"));
+            m_weatherData[source].forecasts[i]->period.replace("Sunday", i18nc("Short for Sunday", "Sun"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Monday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Monday", i18n("Mon"));
+            m_weatherData[source].forecasts[i]->period.replace("Monday", i18nc("Short for Monday", "Mon"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Tuesday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Tuesday", i18n("Tue"));
+            m_weatherData[source].forecasts[i]->period.replace("Tuesday", i18nc("Short for Tuesday", "Tue"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Wednesday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Wednesday", i18n("Wed"));
+            m_weatherData[source].forecasts[i]->period.replace("Wednesday", i18nc("Short for Wednesday", "Wed"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Thursday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Thursday", i18n("Thu"));
+            m_weatherData[source].forecasts[i]->period.replace("Thursday", i18nc("Short for Thursday", "Thu"));
         }
         if (m_weatherData[source].forecasts[i]->period.contains("Friday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Friday", i18n("Fri"));
+            m_weatherData[source].forecasts[i]->period.replace("Friday", i18nc("Short for Friday", "Fri"));
         }
 
         forecastData.append(QString("%1|%2|%3|%4|%5|%6") \

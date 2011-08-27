@@ -127,7 +127,7 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 
     //bookmarks
     m_bookmarkManager = KBookmarkManager::userBookmarksManager();
-    connect(m_bookmarkManager, SIGNAL(changed(const QString, const QString)), this, SLOT(bookmarksModelInit()));
+    connect(m_bookmarkManager, SIGNAL(changed(QString,QString)), this, SLOT(bookmarksModelInit()));
     bookmarksModelInit();
 
     m_bookmarksView = new Plasma::TreeView(this);
@@ -142,7 +142,7 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_bookmarksDelegate = new BookmarksDelegate(this);
     m_bookmarksView->nativeWidget()->setItemDelegate(m_bookmarksDelegate);
 
-    connect(m_bookmarksDelegate, SIGNAL(destroyBookmark(const QModelIndex &)), this, SLOT(removeBookmark(const QModelIndex &)));
+    connect(m_bookmarksDelegate, SIGNAL(destroyBookmark(QModelIndex)), this, SLOT(removeBookmark(QModelIndex)));
 
     m_layout->addItem(m_statusbarLayout);
 
@@ -184,14 +184,14 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 
     connect(m_historyCombo->nativeWidget(), SIGNAL(returnPressed()), this, SLOT(returnPressed()));
     connect(m_historyCombo->nativeWidget(), SIGNAL(activated(int)), this, SLOT(returnPressed()));
-    connect(m_historyCombo, SIGNAL(activated(const QString&)), this, SLOT(comboTextChanged(const QString&)));
-    connect(m_browser->page()->mainFrame(), SIGNAL(urlChanged(const QUrl &)), this, SLOT(urlChanged(const QUrl &)));
+    connect(m_historyCombo, SIGNAL(activated(QString)), this, SLOT(comboTextChanged(QString)));
+    connect(m_browser->page()->mainFrame(), SIGNAL(urlChanged(QUrl)), this, SLOT(urlChanged(QUrl)));
     connect(m_browser, SIGNAL(loadProgress(int)), this, SLOT(loadProgress(int)));
     
     connect(m_addBookmarkAction, SIGNAL(triggered()), this, SLOT(addBookmark()));
     connect(m_removeBookmarkAction, SIGNAL(triggered()), this, SLOT(removeBookmark()));
     connect(m_organizeBookmarks->action(), SIGNAL(triggered()), this, SLOT(bookmarksToggle()));
-    connect(m_bookmarksView->nativeWidget(), SIGNAL(clicked(const QModelIndex &)), this, SLOT(bookmarkClicked(const QModelIndex &)));
+    connect(m_bookmarksView->nativeWidget(), SIGNAL(clicked(QModelIndex)), this, SLOT(bookmarkClicked(QModelIndex)));
 
     //Autocompletion stuff
     m_completion = new KCompletion();
@@ -205,7 +205,7 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 
     configChanged();
 
-    connect(this, SIGNAL(messageButtonPressed(const MessageButton)), this, SLOT(removeBookmarkMessageButtonPressed(const MessageButton)));
+    connect(this, SIGNAL(messageButtonPressed(MessageButton)), this, SLOT(removeBookmarkMessageButtonPressed(MessageButton)));
     
     return m_graphicsWidget;
 }

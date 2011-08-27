@@ -26,8 +26,8 @@ KActivityConsumer::KActivityConsumer(QObject * parent)
     : QObject(parent), d(new KActivityConsumerPrivate())
 {
     connect(
-        KActivityManager::self(), SIGNAL(CurrentActivityChanged(const QString &)),
-        this,       SIGNAL(currentActivityChanged(const QString &))
+        KActivityManager::self(), SIGNAL(CurrentActivityChanged(QString)),
+        this,       SIGNAL(currentActivityChanged(QString))
     );
 }
 

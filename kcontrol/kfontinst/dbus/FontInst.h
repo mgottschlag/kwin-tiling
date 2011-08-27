@@ -103,18 +103,19 @@ class KFONTINST_EXPORT FontInst : public QObject
 
     public Q_SLOTS:
 
-    Q_NOREPLY    void list(int folders, int pid);
-    Q_NOREPLY    void stat(const QString &font, int folders, int pid);
-    Q_NOREPLY    void install(const QString &file, bool createAfm, bool toSystem, int pid, bool checkConfig);
-    Q_NOREPLY    void uninstall(const QString &family, quint32 style, bool fromSystem, int pid, bool checkConfig);
-    Q_NOREPLY    void uninstall(const QString &name, bool fromSystem, int pid, bool checkConfig);
-    Q_NOREPLY    void move(const QString &family, quint32 style, bool toSystem, int pid, bool checkConfig);
-    Q_NOREPLY    void enable(const QString &family, quint32 style, bool inSystem, int pid, bool checkConfig);
-    Q_NOREPLY    void disable(const QString &family, quint32 style, bool inSystem, int pid, bool checkConfig);
-    Q_NOREPLY    void removeFile(const QString &family, quint32 style, const QString &file, bool fromSystem, int pid,
-                                 bool checkConfig);
-    Q_NOREPLY    void reconfigure(int pid);
-    Q_SCRIPTABLE void saveDisabled();
+    Q_NOREPLY    void    list(int folders, int pid);
+    Q_NOREPLY    void    stat(const QString &font, int folders, int pid);
+    Q_NOREPLY    void    install(const QString &file, bool createAfm, bool toSystem, int pid, bool checkConfig);
+    Q_NOREPLY    void    uninstall(const QString &family, quint32 style, bool fromSystem, int pid, bool checkConfig);
+    Q_NOREPLY    void    uninstall(const QString &name, bool fromSystem, int pid, bool checkConfig);
+    Q_NOREPLY    void    move(const QString &family, quint32 style, bool toSystem, int pid, bool checkConfig);
+    Q_NOREPLY    void    enable(const QString &family, quint32 style, bool inSystem, int pid, bool checkConfig);
+    Q_NOREPLY    void    disable(const QString &family, quint32 style, bool inSystem, int pid, bool checkConfig);
+    Q_NOREPLY    void    removeFile(const QString &family, quint32 style, const QString &file, bool fromSystem, int pid,
+                                    bool checkConfig);
+    Q_NOREPLY    void    reconfigure(int pid, bool force);
+    Q_SCRIPTABLE QString folderName(bool sys);
+    Q_SCRIPTABLE void    saveDisabled();
 
     Q_SIGNALS:
     

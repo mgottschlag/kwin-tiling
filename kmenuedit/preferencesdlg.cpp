@@ -43,7 +43,7 @@ PreferencesDialog::PreferencesDialog( QWidget *parent )
     page->setIcon( KIcon( "tools-check-spelling" ) );
     addPage(page);
 
-    connect( this, SIGNAL( okClicked() ), this, SLOT( slotSave() ) );
+    connect( this, SIGNAL(okClicked()), this, SLOT(slotSave()) );
 }
 
 void PreferencesDialog::slotSave()

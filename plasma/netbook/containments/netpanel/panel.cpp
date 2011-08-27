@@ -80,8 +80,8 @@ void Panel::init()
     Containment::init();
 
     Plasma::Corona *c = corona();
-    connect(c, SIGNAL(containmentAdded(Plasma::Containment *)),
-            this, SLOT(containmentAdded(Plasma::Containment *)));
+    connect(c, SIGNAL(containmentAdded(Plasma::Containment*)),
+            this, SLOT(containmentAdded(Plasma::Containment*)));
 
     KAction *lockAction = new KAction(this);
     addAction("lock panel", lockAction);
@@ -383,8 +383,8 @@ void Panel::updateConfigurationMode(bool config)
     if (config && !m_appletOverlay && immutability() == Plasma::Mutable) {
         m_appletOverlay = new LinearAppletOverlay(this, m_layout);
         m_appletOverlay->resize(size());
-        connect (m_appletOverlay, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)),
-                 this, SLOT(overlayRequestedDrop(QGraphicsSceneDragDropEvent *)));
+        connect (m_appletOverlay, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent*)),
+                 this, SLOT(overlayRequestedDrop(QGraphicsSceneDragDropEvent*)));
     } else if (!config) {
         delete m_appletOverlay;
         m_appletOverlay = 0;

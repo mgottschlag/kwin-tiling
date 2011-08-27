@@ -207,7 +207,7 @@ KCMInit::KCMInit( KCmdLineArgs* args )
      strcpy( e.xclient.data.b, "kcminit" );
      XSendEvent( QX11Info::display(), QX11Info::appRootWindow(), False, SubstructureNotifyMask, &e );
      sendReady();
-     QTimer::singleShot( 300 * 1000, qApp, SLOT( quit())); // just in case
+     QTimer::singleShot( 300 * 1000, qApp, SLOT(quit())); // just in case
      qApp->exec(); // wait for runPhase1() and runPhase2()
   }
   else

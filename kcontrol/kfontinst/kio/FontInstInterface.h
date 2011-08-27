@@ -48,7 +48,8 @@ class FontInstInterface : public QObject
     int      reconfigure();
     Families list(bool system);
     Family   stat(const QString &file, bool system);
-    
+    QString  folderName(bool sys);
+
     private:
 
     int waitForResponse();

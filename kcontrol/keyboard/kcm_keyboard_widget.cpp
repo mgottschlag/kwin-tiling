@@ -289,7 +289,7 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::DISPLAY_NAME_COLUMN, 50);
 	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::SHORTCUT_COLUMN, 130);
 
-	connect(layoutsTableModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(uiChanged()));
+	connect(layoutsTableModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(uiChanged()));
 
 	uiWidget->layoutLoopCountSpinBox->setMinimum(MIN_LOOPING_COUNT);
 
@@ -315,8 +315,8 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 
 	connect(uiWidget->addLayoutBtn, SIGNAL(clicked(bool)), this, SLOT(addLayout()));
 	connect(uiWidget->removeLayoutBtn, SIGNAL(clicked(bool)), this, SLOT(removeLayout()));
-//	connect(uiWidget->layoutsTable, SIGNAL(itemSelectionChanged ()), this, SLOT(layoutSelectionChanged()));
-	connect(uiWidget->layoutsTableView->selectionModel(), SIGNAL(selectionChanged ( const QItemSelection &, const QItemSelection &)), this, SLOT(layoutSelectionChanged()));
+//	connect(uiWidget->layoutsTable, SIGNAL(itemSelectionChanged()), this, SLOT(layoutSelectionChanged()));
+	connect(uiWidget->layoutsTableView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(layoutSelectionChanged()));
 
 //	connect(uiWidget->moveUpBtn, SIGNAL(triggered(QAction*)), this, SLOT(moveUp()));
 //	connect(uiWidget->moveDownBtn, SIGNAL(triggered(QAction*)), this, SLOT(moveDown()));
@@ -328,7 +328,7 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 
 //	connect(uiWidget->xkbGrpClearBtn, SIGNAL(triggered(QAction*)), this, SLOT(uiChanged()));
 //	connect(uiWidget->xkb3rdLevelClearBtn, SIGNAL(triggered(QAction*)), this, SLOT(uiChanged()));
-	connect(uiWidget->kdeKeySequence, SIGNAL(keySequenceChanged (const QKeySequence &)), this, SLOT(uiChanged()));
+	connect(uiWidget->kdeKeySequence, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(uiChanged()));
 	connect(uiWidget->switchingPolicyButtonGroup, SIGNAL(clicked(int)), this, SLOT(uiChanged()));
 
 	connect(uiWidget->xkbGrpShortcutBtn, SIGNAL(clicked(bool)), this, SLOT(scrollToGroupShortcut()));
@@ -515,7 +515,7 @@ void KCMKeyboardWidget::initializeXkbOptionsUI()
 
 	XkbOptionsTreeModel* model = new XkbOptionsTreeModel(rules, keyboardConfig, uiWidget->xkbOptionsTreeView);
 	uiWidget->xkbOptionsTreeView->setModel(model);
-	connect(model, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(uiChanged()));
+	connect(model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(uiChanged()));
 
 	connect(uiWidget->configureKeyboardOptionsChk, SIGNAL(toggled(bool)), this, SLOT(configureXkbOptionsChanged()));
 	//	connect(uiWidget->configureKeyboardOptionsChk, SIGNAL(toggled(bool)), this, SLOT(uiChanged()));

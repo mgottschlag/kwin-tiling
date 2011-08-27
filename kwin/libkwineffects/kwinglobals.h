@@ -105,6 +105,10 @@ enum TabBoxMode {
     TabBoxWindowsAlternativeMode // Secondary window switching mode
 };
 
+enum KWinOption {
+    CloseButtonCorner
+};
+
 inline
 KWIN_EXPORT Display* display()
 {
@@ -165,9 +169,6 @@ public:
         return fixes_version > 0;
     }
     static bool fixesRegionAvailable();
-    static bool glxAvailable() {
-        return has_glx;
-    }
     static bool syncAvailable() {
         return has_sync;
     }
@@ -187,7 +188,6 @@ private:
     static int composite_version;
     static int render_version;
     static int fixes_version;
-    static bool has_glx;
     static bool has_sync;
     static int sync_event_base;
     static const char* data_extensions[ 32 ];

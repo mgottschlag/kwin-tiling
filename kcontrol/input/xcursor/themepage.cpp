@@ -62,7 +62,9 @@ ThemePage::ThemePage(QWidget *parent)
     : QWidget(parent)
 {
     setupUi(this);
-    installKnsButton->setIcon( KIcon("get-hot-new-stuff") );
+    installKnsButton->setIcon(KIcon("get-hot-new-stuff"));
+    installButton->setIcon(KIcon("document-import"));
+    removeButton->setIcon(KIcon("edit-delete"));
 
     model = new CursorThemeModel(this);
 
@@ -76,12 +78,12 @@ ThemePage::ThemePage(QWidget *parent)
     view->setModel(proxy);
     view->setItemDelegate(new ItemDelegate(this));
     view->setIconSize(QSize(size, size));
-    view->setSelectionMode( QAbstractItemView::SingleSelection );
+    view->setSelectionMode(QAbstractItemView::SingleSelection);
 
     // Make sure we find out about selection changes
     connect(view->selectionModel(),
-            SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
-            SLOT(currentChanged(const QModelIndex &, const QModelIndex &)));
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SLOT(selectionChanged()));
 
     // Disable the install button if we can't install new themes to ~/.icons,
     // or Xcursor isn't set up to look for cursor themes there.
@@ -185,10 +187,10 @@ bool ThemePage::applyTheme(const CursorTheme *theme)
 
 void ThemePage::save()
 {
-    if (appliedIndex == view->currentIndex() || !view->currentIndex().isValid())
+    if (appliedIndex == selectedIndex() || !selectedIndex().isValid())
         return;
 
-    const CursorTheme *theme = proxy->theme(view->currentIndex());
+    const CursorTheme *theme = proxy->theme(selectedIndex());
 
     KConfig config("kcminputrc");
     KConfigGroup c(&config, "Mouse");
@@ -202,7 +204,7 @@ void ThemePage::save()
                                  i18n("Cursor Settings Changed"), "CursorSettingsChanged");
     }
 
-    appliedIndex = view->currentIndex();
+    appliedIndex = selectedIndex();
 }
 
 
@@ -267,19 +269,28 @@ void ThemePage::selectRow(int row) const
 }
 
 
-void ThemePage::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+void ThemePage::selectionChanged()
 {
-    Q_UNUSED(previous)
+    QModelIndex selected = selectedIndex();
 
-    if (current.isValid())
+    if (selected.isValid())
     {
-        const CursorTheme *theme = proxy->theme(current);
+        const CursorTheme *theme = proxy->theme(selected);
         preview->setTheme(theme);
         removeButton->setEnabled(theme->isWritable());
     } else
         preview->setTheme(NULL);
 
-    emit changed(appliedIndex != current);
+    emit changed(appliedIndex != selected);
+}
+
+QModelIndex ThemePage::selectedIndex() const
+{
+    QModelIndexList selection = view->selectionModel()->selectedIndexes();
+    if (!selection.isEmpty()) {
+        return (selection.at(0));
+    }
+    return QModelIndex();
 }
 
 void ThemePage::getNewClicked()
@@ -329,10 +340,10 @@ void ThemePage::removeClicked()
 {
     // We don't have to check if the current index is valid, since
     // the remove button will be disabled when there's no selection.
-    const CursorTheme *theme = proxy->theme(view->currentIndex());
+    const CursorTheme *theme = proxy->theme(selectedIndex());
 
     // Don't let the user delete the currently configured theme
-    if (view->currentIndex() == appliedIndex) {
+    if (selectedIndex() == appliedIndex) {
         KMessageBox::sorry(this, i18n("<qt>You cannot delete the theme you are currently "
                 "using.<br />You have to switch to another theme first.</qt>"));
         return;
@@ -354,7 +365,7 @@ void ThemePage::removeClicked()
     KIO::del(KUrl(theme->path())); // async
 
     // Remove the theme from the model
-    proxy->removeTheme(view->currentIndex());
+    proxy->removeTheme(selectedIndex());
 
     // TODO:
     //  Since it's possible to substitute cursors in a system theme by adding a local

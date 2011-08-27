@@ -12,8 +12,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2010-08-20</date>
-<releaseinfo>&kde; 4.5</releaseinfo>
+<date>2011-08-24</date>
+<releaseinfo>&kde; 4.7</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -27,12 +27,12 @@
 <sect1 id="workspace">
 <title>Workspace</title>
 
-<para>This is a module to configure the behavior of the Plasma workspace.
+<para>This is a module to configure global options for the Plasma workspace.
 </para>
 
 <sect2 id="form-factor">
-<title>Form Factor</title>
-<para>In the form factor section you can configure the type of workspace you will be 
+<title>Workspace Type</title>
+<para>In this section you can configure the type of workspace you will be 
 using. Right now there are two options:</para>
 
 <variablelist>
@@ -63,14 +63,14 @@ Right now there are two options:
 
 <variablelist>
 <varlistentry>
-<term><guilabel>Show desktop widgets</guilabel></term>
+<term><guilabel>Show Desktop Widgets</guilabel></term>
 <listitem>
 <para>The dashboard will show the same widgets present on the desktop.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Show an independent widget set</guilabel></term>
+<term><guilabel>Show an Independent Widget Set</guilabel></term>
 <listitem>
 <para>The dashboard will present an independent 
 set of widget that is different from the ones in the desktop.</para>
@@ -83,13 +83,8 @@ set of widget that is different from the ones in the desktop.</para>
 <sect2 id="informational-tips">
 <title>Informational Tips</title>
 <para>
-<guilabel>Informational Tips</guilabel> are displayed hovering items in the 
-Plasma panel or on the desktop by default after 0.7 seconds.</para>
-<para>
-Clicking the up and down arrows or pressing the up or down cursor keys on the keyboard
-increases/decreases the delay before informational tips are shown. The number
-can also be entered with the keyboard. The minimum value of -0.1 also means 
-<guilabel>Do not show</guilabel>.</para>
+<guilabel>Show Informational Tips</guilabel> are displayed hovering items in the 
+Plasma panel or on the desktop.</para>
 </sect2>
 </sect1>
 </article>

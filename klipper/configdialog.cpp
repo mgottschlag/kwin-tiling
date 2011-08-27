@@ -272,12 +272,12 @@ ConfigDialog::ConfigDialog(QWidget *parent, KConfigSkeleton *skeleton, const Kli
         setHelp( QString(), "klipper" );
     }
 
-    addPage(m_generalPage, i18nc("General Config", "General"), "klipper", i18n("General Config"));
-    addPage(m_actionsPage, i18nc("Actions Config", "Actions"), "system-run", i18n("Actions Config"));
+    addPage(m_generalPage, i18nc("General Config", "General"), "klipper", i18n("General Configuration"));
+    addPage(m_actionsPage, i18nc("Actions Config", "Actions"), "system-run", i18n("Actions Configuration"));
 
     QWidget* w = new QWidget(this);
     m_shortcutsWidget = new KShortcutsEditor( collection, w, KShortcutsEditor::GlobalAction );
-    addPage(m_shortcutsWidget, i18nc("Shortcuts Config", "Shortcuts"), "configure-shortcuts", i18n("Shortcuts Config"));
+    addPage(m_shortcutsWidget, i18nc("Shortcuts Config", "Shortcuts"), "configure-shortcuts", i18n("Shortcuts Configuration"));
 }
 
 

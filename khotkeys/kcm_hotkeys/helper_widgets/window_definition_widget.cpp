@@ -159,7 +159,7 @@ bool WindowDefinitionWidget::isChanged() const
 
 void WindowDefinitionWidget::slotAutoDetect()
     {
-    KHotKeys::WindowSelector* sel = new KHotKeys::WindowSelector( this, SLOT( slotWindowSelected( WId )));
+    KHotKeys::WindowSelector* sel = new KHotKeys::WindowSelector( this, SLOT(slotWindowSelected(WId)));
     sel->select();
     }
 

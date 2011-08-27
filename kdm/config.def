@@ -2676,9 +2676,13 @@ Type: bool
 Default: false
 User: greeter
 Instance: */true
-Comment: &
+Comment:
+ Whether the greeter should be themed.
 Description:
  Whether the greeter should be themed.
+ Note that the themed greeter is challenged accessibility-wise, and themes
+ may lack support for features like a user list or alternative
+ authentication methods.
 
 Key: Theme
 Type: string

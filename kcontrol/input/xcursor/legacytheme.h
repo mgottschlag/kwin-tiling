@@ -45,7 +45,7 @@ class LegacyTheme : public CursorTheme
         QCursor loadCursor(const QString &name, int size = - 1) const;
 
     protected:
-        LegacyTheme(const QString &title, const QString &description)
+        LegacyTheme(const QString &title, const QString &description = QString())
             : CursorTheme(title, description) {}
 
     private:

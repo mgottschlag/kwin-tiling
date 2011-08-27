@@ -84,7 +84,7 @@ KClassicGreeter::KClassicGreeter(KGreeterPluginHandler *_handler,
             loginEdit->setContextMenuPolicy(Qt::NoContextMenu);
             connect(loginEdit, SIGNAL(editingFinished()), SLOT(slotLoginLostFocus()));
             connect(loginEdit, SIGNAL(editingFinished()), SLOT(slotChanged()));
-            connect(loginEdit, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
+            connect(loginEdit, SIGNAL(textChanged(QString)), SLOT(slotChanged()));
             connect(loginEdit, SIGNAL(selectionChanged()), SLOT(slotChanged()));
             if (!grid) {
                 loginEdit->setObjectName("user-entry");
@@ -101,7 +101,7 @@ KClassicGreeter::KClassicGreeter(KGreeterPluginHandler *_handler,
             grid->addWidget(new QLabel(fixedUser, parent), line++, 1);
         }
         passwdEdit = new KDMPasswordEdit(parent);
-        connect(passwdEdit, SIGNAL(textChanged(const QString &)),
+        connect(passwdEdit, SIGNAL(textChanged(QString)),
                 SLOT(slotChanged()));
         connect(passwdEdit, SIGNAL(editingFinished()), SLOT(slotChanged()));
         if (!grid) {

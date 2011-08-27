@@ -155,8 +155,8 @@ void Solid::Control::AccessPointPrivate::setBackendObject(QObject *object)
                 parent(), SIGNAL(wpaFlagsChanged(Solid::Control::AccessPoint::WpaFlags)));
         QObject::connect(object, SIGNAL(rsnFlagsChanged(Solid::Control::AccessPoint::WpaFlags)),
                 parent(), SIGNAL(rsnFlagsChanged(Solid::Control::AccessPoint::WpaFlags)));
-        QObject::connect(object, SIGNAL(ssidChanged(const QString&)),
-                parent(), SIGNAL(ssidChanged(const QString&)));
+        QObject::connect(object, SIGNAL(ssidChanged(QString)),
+                parent(), SIGNAL(ssidChanged(QString)));
         QObject::connect(object, SIGNAL(frequencyChanged(uint)),
                 parent(), SIGNAL(frequencyChanged(uint)));
     }

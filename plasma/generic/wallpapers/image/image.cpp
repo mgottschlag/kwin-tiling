@@ -188,14 +188,14 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_uiImage.m_color->setColor(m_color);
         //Color button is useless with some resize methods
         m_uiImage.m_color->setEnabled(m_resizeMethod == MaxpectResize || m_resizeMethod == CenteredResize);
-        connect(m_uiImage.m_color, SIGNAL(changed(const QColor&)), this, SLOT(colorChanged(const QColor&)));
+        connect(m_uiImage.m_color, SIGNAL(changed(QColor)), this, SLOT(colorChanged(QColor)));
 
         m_uiImage.m_newStuff->setIcon(KIcon("get-hot-new-stuff"));
         connect(m_uiImage.m_newStuff, SIGNAL(clicked()), this, SLOT(getNewWallpaper()));
 
-        connect(m_uiImage.m_color, SIGNAL(changed(const QColor&)), this, SLOT(modified()));
+        connect(m_uiImage.m_color, SIGNAL(changed(QColor)), this, SLOT(modified()));
         connect(m_uiImage.m_resizeMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(modified()));
-        connect(m_uiImage.m_view, SIGNAL(clicked(const QModelIndex &)), this, SLOT(modified()));
+        connect(m_uiImage.m_view, SIGNAL(clicked(QModelIndex)), this, SLOT(modified()));
 
     } else {
         m_uiSlideshow.setupUi(m_configWidget);
@@ -227,8 +227,8 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         time = time.addSecs(m_delay);
         m_uiSlideshow.m_slideshowDelay->setTime(time);
         m_uiSlideshow.m_slideshowDelay->setMinimumTime(QTime(0, 0, 10));
-        connect(m_uiSlideshow.m_slideshowDelay, SIGNAL(timeChanged(const QTime&)),
-                this, SLOT(timeChanged(const QTime&)));
+        connect(m_uiSlideshow.m_slideshowDelay, SIGNAL(timeChanged(QTime)),
+                this, SLOT(timeChanged(QTime)));
 
         m_uiSlideshow.m_resizeMethod->addItem(i18n("Scaled & Cropped"), ScaledAndCroppedResize);
         m_uiSlideshow.m_resizeMethod->addItem(i18n("Scaled"), ScaledResize);
@@ -248,19 +248,19 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_uiSlideshow.m_color->setColor(m_color);
         //Color button is useless with some resize methods
         m_uiSlideshow.m_color->setEnabled(m_resizeMethod == MaxpectResize || m_resizeMethod == CenteredResize);
-        connect(m_uiSlideshow.m_color, SIGNAL(changed(const QColor&)), this, SLOT(colorChanged(const QColor&)));
+        connect(m_uiSlideshow.m_color, SIGNAL(changed(QColor)), this, SLOT(colorChanged(QColor)));
         connect(m_uiSlideshow.m_newStuff, SIGNAL(clicked()), this, SLOT(getNewWallpaper()));
 
         connect(m_uiSlideshow.m_systemCheckBox, SIGNAL(toggled(bool)),
                 this, SLOT(systemCheckBoxToggled(bool)));
         connect(m_uiSlideshow.m_downloadedCheckBox, SIGNAL(toggled(bool)),
                 this, SLOT(downloadedCheckBoxToggled(bool)));
-        connect(m_uiSlideshow.m_color, SIGNAL(changed(const QColor&)), this, SLOT(modified()));
+        connect(m_uiSlideshow.m_color, SIGNAL(changed(QColor)), this, SLOT(modified()));
         connect(m_uiSlideshow.m_resizeMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(modified()));
         connect(m_uiSlideshow.m_addDir, SIGNAL(clicked()), this, SLOT(modified()));
         connect(m_uiSlideshow.m_removeDir, SIGNAL(clicked()), this, SLOT(modified()));
         connect(m_uiSlideshow.m_slideshowDelay, SIGNAL(dateTimeChanged(QDateTime)), this, SLOT(modified()));
-	connect(m_uiSlideshow.m_dirlist, SIGNAL(currentRowChanged (int)), SLOT(updateDirs()));
+	connect(m_uiSlideshow.m_dirlist, SIGNAL(currentRowChanged(int)), SLOT(updateDirs()));
     }
 
     connect(this, SIGNAL(settingsChanged(bool)), parent, SLOT(settingsChanged(bool)));
@@ -290,7 +290,7 @@ void Image::downloadedCheckBoxToggled(bool checked)
 void Image::setConfigurationInterfaceModel()
 {
     m_uiImage.m_view->setModel(m_model);
-    connect(m_uiImage.m_view->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(pictureChanged(const QModelIndex &)));
+    connect(m_uiImage.m_view->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), this, SLOT(pictureChanged(QModelIndex)));
 
     QModelIndex index = m_model->indexOf(m_wallpaper);
     if (index.isValid()) {

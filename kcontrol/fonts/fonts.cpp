@@ -286,8 +286,8 @@ FontAASettings::FontAASettings(QWidget *parent)
   connect(useSubPixel, SIGNAL(toggled(bool)), SLOT(changed()));
   connect(excludeFrom, SIGNAL(valueChanged(double)), SLOT(changed()));
   connect(excludeTo, SIGNAL(valueChanged(double)), SLOT(changed()));
-  connect(subPixelType, SIGNAL(activated(const QString &)), SLOT(changed()));
-  connect(hintingStyle, SIGNAL(activated(const QString &)), SLOT(changed()));
+  connect(subPixelType, SIGNAL(activated(QString)), SLOT(changed()));
+  connect(hintingStyle, SIGNAL(activated(QString)), SLOT(changed()));
 }
 
 bool FontAASettings::load()
@@ -582,7 +582,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
       );
 
     fontUseList.append(i);
-    connect(i, SIGNAL(fontSelected(const QFont &)), SLOT(fontSelected()));
+    connect(i, SIGNAL(fontSelected(QFont)), SLOT(fontSelected()));
 
     QLabel * fontUse = new QLabel(i18nc("Font role", "%1: ", name), this);
     fontUse->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -645,7 +645,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
        " properly with real DPI value better fonts should be used or configuration"
        " of font hinting should be checked.</p>" );
    comboForceDpi->setWhatsThis(whatsthis);
-   connect( comboForceDpi, SIGNAL( activated( int )), SLOT( changed()));
+   connect( comboForceDpi, SIGNAL(activated(int)), SLOT(changed()));
    lay->addWidget( comboForceDpi, 1, 1 );
 
    layout->addStretch(1);

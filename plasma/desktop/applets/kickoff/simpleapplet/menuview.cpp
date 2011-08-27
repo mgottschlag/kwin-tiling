@@ -57,37 +57,45 @@ public:
     enum { ActionRole = Qt::UserRole + 52 };
 
     Private(MenuView *q) : q(q), column(0), launcher(new UrlItemLauncher(q)), formattype(MenuView::DescriptionName) {}
-    ~Private() { qDeleteAll(items); }
+    ~Private()
+    {
+        qDeleteAll(items);
+    }
 
-    QAction *createActionForIndex(QAbstractItemModel *model, const QModelIndex& index, QMenu *parent) {
+    QAction *createActionForIndex(QAbstractItemModel *model, const QModelIndex& index, QMenu *parent)
+    {
         Q_ASSERT(index.isValid());
         QAction *action = 0;
         if (model->hasChildren(index)) {
             KMenu *childMenu = new KMenu(parent);
             childMenu->installEventFilter(q);
             childMenu->setContextMenuPolicy(Qt::CustomContextMenu);
-            connect(childMenu, SIGNAL(customContextMenuRequested(const QPoint&)),
-                    q, SLOT(contextMenuRequested(const QPoint&)));
+            connect(childMenu, SIGNAL(customContextMenuRequested(QPoint)),
+                    q, SLOT(contextMenuRequested(QPoint)));
             action = childMenu->menuAction();
             buildBranch(childMenu, model, index);
         } else {
             action = q->createLeafAction(index, parent);
         }
+
         q->updateAction(model, action, index);
         return action;
     }
-    
-    QString trunctuateName(QString name, int maxSize){
-        if(name.length() <= maxSize)
+
+    QString trunctuateName(QString name, int maxSize)
+    {
+        if (name.length() <= maxSize) {
             return name;
-        
+        }
+
         maxSize -= 2; // remove the 3 placeholder points
         const int start = maxSize / 3; //use one third of the chars for the start of the name
         const int end = maxSize - start;
         return name.left(start) + ".." + name.right(end);
     }
 
-    void buildBranch(KMenu *menu, QAbstractItemModel *model, const QModelIndex& parent) {
+    void buildBranch(KMenu *menu, QAbstractItemModel *model, const QModelIndex& parent)
+    {
         if (model->canFetchMore(parent)) {
             model->fetchMore(parent);
         }
@@ -145,12 +153,21 @@ MenuView::MenuView(QWidget *parent, const QString &title, const QIcon &icon)
 
     installEventFilter(this);
 
-    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
-            this, SLOT(contextMenuRequested(const QPoint&)));
+    connect(this, SIGNAL(customContextMenuRequested(QPoint)),
+            this, SLOT(contextMenuRequested(QPoint)));
 }
 
 MenuView::~MenuView()
 {
+    // delete all the models before we are; we can't let ~QObject do this
+    // for us since by that point it is too late and we'll get all 
+    foreach (QObject *child, children()) {
+        if (QAbstractItemModel *model = qobject_cast<QAbstractItemModel *>(child)) {
+            model->disconnect(this);
+            delete model;
+        }
+    }
+
     delete d;
 }
 
@@ -337,10 +354,10 @@ void MenuView::addModel(QAbstractItemModel *model, MenuView::ModelOptions option
         d->buildBranch(this, model, root);
     }
 
-//connect(model, SIGNAL(rowsAboutToBeInserted(QModelIndex, int, int)), this, SLOT(rowsInserted(QModelIndex, int, int)));
-    connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(rowsInserted(QModelIndex, int, int)));
-    connect(model, SIGNAL(rowsAboutToBeRemoved(QModelIndex, int, int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex, int, int)));
-    connect(model, SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(dataChanged(QModelIndex, QModelIndex)));
+//connect(model, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int)));
+    connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int)));
+    connect(model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int)));
+    connect(model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
     connect(model, SIGNAL(modelReset()), this, SLOT(modelReset()));
 }
 

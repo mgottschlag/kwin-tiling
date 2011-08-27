@@ -192,7 +192,7 @@ bool KSysTrayCmd::startClient()
   client->setShellCommand( command );
   //connect( KWindowSystem::self(), SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)) );
   waitingForWindow = true;
-  connect( client, SIGNAL( finished(int,QProcess::ExitStatus) ), this, SLOT( clientExited() ) );
+  connect( client, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(clientExited()) );
 
   client->start();
   return client->waitForStarted( -1 );

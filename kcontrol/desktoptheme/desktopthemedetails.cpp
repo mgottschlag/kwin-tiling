@@ -75,7 +75,7 @@ DesktopThemeDetails::DesktopThemeDetails(QWidget* parent)
 
     reloadConfig();
 
-    connect(m_theme->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(themeSelectionChanged(const QItemSelection, const QItemSelection)));
+    connect(m_theme->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(themeSelectionChanged(QItemSelection,QItemSelection)));
 
     connect(m_enableAdvanced, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedVisible()));
     connect(m_removeThemeButton, SIGNAL(clicked()), this, SLOT(removeTheme()));

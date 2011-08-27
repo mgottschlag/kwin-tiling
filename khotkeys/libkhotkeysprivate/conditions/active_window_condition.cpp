@@ -85,8 +85,8 @@ const QString Active_window_condition::description() const
 
 void Active_window_condition::init()
     {
-    connect( windows_handler, SIGNAL( active_window_changed( WId )),
-        this, SLOT( active_window_changed( WId )));
+    connect( windows_handler, SIGNAL(active_window_changed(WId)),
+        this, SLOT(active_window_changed(WId)));
     }
 
 

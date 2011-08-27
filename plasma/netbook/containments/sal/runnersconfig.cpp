@@ -34,7 +34,7 @@ RunnersConfig::RunnersConfig(Plasma::RunnerManager *manager, QWidget *parent)
     : KPluginSelector(parent),
       m_manager(manager)
 {
-   connect(this, SIGNAL(configCommitted(const QByteArray&)), this, SLOT(updateRunner(const QByteArray&)));
+   connect(this, SIGNAL(configCommitted(QByteArray)), this, SLOT(updateRunner(QByteArray)));
 
     KService::List offers = KServiceTypeTrader::self()->query("Plasma/Runner");
     QList<KPluginInfo> runnerInfo = KPluginInfo::fromServices(offers);

@@ -375,9 +375,15 @@ void CubeEffect::paintScreen(int mask, QRegion region, ScreenPaintData& data)
 
         // wallpaper
         if (wallpaper) {
+            if (ShaderManager::instance()->isValid()) {
+                ShaderManager::instance()->pushShader(ShaderManager::SimpleShader);
+            }
             wallpaper->bind();
             wallpaper->render(region, rect);
             wallpaper->unbind();
+            if (ShaderManager::instance()->isValid()) {
+                ShaderManager::instance()->popShader();
+            }
         }
 
 #ifndef KWIN_HAVE_OPENGLES
@@ -396,10 +402,7 @@ void CubeEffect::paintScreen(int mask, QRegion region, ScreenPaintData& data)
             zTranslate *= (1.0 - timeLine.currentValue());
         // reflection
         if (reflection && mode != Sphere) {
-            // restrict painting the reflections to the current screen
-            PaintClipper::push(QRegion(rect));
             // we can use a huge scale factor (needed to calculate the rearground vertices)
-            // as we restrict with a PaintClipper painting on the current screen
             float scaleFactor = 1000000 * tan(60.0 * M_PI / 360.0f) / rect.height();
             m_reflectionMatrix.setToIdentity();
             m_reflectionMatrix.scale(1.0, -1.0, 1.0);
@@ -516,7 +519,6 @@ void CubeEffect::paintScreen(int mask, QRegion region, ScreenPaintData& data)
 #endif
             }
             glDisable(GL_BLEND);
-            PaintClipper::pop(QRegion(rect));
         }
         glEnable(GL_CULL_FACE);
         // caps
@@ -933,13 +935,23 @@ void CubeEffect::paintCubeCap()
                 float texY2 = 0.0;
                 float texY3 = 0.0;
                 if (texture) {
-                    texX1 = x1 / (rect.width()) + 0.5;
-                    texY1 = 0.5 - z1 / zTexture * 0.5;
-                    texX2 = x2 / (rect.width()) + 0.5;
-                    texY2 = 0.5 - z2 / zTexture * 0.5;
-                    texX3 = x3 / (rect.width()) + 0.5;
-                    texY3 = 0.5 - z3 / zTexture * 0.5;
-                    texCoords << texX1 << texY1;
+                    if (capTexture->isYInverted()) {
+                        texX1 = x1 / (rect.width()) + 0.5;
+                        texY1 = 0.5 + z1 / zTexture * 0.5;
+                        texX2 = x2 / (rect.width()) + 0.5;
+                        texY2 = 0.5 + z2 / zTexture * 0.5;
+                        texX3 = x3 / (rect.width()) + 0.5;
+                        texY3 = 0.5 + z3 / zTexture * 0.5;
+                        texCoords << texX1 << texY1;
+                    } else {
+                        texX1 = x1 / (rect.width()) + 0.5;
+                        texY1 = 0.5 - z1 / zTexture * 0.5;
+                        texX2 = x2 / (rect.width()) + 0.5;
+                        texY2 = 0.5 - z2 / zTexture * 0.5;
+                        texX3 = x3 / (rect.width()) + 0.5;
+                        texY3 = 0.5 - z3 / zTexture * 0.5;
+                        texCoords << texX1 << texY1;
+                    }
                 }
                 verts << x1 << 0.0 << z1;
                 if (texture) {
@@ -984,12 +996,21 @@ void CubeEffect::paintCylinderCap()
             const float z3 = segment * (i - 1) * cos(azimuthAngle2);
             const float z4 = segment * i * cos(azimuthAngle2);
             if (texture) {
-                texCoords << (radius + x1) / (radius * 2.0f) << 1.0f - (z1 + radius) / (radius * 2.0f);
-                texCoords << (radius + x2) / (radius * 2.0f) << 1.0f - (z2 + radius) / (radius * 2.0f);
-                texCoords << (radius + x3) / (radius * 2.0f) << 1.0f - (z3 + radius) / (radius * 2.0f);
-                texCoords << (radius + x4) / (radius * 2.0f) << 1.0f - (z4 + radius) / (radius * 2.0f);
-                texCoords << (radius + x3) / (radius * 2.0f) << 1.0f - (z3 + radius) / (radius * 2.0f);
-                texCoords << (radius + x2) / (radius * 2.0f) << 1.0f - (z2 + radius) / (radius * 2.0f);
+                if (capTexture->isYInverted()) {
+                    texCoords << (radius + x1) / (radius * 2.0f) << (z1 + radius) / (radius * 2.0f);
+                    texCoords << (radius + x2) / (radius * 2.0f) << (z2 + radius) / (radius * 2.0f);
+                    texCoords << (radius + x3) / (radius * 2.0f) << (z3 + radius) / (radius * 2.0f);
+                    texCoords << (radius + x4) / (radius * 2.0f) << (z4 + radius) / (radius * 2.0f);
+                    texCoords << (radius + x3) / (radius * 2.0f) << (z3 + radius) / (radius * 2.0f);
+                    texCoords << (radius + x2) / (radius * 2.0f) << (z2 + radius) / (radius * 2.0f);
+                } else {
+                    texCoords << (radius + x1) / (radius * 2.0f) << 1.0f - (z1 + radius) / (radius * 2.0f);
+                    texCoords << (radius + x2) / (radius * 2.0f) << 1.0f - (z2 + radius) / (radius * 2.0f);
+                    texCoords << (radius + x3) / (radius * 2.0f) << 1.0f - (z3 + radius) / (radius * 2.0f);
+                    texCoords << (radius + x4) / (radius * 2.0f) << 1.0f - (z4 + radius) / (radius * 2.0f);
+                    texCoords << (radius + x3) / (radius * 2.0f) << 1.0f - (z3 + radius) / (radius * 2.0f);
+                    texCoords << (radius + x2) / (radius * 2.0f) << 1.0f - (z2 + radius) / (radius * 2.0f);
+                }
             }
             verts << x1 << 0.0 << z1;
             verts << x2 << 0.0 << z2;
@@ -1032,12 +1053,21 @@ void CubeEffect::paintSphereCap()
             const float x4 = radius * sin(topAngle) * sin((90.0 + (j + 1) * 10.0) * M_PI / 180.0);
             const float z4 = radius * sin(topAngle) * cos((90.0 + (j + 1) * 10.0) * M_PI / 180.0);
             if (texture) {
-                texCoords << x4 / (rect.width()) + 0.5 << 0.5 - z4 / zTexture * 0.5;
-                texCoords << x1 / (rect.width()) + 0.5 << 0.5 - z1 / zTexture * 0.5;
-                texCoords << x2 / (rect.width()) + 0.5 << 0.5 - z2 / zTexture * 0.5;
-                texCoords << x2 / (rect.width()) + 0.5 << 0.5 - z2 / zTexture * 0.5;
-                texCoords << x3 / (rect.width()) + 0.5 << 0.5 - z3 / zTexture * 0.5;
-                texCoords << x4 / (rect.width()) + 0.5 << 0.5 - z4 / zTexture * 0.5;
+                if (capTexture->isYInverted()) {
+                    texCoords << x4 / (rect.width()) + 0.5 << 0.5 + z4 / zTexture * 0.5;
+                    texCoords << x1 / (rect.width()) + 0.5 << 0.5 + z1 / zTexture * 0.5;
+                    texCoords << x2 / (rect.width()) + 0.5 << 0.5 + z2 / zTexture * 0.5;
+                    texCoords << x2 / (rect.width()) + 0.5 << 0.5 + z2 / zTexture * 0.5;
+                    texCoords << x3 / (rect.width()) + 0.5 << 0.5 + z3 / zTexture * 0.5;
+                    texCoords << x4 / (rect.width()) + 0.5 << 0.5 + z4 / zTexture * 0.5;
+                } else {
+                    texCoords << x4 / (rect.width()) + 0.5 << 0.5 - z4 / zTexture * 0.5;
+                    texCoords << x1 / (rect.width()) + 0.5 << 0.5 - z1 / zTexture * 0.5;
+                    texCoords << x2 / (rect.width()) + 0.5 << 0.5 - z2 / zTexture * 0.5;
+                    texCoords << x2 / (rect.width()) + 0.5 << 0.5 - z2 / zTexture * 0.5;
+                    texCoords << x3 / (rect.width()) + 0.5 << 0.5 - z3 / zTexture * 0.5;
+                    texCoords << x4 / (rect.width()) + 0.5 << 0.5 - z4 / zTexture * 0.5;
+                }
             }
             verts << x4 << yTop    << z4;
             verts << x1 << yTop    << z1;

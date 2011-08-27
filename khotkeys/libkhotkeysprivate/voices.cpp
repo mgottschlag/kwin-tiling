@@ -87,7 +87,7 @@ void Voice::record_start()
 	if(!_recorder)
 	{
 		_recorder= SoundRecorder::create(this);
-		connect(_recorder, SIGNAL(recorded(const Sound& )), this, SLOT(slot_sound_recorded(const Sound& )));
+		connect(_recorder, SIGNAL(recorded(Sound)), this, SLOT(slot_sound_recorded(Sound)));
 	}
 
 	_recorder->start();
@@ -197,7 +197,7 @@ void Voice::set_shortcut( const KShortcut &shortcut)
     {
         _kga = new KAction(this);
         _kga->setObjectName("khotkeys_voice");
-        connect(_kga,SIGNAL(triggered ( bool  )) , this , SLOT(slot_key_pressed()));
+        connect(_kga,SIGNAL(triggered(bool)) , this , SLOT(slot_key_pressed()));
     }
     _kga->setGlobalShortcut(shortcut);
 }

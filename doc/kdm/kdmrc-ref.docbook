@@ -573,6 +573,10 @@ shutdown dialog.
 <listitem><para>Grub boot manager</para></listitem>
 </varlistentry>
 <varlistentry>
+<term><parameter>Grub2</parameter></term>
+<listitem><para>Grub2 boot manager</para></listitem>
+</varlistentry>
+<varlistentry>
 <term><parameter>Lilo</parameter></term>
 <listitem><para>Lilo boot manager (Linux on i386 &amp; x86-64 only)</para></listitem>
 </varlistentry>
@@ -1455,9 +1459,9 @@ Whether the fonts used in the greeter should be antialiased.
 <term id="option-greetfont"><option>GreetFont</option></term>
 <listitem>
 <para>
-The font for the greeter headline.
+The font for the greeter headline. The value is encoded.
 </para>
-<para>The default is <quote>Serif,20,bold</quote>.</para>
+<para>The default is <quote>Serif 20pt bold</quote>.</para>
 </listitem>
 </varlistentry>
 
@@ -1465,9 +1469,9 @@ The font for the greeter headline.
 <term id="option-stdfont"><option>StdFont</option></term>
 <listitem>
 <para>
-The normal font used in the greeter.
+The normal font used in the greeter. The value is encoded.
 </para>
-<para>The default is <quote>Sans Serif,10</quote>.</para>
+<para>The default is <quote>Sans Serif 10pt</quote>.</para>
 </listitem>
 </varlistentry>
 
@@ -1475,9 +1479,9 @@ The normal font used in the greeter.
 <term id="option-failfont"><option>FailFont</option></term>
 <listitem>
 <para>
-The font used for the <quote>Login Failed</quote> message.
+The font used for the <quote>Login Failed</quote> message. The value is encoded.
 </para>
-<para>The default is <quote>Sans Serif,10,bold</quote>.</para>
+<para>The default is <quote>Sans Serif 10pt bold</quote>.</para>
 </listitem>
 </varlistentry>
 
@@ -1996,6 +2000,9 @@ probably).
 <listitem>
 <para>
 Whether the greeter should be themed.
+Note that the themed greeter is challenged accessibility-wise, and themes
+may lack support for features like a user list or alternative
+authentication methods.
 </para>
 <para>The default is <quote>false</quote>.</para>
 </listitem>

@@ -75,8 +75,8 @@ const QString Existing_window_condition::description() const
 
 void Existing_window_condition::init()
     {
-    connect( windows_handler, SIGNAL( window_added( WId )), this, SLOT( window_added( WId )));
-    connect( windows_handler, SIGNAL( window_removed( WId )), this, SLOT( window_removed( WId )));
+    connect( windows_handler, SIGNAL(window_added(WId)), this, SLOT(window_added(WId)));
+    connect( windows_handler, SIGNAL(window_removed(WId)), this, SLOT(window_removed(WId)));
     }
 
 

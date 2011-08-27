@@ -44,7 +44,7 @@
 #include <QtGui/QStyle>
 #include <QtGui/QCloseEvent>
 #include <QtCore/QTimer>
-#include <QtCore/QEventLoop>
+#include <QtDBus/QDBusServiceWatcher>
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 #include <fontconfig/fontconfig.h>
@@ -66,6 +66,17 @@ FontInstInterface * CJobRunner::dbus()
     return theInterface;
 }
 
+QString CJobRunner::folderName(bool sys)
+{
+    if(!theInterface)
+        return QString();
+
+    QDBusPendingReply<QString> reply=theInterface->folderName(sys);
+
+    reply.waitForFinished();
+    return reply.isError() ? QString() : reply.argumentAt<0>();
+}
+            
 void CJobRunner::startDbusService()
 {
     if (!QDBusConnection::sessionBus().interface()->isServiceRegistered(OrgKdeFontinstInterface::staticInterfaceName()))
@@ -120,8 +131,7 @@ CJobRunner::CJobRunner(QWidget *parent, int xid)
              itsAutoSkip(false),
              itsCancelClicked(false),
              itsModified(false),
-             itsTempDir(0L),
-             itsLoop(0L)
+             itsTempDir(0L)
 {
     setModal(true);
 
@@ -205,9 +215,12 @@ CJobRunner::CJobRunner(QWidget *parent, int xid)
         itsStack->insertWidget(PAGE_COMPLETE, page);
     }
     
-    connect(dbus()->connection().interface(), SIGNAL(serviceOwnerChanged(QString, QString, QString)),
-           SLOT(dbusServiceOwnerChanged(QString, QString, QString)));
-    connect(dbus(), SIGNAL(status(int, int)), SLOT(dbusStatus(int, int)));
+    QDBusServiceWatcher *watcher = new QDBusServiceWatcher(QLatin1String(OrgKdeFontinstInterface::staticInterfaceName()),
+                                                           QDBusConnection::sessionBus(),
+                                                           QDBusServiceWatcher::WatchForOwnerChange, this);
+
+    connect(watcher, SIGNAL(serviceOwnerChanged(QString,QString,QString)), SLOT(dbusServiceOwnerChanged(QString,QString,QString)));
+    connect(dbus(), SIGNAL(status(int,int)), SLOT(dbusStatus(int,int)));
     setMinimumSize(420, 160);
 }
 
@@ -267,8 +280,30 @@ void CJobRunner::getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAn
     }
 }
 
+static void addEnableActions(CJobRunner::ItemList &urls)
+{
+    CJobRunner::ItemList                modified;
+    CJobRunner::ItemList::ConstIterator it(urls.constBegin()),
+                                        end(urls.constEnd());
+                            
+    for(; it!=end; ++it)
+    {
+        if((*it).isDisabled)
+        {
+            CJobRunner::Item item(*it);
+            item.fileName=QLatin1String("--");
+            modified.append(item);
+        }
+        modified.append(*it);
+    }
+    
+    urls=modified;
+}
+
 int CJobRunner::exec(ECommand cmd, const ItemList &urls, bool destIsSystem)
 {
+    itsAutoSkip=itsCancelClicked=itsModified=false;
+
     switch(cmd)
     {
         case CMD_INSTALL:
@@ -285,6 +320,7 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, bool destIsSystem)
             break;
         case CMD_UPDATE:
             setCaption(i18n("Updating"));
+            itsModified=true;
             break;
         case CMD_REMOVE_FILE:
             setCaption(i18n("Removing"));
@@ -298,6 +334,8 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, bool destIsSystem)
     itsUrls=urls;
     if(CMD_INSTALL==cmd)
         qSort(itsUrls.begin(), itsUrls.end());  // Sort list of fonts so that we have type1 fonts followed by their metrics...
+    else if(CMD_MOVE==cmd)
+        addEnableActions(itsUrls);
     itsIt=itsUrls.constBegin();
     itsEnd=itsUrls.constEnd();
     itsPrev=itsEnd;
@@ -307,14 +345,16 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, bool destIsSystem)
     itsCmd=cmd;
     itsCurrentFile=QString();
     itsStatusLabel->setText(QString());
-    itsAutoSkip=itsCancelClicked=itsModified=false;
     setPage(PAGE_PROGRESS);
     QTimer::singleShot(0, this, SLOT(doNext()));
     QTimer::singleShot(constInterfaceCheck, this, SLOT(checkInterface()));
     itsActionLabel->startAnimation();
     int rv=KDialog::exec();
-    delete itsTempDir;
-    itsTempDir=0L;
+    if(itsTempDir)
+    {
+        delete itsTempDir;
+        itsTempDir=0L;
+    }
     return rv;
 }
 
@@ -324,8 +364,9 @@ void CJobRunner::doNext()
     {
         if(itsModified)
         {
+            // Force reconfig if command was already set to update...
+            dbus()->reconfigure(getpid(), CMD_UPDATE==itsCmd);
             itsCmd=CMD_UPDATE;
-            dbus()->reconfigure(getpid());
             itsStatusLabel->setText(i18n("Updating font configuration. Please wait..."));
             itsProgress->setValue(itsProgress->maximum());
             emit configuring();
@@ -374,7 +415,19 @@ void CJobRunner::doNext()
                 break;
             case CMD_MOVE:
                 decode(*itsIt, font, system);
-                dbus()->move(font.family, font.styleInfo, itsDestIsSystem, getpid(), false);
+                // To 'Move' a disabled font, we first need to enable it. To accomplish this, JobRunner creates a 'fake' entry
+                // with the filename "--"
+                if((*itsIt).fileName==QLatin1String("--"))
+                {
+                    setCaption(i18n("Enabling"));
+                    dbus()->enable(font.family, font.styleInfo, system, getpid(), false);
+                }
+                else
+                {
+                    if(itsPrev!=itsEnd && (*itsPrev).fileName==QLatin1String("--"))
+                        setCaption(i18n("Moving"));
+                    dbus()->move(font.family, font.styleInfo, itsDestIsSystem, getpid(), false);
+                }
                 break;
             case CMD_REMOVE_FILE:
                 decode(*itsIt, font, system);
@@ -403,7 +456,7 @@ void CJobRunner::checkInterface()
 
 void CJobRunner::dbusServiceOwnerChanged(const QString &name, const QString &from, const QString &to)
 {
-    if(to.isEmpty() && !from.isEmpty() && name==OrgKdeFontinstInterface::staticInterfaceName() && itsIt!=itsEnd)
+    if(to.isEmpty() && !from.isEmpty() && name==QLatin1String(OrgKdeFontinstInterface::staticInterfaceName()) && itsIt!=itsEnd)
     {
         setPage(PAGE_ERROR, i18n("Backend died, but has been restarted. Please try again."));
         itsActionLabel->stopAnimation();
@@ -422,15 +475,20 @@ void CJobRunner::dbusStatus(int pid, int status)
         return;
     }
 
+    itsLastDBusStatus=status;
+
     if(itsCancelClicked)
     {
         itsActionLabel->stopAnimation();
         setPage(PAGE_CANCEL);
+        return;
+        /*
         if(RESP_CANCEL==itsResponse)
             itsIt=itsEnd;
         itsCancelClicked=false;
         setPage(PAGE_PROGRESS);
         itsActionLabel->startAnimation();
+        */
     }
 
     // itsIt will equal itsEnd if user decided to cancel the current op
@@ -476,46 +534,42 @@ void CJobRunner::dbusStatus(int pid, int status)
                 else
                 {
                     setPage(PAGE_SKIP, errorString(status));
-                    switch(itsResponse)
-                    {
-                        case RESP_CONTINUE:
-                            cont=true;
-                            break;
-                        case RESP_AUTO:
-                            cont=itsAutoSkip=true;
-                            break;
-                        case RESP_CANCEL:
-                            break;
-                    }
-                    setPage(PAGE_PROGRESS);
+                    return;
                 }
             }
         }
 
-        itsActionLabel->startAnimation();
-        if(cont)
-        {
-            if(CMD_INSTALL==itsCmd && Item::TYPE1_FONT==(*itsIt).type) // Did we error on a pfa/pfb? if so, exclude the afm/pfm...
-            {
-                ++itsIt;
+        contineuToNext(cont);
+    }
+}
 
-                // Skip afm/pfm
-                if(itsIt!=itsEnd && (*itsIt).fileName==currentName && (Item::TYPE1_AFM==(*itsIt).type || Item::TYPE1_PFM==(*itsIt).type))
-                    ++itsIt;
-                // Skip pfm/afm
-                if(itsIt!=itsEnd && (*itsIt).fileName==currentName && (Item::TYPE1_AFM==(*itsIt).type || Item::TYPE1_PFM==(*itsIt).type))
-                    ++itsIt;
-            }
-            else
+void CJobRunner::contineuToNext(bool cont)
+{
+    itsActionLabel->startAnimation();
+    if(cont)
+    {
+        if(CMD_INSTALL==itsCmd && Item::TYPE1_FONT==(*itsIt).type) // Did we error on a pfa/pfb? if so, exclude the afm/pfm...
+        {
+            QString currentName((*itsIt).fileName);
+
+            ++itsIt;
+
+            // Skip afm/pfm
+            if(itsIt!=itsEnd && (*itsIt).fileName==currentName && (Item::TYPE1_AFM==(*itsIt).type || Item::TYPE1_PFM==(*itsIt).type))
+                ++itsIt;
+            // Skip pfm/afm
+            if(itsIt!=itsEnd && (*itsIt).fileName==currentName && (Item::TYPE1_AFM==(*itsIt).type || Item::TYPE1_PFM==(*itsIt).type))
                 ++itsIt;
         }
         else
-        {
-            itsUrls.empty();
-            itsIt=itsEnd=itsUrls.constEnd();
-        }
-        doNext();
+            ++itsIt;
     }
+    else
+    {
+        itsUrls.empty();
+        itsIt=itsEnd=itsUrls.constEnd();
+    }
+    doNext();
 }
 
 void CJobRunner::slotButtonClicked(int button)
@@ -527,30 +581,29 @@ void CJobRunner::slotButtonClicked(int button)
                 itsCancelClicked=true;
             break;
         case PAGE_SKIP:
+            setPage(PAGE_PROGRESS);
             switch(button)
             {
                 case User1:
-                    itsResponse=RESP_CONTINUE;
+                    contineuToNext(true);
                     break;
                 case User2:
-                    itsResponse=RESP_AUTO;
+                    itsAutoSkip=true;
+                    contineuToNext(true);
                     break;
                 default:
-                    itsResponse=RESP_CANCEL;
+                    contineuToNext(false);
+                    break;
             }
-            itsLoop->quit();
             break;
         case PAGE_CANCEL:
-            switch(button)
-            {
-                case Yes:
-                    itsResponse=RESP_CANCEL;
-                    break;
-                case No:
-                default:
-                    itsResponse=RESP_CONTINUE;
-            }
-            itsLoop->quit();
+            if(Yes==button)
+                itsIt=itsEnd;
+            itsCancelClicked=false;
+            setPage(PAGE_PROGRESS);
+            itsActionLabel->startAnimation();
+            // Now continue...
+            dbusStatus(getpid(), itsLastDBusStatus);
             break;
         case PAGE_COMPLETE:
             if(itsDontShowFinishedMsg)
@@ -587,9 +640,6 @@ void CJobRunner::setPage(int page, const QString &msg)
             setButtons(Cancel|User1|User2);
             setButtonText(User1, i18n("Skip"));
             setButtonText(User2, i18n("AutoSkip"));
-            if(!itsLoop)
-                itsLoop=new QEventLoop(this);
-            itsLoop->exec();
             break;
         case PAGE_ERROR:
             itsErrorLabel->setText(i18n("<h3>Error</h3>")+QLatin1String("<p>")+msg+QLatin1String("</p>"));
@@ -597,9 +647,6 @@ void CJobRunner::setPage(int page, const QString &msg)
             break;
         case PAGE_CANCEL:
             setButtons(Yes|No);
-            if(!itsLoop)
-                itsLoop=new QEventLoop(this);
-            itsLoop->exec();
             break;
         case PAGE_COMPLETE:
             if(!itsDontShowFinishedMsg || itsDontShowFinishedMsg->isChecked())
@@ -668,7 +715,11 @@ QString CJobRunner::errorString(int value) const
         case FontInst::STATUS_NO_SYS_CONNECTION:
             return i18n("Failed to start the system daemon.<br><i>%1</i>", urlStr);
         case KIO::ERR_FILE_ALREADY_EXIST:
-            return i18n("<i>%1</i> already exists.", urlStr);
+        {
+            QString name(Misc::modifyName(Misc::getFile((*itsIt).fileName))),
+                    destFolder(Misc::getDestFolder(folderName(itsDestIsSystem), name));
+            return i18n("<i>%1</i> already exists.", destFolder+name);
+        }
         case KIO::ERR_DOES_NOT_EXIST:
             return i18n("<i>%1</i> does not exist.", urlStr);
         case KIO::ERR_WRITE_ACCESS_DENIED:
@@ -682,8 +733,8 @@ QString CJobRunner::errorString(int value) const
     }
 }
 
-CJobRunner::Item::Item(const KUrl &u, const QString &n)
-                : KUrl(u), name(n), fileName(Misc::getFile(u.path()))
+CJobRunner::Item::Item(const KUrl &u, const QString &n, bool dis)
+                : KUrl(u), name(n), fileName(Misc::getFile(u.path())), isDisabled(dis)
 {
     type=Misc::checkExt(fileName, "pfa") || Misc::checkExt(fileName, "pfb")
             ? TYPE1_FONT

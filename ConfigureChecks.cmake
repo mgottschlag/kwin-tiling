@@ -60,6 +60,8 @@ check_include_files("sys/stat.h;sys/statvfs.h" HAVE_SYS_STATVFS_H) # statvfs for
 check_include_files(sys/param.h HAVE_SYS_PARAM_H)
 check_include_files("sys/param.h;sys/mount.h" HAVE_SYS_MOUNT_H)
 check_include_files("sys/types.h;sys/statfs.h" HAVE_SYS_STATFS_H)
+check_include_files(unistd.h HAVE_UNISTD_H)
+check_include_files(malloc.h HAVE_MALLOC_H)
 check_function_exists(statfs HAVE_STATFS)
 macro_bool_to_01(FONTCONFIG_FOUND HAVE_FONTCONFIG) # kcontrol/{fonts,kfontinst}
 macro_bool_to_01(FREETYPE_FOUND HAVE_FREETYPE) # kcontrol/fonts

@@ -32,7 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "rules.h"
 #include "group.h"
 
+#ifdef KWIN_BUILD_SCRIPTING
 #include "scripting/workspaceproxy.h"
+#endif
 
 namespace KWin
 {
@@ -46,6 +48,7 @@ bool Client::manage(Window w, bool isMapped)
 {
     StackingUpdatesBlocker stacking_blocker(workspace());
 
+#ifdef KWIN_BUILD_SCRIPTING
     //Scripting call. Does not use a signal/slot mechanism
     //as ensuring connections was a bit difficult between
     //so many clients and the workspace
@@ -53,6 +56,7 @@ bool Client::manage(Window w, bool isMapped)
     if (ws_wrap != 0) {
         ws_wrap->sl_clientManaging(this);
     }
+#endif
 
     grabXServer();
 
@@ -485,9 +489,6 @@ bool Client::manage(Window w, bool isMapped)
     user_time = readUserTimeMapTimestamp(asn_valid ? &asn_id : NULL, asn_valid ? &asn_data : NULL, session);
     group()->updateUserTime(user_time);   // And do what Client::updateUserTime() does
 
-    if (isTopMenu())  // They're shown in Workspace::addClient() if their mainwindow
-        hideClient(true);   // Is the active one
-
     // This should avoid flicker, because real restacking is done
     // only after manage() finishes because of blocking, but the window is shown sooner
     XLowerWindow(display(), frameId());
@@ -500,6 +501,8 @@ bool Client::manage(Window w, bool isMapped)
         // Sending ConfigureNotify is done when setting mapping state below,
         // Getting the first sync response means window is ready for compositing
         sendSyncRequest();
+    else
+        ready_for_painting = true; // set to true in case compositing is turned on later. bug #160393
 
     if (isShown(true) && !doNotShow) {
         if (isDialog())

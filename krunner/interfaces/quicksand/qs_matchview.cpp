@@ -158,8 +158,8 @@ QsMatchView::QsMatchView(QWidget *parent)
     layout->addWidget(d->m_stack);
 
     connect(d->m_compBox, SIGNAL(currentRowChanged(int)), this, SLOT(scrollToItem(int)));
-    connect(d->m_compBox, SIGNAL(activated(const QString&)), this, SLOT(showSelected()));
-    connect(d->m_lineEdit, SIGNAL(textChanged(const QString&)), this, SIGNAL(textChanged(const QString&)));
+    connect(d->m_compBox, SIGNAL(activated(QString)), this, SLOT(showSelected()));
+    connect(d->m_lineEdit, SIGNAL(textChanged(QString)), this, SIGNAL(textChanged(QString)));
     connect(d->m_arrowButton, SIGNAL(pressed()), this, SLOT(toggleView()));
 
     reset();

@@ -98,6 +98,12 @@ namespace Misc
     extern KDE_EXPORT QString contractHome(QString path);
     extern KDE_EXPORT QString expandHome(QString path);
     extern KDE_EXPORT QMap<QString, QString> getFontFileMap(const QSet<QString> &files);
+    extern KDE_EXPORT QString modifyName(const QString &fname);
+    inline QString getDestFolder(const QString &folder, const QString &file)
+    {
+        return folder+file[0].toLower()+'/';
+    }
+    extern KDE_EXPORT QString app(const QString &name, const char *path=0L);
 }
 
 }

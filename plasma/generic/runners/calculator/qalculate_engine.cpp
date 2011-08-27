@@ -62,7 +62,7 @@ void QalculateEngine::updateExchangeRates()
     KUrl dest = KUrl(CALCULATOR->getExchangeRatesFileName().c_str());
 
     KIO::Job* getJob = KIO::file_copy(source, dest, -1, KIO::Overwrite | KIO::HideProgressInfo);
-    connect( getJob, SIGNAL( result( KJob * ) ), this, SLOT( updateResult( KJob * ) ) );
+    connect( getJob, SIGNAL(result(KJob*)), this, SLOT(updateResult(KJob*)) );
 }
 
 void QalculateEngine::updateResult(KJob* job)

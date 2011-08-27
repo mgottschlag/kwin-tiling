@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>544</width>
+    <width>552</width>
     <height>523</height>
    </rect>
   </property>
@@ -227,7 +227,7 @@
             <item>
              <widget class="QGroupBox" name="groupBox">
               <property name="title">
-               <string>Simple effect setup</string>
+               <string comment="@title:group a few general options to set up desktop effects">Simple effect setup</string>
               </property>
               <property name="flat">
                <bool>true</bool>
@@ -553,13 +553,6 @@
            </item>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QCheckBox" name="disableChecks">
-           <property name="text">
-            <string>Disable functionality checks</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </item>
        <item row="1" column="3">
@@ -778,17 +771,7 @@ p, li { white-space: pre-wrap; }
           <bool>true</bool>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0" colspan="2">
-           <widget class="QCheckBox" name="glDirect">
-            <property name="text">
-             <string>Enable direct rendering</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" colspan="2">
+          <item row="1" column="0" colspan="2">
            <widget class="QCheckBox" name="glVSync">
             <property name="text">
              <string>Use VSync</string>
@@ -798,7 +781,7 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="0" column="0">
            <widget class="QCheckBox" name="glShaders">
             <property name="toolTip">
              <string>If enabled all rendering will be performed with Shaders written in the OpenGL Shading Language.

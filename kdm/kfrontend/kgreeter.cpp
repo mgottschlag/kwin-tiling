@@ -186,9 +186,9 @@ KGreeter::KGreeter(bool framed)
 
     if (_userList) {
         userView = new UserListView(this);
-        connect(userView, SIGNAL(itemClicked(QListWidgetItem *)),
-                SLOT(slotUserClicked(QListWidgetItem *)));
-        connect(userView, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
+        connect(userView, SIGNAL(itemClicked(QListWidgetItem*)),
+                SLOT(slotUserClicked(QListWidgetItem*)));
+        connect(userView, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
                 SLOT(accept()));
     }
     if (_userCompletion)
@@ -197,7 +197,7 @@ KGreeter::KGreeter(bool framed)
         insertUsers();
 
     sessMenu = new QMenu(this);
-    connect(sessMenu, SIGNAL(triggered(QAction *)),
+    connect(sessMenu, SIGNAL(triggered(QAction*)),
             SLOT(slotSessionSelected()));
 
     sessGroup = new QActionGroup(this);
@@ -902,8 +902,8 @@ KThemedGreeter::KThemedGreeter(KdmThemer *_themer)
         new QShortcut(QKeySequence(QLatin1String("Ctrl+Alt+D")),
                       this, SLOT(slotDebugToggled()));
 
-    connect(themer, SIGNAL(activated(const QString &)),
-            SLOT(slotThemeActivated(const QString &)));
+    connect(themer, SIGNAL(activated(QString)),
+            SLOT(slotThemeActivated(QString)));
 
     KdmItem *console_node = themer->findNode("xconsole"); // kdm ext
     KdmItem *console_rect = themer->findNode("xconsole-rect"); // kdm ext

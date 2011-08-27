@@ -59,8 +59,8 @@ RssEngine::RssEngine(QObject* parent, const QVariantList& args)
     m_signalMapper = new QSignalMapper(this);
     connect(m_favIconsModule, SIGNAL(iconChanged(bool,QString,QString)),
             this, SLOT(slotIconChanged(bool,QString,QString)));
-    connect(m_signalMapper, SIGNAL(mapped(const QString &)),
-            this, SLOT(timeout(const QString &)));
+    connect(m_signalMapper, SIGNAL(mapped(QString)),
+            this, SLOT(timeout(QString)));
     connect(Solid::Networking::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
             SLOT(networkStatusChanged(Solid::Networking::Status)));
 

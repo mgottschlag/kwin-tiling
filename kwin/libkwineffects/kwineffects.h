@@ -166,7 +166,7 @@ X-KDE-Library=kwin4_effect_cooleffect
 
 #define KWIN_EFFECT_API_MAKE_VERSION( major, minor ) (( major ) << 8 | ( minor ))
 #define KWIN_EFFECT_API_VERSION_MAJOR 0
-#define KWIN_EFFECT_API_VERSION_MINOR 180
+#define KWIN_EFFECT_API_VERSION_MINOR 181
 #define KWIN_EFFECT_API_VERSION KWIN_EFFECT_API_MAKE_VERSION( \
         KWIN_EFFECT_API_VERSION_MAJOR, KWIN_EFFECT_API_VERSION_MINOR )
 
@@ -580,6 +580,7 @@ public:
     virtual void paintEffectFrame(EffectFrame* frame, QRegion region, double opacity, double frameOpacity) = 0;
     virtual void drawWindow(EffectWindow* w, int mask, QRegion region, WindowPaintData& data) = 0;
     virtual void buildQuads(EffectWindow* w, WindowQuadList& quadList) = 0;
+    virtual QVariant kwinOption(KWinOption kwopt) = 0;
     // Functions for handling input - e.g. when an Expose-like effect is shown, an input window
     // covering the whole screen is created and all mouse events will be intercepted by it.
     // The effect's windowInputMouseEvent() will get called with such events.
@@ -739,7 +740,6 @@ public:
 
     CompositingType compositingType() const;
     virtual unsigned long xrenderBufferPicture() = 0;
-    bool saturationSupported() const;
     virtual void reconfigure() = 0;
 
     /**
@@ -1136,11 +1136,6 @@ public:
      */
     virtual bool isToolbar() const = 0;
     /**
-     * Returns whether the window is standalone menubar (AKA macmenu).
-     * This window type is a KDE extension.
-     */
-    virtual bool isTopMenu() const = 0;
-    /**
      * Returns whether the window is a torn-off menu.
      * See _NET_WM_WINDOW_TYPE_MENU at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
      */
@@ -1332,7 +1327,7 @@ public:
     WindowQuadList select(WindowQuadType type) const;
     WindowQuadList filterOut(WindowQuadType type) const;
     bool smoothNeeded() const;
-    void makeArrays(float** vertices, float** texcoords) const;
+    void makeArrays(float** vertices, float** texcoords, const QSizeF &size, bool yInverted) const;
     bool isTransformed() const;
 };
 
@@ -1534,6 +1529,7 @@ public:
         return m_target;
     }
     inline void setTarget(const T target) {
+        m_start = m_value;
         m_target = target;
     }
     inline T velocity() const {
@@ -1554,6 +1550,9 @@ public:
     }
     inline void setSmoothness(const double smoothness) {
         m_smoothness = smoothness;
+    }
+    inline T startValue() {
+        return m_start;
     }
 
     /**
@@ -1576,7 +1575,7 @@ public:
 
 private:
     T m_value;
-
+    T m_start;
     T m_target;
     T m_velocity;
     double m_strength;
@@ -1752,6 +1751,13 @@ public:
      */
     inline bool areWindowsMoving() {
         return !m_movingWindowsSet.isEmpty();
+    }
+    /**
+     * Returns whether a window has reached its targets yet
+     * or not.
+     */
+    inline bool isWindowMoving(EffectWindow *w) {
+        return m_movingWindowsSet.contains(w);
     }
 
 private:
@@ -2067,6 +2073,7 @@ double WindowQuad::originalBottom() const
 template <typename T>
 Motion<T>::Motion(T initial, double strength, double smoothness)
     :   m_value(initial)
+    ,   m_start(initial)
     ,   m_target(initial)
     ,   m_velocity()
     ,   m_strength(strength)
@@ -2077,6 +2084,7 @@ Motion<T>::Motion(T initial, double strength, double smoothness)
 template <typename T>
 Motion<T>::Motion(const Motion &other)
     :   m_value(other.value())
+    ,   m_start(other.target())
     ,   m_target(other.target())
     ,   m_velocity(other.velocity())
     ,   m_strength(other.strength())

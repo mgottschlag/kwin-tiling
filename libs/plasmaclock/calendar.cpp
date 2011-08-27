@@ -39,6 +39,7 @@
 #include <KIcon>
 #include <KLineEdit>
 #include <KLocale>
+#include <KTextBrowser>
 #include <KIntSpinBox>
 #include <KConfigDialog>
 #include <KConfigGroup>
@@ -82,6 +83,8 @@ class CalendarPrivate
               separator(0)
         {
         }
+
+        bool addDateDetailsToDisplay(QString &html, const QDate &date);
 
         ToolButton *back;
         Plasma::Label *spacer0;
@@ -130,11 +133,11 @@ void Calendar::init(const QDate &initialDate)
 
     d->calendarTable = new CalendarTable(this);
     d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated()));
-    connect(d->calendarTable, SIGNAL(dateHovered(const QDate &)), this, SIGNAL(dateHovered(const QDate &)));
-    connect(d->calendarTable, SIGNAL(dateSelected(const QDate &)), this, SLOT(displayEvents(const QDate &)));
+    connect(d->calendarTable, SIGNAL(dateChanged(QDate)), this, SLOT(dateUpdated()));
+    connect(d->calendarTable, SIGNAL(dateHovered(QDate)), this, SIGNAL(dateHovered(QDate)));
+    connect(d->calendarTable, SIGNAL(dateSelected(QDate)), this, SLOT(displayEvents(QDate)));
     connect(d->calendarTable, SIGNAL(eventsChanged()), this, SLOT(displayEvents()));
-    connect(this, SIGNAL(dateHovered(const QDate &)), this, SLOT(displayEvents(const QDate &)));
+    connect(this, SIGNAL(dateHovered(QDate)), this, SLOT(displayEvents(QDate)));
 
     d->back = new Plasma::ToolButton(this);
     d->back->setText("<");
@@ -398,47 +401,38 @@ void Calendar::displayEvents(const QDate &date)
     }
 
     QString html;
-    QList<QDate> datesToProcess;
 
-    if (dateHasDetails(date)) {
-        datesToProcess << date;
-    } else {
+    if (d->addDateDetailsToDisplay(html, date) < 1) {
         QDate dt = calendarTable()->date();
         QDate end = calendarTable()->endDate();
 
         if (dt.isValid() && end.isValid()) {
             while (dt <= end) {
-                datesToProcess << dt;
+                d->addDateDetailsToDisplay(html, dt);
                 dt = dt.addDays(1);
             }
         }
     }
 
-    int processedDetails = 0;
-    const int detailsMax = 5;
+    d->eventsDisplay->setText(html);
+}
 
-    foreach (const QDate &d, datesToProcess) {
-        if (dateHasDetails(d)) {
-            html+= "<b>"+d.toString()+"</b>";
-            html+= "<ul>";
-
-            QStringList details = dateDetails(d);
-            foreach (const QString &detail, details) {
-                if (processedDetails<detailsMax) {
-                    html+= "<li>"+detail+"</li>";
-                    processedDetails++;
-                }
-            }
-
-            html+= "</ul>";
-        }
-
-        if (processedDetails>=detailsMax) {
-            break;
-        }
+bool CalendarPrivate::addDateDetailsToDisplay(QString &html, const QDate &date)
+{
+    if (!calendarTable->dateHasDetails(date)) {
+        return false;
     }
 
-    d->eventsDisplay->setText(html);
+    html += "<b>" + calendarTable->calendar()->formatDate(date, KLocale::LongDate) + "</b>";
+    html += "<ul style='-qt-list-indent: 0;'>";
+
+    const QStringList details = calendarTable->dateDetails(date);
+    foreach (const QString &detail, details) {
+        html+= "<li style='margin-left: 2em;'>" + detail + "</li>";
+    }
+
+    html += "</ul>";
+    return true;
 }
 
 // Update the nav widgets to show the current date in the CalendarTable
@@ -446,7 +440,7 @@ void Calendar::refreshWidgets()
 {
     d->month->setText(calendar()->monthName(calendar()->month(date()), calendar()->year(date())));
     d->month->setMinimumSize(static_cast<QToolButton*>(d->month->widget())->sizeHint());
-    d->year->setText(calendar()->yearString(date()));
+    d->year->setText(calendar()->formatDate(date(), KLocale::Year, KLocale::LongNumber));
     d->dateText->setText(calendar()->formatDate(date(),  KLocale::ShortDate));
 
     // Block the signals to prevent changing the date again
@@ -459,7 +453,7 @@ void Calendar::refreshWidgets()
     // Block the signals to prevent changing the date again
     d->weekSpinBox->blockSignals(true);
     d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
-    d->weekSpinBox->setValue(calendar()->weekNumber(date()));
+    d->weekSpinBox->setValue(calendar()->week(date(), KLocale::IsoWeekNumber));
     d->weekSpinBox->blockSignals(false);
 }
 
@@ -486,8 +480,8 @@ void Calendar::nextYear()
 void Calendar::monthsPopup()
 {
     d->monthMenu->clear();
-    int year = calendar()->year(date());
-    int monthsInYear = calendar()->monthsInYear(date());
+    const int year = calendar()->year(date());
+    const int monthsInYear = calendar()->monthsInYear(date());
 
     for (int i = 1; i <= monthsInYear; i++){
         QAction *tmpAction = new QAction(calendar()->monthName(i, year), d->monthMenu);
@@ -526,7 +520,7 @@ void Calendar::monthTriggered()
 
 void Calendar::goToWeek(int newWeek)
 {
-    int currWeek = calendar()->weekNumber(date());
+    int currWeek = calendar()->week(date(), KLocale::IsoWeekNumber);
     int daysInWeek = calendar()->daysInWeek(date());
 
     setDate(calendar()->addDays(date(), (newWeek - currWeek) * daysInWeek));

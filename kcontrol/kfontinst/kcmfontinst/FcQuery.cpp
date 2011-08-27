@@ -60,7 +60,7 @@ void CFcQuery::run(const QString &query)
 
     args << "-v" << query;
 
-    connect(itsProc, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(procExited()));
+    connect(itsProc, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(procExited()));
     connect(itsProc, SIGNAL(readyReadStandardOutput()), SLOT(data()));
 
     itsProc->start("fc-match", args);

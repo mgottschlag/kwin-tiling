@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define QT_CLEAN_NAMESPACE 1
 
 #include <kapplication.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 
 #include "server.h"
 

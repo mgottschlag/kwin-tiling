@@ -17,13 +17,14 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
+#include "krunnerhistorycombobox.h"
+
 #include <QApplication>
-#include <KLineEdit>
+#include <QTimer>
 
 #include <KDebug>
-
-#include <kstandardshortcut.h>
-#include "krunnerhistorycombobox.h"
+#include <KLineEdit>
+#include <KStandardShortcut>
 
 KrunnerHistoryComboBox::KrunnerHistoryComboBox(bool useCompletion, QWidget * parent)
     : KHistoryComboBox(useCompletion,  parent),
@@ -38,9 +39,6 @@ KrunnerHistoryComboBox::KrunnerHistoryComboBox(bool useCompletion, QWidget * par
     // is LTR: as it's more or less a "command line interface"
     // FIXME remove this code when KLineEdit has automatic direction detection of the "paragraph"
     setLayoutDirection(Qt::LeftToRight);
-
-    connect(this, SIGNAL(currentIndexChanged(QString)), this, SLOT(slotCurrentIndexChanged(QString)));
-    connect(lineEdit(), SIGNAL(textEdited(QString)), this, SIGNAL(queryTextEdited(QString)));
 }
 
 KrunnerHistoryComboBox::~KrunnerHistoryComboBox()
@@ -54,12 +52,25 @@ void KrunnerHistoryComboBox::addToHistory(const QString & item)
     m_addingToHistory = false;
 }
 
-void KrunnerHistoryComboBox::setLineEdit(QLineEdit* e)
+void KrunnerHistoryComboBox::setLineEdit(QLineEdit *e)
 {
-    kDebug() << "resetting" << e;
-    disconnect(lineEdit(), 0, this, 0);
+    if (lineEdit()) {
+        disconnect(lineEdit(), 0, this, 0);
+    }
+
     KComboBox::setLineEdit(e);
-    connect(e, SIGNAL(textEdited(QString)), this, SIGNAL(queryTextEdited(QString)));
+    QTimer::singleShot(50, this, SLOT(connectLineEdit()));
+}
+
+void KrunnerHistoryComboBox::connectLineEdit()
+{
+    disconnect(this, SIGNAL(currentIndexChanged(QString)), this, SLOT(currentIndexChanged(QString)));
+    connect(this, SIGNAL(currentIndexChanged(QString)), this, SLOT(currentIndexChanged(QString)));
+
+    if (lineEdit()) {
+        disconnect(lineEdit(), SIGNAL(textEdited(QString)), this, SIGNAL(queryTextEdited(QString)));
+        connect(lineEdit(), SIGNAL(textEdited(QString)), this, SIGNAL(queryTextEdited(QString)));
+    }
 }
 
 void KrunnerHistoryComboBox::focusOutEvent(QFocusEvent *e)
@@ -109,7 +120,7 @@ void KrunnerHistoryComboBox::discardCompletion()
     }
 }
 
-void KrunnerHistoryComboBox::slotCurrentIndexChanged(QString item)
+void KrunnerHistoryComboBox::currentIndexChanged(const QString &item)
 {
     if (!m_addingToHistory) {
         emit queryTextEdited(item);

@@ -62,10 +62,10 @@ void DBusJobProtocol::init()
         return;
     }
 
-    connect(m_engine, SIGNAL(sourceAdded(const QString&)),
-            this, SLOT(prepareJob(const QString&)));
-    connect(m_engine, SIGNAL(sourceRemoved(const QString&)),
-            this, SLOT(removeJob(const QString&)));
+    connect(m_engine, SIGNAL(sourceAdded(QString)),
+            this, SLOT(prepareJob(QString)));
+    connect(m_engine, SIGNAL(sourceRemoved(QString)),
+            this, SLOT(removeJob(QString)));
 }
 
 void DBusJobProtocol::prepareJob(const QString &source)
@@ -80,14 +80,14 @@ void DBusJobProtocol::dataUpdated(const QString &source, const Plasma::DataEngin
     if (!job) {
         job = new DBusJob(source, this);
         m_jobs.insert(source, job);
-        connect(job, SIGNAL(jobDeleted(const QString&)),
-                this, SLOT(removeJob(const QString&)));
-        connect(job, SIGNAL(suspend(const QString&)),
-                this, SLOT(suspend(const QString&)));
-        connect(job, SIGNAL(resume(const QString&)),
-                this, SLOT(resume(const QString&)));
-        connect(job, SIGNAL(stop(const QString&)),
-                this, SLOT(stop(const QString&)));
+        connect(job, SIGNAL(jobDeleted(QString)),
+                this, SLOT(removeJob(QString)));
+        connect(job, SIGNAL(suspend(QString)),
+                this, SLOT(suspend(QString)));
+        connect(job, SIGNAL(resume(QString)),
+                this, SLOT(resume(QString)));
+        connect(job, SIGNAL(stop(QString)),
+                this, SLOT(stop(QString)));
         connect(job, SIGNAL(ready(Job*)),
                 this, SIGNAL(jobCreated(Job*)));
     }

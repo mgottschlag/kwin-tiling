@@ -22,6 +22,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QVariant>
+#include <QtDBus/QtDBus>
 
 #include <solid/networking.h>
 #include "solid_control_export.h"

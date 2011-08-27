@@ -19,7 +19,7 @@
 
 #include "desktopcorona.h"
 #include "plasma-shell-desktop.h"
-#include "kactivitycontroller.h"
+#include "kworkspace/kactivitycontroller.h"
 #include "activitymanager/kidenticongenerator.h"
 
 #include <QPixmap>
@@ -36,7 +36,7 @@
 #include <Plasma/Context>
 #include <Plasma/Corona>
 
-#include <kactivityconsumer.h>
+#include <kworkspace/kactivityconsumer.h>
 
 #include "plasmaapp.h"
 
@@ -364,7 +364,7 @@ void Activity::insertContainment(Plasma::Containment* containment, int screen, i
     connect(context, SIGNAL(activityChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)), Qt::UniqueConnection);
 
     m_containments.insert(QPair<int,int>(screen, desktop), containment);
-    connect(containment, SIGNAL(destroyed(QObject *)), this, SLOT(containmentDestroyed(QObject *)));
+    connect(containment, SIGNAL(destroyed(QObject*)), this, SLOT(containmentDestroyed(QObject*)));
 }
 
 void Activity::containmentDestroyed(QObject *object)

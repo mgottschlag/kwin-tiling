@@ -74,7 +74,7 @@ NotificationGroup::~NotificationGroup()
 
 void NotificationGroup::addNotification(Notification *notification)
 {
-    connect(notification, SIGNAL(notificationDestroyed(Notification *)), this, SLOT(removeNotification(Notification *)));
+    connect(notification, SIGNAL(notificationDestroyed(Notification*)), this, SLOT(removeNotification(Notification*)));
 
     NotificationWidget *notificationWidget = new NotificationWidget(notification, this);
     notificationWidget->setTitleBarVisible(false);

@@ -46,7 +46,7 @@ HotplugEngine::HotplugEngine(QObject* parent, const QVariantList& args)
     foreach (const QString &folder, folders) {
         m_dirWatch->addDir(folder, KDirWatch::WatchFiles);
     }
-    connect(m_dirWatch, SIGNAL(dirty(const QString &)), this, SLOT(updatePredicates(const QString &)));
+    connect(m_dirWatch, SIGNAL(dirty(QString)), this, SLOT(updatePredicates(QString)));
 }
 
 HotplugEngine::~HotplugEngine()
@@ -70,10 +70,10 @@ void HotplugEngine::init()
         m_startList.insert(dev.udi(), dev);
     }
 
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)),
-            this, SLOT(onDeviceAdded(const QString &)));
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
-            this, SLOT(onDeviceRemoved(const QString &)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)),
+            this, SLOT(onDeviceAdded(QString)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)),
+            this, SLOT(onDeviceRemoved(QString)));
 
     m_encryptedPredicate = Solid::Predicate("StorageVolume", "usage", "Encrypted");
 

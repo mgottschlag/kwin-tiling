@@ -53,7 +53,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <stdio.h>
 #include <kxerrorhandler.h>
 
-#include <kdisplaymanager.h>
+#include <kworkspace/kdisplaymanager.h>
 
 #include <config-workspace.h>
 
@@ -75,7 +75,7 @@ KSMShutdownFeedback::KSMShutdownFeedback()
     setAttribute( Qt::WA_PaintOnScreen );
     setGeometry( QApplication::desktop()->geometry() );
     m_pixmap = QPixmap( size() );
-    QTimer::singleShot( 10, this, SLOT( slotPaintEffect() ) );
+    QTimer::singleShot( 10, this, SLOT(slotPaintEffect()) );
 }
 
 

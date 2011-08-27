@@ -46,6 +46,7 @@
 #include <QtGui/QMenu>
 #include <QtCore/QTimer>
 #include <QtGui/QApplication>
+#include <QtDBus/QDBusServiceWatcher>
 #include <stdlib.h>
 #include <unistd.h>
 #include <utime.h>
@@ -58,10 +59,16 @@
 #include "Family.h"
 #include "Style.h"
 #include "File.h"
-#include <config-workspace.h>
 
 namespace KFI
 {
+
+const QStringList CFontList::fontMimeTypes(QStringList() << "application/x-font-ttf"
+                                                         << "application/x-font-otf"
+                                                         << "application/x-font-type1"
+                                                         << "application/x-font-pcf"
+                                                         << "application/x-font-bdf"
+                                                         << "application/vnd.kde.fontspackage");
 
 static const int constMaxSlowed = 250;
 
@@ -81,7 +88,7 @@ static void addFont(CFontItem *font, CJobRunner::ItemList &urls, QStringList &fo
         ( (getEnabled && font->isEnabled()) ||
           (getDisabled && !font->isEnabled()) ) )
     {
-        urls.append(CJobRunner::Item(font->url(), font->name()));
+        urls.append(CJobRunner::Item(font->url(), font->name(), !font->isEnabled()));
         fontNames.append(font->name());
         usedFonts.insert(font);
         if(fonts)
@@ -176,16 +183,18 @@ QString capitaliseFoundry(const QString &foundry)
 {
     QString f(foundry.toLower());
 
-    if(f==QString::fromLatin1("ibm"))
-        return QString::fromLatin1("IBM");
-    else if(f==QString::fromLatin1("urw"))
-        return QString::fromLatin1("URW");
-    else if(f==QString::fromLatin1("itc"))
-        return QString::fromLatin1("ITC");
-    else if(f==QString::fromLatin1("nec"))
-        return QString::fromLatin1("NEC");
-    else if(f==QString::fromLatin1("b&h"))
-        return QString::fromLatin1("B&H");
+    if(f==QLatin1String("ibm"))
+        return QLatin1String("IBM");
+    else if(f==QLatin1String("urw"))
+        return QLatin1String("URW");
+    else if(f==QLatin1String("itc"))
+        return QLatin1String("ITC");
+    else if(f==QLatin1String("nec"))
+        return QLatin1String("NEC");
+    else if(f==QLatin1String("b&h"))
+        return QLatin1String("B&H");
+    else if(f==QLatin1String("dec"))
+        return QLatin1String("DEC");
     else
     {
         QChar   *ch(f.data());
@@ -450,11 +459,14 @@ CFontList::CFontList(QWidget *parent)
 {
     FontInst::registerTypes();
 
-    connect(CJobRunner::dbus(), SIGNAL(fontsAdded(const KFI::Families &)), SLOT(fontsAdded(const KFI::Families &)));
-    connect(CJobRunner::dbus(), SIGNAL(fontsRemoved(const KFI::Families &)), SLOT(fontsRemoved(const KFI::Families &)));
-    connect(CJobRunner::dbus(), SIGNAL(fontList(int, const QList<KFI::Families> &)), SLOT(fontList(int, const QList<KFI::Families> &)));
-    connect(CJobRunner::dbus()->connection().interface(), SIGNAL(serviceOwnerChanged(QString, QString, QString)),
-            SLOT(dbusServiceOwnerChanged(QString, QString, QString)));
+    QDBusServiceWatcher *watcher = new QDBusServiceWatcher(QLatin1String(OrgKdeFontinstInterface::staticInterfaceName()),
+                                                           QDBusConnection::sessionBus(),
+                                                           QDBusServiceWatcher::WatchForOwnerChange, this);
+
+    connect(watcher, SIGNAL(serviceOwnerChanged(QString,QString,QString)), SLOT(dbusServiceOwnerChanged(QString,QString,QString)));
+    connect(CJobRunner::dbus(), SIGNAL(fontsAdded(KFI::Families)), SLOT(fontsAdded(KFI::Families)));
+    connect(CJobRunner::dbus(), SIGNAL(fontsRemoved(KFI::Families)), SLOT(fontsRemoved(KFI::Families)));
+    connect(CJobRunner::dbus(), SIGNAL(fontList(int,QList<KFI::Families>)), SLOT(fontList(int,QList<KFI::Families>)));
 }
 
 CFontList::~CFontList()
@@ -469,7 +481,7 @@ void CFontList::dbusServiceOwnerChanged(const QString &name, const QString &from
     Q_UNUSED(from);
     Q_UNUSED(to);
 
-    if(name==OrgKdeFontinstInterface::staticInterfaceName())
+    if(name==QLatin1String(OrgKdeFontinstInterface::staticInterfaceName()))
         load();
 }
 
@@ -600,14 +612,16 @@ QVariant CFontList::headerData(int section, Qt::Orientation orientation,
                 {
                     case COL_FONT:
                         return i18n("Font");
+                    case COL_STATUS:
+                        return i18n("Status");
                     default:
                         break;
                 }
                 break;
-            case Qt::DecorationRole:
-                if(COL_STATUS==section)
-                    return SmallIcon("fontstatus");
-                break;
+//             case Qt::DecorationRole:
+//                 if(COL_STATUS==section)
+//                     return SmallIcon("fontstatus");
+//                 break;
             case Qt::TextAlignmentRole:
                 return Qt::AlignLeft;
             case Qt::ToolTipRole:
@@ -809,11 +823,11 @@ void CFontList::addFonts(const FamilyCont &families, bool sys)
 //     bool emitLayout=!itsSlowUpdates || itsFamilies.isEmpty();
 // 
 //     if(emitLayout)
-        emit layoutAboutToBeChanged();
+//         emit layoutAboutToBeChanged();
 
     FamilyCont::ConstIterator family(families.begin()),
                               end(families.end());
-//     int                       famRowFrom=itsFamilies.count();
+    int                       famRowFrom=itsFamilies.count();
     QSet<CFamilyItem *>       modifiedFamilies;
 
     for(; family!=end; ++family)
@@ -824,16 +838,16 @@ void CFontList::addFonts(const FamilyCont &families, bool sys)
 
             if(famItem)
             {
-//                 int rowFrom=famItem->fonts().count();
+                int rowFrom=famItem->fonts().count();
                 if(famItem->addFonts((*family).styles(), sys))
                 {
-//                     int rowTo=famItem->fonts().count()-1;
-// 
-//                     if(rowFrom>=rowTo)
-//                     {
-//                         beginInsertRows(createIndex(famItem->rowNumber(), 0, famItem), rowFrom, rowTo);
-//                         endInsertRows();
-//                     }
+                    int rowTo=famItem->fonts().count();
+
+                    if(rowTo!=rowFrom)
+                    {
+                        beginInsertRows(createIndex(famItem->rowNumber(), 0, famItem), rowFrom, rowTo);
+                        endInsertRows();
+                    }
 
                     modifiedFamilies.insert(famItem);
                 }
@@ -848,12 +862,12 @@ void CFontList::addFonts(const FamilyCont &families, bool sys)
         }
     }
 
-//     int famRowTo=itsFamilies.count()-1;
-//     if(famRowFrom>=famRowTo)
-//     {
-//         beginInsertRows(QModelIndex(), famRowFrom, famRowTo);
-//         endInsertRows();
-//     }
+    int famRowTo=itsFamilies.count();
+    if(famRowTo!=famRowFrom)
+    {
+        beginInsertRows(QModelIndex(), famRowFrom, famRowTo);
+        endInsertRows();
+    }
 
     if(!modifiedFamilies.isEmpty())
     {
@@ -865,17 +879,16 @@ void CFontList::addFonts(const FamilyCont &families, bool sys)
     }
 
 //     if(emitLayout)
-        emit layoutChanged();
+//         emit layoutChanged();
 }
 
 void CFontList::removeFonts(const FamilyCont &families, bool sys)
 {
 //     if(!itsSlowUpdates)
-        emit layoutAboutToBeChanged();
+//         emit layoutAboutToBeChanged();
 
     FamilyCont::ConstIterator family(families.begin()),
                               end(families.end());
-//     int                       famRowFrom=itsFamilies.count();
     QSet<CFamilyItem *>       modifiedFamilies;
 
     for(; family!=end; ++family)
@@ -891,8 +904,6 @@ void CFontList::removeFonts(const FamilyCont &families, bool sys)
 
                 for(; it!=end; ++it)
                 {
-// if(itsSlowUpdates)
-// printf("REMOVE FONT:%s %d\n", (*family).name().toLatin1().constData(), (*it).value());
                     CFontItem *fontItem=famItem->findFont((*it).value(), sys);
 
                     if(fontItem)
@@ -909,38 +920,30 @@ void CFontList::removeFonts(const FamilyCont &families, bool sys)
                                 if(1!=famItem->fonts().count())
                                 {
                                     row=fontItem->rowNumber();
-//                                     beginRemoveRows(createIndex(famItem->rowNumber(), 0, famItem), row, row);
+                                    beginRemoveRows(createIndex(famItem->rowNumber(), 0, famItem), row, row);
                                 }
                                 famItem->removeFont(fontItem, false);
-//                                 printf("FONT REMOVED\n");
-//                                 if(-1!=row)
-//                                     endRemoveRows();
+                                if(-1!=row)
+                                    endRemoveRows();
                             }
                             else
                                 fontItem->refresh();
                         }
                     }
-//                     else
-//                     printf("Failed to find font\n");
                 }
 
                 if(famItem->fonts().isEmpty())
                 {
-// printf("REMOVE FAMILY\n");
                     int row=famItem->rowNumber();
-//                     beginRemoveRows(QModelIndex(), row, row);
+                    beginRemoveRows(QModelIndex(), row, row);
                     itsFamilyHash.remove(famItem->name());
                     itsFamilies.removeAt(row);
-//                     endRemoveRows();
+                    endRemoveRows();
                 }
                 else
                     modifiedFamilies.insert(famItem);
             }
-//             else
-//             printf("Failed to find family\n");
         }
-//         else
-//         printf("Supplied list has no styles?\n");
     }
 
     if(!modifiedFamilies.isEmpty())
@@ -953,7 +956,7 @@ void CFontList::removeFonts(const FamilyCont &families, bool sys)
     }
 
 //     if(!itsSlowUpdates)
-        emit layoutChanged();
+//         emit layoutChanged();
 }
 
 CFamilyItem * CFontList::findFamily(const QString &familyName)
@@ -994,6 +997,9 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
 
     QModelIndex    index(mapToSource(idx));
     CFontModelItem *mi=static_cast<CFontModelItem *>(index.internalPointer());
+
+    if(!mi)
+        return QVariant();
 
     switch(role)
     {
@@ -1168,6 +1174,22 @@ bool CFontListSortFilterProxy::acceptFont(CFontItem *fnt, bool checkFontText) co
                             fontMatch=true;
                     break;
                 }
+                case CFontFilter::CRIT_FILETYPE:
+                {
+                    FileCont::ConstIterator    it(fnt->files().begin()),
+                                               end(fnt->files().end());
+                    QStringList::ConstIterator mimeEnd(itsFilterTypes.constEnd());
+
+                    for(; it!=end && !fontMatch; ++it)
+                    {
+                        QStringList::ConstIterator mime(itsFilterTypes.constBegin());
+                        
+                        for(; mime!=mimeEnd; ++mime)
+                            if(Misc::checkExt((*it).path(), *mime))
+                                fontMatch=true;
+                    }
+                    break;
+                }
                 case CFontFilter::CRIT_WS:
                     fontMatch=fnt->writingSystems()&itsFilterWs;
                     break;
@@ -1301,12 +1323,13 @@ void CFontListSortFilterProxy::setFilterText(const QString &text)
     }
 }
 
-void CFontListSortFilterProxy::setFilterCriteria(CFontFilter::ECriteria crit, qulonglong ws)
+void CFontListSortFilterProxy::setFilterCriteria(CFontFilter::ECriteria crit, qulonglong ws, const QStringList &ft)
 {
-    if(crit!=itsFilterCriteria || ws!=itsFilterWs)
+    if(crit!=itsFilterCriteria || ws!=itsFilterWs || ft!=itsFilterTypes)
     {
         itsFilterWs=ws;
         itsFilterCriteria=crit;
+        itsFilterTypes=ft;
         if(CFontFilter::CRIT_LOCATION==itsFilterCriteria)
             setFilterText(itsFilterText);
         itsTimer->stop();
@@ -1381,7 +1404,7 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
     setDragDropMode(QAbstractItemView::DragDrop);
     header()->setClickable(true);
     header()->setSortIndicatorShown(true);
-    connect(this, SIGNAL(collapsed(const QModelIndex &)), SLOT(itemCollapsed(const QModelIndex &)));
+    connect(this, SIGNAL(collapsed(QModelIndex)), SLOT(itemCollapsed(QModelIndex)));
     connect(header(), SIGNAL(sectionClicked(int)), SLOT(setSortColumn(int)));
     connect(itsProxy, SIGNAL(refresh()), SIGNAL(refresh()));
     connect(itsModel, SIGNAL(listingPercent(int)), SLOT(listingPercent(int)));
@@ -1396,11 +1419,12 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
                                        this, SIGNAL(enable()));
     itsDisableAct=itsMenu->addAction(KIcon("disablefont"), i18n("Disable"),
                                         this, SIGNAL(disable()));
-    itsMenu->addSeparator();
-    itsPrintAct=itsMenu->addAction(KIcon("document-print"), i18n("Print..."),
-                                      this, SIGNAL(print()));
-    itsViewAct=itsMenu->addAction(KIcon("kfontview"), i18n("Open in Font Viewer"),
-                                      this, SLOT(view()));
+    if(!Misc::app(KFI_VIEWER).isEmpty() || !Misc::app(KFI_VIEWER).isEmpty())
+        itsMenu->addSeparator();
+    itsPrintAct=Misc::app(KFI_VIEWER).isEmpty() ? 0L : itsMenu->addAction(KIcon("document-print"), i18n("Print..."),
+                                                                          this, SIGNAL(print()));
+    itsViewAct=Misc::app(KFI_VIEWER).isEmpty() ? 0L : itsMenu->addAction(KIcon("kfontview"), i18n("Open in Font Viewer"),
+                                                                         this, SLOT(view()));
     itsMenu->addSeparator();
     itsMenu->addAction(KIcon("view-refresh"), i18n("Reload"), model, SLOT(load()));
 }
@@ -1572,9 +1596,9 @@ void CFontListView::filterText(const QString &text)
     itsProxy->setFilterText(text);
 }
 
-void CFontListView::filterCriteria(int crit, qulonglong ws)
+void CFontListView::filterCriteria(int crit, qulonglong ws, const QStringList &ft)
 {
-    itsProxy->setFilterCriteria((CFontFilter::ECriteria)crit, ws);
+    itsProxy->setFilterCriteria((CFontFilter::ECriteria)crit, ws, ft);
 }
 
 void CFontListView::stats(int &enabled, int &disabled, int &partial)
@@ -1611,7 +1635,7 @@ void CFontListView::stats(int &enabled, int &disabled, int &partial)
 
 void CFontListView::selectedStatus(bool &enabled, bool &disabled)
 {
-    QModelIndexList selected(selectedItems());
+    QModelIndexList selected(selectedIndexes());
     QModelIndex     index;
 
     enabled=disabled=false;
@@ -1675,7 +1699,7 @@ QModelIndexList CFontListView::allFonts()
 
 void CFontListView::selectFirstFont()
 {
-    if(0==selectedItems().count())
+    if(0==selectedIndexes().count())
         for(int i=0; i<NUM_COLS; ++i)
         {
             QModelIndex idx(itsProxy->index(0, i, QModelIndex()));
@@ -1698,7 +1722,13 @@ void CFontListView::selectionChanged(const QItemSelection &selected,
                                      const QItemSelection &deselected)
 {
     QAbstractItemView::selectionChanged(selected, deselected);
+    if(itsModel->slowUpdates())
+        return;
+    emit itemsSelected(getSelectedItems());
+}
 
+QModelIndexList CFontListView::getSelectedItems()
+{
     //
     // Go throgh current selection, and for any 'font' items that are selected,
     // ensure 'family' item is not...
@@ -1770,7 +1800,7 @@ void CFontListView::selectionChanged(const QItemSelection &selected,
         }
     }
 
-    emit itemsSelected(sel);
+    return sel;
 }
 
 void CFontListView::itemCollapsed(const QModelIndex &idx)
@@ -1844,7 +1874,7 @@ void CFontListView::view()
         for(; it!=end; ++it)
         {
             QString file;
-            int     index;
+            int     index(0);
 
             if(!(*it)->isEnabled())
             {
@@ -1868,7 +1898,7 @@ void CFontListView::view()
             args << FC::encode((*it)->family(), (*it)->styleInfo(), file, index).url();
         }
 
-        QProcess::startDetached(KFI_VIEWER, args);
+        QProcess::startDetached(Misc::app(KFI_VIEWER), args);
     }
 }
 
@@ -1951,19 +1981,20 @@ void CFontListView::dropEvent(QDropEvent *event)
         QList<QUrl>                urls(event->mimeData()->urls());
         QList<QUrl>::ConstIterator it(urls.begin()),
                                    end(urls.end());
+        QStringList::ConstIterator mtEnd(CFontList::fontMimeTypes.constEnd());
         QSet<KUrl>                 kurls;
 
         for(; it!=end; ++it)
         {
-            KMimeType::Ptr mime=KMimeType::findByUrl(*it, 0, false, true);
+            KMimeType::Ptr             mime=KMimeType::findByUrl(*it, 0, false, true);
+            QStringList::ConstIterator mt(CFontList::fontMimeTypes.constBegin());
 
-            if(mime->is("application/x-font-ttf") ||
-               mime->is("application/x-font-otf") ||
-               mime->is("application/x-font-type1") ||
-               mime->is("application/vnd.kde.fontspackage") ||
-               mime->is("application/x-font-pcf") ||
-               mime->is("application/x-font-bdf"))
-                kurls.insert(*it);
+            for(; mt!=mtEnd; ++mt)
+                if(mime->is(*mt))
+                {
+                    kurls.insert(*it);
+                    break;
+                }
         }
 
         if(kurls.count())
@@ -2017,8 +2048,10 @@ void CFontListView::contextMenuEvent(QContextMenuEvent *ev)
 
     itsEnableAct->setEnabled(dis);
     itsDisableAct->setEnabled(en);
-    itsPrintAct->setEnabled(en|dis);
-    itsViewAct->setEnabled(en|dis);
+    if(itsPrintAct)
+        itsPrintAct->setEnabled(en|dis);
+    if(itsViewAct)
+        itsViewAct->setEnabled(en|dis);
     itsMenu->popup(ev->globalPos());
 }
 

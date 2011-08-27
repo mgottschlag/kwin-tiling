@@ -66,8 +66,8 @@ LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlag
         updateResolution();
         resolutionSelector->setEnabled( true );
 
-        connect( button400cpi, SIGNAL( clicked() ), parent, SLOT( changed() ) );
-        connect( button800cpi, SIGNAL( clicked() ), parent, SLOT( changed() ) );
+        connect( button400cpi, SIGNAL(clicked()), parent, SLOT(changed()) );
+        connect( button800cpi, SIGNAL(clicked()), parent, SLOT(changed()) );
 
         if ( 4 == resolution() ) {
             button800cpi->setChecked( true );
@@ -96,12 +96,12 @@ LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlag
         // if the channel is changed, we need to turn off the timer, otherwise it
         // just resets the button to reflect the current status. The timer is
         // started again when we applyChanges()
-        connect( channel1, SIGNAL( clicked() ), this, SLOT( stopTimerForNow() ) );
-        connect( channel1, SIGNAL( clicked() ), parent, SLOT( changed() ) );
+        connect( channel1, SIGNAL(clicked()), this, SLOT(stopTimerForNow()) );
+        connect( channel1, SIGNAL(clicked()), parent, SLOT(changed()) );
         if ( isDualChannelCapable() ) {
             channel2->setEnabled( true );
-            connect( channel2, SIGNAL( clicked() ), this, SLOT( stopTimerForNow() ) );
-            connect( channel2, SIGNAL( clicked() ), parent, SLOT( changed() ) );
+            connect( channel2, SIGNAL(clicked()), this, SLOT(stopTimerForNow()) );
+            connect( channel2, SIGNAL(clicked()), parent, SLOT(changed()) );
         }
 
         updateGUI();
@@ -119,7 +119,7 @@ void LogitechMouse::initCordlessStatusReporting()
 {
     updateCordlessStatus();
     doUpdate = new QTimer( this ); // will be automatically deleted
-    connect( doUpdate, SIGNAL( timeout() ), this, SLOT( updateGUI() ) );
+    connect( doUpdate, SIGNAL(timeout()), this, SLOT(updateGUI()) );
     doUpdate->start( 20000 );
 }
 

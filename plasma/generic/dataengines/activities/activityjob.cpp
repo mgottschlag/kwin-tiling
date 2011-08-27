@@ -18,7 +18,7 @@
 
 #include "activityjob.h"
 
-#include <kactivitycontroller.h>
+#include <kworkspace/kactivitycontroller.h>
 
 ActivityJob::ActivityJob(KActivityController *controller, const QString &id, const QString &operation, QMap<QString, QVariant> &parameters, QObject *parent) :
     ServiceJob(parent->objectName(), operation, parameters, parent),

@@ -55,14 +55,14 @@ void Solid::Control::ModemLocationInterface::slotLocationChanged(const LocationI
 void Solid::Control::ModemLocationInterface::makeConnections(QObject * source)
 {
     if (source) {
-        QObject::connect(source, SIGNAL(capabilitiesChanged(const Solid::Control::ModemLocationInterface::Capability)),
-                this, SIGNAL(capabilitiesChanged(const Solid::Control::ModemLocationInterface::Capability)));
-        QObject::connect(source, SIGNAL(enabledChanged(const bool)),
-                this, SIGNAL(enabledChanged(const bool)));
-        QObject::connect(source, SIGNAL(signalsLocationChanged(const bool)),
-                this, SIGNAL(signalsLocationChanged(const bool)));
-        QObject::connect(source, SIGNAL(locationChanged(const LocationInformationMap &)),
-                this, SIGNAL(slotLocationChanged(const LocationInformationMap &)));
+        QObject::connect(source, SIGNAL(capabilitiesChanged(Solid::Control::ModemLocationInterface::Capability)),
+                this, SIGNAL(capabilitiesChanged(Solid::Control::ModemLocationInterface::Capability)));
+        QObject::connect(source, SIGNAL(enabledChanged(bool)),
+                this, SIGNAL(enabledChanged(bool)));
+        QObject::connect(source, SIGNAL(signalsLocationChanged(bool)),
+                this, SIGNAL(signalsLocationChanged(bool)));
+        QObject::connect(source, SIGNAL(locationChanged(LocationInformationMap)),
+                this, SIGNAL(slotLocationChanged(LocationInformationMap)));
     }
 }
 

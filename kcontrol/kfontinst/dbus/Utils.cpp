@@ -38,22 +38,6 @@ namespace KFI
 namespace Utils
 {
 
-QString modifyName(const QString &fname)
-{
-    static const char constSymbols[]={ '-', ' ', ':', ';', '/', '~', 0 };
-
-    QString rv(fname);
-
-    for(int s=0; constSymbols[s]; ++s)
-        rv=rv.replace(constSymbols[s], '_');
-
-    int dotPos(rv.lastIndexOf('.'));
-
-    return -1==dotPos
-            ? rv
-            : rv.left(dotPos+1)+rv.mid(dotPos+1).toLower();
-}
-
 bool isAAfm(const QString &fname)
 {
     if(Misc::checkExt(QFile::encodeName(fname), "afm"))   // CPD? Is this a necessary check?

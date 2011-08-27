@@ -38,7 +38,7 @@ DBusAPIConfigurations::DBusAPIConfigurations(QObject * parent)
     const bool result = dbus.registerObject("/modules/kephal/Configurations", this);
     kDebug() << "configurations registered on the bus:" << result;
 
-    connect(Configurations::self(), SIGNAL(configurationActivated(Kephal::Configuration *)), this, SLOT(configurationActivatedSlot(Kephal::Configuration *)));
+    connect(Configurations::self(), SIGNAL(configurationActivated(Kephal::Configuration*)), this, SLOT(configurationActivatedSlot(Kephal::Configuration*)));
     connect(Configurations::self(), SIGNAL(confirmed()), this, SIGNAL(confirmed()));
     connect(Configurations::self(), SIGNAL(reverted()), this, SIGNAL(reverted()));
     connect(Configurations::self(), SIGNAL(confirmTimeout(int)), this, SIGNAL(confirmTimeout(int)));

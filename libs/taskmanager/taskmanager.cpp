@@ -48,7 +48,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 
 #include <kephal/screens.h>
-#include <kactivityconsumer.h>
+#include <kworkspace/kactivityconsumer.h>
 
 namespace TaskManager
 {
@@ -118,8 +118,8 @@ TaskManager::TaskManager()
             this,       SLOT(activeWindowChanged(WId)));
     connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)),
             this,       SLOT(currentDesktopChanged(int)));
-    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,const unsigned long*)),
-            this,       SLOT(windowChanged(WId,const unsigned long*)));
+    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,const ulong*)),
+            this,       SLOT(windowChanged(WId,const ulong*)));
     connect(&d->activityConsumer, SIGNAL(currentActivityChanged(QString)),
             this,       SLOT(currentActivityChanged(QString)));
     if (QCoreApplication::instance()) {
@@ -142,9 +142,9 @@ TaskManager::TaskManager()
 
     d->watcher = new KDirWatch(this);
     d->watcher->addFile(KGlobal::dirs()->locateLocal("config", "klaunchrc"));
-    connect(d->watcher, SIGNAL(dirty(const QString&)), this, SLOT(configureStartup()));
-    connect(d->watcher, SIGNAL(created(const QString&)), this, SLOT(configureStartup()));
-    connect(d->watcher, SIGNAL(deleted(const QString&)), this, SLOT(configureStartup()));
+    connect(d->watcher, SIGNAL(dirty(QString)), this, SLOT(configureStartup()));
+    connect(d->watcher, SIGNAL(created(QString)), this, SLOT(configureStartup()));
+    connect(d->watcher, SIGNAL(deleted(QString)), this, SLOT(configureStartup()));
 
     configureStartup();
 }
@@ -168,14 +168,14 @@ void TaskManager::configureStartup()
     if (!d->startupInfo) {
         d->startupInfo = new KStartupInfo(KStartupInfo::CleanOnCantDetect, this );
         connect(d->startupInfo,
-                SIGNAL(gotNewStartup(const KStartupInfoId&, const KStartupInfoData&)),
-                SLOT(gotNewStartup(const KStartupInfoId&, const KStartupInfoData&)));
+                SIGNAL(gotNewStartup(KStartupInfoId,KStartupInfoData)),
+                SLOT(gotNewStartup(KStartupInfoId,KStartupInfoData)));
         connect(d->startupInfo,
-                SIGNAL(gotStartupChange(const KStartupInfoId&, const KStartupInfoData&)),
-                SLOT(gotStartupChange(const KStartupInfoId&, const KStartupInfoData&)));
+                SIGNAL(gotStartupChange(KStartupInfoId,KStartupInfoData)),
+                SLOT(gotStartupChange(KStartupInfoId,KStartupInfoData)));
         connect(d->startupInfo,
-                SIGNAL(gotRemoveStartup(const KStartupInfoId&, const KStartupInfoData&)),
-                SLOT(killStartup(const KStartupInfoId&)));
+                SIGNAL(gotRemoveStartup(KStartupInfoId,KStartupInfoData)),
+                SLOT(killStartup(KStartupInfoId)));
     }
 
     c = KConfigGroup(&_c, "TaskbarButtonSettings");

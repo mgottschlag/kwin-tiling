@@ -74,8 +74,8 @@ void AppletsListWidget::setItemModel(PlasmaAppletItemModel *model)
 
     connect(m_modelFilterItems, SIGNAL(searchTermChanged(QString)), this, SLOT(updateList()));
     connect(m_modelFilterItems, SIGNAL(filterChanged()), this, SLOT(updateList()));
-    connect(m_modelItems, SIGNAL(rowsAboutToBeRemoved(const QModelIndex&, int, int)),
-            this, SLOT(rowsAboutToBeRemoved(const QModelIndex&, int, int)));
+    connect(m_modelItems, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)),
+            this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int)));
 
     updateList();
 }

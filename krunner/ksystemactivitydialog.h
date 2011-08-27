@@ -44,6 +44,7 @@ class KSystemActivityDialog : public KDialog
 
         /** Set the text in the filter line in the process list widget */
         void setFilterText(const QString &filterText);
+        QString filterText() const;
 
         /** Save the settings if the user presses the ESC key */
         virtual void reject();

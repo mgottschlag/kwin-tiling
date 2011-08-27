@@ -213,6 +213,7 @@ class CGroupListView : public QTreeView
     void                  selectionChanged(const QItemSelection &selected,
                                            const QItemSelection &deselected);
     void                  rename();
+    void                  emitMoveFonts();
 
     private:
 
@@ -226,8 +227,7 @@ class CGroupListView : public QTreeView
 
     private:
 
-    QMenu       *itsMenu,
-                *itsActionMenu;
+    QMenu       *itsMenu;
     QAction     *itsDeleteAct,
                 *itsEnableAct,
                 *itsDisableAct,

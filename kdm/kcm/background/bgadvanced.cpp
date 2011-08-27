@@ -60,8 +60,8 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
     dlg->m_listPrograms->setRootIsDecorated(false);
     dlg->m_listPrograms->setAllColumnsShowFocus(true);
 
-    connect(dlg->m_listPrograms, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
-            SLOT(slotProgramItemClicked(QTreeWidgetItem *)));
+    connect(dlg->m_listPrograms, SIGNAL(itemClicked(QTreeWidgetItem*,int)),
+            SLOT(slotProgramItemClicked(QTreeWidgetItem*)));
 
     // Load programs
     const QStringList lst = KBackgroundProgram::list();

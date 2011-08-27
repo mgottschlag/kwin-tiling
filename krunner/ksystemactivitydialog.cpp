@@ -79,6 +79,11 @@ void KSystemActivityDialog::setFilterText(const QString &filterText)
     m_processList.filterLineEdit()->setFocus();
 }
 
+QString KSystemActivityDialog::filterText() const
+{
+    return m_processList.filterLineEdit()->text();
+}
+
 void KSystemActivityDialog::closeEvent(QCloseEvent *event)
 {
     saveDialogSettings();

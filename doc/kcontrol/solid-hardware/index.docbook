@@ -12,8 +12,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-11-30</date>
-<releaseinfo>&kde; 4.4</releaseinfo>
+<date>2011-05-20</date>
+<releaseinfo>&kde; 4.7</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -24,9 +24,13 @@
 </articleinfo>
 
 <para>
-This &systemsettings; module allows you to select the backends used by Solid to 
+This &systemsettings; module allows you to change the order of the backends used by Solid to 
 retrieve information about your hardware, and manage its network connection, 
-bluetooth and infrared devices if present. None of these backends can be used directly by the user.
+bluetooth and infrared devices if present. None of these backends can be used directly by the user.</para>
+<para>
+To use &eg; a different network management backend, select it, and move
+it up to the first position using the arrow buttons next to the list. Then the
+<guibutton>Apply</guibutton> button will be available.
 </para>
 
 <variablelist>

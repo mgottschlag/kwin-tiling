@@ -48,6 +48,7 @@
 #include "configdialog.h"
 #include "krunnerapp.h"
 #include "krunnersettings.h"
+#include "panelshadows.h"
 
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
@@ -57,6 +58,8 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     : QWidget(parent, f),
       m_runnerManager(runnerManager),
       m_configWidget(0),
+      m_shadows(new PanelShadows(this)),
+      m_background(new Plasma::FrameSvg(this)),
       m_oldScreen(-1),
       m_floating(!KRunnerSettings::freeFloating()),
       m_resizing(false),
@@ -77,7 +80,6 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     m_iconSvg = new Plasma::Svg(this);
     m_iconSvg->setImagePath(QLatin1String("widgets/configuration-icons"));
 
-    m_background = new Plasma::FrameSvg(this);
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(themeUpdated()));
 
     connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)),
@@ -87,6 +89,7 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)),
             this, SLOT(screenChanged(Kephal::Screen*)));
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(resetScreenPos()));
+    connect(KWindowSystem::self(), SIGNAL(compositingChanged(bool)), this, SLOT(compositingChanged(bool)));
 
     setFreeFloating(KRunnerSettings::freeFloating());
 }
@@ -224,15 +227,21 @@ void KRunnerDialog::setFreeFloating(bool floating)
     m_screenPos.clear();
     m_oldScreen = -1;
     unsetCursor();
+    updatePresentation();
+}
 
+void KRunnerDialog::updatePresentation()
+{
     if (m_floating) {
+        KWindowSystem::setType(winId(), NET::Normal);
+
+        //m_shadows->setImagePath(QLatin1String("dialogs/krunner"));
         m_background->setImagePath(QLatin1String("dialogs/krunner"));
         m_background->setElementPrefix(QString());
-        m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
-        KWindowSystem::setType(winId(), NET::Normal);
-        // recalc the contents margins
+
         themeUpdated();
     } else {
+        //m_shadows->setImagePath(QLatin1String("widgets/panel-background"));
         m_background->setImagePath(QLatin1String("widgets/panel-background"));
         m_background->resizeFrame(size());
         m_background->setElementPrefix("north-mini");
@@ -254,6 +263,13 @@ void KRunnerDialog::setFreeFloating(bool floating)
     if (isVisible()) {
         positionOnScreen();
     }
+}
+
+void KRunnerDialog::compositingChanged(bool)
+{
+    updatePresentation();
+    updateMask();
+    adjustSize();
 }
 
 bool KRunnerDialog::freeFloating() const
@@ -302,20 +318,39 @@ void KRunnerDialog::configCompleted()
 
 void KRunnerDialog::themeUpdated()
 {
-    m_leftBorderWidth = qMax(0, int(m_background->marginSize(Plasma::LeftMargin)));
-    m_rightBorderWidth = qMax(0, int(m_background->marginSize(Plasma::RightMargin)));
-    m_bottomBorderHeight = qMax(0, int(m_background->marginSize(Plasma::BottomMargin)));
-    // the -2 in the non-floating case is not optimal, but it gives it a bit of a "more snug to the
-    // top" feel; best would be if we could tell exactly where the edge/shadow of the frame svg was
-    // but this works nicely
-    const int topHeight = m_floating ? qMax(0, int(m_background->marginSize(Plasma::TopMargin)))
-                                     : Plasma::Theme::defaultTheme()->windowTranslucencyEnabled() ?
-                                         qMax(1, m_bottomBorderHeight / 2)
-                                       : qMax(1, m_bottomBorderHeight - 2);
+    m_shadows->addWindow(this);
 
-    //kDebug() << m_leftBorderWidth<< topHeight<< m_rightBorderWidth<< m_bottomBorderHeight;
+    bool useShadowsForMargins = false;
+    if (m_floating) {
+        // recalc the contents margins
+        m_background->blockSignals(true);
+        if (KWindowSystem::compositingActive()) {
+            m_background->setEnabledBorders(Plasma::FrameSvg::NoBorder);
+            useShadowsForMargins = true;
+        } else {
+            m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+        }
+        m_background->blockSignals(false);
+    }
+
+    if (useShadowsForMargins) {
+        m_shadows->getMargins(m_topBorderHeight, m_rightBorderWidth, m_bottomBorderHeight, m_leftBorderWidth);
+    } else {
+        m_leftBorderWidth = qMax(0, int(m_background->marginSize(Plasma::LeftMargin)));
+        m_rightBorderWidth = qMax(0, int(m_background->marginSize(Plasma::RightMargin)));
+        m_bottomBorderHeight = qMax(0, int(m_background->marginSize(Plasma::BottomMargin)));
+        // the -2 in the non-floating case is not optimal, but it gives it a bit of a "more snug to the
+        // top" feel; best would be if we could tell exactly where the edge/shadow of the frame svg was
+        // but this works nicely
+        m_topBorderHeight = m_floating ? qMax(0, int(m_background->marginSize(Plasma::TopMargin)))
+                                       : Plasma::Theme::defaultTheme()->windowTranslucencyEnabled()
+                                            ? qMax(1, m_bottomBorderHeight / 2)
+                                            : qMax(1, m_bottomBorderHeight - 2);
+    }
+
+    kDebug() << m_leftBorderWidth << m_topBorderHeight << m_rightBorderWidth << m_bottomBorderHeight;
     // the +1 gives us the extra mouseMoveEvent needed to always reset the resize cursor
-    setContentsMargins(m_leftBorderWidth + 1, topHeight, m_rightBorderWidth + 1, m_bottomBorderHeight + 1);
+    setContentsMargins(m_leftBorderWidth + 1, m_topBorderHeight, m_rightBorderWidth + 1, m_bottomBorderHeight + 1);
 
     update();
 }
@@ -370,6 +405,7 @@ void KRunnerDialog::updateMask()
     // way to workaround it for no-compositing users.
 
     if (KWindowSystem::compositingActive()) {
+        clearMask();
         const QRegion mask = m_background->mask();
         Plasma::WindowEffects::enableBlurBehind(winId(), true, mask);
         Plasma::WindowEffects::overrideShadow(winId(), true);

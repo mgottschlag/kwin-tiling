@@ -41,10 +41,10 @@ Solid::Control::ModemManagerPrivate::ModemManagerPrivate() : m_invalidDevice(0)
                 "Solid::Control::Ifaces::ModemManager");
 
     if (managerBackend()!=0) {
-        connect(managerBackend(), SIGNAL(modemInterfaceAdded(const QString &)),
-                this, SLOT(_k_modemInterfaceAdded(const QString &)));
-        connect(managerBackend(), SIGNAL(modemInterfaceRemoved(const QString &)),
-                this, SLOT(_k_modemInterfaceRemoved(const QString &)));
+        connect(managerBackend(), SIGNAL(modemInterfaceAdded(QString)),
+                this, SLOT(_k_modemInterfaceAdded(QString)));
+        connect(managerBackend(), SIGNAL(modemInterfaceRemoved(QString)),
+                this, SLOT(_k_modemInterfaceRemoved(QString)));
     }
 }
 
@@ -227,8 +227,8 @@ Solid::Control::ModemManagerPrivate::findRegisteredModemInterface(const QString 
         }
         if (device != 0) {
             ModemInterfaceIfacePair pair(device, iface);
-            connect(iface, SIGNAL(destroyed(QObject *)),
-                    this, SLOT(_k_destroyed(QObject *)));
+            connect(iface, SIGNAL(destroyed(QObject*)),
+                    this, SLOT(_k_destroyed(QObject*)));
             QMap<ModemInterface::GsmInterfaceType, ModemInterfaceIfacePair> map;
             map.insert(ifaceType, pair);
             m_modemInterfaceMap.insertMulti(udi, map);

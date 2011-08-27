@@ -32,7 +32,7 @@ History::History( QObject* parent )
       m_topIsUserSelected( false ),
       m_nextCycle(0L)
 {
-    connect( this, SIGNAL( changed() ), m_popup, SLOT( slotHistoryChanged() ) );
+    connect( this, SIGNAL(changed()), m_popup, SLOT(slotHistoryChanged()) );
 
 }
 

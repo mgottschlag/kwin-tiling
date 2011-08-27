@@ -136,7 +136,7 @@ void PlacesRunner::run(const Plasma::RunnerContext &context, const Plasma::Query
 
         // gets deleted in setupComplete
         KFilePlacesModel *places = new KFilePlacesModel(this);
-        connect(places, SIGNAL(setupDone(QModelIndex, bool)), SLOT(setupComplete(QModelIndex, bool)));
+        connect(places, SIGNAL(setupDone(QModelIndex,bool)), SLOT(setupComplete(QModelIndex,bool)));
         bool found = false;
 
         for (int i = 0; i <= places->rowCount();i++) {

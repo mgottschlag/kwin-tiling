@@ -40,12 +40,7 @@ enum EFileType
     FILE_AFM,
     FILE_PFM
 };
-    
-inline QString getDestFolder(const QString &folder, const QString &file)
-{
-    return folder+file[0].toLower()+'/';
-}
-extern QString modifyName(const QString &fname);
+
 extern bool isAAfm(const QString &fname);
 extern bool isAPfm(const QString &fname);
 extern bool isAType1(const QString &fname);

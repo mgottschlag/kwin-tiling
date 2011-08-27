@@ -41,9 +41,9 @@ namespace KWin
 {
 
 #define SETUP( var, type ) \
-    connect( enable_##var, SIGNAL( toggled( bool )), rule_##var, SLOT( setEnabled( bool ))); \
-    connect( enable_##var, SIGNAL( toggled( bool )), this, SLOT( updateEnable##var())); \
-    connect( rule_##var, SIGNAL( activated( int )), this, SLOT( updateEnable##var())); \
+    connect( enable_##var, SIGNAL(toggled(bool)), rule_##var, SLOT(setEnabled(bool))); \
+    connect( enable_##var, SIGNAL(toggled(bool)), this, SLOT(updateEnable##var())); \
+    connect( rule_##var, SIGNAL(activated(int)), this, SLOT(updateEnable##var())); \
     enable_##var->setWhatsThis( enableDesc ); \
     rule_##var->setWhatsThis( type##RuleDesc );
 
@@ -108,7 +108,6 @@ RulesWidget::RulesWidget(QWidget* parent)
     SETUP(shortcut, force);
     // workarounds tab
     SETUP(fsplevel, force);
-    SETUP(moveresizemode, force);
     SETUP(type, force);
     SETUP(ignoreposition, force);
     SETUP(minsize, force);
@@ -126,7 +125,7 @@ RulesWidget::RulesWidget(QWidget* parent)
 
 #undef SETUP
 
-#define UPDATE_ENABLE_SLOT( var ) \
+#define UPDATE_ENABLE_SLOT(var) \
     void RulesWidget::updateEnable##var() \
     { \
         /* leave the label readable label_##var->setEnabled( enable_##var->isChecked() && rule_##var->currentIndex() != 0 );*/ \
@@ -165,7 +164,6 @@ void RulesWidget::updateEnableshortcut()
 }
 // workarounds tab
 UPDATE_ENABLE_SLOT(fsplevel)
-UPDATE_ENABLE_SLOT(moveresizemode)
 UPDATE_ENABLE_SLOT(type)
 UPDATE_ENABLE_SLOT(ignoreposition)
 UPDATE_ENABLE_SLOT(minsize)
@@ -319,16 +317,6 @@ static Placement::Policy comboToPlacement(int val)
     return conv[ val ];
 }
 
-static int moveresizeToCombo(Options::MoveResizeMode mode)
-{
-    return mode == Options::Opaque ? 0 : 1;
-}
-
-static Options::MoveResizeMode comboToMoveResize(int val)
-{
-    return val == 0 ? Options::Opaque : Options::Transparent;
-}
-
 static int typeToCombo(NET::WindowType type)
 {
     if (type < NET::Normal || type > NET::Splash ||
@@ -396,8 +384,9 @@ static NET::WindowType comboToType(int val)
 void RulesWidget::setRules(Rules* rules)
 {
     Rules tmp;
-    if (rules == NULL)
-        rules = &tmp; // empty
+
+    Q_ASSERT( rules );
+
     description->setText(rules->description);
     wmclass->setText(rules->wmclass);
     whole_wmclass->setChecked(rules->wmclasscomplete);
@@ -450,7 +439,6 @@ void RulesWidget::setRules(Rules* rules)
     COMBOBOX_FORCE_RULE(tilingoption, tilingToCombo);
     LINEEDIT_SET_RULE(shortcut,);
     COMBOBOX_FORCE_RULE(fsplevel,);
-    COMBOBOX_FORCE_RULE(moveresizemode, moveresizeToCombo);
     COMBOBOX_FORCE_RULE(type, typeToCombo);
     CHECKBOX_FORCE_RULE(ignoreposition,);
     LINEEDIT_FORCE_RULE(minsize, sizeToStr);
@@ -547,7 +535,6 @@ Rules* RulesWidget::rules() const
     COMBOBOX_FORCE_RULE(tilingoption, comboToTiling);
     LINEEDIT_SET_RULE(shortcut,);
     COMBOBOX_FORCE_RULE(fsplevel,);
-    COMBOBOX_FORCE_RULE(moveresizemode, comboToMoveResize);
     COMBOBOX_FORCE_RULE(type, comboToType);
     CHECKBOX_FORCE_RULE(ignoreposition,);
     LINEEDIT_FORCE_RULE(minsize, strToSize);
@@ -668,7 +655,6 @@ void RulesWidget::prefillUnusedValues(const KWindowInfo& info)
     COMBOBOX_PREFILL(tilingoption, tilingToCombo, 0);
     //LINEEDIT_PREFILL( shortcut, );
     //COMBOBOX_PREFILL( fsplevel, );
-    //COMBOBOX_PREFILL( moveresizemode, moveresizeToCombo );
     COMBOBOX_PREFILL(type, typeToCombo, info.windowType(SUPPORTED_MANAGED_WINDOW_TYPES_MASK));
     //CHECKBOX_PREFILL( ignoreposition, );
     LINEEDIT_PREFILL(minsize, sizeToStr, info.frameGeometry().size());

@@ -37,7 +37,7 @@ MMModemGsmCardInterface::MMModemGsmCardInterface(const QString & path, MMModemMa
     d->modemGsmCardIface.connection().connect(MMModemManager::DBUS_SERVICE,
         path, QLatin1String("org.freedesktop.DBus.Properties"),
         QLatin1String("MmPropertiesChanged"), QLatin1String("sa{sv}"),
-        this, SLOT(propertiesChanged(const QString &,const QVariantMap &)));
+        this, SLOT(propertiesChanged(QString,QVariantMap)));
 }
 
 MMModemGsmCardInterface::~MMModemGsmCardInterface()
@@ -88,28 +88,28 @@ QString MMModemGsmCardInterface::getImsi()
     return QString();
 }
 
-void MMModemGsmCardInterface::sendPuk(const QString & puk, const QString & pin)
+QDBusPendingReply<> MMModemGsmCardInterface::sendPuk(const QString & puk, const QString & pin)
 {
     Q_D(MMModemGsmCardInterface);
-    d->modemGsmCardIface.SendPuk(puk, pin);
+    return d->modemGsmCardIface.SendPuk(puk, pin);
 }
 
-void MMModemGsmCardInterface::sendPin(const QString & pin)
+QDBusPendingReply<> MMModemGsmCardInterface::sendPin(const QString & pin)
 {
     Q_D(MMModemGsmCardInterface);
-    d->modemGsmCardIface.SendPin(pin);
+    return d->modemGsmCardIface.SendPin(pin);
 }
 
-void MMModemGsmCardInterface::enablePin(const QString & pin, const bool enabled)
+QDBusPendingReply<> MMModemGsmCardInterface::enablePin(const QString & pin, const bool enabled)
 {
     Q_D(MMModemGsmCardInterface);
-    d->modemGsmCardIface.EnablePin(pin, enabled);
+    return d->modemGsmCardIface.EnablePin(pin, enabled);
 }
 
-void MMModemGsmCardInterface::changePin(const QString & oldPin, const QString & newPin)
+QDBusPendingReply<> MMModemGsmCardInterface::changePin(const QString & oldPin, const QString & newPin)
 {
     Q_D(MMModemGsmCardInterface);
-    d->modemGsmCardIface.ChangePin(oldPin, newPin);
+    return d->modemGsmCardIface.ChangePin(oldPin, newPin);
 }
 
 Solid::Control::ModemInterface::Band MMModemGsmCardInterface::getSupportedBands() const

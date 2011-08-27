@@ -51,7 +51,7 @@ public:
 
     void setCalendar(const QString &newCalendarType = "locale");
     void setCalendar(const KCalendarSystem *calendar);
-    const KCalendarSystem *calendar () const;
+    const KCalendarSystem *calendar() const;
 
     void setDate(const QDate &date);
     const QDate& date() const;

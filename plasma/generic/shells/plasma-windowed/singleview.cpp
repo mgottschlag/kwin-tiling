@@ -104,9 +104,8 @@ void SingleView::resizeEvent(QResizeEvent *event)
     emit geometryChanged();
 }
 
-void SingleView::hideEvent(QHideEvent *event)
+void SingleView::closeEvent(QCloseEvent *event)
 {
-    Q_UNUSED(event)
     if (m_applet) {
         KConfigGroup dummy;
         m_containment->save(dummy);
@@ -114,6 +113,7 @@ void SingleView::hideEvent(QHideEvent *event)
         m_applet = 0;
     }
 
+    QGraphicsView::closeEvent(event);
     deleteLater();
 }
 

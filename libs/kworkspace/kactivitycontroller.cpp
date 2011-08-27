@@ -60,17 +60,17 @@ KActivityController::KActivityController(QObject * parent)
     connect(KActivityManager::self(), SIGNAL(ActivityRemoved(QString)),
             this, SIGNAL(activityRemoved(QString)));
 
-    connect(KActivityManager::self(), SIGNAL(ResourceAccessed(QString, QString)),
-            this, SLOT(resourceAccessed(QString, QString)));
+    connect(KActivityManager::self(), SIGNAL(ResourceAccessed(QString,QString)),
+            this, SLOT(resourceAccessed(QString,QString)));
 
-    connect(KActivityManager::self(), SIGNAL(ResourceOpened(QString, uint, QString)),
-            this, SLOT(resourceOpened(QString, uint, QString)));
+    connect(KActivityManager::self(), SIGNAL(ResourceOpened(QString,uint,QString)),
+            this, SLOT(resourceOpened(QString,uint,QString)));
 
-    connect(KActivityManager::self(), SIGNAL(ResourceModified(uint, QString)),
-            this, SLOT(resourceModified(uint, QString)));
+    connect(KActivityManager::self(), SIGNAL(ResourceModified(uint,QString)),
+            this, SLOT(resourceModified(uint,QString)));
 
-    connect(KActivityManager::self(), SIGNAL(ResourceClosed(uint, QString)),
-            this, SLOT(resourceClosed(uint, QString)));
+    connect(KActivityManager::self(), SIGNAL(ResourceClosed(uint,QString)),
+            this, SLOT(resourceClosed(uint,QString)));
 }
 
 KActivityController::~KActivityController()
