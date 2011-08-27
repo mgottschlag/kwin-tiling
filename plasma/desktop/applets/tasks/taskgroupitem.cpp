@@ -293,7 +293,8 @@ void TaskGroupItem::updateToolTip()
         return;
     }
 
-    Plasma::ToolTipContent data(m_group.data()->name(), QString());
+    QString groupName = i18nc("@title:group Name of a group of windows", "%1", m_group.data()->name());
+    Plasma::ToolTipContent data(groupName, QString());
     int desktop = m_group.data()->desktop();
     if (desktop != 0 &&
         (!m_applet->groupManager().showOnlyCurrentDesktop() || !m_group.data()->isOnCurrentDesktop())) {
