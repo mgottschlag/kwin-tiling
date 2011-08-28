@@ -390,8 +390,6 @@ void Workspace::performCompositing()
     QRegion repaints = repaints_region;
     // clear all repaints, so that post-pass can add repaints for the next repaint
     repaints_region = QRegion();
-    QElapsedTimer t;
-    t.start();
     if (scene->waitSyncAvailable()) {
         // vsync: paint the scene, than rebase the timer and use the duration for next timeout estimation
         scene->paint(repaints, windows);
@@ -589,7 +587,19 @@ static QVector<QRect> damageRects;
 void Toplevel::damageNotifyEvent(XDamageNotifyEvent* e)
 {
     if (damageRatio == 1.0) // we know that we're completely damaged, no need to tell us again
+    {   // drop events
+        while (XPending(display())) {
+            EventUnion e2;
+            if (XPeekEvent(display(), &e2.e) && e2.e.type == Extensions::damageNotifyEvent() &&
+                    e2.e.xany.window == frameId()) {
+                XNextEvent(display(), &e2.e);
+                continue;
+            }
+            break;
+        }
+
         return;
+    }
 
     const float area = rect().width()*rect().height();
     damageRects.reserve(16);
