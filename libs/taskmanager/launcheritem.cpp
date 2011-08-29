@@ -38,6 +38,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // KIO
 #include <kemailsettings.h> // no camelcase include
 
+#include "groupmanager.h"
 #include "taskitem.h"
 #include "taskgroup.h"
 
@@ -64,10 +65,8 @@ public:
 
 LauncherItem::LauncherItem(QObject *parent, const KUrl &url)
     : AbstractGroupableItem(parent),
-    d(new LauncherItemPrivate(this))
+      d(new LauncherItemPrivate(this))
 {
-    d->genericName = QString();
-    d->name = QString();
     if (url.isEmpty()) {
         d->icon = KIcon("unknown");
     } else {
@@ -99,12 +98,11 @@ void LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
     }
 
     if (name.compare(d->name, Qt::CaseInsensitive) == 0) {
-        const bool wasEmpty = d->associates.isEmpty();
-
         d->associates.insert(item);
         connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(associateDestroyed(QObject*)));
 
-        if (wasEmpty) {
+        if (d->associates.count() == 1) {
+            // this is our first associated item, means we need to hide
             emit show(false);
         }
     }
@@ -120,9 +118,25 @@ void LauncherItem::removeItemIfAssociated(AbstractGroupableItem *item)
 
 bool LauncherItem::shouldShow() const
 {
+    GroupManager *manager = parentGroup() ? parentGroup()->manager() : 0;
+
+    if (!manager) {
+        return d->associates.isEmpty();
+    }
+
+    const bool screen = manager->showOnlyCurrentScreen();
+    const bool desk = manager->showOnlyCurrentDesktop();
+    const bool activity = manager->showOnlyCurrentActivity();
+
     foreach (QObject *obj, d->associates) {
         TaskItem *item = static_cast<TaskItem *>(obj);
-        if (item && item->isOnCurrentDesktop() && item->task().data()->isOnCurrentActivity()) {
+        if (!item || !item->task()) {
+            continue;
+        }
+
+        if ((!screen || item->task().data()->isOnScreen(manager->screen())) ||
+            (!desk || item->isOnCurrentDesktop()) ||
+            (!activity || item->task().data()->isOnCurrentActivity())) {
             return false;
         }
     }
@@ -132,7 +146,6 @@ bool LauncherItem::shouldShow() const
 
 void LauncherItemPrivate::associateDestroyed(QObject *obj)
 {
-    kDebug() << "associate was destroyed" << associates.isEmpty();
     if (associates.isEmpty()) {
         return;
     }
@@ -304,7 +317,7 @@ void LauncherItem::setLauncherUrl(const KUrl &url)
     // into file:/// URLs
     KUrl newUrl(url.url());
 
-    if (newUrl == d->url) {
+    if (d->url.protocol() != "preferred" && newUrl == d->url) {
         return;
     }
 
@@ -336,7 +349,7 @@ void LauncherItem::setLauncherUrl(const KUrl &url)
             KConfigGroup cg(&f, "Desktop Entry");
 
             d->icon = KIcon(f.readIcon());
-            QString exec = cg.readEntry("Exec", "");
+            const QString exec = cg.readEntry("Exec", "");
             if (!exec.isNull()) {
                 d->name = exec.split(' ').at(0);
             }

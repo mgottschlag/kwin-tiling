@@ -125,6 +125,12 @@ public:
      * The Visualization is responsible to update the screen number the visualization is currently on.
      */
     void setScreen(int screen);
+
+    /**
+     * @return the currently set screen; -1 if none
+     */
+    int screen() const;
+
     /**
      * Reconnect all neccessary signals to the taskmanger, and clear the per desktop stored rootGroups
      */
