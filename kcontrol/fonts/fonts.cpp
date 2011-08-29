@@ -219,7 +219,7 @@ void FontUseItem::applyFontDiff( const QFont &fnt, int fontDiffFlags )
 }
 
 /**** FontAASettings ****/
-#ifdef HAVE_FONTCONFIG
+#if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
 FontAASettings::FontAASettings(QWidget *parent)
               : KDialog( parent ),
                 changesMade(false)
@@ -475,13 +475,13 @@ void FontAASettings::enableWidgets()
 
 void FontAASettings::changed()
 {
-#ifdef HAVE_FONTCONFIG
+#if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
     changesMade=true;
     enableWidgets();
 #endif
 }
 
-#ifdef HAVE_FONTCONFIG
+#if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
 int FontAASettings::exec()
 {
     int i=KDialog::exec();
@@ -608,7 +608,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
    layout->addLayout(lay);
    lay->setColumnStretch( 3, 10 );
    QLabel* label=0L;
-#ifdef HAVE_FONTCONFIG
+#if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
    label = new QLabel( i18n( "Use a&nti-aliasing:" ), this );
    label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
    lay->addWidget( label, 0, 0 );
@@ -650,7 +650,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
 
    layout->addStretch(1);
 
-#ifdef HAVE_FONTCONFIG
+#if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
    aaSettings=new FontAASettings(this);
 #endif
 
@@ -676,7 +676,7 @@ void KFonts::defaults()
   for ( int i = 0; i < (int) fontUseList.count(); i++ )
     fontUseList.at( i )->setDefault();
 
-#ifdef HAVE_FONTCONFIG
+#if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
   useAA = AASystem;
   cbAA->setCurrentIndex( useAA );
   aaSettings->defaults();
@@ -693,7 +693,7 @@ void KFonts::load()
   for(; it!=end; ++it)
     (*it)->readFont();
 
-#ifdef HAVE_FONTCONFIG
+#if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
   useAA_original = useAA = aaSettings->load() ? AAEnabled : AADisabled;
   cbAA->setCurrentIndex( useAA );
 #endif
@@ -704,7 +704,7 @@ void KFonts::load()
   DPISetting dpi = dpicfg == 120 ? DPI120 : dpicfg == 96 ? DPI96 : DPINone;
   comboForceDpi->setCurrentIndex( dpi );
   dpi_original = dpi;
-#ifdef HAVE_FONTCONFIG
+#if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
   if( cfgfonts.readEntry( "dontChangeAASettings", true )) {
       useAA_original = useAA = AASystem;
       cbAA->setCurrentIndex( useAA );
@@ -730,7 +730,7 @@ void KFonts::save()
   DPISetting dpi = static_cast< DPISetting >( comboForceDpi->currentIndex());
   const int dpi2value[] = { 0, 96, 120 };
   cfgfonts.writeEntry( "forceFontDPI", dpi2value[ dpi ] );
-#ifdef HAVE_FONTCONFIG
+#if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
   cfgfonts.writeEntry( "dontChangeAASettings", cbAA->currentIndex() == AASystem );
 #endif
   cfgfonts.sync();
@@ -769,7 +769,7 @@ void KFonts::save()
   // Don't overwrite global settings unless explicitly asked for - e.g. the system
   // fontconfig setup may be much more complex than this module can provide.
   // TODO: With AASystem the changes already made by this module should be reverted somehow.
-#ifdef HAVE_FONTCONFIG
+#if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
   bool aaSave = false;
   if( cbAA->currentIndex() != AASystem )
       aaSave = aaSettings->save( useAA == AAEnabled );
@@ -813,7 +813,7 @@ void KFonts::slotApplyFontDiff()
 
 void KFonts::slotUseAntiAliasing()
 {
-#ifdef HAVE_FONTCONFIG
+#if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
     useAA = static_cast< AASetting >( cbAA->currentIndex());
     aaSettingsButton->setEnabled( cbAA->currentIndex() == AAEnabled );
     emit changed(true);
@@ -822,7 +822,7 @@ void KFonts::slotUseAntiAliasing()
 
 void KFonts::slotCfgAa()
 {
-#ifdef HAVE_FONTCONFIG
+#if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
   if(aaSettings->exec())
   {
     emit changed(true);
