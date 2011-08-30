@@ -162,8 +162,8 @@ void KWindowListMenu::init()
         // Avoid creating unwanted accelerators.
         itemText.replace( '&', QLatin1String( "&&" ));
 
-        QAction* action = addAction( pm, itemText, this, SLOT(slotForceActiveWindow()) );
-        action->setData( (int)info->win() );
+        QAction* action = addAction( pm, itemText, this, SLOT( slotForceActiveWindow() ) );
+        action->setData( (quintptr)info->win() );
 
         if ( info->win() == activeWindow )
           action->setChecked( true );

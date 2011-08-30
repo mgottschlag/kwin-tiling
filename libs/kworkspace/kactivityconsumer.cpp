@@ -91,21 +91,21 @@ void KActivityConsumer::resourceAccessed(WId wid, const KUrl & uri, ResourceActi
         case Opened:
             KActivityManager::self()->NotifyResourceOpened(
                     QCoreApplication::instance()->applicationName(),
-                    (uint)wid,
+                    (quintptr)wid,
                     uri.url()
                 );
             break;
 
         case Modified:
             KActivityManager::self()->NotifyResourceModified(
-                    (uint)wid,
+                    (quintptr)wid,
                     uri.url()
                 );
             break;
 
         case Closed:
             KActivityManager::self()->NotifyResourceClosed(
-                    (uint)wid,
+                    (quintptr)wid,
                     uri.url()
                 );
             break;
