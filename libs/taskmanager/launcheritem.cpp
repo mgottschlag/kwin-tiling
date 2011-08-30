@@ -134,8 +134,8 @@ bool LauncherItem::shouldShow() const
             continue;
         }
 
-        if ((!screen || item->task().data()->isOnScreen(manager->screen())) ||
-            (!desk || item->isOnCurrentDesktop()) ||
+        if ((!screen || item->task().data()->isOnScreen(manager->screen())) &&
+            (!desk || item->isOnCurrentDesktop()) &&
             (!activity || item->task().data()->isOnCurrentActivity())) {
             return false;
         }
