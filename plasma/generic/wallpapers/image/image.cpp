@@ -472,7 +472,7 @@ void Image::addUrl(const KUrl &url, bool setAsCurrent)
         if (setAsCurrent) {
             setWallpaper(path);
         } else {
-            if (m_wallpaper.isEmpty()) {
+            if (m_mode != "SingleImage") {
                 // it's a slide show, add it to the slide show
                 m_slideshowBackgrounds.append(path);
             }
