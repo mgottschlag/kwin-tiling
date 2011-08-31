@@ -514,14 +514,14 @@ void Image::addWallpaperRetrieved(KJob *job)
 
 void Image::setWallpaper(const QString &path)
 {
-    if (m_wallpaper.isEmpty()) {
+    if (m_mode == "SingleImage") {
+        m_wallpaper = path;
+        setSingleImage();
+    } else {
         m_slideshowBackgrounds.append(path);
         m_currentSlide = m_slideshowBackgrounds.size() - 2;
         nextSlide();
         updateWallpaperActions();
-    } else {
-        m_wallpaper = path;
-        setSingleImage();
     }
 
     if (!m_usersWallpapers.contains(path)) {
