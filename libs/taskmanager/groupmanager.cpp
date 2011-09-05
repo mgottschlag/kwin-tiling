@@ -813,7 +813,12 @@ void GroupManagerPrivate::unsaveLauncher(LauncherItem *launcher)
         return;
     }
 
-    cg.deleteEntry(launcher->name());
+    if (launcher->launcherUrl().protocol() == "preferred") {
+        cg.deleteEntry(launcher->launcherUrl().host());
+    } else {
+        cg.deleteEntry(launcher->name());
+    }
+
     emit q->configChanged();
 }
 
