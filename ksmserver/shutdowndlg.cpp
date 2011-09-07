@@ -536,7 +536,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         m_pictureWidth = 0;
     }
 
-    KDialog::centerOnScreen(this);
+    KDialog::centerOnScreen(this, -3);
 }
 
 void KSMShutdownDlg::automaticallyDoTimeout()
@@ -630,7 +630,7 @@ void KSMShutdownDlg::resizeEvent(QResizeEvent *e)
         setMask(m_svg->mask());
     }
 
-    KDialog::centerOnScreen(this);
+    KDialog::centerOnScreen(this, -3);
 }
 
 void KSMShutdownDlg::slotLogout()
