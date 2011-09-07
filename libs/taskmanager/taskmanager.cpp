@@ -567,8 +567,12 @@ bool TaskManager::isOnScreen(int screen, const WId wid)
 
     // for window decos that fudge a bit and claim to extend beyond the
     // edge of the screen, we just contract a bit.
-    QRect window = wi.frameGeometry();
+    const QRect window = wi.frameGeometry();
+#ifdef KDE_PLATFORM_FEATURE_BINARY_COMPATIBLE_FEATURE_REDUCTION
+    QRect desktop = qApp->desktop()->screenGeometry(screen);
+#else
     QRect desktop = Kephal::ScreenUtils::screenGeometry(screen);
+#endif
     desktop.adjust(5, 5, -5, -5);
     return window.intersects(desktop);
 }
