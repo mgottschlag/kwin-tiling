@@ -57,6 +57,7 @@ void SplashWindow::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
     rootContext()->setContextProperty("screenSize", size());
+    centerOn(rootObject());
 }
 
 void SplashWindow::keyPressEvent(QKeyEvent *event)
