@@ -200,7 +200,7 @@ It allows you to switch between your virtual desktops.
 If you change the layout of the <application>Pager</application>
 through the <guimenuitem>Number of rows</guimenuitem> option,
 which will also affect the layout and animations that are shown in &kwin;’s
-<guimenuitem>Desktop Grid</guimenuitem> effect &ndash; <!--(Switch on desktop effect,
+<guimenuitem>Desktop Grid</guimenuitem> effect.<!-- &ndash; (Switch on desktop effect,
 press <keycombo action="simul">&Ctrl;<keycap>F8</keycap></keycombo> to see it.)
 don't see that in 4.7-->
 For larger pagers, selecting <guimenuitem>Display windows icons</guimenuitem>
