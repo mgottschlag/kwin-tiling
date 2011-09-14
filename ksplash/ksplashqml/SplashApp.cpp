@@ -24,14 +24,14 @@
 
 SplashApp::SplashApp(Display * display, int argc, char ** argv)
     : QApplication(display, argc, argv),
-      m_display(display), m_state(0), m_window(0),
+      m_display(display), m_stage(0), m_window(0),
       m_testing(false)
 {
     m_kde_splash_progress = XInternAtom(m_display, "_KDE_SPLASH_PROGRESS", False);
     m_testing = arguments().contains("--test");
     m_window = new SplashWindow(m_testing);
 
-    setState(1);
+    setStage(1);
 
     int sw = WidthOfScreen(ScreenOfDisplay(display, DefaultScreen(display)));
     int sh = HeightOfScreen(ScreenOfDisplay(display, DefaultScreen(display)));
@@ -60,7 +60,7 @@ void SplashApp::timerEvent(QTimerEvent * event)
     if (event->timerId() == m_timer.timerId()) {
         m_timer.stop();
 
-        setState(m_state + 1);
+        setStage(m_stage + 1);
 
         m_timer.start(TEST_STEP_INTERVAL, this);
     }
@@ -74,24 +74,24 @@ bool SplashApp::x11EventFilter(XEvent * xe)
             if (xe->xclient.message_type == m_kde_splash_progress) {
                 message = xe->xclient.data.b;
 
-                int state;
+                int stage;
 
-                if (strcmp(message, "initial") == 0 && m_state < 0)
-                    state = 0; // not actually used
-                else if (strcmp(message, "kded") == 0 && m_state < 1)
-                    state = 1;
-                else if (strcmp(message, "confupdate") == 0 && m_state < 2)
-                    state = 2;
-                else if (strcmp(message, "kcminit") == 0 && m_state < 3)
-                    state = 3;
-                else if (strcmp(message, "ksmserver") == 0 && m_state < 4)
-                    state = 4;
-                else if (strcmp(message, "wm") == 0 && m_state < 5)
-                    state = 5;
-                else if (strcmp(message, "desktop") == 0 && m_state < 6)
-                    state = 6;
+                if (strcmp(message, "initial") == 0 && m_stage < 0)
+                    stage = 0; // not actually used
+                else if (strcmp(message, "kded") == 0 && m_stage < 1)
+                    stage = 1;
+                else if (strcmp(message, "confupdate") == 0 && m_stage < 2)
+                    stage = 2;
+                else if (strcmp(message, "kcminit") == 0 && m_stage < 3)
+                    stage = 3;
+                else if (strcmp(message, "ksmserver") == 0 && m_stage < 4)
+                    stage = 4;
+                else if (strcmp(message, "wm") == 0 && m_stage < 5)
+                    stage = 5;
+                else if (strcmp(message, "desktop") == 0 && m_stage < 6)
+                    stage = 6;
 
-                setState(state);
+                setStage(stage);
             }
     }
     return false;
@@ -104,13 +104,13 @@ int SplashApp::x11ProcessEvent(XEvent * xe)
     return 0;
 }
 
-void SplashApp::setState(int state)
+void SplashApp::setStage(int stage)
 {
-    if (m_state == 6) {
+    if (m_stage == 6) {
         QApplication::exit(EXIT_SUCCESS);
     }
 
-    m_state = state;
-    m_window->setState(state);
+    m_stage = stage;
+    m_window->setStage(stage);
 }
 

@@ -41,11 +41,11 @@ public:
 
 protected:
     void timerEvent(QTimerEvent * event);
-    void setState(int state);
+    void setStage(int stage);
 
 private:
     Display * m_display;
-    int m_state;
+    int m_stage;
     Atom m_kde_splash_progress;
     SplashWindow * m_window;
     bool m_testing;

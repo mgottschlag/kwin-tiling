@@ -29,7 +29,7 @@ Item {
     // height: 300
 
     /* property declarations --------------------------{{{ */
-    property int state
+    property int stage
     property int iconSize: (screenSize.width <= 1024) ? 64 : 128
     /* }}} */
 
@@ -38,24 +38,24 @@ Item {
     /* }}} */
 
     /* JavaScript functions ---------------------------{{{ */
-    onStateChanged: {
-        if (state == 1) {
+    onStageChanged: {
+        if (stage == 1) {
             background.opacity = 1
             gear.opacity = 0.5
         }
-        if (state == 2) {
+        if (stage == 2) {
             gear.opacity = 1
             mask.opacity = 1
             letter.opacity = 1
         }
-        if (state == 3) {
+        if (stage == 3) {
         }
-        if (state == 4) {
+        if (stage == 4) {
         }
-        if (state == 5) {
+        if (stage == 5) {
             logo.opacity = 1
         }
-        if (state == 6) {
+        if (stage == 6) {
         }
     }
     /* }}} */
@@ -178,7 +178,7 @@ Item {
 
     /* }}} */
 
-    /* states -----------------------------------------{{{ */
+    /* stages -----------------------------------------{{{ */
 
     /* }}} */
 

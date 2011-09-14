@@ -29,7 +29,7 @@
 
 SplashWindow::SplashWindow(bool testing)
     : QDeclarativeView(),
-      m_state(0),
+      m_stage(0),
       m_testing(testing)
 {
     setWindowFlags(
@@ -46,11 +46,11 @@ SplashWindow::SplashWindow(bool testing)
     setStyleSheet("background: #000000; border: none");
 }
 
-void SplashWindow::setState(int state)
+void SplashWindow::setStage(int stage)
 {
-    m_state = state;
+    m_stage = stage;
 
-    rootObject()->setProperty("state", state);
+    rootObject()->setProperty("stage", stage);
 }
 
 void SplashWindow::resizeEvent(QResizeEvent *event)

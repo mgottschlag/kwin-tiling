@@ -27,7 +27,7 @@ QML.Item {
     height: screenSize.height
 
     /* property declarations --------------------------{{{ */
-    property int state
+    property int stage
     /* }}} */
 
     /* signal declarations ----------------------------{{{ */
@@ -35,36 +35,36 @@ QML.Item {
     /* }}} */
 
     /* JavaScript functions ---------------------------{{{ */
-    onStateChanged: {
-        if (state == 2) {
-            state1.x = (main.width - state1.width) / 2
-            state1.opacity = 1
+    onStageChanged: {
+        if (stage == 2) {
+            stage1.x = (main.width - stage1.width) / 2
+            stage1.opacity = 1
         }
-        if (state == 3) {
-            state1.x = - state1.width
-            state2.x = (main.width - state2.width) / 2
-            state1.opacity = 0
-            state2.opacity = 1
+        if (stage == 3) {
+            stage1.x = - stage1.width
+            stage2.x = (main.width - stage2.width) / 2
+            stage1.opacity = 0
+            stage2.opacity = 1
         }
-        if (state == 4) {
-            state2.x = - state2.width
-            state3.x = (main.width - state3.width) / 2
-            state2.opacity = 0
-            state3.opacity = 1
+        if (stage == 4) {
+            stage2.x = - stage2.width
+            stage3.x = (main.width - stage3.width) / 2
+            stage2.opacity = 0
+            stage3.opacity = 1
         }
-        if (state == 5) {
-            state3.x = - state3.width
-            state4.x = (main.width - state4.width) / 2
-            state3.opacity = 0
-            state4.opacity = 1
+        if (stage == 5) {
+            stage3.x = - stage3.width
+            stage4.x = (main.width - stage4.width) / 2
+            stage3.opacity = 0
+            stage4.opacity = 1
         }
-        if (state == 6) {
-            state4.x = - state4.width
-            state5.x = (main.width - state5.width) / 2
-            state4.opacity = 0
-            state5.opacity = 1
-            state5.width = 128
-            state5.height = 128
+        if (stage == 6) {
+            stage4.x = - stage4.width
+            stage5.x = (main.width - stage5.width) / 2
+            stage4.opacity = 0
+            stage5.opacity = 1
+            stage5.width = 128
+            stage5.height = 128
         }
     }
     /* }}} */
@@ -90,7 +90,7 @@ QML.Item {
     }
 
     QML.Image {
-        id: state1
+        id: stage1
         x: main.width + width
         y: (main.height - height) / 2
         source: "images/hardware.png"
@@ -102,7 +102,7 @@ QML.Item {
     }
 
     QML.Image {
-        id: state2
+        id: stage2
         x: main.width + width
         y: (main.height - height) / 2
         source: "images/configuring.png"
@@ -114,7 +114,7 @@ QML.Item {
     }
 
     QML.Image {
-        id: state3
+        id: stage3
         x: main.width + width
         y: (main.height - height) / 2
         source: "images/globe.png"
@@ -126,7 +126,7 @@ QML.Item {
     }
 
     QML.Image {
-        id: state4
+        id: stage4
         x: main.width + width
         y: (main.height - height) / 2
         source: "images/desktop.png"
@@ -138,7 +138,7 @@ QML.Item {
     }
 
     QML.Image {
-        id: state5
+        id: stage5
         x: main.width + width
         y: (main.height - height) / 2
         source: "images/kde.png"
@@ -153,7 +153,7 @@ QML.Item {
 
     /* }}} */
 
-    /* states -----------------------------------------{{{ */
+    /* stages -----------------------------------------{{{ */
 
     /* }}} */
 

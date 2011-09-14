@@ -31,7 +31,7 @@ class SplashWindow: public QDeclarativeView
 public:
     SplashWindow(bool testing);
 
-    void setState(int i);
+    void setStage(int stage);
 
 protected:
     virtual void resizeEvent (QResizeEvent *event);
@@ -39,7 +39,7 @@ protected:
     virtual void mousePressEvent(QMouseEvent *event);
 
 private:
-    int m_state;
+    int m_stage;
     bool m_testing;
 };
 
