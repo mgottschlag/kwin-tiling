@@ -65,20 +65,25 @@ Item {
 
     ListModel {
         id: iconList
-
-        ListElement { icon: "system-lock-screen";       op: "lock";       show: true  }
-        ListElement { icon: "system-switch-user";       op: "switchUser"; show: false }
-        ListElement { icon: "system-shutdown";          op: "leave";      show: true  }
-        ListElement { icon: "system-suspend";           op: "suspend";    show: false }
-        ListElement { icon: "system-suspend-hibernate"; op: "hibernate";  show: false }
     }
 
     function updateIcons() {
-        iconList.setProperty (0, "show", show_lock);
-        iconList.setProperty (1, "show", show_switchUser);
-        iconList.setProperty (2, "show", show_leave);
-        iconList.setProperty (3, "show", show_suspend);
-        iconList.setProperty (4, "show", show_hibernate);
+        iconList.clear();
+        if (show_lock) {
+            iconList.append ({ "icon": "system-lock-screen", "op": "lock" });
+        }
+        if (show_switchUser) {
+            iconList.append ({ "icon": "system-switch-user", "op": "switchUser" });
+        }
+        if (show_leave) {
+            iconList.append ({ "icon": "system-shutdown", op: "leave" });
+        }
+        if (show_suspend) {
+            iconList.append ({ "icon": "system-suspend", "op": "suspend" });
+        }
+        if (show_hibernate) {
+            iconList.append ({ "icon": "system-suspend-hibernate", "op": "hibernate" });
+        }
     }
 
     Flow {
@@ -86,27 +91,16 @@ Item {
         anchors.fill: parent
         flow: orientation==Qt.Vertical ? Flow.TopToBottom : Flow.LeftToRight
         Repeater {
-            /* should be:
-            model: PlasmaCore.SortFilterModel {
-                sourceModel: iconList
-                filterRole: "show"
-                filterRegExp: "true"
-            }
-            // error: sourceModel expects a QAbstractItemModel
-            */
-
             model: iconList
             delegate: Item {
                 id: iconDelegate
-                visible: show
-                width: visible ? iconButton.width : 0
-                height: visible ? iconButton.height : 0
+                width: iconView.flow==Flow.LeftToRight ? lockout.height : lockout.width
+                height: iconView.flow==Flow.TopToBottom ? lockout.width : lockout.height
 
                 QIconItem {
                     id: iconButton
+                    anchors.fill: parent
                     icon: QIcon(model.icon)
-                    width: iconView.flow==Flow.LeftToRight ? lockout.width/count : lockout.width
-                    height: iconView.flow==Flow.TopToBottom ? lockout.height/count : lockout.height
                     scale: mouseArea.pressed ? 0.9 : 1
                     smooth: true
 
