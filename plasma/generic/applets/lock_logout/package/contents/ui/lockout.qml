@@ -29,6 +29,8 @@ Item {
     property bool show_suspend: false
     property bool show_hibernate: false
     property int count: 2
+    property int orientation: plasmoid.formFactor==2 ? Qt.Vertical : Qt.Horizontal
+    property int iconSize: 80
 
     PlasmaCore.DataSource {
         id: dataEngine
@@ -42,6 +44,14 @@ Item {
         configChanged();
     }
 
+    function setSize() {
+        if (orientation == Qt.Vertical) {
+            plasmoid.resize (iconSize, iconSize*count);
+        } else {
+            plasmoid.resize (iconSize*count, iconSize);
+        }
+    }
+
     function configChanged() {
         show_lock = plasmoid.readConfig("show_lock");
         show_switchUser = plasmoid.readConfig("show_switchUser");
@@ -49,6 +59,7 @@ Item {
         show_suspend = plasmoid.readConfig("show_suspend");
         show_hibernate = plasmoid.readConfig("show_hibernate");
         count = show_lock+show_switchUser+show_leave+show_suspend+show_hibernate;
+        setSize();
         updateIcons();
     }
 
@@ -73,7 +84,7 @@ Item {
     Flow {
         id: iconView
         anchors.fill: parent
-        flow: width>height ? Flow.LeftToRight : Flow.TopToBottom
+        flow: orientation==Qt.Vertical ? Flow.TopToBottom : Flow.LeftToRight
         Repeater {
             /* should be:
             model: PlasmaCore.SortFilterModel {
