@@ -49,6 +49,25 @@ Item {
         show_suspend = plasmoid.readConfig("show_suspend");
         show_hibernate = plasmoid.readConfig("show_hibernate");
         count = show_lock+show_switchUser+show_leave+show_suspend+show_hibernate;
+        updateIcons();
+    }
+
+    ListModel {
+        id: iconList
+
+        ListElement { icon: "system-lock-screen";       op: "lock";       show: true  }
+        ListElement { icon: "system-switch-user";       op: "switchUser"; show: false }
+        ListElement { icon: "system-shutdown";          op: "leave";      show: true  }
+        ListElement { icon: "system-suspend";           op: "suspend";    show: false }
+        ListElement { icon: "system-suspend-hibernate"; op: "hibernate";  show: false }
+    }
+
+    function updateIcons() {
+        iconList.setProperty (0, "show", show_lock);
+        iconList.setProperty (1, "show", show_switchUser);
+        iconList.setProperty (2, "show", show_leave);
+        iconList.setProperty (3, "show", show_suspend);
+        iconList.setProperty (4, "show", show_hibernate);
     }
 
     Flow {
@@ -56,22 +75,25 @@ Item {
         anchors.fill: parent
         flow: width>height ? Flow.LeftToRight : Flow.TopToBottom
         Repeater {
-            model: [ // iconname,               operation,      visible
-                [ "system-lock-screen",       "lock",          show_lock         ],
-                [ "system-switch-user",       "switchUser",    show_switchUser   ],
-                [ "system-shutdown",          "leave",         show_leave        ],
-                [ "system-suspend",           "suspend",       show_suspend      ],
-                [ "system-suspend-hibernate", "hibernate",     show_hibernate    ]
-            ]
+            /* should be:
+            model: PlasmaCore.SortFilterModel {
+                sourceModel: iconList
+                filterRole: "show"
+                filterRegExp: "true"
+            }
+            // error: sourceModel expects a QAbstractItemModel
+            */
+
+            model: iconList
             delegate: Item {
                 id: iconDelegate
-                visible: modelData[2]
+                visible: show
                 width: visible ? iconButton.width : 0
                 height: visible ? iconButton.height : 0
 
                 QIconItem {
                     id: iconButton
-                    icon: QIcon(modelData[0])
+                    icon: QIcon(model.icon)
                     width: iconView.flow==Flow.LeftToRight ? lockout.width/count : lockout.width
                     height: iconView.flow==Flow.TopToBottom ? lockout.height/count : lockout.height
                     scale: mouseArea.pressed ? 0.9 : 1
@@ -80,7 +102,7 @@ Item {
                     MouseArea {
                         id: mouseArea
                         anchors.fill: parent
-                        onClicked: clickHandler(modelData[1])
+                        onClicked: clickHandler(op)
                     }
                 }
             }
