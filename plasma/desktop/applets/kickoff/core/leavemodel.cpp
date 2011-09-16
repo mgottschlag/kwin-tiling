@@ -151,26 +151,26 @@ void LeaveModel::updateModel()
 
 //FIXME: the proper fix is to implement the KWorkSpace methods for Windows
 #ifndef Q_WS_WIN
+    QSet< Solid::PowerManagement::SleepState > spdMethods = Solid::PowerManagement::supportedSleepStates();
+    if (spdMethods.contains(Solid::PowerManagement::StandbyState)) {
+        QStandardItem *standbyOption = createStandardItem("leave:/standby");
+        systemOptions->appendRow(standbyOption);
+        addSystemSession = true;
+    }
+
+    if (spdMethods.contains(Solid::PowerManagement::SuspendState)) {
+        QStandardItem *suspendramOption = createStandardItem("leave:/suspendram");
+        systemOptions->appendRow(suspendramOption);
+        addSystemSession = true;
+    }
+
+    if (spdMethods.contains(Solid::PowerManagement::HibernateState)) {
+        QStandardItem *suspenddiskOption = createStandardItem("leave:/suspenddisk");
+        systemOptions->appendRow(suspenddiskOption);
+        addSystemSession = true;
+    }
+
     if (canLogout) {
-        QSet< Solid::PowerManagement::SleepState > spdMethods = Solid::PowerManagement::supportedSleepStates();
-        if (spdMethods.contains(Solid::PowerManagement::StandbyState)) {
-            QStandardItem *standbyOption = createStandardItem("leave:/standby");
-            systemOptions->appendRow(standbyOption);
-            addSystemSession = true;
-        }
-
-        if (spdMethods.contains(Solid::PowerManagement::SuspendState)) {
-            QStandardItem *suspendramOption = createStandardItem("leave:/suspendram");
-            systemOptions->appendRow(suspendramOption);
-            addSystemSession = true;
-        }
-
-        if (spdMethods.contains(Solid::PowerManagement::HibernateState)) {
-            QStandardItem *suspenddiskOption = createStandardItem("leave:/suspenddisk");
-            systemOptions->appendRow(suspenddiskOption);
-            addSystemSession = true;
-        }
-
         if (KWorkSpace::canShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeReboot)) {
             // Restart
             QStandardItem *restartOption = createStandardItem("leave:/restart");
