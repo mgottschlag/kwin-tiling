@@ -42,6 +42,15 @@ Item {
         interval: 0
     }
 
+    PlasmaCore.DataSource {
+        id: statusSource
+        engine: "devicenotifications"
+        onSourceAdded: {
+            statusBar.text = data[source]["error"];
+            // show the status bar
+        }
+    }
+
     Component.onCompleted: {
         plasmoid.addEventListener ('ConfigChanged', configChanged);
     }
@@ -174,6 +183,17 @@ Item {
             opacity: 0
             Behavior on opacity { NumberAnimation { duration: 150 } }
         }
+    }
+
+    Text {
+        id: statusBar
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        height: 14
+        onTextChanged: print (text);
     }
 
     function isMounted (udi) {
