@@ -38,6 +38,7 @@
 #include <QtDBus/QDBusReply>
 
 #include <Plasma/DataContainer>
+#include "powermanagementservice.h"
 
 typedef QMap< QString, QString > StringStringMap;
 Q_DECLARE_METATYPE(StringStringMap)
@@ -195,6 +196,17 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
         return false;
     }
     return true;
+}
+
+Plasma::Service* PowermanagementEngine::serviceForSource(const QString &source)
+{
+    if (source == "PowerDevil") {
+        PowerManagementService *service = new PowerManagementService(source);
+        service->setParent(this);
+        return service;
+    }
+
+    return 0;
 }
 
 void PowermanagementEngine::updateBatteryChargeState(int newState, const QString& udi)
