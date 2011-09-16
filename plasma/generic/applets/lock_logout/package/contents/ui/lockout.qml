@@ -28,9 +28,10 @@ Item {
     property bool show_leave: true
     property bool show_suspend: false
     property bool show_hibernate: false
-    property int count: 2
-    property int orientation: plasmoid.formFactor==2 ? Qt.Vertical : Qt.Horizontal
-    property int iconSize: 80
+    property int myCount: 2
+    property alias count: iconList.count
+    property int orientation: plasmoid.formFactor!=3 ? Qt.Horizontal : Qt.Vertical
+    clip: true
 
     PlasmaCore.DataSource {
         id: dataEngine
@@ -41,14 +42,16 @@ Item {
 
     Component.onCompleted: {
         plasmoid.addEventListener('ConfigChanged', configChanged);
-        configChanged();
     }
 
     function setSize() {
+        if (width==0 || height==0 || myCount==0)
+            return;
+
         if (orientation == Qt.Vertical) {
-            plasmoid.resize (iconSize, iconSize*count);
+            plasmoid.resize (width, width*myCount);
         } else {
-            plasmoid.resize (iconSize*count, iconSize);
+            plasmoid.resize (height*myCount, height);
         }
     }
 
@@ -58,7 +61,7 @@ Item {
         show_leave = plasmoid.readConfig("show_leave");
         show_suspend = plasmoid.readConfig("show_suspend");
         show_hibernate = plasmoid.readConfig("show_hibernate");
-        count = show_lock+show_switchUser+show_leave+show_suspend+show_hibernate;
+        myCount = show_lock+show_switchUser+show_leave+show_suspend+show_hibernate;
         setSize();
         updateIcons();
     }
@@ -94,8 +97,8 @@ Item {
             model: iconList
             delegate: Item {
                 id: iconDelegate
-                width: iconView.flow==Flow.LeftToRight ? lockout.height : lockout.width
-                height: iconView.flow==Flow.TopToBottom ? lockout.width : lockout.height
+                width: iconView.flow==Flow.LeftToRight ? iconView.width/count : iconView.width
+                height: iconView.flow==Flow.TopToBottom ? iconView.height/count : iconView.height
 
                 QIconItem {
                     id: iconButton
