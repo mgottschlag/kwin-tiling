@@ -11,7 +11,7 @@ set(KDE4WORKSPACE_VERSION ${KDE4WORKSPACE_VERSION_MAJOR}.${KDE4WORKSPACE_VERSION
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} )
 
 #search packages used by KDE
-set (QT_MIN_VERSION "4.7.0")
+set(QT_MIN_VERSION "4.7.0")
 set(KDE_MIN_VERSION "4.6.90")
 set(SOPRANO_MIN_VERSION "2.5.63")
 find_package(KDE4 ${KDE_MIN_VERSION} REQUIRED)
@@ -19,13 +19,9 @@ find_package(Strigi REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(KActivities REQUIRED)
 find_package(DBusMenuQt 0.6.0 REQUIRED)
+find_package(QImageBlitz REQUIRED)
 macro_optional_find_package(OpenGL)
 macro_optional_find_package(OpenGLES)
-
-macro_optional_find_package(QImageBlitz)
-if (QIMAGEBLITZ_FOUND)
-   set(HAVE_QIMAGEBLITZ true)
-endif (QIMAGEBLITZ_FOUND)
 
 if(Q_WS_X11)
   if(NOT X11_XTest_FOUND)
