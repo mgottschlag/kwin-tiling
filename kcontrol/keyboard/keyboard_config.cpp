@@ -66,8 +66,22 @@ void KeyboardConfig::setDefaults()
 
 	// display options
 	showIndicator = true;
-	showFlag = true;
+	indicatorType = SHOW_LABEL;
 	showSingle = false;
+}
+
+static
+KeyboardConfig::IndicatorType getIndicatorType(bool showFlag, bool showLabel)
+{
+	if( showFlag ) {
+		if( showLabel )
+			return KeyboardConfig::SHOW_LABEL_ON_FLAG;
+		else
+			return KeyboardConfig::SHOW_FLAG;
+	}
+	else {
+		return KeyboardConfig::SHOW_LABEL;
+	}
 }
 
 
@@ -101,7 +115,11 @@ void KeyboardConfig::load()
 	switchingPolicy = static_cast<SwitchingPolicy>(findStringIndex(SWITCHING_POLICIES, layoutMode, SWITCH_POLICY_GLOBAL));
 
 	showIndicator = config.readEntry("ShowLayoutIndicator", true);
-	showFlag = config.readEntry("ShowFlag", false);
+
+	bool showFlag = config.readEntry("ShowFlag", false);
+	bool showLabel = config.readEntry("ShowLabel", true);
+	indicatorType = getIndicatorType(showFlag, showLabel);
+
 	showSingle = config.readEntry("ShowSingle", false);
 
     QString labelsStr = config.readEntry("DisplayNames", "");
@@ -156,7 +174,8 @@ void KeyboardConfig::save()
 	config.writeEntry("SwitchMode", SWITCHING_POLICIES[switchingPolicy]);
 
 	config.writeEntry("ShowLayoutIndicator", showIndicator);
-	config.writeEntry("ShowFlag", showFlag);
+	config.writeEntry("ShowFlag", indicatorType == SHOW_FLAG || indicatorType == SHOW_LABEL_ON_FLAG);
+	config.writeEntry("ShowLabel", indicatorType == SHOW_LABEL || indicatorType == SHOW_LABEL_ON_FLAG);
 	config.writeEntry("ShowSingle", showSingle);
 
 	config.sync();

@@ -137,7 +137,7 @@ void KeyboardApplet::updateTooltip()
 
 const QIcon KeyboardApplet::getFlag(const QString& layout)
 {
-	return keyboardConfig->showFlag ? flags.getIcon(layout) : QIcon();
+	return keyboardConfig->isFlagShown() ? flags.getIcon(layout) : QIcon();
 }
 
 void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem */*option*/, const QRect &contentsRect)
@@ -155,7 +155,7 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 		p->drawPixmap(contentsRect, pixmap);
 		p->restore();
 	}
-	else {
+	if( icon.isNull() || keyboardConfig->isLabelShown() ) {
 		QRect finalRect(m_pixmap.rect());
 		finalRect.moveCenter(contentsRect.center());
 		p->drawPixmap(finalRect, m_pixmap);
@@ -192,7 +192,7 @@ void KeyboardApplet::generatePixmap()
 	LayoutUnit layoutUnit = X11Helper::getCurrentLayout();
 	QRect contentsRect = KeyboardApplet::contentsRect().toRect();
 	QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
-	kDebug() << "applet: LayoutChanged" << layoutUnit.toString() << shortText;
+	kWarning() << "applet: LayoutChanged" << layoutUnit.toString() << shortText;
 
 	QPixmap pixmap(contentsRect.size());
 	pixmap.fill(Qt::transparent);
@@ -208,8 +208,12 @@ void KeyboardApplet::generatePixmap()
 		fontSize = smallestReadableSize;
 	}
 	font.setPixelSize(fontSize);
-
-	m_pixmap = Plasma::PaintUtils::texturedText(shortText, font, m_svg);
+	if( keyboardConfig->isFlagShown() ) {
+		m_pixmap = Plasma::PaintUtils::shadowText(shortText, font, Qt::black, Qt::white, QPoint(), 3);
+	}
+	else {
+		m_pixmap = Plasma::PaintUtils::texturedText(shortText, font, m_svg);
+	}
 }
 
 QList<QAction*> KeyboardApplet::contextualActions()

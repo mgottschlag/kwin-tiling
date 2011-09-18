@@ -93,7 +93,7 @@ void LayoutWidget::layoutChanged()
 		return;
 
 	QIcon icon;
-	if( keyboardConfig->showFlag ) {
+	if( keyboardConfig->isFlagShown() ) {
 		icon = flags->getIcon(layoutUnit.layout);
 	}
 

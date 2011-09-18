@@ -121,5 +121,5 @@ void LayoutTrayIcon::scrollRequested(int delta, Qt::Orientation /*orientation*/)
 
 const QIcon LayoutTrayIcon::getFlag(const QString& layout) const
 {
-	return keyboardConfig.showFlag ? flags->getIcon(layout) : QIcon();
+	return keyboardConfig.isFlagShown() ? flags->getIcon(layout) : QIcon();
 }

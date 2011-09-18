@@ -111,7 +111,6 @@ QMimeData *LayoutsTableModel::mimeData(const QModelIndexList &indexes) const
      }
      foreach (int row, rows) {
     	 stream << row;
-    	 kDebug() << "idx: " << row;
      }
 
      mimeData->setData("application/keyboard-layout-item", encodedData);
@@ -132,10 +131,10 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
      if (role == Qt::DecorationRole) {
     	 switch( index.column() ) {
     	 case DISPLAY_NAME_COLUMN: {
-    			if( keyboardConfig->showFlag ) {
-    				QIcon icon = countryFlags->getIcon(layoutUnit.layout);
+//    			if( keyboardConfig->isFlagShown() ) {
+    				QIcon icon = countryFlags->getIconWithText(layoutUnit, *keyboardConfig);
     				return icon.isNull() ? countryFlags->getTransparentPixmap() : icon;
-    			}
+//    			}
     	 }
 //TODO: show the cells are editable
 //    	 case VARIANT_COLUMN: {
@@ -179,9 +178,9 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
     	 }
          break;
     	 case DISPLAY_NAME_COLUMN:
- 			if( ! keyboardConfig->showFlag ) {
- 				return layoutUnit.getDisplayName();
- 			}
+// 			if( keyboardConfig->indicatorType == KeyboardConfig::SHOW_LABEL ) {
+// 				return layoutUnit.getDisplayName();
+// 			}
     	 break;
     	 case SHORTCUT_COLUMN: {
     		return layoutUnit.getShortcut().toString();
@@ -244,6 +243,7 @@ bool LayoutsTableModel::setData(const QModelIndex &index, const QVariant &value,
 	case DISPLAY_NAME_COLUMN: {
 		QString displayText = value.toString().left(3);
 		layoutUnit.setDisplayName(displayText);
+		countryFlags->clearCache();	// regenerate the label
 	}
 	break;
 	case VARIANT_COLUMN: {
@@ -273,7 +273,7 @@ LabelEditDelegate::LabelEditDelegate(const KeyboardConfig* keyboardConfig_, QObj
 QWidget *LabelEditDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem & option ,
 		const QModelIndex & index ) const
 {
-	if( keyboardConfig->showFlag )
+	if( keyboardConfig->indicatorType == KeyboardConfig::SHOW_FLAG )
 		return NULL;
 
 	QWidget* widget = QStyledItemDelegate::createEditor(parent, option, index);

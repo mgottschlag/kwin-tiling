@@ -46,7 +46,7 @@ LayoutsMenu::~LayoutsMenu()
 
 const QIcon LayoutsMenu::getFlag(const QString& layout) const
 {
-	return keyboardConfig.showFlag ? flags.getIcon(layout) : QIcon();
+	return keyboardConfig.isFlagShown() ? flags.getIcon(layout) : QIcon();
 }
 
 void LayoutsMenu::actionTriggered(QAction* action)

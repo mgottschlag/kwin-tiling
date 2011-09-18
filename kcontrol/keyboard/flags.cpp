@@ -32,6 +32,8 @@
 #include <QtGui/QPainter>
 #include <QtGui/QIcon>
 
+#include <math.h>
+
 #include "x11_helper.h"
 
 //for text handling
@@ -61,10 +63,14 @@ Flags::~Flags()
 
 const QIcon Flags::getIcon(const QString& layout)
 {
-	if( iconMap.contains(layout) ) {
-		return iconMap[ layout ];
+	if( ! iconMap.contains(layout) ) {
+		iconMap[ layout ] = createIcon(layout);
 	}
+	return iconMap[ layout ];
+}
 
+QIcon Flags::createIcon(const QString& layout)
+{
 	QIcon icon;
 	if( ! layout.isEmpty() ) {
 		if( layout == "epo" ) {
@@ -80,9 +86,9 @@ const QIcon Flags::getIcon(const QString& layout)
 			}
 		}
 	}
-	iconMap[ layout ] = icon;
 	return icon;
 }
+
 
 //static
 //const QStringList NON_COUNTRY_LAYOUTS = QString("ara,brai,epo,latam,mao").split(",");
@@ -163,15 +169,85 @@ QString Flags::getLongText(const LayoutUnit& layoutUnit, const Rules* rules)
 	return layoutText;
 }
 
+static
+QString getPixmapKey(const KeyboardConfig& keyboardConfig)
+{
+	switch(keyboardConfig.indicatorType) {
+	case KeyboardConfig::SHOW_FLAG:
+		return "_fl";
+	case KeyboardConfig::SHOW_LABEL_ON_FLAG:
+		return "_bt";
+	case KeyboardConfig::SHOW_LABEL:
+		return "_lb";
+	}
+	return "_";	// should not happen
+}
+
+void Flags::drawLabel(QPainter& painter, const QString& layoutText, bool flagShown)
+{
+	QFont font = painter.font();
+    kWarning() << "pinter window" << painter.window();
+
+    QRect rect = painter.window();
+//	int fontSize = layoutText.length() == 2
+//			? height * 7 / 10
+//			: height * 5 / 10;
+
+	int fontSize = rect.height();// * 7 /10;
+
+	font.setPixelSize(fontSize);
+	font.setWeight(QFont::DemiBold);
+
+	QFontMetrics fm = painter.fontMetrics();
+	int width = fm.width(layoutText);
+
+	kWarning() << "text width for " << layoutText << "is" << width;
+	if( width > rect.width() * 2 / 3 ) {
+		fontSize = round( (double)fontSize * ((double)rect.width()*2/3) / width );
+		kWarning() << "adjuting font size to" << fontSize;
+	}
+	
+	int smallestReadableSize = KGlobalSettings::smallestReadableFont().pixelSize();
+	if( fontSize < smallestReadableSize ) {
+		fontSize = smallestReadableSize;
+	}
+	font.setPixelSize(fontSize);
+	kWarning() << "font size" << fontSize;
+
+#ifdef DONT_USE_PLASMA
+	painter.setFont(font);
+	painter.setPen(Qt::white);
+	painter.drawText(QRect(rect).adust(1,1,0,0), Qt::AlignCenter | Qt::AlignHCenter, layoutText);
+	painter.setPen(Qt::black);
+	painter.drawText(rect, Qt::AlignCenter | Qt::AlignHCenter, layoutText);
+#else
+	// we init svg so that we get notification about theme change
+	getSvg();
+
+    QColor textColor = flagShown ? Qt::black : Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    QColor shadowColor = flagShown ? Qt::white : Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+    QPoint offset = QPoint(0, 0);
+
+    //    QPixmap pixmap = Plasma::PaintUtils::texturedText(layoutText, font, svg);
+    QPixmap labelPixmap = Plasma::PaintUtils::shadowText(layoutText, font, textColor, shadowColor, offset, 3);
+    kWarning() << "text pixmap size" << labelPixmap.size() << "offset" << offset;
+
+    int y = round((rect.height() - labelPixmap.height()) / 2.0);
+    int x = round((rect.width() - labelPixmap.width()) / 2.0);
+    kWarning() << "x" << x << "y" << y;
+    painter.drawPixmap(QPoint(x, y), labelPixmap);
+#endif
+}
+
 const QIcon Flags::getIconWithText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig)
 {
-	QString keySuffix(keyboardConfig.showFlag ? "_wf" : "_nf");
+	QString keySuffix(getPixmapKey(keyboardConfig));
 	QString key(layoutUnit.toString() + keySuffix);
 	if( iconOrTextMap.contains(key) ) {
 		return iconOrTextMap[ key ];
 	}
 
-	if( keyboardConfig.showFlag ) {
+	if( keyboardConfig.indicatorType == KeyboardConfig::SHOW_FLAG ) {
 		QIcon icon = getIcon(layoutUnit.layout);
 		if( ! icon.isNull() ) {
 			iconOrTextMap[ key ] = icon;
@@ -181,36 +257,24 @@ const QIcon Flags::getIconWithText(const LayoutUnit& layoutUnit, const KeyboardC
 
 	QString layoutText = Flags::getShortText(layoutUnit, keyboardConfig);
 
-	QPixmap pm = QPixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
-//	pm.fill(Qt::transparent);
+	const QSize TRAY_ICON_SIZE(21, 14);
+	QPixmap pixmap = QPixmap(TRAY_ICON_SIZE);
+	pixmap.fill(Qt::transparent);
 
-	QPainter p(&pm);
+	QPainter painter(&pixmap);
 //	p.setRenderHint(QPainter::SmoothPixmapTransform);
 //	p.setRenderHint(QPainter::Antialiasing);
 
-	QFont font = p.font();
-
-	int height = pm.height();
-	int fontSize = layoutText.length() == 2
-			? height * 7 / 10
-			: height * 5 / 10;
-
-	int smallestReadableSize = KGlobalSettings::smallestReadableFont().pixelSize();
-	if( fontSize < smallestReadableSize ) {
-		fontSize = smallestReadableSize;
+	if( keyboardConfig.indicatorType == KeyboardConfig::SHOW_LABEL_ON_FLAG ) {
+    	QIcon iconf = createIcon(layoutUnit.layout);
+    	iconf.paint(&painter, painter.window(), Qt::AlignCenter);
 	}
-	font.setPixelSize(fontSize);
-	
-//	p.setFont(font);
-//	p.setPen(Qt::black);
-//	p.drawText(pm.rect(), Qt::AlignCenter | Qt::AlignHCenter, layoutText);
-//	QIcon icon(pm);
 
-	// we init svg so that we get notification about theme change
-	//Plasma::Svg* svg =
-	getSvg();
-//    QPixmap pixmap = Plasma::PaintUtils::texturedText(layoutText, font, svg);
-    QPixmap pixmap = Plasma::PaintUtils::shadowText(layoutText, font);
+	drawLabel(painter, layoutText, keyboardConfig.isFlagShown());
+
+    painter.end();
+
+    kWarning() << "resulting pixmap size" << pixmap.size();
 
     QIcon icon(pixmap);
 	iconOrTextMap[ key ] = icon;
