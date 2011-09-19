@@ -39,6 +39,7 @@ K_EXPORT_PLASMA_WALLPAPER(image, Image)
 
 Image::Image(QObject *parent, const QVariantList &args)
     : Plasma::Wallpaper(parent, args),
+      m_delay(10),
       m_fileWatch(new KDirWatch(this)),
       m_configWidget(0),
       m_wallpaperPackage(0),
@@ -75,7 +76,7 @@ void Image::init(const KConfigGroup &config)
     calculateGeometry();
 
     m_delay = config.readEntry("slideTimer", 10);
-    m_resizeMethod = (ResizeMethod)config.readEntry("wallpaperposition", (int)ScaledResize);
+    setResizeMethodHint((ResizeMethod)config.readEntry("wallpaperposition", (int)ScaledResize));
     m_wallpaper = config.readEntry("wallpaper", QString());
     if (m_wallpaper.isEmpty()) {
         useSingleImageDefaults();
@@ -126,7 +127,7 @@ void Image::useSingleImageDefaults()
 void Image::save(KConfigGroup &config)
 {
     config.writeEntry("slideTimer", m_delay);
-    config.writeEntry("wallpaperposition", (int)m_resizeMethod);
+    config.writeEntry("wallpaperposition", (int)resizeMethodHint());
     config.writeEntry("slidepaths", m_dirs);
     config.writeEntry("wallpaper", m_wallpaper);
     config.writeEntry("wallpapercolor", m_color);
@@ -148,7 +149,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_uiImage.setupUi(m_configWidget);
 
         m_model = new BackgroundListModel(this, m_configWidget);
-        m_model->setResizeMethod(m_resizeMethod);
+        m_model->setResizeMethod(resizeMethodHint());
         m_model->setWallpaperSize(m_size);
         m_model->reload(m_usersWallpapers);
         QTimer::singleShot(0, this, SLOT(setConfigurationInterfaceModel()));
@@ -177,7 +178,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_uiImage.m_resizeMethod->addItem(i18n("Tiled"), TiledResize);
         m_uiImage.m_resizeMethod->addItem(i18n("Center Tiled"), CenterTiledResize);
         for (int i = 0; i < m_uiImage.m_resizeMethod->count(); ++i) {
-            if (m_resizeMethod == m_uiImage.m_resizeMethod->itemData(i).value<int>()) {
+            if (resizeMethodHint() == m_uiImage.m_resizeMethod->itemData(i).value<int>()) {
                 m_uiImage.m_resizeMethod->setCurrentIndex(i);
                 break;
             }
@@ -187,7 +188,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 
         m_uiImage.m_color->setColor(m_color);
         //Color button is useless with some resize methods
-        m_uiImage.m_color->setEnabled(m_resizeMethod == MaxpectResize || m_resizeMethod == CenteredResize);
+        m_uiImage.m_color->setEnabled(resizeMethodHint() == MaxpectResize || resizeMethodHint() == CenteredResize);
         connect(m_uiImage.m_color, SIGNAL(changed(QColor)), this, SLOT(colorChanged(QColor)));
 
         m_uiImage.m_newStuff->setIcon(KIcon("get-hot-new-stuff"));
@@ -237,7 +238,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_uiSlideshow.m_resizeMethod->addItem(i18n("Tiled"), TiledResize);
         m_uiSlideshow.m_resizeMethod->addItem(i18n("Center Tiled"), CenterTiledResize);
         for (int i = 0; i < m_uiSlideshow.m_resizeMethod->count(); ++i) {
-            if (m_resizeMethod == m_uiSlideshow.m_resizeMethod->itemData(i).value<int>()) {
+            if (resizeMethodHint() == m_uiSlideshow.m_resizeMethod->itemData(i).value<int>()) {
                 m_uiSlideshow.m_resizeMethod->setCurrentIndex(i);
                 break;
             }
@@ -247,7 +248,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 
         m_uiSlideshow.m_color->setColor(m_color);
         //Color button is useless with some resize methods
-        m_uiSlideshow.m_color->setEnabled(m_resizeMethod == MaxpectResize || m_resizeMethod == CenteredResize);
+        m_uiSlideshow.m_color->setEnabled(resizeMethodHint() == MaxpectResize || resizeMethodHint() == CenteredResize);
         connect(m_uiSlideshow.m_color, SIGNAL(changed(QColor)), this, SLOT(colorChanged(QColor)));
         connect(m_uiSlideshow.m_newStuff, SIGNAL(clicked()), this, SLOT(getNewWallpaper()));
 
@@ -618,24 +619,23 @@ void Image::pictureChanged(const QModelIndex &index)
 void Image::positioningChanged(int index)
 {
     if (m_mode == "SingleImage") {
-        m_resizeMethod = (ResizeMethod)m_uiImage.m_resizeMethod->itemData(index).value<int>();
+        setResizeMethodHint((ResizeMethod)m_uiImage.m_resizeMethod->itemData(index).value<int>());
         setSingleImage();
-
-        //Color button is useless with some resize methods
-        m_uiImage.m_color->setEnabled(m_resizeMethod == MaxpectResize || m_resizeMethod == CenteredResize);
-
     } else {
-        m_resizeMethod = (ResizeMethod)m_uiSlideshow.m_resizeMethod->itemData(index).value<int>();
+        setResizeMethodHint((ResizeMethod)m_uiSlideshow.m_resizeMethod->itemData(index).value<int>());
         startSlideshow();
-
-        //Color button is useless with some resize methods
-        m_uiSlideshow.m_color->setEnabled(m_resizeMethod == MaxpectResize || m_resizeMethod == CenteredResize);
     }
 
-    setResizeMethodHint(m_resizeMethod);
+    //Color button is useless with some resize methods
+    const bool colorizable = resizeMethodHint() == MaxpectResize || resizeMethodHint() == CenteredResize;
+    if (m_mode == "SingleImage") {
+        m_uiImage.m_color->setEnabled(colorizable);
+    } else {
+        m_uiSlideshow.m_color->setEnabled(colorizable);
+    }
 
     if (m_model) {
-        m_model->setResizeMethod(m_resizeMethod);
+        m_model->setResizeMethod(resizeMethodHint());
     }
 }
 
@@ -780,7 +780,7 @@ void Image::renderWallpaper(const QString& image)
     }
 
     m_fileWatch->addFile(m_img);
-    render(m_img, m_size, m_resizeMethod, m_color);
+    render(m_img, m_size, resizeMethodHint(), m_color);
 }
 
 void Image::imageFileAltered(const QString &path)
