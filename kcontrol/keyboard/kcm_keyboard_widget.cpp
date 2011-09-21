@@ -50,7 +50,7 @@ static const QString LV3_SWITCH_GROUP_NAME("lv3");
 //static const QString RESET_XKB_OPTIONS("-option");
 
 static const int TAB_HARDWARE = 0;
-//static const int TAB_LAYOUTS = 1;
+static const int TAB_LAYOUTS = 1;
 static const int TAB_ADVANCED = 2;
 
 static const int MIN_LOOPING_COUNT = 2;
@@ -95,14 +95,15 @@ KCMKeyboardWidget::~KCMKeyboardWidget()
 void KCMKeyboardWidget::handleParameters(const QVariantList &args)
 {
     // TODO: improve parameter handling
+	setCurrentIndex(TAB_HARDWARE);
     foreach(const QVariant& arg, args) {
   	  if( arg.type() == QVariant::String ) {
   		  QString str = arg.toString();
   		  if( str == "--tab=layouts" ) {
-  			  setCurrentIndex(1);
+  			  setCurrentIndex(TAB_LAYOUTS);
   		  }
   		  else if( str == "--tab=advanced" ) {
-  	  		  setCurrentIndex(2);
+  	  		  setCurrentIndex(TAB_ADVANCED);
   	  	  }
   	  }
     }
