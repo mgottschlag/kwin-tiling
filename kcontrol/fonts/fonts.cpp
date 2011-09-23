@@ -608,8 +608,8 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
    QGridLayout* lay = new QGridLayout();
    layout->addLayout(lay);
    lay->setColumnStretch( 3, 10 );
-   QLabel* label=0L;
 #if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
+   QLabel* label=0L;
    label = new QLabel( i18n( "Use a&nti-aliasing:" ), this );
    label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
    lay->addWidget( label, 0, 0 );
@@ -626,6 +626,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
    lay->addWidget( aaSettingsButton, 0, 2 );
    connect(cbAA, SIGNAL(activated(int)), SLOT(slotUseAntiAliasing()));
 #endif
+#ifdef Q_WS_X11
    checkboxForceDpi = new QCheckBox( i18n( "Force fonts DPI:" ), this );
    lay->addWidget( checkboxForceDpi, 1, 0 );
    spinboxDpi = new QSpinBox( this );
@@ -649,7 +650,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
    connect( checkboxForceDpi, SIGNAL( toggled(bool)), SLOT( changed()));
    connect( checkboxForceDpi, SIGNAL( toggled(bool)), spinboxDpi, SLOT( setEnabled(bool)));
    lay->addWidget( spinboxDpi, 1, 1 );
-
+#endif
    layout->addStretch(1);
 
 #if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
@@ -683,8 +684,10 @@ void KFonts::defaults()
   cbAA->setCurrentIndex( useAA );
   aaSettings->defaults();
 #endif
+#ifdef Q_WS_X11
   checkboxForceDpi->setChecked( false );
   spinboxDpi->setValue( 96 );
+#endif
   emit changed(true);
 }
 
@@ -703,6 +706,7 @@ void KFonts::load()
 
   KConfig _cfgfonts( "kcmfonts" );
   KConfigGroup cfgfonts(&_cfgfonts, "General");
+#ifdef Q_WS_X11
   int dpicfg = cfgfonts.readEntry( "forceFontDPI", 0 );
   if (dpicfg <= 0) {
     checkboxForceDpi->setChecked(false);
@@ -713,6 +717,7 @@ void KFonts::load()
     spinboxDpi->setValue(dpicfg);
     dpi_original = dpicfg;
   };
+#endif
 #if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
   if( cfgfonts.readEntry( "dontChangeAASettings", true )) {
       useAA_original = useAA = AASystem;
@@ -736,12 +741,15 @@ void KFonts::save()
 
   KConfig _cfgfonts( "kcmfonts" );
   KConfigGroup cfgfonts(&_cfgfonts, "General");
+#ifdef Q_WS_X11
   int dpi = ( checkboxForceDpi->isChecked() ? spinboxDpi->value() : 0 );
   cfgfonts.writeEntry( "forceFontDPI", dpi );
+#endif
 #if defined(HAVE_FONTCONFIG) && defined (Q_WS_X11)
   cfgfonts.writeEntry( "dontChangeAASettings", cbAA->currentIndex() == AASystem );
 #endif
   cfgfonts.sync();
+#ifdef Q_WS_X11
   // if the setting is reset in the module, remove the dpi value,
   // otherwise don't explicitly remove it and leave any possible system-wide value
   if( dpi == 0 && dpi_original != 0 ) {
@@ -754,6 +762,7 @@ void KFonts::save()
         proc.waitForFinished();
       }
   }
+#endif
 
   // KDE-1.x support
   {
@@ -791,6 +800,7 @@ void KFonts::save()
     dpi_original = dpi;
   }
 #else
+#ifdef Q_WS_X11
   if(dpi != dpi_original) {
     KMessageBox::information(this,
       i18n(
@@ -798,6 +808,7 @@ void KFonts::save()
       ), i18n("Font Settings Changed"), "FontSettingsChanged");
     dpi_original = dpi;
   }
+#endif
 #endif
   runRdb(KRdbExportXftSettings | KRdbExportGtkTheme);
 
