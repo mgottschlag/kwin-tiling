@@ -51,7 +51,6 @@
 #include <Plasma/SpinBox>
 #include <Plasma/TextBrowser>
 #include <Plasma/ToolButton>
-#include <Plasma/ToolTipManager>
 #include <Plasma/DataEngine>
 
 #include <kephal/screens.h>
