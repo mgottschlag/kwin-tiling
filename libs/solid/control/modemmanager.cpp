@@ -158,6 +158,8 @@ void Solid::Control::ModemManagerPrivate::_k_modemInterfaceAdded(const QString &
 
 void Solid::Control::ModemManagerPrivate::_k_modemInterfaceRemoved(const QString &udi)
 {
+    emit modemInterfaceRemoved(udi);
+
     QList<QMap<ModemInterface::GsmInterfaceType, ModemInterfaceIfacePair> > list = m_modemInterfaceMap.values(udi);
     m_modemInterfaceMap.remove(udi);
 
@@ -172,8 +174,6 @@ void Solid::Control::ModemManagerPrivate::_k_modemInterfaceRemoved(const QString
             }
         }
     }
-
-    emit modemInterfaceRemoved(udi);
 }
 
 void Solid::Control::ModemManagerPrivate::_k_destroyed(QObject *object)
