@@ -408,8 +408,8 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
     kDebug() << "Setting CRTC" << crtc->id() << "on output" << m_name << "(previous" << (m_crtc ? m_crtc->id() : 0) << ")";
 
     if(m_crtc && m_crtc->isValid()) {
-        disconnect(m_crtc, SIGNAL(crtcChanged(RRCrtc, int)),
-                   this, SLOT(slotCrtcChanged(RRCrtc, int)));
+        disconnect(m_crtc, SIGNAL(crtcChanged(RRCrtc,int)),
+                   this, SLOT(slotCrtcChanged(RRCrtc,int)));
 
         m_crtc->removeOutput(m_id);
 //         m_crtc->applyProposed();
@@ -423,8 +423,8 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
     }
 
     kDebug() << "CRTC outputs:" << m_crtc->connectedOutputs();
-    connect(m_crtc, SIGNAL(crtcChanged(RRCrtc, int)),
-            this, SLOT(slotCrtcChanged(RRCrtc, int)));
+    connect(m_crtc, SIGNAL(crtcChanged(RRCrtc,int)),
+            this, SLOT(slotCrtcChanged(RRCrtc,int)));
 
     return true;
 }

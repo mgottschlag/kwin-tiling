@@ -64,7 +64,7 @@ KDMDialogWidget::KDMDialogWidget(QWidget *parent)
     QLabel *label = new QLabel(i18n("&Greeting:"), this);
     label->setBuddy(greetstr_lined);
     hlay->addWidget(label);
-    connect(greetstr_lined, SIGNAL(textChanged(const QString &)),
+    connect(greetstr_lined, SIGNAL(textChanged(QString)),
             SIGNAL(changed()));
     hlay->addWidget(greetstr_lined);
     wtstr = i18n(

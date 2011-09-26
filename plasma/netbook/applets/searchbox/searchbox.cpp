@@ -71,7 +71,7 @@ QGraphicsWidget *SearchBox::graphicsWidget()
     m_search->nativeWidget()->setClearButtonShown(true);
     m_search->nativeWidget()->setClickMessage(i18n("Enter your query here"));
     connect(m_search, SIGNAL(returnPressed()), this, SLOT(query()));
-    connect(m_search->nativeWidget(), SIGNAL(textChanged(const QString &)), this, SLOT(delayedQuery()));
+    connect(m_search->nativeWidget(), SIGNAL(textChanged(QString)), this, SLOT(delayedQuery()));
 
     m_searchTimer = new QTimer(this);
     m_searchTimer->setSingleShot(true);

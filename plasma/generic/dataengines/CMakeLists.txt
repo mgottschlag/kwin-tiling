@@ -24,23 +24,19 @@ if (NEPOMUK_FOUND)
     add_subdirectory(metadata)
 endif (NEPOMUK_FOUND)
 
-macro_optional_find_package(KdepimLibs 4.5.60)
-macro_log_feature(KDEPIMLIBS_FOUND "kdepimlibs" "KDE PIM libraries" "http://www.kde.org" FALSE "" "Needed for building several Plasma DataEngines")
-
-macro_optional_find_package(Akonadi)
-macro_log_feature(AKONADI_FOUND "Akonadi" "Akonadi libraries" "http://pim.kde.org/akonadi/" FALSE "" "Needed for event support in the calendar DataEngine")
-
-if(KDEPIMLIBS_FOUND)
+if(Boost_FOUND AND KDEPIMLIBS_FOUND)
    if(AKONADI_FOUND)
       add_subdirectory(akonadi)
    endif(AKONADI_FOUND)
    add_subdirectory(calendar)
    add_subdirectory(rss)
-endif(KDEPIMLIBS_FOUND)
+endif(Boost_FOUND AND KDEPIMLIBS_FOUND)
 
 if(NOT WIN32)
    add_subdirectory(mouse)
    add_subdirectory(systemmonitor)
-   add_subdirectory(tasks)
+   if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
+      add_subdirectory(tasks)
+   endif(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
 endif(NOT WIN32)
 

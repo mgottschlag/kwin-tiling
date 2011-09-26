@@ -20,8 +20,8 @@
 #include "activityengine.h"
 #include "activityservice.h"
 
-#include <kactivitycontroller.h>
-#include <kactivityinfo.h>
+#include <kworkspace/kactivitycontroller.h>
+#include <kworkspace/kactivityinfo.h>
 
 #include <QApplication>
 

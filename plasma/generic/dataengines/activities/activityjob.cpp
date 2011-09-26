@@ -18,7 +18,7 @@
 
 #include "activityjob.h"
 
-#include <kactivitycontroller.h>
+#include <kworkspace/kactivitycontroller.h>
 
 ActivityJob::ActivityJob(KActivityController *controller, const QString &id, const QString &operation, QMap<QString, QVariant> &parameters, QObject *parent) :
     ServiceJob(parent->objectName(), operation, parameters, parent),
@@ -40,8 +40,8 @@ void ActivityJob::start()
         if (name.isEmpty()) {
             name = i18n("unnamed");
         }
-        m_activityController->addActivity(name);
-        setResult(true);
+        const QString activityId = m_activityController->addActivity(name);
+        setResult(activityId);
         return;
     }
     if (operation == "remove") {

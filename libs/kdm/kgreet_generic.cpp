@@ -192,7 +192,7 @@ KGenericGreeter::textPrompt(const char *prompt, bool echo, bool /* nonBlocking *
             connect(m_lineEdit, SIGNAL(editingFinished()), SLOT(slotLoginLostFocus()));
         }
         connect(m_lineEdit, SIGNAL(editingFinished()), SLOT(slotChanged()));
-        connect(m_lineEdit, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
+        connect(m_lineEdit, SIGNAL(textChanged(QString)), SLOT(slotChanged()));
     } else {
         m_lineEdit = new KDMPasswordEdit;
     }

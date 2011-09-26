@@ -26,17 +26,16 @@
 
 SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
         : Plasma::DataEngine(parent, args),
-          temperature(0),
-          notifier(0)
+          m_temperature(0),
+          m_notifier(0)
 {
     Q_UNUSED(args)
-    signalmanager = new DeviceSignalMapManager(this);
+    m_signalmanager = new DeviceSignalMapManager(this);
 
     listenForNewDevices();
-    temperature = new HddTemp(this);
     setMinimumPollingInterval(1000);
-    connect(this, SIGNAL(sourceRemoved(const QString&)),
-            this, SLOT(sourceWasRemoved(const QString&)));
+    connect(this, SIGNAL(sourceRemoved(QString)),
+            this, SLOT(sourceWasRemoved(QString)));
 }
 
 SolidDeviceEngine::~SolidDeviceEngine()
@@ -45,43 +44,39 @@ SolidDeviceEngine::~SolidDeviceEngine()
 
 void SolidDeviceEngine::listenForNewDevices()
 {
-    if (notifier) {
+    if (m_notifier) {
         return;
     }
 
     //detect when new devices are added
-    notifier = Solid::DeviceNotifier::instance();
-    connect(notifier, SIGNAL(deviceAdded(const QString&)),
-            this, SLOT(deviceAdded(const QString&)));
-    connect(notifier, SIGNAL(deviceRemoved(const QString&)),
-            this, SLOT(deviceRemoved(const QString&)));
+    m_notifier = Solid::DeviceNotifier::instance();
+    connect(m_notifier, SIGNAL(deviceAdded(QString)),
+            this, SLOT(deviceAdded(QString)));
+    connect(m_notifier, SIGNAL(deviceRemoved(QString)),
+            this, SLOT(deviceRemoved(QString)));
 }
 
 bool SolidDeviceEngine::sourceRequestEvent(const QString &name)
 {
-
-    //create a predicate to check for validity
-    Solid::Predicate predicate;
-    Solid::Device device;
-
     if (name.startsWith('/')) {
-        device = Solid::Device(name);
-    } else {
-        predicate = Solid::Predicate::fromString(name);
-    }
-
-    if(predicate.isValid()  && !predicatemap.contains(name)) {
-        foreach (const Solid::Device &device, Solid::Device::listFromQuery(predicate)) {
-            predicatemap[name] << device.udi();
+        Solid::Device device = Solid::Device(name);
+        if (device.isValid()) {
+            if (m_devicemap.contains(name) ) {
+                return true;
+            } else {
+                m_devicemap[name] = device;
+                return populateDeviceData(name);
+            }
         }
-        setData(name, predicatemap[name]);
-        return true;
-    } else if (device.isValid()) {
-        if (devicemap.contains(name) ) {
+    } else {
+        Solid::Predicate predicate = Solid::Predicate::fromString(name);
+        if (predicate.isValid()  && !m_predicatemap.contains(name)) {
+            foreach (const Solid::Device &device, Solid::Device::listFromQuery(predicate)) {
+                m_predicatemap[name] << device.udi();
+            }
+
+            setData(name, m_predicatemap[name]);
             return true;
-        } else {
-            devicemap[name] = device;
-            return populateDeviceData(name);
         }
     }
 
@@ -91,13 +86,13 @@ bool SolidDeviceEngine::sourceRequestEvent(const QString &name)
 
 void SolidDeviceEngine::sourceWasRemoved(const QString &source)
 {
-    devicemap.remove(source);
-    predicatemap.remove(source);
+    m_devicemap.remove(source);
+    m_predicatemap.remove(source);
 }
 
 bool SolidDeviceEngine::populateDeviceData(const QString &name)
 {
-    Solid::Device device = devicemap.value(name);
+    Solid::Device device = m_devicemap.value(name);
     if (!device.isValid()) {
         return false;
     }
@@ -152,7 +147,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
             }
         }
 
-        signalmanager->mapDevice(storageaccess, device.udi());
+        m_signalmanager->mapDevice(storageaccess, device.udi());
     }
     if (device.is<Solid::StorageDrive>()) {
         Solid::StorageDrive *storagedrive = device.as<Solid::StorageDrive>();
@@ -277,10 +272,10 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         if (encryptedContainer.isValid()) {
             QString containerUdi = encryptedContainer.udi();
             setData(name, I18N_NOOP("Encrypted Container"), containerUdi);
-            encryptedContainerMap[name] = containerUdi;
+            m_encryptedContainerMap[name] = containerUdi;
             //TODO: compress the calls?
             forceUpdateAccessibility(containerUdi);
-            }
+        }
 
     }
     if (device.is<Solid::OpticalDisc>()) {
@@ -370,7 +365,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         devicetypes << I18N_NOOP("AC Adapter");
 
         setData(name, I18N_NOOP("Plugged In"), ac->isPlugged());
-        signalmanager->mapDevice(ac, device.udi());
+        m_signalmanager->mapDevice(ac, device.udi());
     }
     if (device.is<Solid::Battery>()) {
         Solid::Battery *battery = device.as<Solid::Battery>();
@@ -394,7 +389,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         setData(name, I18N_NOOP("Rechargeable"), battery->isRechargeable());
         setData(name, I18N_NOOP("Charge State"), chargestate.at((int)battery->chargeState()));
 
-        signalmanager->mapDevice(battery, device.udi());
+        m_signalmanager->mapDevice(battery, device.udi());
     }
     if (device.is<Solid::Button>()) {
         Solid::Button *button = device.as<Solid::Button>();
@@ -413,7 +408,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         setData(name, I18N_NOOP("State Value"), button->stateValue());
         setData(name, I18N_NOOP("Pressed"), false);  //this is an extra value that is tracked by the button signals
 
-        signalmanager->mapDevice(button, device.udi());
+        m_signalmanager->mapDevice(button, device.udi());
     }
     if (device.is<Solid::AudioInterface>()) {
         Solid::AudioInterface *audiointerface = device.as<Solid::AudioInterface>();
@@ -499,11 +494,11 @@ void SolidDeviceEngine::deviceAdded(const QString& udi)
 {
     Solid::Device device(udi);
 
-    foreach (const QString &query, predicatemap.keys()) {
+    foreach (const QString &query, m_predicatemap.keys()) {
         Solid::Predicate predicate = Solid::Predicate::fromString(query);
         if (predicate.matches(device)) {
-            predicatemap[query] << udi;
-            setData(query, predicatemap[query]);
+            m_predicatemap[query] << udi;
+            setData(query, m_predicatemap[query]);
         }
     }
 }
@@ -519,7 +514,7 @@ qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
 
 bool SolidDeviceEngine::updateFreeSpace(const QString &udi)
 {
-    Solid::Device device = devicemap.value(udi);
+    Solid::Device device = m_devicemap.value(udi);
     if (!device.is<Solid::StorageAccess>() || device.is<Solid::OpticalDisc>()) {
         return false;
     } else if (!device.as<Solid::StorageAccess>()->isAccessible()) {
@@ -542,19 +537,28 @@ bool SolidDeviceEngine::updateFreeSpace(const QString &udi)
 
 bool SolidDeviceEngine::updateHardDiskTemperature(const QString &udi)
 {
-    Solid::Device device = devicemap.value(udi);
+    Solid::Device device = m_devicemap.value(udi);
     Solid::Block *block = device.as<Solid::Block>();
-    if (block != 0 && temperature->sources().contains(block->device())) {
-        setData(udi, I18N_NOOP("Temperature"), temperature->data(block->device(), HddTemp::Temperature));
-        setData(udi, I18N_NOOP("Temperature Unit"), temperature->data(block->device(), HddTemp::Unit));
+    if (!block) {
+        return false;
+    }
+
+    if (!m_temperature) {
+        m_temperature = new HddTemp(this);
+    }
+
+    if (m_temperature->sources().contains(block->device())) {
+        setData(udi, I18N_NOOP("Temperature"), m_temperature->data(block->device(), HddTemp::Temperature));
+        setData(udi, I18N_NOOP("Temperature Unit"), m_temperature->data(block->device(), HddTemp::Unit));
         return true;
     }
+
     return false;
 }
 
 bool SolidDeviceEngine::updateEmblems(const QString &udi)
 {
-    Solid::Device device = devicemap.value(udi);
+    Solid::Device device = m_devicemap.value(udi);
 
     setData(udi, I18N_NOOP("Emblems"), device.emblems() );
     return true;
@@ -562,7 +566,7 @@ bool SolidDeviceEngine::updateEmblems(const QString &udi)
 
 bool SolidDeviceEngine::forceUpdateAccessibility(const QString &udi)
 {
-    Solid::Device device = devicemap.value(udi);
+    Solid::Device device = m_devicemap.value(udi);
     if (!device.isValid()) {
         return false;
     }
@@ -589,19 +593,19 @@ void SolidDeviceEngine::deviceRemoved(const QString& udi)
 {
     //libsolid cannot notify us when an encrypted container is closed,
     //hence we trigger an update when a device contained in an encrypted container device dies
-    QString containerUdi = encryptedContainerMap.value(udi, QString());
+    QString containerUdi = m_encryptedContainerMap.value(udi, QString());
 
     if (!containerUdi.isEmpty()) {
         forceUpdateAccessibility(containerUdi);
-        encryptedContainerMap.remove(udi);
+        m_encryptedContainerMap.remove(udi);
     }
 
-    foreach (const QString &query, predicatemap.keys()) {
-        predicatemap[query].removeAll(udi);
-        setData(query, predicatemap[query]);
+    foreach (const QString &query, m_predicatemap.keys()) {
+        m_predicatemap[query].removeAll(udi);
+        setData(query, m_predicatemap[query]);
     }
 
-    devicemap.remove(udi);
+    m_devicemap.remove(udi);
     removeSource(udi);
 }
 

@@ -139,13 +139,13 @@ void DesktopPathConfig::load()
 void DesktopPathConfig::defaults()
 {
     // Desktop Paths - keep defaults in sync with kglobalsettings.cpp
-    urDesktop->setUrl( QDir::homePath() + "/Desktop" );
-    urAutostart->setUrl( KGlobal::dirs()->localkdedir() + "Autostart/" );
-    urDocument->setUrl( QDir::homePath() + "/Documents" );
-    urDownload->setUrl( QDir::homePath() + "/Downloads" );
-    urMovie->setUrl( QDir::homePath() + "/Movies" );
-    urPicture->setUrl( QDir::homePath() + "/Pictures" );
-    urMusic->setUrl( QDir::homePath() + "/Music" );
+    urDesktop->setUrl( QString(QDir::homePath() + "/Desktop") );
+    urAutostart->setUrl( QString(KGlobal::dirs()->localkdedir() + "Autostart/") );
+    urDocument->setUrl( QString(QDir::homePath() + "/Documents") );
+    urDownload->setUrl( QString(QDir::homePath() + "/Downloads") );
+    urMovie->setUrl( QString(QDir::homePath() + "/Movies") );
+    urPicture->setUrl( QString(QDir::homePath() + "/Pictures") );
+    urMusic->setUrl( QString(QDir::homePath() + "/Music") );
 }
 
 // the following method is copied from kdelibs/kdecore/config/kconfiggroup.cpp
@@ -226,7 +226,7 @@ void DesktopPathConfig::save()
             if ( newAutostartURL.equals( autostartURL, KUrl::CompareWithoutTrailingSlash ) )
             {
                 // Hack. It could be in a subdir inside desktop. Hmmm... Argl.
-                urAutostart->setUrl( urlDesktop + "Autostart/" );
+                urAutostart->setUrl( QString(urlDesktop + "Autostart/") );
                 kDebug() << "Autostart is moved with the desktop";
                 autostartMoved = true;
             }
@@ -248,7 +248,7 @@ void DesktopPathConfig::save()
             const QString userDirsFile(KGlobal::dirs()->localxdgconfdir() + QLatin1String("user-dirs.dirs"));
             KConfig xdgUserConf( userDirsFile, KConfig::SimpleConfig );
             KConfigGroup g( &xdgUserConf, "" );
-            g.writeEntry( "XDG_DESKTOP_DIR", "\"" + translatePath( urlDesktop ) + "\"" );
+            g.writeEntry( "XDG_DESKTOP_DIR", QString("\"" + translatePath( urlDesktop ) + "\"") );
             pathChanged = true;
         }
     }
@@ -311,7 +311,7 @@ bool DesktopPathConfig::xdgSavePath(KUrlRequester* ur, const KUrl& currentUrl, c
             const QString userDirsFile(KGlobal::dirs()->localxdgconfdir() + QLatin1String("user-dirs.dirs"));
             KConfig xdgUserConf(userDirsFile, KConfig::SimpleConfig);
             KConfigGroup g(&xdgUserConf, "");
-            g.writeEntry(xdgKey, "\"" + translatePath(path) + "\"");
+            g.writeEntry(xdgKey, QString("\"" + translatePath(path) + "\""));
             return true;
         }
     }
@@ -364,8 +364,8 @@ bool DesktopPathConfig::moveDir( const KUrl & src, const KUrl & dest, const QStr
             job->setAutoDelete(false); // see <noautodelete> below
             job->ui()->setWindow(this);
             job->ui()->setAutoErrorHandlingEnabled(true);
-            connect(job, SIGNAL(entries(KIO::Job *,KIO::UDSEntryList)),
-                    this, SLOT(slotEntries(KIO::Job *,KIO::UDSEntryList)));
+            connect(job, SIGNAL(entries(KIO::Job*,KIO::UDSEntryList)),
+                    this, SLOT(slotEntries(KIO::Job*,KIO::UDSEntryList)));
             // slotEntries will move every file/subdir individually into the dest
             job->exec();
             if (m_ok) {
@@ -378,7 +378,7 @@ bool DesktopPathConfig::moveDir( const KUrl & src, const KUrl & dest, const QStr
             kDebug() << "Direct move from" << src << "to" << dest;
             KIO::Job * job = KIO::move( src, dest );
             job->ui()->setWindow(this);
-            connect(job, SIGNAL(result(KJob *)), this, SLOT(slotResult(KJob *)));
+            connect(job, SIGNAL(result(KJob*)), this, SLOT(slotResult(KJob*)));
             job->exec();
         }
     }
@@ -398,7 +398,7 @@ void DesktopPathConfig::slotEntries(KIO::Job*, const KIO::UDSEntryList& list)
 
         KIO::Job * moveJob = KIO::move(file.url(), m_copyToDest);
         moveJob->ui()->setWindow(this);
-        connect(moveJob, SIGNAL(result(KJob *)), this, SLOT(slotResult(KJob *)));
+        connect(moveJob, SIGNAL(result(KJob*)), this, SLOT(slotResult(KJob*)));
         moveJob->exec(); // sub-event loop here. <noautodelete>: the main job is not autodeleted because it would be deleted here
     }
 }

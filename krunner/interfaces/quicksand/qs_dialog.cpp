@@ -68,7 +68,7 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_activityButton->setIcon(m_iconSvg->pixmap(QLatin1String( "status" )));
 
     updateSystemActivityToolTip();
-    connect(showSystemActivityAction, SIGNAL(globalShortcutChanged(const QKeySequence &)), this, SLOT(updateSystemActivityToolTip()));
+    connect(showSystemActivityAction, SIGNAL(globalShortcutChanged(QKeySequence)), this, SLOT(updateSystemActivityToolTip()));
     connect(showSystemActivityAction, SIGNAL(triggered(bool)), this, SLOT(close()));
 
     m_singleRunnerIcon = new QLabel(this);
@@ -99,7 +99,7 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     m_matchView = new QuickSand::QsMatchView(this);
     layout->addWidget(m_matchView);
-    connect(m_matchView, SIGNAL(textChanged(const QString&)), m_matchView, SLOT(setTitle(const QString&)));
+    connect(m_matchView, SIGNAL(textChanged(QString)), m_matchView, SLOT(setTitle(QString)));
 
     m_currentMatch = 0;
 
@@ -109,9 +109,9 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_actionView->setCountingActions(true);
     m_actionView->hide();
 
-    connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
-             this, SLOT(setMatches(const QList<Plasma::QueryMatch>&)));
-    connect(m_matchView, SIGNAL(textChanged(const QString&)), this, SLOT(launchQuery(const QString&)));
+    connect(m_runnerManager, SIGNAL(matchesChanged(QList<Plasma::QueryMatch>)),
+             this, SLOT(setMatches(QList<Plasma::QueryMatch>)));
+    connect(m_matchView, SIGNAL(textChanged(QString)), this, SLOT(launchQuery(QString)));
     connect(m_matchView, SIGNAL(selectionChanged(MatchItem*)), this, SLOT(loadActions(MatchItem*)));
     connect(m_matchView, SIGNAL(itemActivated(MatchItem*)), this, SLOT(run(MatchItem*)));
     connect(m_actionView, SIGNAL(selectionChanged(MatchItem*)), this, SLOT(setAction(MatchItem*)));

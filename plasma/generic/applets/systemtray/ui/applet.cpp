@@ -71,6 +71,12 @@
 #include "../core/manager.h"
 #include "taskarea.h"
 
+static const bool DEFAULT_SHOW_APPS = true;
+static const bool DEFAULT_SHOW_COMMUNICATION = true;
+static const bool DEFAULT_SHOW_SERVICES = true;
+static const bool DEFAULT_SHOW_HARDWARE = true;
+static const bool DEFAULT_SHOW_UNKNOWN = true;
+
 namespace SystemTray
 {
 
@@ -85,7 +91,6 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
       m_taskArea(0),
       m_background(0),
-      m_separator(0),
       m_firstRun(true)
 {
     if (!s_manager) {
@@ -99,9 +104,6 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/systemtray");
     m_background->setCacheAllRenderedFrames(true);
-    m_separator = new Plasma::FrameSvg(this);
-    m_separator->setImagePath("widgets/line");
-    m_separator->setCacheAllRenderedFrames(true);
     m_taskArea = new TaskArea(this);
     lay->addItem(m_taskArea);
     connect(m_taskArea, SIGNAL(toggleHiddenItems()), this, SLOT(togglePopup()));
@@ -182,23 +184,23 @@ void Applet::configChanged()
 
     m_shownCategories.clear();
 
-    if (cg.readEntry("ShowApplicationStatus", gcg.readEntry("ShowApplicationStatus", false))) {
+    if (cg.readEntry("ShowApplicationStatus", gcg.readEntry("ShowApplicationStatus", DEFAULT_SHOW_APPS))) {
         m_shownCategories.insert(Task::ApplicationStatus);
     }
 
-    if (cg.readEntry("ShowCommunications", gcg.readEntry("ShowCommunications", true))) {
+    if (cg.readEntry("ShowCommunications", gcg.readEntry("ShowCommunications", DEFAULT_SHOW_COMMUNICATION))) {
         m_shownCategories.insert(Task::Communications);
     }
 
-    if (cg.readEntry("ShowSystemServices", gcg.readEntry("ShowSystemServices", true))) {
+    if (cg.readEntry("ShowSystemServices", gcg.readEntry("ShowSystemServices", DEFAULT_SHOW_SERVICES))) {
         m_shownCategories.insert(Task::SystemServices);
     }
 
-    if (cg.readEntry("ShowHardware", gcg.readEntry("ShowHardware", true))) {
+    if (cg.readEntry("ShowHardware", gcg.readEntry("ShowHardware", DEFAULT_SHOW_HARDWARE))) {
         m_shownCategories.insert(Task::Hardware);
     }
 
-    if (cg.readEntry("ShowUnknown", gcg.readEntry("ShowUnknown", true))) {
+    if (cg.readEntry("ShowUnknown", gcg.readEntry("ShowUnknown", DEFAULT_SHOW_UNKNOWN))) {
         m_shownCategories.insert(Task::UnknownCategory);
     }
 
@@ -210,24 +212,6 @@ void Applet::configChanged()
 void Applet::popupEvent(bool)
 {
     m_taskArea->updateUnhideToolIcon();
-}
-
-bool Applet::isPopupShowing() const
-{
-    if (PopupApplet::isPopupShowing()) {
-        return true;
-    }
-
-    foreach (Task *task, s_manager->tasks()) {
-        Plasma::Applet *applet = qobject_cast<Plasma::Applet*>(task->widget(const_cast<Applet *>(this), false));
-        if (applet) {
-            if (applet->isPopupShowing()) {
-                return true;
-            }
-        }
-    }
-
-    return false;
 }
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)
@@ -339,7 +323,7 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     m_background->setElementPrefix(QString());
 
     const int leftEasement = m_taskArea->leftEasement();
-    if(leftEasement > 0)
+    if (leftEasement > 0)
     {
         QRect firstRect(normalRect);
 
@@ -371,7 +355,7 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     }
 
     const int rightEasement = m_taskArea->rightEasement();
-    if(rightEasement > 0)
+    if (rightEasement > 0)
     {
         QRect lastRect(normalRect);
 
@@ -405,25 +389,6 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     painter->setClipRect(normalRect, Qt::IntersectClip);
     m_background->paintFrame(painter, contentsRect, QRectF(QPointF(0, 0), contentsRect.size()));
     painter->restore();
-
-    if (leftEasement > 0) {
-        if (formFactor() == Plasma::Vertical) {
-            if (m_separator->hasElement("horizontal-line")) {
-                QSize s = m_separator->elementRect("horizontal-line").size().toSize();
-                m_separator->paint(painter, QRect(normalRect.topLeft() - QPoint(0, s.height() / 2),
-                                    QSize(normalRect.width(), s.height())), "horizontal-line");
-            }
-        } else if (m_separator->hasElement("vertical-line")) {
-            QSize s = m_separator->elementRect("vertical-line").size().toSize();
-            if (QApplication::layoutDirection() == Qt::RightToLeft) {
-                m_separator->paint(painter, QRect(normalRect.topRight() - QPoint(s.width() / 2, 0),
-                                    QSize(s.width(), normalRect.height())), "vertical-line");
-            } else {
-                m_separator->paint(painter, QRect(normalRect.topLeft() - QPoint(s.width() / 2, 0),
-                                    QSize(s.width(), normalRect.height())), "vertical-line");
-            }
-        }
-    }
 }
 
 
@@ -440,6 +405,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         m_visibleItemsInterface = new QWidget();
 
         m_autoHideUi.setupUi(m_autoHideInterface.data());
+        m_autoHideUi.icons->header()->setResizeMode(QHeaderView::ResizeToContents);
 
         m_visibleItemsUi.setupUi(m_visibleItemsInterface.data());
 
@@ -564,14 +530,13 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         connect(button, SIGNAL(keySequenceChanged(QKeySequence)), parent, SLOT(settingsModified()));
     }
 
-
     const QString itemCategories = i18nc("Categories of items in the systemtray that will be shown or hidden", "Shown Item Categories");
 
     QStandardItem *applicationStatusItem = new QStandardItem();
     applicationStatusItem->setText(i18nc("Systemtray items that describe the status of a generic application", "Application status"));
     applicationStatusItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     bool checked = cg.readEntry("ShowApplicationStatus",
-                                gcg.readEntry("ShowApplicationStatus", true));
+                                gcg.readEntry("ShowApplicationStatus", DEFAULT_SHOW_APPS));
     applicationStatusItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
     applicationStatusItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     applicationStatusItem->setData("ShowApplicationStatus", Qt::UserRole+1);
@@ -581,7 +546,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     communicationsItem->setText(i18nc("Items communication related, such as chat or email clients", "Communications"));
     communicationsItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     checked = cg.readEntry("ShowCommunications",
-                           gcg.readEntry("ShowCommunications", true));
+                           gcg.readEntry("ShowCommunications", DEFAULT_SHOW_COMMUNICATION));
     communicationsItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
     communicationsItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     communicationsItem->setData("ShowCommunications", Qt::UserRole+1);
@@ -591,7 +556,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     systemServicesItem->setText(i18nc("Items about the status of the system, such as a filesystem indexer", "System services"));
     systemServicesItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     checked = cg.readEntry("ShowSystemServices",
-                           gcg.readEntry("ShowSystemServices", true));
+                           gcg.readEntry("ShowSystemServices", DEFAULT_SHOW_SERVICES));
     systemServicesItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
     systemServicesItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     systemServicesItem->setData("ShowSystemServices", Qt::UserRole+1);
@@ -601,7 +566,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     hardwareControlItem->setText(i18nc("Items about hardware, such as battery or volume control", "Hardware control"));
     hardwareControlItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     checked = cg.readEntry("ShowHardware",
-                           gcg.readEntry("ShowHardware", true));
+                           gcg.readEntry("ShowHardware", DEFAULT_SHOW_HARDWARE));
     hardwareControlItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
     hardwareControlItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     hardwareControlItem->setData("ShowHardware", Qt::UserRole+1);
@@ -611,7 +576,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     unknownItem->setText(i18nc("Other uncategorized systemtray items", "Miscellaneous"));
     unknownItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     checked = cg.readEntry("ShowUnknown",
-                           gcg.readEntry("ShowUnknown", true));
+                           gcg.readEntry("ShowUnknown", DEFAULT_SHOW_UNKNOWN));
     unknownItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
     unknownItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     unknownItem->setData("ShowUnknown", Qt::UserRole+1);

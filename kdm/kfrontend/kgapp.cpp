@@ -42,6 +42,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kstandarddirs.h>
 
 #include <QDesktopWidget>
+#include <QPainter>
 #include <QX11Info>
 
 #include <stdio.h>
@@ -73,7 +74,7 @@ sigAlarm(int)
 
 GreeterApp::GreeterApp(int &argc, char **argv) :
     inherited(argc, argv),
-    regrabPtr(false), regrabKbd(false), initalBusy(true),
+    regrabPtr(false), regrabKbd(false), initalBusy(true), sendInteract(false),
     dragWidget(0)
 {
     pingInterval = _isLocal ? 0 : _pingInterval;
@@ -202,6 +203,14 @@ GreeterApp::x11EventFilter(XEvent * ev)
             break;
         }
         break;
+    default:
+        return false;
+    }
+    if (sendInteract) {
+        sendInteract = false;
+        // We assume that no asynchronous communication is going on
+        // before the first user interaction.
+        gSendInt(G_Interact);
     }
     return false;
 }
@@ -408,19 +417,21 @@ main(int argc ATTR_UNUSED, char **argv)
         for (int i = 0; i < dw->numScreens(); i++)
             scrns[dw->screenGeometry(i).size()] << i;
         QPixmap pm(dw->size());
+        QPainter p(&pm);
+        p.fillRect(dw->rect(), Qt::black);
         QSize gsz = dw->screenGeometry(_greeterScreen).size();
         // Paint these first, as throwing away their images does not hurt
         QHash<QSize, QList<int> >::ConstIterator it;
         for (it = scrns.constBegin(); it != scrns.constEnd(); ++it)
             if (it.key() != gsz)
                 foreach (int i, it.value())
-                    themer->paintBackground(&pm, dw->screenGeometry(i), false);
+                    themer->paintBackground(&p, dw->screenGeometry(i), false);
         // If we are lucky, these will use the same images as the greeter
         foreach (int i, scrns.value(gsz))
             if (i != _greeterScreen)
-                themer->paintBackground(&pm, dw->screenGeometry(i), false);
+                themer->paintBackground(&p, dw->screenGeometry(i), false);
         // Paint the greeter background last - it will be re-used.
-        themer->paintBackground(&pm, dw->screenGeometry(_greeterScreen), true);
+        themer->paintBackground(&p, dw->screenGeometry(_greeterScreen), true);
         QPalette palette;
         palette.setBrush(dw->backgroundRole(), QBrush(pm));
         dw->setPalette(palette);
@@ -476,6 +487,7 @@ main(int argc ATTR_UNUSED, char **argv)
             }
         }
         QObject::connect(dialog, SIGNAL(ready()), &app, SLOT(markReady()));
+        app.enableSendInteract();
         debug("entering event loop\n");
         rslt = dialog->exec();
         debug("left event loop\n");

@@ -60,7 +60,6 @@ public slots:
     void addTask(SystemTray::Task *task);
     void removeTask(SystemTray::Task *task);
     void delayedAppletUpdate();
-    void delayedReposition();
     void updateUnhideToolIcon();
 
 signals:

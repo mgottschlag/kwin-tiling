@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007-2009 by Shawn Starr <shawn.starr@rogers.com>       *
+ *   Copyright (C) 2007-2011 by Shawn Starr <shawn.starr@rogers.com>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -185,6 +185,8 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappi
     forecastList["a few wet flurries or rain showers"] = RainSnow;
     forecastList["a mix of sun and cloud"] = PartlyCloudyDay;
     forecastList["cloudy with sunny periods"] = PartlyCloudyDay;
+    forecastList["partly cloudy"] = PartlyCloudyDay;
+    forecastList["mainly sunny"] = FewCloudsDay;
     forecastList["sunny"] = ClearDay;
     forecastList["blizzard"] = Snow;
     forecastList["clear"] = ClearNight;
@@ -493,9 +495,9 @@ void EnvCanadaIon::getXMLSetup()
     KIO::TransferJob *job = KIO::get(KUrl("http://dd.weatheroffice.ec.gc.ca/citypage_weather/xml/siteList.xml"), KIO::NoReload, KIO::HideProgressInfo);
 
     m_xmlSetup.clear();
-    connect(job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-            SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
-    connect(job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
+    connect(job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+            SLOT(setup_slotDataArrived(KIO::Job*,QByteArray)));
+    connect(job, SIGNAL(result(KJob*)), this, SLOT(setup_slotJobFinished(KJob*)));
 }
 
 // Gets specific city XML data
@@ -514,7 +516,7 @@ void EnvCanadaIon::getXMLData(const QString& source)
     QString dataKey = source;
     dataKey.remove("envcan|weather|");
 
-    KUrl url = "http://dd.weatheroffice.ec.gc.ca/citypage_weather/xml/" + m_places[dataKey].territoryName + "/" + m_places[dataKey].cityCode + "_e.xml";
+    KUrl url = QString("http://dd.weatheroffice.ec.gc.ca/citypage_weather/xml/" + m_places[dataKey].territoryName + "/" + m_places[dataKey].cityCode + "_e.xml");
     //url="file:///home/spstarr/Desktop/s0000649_e.xml";
     //kDebug() << "Will Try URL: " << url;
 
@@ -528,9 +530,9 @@ void EnvCanadaIon::getXMLData(const QString& source)
     m_jobXml.insert(newJob, new QXmlStreamReader);
     m_jobList.insert(newJob, source);
 
-    connect(newJob, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-            SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
-    connect(newJob, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
+    connect(newJob, SIGNAL(data(KIO::Job*,QByteArray)), this,
+            SLOT(slotDataArrived(KIO::Job*,QByteArray)));
+    connect(newJob, SIGNAL(result(KJob*)), this, SLOT(slotJobFinished(KJob*)));
 }
 
 void EnvCanadaIon::setup_slotDataArrived(KIO::Job *job, const QByteArray &data)
@@ -1677,30 +1679,30 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
         }
 
         if (m_weatherData[source].forecasts[i]->forecastPeriod.contains("Saturday")) {
-            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Saturday", i18n("Sat"));
+            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Saturday", i18nc("Short for Saturday", "Sat"));
         }
 
         if (m_weatherData[source].forecasts[i]->forecastPeriod.contains("Sunday")) {
-            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Sunday", i18n("Sun"));
+            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Sunday", i18nc("Short for Sunday", "Sun"));
         }
 
         if (m_weatherData[source].forecasts[i]->forecastPeriod.contains("Monday")) {
-            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Monday", i18n("Mon"));
+            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Monday", i18nc("Short for Monday", "Mon"));
         }
 
         if (m_weatherData[source].forecasts[i]->forecastPeriod.contains("Tuesday")) {
-            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Tuesday", i18n("Tue"));
+            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Tuesday", i18nc("Short for Tuesday", "Tue"));
         }
 
         if (m_weatherData[source].forecasts[i]->forecastPeriod.contains("Wednesday")) {
-            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Wednesday", i18n("Wed"));
+            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Wednesday", i18nc("Short for Wednesday", "Wed"));
         }
 
         if (m_weatherData[source].forecasts[i]->forecastPeriod.contains("Thursday")) {
-            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Thursday", i18n("Thu"));
+            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Thursday", i18nc("Short for Thursday", "Thu"));
         }
         if (m_weatherData[source].forecasts[i]->forecastPeriod.contains("Friday")) {
-            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Friday", i18n("Fri"));
+            m_weatherData[source].forecasts[i]->forecastPeriod.replace("Friday", i18nc("Short for Friday", "Fri"));
         }
 
         forecastData.append(QString("%1|%2|%3|%4|%5|%6") \

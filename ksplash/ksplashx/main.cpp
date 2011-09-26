@@ -23,6 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include <signal.h>
+#include <math.h>
+
+int screen_number = 0;
+int number_of_screens = 1;
 
 static void usage( char* name )
     {
@@ -36,6 +41,7 @@ int main( int argc, char* argv[] )
         usage( argv[ 0 ] );
     bool test = false;
     bool print_pid = false;
+    int* cpid;
     for( int i = 2; // 1 is the theme
          i < argc;
          ++i )
@@ -72,6 +78,58 @@ int main( int argc, char* argv[] )
             close( 0 ); // close stdin,stdout,stderr, otherwise startkde will block
             close( 1 );
             close( 2 );
+            Display* dpy = XOpenDisplay(NULL);
+            if (!dpy)
+                {
+                exit(1);
+                }
+            number_of_screens = ScreenCount(dpy);
+            if (number_of_screens > 1)
+                {
+                cpid = (int*)calloc(number_of_screens, sizeof(int));
+                screen_number = DefaultScreen(dpy);
+                char* display_name;
+                display_name = XDisplayString(dpy);
+                int breakpos;
+                for (int i = strlen(display_name) - 1; i >= 0; i--)
+                    {
+                    if (display_name[i] == '.')
+                        {
+                        breakpos = i;
+                        break;
+                        }
+                    }
+                // Calculate the array size: part before the dot + length of the screen
+                // string (which is log10 + 1) + 1 for the dot itself + 8 for "DISPLAY=" + \0
+                const int envir_len = breakpos + log10(static_cast<double>(number_of_screens)) + 11;
+                char *envir = new char[envir_len];
+                char *server_name = new char[breakpos + 1];
+                strncpy(server_name, display_name, breakpos);
+                server_name[breakpos] = '\0';
+
+                XCloseDisplay(dpy);
+                dpy = 0;
+                for (int i = 0; i < number_of_screens; i++)
+                    {
+                    if (i != screen_number)
+                        {
+                        cpid[i] = fork();
+                        if (cpid[i] == 0)
+                            {
+                            screen_number = i;
+                            // Break here because we are the child process, we don't
+                            // want to fork() anymore
+                            break;
+                            }
+                        }
+                    }
+                snprintf(envir, envir_len, "DISPLAY=%s.%d", server_name, screen_number);
+                putenv(strdup(envir));
+                delete[] envir;
+                delete[] server_name;
+                }
+            else
+                XCloseDisplay(dpy);
             }
         else
             { // parent
@@ -91,4 +149,9 @@ int main( int argc, char* argv[] )
         XSynchronize( qt_xdisplay(), True );
     runSplash( theme, test, parent_pipe );
     closeDisplay();
+    if (number_of_screens > 1)
+        {
+        for (int i = 1; i < number_of_screens; i++)
+            kill(cpid[i], SIGTERM);
+        }
     }

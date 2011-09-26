@@ -95,9 +95,9 @@ void PowerDevilUPowerBackend::init()
     // devices
     enumerateDevices();
     connect(m_upowerInterface, SIGNAL(Changed()), this, SLOT(slotPropertyChanged()));
-    connect(m_upowerInterface, SIGNAL(DeviceAdded(const QString &)), this, SLOT(slotDeviceAdded(const QString &)));
-    connect(m_upowerInterface, SIGNAL(DeviceRemoved(const QString &)), this, SLOT(slotDeviceRemoved(const QString &)));
-    connect(m_upowerInterface, SIGNAL(DeviceChanged(const QString &)), this, SLOT(slotDeviceChanged(const QString &)));
+    connect(m_upowerInterface, SIGNAL(DeviceAdded(QString)), this, SLOT(slotDeviceAdded(QString)));
+    connect(m_upowerInterface, SIGNAL(DeviceRemoved(QString)), this, SLOT(slotDeviceRemoved(QString)));
+    connect(m_upowerInterface, SIGNAL(DeviceChanged(QString)), this, SLOT(slotDeviceChanged(QString)));
 
     // Brightness Controls available
     BrightnessControlsList controls;
@@ -170,7 +170,13 @@ void PowerDevilUPowerBackend::brightnessKeyPressed(PowerDevil::BackendInterface:
             newBrightness = qMax(0.0f, currentBrightness - 10);
         }
 
-        setBrightness(newBrightness, Screen);
+        if (setBrightness(newBrightness, Screen)) {
+            newBrightness = brightness(Screen);
+            if (!qFuzzyCompare(newBrightness, m_cachedBrightness)) {
+                m_cachedBrightness = newBrightness;
+                onBrightnessChanged(Screen, m_cachedBrightness);
+            }
+        }
     } else {
         m_cachedBrightness = currentBrightness;
     }
@@ -224,11 +230,6 @@ bool PowerDevilUPowerBackend::setBrightness(float brightnessValue, PowerDevil::B
             }
         }
 
-        float newBrightness = brightness(Screen);
-        if (!qFuzzyCompare(newBrightness, m_cachedBrightness)) {
-            m_cachedBrightness = newBrightness;
-            onBrightnessChanged(Screen, m_cachedBrightness);
-        }
         return true;
     } else if (type == Keyboard) {
         kDebug() << "set kbd backlight: " << brightnessValue;

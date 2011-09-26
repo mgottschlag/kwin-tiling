@@ -20,6 +20,7 @@
 #include "EditPage.h"
 
 #include "actionconfigwidget.h"
+#include "ErrorOverlay.h"
 
 #include <daemon/powerdevilactionconfig.h>
 #include <daemon/powerdevilprofilegenerator.h>
@@ -33,7 +34,9 @@
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusReply>
 #include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusConnectionInterface>
 #include <QtDBus/QDBusMetaType>
+#include <QtDBus/QDBusServiceWatcher>
 
 #include <KConfigGroup>
 #include <KLineEdit>
@@ -106,8 +109,8 @@ EditPage::EditPage(QWidget *parent, const QVariantList &args)
     actionExportProfiles->setIcon(KIcon("document-export"));
     actionRestoreDefaultProfiles->setIcon(KIcon("document-revert"));
 
-    connect(profilesList, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
-            SLOT(switchProfile(QListWidgetItem*, QListWidgetItem*)));
+    connect(profilesList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+            SLOT(switchProfile(QListWidgetItem*,QListWidgetItem*)));
     connect(this, SIGNAL(changed(bool)),
             this, SLOT(onChanged(bool)));
 
@@ -170,6 +173,21 @@ EditPage::EditPage(QWidget *parent, const QVariantList &args)
     lay->addStretch();
     tw->setLayout(lay);
     scrollArea->setWidget(tw);
+
+    QDBusServiceWatcher *watcher = new QDBusServiceWatcher("org.kde.Solid.PowerManagement",
+                                                           QDBusConnection::sessionBus(),
+                                                           QDBusServiceWatcher::WatchForRegistration |
+                                                           QDBusServiceWatcher::WatchForUnregistration,
+                                                           this);
+
+    connect(watcher, SIGNAL(serviceRegistered(QString)), this, SLOT(onServiceRegistered(QString)));
+    connect(watcher, SIGNAL(serviceUnregistered(QString)), this, SLOT(onServiceUnregistered(QString)));
+
+    if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
+        onServiceRegistered("org.kde.Solid.PowerManagement");
+    } else {
+        onServiceUnregistered("org.kde.Solid.PowerManagement");
+    }
 }
 
 EditPage::~EditPage()
@@ -576,11 +594,11 @@ void EditPage::switchProfile(QListWidgetItem *current, QListWidgetItem *previous
         } else if (result == KMessageBox::No) {
             loadProfile();
         } else if (result == KMessageBox::Cancel) {
-            disconnect(profilesList, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
-                       this, SLOT(switchProfile(QListWidgetItem*, QListWidgetItem*)));
+            disconnect(profilesList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+                       this, SLOT(switchProfile(QListWidgetItem*,QListWidgetItem*)));
             profilesList->setCurrentItem(previous);
-            connect(profilesList, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
-                    SLOT(switchProfile(QListWidgetItem*, QListWidgetItem*)));
+            connect(profilesList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+                    SLOT(switchProfile(QListWidgetItem*,QListWidgetItem*)));
         }
     }
 }
@@ -593,6 +611,28 @@ void EditPage::openUrl(const QString &url)
 void EditPage::defaults()
 {
     restoreDefaultProfiles();
+}
+
+void EditPage::onServiceRegistered(const QString& service)
+{
+    Q_UNUSED(service);
+
+    if (m_errorOverlay) {
+        m_errorOverlay.data()->deleteLater();
+    }
+}
+
+void EditPage::onServiceUnregistered(const QString& service)
+{
+    Q_UNUSED(service);
+
+    if (m_errorOverlay) {
+        m_errorOverlay.data()->deleteLater();
+    }
+
+    m_errorOverlay = new ErrorOverlay(this, i18n("The Power Management Service appears not to be running.\n"
+                                                 "This can be solved by starting or scheduling it inside \"Startup and Shutdown\""),
+                                      this);
 }
 
 #include "EditPage.moc"

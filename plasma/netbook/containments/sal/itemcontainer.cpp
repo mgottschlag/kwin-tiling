@@ -198,7 +198,7 @@ ResultWidget *ItemContainer::createItem(QModelIndex index)
         item->setMaximumSize(m_cellSize);
         item->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         connect(item, SIGNAL(clicked()), this, SLOT(itemClicked()));
-        connect(item, SIGNAL(dragStartRequested(ResultWidget *)), this, SLOT(itemRequestedDrag(ResultWidget *)));
+        connect(item, SIGNAL(dragStartRequested(ResultWidget*)), this, SLOT(itemRequestedDrag(ResultWidget*)));
     }
 
     return item;
@@ -610,8 +610,8 @@ void ItemContainer::setModel(QAbstractItemModel *model)
 
     m_model = model;
     connect (m_model, SIGNAL(modelAboutToBeReset()), this, SLOT(reset()));
-    connect (m_model, SIGNAL(rowsInserted(const QModelIndex & , int, int)), this, SLOT(generateItems(const QModelIndex&, int, int)));
-    connect (m_model, SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)), this, SLOT(removeItems(const QModelIndex&, int, int)));
+    connect (m_model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(generateItems(QModelIndex,int,int)));
+    connect (m_model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(removeItems(QModelIndex,int,int)));
 
     generateItems(m_rootIndex, 0, m_model->rowCount());
 }

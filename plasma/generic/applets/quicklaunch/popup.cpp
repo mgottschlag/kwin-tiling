@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 - 2009 by Lukas Appelhans <l.appelhans@gmx.de>     *
- *   Copyright (C) 2010 by Ingomar Wesp <ingomar@wesp.name>                *
+ *   Copyright (C) 2010 - 2011 by Ingomar Wesp <ingomar@wesp.name>         *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,6 +21,7 @@
 
 // Qt
 #include <Qt>
+#include <QtGlobal>
 #include <QtCore/QEvent>
 #include <QtCore/QMargins>
 #include <QtCore/QSize>
@@ -36,7 +37,7 @@
 #include <Plasma/Dialog>
 
 // Own
-#include "launcherlist.h"
+#include "popuplauncherlist.h"
 #include "quicklaunch.h"
 
 using Plasma::Applet;
@@ -49,7 +50,7 @@ Popup::Popup(Quicklaunch *applet)
 :
     Dialog(0, Qt::X11BypassWindowManagerHint),
     m_applet(applet),
-    m_launcherList(new LauncherList(LauncherList::IconList))
+    m_launcherList(new PopupLauncherList())
 {
     m_applet->containment()->corona()->addItem(m_launcherList);
     m_launcherList->installEventFilter(this);
@@ -75,7 +76,7 @@ bool Popup::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
-LauncherList * Popup::launcherList()
+PopupLauncherList *Popup::launcherList()
 {
     return m_launcherList;
 }

@@ -49,7 +49,11 @@ void CalendarApplet::init()
 {
     setPopupIcon("view-pim-calendar");
     m_calendarWidget = new Plasma::Calendar(this);
-    m_calendarWidget->setPreferredSize(220, 250);
+    if (m_calendarWidget->isDisplayingDateDetails()) {
+        m_calendarWidget->setPreferredSize(440, 250);
+    } else {
+        m_calendarWidget->setPreferredSize(220, 250);
+    }
     updateDate();
     configChanged();
     setFocusPolicy(Qt::StrongFocus);

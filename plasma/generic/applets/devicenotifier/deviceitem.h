@@ -155,13 +155,13 @@ class DeviceItem : public QGraphicsWidget
         **/
         bool hovered() const;
 
-	/** 
+	/**
 	 * Used to know if this item can be safely removed
 	 * @return true if it can be safely removed
 	 **/
 	bool safelyRemovable() const;
 
-	/** 
+	/**
 	 * Indicates if this item can be safely removed
 	 * @param safe true if it can be safely removed
 	 **/
@@ -169,7 +169,7 @@ class DeviceItem : public QGraphicsWidget
 
 	/**
 	 * Used to know if this item can be unplugged.
-	 * 
+	 *
 	 */
 	bool unpluggable();
 

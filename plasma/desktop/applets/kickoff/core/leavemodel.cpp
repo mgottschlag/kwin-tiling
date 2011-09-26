@@ -118,19 +118,20 @@ void LeaveModel::updateModel()
     QStandardItem *sessionOptions = new QStandardItem(i18n("Session"));
 
     // Logout
-    if ( KAuthorized::authorizeKAction( "logout" ) ) {
+    const bool canLogout = KAuthorized::authorizeKAction("logout") && KAuthorized::authorize("logout");
+    if (canLogout) {
         QStandardItem *logoutOption = createStandardItem("leave:/logoutonly");
         sessionOptions->appendRow(logoutOption);
     }
 
     // Lock
-    if ( KAuthorized::authorizeKAction( "lock_screen" ) ) {
+    if (KAuthorized::authorizeKAction("lock_screen") && KAuthorized::authorize("logout")) {
         QStandardItem *lockOption = createStandardItem("leave:/lock");
         sessionOptions->appendRow(lockOption);
     }
 
     // Save Session
-    if ( KAuthorized::authorizeKAction( "logout" ) ) {
+    if (canLogout) {
         KConfigGroup c(KSharedConfig::openConfig("ksmserverrc", KConfig::NoGlobals), "General");
         if (c.readEntry("loginMode") == "restoreSavedSession") {
             QStandardItem *saveSessionOption = createStandardItem("leave:/savesession");
@@ -139,8 +140,10 @@ void LeaveModel::updateModel()
     }
 
     // Switch User
-    QStandardItem *switchUserOption = createStandardItem("leave:/switch");
-    sessionOptions->appendRow(switchUserOption);
+    if (KAuthorized::authorize(QLatin1String("switch_user")))  {
+        QStandardItem *switchUserOption = createStandardItem("leave:/switch");
+        sessionOptions->appendRow(switchUserOption);
+    }
 
     // System Options
     QStandardItem *systemOptions = new QStandardItem(i18n("System"));
@@ -148,26 +151,26 @@ void LeaveModel::updateModel()
 
 //FIXME: the proper fix is to implement the KWorkSpace methods for Windows
 #ifndef Q_WS_WIN
-    if ( KAuthorized::authorizeKAction( "logout" ) ) {
-        QSet< Solid::PowerManagement::SleepState > spdMethods = Solid::PowerManagement::supportedSleepStates();
-        if (spdMethods.contains(Solid::PowerManagement::StandbyState)) {
-            QStandardItem *standbyOption = createStandardItem("leave:/standby");
-            systemOptions->appendRow(standbyOption);
-            addSystemSession = true;
-        }
+    QSet< Solid::PowerManagement::SleepState > spdMethods = Solid::PowerManagement::supportedSleepStates();
+    if (spdMethods.contains(Solid::PowerManagement::StandbyState)) {
+        QStandardItem *standbyOption = createStandardItem("leave:/standby");
+        systemOptions->appendRow(standbyOption);
+        addSystemSession = true;
+    }
 
-        if (spdMethods.contains(Solid::PowerManagement::SuspendState)) {
-            QStandardItem *suspendramOption = createStandardItem("leave:/suspendram");
-            systemOptions->appendRow(suspendramOption);
-            addSystemSession = true;
-        }
+    if (spdMethods.contains(Solid::PowerManagement::SuspendState)) {
+        QStandardItem *suspendramOption = createStandardItem("leave:/suspendram");
+        systemOptions->appendRow(suspendramOption);
+        addSystemSession = true;
+    }
 
-        if (spdMethods.contains(Solid::PowerManagement::HibernateState)) {
-            QStandardItem *suspenddiskOption = createStandardItem("leave:/suspenddisk");
-            systemOptions->appendRow(suspenddiskOption);
-            addSystemSession = true;
-        }
+    if (spdMethods.contains(Solid::PowerManagement::HibernateState)) {
+        QStandardItem *suspenddiskOption = createStandardItem("leave:/suspenddisk");
+        systemOptions->appendRow(suspenddiskOption);
+        addSystemSession = true;
+    }
 
+    if (canLogout) {
         if (KWorkSpace::canShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeReboot)) {
             // Restart
             QStandardItem *restartOption = createStandardItem("leave:/restart");

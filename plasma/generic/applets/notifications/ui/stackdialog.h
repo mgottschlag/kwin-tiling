@@ -77,6 +77,7 @@ private:
     QWidget *m_windowToTile;
     QPropertyAnimation *m_windowToTileAnimation;
     QPoint m_dragPos;
+    QSize m_lastSize;
 
     Plasma::FrameSvg *m_background;
     NotificationStack *m_notificationStack;

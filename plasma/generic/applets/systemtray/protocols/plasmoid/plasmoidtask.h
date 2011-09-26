@@ -49,7 +49,7 @@ public:
     Plasma::Applet *host() const;
 
 protected Q_SLOTS:
-    void appletDestroyed(QObject *object);
+    void appletDestroyed(Plasma::Applet *object);
     void newAppletStatus(Plasma::ItemStatus status);
 
 Q_SIGNALS:

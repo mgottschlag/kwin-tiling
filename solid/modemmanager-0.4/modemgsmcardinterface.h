@@ -40,10 +40,10 @@ public:
 
     QString getImei();
     QString getImsi();
-    void sendPuk(const QString & puk, const QString & pin);
-    void sendPin(const QString & pin);
-    void enablePin(const QString & pin, const bool enabled);
-    void changePin(const QString & oldPin, const QString & newPin);
+    QDBusPendingReply<> sendPuk(const QString & puk, const QString & pin);
+    QDBusPendingReply<> sendPin(const QString & pin);
+    QDBusPendingReply<> enablePin(const QString & pin, const bool enabled);
+    QDBusPendingReply<> changePin(const QString & oldPin, const QString & newPin);
 
     // Properties
     Solid::Control::ModemInterface::Band getSupportedBands() const;

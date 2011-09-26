@@ -94,10 +94,10 @@ StripWidget::StripWidget(QGraphicsWidget *parent)
     m_itemView->setDragAndDropMode(ItemContainer::MoveDragAndDrop);
     m_itemView->setModel(m_favouritesModel);
 
-    connect(m_itemView, SIGNAL(itemActivated(const QModelIndex &)), this, SLOT(launchFavourite(const QModelIndex &)));
+    connect(m_itemView, SIGNAL(itemActivated(QModelIndex)), this, SLOT(launchFavourite(QModelIndex)));
     connect(m_itemView, SIGNAL(scrollBarsNeededChanged(ItemView::ScrollBarFlags)), this, SLOT(arrowsNeededChanged(ItemView::ScrollBarFlags)));
-    connect(m_itemView, SIGNAL(itemAskedReorder(const QModelIndex &, const QPointF &)), this, SLOT(reorderItem(const QModelIndex &, const QPointF&)));
-    connect(m_itemView, SIGNAL(dragStartRequested(const QModelIndex &)), this, SLOT(showDeleteTarget()));
+    connect(m_itemView, SIGNAL(itemAskedReorder(QModelIndex,QPointF)), this, SLOT(reorderItem(QModelIndex,QPointF)));
+    connect(m_itemView, SIGNAL(dragStartRequested(QModelIndex)), this, SLOT(showDeleteTarget()));
 
     m_arrowsLayout->addItem(m_leftArrow);
     m_arrowsLayout->addItem(m_itemView);

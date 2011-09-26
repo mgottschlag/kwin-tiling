@@ -1,4 +1,3 @@
-find_package(Boost REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIR} ${KDEPIMLIBS_INCLUDE_DIR})
 

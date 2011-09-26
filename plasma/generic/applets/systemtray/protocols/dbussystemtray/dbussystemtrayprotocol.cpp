@@ -44,10 +44,10 @@ void DBusSystemTrayProtocol::init()
 {
     if (m_dataEngine->isValid()) {
         initRegisteredServices();
-        connect(m_dataEngine, SIGNAL(sourceAdded(const QString&)),
-                this, SLOT(newTask(const QString&)));
-        connect(m_dataEngine, SIGNAL(sourceRemoved(const QString&)),
-                this, SLOT(cleanupTask(const QString&)));
+        connect(m_dataEngine, SIGNAL(sourceAdded(QString)),
+                this, SLOT(newTask(QString)));
+        connect(m_dataEngine, SIGNAL(sourceRemoved(QString)),
+                this, SLOT(cleanupTask(QString)));
     }
 }
 

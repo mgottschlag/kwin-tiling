@@ -78,6 +78,7 @@ void KdmClock::paintEvent(QPaintEvent *)
 
     p.setPen(palette().foreground().color());
     p.setBrush(palette().foreground());
+    p.setRenderHint(QPainter::Antialiasing);
 
     QTime time = QTime::currentTime();
 

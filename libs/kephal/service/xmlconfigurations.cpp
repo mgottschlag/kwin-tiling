@@ -192,7 +192,7 @@ namespace Kephal {
 
             XMLConfiguration * c = new XMLConfiguration(this, config);
             m_configurations.insert(config->name(), c);
-            connect(c, SIGNAL(configurationActivated(XMLConfiguration *)), this, SLOT(activate(XMLConfiguration *)));
+            connect(c, SIGNAL(configurationActivated(XMLConfiguration*)), this, SLOT(activate(XMLConfiguration*)));
         }
 
         findOutputs();

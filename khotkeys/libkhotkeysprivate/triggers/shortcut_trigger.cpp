@@ -100,8 +100,8 @@ void ShortcutTrigger::activate( bool newState )
             this, SLOT(trigger()) );
 
         connect(
-            act, SIGNAL(globalShortcutChanged(const QKeySequence&)),
-            this, SIGNAL(globalShortcutChanged(const QKeySequence&)));
+            act, SIGNAL(globalShortcutChanged(QKeySequence)),
+            this, SIGNAL(globalShortcutChanged(QKeySequence)));
         }
     else
         {

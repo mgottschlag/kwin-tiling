@@ -29,7 +29,7 @@ KLineSpellChecking::KLineSpellChecking(QWidget* parent)
     : KLineEdit(parent)
 {
     KActionCollection *ac = new KActionCollection(this);
-    m_spellAction = KStandardAction::spelling( this, SLOT( slotCheckSpelling() ), ac );
+    m_spellAction = KStandardAction::spelling( this, SLOT(slotCheckSpelling()), ac );
 }
 
 KLineSpellChecking::~KLineSpellChecking()
@@ -42,9 +42,9 @@ void KLineSpellChecking::slotCheckSpelling()
         return;
     }
     Sonnet::Dialog *spellDialog = new Sonnet::Dialog(new Sonnet::BackgroundChecker(this), 0);
-    connect(spellDialog, SIGNAL(replace( const QString&, int,const QString&)), this, SLOT(spellCheckerCorrected( const QString&, int,const QString&)));
-    connect(spellDialog, SIGNAL(misspelling( const QString&, int)), this, SLOT(spellCheckerMisspelling(const QString &,int)));
-    connect(spellDialog, SIGNAL(done(const QString&)), this, SLOT(slotSpellCheckDone(const QString&)));
+    connect(spellDialog, SIGNAL(replace(QString,int,QString)), this, SLOT(spellCheckerCorrected(QString,int,QString)));
+    connect(spellDialog, SIGNAL(misspelling(QString,int)), this, SLOT(spellCheckerMisspelling(QString,int)));
+    connect(spellDialog, SIGNAL(done(QString)), this, SLOT(slotSpellCheckDone(QString)));
     connect(spellDialog, SIGNAL(cancel()), this, SLOT(spellCheckerFinished()));
     connect(spellDialog, SIGNAL(stop()), this, SLOT(spellCheckerFinished()));
     spellDialog->setBuffer(text());

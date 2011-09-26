@@ -34,8 +34,8 @@ NMCdmaNetworkInterface::NMCdmaNetworkInterface(const QString & path, NMNetworkMa
     : NMSerialNetworkInterface(*new NMCdmaNetworkInterfacePrivate(path, this), manager, parent)
 {
     Q_D(NMCdmaNetworkInterface);
-    connect( &d->cdmaIface, SIGNAL(PropertiesChanged(const QVariantMap &)),
-                this, SLOT(cdmaPropertiesChanged(const QVariantMap &)));
+    connect( &d->cdmaIface, SIGNAL(PropertiesChanged(QVariantMap)),
+                this, SLOT(cdmaPropertiesChanged(QVariantMap)));
 }
 
 NMCdmaNetworkInterface::~NMCdmaNetworkInterface()

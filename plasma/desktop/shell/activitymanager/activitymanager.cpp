@@ -95,10 +95,8 @@ void ActivityManagerPrivate::init(Plasma::Location loc)
     close->setIcon(KIcon("dialog-close"));
 
     //connect
-    //QObject::connect(appletsListWidget, SIGNAL(appletDoubleClicked(PlasmaAppletItem*)), q, SLOT(addApplet(PlasmaAppletItem*)));
     QObject::connect(filteringWidget, SIGNAL(searchTermChanged(QString)), activityList, SLOT(searchTermChanged(QString)));
     QObject::connect(filteringWidget, SIGNAL(addWidgetsRequested()), q, SIGNAL(addWidgetsRequested()));
-    //QObject::connect(filteringWidget, SIGNAL(filterChanged(int)), activityList, SLOT(filterChanged(int)));
     QObject::connect(close, SIGNAL(clicked()), q, SIGNAL(closeClicked()));
 
     //adding to layout
@@ -212,6 +210,7 @@ int ActivityManager::iconSize() const
 
 void ActivityManager::setContainment(Plasma::Containment *containment)
 {
+    kDebug() << "Setting containment to" << containment;
     if (d->containment != containment) {
         if (d->containment) {
             d->containment->disconnect(this);
@@ -221,8 +220,6 @@ void ActivityManager::setContainment(Plasma::Containment *containment)
 
         if (d->containment) {
             connect(d->containment, SIGNAL(destroyed(QObject*)), this, SLOT(containmentDestroyed()));
-            connect(d->containment, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)), this, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
-            d->filteringWidget->coronaImmutabilityChanged(d->containment->immutability());
         }
     }
 }
@@ -232,19 +229,6 @@ void ActivityManager::focusInEvent(QFocusEvent* event)
     Q_UNUSED(event);
     qDebug() << "ActivityManager::focusInEvent()";
     QTimer::singleShot(300, d->filteringWidget, SLOT(setFocus())); 
-}
-
-
-void ActivityManager::immutabilityChanged(Plasma::ImmutabilityType type)
-{
-    //FIXME you can still switch activities while they're locked
-    //just need to turn off all other features.
-    //hey, can you not stash/restore while locked?
-    //that gives a way to make it look "clean" by hiding the stashed ones...
-    if (type != Plasma::Mutable) {
-        emit closeClicked();
-    }
-    d->filteringWidget->coronaImmutabilityChanged(type);
 }
 
 #include "activitymanager.moc"

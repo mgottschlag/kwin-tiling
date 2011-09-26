@@ -28,6 +28,7 @@
 #include "Utils.h"
 #include <KDE/KDebug>
 #include <QtXml/QDomDocument>
+#include <QtCore/QTextCodec>
 #include <kio/global.h>
 #include <kde_file.h>
 #include <sys/types.h>
@@ -76,9 +77,14 @@ static void registerSignalHandler(SignalHandler handler)
 
 static void signalHander(int)
 {
-    registerSignalHandler(0L);
-    theFontFolder.saveDisabled();
-    registerSignalHandler(signalHander);
+    static bool inHandler=false;
+    
+    if(!inHandler)
+    {
+        inHandler=true;
+        theFontFolder.saveDisabled();
+        inHandler=false;
+    }
 }
 
 static void cleanup()
@@ -89,6 +95,7 @@ static void cleanup()
 Helper::Helper()
 {
     KFI_DBUG;
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
     registerSignalHandler(signalHander);
     qAddPostRoutine(cleanup);
     theFontFolder.init(true, true);
@@ -232,8 +239,8 @@ int Helper::move(const QVariantMap &args)
         // Move fonts!
         for(it=files.constBegin(); it!=end && FontInst::STATUS_OK==result; ++it)
         {
-            QString name(Utils::modifyName(Misc::getFile(*it))),
-                    destFolder(Utils::getDestFolder(dest, name));
+            QString name(Misc::modifyName(Misc::getFile(*it))),
+                    destFolder(Misc::getDestFolder(dest, name));
 
             if(!Misc::dExists(destFolder))
             {
@@ -261,6 +268,9 @@ int Helper::move(const QVariantMap &args)
                     else
                         result=KIO::ERR_WRITE_ACCESS_DENIED;
                 }
+                
+                if(toSystem)
+                    theFontFolder.addModifiedDir(theFontFolder.location());
             }
             else
                 result=KIO::ERR_WRITE_ACCESS_DENIED;

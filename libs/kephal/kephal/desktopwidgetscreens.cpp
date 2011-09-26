@@ -30,7 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Kephal::DesktopWidgetScreens::DesktopWidgetScreens(QObject * parent)
     : Screens(parent)
 {
-    kDebug() << "foo";
     QDesktopWidget * desktop = QApplication::desktop();
     connect(desktop, SIGNAL(screenCountChanged(int)), this, SLOT(handleScreenCountChanged(int)));
     connect(desktop, SIGNAL(resized(int)), this, SLOT(handleScreenResized(int)));

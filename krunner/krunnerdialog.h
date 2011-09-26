@@ -31,6 +31,7 @@ namespace Plasma
 }
 
 class KRunnerConfigWidget;
+class PanelShadows;
 
 class KRunnerDialog : public QWidget
 {
@@ -75,6 +76,13 @@ class KRunnerDialog : public QWidget
          */
         void configCompleted();
 
+    private:
+        void updatePresentation();
+        bool checkBorders(const QRect &screenGeom);
+        bool checkCursor(const QPoint &pos);
+        void updateMask();
+        void paintBackground(QPainter* painter, const QRect &exposedRect);
+
     private Q_SLOTS:
         /**
          * React to theme changes
@@ -88,21 +96,20 @@ class KRunnerDialog : public QWidget
         void screenChanged(Kephal::Screen* screen);
         void resetScreenPos();
 
+        void compositingChanged(bool);
+
     protected:
         Plasma::Svg *m_iconSvg;
         Plasma::RunnerManager *m_runnerManager;
 
     private:
-        bool checkBorders(const QRect &screenGeom);
-        bool checkCursor(const QPoint &pos);
-        void updateMask();
-        void paintBackground(QPainter* painter, const QRect &exposedRect);
-
         KRunnerConfigWidget *m_configWidget;
+        PanelShadows *m_shadows;
         Plasma::FrameSvg *m_background;
         QPixmap *m_cachedBackground;
         QHash<int, QPoint> m_screenPos;
         QPoint m_lastPressPos;
+        int m_topBorderHeight;
         int m_leftBorderWidth;
         int m_rightBorderWidth;
         int m_bottomBorderHeight;

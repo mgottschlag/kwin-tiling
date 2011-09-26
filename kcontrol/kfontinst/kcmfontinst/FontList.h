@@ -92,6 +92,10 @@ class CFontList : public QAbstractItemModel
     };
 
     public:
+    
+    static const QStringList fontMimeTypes;
+
+    public:
 
     static QStringList compact(const QStringList &fonts);
 
@@ -281,7 +285,7 @@ class CFontListSortFilterProxy : public QSortFilterProxyModel
     CGroupListItem * filterGroup()   { return itsGroup; }
 
     void             setFilterText(const QString &text);
-    void             setFilterCriteria(CFontFilter::ECriteria crit, qulonglong ws);
+    void             setFilterCriteria(CFontFilter::ECriteria crit, qulonglong ws, const QStringList &ft);
 
     private Q_SLOTS:
 
@@ -302,6 +306,7 @@ class CFontListSortFilterProxy : public QSortFilterProxyModel
     QString                itsFilterText;
     CFontFilter::ECriteria itsFilterCriteria;
     qulonglong             itsFilterWs;
+    QStringList            itsFilterTypes;
     QTimer                 *itsTimer;
     CFcQuery               *itsFcQuery;
 };
@@ -315,7 +320,6 @@ class CFontListView : public QTreeView
     CFontListView(QWidget *parent, CFontList *model);
     virtual ~CFontListView() { }
 
-    QModelIndexList selectedItems() const  { return selectedIndexes(); }
     void            getFonts(CJobRunner::ItemList &urls, QStringList &fontNames, QSet<Misc::TFont> *fonts,
                              bool selected, bool getEnabled=true, bool getDisabled=true);
     QSet<QString>   getFiles();
@@ -325,6 +329,7 @@ class CFontListView : public QTreeView
     void            selectedStatus(bool &enabled, bool &disabled);
     QModelIndexList allFonts();
     void            selectFirstFont();
+    QModelIndexList getSelectedItems();
 
     Q_SIGNALS:
 
@@ -342,7 +347,7 @@ class CFontListView : public QTreeView
     void            listingPercent(int percent);
     void            refreshFilter();
     void            filterText(const QString &text);
-    void            filterCriteria(int crit, qulonglong ws);
+    void            filterCriteria(int crit, qulonglong ws, const QStringList &ft);
 
     private Q_SLOTS:
 

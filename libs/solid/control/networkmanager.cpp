@@ -47,10 +47,10 @@ Solid::Control::NetworkManagerPrivate::NetworkManagerPrivate() : m_invalidDevice
                 "Solid::Control::Ifaces::NetworkManager");
 
     if (managerBackend()!=0) {
-        connect(managerBackend(), SIGNAL(networkInterfaceAdded(const QString &)),
-                this, SLOT(_k_networkInterfaceAdded(const QString &)));
-        connect(managerBackend(), SIGNAL(networkInterfaceRemoved(const QString &)),
-                this, SLOT(_k_networkInterfaceRemoved(const QString &)));
+        connect(managerBackend(), SIGNAL(networkInterfaceAdded(QString)),
+                this, SLOT(_k_networkInterfaceAdded(QString)));
+        connect(managerBackend(), SIGNAL(networkInterfaceRemoved(QString)),
+                this, SLOT(_k_networkInterfaceRemoved(QString)));
         connect(managerBackend(), SIGNAL(statusChanged(Solid::Networking::Status)),
                 this, SIGNAL(statusChanged(Solid::Networking::Status)));
         connect(managerBackend(), SIGNAL(wirelessEnabledChanged(bool)),
@@ -273,8 +273,8 @@ Solid::Control::NetworkManagerPrivate::findRegisteredNetworkInterface(const QStr
             }
             if (device != 0) {
                 QPair<NetworkInterface *, QObject *> pair(device, iface);
-                connect(iface, SIGNAL(destroyed(QObject *)),
-                        this, SLOT(_k_destroyed(QObject *)));
+                connect(iface, SIGNAL(destroyed(QObject*)),
+                        this, SLOT(_k_destroyed(QObject*)));
                 m_networkInterfaceMap[uni] = pair;
                 return pair;
             }

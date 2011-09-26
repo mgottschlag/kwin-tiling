@@ -231,7 +231,7 @@ void WindowTaskItem::updateToolTip()
             data.setSubText(i18nc("Which virtual desktop a window is currently on", "On %1",
                                   KWindowSystem::desktopName(m_task->desktop())));
         }
-        data.setWindowToPreview(m_task->task()->window());
+        data.setWindowsToPreview(QList<WId>() << m_task->task()->window());
         data.setClickable(true);
         data.setInstantPopup(true);
         data.setHighlightWindows(m_applet->highlightWindows());

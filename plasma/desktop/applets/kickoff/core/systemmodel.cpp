@@ -70,22 +70,22 @@ public:
     {
         q->setSourceModel(placesModel);
 
-        connect(placesModel, SIGNAL(dataChanged(QModelIndex, QModelIndex)),
-                q, SLOT(sourceDataChanged(QModelIndex, QModelIndex)));
-        connect(placesModel, SIGNAL(rowsAboutToBeInserted(QModelIndex, int, int)),
-                q, SLOT(sourceRowsAboutToBeInserted(QModelIndex, int, int)));
-        connect(placesModel, SIGNAL(rowsInserted(QModelIndex, int, int)),
-                q, SLOT(sourceRowsInserted(QModelIndex, int, int)));
-        connect(placesModel, SIGNAL(rowsAboutToBeRemoved(QModelIndex, int, int)),
-                q, SLOT(sourceRowsAboutToBeRemoved(QModelIndex, int, int)));
-        connect(placesModel, SIGNAL(rowsRemoved(QModelIndex, int, int)),
-                q, SLOT(sourceRowsRemoved(QModelIndex, int, int)));
+        connect(placesModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+                q, SLOT(sourceDataChanged(QModelIndex,QModelIndex)));
+        connect(placesModel, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)),
+                q, SLOT(sourceRowsAboutToBeInserted(QModelIndex,int,int)));
+        connect(placesModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
+                q, SLOT(sourceRowsInserted(QModelIndex,int,int)));
+        connect(placesModel, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)),
+                q, SLOT(sourceRowsAboutToBeRemoved(QModelIndex,int,int)));
+        connect(placesModel, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+                q, SLOT(sourceRowsRemoved(QModelIndex,int,int)));
 
         topLevelSections << i18n("Applications")
         << i18n("Places")
         << i18n("Removable Storage")
         << i18n("Storage");
-        connect(KSycoca::self(), SIGNAL(databaseChanged(const QStringList&)), q, SLOT(reloadApplications()));
+        connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)), q, SLOT(reloadApplications()));
     }
 
     SystemModel * const q;

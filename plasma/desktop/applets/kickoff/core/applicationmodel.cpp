@@ -365,7 +365,7 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
         break;
     case Kickoff::UrlRole:
         if (node->isDir) {
-            return "applications://" + node->desktopEntry;
+            return QString::fromLatin1("applications://%1").arg(node->desktopEntry);
         } else {
             return node->desktopEntry;
         }

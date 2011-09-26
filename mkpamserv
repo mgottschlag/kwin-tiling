@@ -17,7 +17,7 @@ if test -r /etc/pam.d/$1 || grep "^[ 	]*$1[ 	]" /etc/pam.conf >/dev/null 2>&1; t
 fi
 
 oi_mods="pam_(access|env|group|limits|listfile|mkhomedir|nologin|shells|tally|time)"
-oo_mods="pam_(securetty|mail|motd|issue|lastlog)"
+oo_mods="pam_(securetty|mail|motd|issue|lastlog|ck_connector)"
 
 if test -d /etc/pam.d; then
     if test ! -w /etc/pam.d; then

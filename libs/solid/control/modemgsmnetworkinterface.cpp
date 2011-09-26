@@ -114,14 +114,14 @@ Solid::Control::ModemInterface::AccessTechnology Solid::Control::ModemGsmNetwork
 void Solid::Control::ModemGsmNetworkInterface::makeConnections(QObject * source)
 {
     if (source) {
-        QObject::connect(source, SIGNAL(registrationInfoChanged(const Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType &)),
-                this, SIGNAL(registrationInfoChanged(const Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType &)));
+        QObject::connect(source, SIGNAL(registrationInfoChanged(Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType)),
+                this, SIGNAL(registrationInfoChanged(Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType)));
         QObject::connect(source, SIGNAL(signalQualityChanged(uint)),
                 this, SIGNAL(signalQualityChanged(uint)));
-        QObject::connect(source, SIGNAL(allowedModeChanged(const Solid::Control::ModemInterface::AllowedMode)),
-                this, SIGNAL(allowedModeChanged(const Solid::Control::ModemInterface::AllowedMode)));
-        QObject::connect(source, SIGNAL(accessTechnologyChanged(const Solid::Control::ModemInterface::AccessTechnology)),
-                this, SIGNAL(accessTechnologyChanged(const Solid::Control::ModemInterface::AccessTechnology)));
+        QObject::connect(source, SIGNAL(allowedModeChanged(Solid::Control::ModemInterface::AllowedMode)),
+                this, SIGNAL(allowedModeChanged(Solid::Control::ModemInterface::AllowedMode)));
+        QObject::connect(source, SIGNAL(accessTechnologyChanged(Solid::Control::ModemInterface::AccessTechnology)),
+                this, SIGNAL(accessTechnologyChanged(Solid::Control::ModemInterface::AccessTechnology)));
     }
 }
 

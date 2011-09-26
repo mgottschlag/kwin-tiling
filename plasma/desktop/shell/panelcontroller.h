@@ -69,6 +69,7 @@ protected:
     void focusOutEvent(QFocusEvent *event);
     void resizeEvent(QResizeEvent *event);
     void moveEvent(QMoveEvent *event);
+    void showEvent(QShowEvent *event);
 
 Q_SIGNALS:
     /**

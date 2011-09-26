@@ -315,7 +315,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
 {
     if (source == "Battery") {
         m_remainingMSecs = data["Remaining msec"].toULongLong();
-        kDebug() << "Remaining msecs on battery:" << m_remainingMSecs;
+        //kDebug() << "Remaining msecs on battery:" << m_remainingMSecs;
     }
     else if (source.startsWith(QLatin1String("Battery"))) {
         m_batteriesData[source] = data;
@@ -326,7 +326,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     } else if (source == "PowerDevil") {
         m_availableProfiles = data["Available profiles"].value< StringStringMap >();
         m_currentProfile = data["Current profile"].toString();
-        kDebug() << "PowerDevil profiles:" << m_availableProfiles << "[" << m_currentProfile << "]";
+        //kDebug() << "PowerDevil profiles:" << m_availableProfiles << "[" << m_currentProfile << "]";
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
     }

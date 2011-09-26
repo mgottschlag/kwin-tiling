@@ -101,12 +101,12 @@ void Trash::init()
     installSceneEventFilter(m_icon);
 
     m_dirLister = new KDirLister();
-    connect( m_dirLister, SIGNAL( clear() ),
-             this, SLOT( slotClear() ) );
-    connect( m_dirLister, SIGNAL( completed() ),
-             this, SLOT( slotCompleted() ) );
-    connect( m_dirLister, SIGNAL( deleteItem( const KFileItem & ) ),
-             this, SLOT( slotDeleteItem( const KFileItem & ) ) );
+    connect( m_dirLister, SIGNAL(clear()),
+             this, SLOT(slotClear()) );
+    connect( m_dirLister, SIGNAL(completed()),
+             this, SLOT(slotCompleted()) );
+    connect( m_dirLister, SIGNAL(deleteItem(KFileItem)),
+             this, SLOT(slotDeleteItem(KFileItem)) );
 
     m_dirLister->openUrl(KUrl("trash:/"));
 

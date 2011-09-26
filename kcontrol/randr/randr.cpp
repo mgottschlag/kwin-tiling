@@ -111,7 +111,9 @@ QPixmap RandR::rotationIcon(int rotation, int currentRotation)
 		case RR_Rotate_270:
 			return SmallIcon("go-next");
 		case RR_Reflect_X:
+			return SmallIcon("object-flip-horizontal");
 		case RR_Reflect_Y:
+			return SmallIcon("object-flip-vertical");
 		default:
 			return SmallIcon("process-stop");
 	}

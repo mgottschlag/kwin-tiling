@@ -218,10 +218,11 @@ void GroupManagerPrivate::removeStartup(StartupPtr task)
         return;
     }
 
-    AbstractGroupableItem *item = startupList.take(task);
+    TaskItem *item = startupList.take(task);
     if (item->parentGroup()) {
         item->parentGroup()->remove(item);
     }
+    item->setTaskPointer(TaskPtr());
 }
 
 bool GroupManagerPrivate::addTask(TaskPtr task)
@@ -233,14 +234,15 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
              << task->className()
              << task->classClass(); */
 
+    bool skip = false;
     if (!task->showInTaskbar()) {
         //kDebug() << "Do not show in taskbar";
-        return false;
+        skip = true;
     }
 
     if (showOnlyCurrentScreen && !task->isOnScreen(currentScreen)) {
         //kDebug() << "Not on this screen and showOnlyCurrentScreen";
-        return false;
+        skip = true;
     }
 
     // Should the Task be displayed ? We always display if attention is demaded
@@ -250,25 +252,25 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
         if (showOnlyCurrentDesktop && !task->isOnCurrentDesktop()) {
             /* kDebug() << "Not on this desktop and showOnlyCurrentDesktop"
                      << KWindowSystem::currentDesktop() << task->desktop(); */
-            return false;
+            skip = true;
         }
 
         if (showOnlyCurrentActivity && !task->isOnCurrentActivity()) {
             /* kDebug() << "Not on this desktop and showOnlyCurrentActivity"
                      << KWindowSystem::currentActivity() << task->desktop(); */
-            return false;
+            skip = true;
         }
 
         if (showOnlyMinimized && !task->isMinimized()) {
             //kDebug() << "Not minimized and only showing minimized";
-            return false;
+            skip = true;
         }
 
         NET::WindowType type = task->info().windowType(NET::NormalMask | NET::DialogMask |
                                                     NET::OverrideMask | NET::UtilityMask);
         if (type == NET::Utility) {
             //kDebug() << "skipping utility window" << task->name();
-            return false;
+            skip = true;
         }
 
             //TODO: should we check for transiency? if so the following code can detect it.
@@ -288,20 +290,28 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
 
     //Ok the Task should be displayed
     TaskItem *item = qobject_cast<TaskItem*>(currentRootGroup()->getMemberByWId(task->window()));
-    if (!item) {
-        // first search for an existing startuptask for this task
+    if (!item || skip) {
+        TaskItem *startupItem = 0;
         QHash<StartupPtr, TaskItem *>::iterator it = startupList.begin();
         QHash<StartupPtr, TaskItem *>::iterator itEnd = startupList.end();
         while (it != itEnd) {
             if (it.key()->matchesWindow(task->window())) {
                 //kDebug() << "startup task found";
-                item = it.value();
+                item = startupItem = it.value();
                 startupList.erase(it);
                 QObject::disconnect(item, 0, q, 0);
-                item->setTaskPointer(task);
+                if (!skip) {
+                    item->setTaskPointer(task);
+                }
                 break;
             }
             ++it;
+        }
+
+        // if we are to skip because we don't display, we simply delete the startup related to it
+        if (skip) {
+            delete startupItem;
+            return false;
         }
 
         if (!item) {
@@ -324,7 +334,6 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
     }
 
     geometryTasks.insert(task.data());
-
     return true;
 }
 
@@ -340,6 +349,10 @@ void GroupManagerPrivate::removeTask(TaskPtr task)
         // of it it is an ignored type such as a NET::Utility type window
         //kDebug() << "invalid item";
         return;
+    }
+
+    foreach (LauncherItem *launcher, launchers) {
+        launcher->removeItemIfAssociated(item);
     }
 
     if (item->parentGroup()) {
@@ -409,19 +422,23 @@ void GroupManagerPrivate::currentActivityChanged(QString newActivity)
     }
 
     if (onlyGroupWhenFull) {
-        QObject::disconnect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
-        QObject::disconnect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
+        QObject::disconnect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem*)), q, SLOT(checkIfFull()));
+        QObject::disconnect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem*)), q, SLOT(checkIfFull()));
     }
 
     currentActivity = newActivity;
 
     foreach (LauncherItem *item, launchers) {
-        rootGroups[currentActivity][currentDesktop]->add(item);
+        if (item->shouldShow()) {
+            rootGroups[currentActivity][currentDesktop]->add(item);
+        } else {
+            rootGroups[currentActivity][currentDesktop]->remove(item);
+        }
     }
 
     if (onlyGroupWhenFull) {
-        QObject::connect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
-        QObject::connect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
+        QObject::connect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem*)), q, SLOT(checkIfFull()));
+        QObject::connect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem*)), q, SLOT(checkIfFull()));
     }
 
     reloadTasks();
@@ -447,19 +464,23 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
     }
 
     if (onlyGroupWhenFull) {
-        QObject::disconnect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
-        QObject::disconnect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
+        QObject::disconnect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem*)), q, SLOT(checkIfFull()));
+        QObject::disconnect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem*)), q, SLOT(checkIfFull()));
     }
 
     currentDesktop = newDesktop;
 
     foreach (LauncherItem *item, launchers) {
-        rootGroups[currentActivity][currentDesktop]->add(item);
+        if (item->shouldShow()) {
+            rootGroups[currentActivity][currentDesktop]->add(item);
+        } else {
+            rootGroups[currentActivity][currentDesktop]->remove(item);
+        }
     }
 
     if (onlyGroupWhenFull) {
-        QObject::connect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
-        QObject::connect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
+        QObject::connect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem*)), q, SLOT(checkIfFull()));
+        QObject::connect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem*)), q, SLOT(checkIfFull()));
     }
 
     reloadTasks();
@@ -527,6 +548,10 @@ void GroupManager::setScreen(int screen)
     d->reloadTasks();
 }
 
+int GroupManager::screen() const
+{
+    return d->currentScreen;
+}
 
 void GroupManagerPrivate::checkScreenChange()
 {
@@ -588,6 +613,11 @@ bool GroupManager::addLauncher(const KUrl &url, QIcon icon, QString name, QStrin
     LauncherItem *launcher = d->launchers.value(url); // Do not insert launchers twice
     if (!launcher) {
         launcher = new LauncherItem(d->currentRootGroup(), url);
+
+        if (!launcher->isValid()) {
+            delete launcher;
+            return false;
+        }
 
         if (!icon.isNull()) {
             launcher->setIcon(icon);
@@ -655,15 +685,10 @@ void GroupManagerPrivate::checkLauncherVisibility(LauncherItem *launcher)
         return;
     }
 
-    typedef QHash<int, TaskGroup *> Metagroup;
-    foreach (Metagroup metagroup, rootGroups) {
-        foreach (TaskGroup *rootGroup, metagroup) {
-            if (launcher->shouldShow()) {
-                rootGroup->add(launcher);
-            } else {
-                rootGroup->remove(launcher);
-            }
-        }
+    if (launcher->shouldShow()) {
+        rootGroups[currentActivity][currentDesktop]->add(launcher);
+    } else {
+        rootGroups[currentActivity][currentDesktop]->remove(launcher);
     }
 }
 
@@ -788,7 +813,12 @@ void GroupManagerPrivate::unsaveLauncher(LauncherItem *launcher)
         return;
     }
 
-    cg.deleteEntry(launcher->name());
+    if (launcher->launcherUrl().protocol() == "preferred") {
+        cg.deleteEntry(launcher->launcherUrl().host());
+    } else {
+        cg.deleteEntry(launcher->name());
+    }
+
     emit q->configChanged();
 }
 
@@ -806,12 +836,12 @@ void GroupManager::setOnlyGroupWhenFull(bool onlyGroupWhenFull)
 
     d->onlyGroupWhenFull = onlyGroupWhenFull;
 
-    disconnect(d->currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
-    disconnect(d->currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+    disconnect(d->currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem*)), this, SLOT(checkIfFull()));
+    disconnect(d->currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(checkIfFull()));
 
     if (onlyGroupWhenFull) {
-        connect(d->currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
-        connect(d->currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+        connect(d->currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem*)), this, SLOT(checkIfFull()));
+        connect(d->currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(checkIfFull()));
         d->checkIfFull();
     }
 }
@@ -976,8 +1006,8 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
 
     //kDebug() << strategy << kBacktrace();
     if (d->onlyGroupWhenFull) {
-        disconnect(d->currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
-        disconnect(d->currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+        disconnect(d->currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem*)), this, SLOT(checkIfFull()));
+        disconnect(d->currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(checkIfFull()));
     }
 
     if (d->abstractGroupingStrategy) {
@@ -1011,8 +1041,8 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
     d->actuallyReloadTasks();
 
     if (d->onlyGroupWhenFull) {
-        connect(d->currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
-        connect(d->currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+        connect(d->currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem*)), this, SLOT(checkIfFull()));
+        connect(d->currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(checkIfFull()));
     }
 
     d->changingGroupingStrategy = false;

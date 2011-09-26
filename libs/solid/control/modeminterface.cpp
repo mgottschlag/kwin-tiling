@@ -170,20 +170,20 @@ void Solid::Control::ModemInterfacePrivate::setBackendObject(QObject *object)
     FrontendObjectPrivate::setBackendObject(object);
 
     if (object) {
-        QObject::connect(object, SIGNAL(deviceChanged(const QString &)),
-                         parent(), SLOT(slotDeviceChanged(const QString &)));
-        QObject::connect(object, SIGNAL(masterDeviceChanged(const QString &)),
-                         parent(), SLOT(slotMasterDeviceChanged(const QString &)));
-        QObject::connect(object, SIGNAL(driverChanged(const QString &)),
-                         parent(), SLOT(slotDriverChanged(const QString &)));
-        QObject::connect(object, SIGNAL(typeChanged(const Solid::Control::ModemInterface::Type)),
-                         parent(), SIGNAL(typeChanged(const Solid::Control::ModemInterface::Type)));
-        QObject::connect(object, SIGNAL(enabledChanged(const bool)),
-                         parent(), SIGNAL(enabledChanged(const bool)));
-        QObject::connect(object, SIGNAL(unlockRequiredChanged(const QString &)),
-                         parent(), SLOT(slotUnlockRequiredChanged(const QString &)));
-        QObject::connect(object, SIGNAL(ipMethodChanged(const Solid::Control::ModemInterface::Method)),
-                         parent(), SIGNAL(ipMethodChanged(const Solid::Control::ModemInterface::Method)));
+        QObject::connect(object, SIGNAL(deviceChanged(QString)),
+                         parent(), SLOT(slotDeviceChanged(QString)));
+        QObject::connect(object, SIGNAL(masterDeviceChanged(QString)),
+                         parent(), SLOT(slotMasterDeviceChanged(QString)));
+        QObject::connect(object, SIGNAL(driverChanged(QString)),
+                         parent(), SLOT(slotDriverChanged(QString)));
+        QObject::connect(object, SIGNAL(typeChanged(Solid::Control::ModemInterface::Type)),
+                         parent(), SIGNAL(typeChanged(Solid::Control::ModemInterface::Type)));
+        QObject::connect(object, SIGNAL(enabledChanged(bool)),
+                         parent(), SIGNAL(enabledChanged(bool)));
+        QObject::connect(object, SIGNAL(unlockRequiredChanged(QString)),
+                         parent(), SLOT(slotUnlockRequiredChanged(QString)));
+        QObject::connect(object, SIGNAL(ipMethodChanged(Solid::Control::ModemInterface::Method)),
+                         parent(), SIGNAL(ipMethodChanged(Solid::Control::ModemInterface::Method)));
     }
 }
 

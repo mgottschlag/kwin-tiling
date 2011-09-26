@@ -47,8 +47,8 @@ void ExecutableContainer::exec()
     //kDebug() << objectName();
     if (!m_process) {
         m_process = new KProcess();
-        connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)),
-                this, SLOT(finished(int, QProcess::ExitStatus)));
+        connect(m_process, SIGNAL(finished(int,QProcess::ExitStatus)),
+                this, SLOT(finished(int,QProcess::ExitStatus)));
         m_process->setOutputChannelMode(KProcess::SeparateChannels);
         m_process->setShellCommand(objectName());
     }

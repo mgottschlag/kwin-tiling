@@ -226,7 +226,7 @@ PanelController::PanelController(QWidget* parent)
     connect(m_closeControllerTool, SIGNAL(clicked()), this, SLOT(close()));
 
     m_ruler = new PositioningRuler(m_configWidget);
-    connect(m_ruler, SIGNAL(rulersMoved(int, int, int)), this, SLOT(rulersMoved(int, int, int)));
+    connect(m_ruler, SIGNAL(rulersMoved(int,int,int)), this, SLOT(rulersMoved(int,int,int)));
     m_extLayout->addWidget(m_ruler);
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(themeChanged()));
@@ -280,6 +280,7 @@ void PanelController::setContainment(Plasma::Containment *c)
     action = containment()->action("lock widgets");
     if (action && action->isEnabled()) {
         ToolButton *lockWidgetsTool = addTool(action, this);
+        lockWidgetsTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         m_optDialogLayout->addWidget(lockWidgetsTool, m_optDialogLayout->count() - 2);
         connect(lockWidgetsTool, SIGNAL(clicked()), m_optionsDialog, SLOT(hide()));
         connect(lockWidgetsTool, SIGNAL(clicked()), this, SLOT(hide()));
@@ -307,6 +308,15 @@ void PanelController::moveEvent(QMoveEvent *event)
         emit offsetChanged(m_ruler->offset());
     }
     ControllerWindow::moveEvent(event);
+}
+
+void PanelController::showEvent(QShowEvent *event)
+{
+    if (containment()) {
+        setMaximumSize(PlasmaApp::self()->corona()->screenGeometry(containment()->screen()).size());
+        syncToLocation();
+    }
+    ControllerWindow::showEvent(event);
 }
 
 void PanelController::setLocation(const Plasma::Location &loc)
@@ -408,7 +418,7 @@ void PanelController::syncToLocation()
     updateGeometry();
 
     setMinimumSize(QSize(0, 0));
-    setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+    setMaximumSize(sizeHint());
     resize(sizeHint());
 }
 

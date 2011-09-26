@@ -55,21 +55,18 @@ void MenuFolderInfo::add(MenuFolderInfo *info, bool initial)
 // Remove sub menu (without deleting it)
 void MenuFolderInfo::take(MenuFolderInfo *info)
 {
-   subFolders.take(subFolders.findRef(info));
+   subFolders.removeAll(info);
 }
 
 // Remove sub menu (without deleting it)
 bool MenuFolderInfo::takeRecursive(MenuFolderInfo *info)
 {
-   int i = subFolders.findRef(info);
-   if (i >= 0)
+   if (subFolders.removeAll(info) > 0)
    {
-      subFolders.take(i);
       return true;
    }
 
-   for(MenuFolderInfo *subFolderInfo = subFolders.first();
-       subFolderInfo; subFolderInfo = subFolders.next())
+   foreach (MenuFolderInfo *subFolderInfo, subFolders)
    {
       if (subFolderInfo->takeRecursive(info))
          return true;
@@ -82,8 +79,7 @@ void MenuFolderInfo::updateFullId(const QString &parentId)
 {
    fullId = parentId + id;
 
-   for(MenuFolderInfo *subFolderInfo = subFolders.first();
-       subFolderInfo; subFolderInfo = subFolders.next())
+   foreach (MenuFolderInfo *subFolderInfo, subFolders)
    {
       subFolderInfo->updateFullId(fullId);
    }
@@ -100,7 +96,7 @@ void MenuFolderInfo::add(MenuEntryInfo *entry, bool initial)
 // Remove entry
 void MenuFolderInfo::take(MenuEntryInfo *entry)
 {
-   entries.removeRef(entry);
+   entries.removeAll(entry);
 }
 
 
@@ -115,8 +111,7 @@ QString MenuFolderInfo::uniqueMenuCaption(const QString &caption)
    for(int n = 1; ++n; )
    {
       bool ok = true;
-      for(MenuFolderInfo *subFolderInfo = subFolders.first();
-          subFolderInfo; subFolderInfo = subFolders.next())
+      foreach (MenuFolderInfo *subFolderInfo, subFolders)
       {
          if (subFolderInfo->caption == result)
          {
@@ -145,12 +140,13 @@ QString MenuFolderInfo::uniqueItemCaption(const QString &caption, const QString 
       bool ok = true;
       if (result == exclude)
          ok = false;
-      MenuEntryInfo *entryInfo;
-      for(Q3PtrListIterator<MenuEntryInfo> it(entries);
-          ok && (entryInfo = it.current()); ++it)
+      foreach (MenuEntryInfo *entryInfo, entries)
       {
          if (entryInfo->caption == result)
+         {
             ok = false;
+            break;
+         }
       }
       if (ok)
          return result;
@@ -164,8 +160,7 @@ QString MenuFolderInfo::uniqueItemCaption(const QString &caption, const QString 
 QStringList MenuFolderInfo::existingMenuIds()
 {
    QStringList result;
-   for(MenuFolderInfo *subFolderInfo = subFolders.first();
-       subFolderInfo; subFolderInfo = subFolders.next())
+   foreach (MenuFolderInfo *subFolderInfo, subFolders)
    {
        result.append(subFolderInfo->id);
    }
@@ -220,16 +215,13 @@ void MenuFolderInfo::save(MenuFile *menuFile)
    }
 
    // Save sub-menus
-   for(MenuFolderInfo *subFolderInfo = subFolders.first();
-       subFolderInfo; subFolderInfo = subFolders.next())
+   foreach (MenuFolderInfo *subFolderInfo, subFolders)
    {
       subFolderInfo->save(menuFile);
    }
 
    // Save entries
-   MenuEntryInfo *entryInfo;
-   for(Q3PtrListIterator<MenuEntryInfo> it(entries);
-       (entryInfo = it.current()); ++it)
+   foreach (MenuEntryInfo *entryInfo, entries)
    {
       if (entryInfo->needInsertion())
          menuFile->addEntry(fullId, entryInfo->menuId());
@@ -242,19 +234,15 @@ bool MenuFolderInfo::hasDirt()
    if (dirty) return true;
 
    // Check sub-menus
-   for(MenuFolderInfo *subFolderInfo = subFolders.first();
-       subFolderInfo; subFolderInfo = subFolders.next())
+   foreach (MenuFolderInfo *subFolderInfo, subFolders)
    {
       if (subFolderInfo->hasDirt()) return true;
    }
 
    // Check entries
-   MenuEntryInfo *entryInfo;
-   for(Q3PtrListIterator<MenuEntryInfo> it(entries);
-       (entryInfo = it.current()); ++it)
+   foreach (MenuEntryInfo *entryInfo, entries)
    {
-      if (entryInfo->dirty) return true;
-      if (entryInfo->shortcutDirty) return true;
+      if (entryInfo->dirty || entryInfo->shortcutDirty) return true;
    }
    return false;
 }
@@ -263,8 +251,7 @@ KService::Ptr MenuFolderInfo::findServiceShortcut(const KShortcut&cut)
 {
    KService::Ptr result;
    // Check sub-menus
-   for(MenuFolderInfo *subFolderInfo = subFolders.first();
-       subFolderInfo; subFolderInfo = subFolders.next())
+   foreach (MenuFolderInfo *subFolderInfo, subFolders)
    {
       result = subFolderInfo->findServiceShortcut(cut);
       if (result)
@@ -272,9 +259,7 @@ KService::Ptr MenuFolderInfo::findServiceShortcut(const KShortcut&cut)
    }
 
    // Check entries
-   MenuEntryInfo *entryInfo;
-   for(Q3PtrListIterator<MenuEntryInfo> it(entries);
-       (entryInfo = it.current()); ++it)
+   foreach (MenuEntryInfo *entryInfo, entries)
    {
       if (entryInfo->shortCut == cut)
          return entryInfo->service;
@@ -285,16 +270,13 @@ KService::Ptr MenuFolderInfo::findServiceShortcut(const KShortcut&cut)
 void MenuFolderInfo::setInUse(bool inUse)
 {
    // Propagate to sub-menus
-   for(MenuFolderInfo *subFolderInfo = subFolders.first();
-       subFolderInfo; subFolderInfo = subFolders.next())
+   foreach (MenuFolderInfo *subFolderInfo, subFolders)
    {
       subFolderInfo->setInUse(inUse);
    }
 
    // Propagate to entries
-   MenuEntryInfo *entryInfo;
-   for(Q3PtrListIterator<MenuEntryInfo> it(entries);
-       (entryInfo = it.current()); ++it)
+   foreach (MenuEntryInfo *entryInfo, entries)
    {
       entryInfo->setInUse(inUse);
    }

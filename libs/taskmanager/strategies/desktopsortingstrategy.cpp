@@ -37,7 +37,7 @@ namespace TaskManager
 {
 
 DesktopSortingStrategy::DesktopSortingStrategy(QObject *parent)
-:AbstractSortingStrategy(parent)
+    : AbstractSortingStrategy(parent)
 {
     setType(GroupManager::DesktopSorting);
 }

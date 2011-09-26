@@ -92,7 +92,6 @@ public:
     void applyConfiguration(KConfigGroup cg);
     void writeConfiguration(KConfigGroup cg);
     void createConfigurationInterface(KConfigDialog *parent);
-    void applyConfigurationInterface();
     void configAccepted(KConfigGroup cg);
 
 Q_SIGNALS:

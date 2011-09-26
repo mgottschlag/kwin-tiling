@@ -62,13 +62,15 @@ void OutputGraphicsItem::configUpdated()
 	m_text->setVisible( true );
 	setRect( m_config->rect());
 	setBrush(QColor(0, 255, 0, 128));
+	setObjectName(m_config->output()->name());
+	
 	// An example of this description text with radeonhd on randr 1.2:
 	// DVI-I_2/digital
 	// 1680x1050 (60.0 Hz)
 	QString refresh = QString::number(m_config->refreshRate(), 'f', 1);
-	QString desc = m_config->output()->name() + '\n' + 
-	               QString("%1x%2 (%3 Hz)").arg(rect().width()).arg(rect().height()).arg(refresh);
-	m_text->setPlainText( desc );
+	
+	m_text->setPlainText( i18nc("Configuration options. Output name, width x height (refresh rate Hz)", "%1\n%2x%3 (%4 Hz)",
+							   m_config->output()->name(), rect().width(), rect().height(), refresh) );
 	// more accurate text centering
 	QRectF textRect = m_text->boundingRect();
 	m_text->setPos( rect().x() + (rect().width() - textRect.width()) / 2,
@@ -283,6 +285,18 @@ void OutputGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 bool OutputGraphicsItem::isConnected()
 {
 	return (m_top != NULL || m_bottom != NULL || m_left != NULL || m_right != NULL);
+}
+
+void OutputGraphicsItem::setPrimary(bool primary)
+{
+	QPen p=pen();
+	p.setWidth(primary ? rect().width()/100 : 0);
+	setPen(p);
+}
+
+bool OutputGraphicsItem::isPrimary() const
+{
+	return pen().width()>0;
 }
 
 #include "outputgraphicsitem.moc"

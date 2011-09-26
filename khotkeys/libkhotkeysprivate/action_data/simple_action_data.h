@@ -75,12 +75,6 @@ class KDE_EXPORT SimpleActionDataHelper
             : base( parent_P, name_P, comment_P)
             {}
 
-        SimpleActionDataHelper(
-                const KConfigGroup& cfg_P,
-                ActionDataGroup* parent_P )
-            : base( cfg_P, parent_P )
-            {}
-
         //! The action associated with this hotkey
         const A* action() const;
         A* action();

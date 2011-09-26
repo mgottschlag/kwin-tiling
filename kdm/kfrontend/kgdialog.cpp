@@ -61,8 +61,8 @@ KGDialog::completeMenu()
         connect(action, SIGNAL(triggered(bool)),
                 SLOT(slotActivateMenu(bool)));
         addAction(action);
-        connect(dpyMenu, SIGNAL(triggered(QAction *)),
-                SLOT(slotDisplaySelected(QAction *)));
+        connect(dpyMenu, SIGNAL(triggered(QAction*)),
+                SLOT(slotDisplaySelected(QAction*)));
         connect(dpyMenu, SIGNAL(aboutToShow()),
                 SLOT(slotPopulateDisplays()));
     }
@@ -97,7 +97,7 @@ KGDialog::ensureMenu()
 {
     if (!optMenu) {
         optMenu = new QMenu(this);
-        connect(optMenu, SIGNAL(triggered(QAction *)), SLOT(slotActivateMenu(QAction *)));
+        connect(optMenu, SIGNAL(triggered(QAction*)), SLOT(slotActivateMenu(QAction*)));
         needSep = false;
     } else if (needSep) {
         optMenu->addSeparator();

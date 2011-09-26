@@ -60,6 +60,7 @@
 #include <KRun>
 #include <KWindowSystem>
 #include <KService>
+#include <KIconLoader>
 
 #include <ksmserver_interface.h>
 
@@ -77,7 +78,7 @@
 #include <kephal/screens.h>
 
 #include <plasmagenericshell/backgrounddialog.h>
-#include "kactivitycontroller.h"
+#include "kworkspace/kactivitycontroller.h"
 
 #include "activity.h"
 #include "appadaptor.h"
@@ -86,7 +87,8 @@
 #include "desktopcorona.h"
 #include "desktopview.h"
 #include "interactiveconsole.h"
-#include "kactivityinfo.h"
+#include "kworkspace/kactivityinfo.h"
+#include "panelshadows.h"
 #include "panelview.h"
 #include "plasma-shell-desktop.h"
 #include "toolbutton.h"
@@ -119,7 +121,7 @@ PlasmaApp::PlasmaApp()
       m_unlockCorona(false)
 {
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor start" << "(line:" << __LINE__ << ")";
-    PlasmaApp::suspendStartup(true);
+    suspendStartup(true);
 
     if (KGlobalSettings::isMultiHead()) {
         KGlobal::locale()->setLanguage(plasmaLocale, KGlobal::config().data());
@@ -267,8 +269,8 @@ PlasmaApp::PlasmaApp()
     KGlobal::setAllowQuit(true);
     KGlobal::ref();
 
-    connect(m_mapper, SIGNAL(mapped(const QString &)),
-            this, SLOT(addRemotePlasmoid(const QString &)));
+    connect(m_mapper, SIGNAL(mapped(QString)),
+            this, SLOT(addRemotePlasmoid(QString)));
     connect(Plasma::AccessManager::self(),
             SIGNAL(finished(Plasma::AccessAppletJob*)),
             this, SLOT(plasmoidAccessFinished(Plasma::AccessAppletJob*)));
@@ -304,6 +306,7 @@ void PlasmaApp::setupDesktop()
     // intialize the default theme and set the font
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
     theme->setFont(AppSettings::desktopFont());
+    m_panelShadows = new PanelShadows();
 
     // this line initializes the corona.
     corona();
@@ -377,6 +380,9 @@ void PlasmaApp::cleanup()
     delete m_console.data();
     delete m_corona;
     m_corona = 0;
+
+    delete m_panelShadows;
+    m_panelShadows = 0;
 
     //TODO: This manual sync() should not be necessary. Remove it when
     // KConfig was fixed
@@ -482,6 +488,11 @@ void PlasmaApp::panelHidden(bool hidden)
 QList<PanelView*> PlasmaApp::panelViews() const
 {
     return m_panels;
+}
+
+PanelShadows *PlasmaApp::panelShadows() const
+{
+    return m_panelShadows;
 }
 
 ControllerWindow *PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *containment)
@@ -663,6 +674,9 @@ void PlasmaApp::screenRemoved(int id)
         }
     }
 
+#if 0
+    NOTE: CURRENTLY UNSAFE DUE TO HOW KEPHAL (or rather, it seems, Qt?) PROCESSES EVENTS
+          DURING XRANDR EVENTS. REVISIT IN 4.8!
     Kephal::Screen *primary = Kephal::Screens::self()->primaryScreen();
     QList<Kephal::Screen *> screens = Kephal::Screens::self()->screens();
     screens.removeAll(primary);
@@ -697,6 +711,16 @@ void PlasmaApp::screenRemoved(int id)
 
         panel->updateStruts();
     }
+#else
+    QMutableListIterator<PanelView*> pIt(m_panels);
+    while (pIt.hasNext()) {
+        PanelView *panel = pIt.next();
+        if (panel->screen() == id) {
+            pIt.remove();
+            delete panel;
+        }
+    }
+#endif
 }
 
 void PlasmaApp::screenAdded(Kephal::Screen *screen)
@@ -1161,10 +1185,32 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
         configDialog = new BackgroundDialog(resolution, containment, view, 0, id, nullManager);
         configDialog->setAttribute(Qt::WA_DeleteOnClose);
 
-        Activity *activity = m_corona->activity(containment->context()->currentActivityId());
-        Q_ASSERT(activity);
-        connect(configDialog, SIGNAL(containmentPluginChanged(Plasma::Containment*)),
-                activity, SLOT(replaceContainment(Plasma::Containment*)));
+
+        // if our containment is a dashboard containment only, then we don't
+        // want to mess with activities OR allow the user to change the containment type
+        // doing so causes the dashboard view to lose its containment and renders it useless
+        bool isDashboardContainment = fixedDashboard();
+        if (isDashboardContainment) {
+            bool found = false;
+            foreach (DesktopView *view, m_desktops) {
+                if (view->dashboardContainment() == containment) {
+                    found = true;
+                    break;
+                }
+            }
+
+            isDashboardContainment = found;
+        }
+
+        if (isDashboardContainment) {
+            configDialog->setLayoutChangeable(false);
+        } else {
+            Activity *activity = m_corona->activity(containment->context()->currentActivityId());
+            Q_ASSERT(activity);
+            connect(configDialog, SIGNAL(containmentPluginChanged(Plasma::Containment*)),
+                    activity, SLOT(replaceContainment(Plasma::Containment*)));
+        }
+
         connect(configDialog, SIGNAL(destroyed(QObject*)), nullManager, SLOT(deleteLater()));
     }
 
@@ -1326,6 +1372,11 @@ void PlasmaApp::remotePlasmoidAdded(Plasma::PackageMetadata metadata)
     notification->setText(i18n("A new widget has become available on the network:<br><b>%1</b> - <i>%2</i>",
                                metadata.name(), metadata.description()));
 
+    // setup widget icon
+    if (!metadata.icon().isEmpty()) {
+        notification->setPixmap(KIcon(metadata.icon()).pixmap(IconSize(KIconLoader::Desktop)));
+    }
+
     // locked, but the user is able to unlock
     if (m_corona->immutability() == Plasma::UserImmutable) {
         m_unlockCorona = true;
@@ -1368,7 +1419,7 @@ void PlasmaApp::plasmoidAccessFinished(Plasma::AccessAppletJob *job)
 void PlasmaApp::createActivity(const QString &plugin)
 {
     KActivityController controller;
-    QString id = controller.addActivity(i18nc("Action used to create a new activity", "New Activity"));
+    QString id = controller.addActivity(i18nc("Default name for a new activity", "New Activity"));
 
     Activity *a = m_corona->activity(id);
     Q_ASSERT(a);
@@ -1421,7 +1472,7 @@ void PlasmaApp::createActivityFromScript(const QString &script, const QString &n
 
         if (service) {
             confirmDialog->addItem(KIcon(service->icon()), service->name(),
-                    ((realExec == name) ? QString() : realExec), realExec, true);
+                    ((realExec == name) ? QString() : realExec), realExec, exec.split(" ").size() <= 2);
         } else {
             confirmDialog->addItem(KIcon("dialog-warning"), name,
                     ((realExec == name) ? QString() : realExec), realExec, false);

@@ -48,7 +48,7 @@ OpenWidgetAssistant::OpenWidgetAssistant(QWidget *parent)
     m_widgetTypeList->setSelectionMode(QAbstractItemView::SingleSelection);
     //m_widgetTypeList->setSelectionBehavior(QAbstractItemView::SelectItems);
     connect(m_widgetTypeList, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(next()));
-    connect(m_widgetTypeList, SIGNAL(itemSelectionChanged ()), this, SLOT(slotItemChanged()));
+    connect(m_widgetTypeList, SIGNAL(itemSelectionChanged()), this, SLOT(slotItemChanged()));
 
     QString constraint("'Applet' in [X-Plasma-ComponentTypes] and exist [X-Plasma-PackageFormat]");
     KService::List offers = KServiceTypeTrader::self()->query("Plasma/ScriptEngine", constraint);
@@ -84,7 +84,7 @@ OpenWidgetAssistant::OpenWidgetAssistant(QWidget *parent)
 
     connect(this, SIGNAL(currentPageChanged(KPageWidgetItem*,KPageWidgetItem*)), SLOT(prepPage(KPageWidgetItem*,KPageWidgetItem*)));
     enableButton(KDialog::Help, false);
-    //connect( this, SIGNAL( helpClicked() ), this, SLOT( slotHelpClicked() ) );
+    //connect( this, SIGNAL(helpClicked()), this, SLOT(slotHelpClicked()) );
     //m_widgetTypeList->setFocus();
     resize(QSize(560, 400).expandedTo(minimumSizeHint()));
 }

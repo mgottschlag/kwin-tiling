@@ -32,7 +32,6 @@
 #include <QtGui/QPixmapCache>
 #include <QtGui/QContextMenuEvent>
 #include <QtGui/QX11Info>
-#include <config-workspace.h>
 
 namespace KFI
 {

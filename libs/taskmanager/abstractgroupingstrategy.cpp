@@ -135,7 +135,7 @@ TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
     TaskGroup *newGroup = new TaskGroup(d->groupManager);
     d->createdGroups.append(newGroup);
     //kDebug() << "added group" << d->createdGroups.count();
-    connect(newGroup, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkGroup()));
+    connect(newGroup, SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(checkGroup()));
     foreach (AbstractGroupableItem *item, items) {
         newGroup->add(item);
     }

@@ -38,6 +38,7 @@
 #include <QtDBus/QDBusReply>
 
 #include <Plasma/DataContainer>
+#include "powermanagementservice.h"
 
 typedef QMap< QString, QString > StringStringMap;
 Q_DECLARE_METATYPE(StringStringMap)
@@ -65,7 +66,7 @@ void PowermanagementEngine::init()
                                                    "/org/kde/Solid/PowerManagement",
                                                    "org.kde.Solid.PowerManagement",
                                                    "profileChanged", this,
-                                                   SLOT(profileChanged(const QString&)))) {
+                                                   SLOT(profileChanged(QString)))) {
             kDebug() << "error connecting to Profile changes via dbus";
         }
         if (!QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement",
@@ -110,7 +111,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
         m_batterySources.clear();
 
         if (listBattery.isEmpty()) {
-            setData("Battery", "Has Battery", false);
+            setData("Battery", "Has battery", false);
             return true;
         }
 
@@ -127,12 +128,12 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
                 batterySources << source;
                 m_batterySources[deviceBattery.udi()] = source;
 
-                connect(battery, SIGNAL(chargeStateChanged(int, const QString &)), this,
-                        SLOT(updateBatteryChargeState(int, const QString &)));
-                connect(battery, SIGNAL(chargePercentChanged(int, const QString &)), this,
-                        SLOT(updateBatteryChargePercent(int, const QString &)));
-                connect(battery, SIGNAL(plugStateChanged(bool, const QString &)), this,
-                        SLOT(updateBatteryPlugState(bool, const QString &)));
+                connect(battery, SIGNAL(chargeStateChanged(int,QString)), this,
+                        SLOT(updateBatteryChargeState(int,QString)));
+                connect(battery, SIGNAL(chargePercentChanged(int,QString)), this,
+                        SLOT(updateBatteryChargePercent(int,QString)));
+                connect(battery, SIGNAL(plugStateChanged(bool,QString)), this,
+                        SLOT(updateBatteryPlugState(bool,QString)));
 
                 // Set initial values
                 updateBatteryChargeState(battery->chargeState(), deviceBattery.udi());
@@ -164,7 +165,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
         foreach (Solid::Device device_ac, list_ac) {
             Solid::AcAdapter* acadapter = device_ac.as<Solid::AcAdapter>();
             isPlugged |= acadapter->isPlugged();
-            connect(acadapter, SIGNAL(plugStateChanged(bool, const QString &)), this,
+            connect(acadapter, SIGNAL(plugStateChanged(bool,QString)), this,
                     SLOT(updateAcPlugState(bool)), Qt::UniqueConnection);
         }
 
@@ -195,6 +196,17 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
         return false;
     }
     return true;
+}
+
+Plasma::Service* PowermanagementEngine::serviceForSource(const QString &source)
+{
+    if (source == "PowerDevil") {
+        PowerManagementService *service = new PowerManagementService(source);
+        service->setParent(this);
+        return service;
+    }
+
+    return 0;
 }
 
 void PowermanagementEngine::updateBatteryChargeState(int newState, const QString& udi)
@@ -260,12 +272,12 @@ void PowermanagementEngine::deviceAdded(const QString& udi)
             sourceNames << source;
             m_batterySources[device.udi()] = source;
 
-            connect(battery, SIGNAL(chargeStateChanged(int, const QString &)), this,
-                    SLOT(updateBatteryChargeState(int, const QString &)));
-            connect(battery, SIGNAL(chargePercentChanged(int, const QString &)), this,
-                    SLOT(updateBatteryChargePercent(int, const QString &)));
-            connect(battery, SIGNAL(plugStateChanged(bool, const QString &)), this,
-                    SLOT(updateBatteryPlugState(bool, const QString &)));
+            connect(battery, SIGNAL(chargeStateChanged(int,QString)), this,
+                    SLOT(updateBatteryChargeState(int,QString)));
+            connect(battery, SIGNAL(chargePercentChanged(int,QString)), this,
+                    SLOT(updateBatteryChargePercent(int,QString)));
+            connect(battery, SIGNAL(plugStateChanged(bool,QString)), this,
+                    SLOT(updateBatteryPlugState(bool,QString)));
 
             // Set initial values
             updateBatteryChargeState(battery->chargeState(), device.udi());
@@ -340,5 +352,7 @@ void PowermanagementEngine::reloadPowerDevilData()
 
     availableProfilesChanged();
 }
+
+K_EXPORT_PLASMA_DATAENGINE(powermanagement, PowermanagementEngine)
 
 #include "powermanagementengine.moc"

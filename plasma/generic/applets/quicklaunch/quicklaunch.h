@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Lukas Appelhans <l.appelhans@gmx.de>            *
- *   Copyright (C) 2010 by Ingomar Wesp <ingomar@wesp.name>                *
+ *   Copyright (C) 2010 - 2011 by Ingomar Wesp <ingomar@wesp.name>         *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -23,6 +23,8 @@
 #include "ui_quicklaunchConfig.h"
 
 // Qt
+#include <Qt>
+#include <QtGlobal>
 #include <QtCore/QObject>
 #include <QtCore/QPoint>
 #include <QtCore/QPointF>
@@ -52,7 +54,7 @@ using Plasma::Constraints;
 
 namespace Quicklaunch {
 
-class LauncherList;
+class LauncherGrid;
 class Popup;
 
 class Quicklaunch : public Plasma::Applet
@@ -85,7 +87,7 @@ private Q_SLOTS:
 private:
     void showContextMenu(
         const QPoint& screenPos,
-        LauncherList *component,
+        bool onPopup,
         int iconIndex);
 
     void initActions();
@@ -102,7 +104,7 @@ private:
 
     Ui::quicklaunchConfig uiConfig;
 
-    LauncherList *m_launcherList;
+    LauncherGrid *m_launcherGrid;
 
     QGraphicsLinearLayout *m_layout;
     Plasma::IconWidget *m_popupTrigger;
@@ -112,8 +114,8 @@ private:
     QAction* m_editLauncherAction;
     QAction* m_removeLauncherAction;
 
-    LauncherList *m_currentLauncherList;
-    int m_currentLauncherIndex;
+    bool m_contextMenuTriggeredOnPopup;
+    int m_contextMenuLauncherIndex;
 };
 }
 

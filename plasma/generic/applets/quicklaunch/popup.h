@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2010 by Ingomar Wesp <ingomar@wesp.name>                *
+ *   Copyright (C) 2010 - 2011 by Ingomar Wesp <ingomar@wesp.name>         *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,6 +21,8 @@
 
 // Qt
 #include <Qt>
+#include <QtGlobal>
+#include <QtCore/QObject>
 
 // KDE
 #include <Plasma/Dialog>
@@ -29,7 +31,7 @@ using Plasma::Dialog;
 
 namespace Quicklaunch {
 
-class LauncherList;
+class PopupLauncherList;
 class Quicklaunch;
 
 class Popup : public Dialog {
@@ -40,7 +42,7 @@ public:
     Popup(Quicklaunch *applet);
     ~Popup();
 
-    LauncherList *launcherList();
+    PopupLauncherList *launcherList();
     void show();
     bool eventFilter(QObject *watched, QEvent *event);
 
@@ -52,7 +54,7 @@ private:
     void syncSizeAndPosition();
 
     Quicklaunch *m_applet;
-    LauncherList *m_launcherList;
+    PopupLauncherList *m_launcherList;
 };
 }
 

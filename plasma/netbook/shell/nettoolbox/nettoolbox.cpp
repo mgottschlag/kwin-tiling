@@ -220,7 +220,7 @@ void NetToolBox::init()
     slideAnim->setProperty("movementDirection", Plasma::Animation::MoveAny);
     connect(slideAnim, SIGNAL(stateChanged(QAbstractAnimation::State,
                         QAbstractAnimation::State)),
-                this, SLOT(onMovement(QAbstractAnimation::State, QAbstractAnimation::State)));
+                this, SLOT(onMovement(QAbstractAnimation::State,QAbstractAnimation::State)));
     connect(slideAnim, SIGNAL(finished()), this, SLOT(movementFinished()));
 
     anim = new QPropertyAnimation(this, "highlight", this);

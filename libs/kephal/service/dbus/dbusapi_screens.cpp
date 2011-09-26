@@ -38,9 +38,9 @@ DBusAPIScreens::DBusAPIScreens(QObject * parent)
     const bool result = dbus.registerObject("/modules/kephal/Screens", this);
     kDebug() << "screens registered on the bus:" << result;
 
-    connect(Screens::self(), SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), this, SLOT(screenResized(Kephal::Screen *, QSize, QSize)));
-    connect(Screens::self(), SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), this, SLOT(screenMoved(Kephal::Screen *, QPoint, QPoint)));
-    connect(Screens::self(), SIGNAL(screenAdded(Kephal::Screen *)), this, SLOT(screenAdded(Kephal::Screen *)));
+    connect(Screens::self(), SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)), this, SLOT(screenResized(Kephal::Screen*,QSize,QSize)));
+    connect(Screens::self(), SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)), this, SLOT(screenMoved(Kephal::Screen*,QPoint,QPoint)));
+    connect(Screens::self(), SIGNAL(screenAdded(Kephal::Screen*)), this, SLOT(screenAdded(Kephal::Screen*)));
     connect(Screens::self(), SIGNAL(screenRemoved(int)), this, SLOT(screenRemovedSlot(int)));
 }
 

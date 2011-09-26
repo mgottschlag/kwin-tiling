@@ -57,6 +57,7 @@ public:
     KDE_DEPRECATED bool isGroupItem() const;
     ItemType itemType() const;
 
+    bool isValid() const;
     QIcon icon() const;
     QString name() const;
     QString genericName() const;

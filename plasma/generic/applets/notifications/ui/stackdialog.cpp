@@ -237,7 +237,9 @@ void StackDialog::resizeEvent(QResizeEvent *event)
     Q_UNUSED(event)
     adjustWindowToTilePos();
     Plasma::Dialog::resizeEvent(event);
-    if (!m_hasCustomPosition) {
+    if (m_hasCustomPosition) {
+        adjustPosition(pos());
+    } else {
         move(m_applet->containment()->corona()->popupPosition(m_applet, size()));
     }
 }
@@ -291,7 +293,15 @@ void StackDialog::adjustPosition(const QPoint &pos)
             customPosition.ry() = qMax(customPosition.y(), screenRect.top());
             customPosition.rx() = qMin(customPosition.x() + size().width(), screenRect.right()) - size().width();
             customPosition.ry() = qMin(customPosition.y() + size().height(), screenRect.bottom()) - size().height();
+
+            bool closerToBottom = (customPosition.ry() > (screenRect.height() / 2));
+            if (!m_lastSize.isNull() && closerToBottom
+                && (m_lastSize.height() > size().height())) {
+                customPosition.ry() += m_lastSize.height() - size().height();
+            }
+            m_lastSize = size();
         }
+
         move(customPosition);
         Plasma::WindowEffects::slideWindow(this, Plasma::Desktop);
         m_hasCustomPosition = true;

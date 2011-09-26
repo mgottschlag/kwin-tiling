@@ -322,7 +322,7 @@ void CursorThemeModel::processThemeDir(const QDir &themeDir)
         bool foundCursorTheme = false;
 
         foreach (const QString &name, theme->inherits())
-            if (foundCursorTheme = isCursorTheme(name))
+            if ((foundCursorTheme = isCursorTheme(name)))
                 break;
 
         if (!foundCursorTheme) {

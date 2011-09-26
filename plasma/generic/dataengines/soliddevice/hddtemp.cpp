@@ -52,11 +52,13 @@ void HddTemp::timerEvent(QTimerEvent *event)
 bool HddTemp::updateData()
 {
     if (m_cacheValid) {
-	return true;
+        return true;
     }
+
     if (m_failCount > 4) {
         return false;
     }
+
     QTcpSocket socket;
     QString data;
 

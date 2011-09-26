@@ -514,6 +514,9 @@ void AbstractTaskItem::paint(QPainter *painter,
                              const QStyleOptionGraphicsItem *option,
                              QWidget *widget)
 {
+    if (!m_abstractItem) {
+        return;
+    }
     //kDebug() << "painting" << (QObject*)this << text();
     painter->setRenderHint(QPainter::Antialiasing);
 
@@ -647,7 +650,7 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
     if (m_abstractItem->itemType() != TaskManager::LauncherItemType) {
         bounds = bounds.adjusted(m_applet->itemLeftMargin(), m_applet->itemTopMargin(), -m_applet->itemRightMargin(), -m_applet->itemBottomMargin());
     } else {
-        bounds = bounds.adjusted(5,5,-5,-5);
+        bounds = bounds.adjusted(4,4,-5,-5);
     }
 
     WindowTaskItem *window = qobject_cast<WindowTaskItem *>(this);

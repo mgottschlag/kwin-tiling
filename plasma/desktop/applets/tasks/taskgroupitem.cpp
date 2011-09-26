@@ -293,7 +293,8 @@ void TaskGroupItem::updateToolTip()
         return;
     }
 
-    Plasma::ToolTipContent data(m_group.data()->name(), QString());
+    QString groupName = i18nc("@title:group Name of a group of windows", "%1", m_group.data()->name());
+    Plasma::ToolTipContent data(groupName, QString());
     int desktop = m_group.data()->desktop();
     if (desktop != 0 &&
         (!m_applet->groupManager().showOnlyCurrentDesktop() || !m_group.data()->isOnCurrentDesktop())) {
@@ -373,14 +374,14 @@ void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
     if (m_group) {
         connect(m_abstractItem, SIGNAL(destroyed(QObject*)), this, SLOT(clearAbstractItem()));
         connect(group, SIGNAL(destroyed(QObject*)), this, SLOT(clearGroup()));
-        connect(group, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(itemRemoved(AbstractGroupableItem *)));
-        connect(group, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(itemAdded(AbstractGroupableItem *)));
+        connect(group, SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(itemRemoved(AbstractGroupableItem*)));
+        connect(group, SIGNAL(itemAdded(AbstractGroupableItem*)), this, SLOT(itemAdded(AbstractGroupableItem*)));
 
         //connect(group, SIGNAL(destroyed()), this, SLOT(close()));
 
         connect(group, SIGNAL(changed(::TaskManager::TaskChanges)), this, SLOT(updateTask(::TaskManager::TaskChanges)));
 
-        connect(group, SIGNAL(itemPositionChanged(AbstractGroupableItem *)), this, SLOT(itemPositionChanged(AbstractGroupableItem *)));
+        connect(group, SIGNAL(itemPositionChanged(AbstractGroupableItem*)), this, SLOT(itemPositionChanged(AbstractGroupableItem*)));
         connect(group, SIGNAL(groupEditRequest()), this, SLOT(editGroup()));
     }
 
@@ -679,9 +680,8 @@ void TaskGroupItem::popupMenu()
 
     if (!m_popupDialog) {
         // Initialize popup dialog
-        m_popupDialog = new Plasma::Dialog();
+        m_popupDialog = new Plasma::Dialog(0, Qt::Popup);
         KWindowSystem::setType(m_popupDialog->winId(), NET::PopupMenu);
-        m_popupDialog->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
         connect(m_popupDialog, SIGNAL(dialogVisible(bool)), this, SLOT(popupVisibilityChanged(bool)));
         connect(m_popupDialog, SIGNAL(dialogVisible(bool)), m_applet, SLOT(setPopupDialog(bool)));
         connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(handleActiveWindowChanged(WId)));

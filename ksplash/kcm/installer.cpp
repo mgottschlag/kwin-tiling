@@ -121,7 +121,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   mThemesList = new ThemeListBox(this);
   mThemesList->setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Expanding );
   connect(mThemesList, SIGNAL(currentRowChanged(int)), SLOT(slotSetTheme(int)));
-  connect(mThemesList, SIGNAL(filesDropped(const KUrl::List&)), SLOT(slotFilesDropped(const KUrl::List&)));
+  connect(mThemesList, SIGNAL(filesDropped(KUrl::List)), SLOT(slotFilesDropped(KUrl::List)));
   leftbox->addWidget(mThemesList);
 
   mBtnNew = new KPushButton( KIcon("get-hot-new-stuff"), i18n("Get New Themes..."), this );

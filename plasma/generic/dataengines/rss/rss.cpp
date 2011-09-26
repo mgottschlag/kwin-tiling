@@ -29,6 +29,7 @@
 #include <syndication/item.h>
 #include <syndication/loader.h>
 #include <syndication/image.h>
+#include <syndication/person.h>
 
 //Plasma
 #include <Plasma/DataEngine>
@@ -58,8 +59,8 @@ RssEngine::RssEngine(QObject* parent, const QVariantList& args)
     m_signalMapper = new QSignalMapper(this);
     connect(m_favIconsModule, SIGNAL(iconChanged(bool,QString,QString)),
             this, SLOT(slotIconChanged(bool,QString,QString)));
-    connect(m_signalMapper, SIGNAL(mapped(const QString &)),
-            this, SLOT(timeout(const QString &)));
+    connect(m_signalMapper, SIGNAL(mapped(QString)),
+            this, SLOT(timeout(QString)));
     connect(Solid::Networking::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
             SLOT(networkStatusChanged(Solid::Networking::Status)));
 
@@ -228,8 +229,14 @@ void RssEngine::processRss(Syndication::Loader* loader,
                 iconRequested = true;
             }
             dataItem["icon"] = m_feedIcons[url.toLower()];
+            QStringList authors;
+            foreach (const boost::shared_ptr<Syndication::Person> a, item->authors()) {
+                authors << a->name();
+            }
+            dataItem["author"] = authors;
 
             items.append(dataItem);
+
 
             if (!m_rssSourceNames.contains(url)) {
                 QMap<QString, QVariant> sourceItem;

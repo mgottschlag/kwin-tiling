@@ -82,10 +82,10 @@ Calendar::Private::Private( QAbstractItemModel *treeModel, QAbstractItemModel *m
            SLOT(onRowsMovedInTreeModel(QModelIndex,int,int,QModelIndex,int)) );
 
   /*
-  connect( m_monitor, SIGNAL(itemLinked(const Akonadi::Item,Akonadi::Collection)),
-           this, SLOT(itemAdded(const Akonadi::Item,Akonadi::Collection)) );
-  connect( m_monitor, SIGNAL(itemUnlinked(Akonadi::Item,Akonadi::Collection )),
-           this, SLOT(itemRemoved(Akonadi::Item,Akonadi::Collection )) );
+  connect( m_monitor, SIGNAL(itemLinked(Akonadi::Item,Akonadi::Collection)),
+           this, SLOT(itemAdded(Akonadi::Item,Akonadi::Collection)) );
+  connect( m_monitor, SIGNAL(itemUnlinked(Akonadi::Item,Akonadi::Collection)),
+           this, SLOT(itemRemoved(Akonadi::Item,Akonadi::Collection)) );
   */
 }
 
@@ -537,8 +537,11 @@ void Calendar::Private::removeItemFromMaps( const Akonadi::Item &item )
 
   unseen_item.collection = unseen_parent.collection = item.storageCollectionId();
 
-  unseen_item.uid   = CalendarSupport::incidence( item )->uid();
-  unseen_parent.uid = CalendarSupport::incidence( item )->relatedTo();
+  KCalCore::Incidence::Ptr incidence = CalendarSupport::incidence( item );
+  if ( incidence ) {
+    unseen_item.uid  = incidence->uid();
+    unseen_parent.uid = incidence->relatedTo();
+  }
 
   if ( m_childToParent.contains( item.id() ) ) {
     Akonadi::Item::Id parentId = m_childToParent.take( item.id() );

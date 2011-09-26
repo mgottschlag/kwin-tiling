@@ -127,7 +127,7 @@ class GadgetBrowserHost : public ggadget::HostInterface {
     if (!root.cd(pkg_name) &&
         (!root.mkpath(pkg_name) || !root.cd(pkg_name))) {
       LOGE("Failed to create package %s",
-           (root.path() + "/" + pkg_name).toUtf8().data());
+           QString(root.path() + "/" + pkg_name).toUtf8().data());
       return false;
     }
     {

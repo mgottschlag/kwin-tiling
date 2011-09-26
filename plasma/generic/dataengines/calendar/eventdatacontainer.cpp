@@ -149,7 +149,7 @@ void EventDataContainer::populateIncidenceData(KCalCore::Incidence::Ptr incidenc
 {
     QVariant var;
     incidenceData["UID"] = incidence->uid();
-    incidenceData["Type"] = incidence->type();
+    incidenceData["Type"] = incidence->typeStr();
     incidenceData["Summary"] = incidence->summary();
     incidenceData["Description"] = incidence->description();
     incidenceData["Comments"] = incidence->comments();

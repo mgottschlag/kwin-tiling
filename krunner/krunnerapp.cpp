@@ -46,7 +46,6 @@
 #include "kworkspace/kdisplaymanager.h"
 
 #include "appadaptor.h"
-#include "kworkspace.h"
 #include "ksystemactivitydialog.h"
 #include "interfaces/default/interface.h"
 #include "interfaces/quicksand/qs_dialog.h"
@@ -249,6 +248,7 @@ void KRunnerApp::showTaskManager()
 {
     showTaskManagerWithFilter(QString());
 }
+
 void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
 {
 #ifndef Q_WS_WIN
@@ -257,7 +257,12 @@ void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
         m_tasks = new KSystemActivityDialog;
         connect(m_tasks, SIGNAL(finished()),
                 this, SLOT(taskDialogFinished()));
+    } else if ((filterText.isEmpty() || m_tasks->filterText() == filterText) &&
+               KWindowSystem::activeWindow() == m_tasks->winId()) {
+        m_tasks->hide();
+        return;
     }
+
     m_tasks->run();
     m_tasks->setFilterText(filterText);
 #endif
@@ -377,15 +382,6 @@ int KRunnerApp::newInstance()
 
     return KUniqueApplication::newInstance();
     //return 0;
-}
-
-bool KRunnerApp::hasCompositeManager() const
-{
-#ifdef Q_WS_X11
-    return KWindowSystem::compositingActive();
-#else
-    return false;
-#endif
 }
 
 void KRunnerApp::reloadConfig()

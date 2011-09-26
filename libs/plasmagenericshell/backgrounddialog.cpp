@@ -472,6 +472,17 @@ KConfigGroup BackgroundDialog::wallpaperConfig(const QString &plugin)
     return KConfigGroup(&cfg, plugin);
 }
 
+void BackgroundDialog::setLayoutChangeable(bool changeable)
+{
+    d->backgroundDialogUi.containmentLabel->setVisible(changeable);
+    d->backgroundDialogUi.containmentComboBox->setVisible(changeable);
+}
+
+bool BackgroundDialog::isLayoutChangeable() const
+{
+    return d->backgroundDialogUi.containmentComboBox->isVisible();
+}
+
 void BackgroundDialog::saveConfig()
 {
     if (!isButtonEnabled(Apply)) {
@@ -484,7 +495,7 @@ void BackgroundDialog::saveConfig()
                                                           AppletDelegate::PluginNameRole).toString();
 
     // Containment
-    if (d->containment) {
+    if (isLayoutChangeable() && d->containment) {
         if (d->containment.data()->pluginName() != containment) {
             disconnect(d->containment.data(), SIGNAL(destroyed()), this, SLOT(close()));
             disconnect(this, 0, d->containment.data(), 0);

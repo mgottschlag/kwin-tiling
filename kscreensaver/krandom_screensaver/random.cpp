@@ -197,7 +197,7 @@ KRandomSetup::KRandomSetup( QWidget *parent, const char *name )
 	openGL->setChecked(configGroup.readEntry("OpenGL", true));
 	manipulateScreen->setChecked(configGroup.readEntry("ManipulateScreen", true));
 
-  connect( this, SIGNAL( okClicked() ), SLOT( slotOk() ) );
+  connect( this, SIGNAL(okClicked()), SLOT(slotOk()) );
 }
 
 void KRandomSetup::slotOk()

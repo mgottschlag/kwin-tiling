@@ -169,7 +169,7 @@ ActionReply Helper::managefaces(const QVariantMap &args)
     QString facesDir =
         KConfig(QString::fromLatin1(KDE_CONFDIR "/kdm/kdmrc"), KConfig::SimpleConfig)
             .group("X-*-Greeter").readEntry("FaceDir",
-                KStandardDirs::installPath("data") + "kdm/faces") + '/';
+                QString(KStandardDirs::installPath("data") + "kdm/faces" + '/'));
 
     int code = 0;
 

@@ -99,7 +99,7 @@ KAction *ShortcutsHandler::addAction(
     Q_ASSERT(newAction->isEnabled());
 
     connect(
-        newAction, SIGNAL(globalShortcutChanged(const QKeySequence&)),
+        newAction, SIGNAL(globalShortcutChanged(QKeySequence)),
         this, SIGNAL(shortcutChanged()));
 
     return newAction;

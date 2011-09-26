@@ -71,10 +71,10 @@ void PowerDevilHALBackend::init()
 {
     setCapabilities(NoCapabilities);
 
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
-            this, SLOT(slotDeviceRemoved(const QString &)));
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)),
-            this, SLOT(slotDeviceAdded(const QString &)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)),
+            this, SLOT(slotDeviceRemoved(QString)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)),
+            this, SLOT(slotDeviceAdded(QString)));
 
     m_pluggedAdapterCount = 0;
     computeAcAdapters();
@@ -192,7 +192,13 @@ void PowerDevilHALBackend::brightnessKeyPressed(PowerDevil::BackendInterface::Br
             newBrightness = qMax(0.0f, currentBrightness - 10);
         }
 
-        setBrightness(newBrightness, Screen);
+        if (setBrightness(newBrightness, Screen)) {
+            newBrightness = brightness(Screen);
+            if (!qFuzzyCompare(newBrightness, m_cachedBrightness)) {
+                m_cachedBrightness = newBrightness;
+                onBrightnessChanged(Screen, m_cachedBrightness);
+            }
+        }
     } else {
         m_cachedBrightness = currentBrightness;
     }
@@ -265,11 +271,6 @@ bool PowerDevilHALBackend::setBrightness(float brightnessValue, PowerDevil::Back
                                             "org.freedesktop.Hal.Device.LaptopPanel", QDBusConnection::systemBus());
                 deviceInterface.call("SetBrightness", qRound((levels-1)*(brightnessValue/100.0))); // .0? The right way? Feels hackish.
                 if (!deviceInterface.lastError().isValid()) {
-                    float newBrightness = brightness(Screen);
-                    if (!qFuzzyCompare(newBrightness, m_cachedBrightness)) {
-                        m_cachedBrightness = newBrightness;
-                        onBrightnessChanged(Screen, m_cachedBrightness);
-                    }
                     return true;
                 }
             }
@@ -288,11 +289,6 @@ bool PowerDevilHALBackend::setBrightness(float brightnessValue, PowerDevil::Back
                 
                 deviceInterface.call("SetBrightness", qRound((levels-1)*(brightnessValue/100.0)));
                 if(!deviceInterface.lastError().isValid()) {
-                    float newBrightness = brightness(Keyboard);
-                    if (!qFuzzyCompare(newBrightness, m_cachedBrightness)) {
-                        m_cachedBrightness = newBrightness;
-                        onBrightnessChanged(Screen, m_cachedBrightness);
-                    }
                     return true;
                 }
             }
@@ -316,7 +312,7 @@ void PowerDevilHALBackend::computeAcAdapters()
 
     foreach (const Solid::Device &adapter, adapters) {
         m_acAdapters[adapter.udi()] = new Solid::Device(adapter);
-        connect(m_acAdapters[adapter.udi()]->as<Solid::AcAdapter>(), SIGNAL(plugStateChanged(bool, const QString &)),
+        connect(m_acAdapters[adapter.udi()]->as<Solid::AcAdapter>(), SIGNAL(plugStateChanged(bool,QString)),
                  this, SLOT(slotPlugStateChanged(bool)));
 
         if (m_acAdapters[adapter.udi()]->as<Solid::AcAdapter>()!=0
@@ -339,10 +335,10 @@ void PowerDevilHALBackend::computeBatteries()
 
     foreach (const Solid::Device &battery, batteries) {
         m_batteries[battery.udi()] = new Solid::Device(battery);
-        connect(m_batteries[battery.udi()]->as<Solid::Battery>(), SIGNAL(chargePercentChanged(int, const QString &)),
+        connect(m_batteries[battery.udi()]->as<Solid::Battery>(), SIGNAL(chargePercentChanged(int,QString)),
                  this, SLOT(updateBatteryStats()));
-        connect(m_batteries[battery.udi()]->as<Solid::GenericInterface>(), SIGNAL(propertyChanged(const QMap<QString,int> &)),
-                 this, SLOT(slotBatteryPropertyChanged(const QMap<QString,int> &)));
+        connect(m_batteries[battery.udi()]->as<Solid::GenericInterface>(), SIGNAL(propertyChanged(QMap<QString,int>)),
+                 this, SLOT(slotBatteryPropertyChanged(QMap<QString,int>)));
     }
 
     updateBatteryStats();
@@ -355,7 +351,7 @@ void PowerDevilHALBackend::computeButtons()
 
     foreach (const Solid::Device &button, buttons) {
         m_buttons[button.udi()] = new Solid::Device(button);
-        connect(m_buttons[button.udi()]->as<Solid::Button>(), SIGNAL(pressed(Solid::Button::ButtonType, const QString &)),
+        connect(m_buttons[button.udi()]->as<Solid::Button>(), SIGNAL(pressed(Solid::Button::ButtonType,QString)),
                  this, SLOT(slotButtonPressed(Solid::Button::ButtonType)));
     }
 }
@@ -406,7 +402,7 @@ void PowerDevilHALBackend::slotDeviceAdded(const QString &udi)
     Solid::Device *device = new Solid::Device(udi);
     if (device->is<Solid::AcAdapter>()) {
         m_acAdapters[udi] = device;
-        connect(m_acAdapters[udi]->as<Solid::AcAdapter>(), SIGNAL(plugStateChanged(bool, const QString &)),
+        connect(m_acAdapters[udi]->as<Solid::AcAdapter>(), SIGNAL(plugStateChanged(bool,QString)),
                  this, SLOT(slotPlugStateChanged(bool)));
 
         if (m_acAdapters[udi]->as<Solid::AcAdapter>()!=0
@@ -415,13 +411,13 @@ void PowerDevilHALBackend::slotDeviceAdded(const QString &udi)
         }
     } else if (device->is<Solid::Battery>()) {
         m_batteries[udi] = device;
-        connect(m_batteries[udi]->as<Solid::Battery>(), SIGNAL(chargePercentChanged(int, const QString &)),
+        connect(m_batteries[udi]->as<Solid::Battery>(), SIGNAL(chargePercentChanged(int,QString)),
                  this, SLOT(updateBatteryStats()));
-        connect(m_batteries[udi]->as<Solid::GenericInterface>(), SIGNAL(propertyChanged(const QMap<QString,int> &)),
-                 this, SLOT(slotBatteryPropertyChanged(const QMap<QString,int> &)));
+        connect(m_batteries[udi]->as<Solid::GenericInterface>(), SIGNAL(propertyChanged(QMap<QString,int>)),
+                 this, SLOT(slotBatteryPropertyChanged(QMap<QString,int>)));
     } else if (device->is<Solid::Button>()) {
         m_buttons[udi] = device;
-        connect(m_buttons[udi]->as<Solid::Button>(), SIGNAL(pressed(int, const QString &)),
+        connect(m_buttons[udi]->as<Solid::Button>(), SIGNAL(pressed(int,QString)),
                  this, SLOT(slotButtonPressed(int)));
     } else {
         delete device;
