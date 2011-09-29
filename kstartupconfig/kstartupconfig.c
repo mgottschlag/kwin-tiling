@@ -154,5 +154,5 @@ int main()
     fclose( keys );
     fclose( config );
   doit:
-    return WEXITSTATUS( system( "kdostartupconfig4" ) );
+    return system( "kdostartupconfig4" );
     }

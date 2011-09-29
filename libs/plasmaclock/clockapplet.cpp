@@ -98,22 +98,34 @@ public:
     QTime lastTimeSeen;
     bool forceTzDisplay : 1;
 
-    void addTzToTipText(QString &subText, const QString& tz)
+    QDate addTzToTipText(QString &subText, const Plasma::DataEngine::Data &data, const QDate &prevDate, bool highlight)
     {
-        Plasma::DataEngine::Data data = q->dataEngine("time")->query(tz);
-
-        subText.append("<tr><td align=\"right\">");
-        if (tz == "UTC")  {
-            subText.append("UTC");
-        } else {
-            subText.append(data["Timezone City"].toString().replace('_', "&nbsp;"));
+        const QDate date = data["Date"].toDate();
+        // show the date if it is different from the previous date in its own row
+        if (date != prevDate) {
+            subText.append("<tr><td>&nbsp;</td></tr>")
+                   .append("<tr><th colspan=2 align=left>")
+                   .append(q->calendar()->formatDate(data["Date"].toDate()).replace(' ', "&nbsp;"))
+                   .append("</th></tr>");
         }
-        subText.append(":</td><td>");
 
-        subText.append(KGlobal::locale()->formatTime(data["Time"].toTime(), false).replace(' ', "&nbsp;"))
-               .append(",&nbsp;")
-               .append(q->calendar()->formatDate(data["Date"].toDate()).replace(' ', "&nbsp;"))
-               .append("</td></tr>");
+        // start the row
+        subText.append("<tr>");
+
+        // put the name of the city in the first cell
+        // highlight the name of the place if requested
+        subText.append(highlight ? "<th align=\"right\">" : "<td align=\"right\">");
+        subText.append(data["Timezone City"].toString().replace('_', "&nbsp;"));
+        subText.append(':').append(highlight ? "</th>" : "</td>");
+
+        // now the time
+        subText.append("<td>")
+               .append(KGlobal::locale()->formatTime(data["Time"].toTime(), false).replace(' ', "&nbsp;"))
+               .append("</td>");
+
+        // and close out the row.
+        subText.append("</tr>");
+        return date;
     }
 
     void createCalendarExtender()
@@ -243,38 +255,55 @@ void ClockApplet::toolTipHidden()
     Plasma::ToolTipManager::self()->clearContent(this);
 }
 
+//bool sortTzByData(const Plasma::DataEngine::Data &left, const Plasma::DataEngine::Data &right)
+bool sortTzByData(const QHash<QString, QVariant> &left, const QHash<QString, QVariant> &right)
+{
+    const int leftOffset = left.value("Offset").toInt();
+    const int rightOffset = right.value("Offset").toInt();
+    if (leftOffset == rightOffset) {
+        return left.value("Timezone City").toString() < right.value("Timezone City").toString();
+    }
+
+    return leftOffset < rightOffset;
+}
+
 void ClockApplet::updateTipContent()
 {
     Plasma::ToolTipContent tipData;
 
-    // the main text contains the current timezone's time and date
-    Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
-    QString mainText = d->prettyTimezone + ' ';
-    mainText += KGlobal::locale()->formatTime(data["Time"].toTime(), false) + "<br>";
-    QDate tipDate = data["Date"].toDate();
-    mainText += calendar()->formatDate(tipDate);
-    tipData.setMainText(mainText);
-
     QString subText("<table>");
-    if (!isLocalTimezone()) {
-        d->addTzToTipText(subText, localTimezone());
-    }
+    QList<Plasma::DataEngine::Data> tzs;
+    Plasma::DataEngine *engine = dataEngine("time");
+    Plasma::DataEngine::Data data = engine->query("Local");
+    const QDate localDate = data["Date"].toDate();
+    const QString localTz = data["Timezone"].toString();
+    tzs.append(data);
+    bool highlightLocal = false;
 
-    foreach (const QString &tz, getSelectedTimezones()) {
-        if (tz == currentTimezone()) {
-            continue;
+    const bool hasEvents = d->calendarWidget->dateHasDetails(localDate);
+    tipData.setMainText(hasEvents ? i18n("Current Time and Events") : i18n("Current Time"));
+
+    foreach (const QString &tz, d->selectedTimezones) {
+        if (tz != "UTC") {
+            highlightLocal = true;
         }
 
-        d->addTzToTipText(subText, tz);
+        data = engine->query(tz);
+        tzs.append(data);
     }
 
-    if (!subText.isEmpty()) {
-        subText.prepend("<table>");
-        subText.append("</table>");
+    qSort(tzs.begin(), tzs.end(), sortTzByData);
+    QDate currentDate;
+    foreach (const Plasma::DataEngine::Data &data, tzs) {
+        bool shouldHighlight = highlightLocal && (data["Timezone"].toString() == localTz);
+        currentDate = d->addTzToTipText(subText, data, currentDate, shouldHighlight);
     }
 
-    if (d->calendarWidget->dateHasDetails(tipDate)) {
-        subText.append("<br>").append(d->calendarWidget->dateDetails(tipDate).join("<br>"));
+    subText.append("</table>");
+
+    if (hasEvents) {
+        subText.append("<br /><br /><b>").append(i18n("Today's Events")).append("</b><br/>");
+        subText.append(d->calendarWidget->dateDetails(localDate).join("<br>"));
     }
 
     tipData.setSubText(subText);
@@ -289,7 +318,7 @@ void ClockApplet::updateTipContent()
 
     if (!customContent.mainText().isEmpty()) {
         // add their main text
-        tipData.setMainText(customContent.mainText() + "<br>" + tipData.mainText());
+        tipData.setMainText(customContent.mainText());
     }
 
     if (!customContent.subText().isEmpty()) {
@@ -526,7 +555,7 @@ void ClockApplet::launchTimeControlPanel()
 
 void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-    if (d->selectedTimezones.count() < 1) {
+    if (d->selectedTimezones.isEmpty()) {
         return;
     }
 
@@ -641,11 +670,6 @@ QString ClockApplet::currentTimezone() const
 QString ClockApplet::prettyTimezone() const
 {
     return d->prettyTimezone;
-}
-
-QStringList ClockApplet::getSelectedTimezones() const
-{
-    return d->selectedTimezones;
 }
 
 bool ClockApplet::isLocalTimezone() const
