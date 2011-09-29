@@ -58,6 +58,7 @@ signals:
 	void itemChanged(OutputGraphicsItem *item);
 
 private:
+        void calculateSetRect( OutputConfig* config );
 	OutputGraphicsItem *m_left;
 	OutputGraphicsItem *m_right;
 	OutputGraphicsItem *m_top;
