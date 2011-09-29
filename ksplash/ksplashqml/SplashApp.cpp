@@ -74,7 +74,7 @@ bool SplashApp::x11EventFilter(XEvent * xe)
             if (xe->xclient.message_type == m_kde_splash_progress) {
                 message = xe->xclient.data.b;
 
-                int stage;
+                int stage = -1;
 
                 if (strcmp(message, "initial") == 0 && m_stage < 0)
                     stage = 0; // not actually used

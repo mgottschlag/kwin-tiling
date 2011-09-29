@@ -24,6 +24,7 @@
 #include <QGraphicsObject>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QTimer>
 
 #include "SystemInfo.h"
 
@@ -37,13 +38,14 @@ SplashWindow::SplashWindow(bool testing)
             Qt::WindowStaysOnTopHint
         );
 
-    if (m_testing) {
-        setWindowState(Qt::WindowFullScreen);
-    }
+    setWindowState(Qt::WindowFullScreen);
 
     rootContext()->setContextProperty("screenSize", size());
     setSource(QUrl(themeDir(QApplication::arguments().at(1)) + "/main.qml"));
     setStyleSheet("background: #000000; border: none");
+    //be sure it will be eventually closed
+    //FIXME: should never be stuck
+    QTimer::singleShot(30000, this, SLOT(close()));
 }
 
 void SplashWindow::setStage(int stage)
