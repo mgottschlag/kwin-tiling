@@ -174,29 +174,25 @@ static void cleanup_sm()
 }
 #endif
 
-bool requestShutDown(
-    ShutdownConfirm confirm, ShutdownType sdtype, ShutdownMode sdmode )
+void requestShutDown(ShutdownConfirm confirm, ShutdownType sdtype, ShutdownMode sdmode)
 {
 #ifdef Q_WS_X11
-    QApplication::syncX();
-    kapp->updateRemoteUserTimestamp( "org.kde.ksmserver" );
     /*  use ksmserver's dcop interface if necessary  */
     if ( confirm == ShutdownConfirmYes ||
          sdtype != ShutdownTypeDefault ||
          sdmode != ShutdownModeDefault )
     {
         org::kde::KSMServerInterface ksmserver("org.kde.ksmserver", "/KSMServer", QDBusConnection::sessionBus());
-        QDBusReply<void> reply = ksmserver.logout((int)confirm,  (int)sdtype,  (int)sdmode);
-        return (reply.isValid());
+        ksmserver.logout((int)confirm,  (int)sdtype,  (int)sdmode);
+        return;
     }
+
     if( helper == NULL )
     {
         helper = new KRequestShutdownHelper();
         qAddPostRoutine(cleanup_sm);
     }
-    return helper->requestShutdown( confirm );
-#else
-    return false;
+    helper->requestShutdown( confirm );
 #endif
 }
 
