@@ -196,6 +196,17 @@ private Q_SLOTS:
         QTextStream out(&file);
         out << doc.toString();
     }
+    
+    void testRulesVersion() {
+    	QVERIFY(!rules->version.isEmpty());
+
+    	Rules* rules10 = Rules::readRules(QString("config/base.xml"));
+    	QCOMPARE(rules10->version, QString("1.0"));
+    	delete rules10;
+    	Rules* rules11 = Rules::readRules(QString("config/base.1.1.xml"));
+    	QCOMPARE(rules11->version, QString("1.1"));
+    	delete rules11;
+    }
 
     void loadRulesBenchmark() {
     	QBENCHMARK {
