@@ -171,9 +171,9 @@ KRunnerModel::KRunnerModel(QObject *parent)
         , d(new Private())
 {
     connect(runnerManager(),
-            SIGNAL(matchesChanged (const QList< Plasma::QueryMatch > & )),
+            SIGNAL(matchesChanged(QList<Plasma::QueryMatch>)),
             this,
-            SLOT(matchesChanged (const QList< Plasma::QueryMatch > & )));
+            SLOT(matchesChanged(QList<Plasma::QueryMatch>)));
 }
 
 KRunnerModel::~KRunnerModel()

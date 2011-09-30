@@ -26,6 +26,7 @@
 #include "FontInst.h"
 #include <KDE/KDebug>
 #include <kio/global.h>
+#include <QtDBus/QDBusServiceWatcher>
 #include "config-fontinst.h"
 
 #define KFI_DBUG kDebug(7000) << '(' << time(NULL) << ')'
@@ -41,11 +42,15 @@ FontInstInterface::FontInstInterface()
 {
     KFI_DBUG;
     FontInst::registerTypes();
-    connect(itsInterface->connection().interface(), SIGNAL(serviceOwnerChanged(QString, QString, QString)),
-            SLOT(dbusServiceOwnerChanged(QString, QString, QString)));
-    connect(itsInterface, SIGNAL(status(int, int)), SLOT(status(int, int)));
-    connect(itsInterface, SIGNAL(fontList(int, const QList<KFI::Families> &)), SLOT(fontList(int, const QList<KFI::Families> &)));
-    connect(itsInterface, SIGNAL(fontStat(int, const KFI::Family &)), SLOT(fontStat(int, const KFI::Family &)));
+    
+    QDBusServiceWatcher *watcher = new QDBusServiceWatcher(QLatin1String(OrgKdeFontinstInterface::staticInterfaceName()),
+                                                           QDBusConnection::sessionBus(),
+                                                           QDBusServiceWatcher::WatchForOwnerChange, this);
+
+    connect(watcher, SIGNAL(serviceOwnerChanged(QString,QString,QString)), SLOT(dbusServiceOwnerChanged(QString,QString,QString)));
+    connect(itsInterface, SIGNAL(status(int,int)), SLOT(status(int,int)));
+    connect(itsInterface, SIGNAL(fontList(int,QList<KFI::Families>)), SLOT(fontList(int,QList<KFI::Families>)));
+    connect(itsInterface, SIGNAL(fontStat(int,KFI::Family)), SLOT(fontStat(int,KFI::Family)));
     
     if (!QDBusConnection::sessionBus().interface()->isServiceRegistered(OrgKdeFontinstInterface::staticInterfaceName()))
         QProcess::startDetached(QLatin1String(KFONTINST_LIB_EXEC_DIR"/fontinst"));
@@ -73,7 +78,7 @@ int FontInstInterface::uninstall(const QString &name, bool fromSystem)
 int FontInstInterface::reconfigure()
 {
     KFI_DBUG;
-    itsInterface->reconfigure(getpid());
+    itsInterface->reconfigure(getpid(), false);
     return waitForResponse();
 }
 
@@ -103,6 +108,17 @@ Family FontInstInterface::stat(const QString &file, bool system)
     return rv;
 }
 
+QString FontInstInterface::folderName(bool sys)
+{
+    if(!itsInterface)
+        return QString();
+
+    QDBusPendingReply<QString> reply=itsInterface->folderName(sys);
+
+    reply.waitForFinished();
+    return reply.isError() ? QString() : reply.argumentAt<0>();
+}
+
 int FontInstInterface::waitForResponse()
 {
     KFI_DBUG;
@@ -117,7 +133,7 @@ int FontInstInterface::waitForResponse()
 
 void FontInstInterface::dbusServiceOwnerChanged(const QString &name, const QString &from, const QString &to)
 {
-    if(itsActive && to.isEmpty() && !from.isEmpty() && name==OrgKdeFontinstInterface::staticInterfaceName())
+    if(itsActive && to.isEmpty() && !from.isEmpty() && name==QLatin1String(OrgKdeFontinstInterface::staticInterfaceName()))
     {
         KFI_DBUG << "Service died :-(";
         itsStatus=FontInst::STATUS_SERVICE_DIED;

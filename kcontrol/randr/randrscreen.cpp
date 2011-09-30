@@ -38,7 +38,8 @@ RandRScreen::RandRScreen(int screenIndex)
 	m_activeCount = 0;
 
 	loadSettings();
-	load();
+	KConfig cfg("krandrrc");
+	load(cfg, true);
 
 	m_originalPrimaryOutput = primaryOutput();
 
@@ -127,8 +128,8 @@ void RandRScreen::loadSettings(bool notify)
 		{
 			kDebug() << "Creating CRTC object for XID" << m_resources->crtcs[i];
 			RandRCrtc *c = new RandRCrtc(this, m_resources->crtcs[i]);
-			connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SIGNAL(configChanged()));
-			connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SLOT(save()));
+			connect(c, SIGNAL(crtcChanged(RRCrtc,int)), this, SIGNAL(configChanged()));
+			connect(c, SIGNAL(crtcChanged(RRCrtc,int)), this, SLOT(save()));
 			c->loadSettings(notify);
 			m_crtcs[m_resources->crtcs[i]] = c;
 			changed = true;
@@ -144,8 +145,8 @@ void RandRScreen::loadSettings(bool notify)
 		{
 			kDebug() << "Creating output object for XID" << m_resources->outputs[i];
 			RandROutput *o = new RandROutput(this, m_resources->outputs[i]);
-			connect(o, SIGNAL(outputChanged(RROutput, int)), this,
-				      SLOT(slotOutputChanged(RROutput, int)));
+			connect(o, SIGNAL(outputChanged(RROutput,int)), this,
+				      SLOT(slotOutputChanged(RROutput,int)));
 			m_outputs[m_resources->outputs[i]] = o;
 			if (o->isConnected())
 				m_connectedCount++;
@@ -417,7 +418,7 @@ QRect RandRScreen::rect() const
 	return m_rect;
 }
 
-void RandRScreen::load(KConfig &config)
+void RandRScreen::load(KConfig& config, bool skipOutputs)
 {
 	KConfigGroup group = config.group("Screen_" + QString::number(m_index));
 	m_outputsUnified = group.readEntry("OutputsUnified", false);
@@ -427,6 +428,10 @@ void RandRScreen::load(KConfig &config)
 	m_unifiedRotation = group.readEntry("UnifiedRotation", (int) RandR::Rotate0);
 
 //	slotUnifyOutputs(m_outputsUnified);
+
+	if (skipOutputs) {
+		return;
+	}
 
 	foreach(RandROutput *output, m_outputs)
 	{
@@ -636,15 +641,8 @@ void RandRScreen::slotUnifyOutputs(bool unified)
 			return;
 		}
 
-		QSize s = m_unifiedRect.size();
-
-		// if the last size we used is not available, use the first one
-		// from the list
-		if (sizes.indexOf(s) == -1)
-			s = sizes[0];
-
 		m_unifiedRect.setTopLeft(QPoint(0,0));
-		m_unifiedRect.setSize(s);
+		m_unifiedRect.setSize(sizes.first());
 		unifyOutputs();
 	}
 }
@@ -676,11 +674,6 @@ void RandRScreen::slotOutputChanged(RROutput id, int changes)
 	// if there is less than 2 outputs connected, there is no need to unify
 	if (connected <= 1)
 		return;
-
-	// wait some time before checking the output configuration as some randr 
-	// clients do operations in more than one step
-	if(m_outputsUnified)
-		unifyOutputs();
 }
 
 #include "randrscreen.moc"

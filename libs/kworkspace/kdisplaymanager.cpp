@@ -124,8 +124,7 @@ KDisplayManager::KDisplayManager() : d(new Private)
             DMType = OldKDM;
         else if (::getenv("GDMSESSION")) {
             //lightDM identifies itself as GDM at the moment.
-            QDBusReply<bool> reply = QDBusConnection::systemBus().interface()->isServiceRegistered("org.lightdm.LightDisplayManager");
-            if (reply.isValid()) {
+            if (LightDMDBus().isValid()) {
                 DMType = LightDM;
             } else {
                 DMType = GDMFactory().isValid() ? NewGDM : OldGDM;

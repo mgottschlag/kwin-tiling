@@ -90,8 +90,8 @@ Gps::Gps(QObject* parent, const QVariantList& args)
     if (m_gpsdata) {
         kDebug() << "gpsd found.";
         m_gpsd = new Gpsd(m_gpsdata);
-        connect(m_gpsd, SIGNAL(dataReady(const Plasma::DataEngine::Data&)),
-                this, SIGNAL(setData(const Plasma::DataEngine::Data&)));
+        connect(m_gpsd, SIGNAL(dataReady(Plasma::DataEngine::Data)),
+                this, SIGNAL(setData(Plasma::DataEngine::Data)));
     } else {
         kDebug() << "gpsd not found";
     }

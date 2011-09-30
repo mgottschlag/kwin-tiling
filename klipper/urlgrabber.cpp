@@ -55,8 +55,8 @@ URLGrabber::URLGrabber(History* history):
     m_history(history)
 {
     m_myPopupKillTimer->setSingleShot( true );
-    connect( m_myPopupKillTimer, SIGNAL( timeout() ),
-             SLOT( slotKillPopupMenu() ));
+    connect( m_myPopupKillTimer, SIGNAL(timeout()),
+             SLOT(slotKillPopupMenu()));
 
     // testing
     /*

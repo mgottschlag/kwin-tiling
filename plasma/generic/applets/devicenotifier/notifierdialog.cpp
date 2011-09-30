@@ -148,12 +148,12 @@ void NotifierDialog::insertDevice(const QString &udi)
         unpluggable = (drive->isHotpluggable() || drive->isRemovable());
     }
     DeviceItem *devItem = new DeviceItem(udi, unpluggable);
-    connect(devItem, SIGNAL(leftActionActivated(DeviceItem *)), this, SLOT(leftActionActivated(DeviceItem *)));
-    connect(devItem, SIGNAL(actionActivated(DeviceItem *, const QString &, const QString &)),
-            this, SLOT(actionActivated(DeviceItem *, const QString &, const QString &)));
-    connect(devItem, SIGNAL(activated(DeviceItem *)), this, SLOT(deviceActivated(DeviceItem *)));
-    connect(devItem, SIGNAL(collapsed(DeviceItem *)), this, SLOT(deviceCollapsed(DeviceItem *)));
-    connect(devItem, SIGNAL(highlightActionItem(QGraphicsItem *)), this, SLOT(highlightDeviceAction(QGraphicsItem*)));
+    connect(devItem, SIGNAL(leftActionActivated(DeviceItem*)), this, SLOT(leftActionActivated(DeviceItem*)));
+    connect(devItem, SIGNAL(actionActivated(DeviceItem*,QString,QString)),
+            this, SLOT(actionActivated(DeviceItem*,QString,QString)));
+    connect(devItem, SIGNAL(activated(DeviceItem*)), this, SLOT(deviceActivated(DeviceItem*)));
+    connect(devItem, SIGNAL(collapsed(DeviceItem*)), this, SLOT(deviceCollapsed(DeviceItem*)));
+    connect(devItem, SIGNAL(highlightActionItem(QGraphicsItem*)), this, SLOT(highlightDeviceAction(QGraphicsItem*)));
     devItem->installEventFilter(this);
 
     devItem->setData(SolidUdiRole, udi);
@@ -168,22 +168,22 @@ void NotifierDialog::insertDevice(const QString &udi)
     if (device.is<Solid::OpticalDisc>()) {
         Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
         if (drive) {
-            connect(drive, SIGNAL(ejectRequested(const QString&)),
-                    this, SLOT(ejectRequested(const QString&)));
-            connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
-                    this, SLOT(storageEjectDone(Solid::ErrorType, QVariant , const QString &)));
+            connect(drive, SIGNAL(ejectRequested(QString)),
+                    this, SLOT(ejectRequested(QString)));
+            connect(drive, SIGNAL(ejectDone(Solid::ErrorType,QVariant,QString)),
+                    this, SLOT(storageEjectDone(Solid::ErrorType,QVariant,QString)));
         }
     } else if (device.is<Solid::StorageVolume>()) {
         Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
         if (access ) {
-            connect(access, SIGNAL(teardownRequested(const QString &)),
-                    this, SLOT(teardownRequested(const QString &)));
-            connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
-                    this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant , const QString &)));
-            connect(access, SIGNAL(setupRequested(const QString &)),
-                    this, SLOT(setupRequested(const QString &)));
-            connect(access, SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
-                    this, SLOT(storageSetupDone(Solid::ErrorType, QVariant , const QString &)));
+            connect(access, SIGNAL(teardownRequested(QString)),
+                    this, SLOT(teardownRequested(QString)));
+            connect(access, SIGNAL(teardownDone(Solid::ErrorType,QVariant,QString)),
+                    this, SLOT(storageTeardownDone(Solid::ErrorType,QVariant,QString)));
+            connect(access, SIGNAL(setupRequested(QString)),
+                    this, SLOT(setupRequested(QString)));
+            connect(access, SIGNAL(setupDone(Solid::ErrorType,QVariant,QString)),
+                    this, SLOT(storageSetupDone(Solid::ErrorType,QVariant,QString)));
         }
     }
 

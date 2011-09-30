@@ -72,9 +72,6 @@ Q_SIGNALS:
     void closeClicked();
     void addWidgetsRequested();
 
-public Q_SLOTS:
-    void immutabilityChanged(Plasma::ImmutabilityType type);
-
 protected:
     void focusInEvent(QFocusEvent *event);
 

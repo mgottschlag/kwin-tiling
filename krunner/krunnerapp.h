@@ -19,8 +19,6 @@
 #ifndef KRUNNERAPP_H
 #define KRUNNERAPP_H
 
-#include <kworkspace.h>
-
 #include <kuniqueapplication.h>
 #ifdef Q_WS_X11
 #include "saverengine.h"
@@ -37,7 +35,6 @@ namespace Plasma
 class KRunnerDialog;
 class KSystemActivityDialog;
 class StartupId;
-class PanelShadows;
 
 class KRunnerApp : public KUniqueApplication
 {
@@ -48,7 +45,6 @@ public:
     static KRunnerApp* self();
     ~KRunnerApp();
 
-    void logout( KWorkSpace::ShutdownConfirm confirm, KWorkSpace::ShutdownType sdtype );
     // The action collection of the active widget
     KActionCollection* actionCollection();
 
@@ -56,8 +52,6 @@ public:
 #ifdef Q_WS_X11
     SaverEngine& screensaver() { return m_saver; }
 #endif
-
-    bool hasCompositeManager() const;
 
 public Q_SLOTS:
     // DBUS interface. if you change these methods, you MUST run:
@@ -112,7 +106,6 @@ private:
     SaverEngine m_saver;
 #endif
     KRunnerDialog *m_interface;
-    PanelShadows *m_shadows;
     KSystemActivityDialog *m_tasks;
     StartupId *m_startupId;
     bool m_firstTime;

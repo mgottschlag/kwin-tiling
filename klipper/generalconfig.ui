@@ -26,20 +26,6 @@
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="kcfg_ReplayActionInHistory">
-     <property name="text">
-      <string>Replay actions on an item selected from history</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="kcfg_StripWhiteSpace">
-     <property name="text">
-      <string>Remove whitespace when executing actions</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QCheckBox" name="kcfg_IgnoreImages">
      <property name="text">
       <string>Ignore images</string>

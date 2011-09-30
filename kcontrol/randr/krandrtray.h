@@ -51,11 +51,11 @@ protected Q_SLOTS:
 	void slotPrefs();
 
 	void slotPrepareMenu();
+	void updateToolTip();
 
 private:
 	void populateMenu(KMenu* menu);
 	void populateLegacyMenu(KMenu* menu);
-	void updateToolTip();
 
 	// helper functions
 	QActionGroup *populateRotations(KMenu *menu, int rotations, int rotation);

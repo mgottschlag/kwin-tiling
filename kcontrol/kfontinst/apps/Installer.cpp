@@ -121,7 +121,7 @@ CInstaller::~CInstaller()
 
 }
 
-static KAboutData aboutData("kfontinst", 0, ki18n("Font Installer"), "1.0", ki18n("Simple font installer"),
+static KAboutData aboutData("kfontinst", KFI_CATALOGUE, ki18n("Font Installer"), "1.0", ki18n("Simple font installer"),
                             KAboutData::License_GPL, ki18n("(C) Craig Drummond, 2007"));
 
 int main(int argc, char **argv)

@@ -33,8 +33,8 @@ QsCompletionBox::QsCompletionBox(QWidget *parent)
         m_offset(0,0)
 {
     m_status = new QsStatusBar(this);
-    connect(model(), SIGNAL(rowsInserted(const QModelIndex &, int, int)), this, SLOT(slotRowsChanged(const QModelIndex &, int, int)));
-    connect(model(), SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(slotRowsChanged(const QModelIndex &, int, int)));
+    connect(model(), SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(slotRowsChanged(QModelIndex,int,int)));
+    connect(model(), SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(slotRowsChanged(QModelIndex,int,int)));
     connect(this, SIGNAL(currentRowChanged(int)), m_status, SLOT(slotCurrentRowChanged(int)));
 }
 

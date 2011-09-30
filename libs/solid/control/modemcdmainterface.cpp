@@ -80,8 +80,8 @@ void Solid::Control::ModemCdmaInterface::makeConnections(QObject * source)
     if (source) {
         QObject::connect(source, SIGNAL(signalQualityChanged(uint)),
                 this, SIGNAL(signalQualityChanged(uint)));
-        QObject::connect(source, SIGNAL(registrationStateChanged(const Solid::Control::ModemCdmaInterface::RegistrationState, const Solid::Control::ModemCdmaInterface::RegistrationState)),
-                this, SIGNAL(registrationStateChanged(const Solid::Control::ModemCdmaInterface::RegistrationState, const Solid::Control::ModemCdmaInterface::RegistrationState)));
+        QObject::connect(source, SIGNAL(registrationStateChanged(Solid::Control::ModemCdmaInterface::RegistrationState,Solid::Control::ModemCdmaInterface::RegistrationState)),
+                this, SIGNAL(registrationStateChanged(Solid::Control::ModemCdmaInterface::RegistrationState,Solid::Control::ModemCdmaInterface::RegistrationState)));
     }
 }
 

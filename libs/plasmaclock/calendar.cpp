@@ -39,6 +39,7 @@
 #include <KIcon>
 #include <KLineEdit>
 #include <KLocale>
+#include <KTextBrowser>
 #include <KIntSpinBox>
 #include <KConfigDialog>
 #include <KConfigGroup>
@@ -50,7 +51,6 @@
 #include <Plasma/SpinBox>
 #include <Plasma/TextBrowser>
 #include <Plasma/ToolButton>
-#include <Plasma/ToolTipManager>
 #include <Plasma/DataEngine>
 
 #include <kephal/screens.h>
@@ -75,11 +75,15 @@ class CalendarPrivate
               forward(0),
               calendarTable(0),
               dateText(0),
+              eventsDisplay(0),
               jumpToday(0),
               monthMenu(0),
-              weekSpinBox(0)
+              weekSpinBox(0),
+              separator(0)
         {
         }
+
+        bool addDateDetailsToDisplay(QString &html, const QDate &date);
 
         ToolButton *back;
         Plasma::Label *spacer0;
@@ -94,10 +98,13 @@ class CalendarPrivate
         ToolButton *jumpToday;
         QMenu *monthMenu;
         Plasma::SpinBox *weekSpinBox;
+        Plasma::Separator *separator;
+        QGraphicsLinearLayout *layout;
 };
 
 Calendar::Calendar(const QDate &date, QGraphicsWidget *parent)
-    : QGraphicsWidget(parent), d(new CalendarPrivate())
+    : QGraphicsWidget(parent),
+      d(new CalendarPrivate())
 {
     init(date);
 }
@@ -118,18 +125,18 @@ void Calendar::init(const QDate &initialDate)
 {
     setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(Qt::Horizontal, this);
-    QGraphicsLinearLayout *calendarLayout = new QGraphicsLinearLayout(Qt::Vertical, layout);
-    QGraphicsLinearLayout *hLayout = new QGraphicsLinearLayout(layout);
-    QGraphicsLinearLayout *layoutTools = new QGraphicsLinearLayout(layout);
+    d->layout = new QGraphicsLinearLayout(Qt::Horizontal, this);
+    QGraphicsLinearLayout *calendarLayout = new QGraphicsLinearLayout(Qt::Vertical, d->layout);
+    QGraphicsLinearLayout *hLayout = new QGraphicsLinearLayout(d->layout);
+    QGraphicsLinearLayout *layoutTools = new QGraphicsLinearLayout(d->layout);
 
     d->calendarTable = new CalendarTable(this);
     d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated()));
-    connect(d->calendarTable, SIGNAL(dateHovered(const QDate &)), this, SIGNAL(dateHovered(const QDate &)));
-    connect(d->calendarTable, SIGNAL(dateSelected(const QDate &)), this, SLOT(displayEvents(const QDate &)));
+    connect(d->calendarTable, SIGNAL(dateChanged(QDate)), this, SLOT(dateUpdated()));
+    connect(d->calendarTable, SIGNAL(dateHovered(QDate)), this, SIGNAL(dateHovered(QDate)));
+    connect(d->calendarTable, SIGNAL(dateSelected(QDate)), this, SLOT(displayEvents(QDate)));
     connect(d->calendarTable, SIGNAL(eventsChanged()), this, SLOT(displayEvents()));
-    connect(this, SIGNAL(dateHovered(const QDate &)), this, SLOT(displayEvents(const QDate &)));
+    connect(this, SIGNAL(dateHovered(QDate)), this, SLOT(displayEvents(QDate)));
 
     d->back = new Plasma::ToolButton(this);
     d->back->setText("<");
@@ -185,17 +192,10 @@ void Calendar::init(const QDate &initialDate)
     connect(d->weekSpinBox, SIGNAL(valueChanged(int)), this, SLOT(goToWeek(int)));
     layoutTools->addItem(d->weekSpinBox);
 
-    d->eventsDisplay = new Plasma::TextBrowser(this);
-
-    Plasma::Separator *separator = new Plasma::Separator(this);
-    separator->setOrientation(Qt::Vertical);
-
     calendarLayout->addItem(hLayout);
     calendarLayout->addItem(d->calendarTable);
     calendarLayout->addItem(layoutTools);
-    layout->addItem(calendarLayout);
-    layout->addItem(separator);
-    layout->addItem(d->eventsDisplay);
+    d->layout->addItem(calendarLayout);
 
     setDate(initialDate);
     displayEvents();
@@ -295,6 +295,11 @@ QStringList Calendar::holidaysRegions() const
     return calendarTable()->holidaysRegions();
 }
 
+bool Calendar::isDisplayingDateDetails() const
+{
+    return calendarTable()->displayHolidays() || calendarTable()->displayEvents();
+}
+
 bool Calendar::dateHasDetails(const QDate &date) const
 {
     return calendarTable()->dateHasDetails(date);
@@ -328,6 +333,11 @@ const QDate& Calendar::currentDate() const
 void Calendar::applyConfiguration(KConfigGroup cg)
 {
     calendarTable()->applyConfiguration(cg);
+    if (isDisplayingDateDetails()) {
+        setPreferredSize(440, 250);
+    } else {
+        setPreferredSize(220, 250);
+    }
 }
 
 void Calendar::writeConfiguration(KConfigGroup cg)
@@ -340,14 +350,15 @@ void Calendar::createConfigurationInterface(KConfigDialog *parent)
     calendarTable()->createConfigurationInterface(parent);
 }
 
-void Calendar::applyConfigurationInterface()
-{
-    calendarTable()->applyConfigurationInterface();
-}
-
 void Calendar::configAccepted(KConfigGroup cg)
 {
     calendarTable()->configAccepted(cg);
+    if (isDisplayingDateDetails()) {
+        setPreferredSize(440, 250);
+    } else {
+        setPreferredSize(220, 250);
+    }
+    displayEvents();
 }
 
 void Calendar::manualDateChange()
@@ -370,52 +381,57 @@ void Calendar::dateUpdated()
 
 void Calendar::displayEvents(const QDate &date)
 {
-    QString html;
-    QList<QDate> datesToProcess;
+    if (!isDisplayingDateDetails()) {
+        if (d->eventsDisplay) {
+            kDebug() << "deleting events display!";
+            delete d->eventsDisplay;
+            d->eventsDisplay = 0;
+            delete d->separator;
+            d->separator = 0;
+        }
+        return;
+    } else if (!d->eventsDisplay) {
+        d->separator = new Plasma::Separator(this);
+        d->separator->setOrientation(Qt::Vertical);
+        d->layout->addItem(d->separator);
 
-    if (dateHasDetails(date)) {
-        datesToProcess << date;
-    } else {
+        d->eventsDisplay = new Plasma::TextBrowser(this);
+        d->layout->addItem(d->eventsDisplay);
+    }
+
+    QString html;
+
+    if (d->addDateDetailsToDisplay(html, date) < 1) {
         QDate dt = calendarTable()->date();
         QDate end = calendarTable()->endDate();
 
         if (dt.isValid() && end.isValid()) {
             while (dt <= end) {
-                datesToProcess << dt;
+                d->addDateDetailsToDisplay(html, dt);
                 dt = dt.addDays(1);
             }
         }
     }
 
-    int processedDetails = 0;
-    const int detailsMax = 5;
-
-    foreach (const QDate &d, datesToProcess) {
-        if (dateHasDetails(d)) {
-            html += "<b>"+d.toString()+"</b>";
-            html += "<ul>";
-
-            QStringList details = dateDetails(d);
-            foreach (const QString &detail, details) {
-                if (processedDetails < detailsMax) {
-                    html += "<li>" + detail + "</li>";
-                    processedDetails++;
-                }
-            }
-
-            html+= "</ul>";
-        }
-
-        if (processedDetails >= detailsMax) {
-            break;
-        }
-    }
-
-    if (processedDetails == 0) {
-        html = "<p align=\"center\"><b>" + i18n("No upcoming events") + "</b></p>";
-    }
-
     d->eventsDisplay->setText(html);
+}
+
+bool CalendarPrivate::addDateDetailsToDisplay(QString &html, const QDate &date)
+{
+    if (!calendarTable->dateHasDetails(date)) {
+        return false;
+    }
+
+    html += "<b>" + calendarTable->calendar()->formatDate(date, KLocale::LongDate) + "</b>";
+    html += "<ul style='-qt-list-indent: 0;'>";
+
+    const QStringList details = calendarTable->dateDetails(date);
+    foreach (const QString &detail, details) {
+        html+= "<li style='margin-left: 2em;'>" + detail + "</li>";
+    }
+
+    html += "</ul>";
+    return true;
 }
 
 // Update the nav widgets to show the current date in the CalendarTable
@@ -423,7 +439,7 @@ void Calendar::refreshWidgets()
 {
     d->month->setText(calendar()->monthName(calendar()->month(date()), calendar()->year(date())));
     d->month->setMinimumSize(static_cast<QToolButton*>(d->month->widget())->sizeHint());
-    d->year->setText(calendar()->yearString(date()));
+    d->year->setText(calendar()->formatDate(date(), KLocale::Year, KLocale::LongNumber));
     d->dateText->setText(calendar()->formatDate(date(),  KLocale::ShortDate));
 
     // Block the signals to prevent changing the date again
@@ -436,7 +452,7 @@ void Calendar::refreshWidgets()
     // Block the signals to prevent changing the date again
     d->weekSpinBox->blockSignals(true);
     d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
-    d->weekSpinBox->setValue(calendar()->weekNumber(date()));
+    d->weekSpinBox->setValue(calendar()->week(date(), KLocale::IsoWeekNumber));
     d->weekSpinBox->blockSignals(false);
 }
 
@@ -463,8 +479,8 @@ void Calendar::nextYear()
 void Calendar::monthsPopup()
 {
     d->monthMenu->clear();
-    int year = calendar()->year(date());
-    int monthsInYear = calendar()->monthsInYear(date());
+    const int year = calendar()->year(date());
+    const int monthsInYear = calendar()->monthsInYear(date());
 
     for (int i = 1; i <= monthsInYear; i++){
         QAction *tmpAction = new QAction(calendar()->monthName(i, year), d->monthMenu);
@@ -503,7 +519,7 @@ void Calendar::monthTriggered()
 
 void Calendar::goToWeek(int newWeek)
 {
-    int currWeek = calendar()->weekNumber(date());
+    int currWeek = calendar()->week(date(), KLocale::IsoWeekNumber);
     int daysInWeek = calendar()->daysInWeek(date());
 
     setDate(calendar()->addDays(date(), (newWeek - currWeek) * daysInWeek));

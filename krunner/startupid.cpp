@@ -69,16 +69,16 @@ StartupId::StartupId( QWidget* parent, const char* name )
         kapp->installX11EventFilter( this );
         }
     update_timer.setSingleShot( true );
-    connect( &update_timer, SIGNAL( timeout()), SLOT( update_startupid()));
+    connect( &update_timer, SIGNAL(timeout()), SLOT(update_startupid()));
     connect( &startup_info,
-        SIGNAL( gotNewStartup( const KStartupInfoId&, const KStartupInfoData& )),
-        SLOT( gotNewStartup( const KStartupInfoId&, const KStartupInfoData& )));
+        SIGNAL(gotNewStartup(KStartupInfoId,KStartupInfoData)),
+        SLOT(gotNewStartup(KStartupInfoId,KStartupInfoData)));
     connect( &startup_info,
-        SIGNAL( gotStartupChange( const KStartupInfoId&, const KStartupInfoData& )),
-        SLOT( gotStartupChange( const KStartupInfoId&, const KStartupInfoData& )));
+        SIGNAL(gotStartupChange(KStartupInfoId,KStartupInfoData)),
+        SLOT(gotStartupChange(KStartupInfoId,KStartupInfoData)));
     connect( &startup_info,
-        SIGNAL( gotRemoveStartup( const KStartupInfoId&, const KStartupInfoData& )),
-        SLOT( gotRemoveStartup( const KStartupInfoId& )));
+        SIGNAL(gotRemoveStartup(KStartupInfoId,KStartupInfoData)),
+        SLOT(gotRemoveStartup(KStartupInfoId)));
     connect( selection_watcher, SIGNAL(newOwner(Window)), SLOT(newOwner()));
     connect( selection_watcher, SIGNAL(lostOwner()), SLOT(lostOwner()));
     active_selection = ( selection_watcher->owner() != None );
@@ -151,10 +151,10 @@ bool StartupId::x11Event( XEvent* e )
             if( startups.count() == 0 )
                 start_startupid( KDE_STARTUP_ICON );
             // 60(?) sec timeout - shouldn't be hopefully needed anyway, ksmserver should have it too
-            QTimer::singleShot( 60000, this, SLOT( finishKDEStartup()));
+            QTimer::singleShot( 60000, this, SLOT(finishKDEStartup()));
             }
         else if( strcmp( s, "ready" ) == 0 && kde_startup_status < StartupDone )
-            QTimer::singleShot( 2000, this, SLOT( finishKDEStartup()));
+            QTimer::singleShot( 2000, this, SLOT(finishKDEStartup()));
         }
     return false;
     }

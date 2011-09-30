@@ -48,6 +48,7 @@ class CFontFilter : public KLineEdit
         CRIT_STYLE,
         CRIT_FOUNDRY,
         CRIT_FONTCONFIG,
+        CRIT_FILETYPE,
         CRIT_FILENAME,
         CRIT_LOCATION,
         CRIT_WS,
@@ -58,18 +59,19 @@ class CFontFilter : public KLineEdit
     CFontFilter(QWidget *parent);
     virtual ~CFontFilter() { }
 
-    void setFoundries(const QSet<QString> &foundries);
+    void setFoundries(const QSet<QString> &currentFoundries);
 
     QSize sizeHint() const;
 
     Q_SIGNALS:
 
-    void criteriaChanged(int crit, qulonglong ws);
+    void criteriaChanged(int crit, qulonglong ws, const QStringList &ft);
 
     private Q_SLOTS:
 
     void filterChanged();
-    void wsChanged();
+    void ftChanged(const QString &ft);
+    void wsChanged(const QString &writingSystemName);
     void foundryChanged(const QString &foundry);
 
     private:
@@ -86,6 +88,7 @@ class CFontFilter : public KLineEdit
     QMenu                        *itsMenu;
     ECriteria                    itsCurrentCriteria;
     QFontDatabase::WritingSystem itsCurrentWs;
+    QStringList                  itsCurrentFileTypes;
     QPixmap                      itsPixmaps[NUM_CRIT];
     KAction                      *itsActions[NUM_CRIT];
     QActionGroup                 *itsActionGroup;

@@ -25,7 +25,6 @@
 #define __FC_H__
 
 #include <KDE/KUrl>
-#include <config-workspace.h>
 #include <fontconfig/fontconfig.h>
 #include "kfontinst_export.h"
 #include "KfiConstants.h"

@@ -66,8 +66,8 @@ SaverEngine::SaverEngine()
     m_serviceWatcher = new QDBusServiceWatcher(this);
     m_serviceWatcher->setConnection(QDBusConnection::sessionBus());
     m_serviceWatcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
-    connect(m_serviceWatcher, SIGNAL(serviceUnregistered(const QString&)),
-            this, SLOT(serviceUnregistered(const QString&)));
+    connect(m_serviceWatcher, SIGNAL(serviceUnregistered(QString)),
+            this, SLOT(serviceUnregistered(QString)));
 
     // Also receive updates triggered through the DBus (from powerdevil) see Bug #177123
     QStringList modules;
@@ -274,7 +274,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
         return false;
     }
     mLockProcess = new KProcess; // No parent, so it is not auto-deleted
-    connect(mLockProcess, SIGNAL(finished(int, QProcess::ExitStatus)),
+    connect(mLockProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
             SLOT(lockProcessExited()));
     *mLockProcess << path;
     switch( lock_type )

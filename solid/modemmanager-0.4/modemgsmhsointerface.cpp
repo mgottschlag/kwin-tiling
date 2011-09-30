@@ -33,10 +33,10 @@ MMModemGsmHsoInterface::MMModemGsmHsoInterface(const QString & path, MMModemMana
     : MMModemInterface(*new MMModemGsmHsoInterfacePrivate(path, this), manager, parent)
 {
     Q_D(const MMModemGsmHsoInterface);
-    connect( &d->modemGsmHsoIface, SIGNAL(smsReceived(uint, bool)),
-                this, SIGNAL(smsReceived(int, bool)));
-    connect( &d->modemGsmHsoIface, SIGNAL(completed(uint, bool)),
-                this, SIGNAL(completed(int, bool)));
+    connect( &d->modemGsmHsoIface, SIGNAL(smsReceived(uint,bool)),
+                this, SIGNAL(smsReceived(int,bool)));
+    connect( &d->modemGsmHsoIface, SIGNAL(completed(uint,bool)),
+                this, SIGNAL(completed(int,bool)));
 }
 
 MMModemGsmHsoInterface::~MMModemGsmHsoInterface()

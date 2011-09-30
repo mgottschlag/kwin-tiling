@@ -110,10 +110,8 @@ namespace KWorkSpace
    * ShutdownConfirm
    * @param sdtype The action to take after logging out. ShutdownType
    * @param sdmode If/When the action should be taken. ShutdownMode
-   * @return true on success, false if the session manager could not be
-   * contacted.
    */
-  KDE_EXPORT bool requestShutDown( ShutdownConfirm confirm = ShutdownConfirmDefault,
+  KDE_EXPORT void requestShutDown( ShutdownConfirm confirm = ShutdownConfirmDefault,
                                    ShutdownType    sdtype  = ShutdownTypeDefault,
                                    ShutdownMode    sdmode  = ShutdownModeDefault );
 
@@ -146,6 +144,15 @@ namespace KWorkSpace
    * are kdesktop or kicker.
    */
    KDE_EXPORT void propagateSessionManager();
+
+   /**
+    * This function should be called at startup to prevent heap fragmentation
+    * in applications that perform many low-level pixmap operations (e.g. kwin).
+    *
+    * It lowers the threshold above which the glibc returns the memory to the kernel
+    * from 120 kB of free space at the end of the heap to 5*pagesize (= 20 kB for x86-64).
+    */
+   KDE_EXPORT void trimMalloc();
 
 }
 

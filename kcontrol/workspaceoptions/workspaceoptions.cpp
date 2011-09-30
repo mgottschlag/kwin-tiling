@@ -22,11 +22,12 @@
 
 #include <QDBusInterface>
 
-#include <kmessagebox.h>
-#include <kpluginfactory.h>
-#include <kaboutdata.h>
-#include <KStandardDirs>
+#include <KDebug>
+#include <KAboutData>
+#include <KMessageBox>
+#include <KPluginFactory>
 #include <KRun>
+#include <KStandardDirs>
 #include <KUrl>
 
 using namespace KAuth;
@@ -177,7 +178,6 @@ void WorkspaceOptionsModule::save()
         desktopFlipSwitchTabbox = kwinFlipSwitchCg.readEntry("TabBox", desktopFlipSwitchTabbox);
         ownFlipSwitchCg.writeEntry( "DesktopTabBox", desktopFlipSwitchTabbox );
         ownFlipSwitchCg.sync();
-
     } else {
         //save the user preferences on titlebar buttons
         netbookTitleBarButtonsLeft = kwinStyleCg.readEntry("ButtonsOnLeft", "MS");
@@ -216,6 +216,7 @@ void WorkspaceOptionsModule::save()
         ownFlipSwitchCg.writeEntry( "NetbookTabBox", netbookFlipSwitchTabbox );
         ownFlipSwitchCg.sync();
     }
+
     ownButtonsCg.sync();
     ownPresentWindowsCg.sync();
     ownCompositingCg.sync();
@@ -285,21 +286,37 @@ void WorkspaceOptionsModule::save()
     if (isDesktop && !m_currentlyIsDesktop) {
         if (KRun::run("plasma-desktop", KUrl::List(), 0)) {
             QDBusInterface interface("org.kde.plasma-netbook", "/MainApplication");
-            interface.call("quit");
+            interface.call(QDBus::NoBlock, "quit");
             KRun::run("krunner", KUrl::List(), 0);
         }
     } else if (!isDesktop && m_currentlyIsDesktop) {
         if (KRun::run("plasma-netbook", KUrl::List(), 0)) {
             QDBusInterface interface("org.kde.plasma-desktop", "/MainApplication");
-            interface.call("quit");
+            interface.call(QDBus::NoBlock, "quit");
             QDBusInterface krunnerInterface("org.kde.krunner", "/MainApplication");
-            krunnerInterface.call("quit");
+            krunnerInterface.call(QDBus::NoBlock, "quit");
         }
     }
     m_currentlyIsDesktop = isDesktop;
 
-    QDBusInterface interface("org.kde.plasma-desktop", "/App");
-    interface.call("setFixedDashboard", (m_ui->dashboardMode->currentIndex() == 1));
+    const bool fixedDashboard = m_ui->dashboardMode->currentIndex() == 1;
+    if (m_currentlyFixedDashboard != fixedDashboard) {
+        // confirm with th euser that this is really the change they want if going from
+        // separate-dashboard back to dashboard-follows-desktop
+        const QString message = i18n("Turning off the show independent widget set feature will "
+                                     "result in all widgets that were on the dashboard to be removed. "
+                                     "Are you sure you wish to make this change?");
+        if (!m_currentlyFixedDashboard ||
+            KMessageBox::Yes == KMessageBox::warningYesNo(this, message, i18n("Turn off independent widgets?"),
+                                                          KGuiItem(i18n("Turn off independent widgets")),
+                                                          KStandardGuiItem::cancel())) {
+            QDBusInterface interface("org.kde.plasma-desktop", "/App");
+            interface.call(QDBus::NoBlock, "setFixedDashboard", fixedDashboard);
+            m_currentlyFixedDashboard = fixedDashboard;
+        } else {
+            m_ui->dashboardMode->setCurrentIndex(m_currentlyFixedDashboard ? 1 : 0);
+        }
+    }
 }
 
 void WorkspaceOptionsModule::load()
@@ -313,17 +330,13 @@ void WorkspaceOptionsModule::load()
     m_currentlyIsDesktop = m_plasmaDesktopAutostart.autostarts();
 
     QDBusInterface interface("org.kde.plasma-desktop", "/App");
-    bool fixedDashboard = false;
+    m_currentlyFixedDashboard = false;
 
     if (interface.isValid()) {
-        fixedDashboard = interface.call("fixedDashboard").arguments().first().toBool();
+        m_currentlyFixedDashboard = interface.call("fixedDashboard").arguments().first().toBool();
     }
 
-    if (fixedDashboard) {
-        m_ui->dashboardMode->setCurrentIndex(1);
-    } else {
-        m_ui->dashboardMode->setCurrentIndex(0);
-    }
+    m_ui->dashboardMode->setCurrentIndex(m_currentlyFixedDashboard ? 1 : 0);
 
     KConfig config("plasmarc");
     KConfigGroup cg(&config, "PlasmaToolTips");

@@ -51,7 +51,7 @@ public:
 
     void setCalendar(const QString &newCalendarType = "locale");
     void setCalendar(const KCalendarSystem *calendar);
-    const KCalendarSystem *calendar () const;
+    const KCalendarSystem *calendar() const;
 
     void setDate(const QDate &date);
     const QDate& date() const;
@@ -60,6 +60,7 @@ public:
     void addHolidaysRegion(const QString &regionCode, bool daysOff);
     QStringList holidaysRegions() const;
 
+    bool isDisplayingDateDetails() const;
     bool dateHasDetails(const QDate &date) const;
     QStringList dateDetails(const QDate &date) const;
 
@@ -72,7 +73,6 @@ public:
     void applyConfiguration(KConfigGroup cg);
     void writeConfiguration(KConfigGroup cg);
     void createConfigurationInterface(KConfigDialog *parent);
-    void applyConfigurationInterface();
     void configAccepted(KConfigGroup cg);
 
 Q_SIGNALS:

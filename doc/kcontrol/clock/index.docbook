@@ -47,6 +47,18 @@ you the current settings, but your changes will not be saved.</para></note>
 to select a <guilabel>Time server</guilabel> from the drop down box and all other 
 settings in this dialog are disabled.</para>
 
+<note>
+<para>The applications <command>rdate</command> or <command>ntpdate</command> are used in  
+this module to fetch date and time from a time server. This happens when you log in to &kde;
+while being online or when you later connect to the Internet and access to time 
+servers is possible.</para> 
+<para>Both applications are simple <acronym>NTP</acronym> clients that set a system's clock 
+to match the time obtained by communicating with one or more <acronym>NTP</acronym> servers. 
+This is not sufficient, however, for maintaining an accurate clock in the long run. 
+This is useful for occasionally setting the time on machines that do not have full-time 
+network access, such as laptops.</para>
+</note>
+
 <para>If you do not use a time server, you are able to set the date manually 
 using the lower half of the tab.  Simply
 choose your month and year using the controls at the top of the calendar

@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <assert.h>
 #include <limits.h>
+#include <netwm.h>
 
 class KLibrary;
 class KConfigGroup;
@@ -166,7 +167,7 @@ X-KDE-Library=kwin4_effect_cooleffect
 
 #define KWIN_EFFECT_API_MAKE_VERSION( major, minor ) (( major ) << 8 | ( minor ))
 #define KWIN_EFFECT_API_VERSION_MAJOR 0
-#define KWIN_EFFECT_API_VERSION_MINOR 180
+#define KWIN_EFFECT_API_VERSION_MINOR 181
 #define KWIN_EFFECT_API_VERSION KWIN_EFFECT_API_MAKE_VERSION( \
         KWIN_EFFECT_API_VERSION_MAJOR, KWIN_EFFECT_API_VERSION_MINOR )
 
@@ -447,6 +448,23 @@ public:
 
     virtual bool borderActivated(ElectricBorder border);
 
+    /**
+     * Overwrite this method to indicate whether your effect will be doing something in
+     * the next frame to be rendered. If the method returns @c false the effect will be
+     * excluded from the chained methods in the next rendered frame.
+     *
+     * This method is called always directly before the paint loop begins. So it is totally
+     * fine to e.g. react on a window event, issue a repaint to trigger an animation and
+     * change a flag to indicate that this method returns @c true.
+     *
+     * As the method is called each frame, you should not perform complex calculations.
+     * Best use just a boolean flag.
+     *
+     * The default implementation of this method returns @c true.
+     * @since 4.8
+     **/
+    virtual bool isActive() const;
+
     static int displayWidth();
     static int displayHeight();
     static QPoint cursorPos();
@@ -580,6 +598,7 @@ public:
     virtual void paintEffectFrame(EffectFrame* frame, QRegion region, double opacity, double frameOpacity) = 0;
     virtual void drawWindow(EffectWindow* w, int mask, QRegion region, WindowPaintData& data) = 0;
     virtual void buildQuads(EffectWindow* w, WindowQuadList& quadList) = 0;
+    virtual QVariant kwinOption(KWinOption kwopt) = 0;
     // Functions for handling input - e.g. when an Expose-like effect is shown, an input window
     // covering the whole screen is created and all mouse events will be intercepted by it.
     // The effect's windowInputMouseEvent() will get called with such events.
@@ -739,7 +758,6 @@ public:
 
     CompositingType compositingType() const;
     virtual unsigned long xrenderBufferPicture() = 0;
-    bool saturationSupported() const;
     virtual void reconfigure() = 0;
 
     /**
@@ -1023,10 +1041,6 @@ protected:
     QHash< QString, KLibrary* > effect_libraries;
     QList< InputWindowPair > input_windows;
     //QHash< QString, EffectFactory* > effect_factories;
-    int current_paint_screen;
-    int current_paint_window;
-    int current_draw_window;
-    int current_build_quads;
     CompositingType compositing_type;
 };
 
@@ -1136,11 +1150,6 @@ public:
      */
     virtual bool isToolbar() const = 0;
     /**
-     * Returns whether the window is standalone menubar (AKA macmenu).
-     * This window type is a KDE extension.
-     */
-    virtual bool isTopMenu() const = 0;
-    /**
      * Returns whether the window is a torn-off menu.
      * See _NET_WM_WINDOW_TYPE_MENU at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
      */
@@ -1204,6 +1213,11 @@ public:
      * See _NET_WM_WINDOW_TYPE_DND at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
      */
     virtual bool isDNDIcon() const = 0;
+    /**
+     * Returns the NETWM window type
+     * See http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    virtual NET::WindowType windowType() const = 0;
     /**
      * Returns whether the window is managed by KWin (it has control over its placement and other
      * aspects, as opposed to override-redirect windows that are entirely handled by the application).
@@ -1332,7 +1346,7 @@ public:
     WindowQuadList select(WindowQuadType type) const;
     WindowQuadList filterOut(WindowQuadType type) const;
     bool smoothNeeded() const;
-    void makeArrays(float** vertices, float** texcoords) const;
+    void makeArrays(float** vertices, float** texcoords, const QSizeF &size, bool yInverted) const;
     bool isTransformed() const;
 };
 
@@ -1534,6 +1548,7 @@ public:
         return m_target;
     }
     inline void setTarget(const T target) {
+        m_start = m_value;
         m_target = target;
     }
     inline T velocity() const {
@@ -1554,6 +1569,9 @@ public:
     }
     inline void setSmoothness(const double smoothness) {
         m_smoothness = smoothness;
+    }
+    inline T startValue() {
+        return m_start;
     }
 
     /**
@@ -1576,7 +1594,7 @@ public:
 
 private:
     T m_value;
-
+    T m_start;
     T m_target;
     T m_velocity;
     double m_strength;
@@ -1735,14 +1753,14 @@ public:
      * Returns whether or not a specified window is being managed
      * by this manager object.
      */
-    inline bool isManaging(EffectWindow *w) {
+    inline bool isManaging(EffectWindow *w) const {
         return m_managedWindows.contains(w);
     }
     /**
      * Returns whether or not this manager object is actually
      * managing any windows or not.
      */
-    inline bool managingWindows() {
+    inline bool managingWindows() const {
         return !m_managedWindows.empty();
     }
     /**
@@ -1750,8 +1768,15 @@ public:
      * or not. Can be used to see if an effect should be
      * processed and displayed or not.
      */
-    inline bool areWindowsMoving() {
+    inline bool areWindowsMoving() const {
         return !m_movingWindowsSet.isEmpty();
+    }
+    /**
+     * Returns whether a window has reached its targets yet
+     * or not.
+     */
+    inline bool isWindowMoving(EffectWindow *w) const {
+        return m_movingWindowsSet.contains(w);
     }
 
 private:
@@ -2067,6 +2092,7 @@ double WindowQuad::originalBottom() const
 template <typename T>
 Motion<T>::Motion(T initial, double strength, double smoothness)
     :   m_value(initial)
+    ,   m_start(initial)
     ,   m_target(initial)
     ,   m_velocity()
     ,   m_strength(strength)
@@ -2077,6 +2103,7 @@ Motion<T>::Motion(T initial, double strength, double smoothness)
 template <typename T>
 Motion<T>::Motion(const Motion &other)
     :   m_value(other.value())
+    ,   m_start(other.target())
     ,   m_target(other.target())
     ,   m_velocity(other.velocity())
     ,   m_strength(other.strength())

@@ -36,15 +36,15 @@ DBusAPIOutputs::DBusAPIOutputs(QObject * parent)
     const bool result = dbus.registerObject("/modules/kephal/Outputs", this);
     kDebug() << "outputs registered on the bus:" << result;
 
-    connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnectedSlot(Kephal::Output *)));
-    connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output *)), this, SLOT(outputDisconnectedSlot(Kephal::Output *)));
-    connect(Outputs::self(), SIGNAL(outputActivated(Kephal::Output *)), this, SLOT(outputActivatedSlot(Kephal::Output *)));
-    connect(Outputs::self(), SIGNAL(outputDeactivated(Kephal::Output *)), this, SLOT(outputDeactivatedSlot(Kephal::Output *)));
-    connect(Outputs::self(), SIGNAL(outputResized(Kephal::Output *, QSize, QSize)), this, SLOT(outputResizedSlot(Kephal::Output *, QSize, QSize)));
-    connect(Outputs::self(), SIGNAL(outputMoved(Kephal::Output *, QPoint, QPoint)), this, SLOT(outputMovedSlot(Kephal::Output *, QPoint, QPoint)));
-    connect(Outputs::self(), SIGNAL(outputRotated(Kephal::Output *, Kephal::Rotation, Kephal::Rotation)), this, SLOT(outputRotatedSlot(Kephal::Output *, Kephal::Rotation, Kephal::Rotation)));
-    connect(Outputs::self(), SIGNAL(outputRateChanged(Kephal::Output *, float, float)), this, SLOT(outputRateChangedSlot(Kephal::Output *, float, float)));
-    connect(Outputs::self(), SIGNAL(outputReflected(Kephal::Output *, bool, bool, bool, bool)), this, SLOT(outputReflectedSlot(Kephal::Output *, bool, bool, bool, bool)));
+    connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output*)), this, SLOT(outputConnectedSlot(Kephal::Output*)));
+    connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output*)), this, SLOT(outputDisconnectedSlot(Kephal::Output*)));
+    connect(Outputs::self(), SIGNAL(outputActivated(Kephal::Output*)), this, SLOT(outputActivatedSlot(Kephal::Output*)));
+    connect(Outputs::self(), SIGNAL(outputDeactivated(Kephal::Output*)), this, SLOT(outputDeactivatedSlot(Kephal::Output*)));
+    connect(Outputs::self(), SIGNAL(outputResized(Kephal::Output*,QSize,QSize)), this, SLOT(outputResizedSlot(Kephal::Output*,QSize,QSize)));
+    connect(Outputs::self(), SIGNAL(outputMoved(Kephal::Output*,QPoint,QPoint)), this, SLOT(outputMovedSlot(Kephal::Output*,QPoint,QPoint)));
+    connect(Outputs::self(), SIGNAL(outputRotated(Kephal::Output*,Kephal::Rotation,Kephal::Rotation)), this, SLOT(outputRotatedSlot(Kephal::Output*,Kephal::Rotation,Kephal::Rotation)));
+    connect(Outputs::self(), SIGNAL(outputRateChanged(Kephal::Output*,float,float)), this, SLOT(outputRateChangedSlot(Kephal::Output*,float,float)));
+    connect(Outputs::self(), SIGNAL(outputReflected(Kephal::Output*,bool,bool,bool,bool)), this, SLOT(outputReflectedSlot(Kephal::Output*,bool,bool,bool,bool)));
 }
 
 QSize DBusAPIOutputs::size(QString id)

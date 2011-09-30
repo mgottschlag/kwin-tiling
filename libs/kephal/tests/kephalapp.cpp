@@ -81,14 +81,14 @@ void KephalApp::run() {
     connect(QApplication::desktop(), SIGNAL(screenCountChanged(int)), SLOT(qdwScreenCountChanged(int)));
     connect(QApplication::desktop(), SIGNAL(workAreaResized(int)), SLOT(qdwWorkAreaResized(int)));
 
-    connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)),
-            this, SLOT(screenMoved(Kephal::Screen *, QPoint, QPoint)));
-    connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
-            this, SLOT(screenResized(Kephal::Screen *, QSize, QSize)));
+    connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)),
+            this, SLOT(screenMoved(Kephal::Screen*,QPoint,QPoint)));
+    connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)),
+            this, SLOT(screenResized(Kephal::Screen*,QSize,QSize)));
     connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)),
             this, SLOT(screenRemoved(int)));
-    connect(Kephal::Screens::self(), SIGNAL(screenAdded(Kephal::Screen *)),
-            this, SLOT(screenAdded(Kephal::Screen *)));
+    connect(Kephal::Screens::self(), SIGNAL(screenAdded(Kephal::Screen*)),
+            this, SLOT(screenAdded(Kephal::Screen*)));
 }
 
 void KephalApp::screenMoved(Kephal::Screen * s, QPoint o, QPoint n)

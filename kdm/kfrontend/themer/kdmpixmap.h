@@ -28,7 +28,7 @@
 #include <QPixmap>
 
 class QSignalMapper;
-class KSvgRenderer;
+class QSvgRenderer;
 
 /*
  * KdmPixmap. A pixmap element
@@ -59,7 +59,7 @@ protected:
                   aspectMode(Qt::IgnoreAspectRatio) {}
             QString fullpath;
             QImage image;
-            KSvgRenderer *svgRenderer;
+            QSvgRenderer *svgRenderer;
             QPixmap readyPixmap;
             QRect targetArea;
             QColor tint;

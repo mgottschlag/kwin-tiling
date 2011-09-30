@@ -69,7 +69,7 @@ void ShowActivityManager::showManager()
     QDBusConnection::sessionBus().call(message, QDBus::NoBlock);
 }
 
-K_EXPORT_PLASMA_APPLET(org.kde.showActivityManager, ShowActivityManager)
+K_EXPORT_PLASMA_APPLET(showactivitymanager, ShowActivityManager)
 
 #include "showActivityManager.moc"
 

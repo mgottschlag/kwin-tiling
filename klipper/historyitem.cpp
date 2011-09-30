@@ -123,3 +123,4 @@ void HistoryItem::insertBetweeen(HistoryItem* before, HistoryItem* after)
     Q_ASSERT(after->uuid() != uuid());
 #endif
 }
+

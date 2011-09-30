@@ -80,7 +80,7 @@ KRunnerConfigWidget::KRunnerConfigWidget(Plasma::RunnerManager *manager, QWidget
 
     m_tabWidget->addTab(m_generalSettings, i18n("User Interface"));
 
-    connect(m_sel, SIGNAL(configCommitted(const QByteArray&)), this, SLOT(updateRunner(const QByteArray&)));
+    connect(m_sel, SIGNAL(configCommitted(QByteArray)), this, SLOT(updateRunner(QByteArray)));
 
     m_sel->addPlugins(Plasma::RunnerManager::listRunnerInfo(),
                       KPluginSelector::ReadConfigFile,

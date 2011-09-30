@@ -115,7 +115,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent)
 
     puserlb = new KComboBox(true, puGroup);
 
-    connect(puserlb, SIGNAL(editTextChanged(const QString &)), SIGNAL(changed()));
+    connect(puserlb, SIGNAL(editTextChanged(QString)), SIGNAL(changed()));
     wtstr = i18n(
         "Select the user to be preselected for login. "
         "This box is editable, so you can specify an arbitrary non-existent "
@@ -191,12 +191,12 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent)
     main->setColumnStretch(1, 2);
     main->setRowStretch(3, 1);
 
-    connect(userlb, SIGNAL(activated(const QString &)),
-            SLOT(slotSetAutoUser(const QString &)));
-    connect(puserlb, SIGNAL(editTextChanged(const QString &)),
-            SLOT(slotSetPreselUser(const QString &)));
-    connect(npuserlv, SIGNAL(itemClicked(QListWidgetItem *)),
-            SLOT(slotUpdateNoPassUser(QListWidgetItem *)));
+    connect(userlb, SIGNAL(activated(QString)),
+            SLOT(slotSetAutoUser(QString)));
+    connect(puserlb, SIGNAL(editTextChanged(QString)),
+            SLOT(slotSetPreselUser(QString)));
+    connect(npuserlv, SIGNAL(itemClicked(QListWidgetItem*)),
+            SLOT(slotUpdateNoPassUser(QListWidgetItem*)));
 
 }
 

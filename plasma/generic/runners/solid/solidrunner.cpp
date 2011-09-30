@@ -74,10 +74,10 @@ void SolidRunner::init()
   m_solidDeviceEngine = dataEngine("soliddevice");
 
   //connect to engine when a device is plugged
-  connect(m_hotplugEngine, SIGNAL(sourceAdded(const QString&)),
-          this, SLOT(onSourceAdded(const QString&)));
-  connect(m_hotplugEngine, SIGNAL(sourceRemoved(const QString&)),
-          this, SLOT(onSourceRemoved(const QString&)));
+  connect(m_hotplugEngine, SIGNAL(sourceAdded(QString)),
+          this, SLOT(onSourceAdded(QString)));
+  connect(m_hotplugEngine, SIGNAL(sourceRemoved(QString)),
+          this, SLOT(onSourceRemoved(QString)));
   fillPreviousDevices();
 }
 
@@ -250,9 +250,9 @@ void SolidRunner::refreshMatch(QString &id)
 void SolidRunner::onSourceAdded(const QString &name)
 {
     DeviceWrapper * device = new DeviceWrapper(name);
-    connect(device, SIGNAL(registerAction(QString &, QString , QString, QString )),
-            this,  SLOT(registerAction(QString &, QString, QString, QString)));
-    connect(device, SIGNAL(refreshMatch(QString &)), this, SLOT(refreshMatch(QString &)));
+    connect(device, SIGNAL(registerAction(QString&,QString,QString,QString)),
+            this,  SLOT(registerAction(QString&,QString,QString,QString)));
+    connect(device, SIGNAL(refreshMatch(QString&)), this, SLOT(refreshMatch(QString&)));
 
     m_deviceList.insert(name, device);
     m_udiOrderedList << name;

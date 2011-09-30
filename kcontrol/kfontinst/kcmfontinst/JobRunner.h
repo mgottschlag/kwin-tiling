@@ -31,7 +31,6 @@
 class QLabel;
 class QProgressBar;
 class QStackedWidget;
-class QEventLoop;
 class QCloseEvent;
 class QCheckBox;
 class KJob;
@@ -58,12 +57,13 @@ class CJobRunner : public KDialog
             OTHER_FONT
         };
 
-        Item(const KUrl &u=KUrl(), const QString &n=QString());
+        Item(const KUrl &u=KUrl(), const QString &n=QString(), bool dis=false);
         Item(const QString &file, const QString &family, quint32 style, bool system);
         QString displayName() const { return name.isEmpty() ? prettyUrl() : name; }
         QString name,
                 fileName;  // Only required so that we can sort an ItemList so that afm/pfms follow after pfa/pfbs
         EType   type;
+        bool    isDisabled;
 
         bool operator<(const Item &o) const;
     };
@@ -85,6 +85,7 @@ class CJobRunner : public KDialog
     ~CJobRunner();
 
     static FontInstInterface * dbus();
+    static QString             folderName(bool sys);
     static void startDbusService();
 
     static KUrl encode(const QString &family, quint32 style, bool system);
@@ -106,6 +107,7 @@ class CJobRunner : public KDialog
 
     private:
 
+    void    contineuToNext(bool cont);
     void    closeEvent(QCloseEvent *e);
     void    setPage(int page, const QString &msg=QString());
     QString fileName(const KUrl &url);
@@ -130,8 +132,7 @@ class CJobRunner : public KDialog
     QString                 itsCurrentFile;
     CActionLabel            *itsActionLabel;
     QStackedWidget          *itsStack;
-    int                     itsResponse;
-    QEventLoop              *itsLoop;
+    int                     itsLastDBusStatus;
     QCheckBox               *itsDontShowFinishedMsg;
 };
 

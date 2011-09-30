@@ -120,9 +120,9 @@ private:
     QTimer *m_criticalBatteryTimer;
 
     // Idle time management
-    QHash< int, int > m_registeredIdleTimeouts;
     QHash< Action*, QList< int > > m_registeredActionTimeouts;
     QList< Action* > m_pendingResumeFromIdleActions;
+    bool m_pendingWakeupEvent;
 
 private Q_SLOTS:
     void onBackendReady();

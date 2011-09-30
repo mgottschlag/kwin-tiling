@@ -178,6 +178,14 @@ void GLSLBlurShader::setTextureMatrix(const QMatrix4x4 &matrix)
     shader->setUniform("u_textureMatrix", matrix);
 }
 
+void GLSLBlurShader::setModelViewProjectionMatrix(const QMatrix4x4 &matrix)
+{
+    if (!isValid()) {
+        return;
+    }
+    shader->setUniform("u_modelViewProjectionMatrix", matrix);
+}
+
 void GLSLBlurShader::bind()
 {
     if (!isValid())
@@ -193,13 +201,13 @@ void GLSLBlurShader::unbind()
 
 int GLSLBlurShader::maxKernelSize() const
 {
-    int value;
 #ifdef KWIN_HAVE_OPENGLES
     // GL_MAX_VARYING_FLOATS not available in GLES
     // querying for GL_MAX_VARYING_VECTORS crashes on nouveau
     // using the minimum value of 8
     return 8 * 2;
 #else
+    int value;
     glGetIntegerv(GL_MAX_VARYING_FLOATS, &value);
     // Maximum number of vec4 varyings * 2
     // The code generator will pack two vec2's into each vec4.

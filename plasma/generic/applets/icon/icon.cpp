@@ -145,7 +145,7 @@ void IconApplet::setUrl(const KUrl& url)
     if (m_url.isLocalFile()) {
         m_watcher = new KDirWatch;
         m_watcher->addFile(m_url.toLocalFile());
-        connect(m_watcher, SIGNAL(deleted(const QString &)), this, SLOT(delayedDestroy()));
+        connect(m_watcher, SIGNAL(deleted(QString)), this, SLOT(delayedDestroy()));
     }
 
     if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
@@ -159,7 +159,7 @@ void IconApplet::setUrl(const KUrl& url)
 
         m_genericName = f.readGenericName();
 
-        connect(m_watcher, SIGNAL(dirty(const QString &)), this, SLOT(updateDesktopFile()));
+        connect(m_watcher, SIGNAL(dirty(QString)), this, SLOT(updateDesktopFile()));
     } else {
         m_text = m_url.fileName();
         m_service = KService::serviceByStorageId(m_text);

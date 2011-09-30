@@ -125,7 +125,7 @@ void RandRScreen::loadSettings(bool notify)
             kDebug() << "adding crtc: " << crtc;
             RandRCrtc *c = new RandRCrtc(this, crtc);
             c->loadSettings(notify);
-            connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SIGNAL(configChanged()));
+            connect(c, SIGNAL(crtcChanged(RRCrtc,int)), this, SIGNAL(configChanged()));
             m_crtcs[crtc] = c;
             changed = true;
         }
@@ -141,8 +141,8 @@ void RandRScreen::loadSettings(bool notify)
         {
             kDebug() << "adding output: " << output;
             RandROutput *o = new RandROutput(this, output);
-            connect(o, SIGNAL(outputChanged(RROutput, int)), this,
-                      SLOT(slotOutputChanged(RROutput, int)));
+            connect(o, SIGNAL(outputChanged(RROutput,int)), this,
+                      SLOT(slotOutputChanged(RROutput,int)));
             m_outputs[output] = o;
             if (o->isConnected())
                 m_connectedCount++;

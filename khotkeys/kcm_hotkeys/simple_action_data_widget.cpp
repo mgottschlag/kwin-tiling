@@ -120,7 +120,7 @@ void SimpleActionDataWidget::setActionData( KHotKeys::SimpleActionData* pData )
         {
         connect(
             currentTrigger, SIGNAL(changed(bool)),
-            this, SLOT(slotChanged() ));
+            this, SLOT(slotChanged()));
         extend(currentTrigger, i18n("Trigger"));
         }
 
@@ -156,7 +156,7 @@ void SimpleActionDataWidget::setActionData( KHotKeys::SimpleActionData* pData )
         {
         connect(
             currentAction, SIGNAL(changed(bool)),
-            this, SLOT(slotChanged() ));
+            this, SLOT(slotChanged()));
         extend(currentAction, i18n("Action"));
         }
 

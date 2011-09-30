@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>130</height>
+    <width>408</width>
+    <height>118</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -39,7 +39,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1" colspan="4">
+   <item row="0" column="1">
     <widget class="QComboBox" name="sizeCombo"/>
    </item>
    <item row="1" column="0">
@@ -55,7 +55,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1" colspan="4">
+   <item row="1" column="1">
     <widget class="QComboBox" name="refreshCombo"/>
    </item>
    <item row="2" column="0">
@@ -71,7 +71,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1" colspan="4">
+   <item row="2" column="1">
     <widget class="QComboBox" name="orientationCombo"/>
    </item>
    <item row="3" column="0">
@@ -82,46 +82,67 @@
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
+     <property name="buddy">
+      <cstring>positionCombo</cstring>
+     </property>
     </widget>
    </item>
    <item row="3" column="1">
-    <widget class="QComboBox" name="positionCombo">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2">
-    <widget class="QComboBox" name="positionOutputCombo">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="3">
-    <widget class="QLineEdit" name="absolutePosX"/>
-   </item>
-   <item row="3" column="4">
-    <widget class="QLineEdit" name="absolutePosY"/>
-   </item>
-   <item row="4" column="2">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QComboBox" name="positionCombo">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="positionOutputCombo">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="absolutePosX">
+       <property name="minimum">
+        <number>-16000</number>
+       </property>
+       <property name="maximum">
+        <number>16000</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="absolutePosY">
+       <property name="minimum">
+        <number>-16000</number>
+       </property>
+       <property name="maximum">
+        <number>16000</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

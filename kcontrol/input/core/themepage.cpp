@@ -60,8 +60,8 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
         listview->setHeaderLabels( lstHeader );
         listview->setSelectionMode( QAbstractItemView::SingleSelection );
         listview->setRootIsDecorated( false );
-        connect( listview, SIGNAL(currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem *) )
-                 , this, SLOT( selectionChanged( QTreeWidgetItem*, QTreeWidgetItem* ) ) );
+        connect( listview, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*))
+                 , this, SLOT(selectionChanged(QTreeWidgetItem*,QTreeWidgetItem*)) );
         layout->addWidget( listview );
 	insertThemes();
 }

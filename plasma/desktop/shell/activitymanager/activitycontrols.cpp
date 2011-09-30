@@ -22,7 +22,7 @@
 #include <KPushButton>
 #include <KIconDialog>
 #include <KWindowSystem>
-#include "kactivityinfo.h"
+#include "kworkspace/kactivityinfo.h"
 #include <QApplication>
 
 ActivityControls::ActivityControls(ActivityIcon * parent)

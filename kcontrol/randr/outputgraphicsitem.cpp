@@ -27,8 +27,7 @@
 #include <KGlobalSettings>
 
 OutputGraphicsItem::OutputGraphicsItem(OutputConfig *config)
-	: QGraphicsRectItem(config->rect())
-	, m_config( config )
+	: m_config( config )
 {
 	m_left = m_right = m_top = m_bottom = NULL;
 
@@ -44,6 +43,7 @@ OutputGraphicsItem::OutputGraphicsItem(OutputConfig *config)
 	m_text->setFont(font);
 	setVisible( false );
 	m_text->setVisible( false );
+        calculateSetRect( config );
 }
 
 OutputGraphicsItem::~OutputGraphicsItem()
@@ -60,19 +60,36 @@ void OutputGraphicsItem::configUpdated()
 	}
 	setVisible( true );
 	m_text->setVisible( true );
-	setRect( m_config->rect());
+	calculateSetRect( m_config );
 	setBrush(QColor(0, 255, 0, 128));
+	setObjectName(m_config->output()->name());
+	
 	// An example of this description text with radeonhd on randr 1.2:
 	// DVI-I_2/digital
 	// 1680x1050 (60.0 Hz)
 	QString refresh = QString::number(m_config->refreshRate(), 'f', 1);
-	QString desc = m_config->output()->name() + '\n' + 
-	               QString("%1x%2 (%3 Hz)").arg(rect().width()).arg(rect().height()).arg(refresh);
-	m_text->setPlainText( desc );
+	
+	m_text->setPlainText( i18nc("Configuration options. Output name, width x height (refresh rate Hz)", "%1\n%2x%3 (%4 Hz)",
+		m_config->output()->name(), m_config->rect().width(), m_config->rect().height(), refresh) );
 	// more accurate text centering
 	QRectF textRect = m_text->boundingRect();
 	m_text->setPos( rect().x() + (rect().width() - textRect.width()) / 2,
 	                rect().y() + (rect().height() - textRect.height()) / 2);
+}
+
+void OutputGraphicsItem::calculateSetRect( OutputConfig* config )
+{
+    switch( config->rotation() & RandR::RotateMask )
+    {
+        case RandR::Rotate0:
+        case RandR::Rotate180:
+            setRect( config->rect());
+            break;
+        case RandR::Rotate90:
+        case RandR::Rotate270:
+            setRect( config->rect().x(), config->rect().y(), config->rect().height(), config->rect().width());
+            break;
+    }
 }
 
 OutputGraphicsItem *OutputGraphicsItem::left() const
@@ -283,6 +300,18 @@ void OutputGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 bool OutputGraphicsItem::isConnected()
 {
 	return (m_top != NULL || m_bottom != NULL || m_left != NULL || m_right != NULL);
+}
+
+void OutputGraphicsItem::setPrimary(bool primary)
+{
+	QPen p=pen();
+	p.setWidth(primary ? rect().width()/100 : 0);
+	setPen(p);
+}
+
+bool OutputGraphicsItem::isPrimary() const
+{
+	return pen().width()>0;
 }
 
 #include "outputgraphicsitem.moc"

@@ -69,8 +69,8 @@ KTimerDialog::KTimerDialog( int msec, TimerStyle style, QWidget *parent,
     if ( buttonMask & Cancel )
         buttonOnTimeout = Cancel;
 
-    connect( totalTimer, SIGNAL( timeout() ), SLOT( slotInternalTimeout() ) );
-    connect( updateTimer, SIGNAL( timeout() ), SLOT( slotUpdateTime() ) );
+    connect( totalTimer, SIGNAL(timeout()), SLOT(slotInternalTimeout()) );
+    connect( updateTimer, SIGNAL(timeout()), SLOT(slotUpdateTime()) );
 
     // create the widgets
     mainWidget = new KVBox( this );

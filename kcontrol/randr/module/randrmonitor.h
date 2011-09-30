@@ -27,6 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <X11/extensions/Xrandr.h>
 #include <fixx11h.h>
 
+#include <randrdisplay.h>
+#include <randrscreen.h>
+#include <randroutput.h>
+#include <randrcrtc.h>
+
 class RandROutput;
 
 class RandrMonitorHelper;
@@ -42,11 +47,16 @@ class RandrMonitorModule
     private slots:
         void poll();
         void switchDisplay();
+        void resumedFromSuspend();
     private:
         void initRandr();
         void getRandrInfo( XRROutputChangeNotifyEvent* e, QString* change, QRect* rect );
         QStringList connectedMonitors() const;
         void enableOutput( RandROutput* output, bool enable );
+        QList< RandROutput* > connectedOutputs( RandRDisplay &display );
+        QList< RandROutput* > activeOutputs( RandRDisplay &display );
+        QList< RandROutput* > validCrtcOutputs( RandRDisplay &display );
+        QList< RandROutput* > outputs( RandRDisplay &display, bool connected = false, bool active = false, bool validCrtc = false );
         bool have_randr;
         int randr_base;
         int randr_error;

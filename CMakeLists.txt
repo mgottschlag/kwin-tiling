@@ -3,7 +3,7 @@ project(KDEBASE_WORKSPACE)
 # Used e.g. in KDE4WorkspaceConfig.cmake, Alex
 set(KDE4WORKSPACE_VERSION_MAJOR 4)
 set(KDE4WORKSPACE_VERSION_MINOR 6)
-set(KDE4WORKSPACE_VERSION_PATCH 80)
+set(KDE4WORKSPACE_VERSION_PATCH 90)
 set(KDE4WORKSPACE_VERSION ${KDE4WORKSPACE_VERSION_MAJOR}.${KDE4WORKSPACE_VERSION_MINOR}.${KDE4WORKSPACE_VERSION_PATCH} )
 
 
@@ -11,20 +11,28 @@ set(KDE4WORKSPACE_VERSION ${KDE4WORKSPACE_VERSION_MAJOR}.${KDE4WORKSPACE_VERSION
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} )
 
 #search packages used by KDE
-set (QT_MIN_VERSION "4.7.0")
-set(KDE_MIN_VERSION "4.6.80")
+set(QT_MIN_VERSION "4.7.0")
+set(KDE_MIN_VERSION "4.6.90")
 set(SOPRANO_MIN_VERSION "2.5.63")
 find_package(KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package(Strigi REQUIRED)
-find_package(QImageBlitz REQUIRED)
 find_package(ZLIB REQUIRED)
-
+find_package(KActivities REQUIRED)
 find_package(DBusMenuQt 0.6.0 REQUIRED)
+find_package(QImageBlitz REQUIRED)
+macro_optional_find_package(OpenGL)
+macro_optional_find_package(OpenGLES)
 
 if(Q_WS_X11)
   if(NOT X11_XTest_FOUND)
     macro_log_feature(X11_XTest_FOUND "libXtst" "X11 Testing Resource extension library" "http://xorg.freedesktop.org" FALSE "" "useful for automated testing of X clients.")
   endif(NOT X11_XTest_FOUND)
+  if(NOT X11_Xau_FOUND)
+    macro_log_feature(X11_Xau_FOUND "libXau" "X11 Authorization Protocol library" "http://xorg.freedesktop.org" FALSE "" "Needed by KDM.")
+  endif(NOT X11_Xau_FOUND)
+  if(NOT X11_Xdmcp_FOUND)
+    macro_log_feature(X11_Xdmcp_FOUND "libXdmcp" "X Display Manager Control Protocol library" "http://xorg.freedesktop.org" FALSE "" "Needed by KDM.")
+  endif(NOT X11_Xdmcp_FOUND)
   # Other X11 libraries that are used unconditionally elsewhere
   # without testing if they are found. With these log messages
   # you get a nice complaint about missing required packages
@@ -35,6 +43,24 @@ if(Q_WS_X11)
   if(NOT X11_Xcomposite_FOUND)
     macro_log_feature(X11_Xcomposite_FOUND "libXcomposite" "X11 composite library" "http://xorg.freedesktop.org" TRUE "" "Needed for plasma tray and notifications.")
   endif(NOT X11_Xcomposite_FOUND)
+  if(NOT X11_Xdamage_FOUND)
+    macro_log_feature(X11_Xdamage_FOUND "libXdamage" "X11 damaged region extension library" "http://xorg.freedesktop.org" TRUE "" "Needed for Compositing support in KWin.")
+  endif(NOT X11_Xdamage_FOUND)
+  if(NOT X11_Xrender_FOUND)
+    macro_log_feature(X11_Xrender_FOUND "libXrender" "X Rendering Extension client library" "http://xorg.freedesktop.org" TRUE "" "Needed for XRender Compositing backend in KWin.")
+  endif(NOT X11_Xrender_FOUND)
+  if(NOT X11_Xfixes_FOUND)
+    macro_log_feature(X11_Xfixes_FOUND "libXfixes" "X11 miscellaneous 'fixes' extension library" "http://xorg.freedesktop.org" TRUE "" "Needed for XRender Compositing backend in KWin.")
+  endif(NOT X11_Xfixes_FOUND)
+  if(NOT X11_Xrandr_FOUND)
+    macro_log_feature(X11_Xrandr_FOUND "libXrandr" "X11 RandR extension library" "http://xorg.freedesktop.org" TRUE "" "Needed for Multi Screen Support.")
+  endif(NOT X11_Xrandr_FOUND)
+  if(NOT OPENGL_FOUND AND NOT OPENGLES_FOUND)
+    macro_log_feature(OPENGL_FOUND "OpenGL" "OpenGL" "http://www.opengl.org/" FALSE "" "Needed to build OpenGL Compositing backend in KWin")
+    macro_log_feature(OPENGLES_FOUND "OpenGL ES" "OpenGL ES 2.0" "http://www.khronos.org/opengles/" FALSE "" "Needed to build OpenGL ES 2.0 Compositing backend in KWin")
+    set(OPENGL_OR_ES_FOUND FALSE)
+    macro_log_feature(OPENGL_OR_ES_FOUND "OpenGL (ES)" "OpenGL (ES)" "http://mesa3d.org/" TRUE "" "Either OpenGL or OpenGL ES 2.0 are required for Compositing support in KWin.")
+  endif(NOT OPENGL_FOUND AND NOT OPENGLES_FOUND)
 endif(Q_WS_X11)
 
 macro_optional_find_package(GLIB2)
@@ -45,11 +71,6 @@ macro_optional_find_package(Fontconfig)
 macro_optional_find_package(Googlegadgets)
 macro_log_feature(GOOGLEGADGETS_FOUND "GoogleGadgets" "Google Gadgets library" "http://code.google.com/p/google-gadgets-for-linux/" FALSE "0.11.0" "Needed to build plasma scriptengine for google gadgets")
 
-macro_optional_find_package(OpenGL)
-macro_optional_find_package(OpenGLES)
-macro_log_feature(OPENGLES_FOUND "OpenGL ES" "OpenGL ES 2.0" "http://www.khronos.org/opengles/" FALSE "" "Needed to build KWin for mobile devices")
-OPTION(KWIN_BUILD_WITH_OPENGLES "Enable OpenGL ES backend. Disables OpenGL desktop." OFF)
-
 #### Python support ####
 macro_optional_find_package(PythonLibrary)
 
@@ -58,9 +79,9 @@ if(SIP_FOUND AND SIP_VERSION STRLESS "040701")
   message(STATUS "The version of SIP found is too old. 4.7.1 or later is needed.")
   set(SIP_FOUND)
 endif(SIP_FOUND AND SIP_VERSION STRLESS "040701")
- 
+
 include(SIPMacros)
- 
+
 macro_optional_find_package(PyQt4)
 if(PYQT4_FOUND AND PYQT4_VERSION STRLESS "040400")
   message(STATUS "The version of PyQt found is too old. 4.4.0 or later is required.")
@@ -98,14 +119,7 @@ configure_file(config-workspace.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-works
 
 add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DHAVE_CONFIG_H=1)
 add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
-include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
-
-include_directories(
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/kdm
-  ${CMAKE_CURRENT_SOURCE_DIR}/libs
-  ${CMAKE_CURRENT_SOURCE_DIR}/libs/kworkspace
-)
+include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${CMAKE_SOURCE_DIR}/libs)
 
 add_definitions(-DDISABLE_NEPOMUK_LEGACY)
 
@@ -114,58 +128,57 @@ add_subdirectory(cmake)
 add_subdirectory(libs)
 
 # system settings (kcontrol replacement)
-macro_optional_add_subdirectory( systemsettings )
+if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
+   macro_optional_add_subdirectory( systemsettings )
+endif(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
 
 # core apps
 if(NOT WIN32)
-  macro_optional_add_subdirectory( kcheckpass )
-  macro_optional_add_subdirectory( kscreensaver )
-  macro_optional_add_subdirectory( kwin )
-  macro_optional_add_subdirectory( ksmserver )
-  macro_optional_add_subdirectory( kcminit )
-  macro_optional_add_subdirectory( ksplash )
-  macro_optional_add_subdirectory( khotkeys )
-  macro_optional_add_subdirectory( ksysguard )
-  macro_optional_add_subdirectory( powerdevil )
-  macro_optional_add_subdirectory( kwrited )
-  macro_optional_add_subdirectory( qguiplatformplugin_kde )
+   macro_optional_add_subdirectory( kcheckpass )
+   macro_optional_add_subdirectory( kwin )
+   macro_optional_add_subdirectory( ksmserver )
+   macro_optional_add_subdirectory( ksplash )
+   macro_optional_add_subdirectory( powerdevil )
+   macro_optional_add_subdirectory( qguiplatformplugin_kde )
+   macro_optional_add_subdirectory( ksysguard )
 endif(NOT WIN32)
 
-if (Q_WS_X11)
-  macro_optional_add_subdirectory( kinfocenter )
-endif (Q_WS_X11)
+if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
+   macro_optional_add_subdirectory(kcontrol)
+   macro_optional_add_subdirectory(klipper)
+   macro_optional_add_subdirectory(kmenuedit)
+   macro_optional_add_subdirectory(krunner)
+   macro_optional_add_subdirectory(solid)
+   macro_optional_add_subdirectory(kstartupconfig)
+   macro_optional_add_subdirectory(freespacenotifier)
 
-macro_optional_add_subdirectory( klipper )
-macro_optional_add_subdirectory( krunner )
-macro_optional_add_subdirectory( solid )
-if (${QT_QT3SUPPORT_FOUND})
-macro_optional_add_subdirectory( kmenuedit )
-endif (${QT_QT3SUPPORT_FOUND})
-macro_optional_add_subdirectory( plasma )
-macro_optional_add_subdirectory( kstartupconfig )
-macro_optional_add_subdirectory( statusnotifierwatcher )
-macro_optional_add_subdirectory( freespacenotifier )
+   # data
+   macro_optional_add_subdirectory(doc)
+
+   if (Q_WS_X11)
+      macro_optional_add_subdirectory(kinfocenter)
+   endif (Q_WS_X11)
+
+   if(NOT WIN32)
+      macro_optional_add_subdirectory(kscreensaver)
+      macro_optional_add_subdirectory(kcminit)
+      macro_optional_add_subdirectory(khotkeys)
+      macro_optional_add_subdirectory(kwrited)
+      macro_optional_add_subdirectory(ksystraycmd)
+      # data
+      macro_optional_add_subdirectory(cursors)
+   endif(NOT WIN32)
+
+   if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
+      add_subdirectory( kdm )
+   else(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
+      message(STATUS "Xau lib or Xdmcp lib was missing. kdm will not compile")
+   endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
+endif(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
+
+macro_optional_add_subdirectory(plasma)
+macro_optional_add_subdirectory(statusnotifierwatcher)
 macro_optional_add_subdirectory(kstyles)
-
-
-# apps we need to figure out what to do with
-macro_optional_add_subdirectory( kcontrol )
-if(NOT WIN32)
-  macro_optional_add_subdirectory( ksystraycmd )
-endif(NOT WIN32)
-# data
-if(NOT WIN32)
-  macro_optional_add_subdirectory( cursors )
-endif(NOT WIN32)
-macro_optional_add_subdirectory( doc )
-macro_optional_add_subdirectory( wallpapers )
-
-if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
-  add_subdirectory( kdm )
-else(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
-  message(STATUS "Xau lib or Xdmcp lib was missing. kdm will not compile")
-endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
-
 
 ########### install files ###############
 if(NOT WIN32)

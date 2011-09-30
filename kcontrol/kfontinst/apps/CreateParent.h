@@ -24,6 +24,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include <QtCore/QLatin1String>
 #include <QtGui/QX11Info>
 #include <X11/Xlib.h>
 #include <fixx11h.h>
@@ -64,6 +65,7 @@ static QWidget * createParent(int xid)
         parent->move(rx, ry);
     }
     parent->setWindowOpacity(0);
+    parent->setWindowTitle(QLatin1String("KFI"));
 
     return parent;
 }

@@ -36,7 +36,7 @@
 QHash<QString, QString> XCursorTheme::alternatives;
 
 XCursorTheme::XCursorTheme(const QDir &themeDir)
-    : LegacyTheme(themeDir.dirName(), i18n("No description available"))
+    : LegacyTheme(themeDir.dirName())
 {
     // Directory information
     setName(themeDir.dirName());

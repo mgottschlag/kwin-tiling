@@ -160,8 +160,8 @@ QWidget* Color::createConfigurationInterface(QWidget* parent)
         m_ui.m_color2->setEnabled(true);
     }
 
-    connect(m_ui.m_color1, SIGNAL(changed(const QColor&)), this, SLOT(settingsModified()));
-    connect(m_ui.m_color2, SIGNAL(changed(const QColor&)), this, SLOT(settingsModified()));
+    connect(m_ui.m_color1, SIGNAL(changed(QColor)), this, SLOT(settingsModified()));
+    connect(m_ui.m_color2, SIGNAL(changed(QColor)), this, SLOT(settingsModified()));
     connect(m_ui.m_backgroundMode, SIGNAL(currentIndexChanged(int)), this, SLOT(settingsModified()));
 
     connect(this, SIGNAL(settingsChanged(bool)), parent, SLOT(settingsChanged(bool)));

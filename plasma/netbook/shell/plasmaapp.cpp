@@ -736,14 +736,14 @@ void PlasmaApp::createView(Plasma::Containment *containment)
             m_controlBar = new NetView(0, NetView::controlBarId(), 0);
 
             Kephal::Screens *screens = Kephal::Screens::self();
-            connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
-                    this, SLOT(adjustSize(Kephal::Screen *)));
+            connect(screens, SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)),
+                    this, SLOT(adjustSize(Kephal::Screen*)));
 
             m_controlBar->setAutoFillBackground(false);
             m_controlBar->viewport()->setAutoFillBackground(false);
             m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
 
-            connect(m_controlBar, SIGNAL(locationChanged(const NetView *)), this, SLOT(positionPanel()));
+            connect(m_controlBar, SIGNAL(locationChanged(const NetView*)), this, SLOT(positionPanel()));
             connect(m_controlBar, SIGNAL(geometryChanged()), this, SLOT(positionPanel()));
             connect(m_controlBar, SIGNAL(containmentActivated()), this, SLOT(showControlBar()));
             connect(m_controlBar, SIGNAL(autoHideChanged(bool)), this, SLOT(setAutoHideControlBar(bool)));

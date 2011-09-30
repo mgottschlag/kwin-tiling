@@ -21,8 +21,7 @@
 #define __menuinfo_h__
 
 
-//Added by qt3to4:
-#include <Q3PtrList>
+#include <QList>
 
 #include <kshortcut.h>
 #include <kservice.h>
@@ -46,8 +45,8 @@ public:
 class MenuFolderInfo : public MenuInfo
 {
 public:
-    MenuFolderInfo() : dirty(false), hidden(false) { subFolders.setAutoDelete(true); }
-
+    MenuFolderInfo() : dirty(false), hidden(false) { }
+    ~MenuFolderInfo() { qDeleteAll(subFolders); subFolders.clear(); }
     // Add separator
     void add(MenuSeparatorInfo *, bool initial=false);
 
@@ -134,9 +133,9 @@ public:
     QString comment; // Comment
     QString directoryFile; // File describing this folder.
     QString icon; // Icon
-    Q3PtrList<MenuFolderInfo> subFolders; // Sub menus in this folder
-    Q3PtrList<MenuEntryInfo> entries; // Menu entries in this folder
-    Q3PtrList<MenuInfo> initialLayout; // Layout of menu entries according to sycoca
+    QList<MenuFolderInfo *> subFolders; // Sub menus in this folder
+    QList<MenuEntryInfo *> entries; // Menu entries in this folder
+    QList<MenuInfo *> initialLayout; // Layout of menu entries according to sycoca
     bool dirty;
     bool hidden;
 };

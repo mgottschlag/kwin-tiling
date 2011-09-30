@@ -190,19 +190,18 @@ void Task::close()
 
 void Task::toDesktop(int desk)
 {
-    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMDesktop);
     if (desk == 0) {
         if (isOnAllDesktops()) {
-            ni.setDesktop(KWindowSystem::currentDesktop());
+            KWindowSystem::setOnDesktop(d->win, KWindowSystem::currentDesktop());
             KWindowSystem::forceActiveWindow(d->win);
         } else {
-            ni.setDesktop(NETWinInfo::OnAllDesktops);
+            KWindowSystem::setOnAllDesktops(d->win, true);
         }
 
         return;
     }
 
-    ni.setDesktop(desk);
+    KWindowSystem::setOnDesktop(d->win, desk);
 
     if (desk == KWindowSystem::currentDesktop()) {
         KWindowSystem::forceActiveWindow(d->win);

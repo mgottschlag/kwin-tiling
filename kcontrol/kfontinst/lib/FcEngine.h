@@ -24,8 +24,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <config-workspace.h>
-
 #include <QtCore/QVector>
 #include <QtCore/QRect>
 #include <QtGui/QFont>

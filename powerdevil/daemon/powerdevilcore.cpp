@@ -318,6 +318,13 @@ void Core::loadProfile(const QString& id)
     // First of all, let's clean the old actions. This will also call the onProfileUnload callback
     ActionPool::instance()->unloadAllActiveActions();
 
+    // Do we need to force a wakeup?
+    if (m_pendingWakeupEvent) {
+        // Fake activity at this stage, when no timeouts are registered
+        KIdleTime::instance()->simulateUserActivity();
+        m_pendingWakeupEvent = false;
+    }
+
     // Now, let's retrieve our profile
     KConfigGroup config(m_profilesConfig, id);
 
@@ -416,8 +423,8 @@ void Core::emitNotification(const QString &evid, const QString &message, const Q
 void Core::onAcAdapterStateChanged(PowerDevil::BackendInterface::AcAdapterState state)
 {
     kDebug();
-    // Fake an activity event - usually adapters don't plug themselves out :)
-    KIdleTime::instance()->simulateUserActivity();
+    // Post request for faking an activity event - usually adapters don't plug themselves out :)
+    m_pendingWakeupEvent = true;
     reloadProfile(state);
 
     if (state == BackendInterface::Plugged) {
@@ -559,17 +566,8 @@ void Core::onKIdleTimeoutReached(int identifier, int msec)
 
 void Core::registerActionTimeout(Action* action, int timeout)
 {
-    int identifier = -1;
-    // Are there any registered timeouts with the same value?
-    if (m_registeredIdleTimeouts.contains(timeout)) {
-        // Easy game
-        identifier = m_registeredIdleTimeouts[timeout];
-    } else {
-        // Register the timeout with KIdleTime
-        identifier = KIdleTime::instance()->addIdleTimeout(timeout);
-        // And add it to the hash
-        m_registeredIdleTimeouts.insert(timeout, identifier);
-    }
+    // Register the timeout with KIdleTime
+    int identifier = KIdleTime::instance()->addIdleTimeout(timeout);
 
     // Add the identifier to the action hash
     QList< int > timeouts = m_registeredActionTimeouts[action];
@@ -579,24 +577,14 @@ void Core::registerActionTimeout(Action* action, int timeout)
 
 void Core::unregisterActionTimeouts(Action* action)
 {
-    // Clear all timeouts from the action: if the timeouts are not used anywhere else, just remove
-    // them from KIdleTime as well.
+    // Clear all timeouts from the action
     QList< int > timeoutsToClean = m_registeredActionTimeouts[action];
-    m_registeredActionTimeouts.remove(action);
-    for (QHash< Action*, QList< int > >::const_iterator i = m_registeredActionTimeouts.constBegin();
-        i != m_registeredActionTimeouts.constEnd(); ++i) {
-        foreach (int timeoutId, i.value()) {
-            if (timeoutsToClean.contains(timeoutId)) {
-                timeoutsToClean.removeOne(timeoutId);
-            }
-        }
-    }
 
-    // Clean the remaining ones
     foreach (int id, timeoutsToClean) {
         KIdleTime::instance()->removeIdleTimeout(id);
-        m_registeredIdleTimeouts.remove(m_registeredIdleTimeouts.key(id));
     }
+
+    m_registeredActionTimeouts.remove(action);
 }
 
 void Core::onResumingFromIdle()

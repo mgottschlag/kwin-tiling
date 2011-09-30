@@ -22,11 +22,6 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include <qglobal.h>
-#ifdef Q_WS_X11
-#include <config-X11.h>
-#endif
-
 #include <QtDBus/QDBusConnection>
 
 #include <kaboutdata.h>
@@ -64,9 +59,6 @@
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#ifdef HAVE_XFIXES
-#include <X11/extensions/Xfixes.h>
-#endif
 #endif
 
 //#define NOISY_KLIPPER
@@ -142,14 +134,12 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_clip = kapp->clipboard();
 
     connect( m_clip, SIGNAL(changed(QClipboard::Mode)),
-             this, SLOT( newClipData( QClipboard::Mode) ) );
-    connect( &m_empty_detector, SIGNAL(changed(QClipboard::Mode)),
-             this, SLOT( newClipData( QClipboard::Mode) ) );
+             this, SLOT(newClipData(QClipboard::Mode)) );
 
-    connect( &m_overflowClearTimer, SIGNAL( timeout()), SLOT( slotClearOverflow()));
+    connect( &m_overflowClearTimer, SIGNAL(timeout()), SLOT(slotClearOverflow()));
 
     m_pendingCheckTimer.setSingleShot( true );
-    connect( &m_pendingCheckTimer, SIGNAL( timeout()), SLOT( slotCheckPending()));
+    connect( &m_pendingCheckTimer, SIGNAL(timeout()), SLOT(slotCheckPending()));
 
     m_history = new History( this );
 
@@ -164,27 +154,27 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_clearHistoryAction = m_collection->addAction( "clearHistoryAction" );
     m_clearHistoryAction->setIcon( KIcon("edit-clear-history") );
     m_clearHistoryAction->setText( i18n("C&lear Clipboard History") );
-    connect(m_clearHistoryAction, SIGNAL(triggered() ), SLOT( slotAskClearHistory() ));
+    connect(m_clearHistoryAction, SIGNAL(triggered()), SLOT(slotAskClearHistory()));
     //m_clearHistoryAction->setGroup( defaultGroup );
     m_configureAction = m_collection->addAction( "configureAction" );
     m_configureAction->setIcon( KIcon("configure") );
     m_configureAction->setText( i18n("&Configure Klipper...") );
-    connect(m_configureAction, SIGNAL(triggered(bool) ), SLOT( slotConfigure() ));
+    connect(m_configureAction, SIGNAL(triggered(bool)), SLOT(slotConfigure()));
     //m_configureAction->setGroup( defaultGroup );
     m_quitAction = m_collection->addAction( "quitAction" );
     m_quitAction->setIcon( KIcon("application-exit") );
     m_quitAction->setText( i18n("&Quit") );
-    connect(m_quitAction, SIGNAL(triggered(bool) ), SLOT( slotQuit() ));
+    connect(m_quitAction, SIGNAL(triggered(bool)), SLOT(slotQuit()));
     //quitAction->setGroup( "exit" );
 
     /*
      * Create URL grabber
      */
     m_myURLGrabber = new URLGrabber(m_history);
-    connect( m_myURLGrabber, SIGNAL( sigPopup( QMenu * )),
-            SLOT( showPopupMenu( QMenu * )) );
-    connect( m_myURLGrabber, SIGNAL( sigDisablePopup() ),
-            SLOT( disableURLGrabber() ) );
+    connect( m_myURLGrabber, SIGNAL(sigPopup(QMenu*)),
+            SLOT(showPopupMenu(QMenu*)) );
+    connect( m_myURLGrabber, SIGNAL(sigDisablePopup()),
+            SLOT(disableURLGrabber()) );
 
     /*
      * Load configuration settings
@@ -232,13 +222,13 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_toggleURLGrabAction->setText(i18n("Enable Clipboard Actions"));
     m_toggleURLGrabAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
 
-    connect( m_toggleURLGrabAction, SIGNAL( toggled( bool )),
-             this, SLOT( setURLGrabberEnabled( bool )));
+    connect( m_toggleURLGrabAction, SIGNAL(toggled(bool)),
+             this, SLOT(setURLGrabberEnabled(bool)));
 
     KlipperPopup* popup = history()->popup();
-    connect ( history(), SIGNAL( topChanged() ), SLOT( slotHistoryTopChanged() ) );
-    connect( popup, SIGNAL( aboutToHide() ), SLOT( slotStartHideTimer() ) );
-    connect( popup, SIGNAL( aboutToShow() ), SLOT( slotStartShowTimer() ) );
+    connect ( history(), SIGNAL(topChanged()), SLOT(slotHistoryTopChanged()) );
+    connect( popup, SIGNAL(aboutToHide()), SLOT(slotStartHideTimer()) );
+    connect( popup, SIGNAL(aboutToShow()), SLOT(slotStartShowTimer()) );
 
     popup->plugAction( m_toggleURLGrabAction );
     popup->plugAction( m_clearHistoryAction );
@@ -543,7 +533,7 @@ void Klipper::slotConfigure()
     }
 
     ConfigDialog *dlg = new ConfigDialog( 0, KlipperSettings::self(), this, m_collection, isApplet() );
-    connect(dlg, SIGNAL(settingsChanged(const QString&)), SLOT(loadSettings()));
+    connect(dlg, SIGNAL(settingsChanged(QString)), SLOT(loadSettings()));
 
     dlg->show();
 }
@@ -678,23 +668,11 @@ void Klipper::newClipData( QClipboard::Mode mode )
         return;
     }
 
-    if( blockFetchingNewData())
+    if( mode == QClipboard::Selection && blockFetchingNewData())
         return;
 
     checkClipData( mode == QClipboard::Selection ? true : false );
 
-}
-
-void Klipper::clipboardSignalArrived( bool selectionMode )
-{
-    if ( m_locklevel ) {
-        return;
-    }
-    if( blockFetchingNewData())
-        return;
-
-    updateTimestamp();
-    checkClipData( selectionMode );
 }
 
 // Protection against too many clipboard data changes. Lyx responds to clipboard data
@@ -1219,60 +1197,5 @@ QString Klipper::cycleText() const
     rv += "</table>";
     return rv;
 }
-
-// http://bugreports.qt.nokia.com/browse/QTBUG-8157
-#if KDE_IS_VERSION( 4, 5, 85 ) && defined(Q_CC_GNU)
-#warning Check if this is still needed, hopefully not.
-#endif
-KlipperEmptyDetector::KlipperEmptyDetector()
-: m_xfixes_event_base( -1 )
-{
-#ifdef HAVE_XFIXES
-    m_xa_clipboard = XInternAtom( QX11Info::display(), "CLIPBOARD", False );
-    kapp->installX11EventFilter( this );
-    int dummy;
-    if( XFixesQueryExtension( QX11Info::display(), &m_xfixes_event_base, &dummy ))
-    {
-        XFixesSelectSelectionInput( QX11Info::display(), QX11Info::appRootWindow( 0 ), XA_PRIMARY,
-            XFixesSetSelectionOwnerNotifyMask |
-            XFixesSelectionWindowDestroyNotifyMask |
-            XFixesSelectionClientCloseNotifyMask );
-        XFixesSelectSelectionInput( QX11Info::display(), QX11Info::appRootWindow( 0 ), m_xa_clipboard,
-            XFixesSetSelectionOwnerNotifyMask |
-            XFixesSelectionWindowDestroyNotifyMask |
-            XFixesSelectionClientCloseNotifyMask );
-    }
-#endif
-}
-
-#ifdef Q_WS_X11
-bool KlipperEmptyDetector::x11Event( XEvent* e )
-{
-#ifdef HAVE_XFIXES
-    if( m_xfixes_event_base != -1 && e->type == m_xfixes_event_base + XFixesSelectionNotify )
-    {
-        XFixesSelectionNotifyEvent* ev = reinterpret_cast< XFixesSelectionNotifyEvent* >( e );
-        if( ev->subtype == XFixesSelectionWindowDestroyNotify || ev->subtype == XFixesSelectionClientCloseNotify )
-        {
-            if( ev->selection == XA_PRIMARY && !kapp->clipboard()->ownsSelection())
-            {
-#ifdef NOISY_KLIPPER
-                kDebug() << "Selection lost";
-#endif
-                emit changed( QClipboard::Selection );
-            }
-            else if( ev->selection == m_xa_clipboard && !kapp->clipboard()->ownsClipboard())
-            {
-#ifdef NOISY_KLIPPER
-                kDebug() << "Clipboard lost";
-#endif
-                emit changed( QClipboard::Clipboard );
-            }
-        }
-    }
-#endif
-    return false;
-}
-#endif
 
 #include "klipper.moc"

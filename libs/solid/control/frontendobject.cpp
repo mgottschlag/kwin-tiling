@@ -52,8 +52,8 @@ void Solid::Control::FrontendObjectPrivate::setBackendObject(QObject *object)
 
     if (m_backendObject)
     {
-        QObject::connect(m_backendObject, SIGNAL(destroyed(QObject *)),
-                         m_parent, SLOT(_k_destroyed(QObject *)));
+        QObject::connect(m_backendObject, SIGNAL(destroyed(QObject*)),
+                         m_parent, SLOT(_k_destroyed(QObject*)));
     }
 }
 
