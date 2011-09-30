@@ -38,7 +38,11 @@ SplashWindow::SplashWindow(bool testing)
             Qt::WindowStaysOnTopHint
         );
 
-    setWindowState(Qt::WindowFullScreen);
+    if (m_testing) {
+        setWindowState(Qt::WindowFullScreen);
+    } else {
+        setWindowFlags(Qt::X11BypassWindowManagerHint);
+    }
 
     rootContext()->setContextProperty("screenSize", size());
     setSource(QUrl(themeDir(QApplication::arguments().at(1)) + "/main.qml"));
