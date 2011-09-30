@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 #include <ktoolinvocation.h>
+#include <solid/powermanagement.h>
 
 #include <qdbusconnection.h>
 #include <qdbusconnectioninterface.h>
@@ -42,6 +43,7 @@ RandrMonitorModule::RandrMonitorModule( QObject* parent, const QList<QVariant>& 
     : KDEDModule( parent )
     , have_randr( false )
     {
+    m_inhibitionCookie = -1;
     setModuleName( "randrmonitor" );
     initRandr();
     QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT(resumedFromSuspend()));
@@ -107,6 +109,21 @@ void RandrMonitorModule::processX11Event( XEvent* e )
             {
             kDebug() << "Monitor change detected";
             QStringList newMonitors = connectedMonitors();
+            QStringList activeMonitorsList = activeMonitors();
+            kDebug() << activeMonitorsList;
+            //Disable inhibition
+            if (m_inhibitionCookie > 0) {
+                kDebug() << "Stopping: " << m_inhibitionCookie;
+                Solid::PowerManagement::stopSuppressingSleep(m_inhibitionCookie);
+                m_inhibitionCookie = -1;
+            }
+            Q_FOREACH(const QString monitor, activeMonitorsList) {
+                if (!monitor.contains("LVDS")) {
+                    m_inhibitionCookie = Solid::PowerManagement::beginSuppressingSleep();
+                    kDebug() << "Inhibing: " << m_inhibitionCookie;
+                }
+            }
+
             if( newMonitors == currentMonitors )
                 return;
             if( QDBusConnection::sessionBus().interface()->isServiceRegistered(
@@ -151,6 +168,25 @@ QStringList RandrMonitorModule::connectedMonitors() const
     XRRFreeScreenResources( resources );
     return ret;
     }
+
+QStringList RandrMonitorModule::activeMonitors() const
+{
+    QStringList ret;
+    Display* dpy = QX11Info::display();
+    XRRScreenResources* resources = XRRGetScreenResources( dpy, window );
+    for( int i = 0;
+         i < resources->noutput;
+         ++i )
+        {
+        XRROutputInfo* info = XRRGetOutputInfo( dpy, resources, resources->outputs[ i ] );
+        QString name = QString::fromUtf8( info->name );
+        if(info->crtc != None)
+            ret.append( name );
+        XRRFreeOutputInfo( info );
+        }
+    XRRFreeScreenResources( resources );
+    return ret;
+}
 
 void RandrMonitorModule::switchDisplay()
     {
