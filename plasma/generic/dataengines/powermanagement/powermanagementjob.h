@@ -38,7 +38,7 @@ class PowerManagementJob : public Plasma::ServiceJob
     private:
         enum SuspendType { Ram, Disk, Hybrid };
         bool suspend(const SuspendType &type);
-        bool requestShutDown();
+        void requestShutDown();
         QString callForType(const SuspendType &type);
 };
 

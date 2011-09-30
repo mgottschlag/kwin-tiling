@@ -51,7 +51,8 @@ void PowerManagementJob::start()
         setResult(suspend(Hybrid));
         return;
     } else if (operation == "requestShutDown") {
-        setResult(requestShutDown());
+        requestShutDown();
+        setResult(true);
         return;
     }
 
@@ -87,9 +88,9 @@ QString PowerManagementJob::callForType(const SuspendType &type)
     }
 }
 
-bool PowerManagementJob::requestShutDown()
+void PowerManagementJob::requestShutDown()
 {
-    return KWorkSpace::requestShutDown();
+    KWorkSpace::requestShutDown();
 }
 
 #include "powermanagementjob.moc"
