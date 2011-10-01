@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <ktoolinvocation.h>
 #include <solid/powermanagement.h>
 
+#include <qdbusservicewatcher.h>
 #include <qdbusconnection.h>
 #include <qdbusconnectioninterface.h>
 #include <qtimer.h>
@@ -46,7 +47,18 @@ RandrMonitorModule::RandrMonitorModule( QObject* parent, const QList<QVariant>& 
     m_inhibitionCookie = -1;
     setModuleName( "randrmonitor" );
     initRandr();
-    QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT(resumedFromSuspend()));
+
+    QDBusReply <bool> re =  QDBusConnection::systemBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement");
+    if (!re.value()) {
+        kDebug(7131) << "PowerManagement not loaded, waiting for it";
+        QDBusServiceWatcher *serviceWatcher = new QDBusServiceWatcher("org.kde.Solid.PowerManagement", QDBusConnection::sessionBus(),
+                                                                  QDBusServiceWatcher::WatchForRegistration, this);
+        connect(serviceWatcher, SIGNAL(serviceRegistered(QString)), this, SLOT(checkResumeFromSuspend()));
+        return;
+    }
+
+    checkResumeFromSuspend();
+
     }
 
 RandrMonitorModule::~RandrMonitorModule()
@@ -186,6 +198,11 @@ QStringList RandrMonitorModule::activeMonitors() const
         }
     XRRFreeScreenResources( resources );
     return ret;
+}
+
+void RandrMonitorModule::checkResumeFromSuspend()
+{
+    QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT(resumedFromSuspend()));
 }
 
 void RandrMonitorModule::switchDisplay()

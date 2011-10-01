@@ -48,6 +48,7 @@ class RandrMonitorModule
         void poll();
         void switchDisplay();
         void resumedFromSuspend();
+        void checkResumeFromSuspend();
     private:
         void initRandr();
         void getRandrInfo( XRROutputChangeNotifyEvent* e, QString* change, QRect* rect );
