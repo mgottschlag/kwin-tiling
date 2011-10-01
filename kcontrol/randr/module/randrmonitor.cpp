@@ -53,10 +53,12 @@ RandrMonitorModule::RandrMonitorModule( QObject* parent, const QList<QVariant>& 
         kDebug(7131) << "PowerManagement not loaded, waiting for it";
         QDBusServiceWatcher *serviceWatcher = new QDBusServiceWatcher("org.kde.Solid.PowerManagement", QDBusConnection::sessionBus(),
                                                                   QDBusServiceWatcher::WatchForRegistration, this);
+        connect(serviceWatcher, SIGNAL(serviceRegistered(QString)), this, SLOT(checkInhibition()));
         connect(serviceWatcher, SIGNAL(serviceRegistered(QString)), this, SLOT(checkResumeFromSuspend()));
         return;
     }
 
+    checkInhibition();
     checkResumeFromSuspend();
 
     }
@@ -121,23 +123,14 @@ void RandrMonitorModule::processX11Event( XEvent* e )
             {
             kDebug() << "Monitor change detected";
             QStringList newMonitors = connectedMonitors();
-            QStringList activeMonitorsList = activeMonitors();
-            kDebug() << activeMonitorsList;
-            //Disable inhibition
-            if (m_inhibitionCookie > 0) {
-                kDebug() << "Stopping: " << m_inhibitionCookie;
-                Solid::PowerManagement::stopSuppressingSleep(m_inhibitionCookie);
-                m_inhibitionCookie = -1;
-            }
-            Q_FOREACH(const QString monitor, activeMonitorsList) {
-                if (!monitor.contains("LVDS")) {
-                    m_inhibitionCookie = Solid::PowerManagement::beginSuppressingSleep();
-                    kDebug() << "Inhibing: " << m_inhibitionCookie;
-                }
-            }
 
-            if( newMonitors == currentMonitors )
+            //If we are already inhibiting and we should stop it, do it
+            checkInhibition();
+
+            if( newMonitors == currentMonitors ) {
+                kDebug() << "Same monitors";
                 return;
+            }
             if( QDBusConnection::sessionBus().interface()->isServiceRegistered(
                 "org.kde.internal.KSettingsWidget-kcm_randr" ))
                 { // already running
@@ -198,6 +191,28 @@ QStringList RandrMonitorModule::activeMonitors() const
         }
     XRRFreeScreenResources( resources );
     return ret;
+}
+
+void RandrMonitorModule::checkInhibition()
+{
+    QStringList activeMonitorsList = activeMonitors();
+    kDebug(7131) << "Active monitor list";
+    kDebug(7131) << activeMonitorsList;
+    bool inhibit = false;
+    Q_FOREACH(const QString monitor, activeMonitorsList) {
+        if (!monitor.contains("LVDS")) {
+            inhibit = true;
+            break;
+        }
+    }
+    if (m_inhibitionCookie > 0 && !inhibit) {
+        kDebug(7131) << "Stopping: " << m_inhibitionCookie;
+        Solid::PowerManagement::stopSuppressingSleep(m_inhibitionCookie);
+        m_inhibitionCookie = -1;
+    } else if (m_inhibitionCookie < 0 && inhibit) { // If we are NOT inhibiting and we should, do it
+        m_inhibitionCookie = Solid::PowerManagement::beginSuppressingSleep();
+        kDebug(7131) << "Inhibing: " << m_inhibitionCookie;
+    }
 }
 
 void RandrMonitorModule::checkResumeFromSuspend()

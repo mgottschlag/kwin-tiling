@@ -48,6 +48,7 @@ class RandrMonitorModule
         void poll();
         void switchDisplay();
         void resumedFromSuspend();
+        void checkInhibition();
         void checkResumeFromSuspend();
     private:
         void initRandr();
