@@ -98,6 +98,7 @@ class Battery : public Plasma::PopupApplet
         void hibernate();
         void updateBattery();
         void setupFonts();
+        void toggleInhibit();
 
     private:
         void connectSources();
@@ -135,7 +136,7 @@ class Battery : public Plasma::PopupApplet
         Plasma::Label *m_profileLabel;
         Plasma::ComboBox *m_profileCombo;
         Plasma::Slider *m_brightnessSlider;
-        int m_inhibitCookie;
+        Plasma::IconWidget *m_inhibitButton;
 
         /* Show multiple batteries with individual icons and charge info? */
         bool m_showMultipleBatteries;
@@ -179,6 +180,8 @@ class Battery : public Plasma::PopupApplet
         QPropertyAnimation *m_acAnimation;
 
         bool m_ignoreBrightnessChange;
+
+        QPair< int, int > m_inhibitCookies;
 };
 
 Q_DECLARE_METATYPE(StringStringMap)

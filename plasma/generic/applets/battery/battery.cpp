@@ -92,7 +92,8 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_labelAnimation(0),
       m_acAlpha(0),
       m_acAnimation(0),
-      m_ignoreBrightnessChange(false)
+      m_ignoreBrightnessChange(false),
+      m_inhibitCookies(qMakePair< int, int >(-1, -1))
 {
     //kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
@@ -581,6 +582,12 @@ void Battery::initPopupWidget()
     QGraphicsLinearLayout *buttonLayout = new QGraphicsLinearLayout;
     buttonLayout->setSpacing(0.0);
     buttonLayout->addStretch();
+
+    m_inhibitButton = createButton(controls);
+    m_inhibitButton->setIcon("media-playback-stop");
+    m_inhibitButton->setText(i18nc("Suspend the computer to disk; translation should be short", "Inhibit"));
+    buttonLayout->addItem(m_inhibitButton);
+    connect(m_inhibitButton, SIGNAL(clicked()), this, SLOT(toggleInhibit()));
 
     // Sleep and Hibernate buttons
     QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
@@ -1100,6 +1107,32 @@ QList<QAction*> Battery::contextualActions()
 qreal Battery::acAlpha() const
 {
     return m_acAlpha;
+}
+
+void Battery::toggleInhibit()
+{
+    using namespace Solid::PowerManagement;
+
+    if (m_inhibitCookies.first > 0) {
+        // Release inhibition
+        stopSuppressingSleep(m_inhibitCookies.first);
+        stopSuppressingScreenPowerManagement(m_inhibitCookies.second);
+
+        m_inhibitButton->setText(i18n("Inhibit"));
+        m_inhibitButton->setIcon("media-playback-stop");
+
+        m_inhibitCookies = qMakePair< int, int >(-1, -1);
+    } else {
+        // Trigger inhibition
+        QString reason = i18n("The battery applet has enabled system-wide inhibition");
+        m_inhibitCookies = qMakePair< int, int >(beginSuppressingSleep(reason),
+                                                 beginSuppressingScreenPowerManagement(reason));
+
+        if (m_inhibitCookies.first >= 0 && m_inhibitCookies.second >= 0) {
+            m_inhibitButton->setText("Uninhibit");
+            m_inhibitButton->setIcon("media-playback-start");
+        }
+    }
 }
 
 #include "battery.moc"
