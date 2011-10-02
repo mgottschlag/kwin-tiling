@@ -93,7 +93,6 @@ class Battery : public Plasma::PopupApplet
         void updateSlider(const float brightness);
         void updateSlider();
         void openConfig();
-        void setProfile(const QString &profile);
         void suspend();
         void hibernate();
         void updateBattery();
@@ -133,8 +132,6 @@ class Battery : public Plasma::PopupApplet
         Plasma::Label *m_remainingInfoLabel;
         Plasma::Label *m_statusLabel;
         Plasma::Label *m_brightnessLabel;
-        Plasma::Label *m_profileLabel;
-        Plasma::ComboBox *m_profileCombo;
         Plasma::Slider *m_brightnessSlider;
         Plasma::IconWidget *m_inhibitButton;
 

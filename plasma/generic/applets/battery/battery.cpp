@@ -78,8 +78,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_batteryInfoLabel(0),
       m_acLabelLabel(0),
       m_acInfoLabel(0),
-      m_profileLabel(0),
-      m_profileCombo(0),
       m_brightnessSlider(0),
       m_minutes(0),
       m_hours(0),
@@ -549,21 +547,6 @@ void Battery::initPopupWidget()
     extenderApplet->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     controlsLayout->addItem(extenderApplet, 1, 2, 2, 1);
 
-    m_profileLabel = createBuddyLabel(controls);
-    m_profileLabel->setText(i18n("Power Profile:"));
-    controlsLayout->addItem(m_profileLabel, row, 0);
-
-
-    m_profileCombo = new Plasma::ComboBox(controls);
-    // Workaround for bug 219873
-    m_profileCombo->nativeWidget()->setMaxVisibleItems(4);
-    // This is necessary until QTBUG-2368 is fixed
-    m_profileCombo->setZValue(110);
-    connect(m_profileCombo, SIGNAL(activated(QString)),
-            this, SLOT(setProfile(QString)));
-    controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
-    row++;
-
     m_brightnessLabel = createBuddyLabel(controls);
     m_brightnessLabel->setText(i18n("Screen Brightness:"));
     controlsLayout->addItem(m_brightnessLabel, row, 0);
@@ -648,7 +631,6 @@ void Battery::setupFonts()
     if (m_batteryLabelLabel) {
         QFont infoFont = KGlobalSettings::generalFont();
         m_brightnessLabel->setFont(infoFont);
-        m_profileLabel->setFont(infoFont);
 
         QFont boldFont = infoFont;
         boldFont.setBold(true);
@@ -740,24 +722,6 @@ void Battery::updateStatus()
         kDebug() << batteriesLabel;
     }
 
-    if (!m_availableProfiles.empty() && m_profileCombo) {
-        m_profileCombo->clear();
-        for (StringStringMap::const_iterator i = m_availableProfiles.constBegin(); i != m_availableProfiles.constEnd(); ++i) {
-            m_profileCombo->addItem(i.value());
-        }
-        m_profileCombo->setCurrentIndex(m_profileCombo->nativeWidget()->findText(m_availableProfiles[m_currentProfile]));
-    }
-
-    if (m_profileLabel && m_profileCombo) {
-        if (m_availableProfiles.empty()) {
-            m_profileCombo->hide();
-            m_profileLabel->hide();
-        } else {
-            m_profileCombo->show();
-            m_profileLabel->show();
-        }
-    }
-
     if (m_brightnessSlider) {
         updateSlider();
     }
@@ -772,15 +736,6 @@ void Battery::openConfig()
         << QLatin1String("powerdevilglobalconfig")
         << QLatin1String("powerdevilprofilesconfig");
     KToolInvocation::kdeinitExec("kcmshell4", args);
-}
-
-void Battery::setProfile(const QString &profile)
-{
-    if (m_currentProfile != profile) {
-        kDebug() << "Changing power profile to " << profile;
-        QDBusInterface iface( "org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement" );
-        iface.call( "loadProfile", m_availableProfiles.key(profile) );
-    }
 }
 
 void Battery::showLabel(bool show)
