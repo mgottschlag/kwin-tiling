@@ -534,6 +534,15 @@ void Battery::initPopupWidget()
     controlsLayout->addItem(m_remainingInfoLabel, row, 1);
     row++;
 
+    m_inhibitLabel = createBuddyLabel(controls);
+    m_inhibitLabel->setText(i18nc("Label for power management inhibition", "Power management enabled:"));
+    m_inhibitButton = new Plasma::CheckBox(controls);
+    m_inhibitButton->setChecked(true);
+    controlsLayout->addItem(m_inhibitLabel, row, 0);
+    controlsLayout->addItem(m_inhibitButton, row, 1);
+    connect(m_inhibitButton, SIGNAL(toggled(bool)), this, SLOT(toggleInhibit(bool)));
+    row++;
+
     Battery *extenderApplet = new Battery(0, QVariantList());
     extenderApplet->setParent(controls);
     extenderApplet->setAcceptsHoverEvents(false);
@@ -565,12 +574,6 @@ void Battery::initPopupWidget()
     QGraphicsLinearLayout *buttonLayout = new QGraphicsLinearLayout;
     buttonLayout->setSpacing(0.0);
     buttonLayout->addStretch();
-
-    m_inhibitButton = createButton(controls);
-    m_inhibitButton->setIcon("media-playback-stop");
-    m_inhibitButton->setText(i18nc("Suspend the computer to disk; translation should be short", "Inhibit"));
-    buttonLayout->addItem(m_inhibitButton);
-    connect(m_inhibitButton, SIGNAL(clicked()), this, SLOT(toggleInhibit()));
 
     // Sleep and Hibernate buttons
     QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
@@ -1064,29 +1067,23 @@ qreal Battery::acAlpha() const
     return m_acAlpha;
 }
 
-void Battery::toggleInhibit()
+void Battery::toggleInhibit(bool toggle)
 {
     using namespace Solid::PowerManagement;
 
-    if (m_inhibitCookies.first > 0) {
+    if (m_inhibitCookies.first > 0 && m_inhibitCookies.second > 0 && !toggle) {
         // Release inhibition
         stopSuppressingSleep(m_inhibitCookies.first);
         stopSuppressingScreenPowerManagement(m_inhibitCookies.second);
 
-        m_inhibitButton->setText(i18n("Inhibit"));
-        m_inhibitButton->setIcon("media-playback-stop");
-
         m_inhibitCookies = qMakePair< int, int >(-1, -1);
-    } else {
+    } else if (m_inhibitCookies.first < 0 && m_inhibitCookies.second < 0 && toggle) {
         // Trigger inhibition
         QString reason = i18n("The battery applet has enabled system-wide inhibition");
         m_inhibitCookies = qMakePair< int, int >(beginSuppressingSleep(reason),
                                                  beginSuppressingScreenPowerManagement(reason));
-
-        if (m_inhibitCookies.first >= 0 && m_inhibitCookies.second >= 0) {
-            m_inhibitButton->setText("Uninhibit");
-            m_inhibitButton->setIcon("media-playback-start");
-        }
+    } else {
+        kWarning() << "The requested action conflicts with the current inhibition state";
     }
 }
 
