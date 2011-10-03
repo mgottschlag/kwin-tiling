@@ -200,10 +200,12 @@ private Q_SLOTS:
     void testRulesVersion() {
     	QVERIFY(!rules->version.isEmpty());
 
-    	Rules* rules10 = Rules::readRules(QString("config/base.xml"));
+    	Rules* rules10 = new Rules();
+    	Rules::readRules(rules10, QString("config/base.xml"), false);
     	QCOMPARE(rules10->version, QString("1.0"));
     	delete rules10;
-    	Rules* rules11 = Rules::readRules(QString("config/base.1.1.xml"));
+    	Rules* rules11 = new Rules();
+    	Rules::readRules(rules11, QString("config/base.1.1.xml"), false);
     	QCOMPARE(rules11->version, QString("1.1"));
     	delete rules11;
     }
