@@ -469,9 +469,14 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupab
         AppLauncherItem *launcherItem = new AppLauncherItem(this, m_applet, static_cast<TaskManager::LauncherItem*>(groupableItem));
         item = launcherItem;
     } else {
-        //it's a window task
+        TaskManager::TaskItem * taskItem = static_cast<TaskManager::TaskItem*>(groupableItem);
+        //if the taskItem is not either a startup o a task, return 0;
+        if (!taskItem->startup() && !taskItem->task()) {
+            return item;
+        }
+
         WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet);
-        windowItem->setTask(static_cast<TaskManager::TaskItem*>(groupableItem));
+        windowItem->setTask(taskItem);
         item = windowItem;
     }
 
