@@ -195,7 +195,7 @@ void X11EmbedContainer::paintEvent(QPaintEvent *event)
     // Taking a detour via a QPixmap is unfortunately the only way we can get
     // the window contents into Qt's backing store.
     QPixmap pixmap(size());
-    pixmap = toX11Pixmap( pixmap );
+    pixmap = toX11Pixmap(pixmap);
     pixmap.fill(Qt::transparent);
     XRenderComposite(x11Info().display(), PictOpSrc, d->picture, None, pixmap.x11PictureHandle(),
                      0, 0, 0, 0, 0, 0, width(), height());
@@ -230,19 +230,19 @@ void X11EmbedContainer::setBackgroundPixmap(QPixmap background)
 // option seems to be to create X11-based QPixmap using QPixmap::fromX11Pixmap()
 // and draw the non-native pixmap to it.
 // NOTE: The alpha-channel is not preserved if it exists, but for X pixmaps it generally should not be needed anyway.
-QPixmap X11EmbedContainer::toX11Pixmap( const QPixmap& pix )
+QPixmap X11EmbedContainer::toX11Pixmap(const QPixmap& pix)
 {
-    if( pix.handle() != 0 ) // X11 pixmap
+    if(pix.handle() != 0)   // X11 pixmap
         return pix;
-    Pixmap xpix = XCreatePixmap( pix.x11Info().display(), RootWindow( pix.x11Info().display(), pix.x11Info().screen()),
-        pix.width(), pix.height(), QX11Info::appDepth());
-    QPixmap wrk = QPixmap::fromX11Pixmap( xpix );
-    QPainter paint( &wrk );
-    paint.drawPixmap( 0, 0, pix );
+    Pixmap xpix = XCreatePixmap(pix.x11Info().display(), RootWindow(pix.x11Info().display(), pix.x11Info().screen()),
+                                pix.width(), pix.height(), QX11Info::appDepth());
+    QPixmap wrk = QPixmap::fromX11Pixmap(xpix);
+    QPainter paint(&wrk);
+    paint.drawPixmap(0, 0, pix);
     paint.end();
     QPixmap ret = wrk.copy();
     wrk = QPixmap(); // reset, so that xpix can be freed (QPixmap does not own it)
-    XFreePixmap( pix.x11Info().display(), xpix );
+    XFreePixmap(pix.x11Info().display(), xpix);
     return ret;
 }
 

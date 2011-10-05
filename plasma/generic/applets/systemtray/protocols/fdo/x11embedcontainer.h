@@ -47,7 +47,7 @@ private slots:
     void ensureValidSize();
 
 private:
-    static QPixmap toX11Pixmap( const QPixmap& pix );
+    static QPixmap toX11Pixmap(const QPixmap& pix);
     class Private;
     Private* const d;
 };
