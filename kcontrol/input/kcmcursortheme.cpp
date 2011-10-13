@@ -24,7 +24,7 @@
 K_PLUGIN_FACTORY(CursorThemeConfigFactory,
     registerPlugin<CursorThemeConfig>();
 )
-K_EXPORT_PLUGIN(CursorThemeConfigFactory("kcm_cursortheme"))
+K_EXPORT_PLUGIN(CursorThemeConfigFactory("kcm_cursortheme", "kcminput"))
 
 
 CursorThemeConfig::CursorThemeConfig(QWidget *parent, const QVariantList &args)
