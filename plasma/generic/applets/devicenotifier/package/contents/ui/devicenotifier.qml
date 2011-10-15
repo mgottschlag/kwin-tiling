@@ -45,9 +45,14 @@ Item {
     PlasmaCore.DataSource {
         id: statusSource
         engine: "devicenotifications"
+        property string last: ""
         onSourceAdded: {
-            statusBar.text = data[source]["error"];
-            // show the status bar
+            last = source;
+            connectSource(source);
+        }
+        onDataChanged: {
+            if (last!="")
+                statusBar.show(data[last]["error"], data[last]["errorDetails"], data[last]["udi"]);
         }
     }
 
@@ -185,15 +190,22 @@ Item {
         }
     }
 
-    Text {
+    PlasmaWidgets.Separator {
+        id: separatorNotifications
+        anchors { bottom: statusBar.top; bottomMargin: 3; left: parent.left; right: parent.right }
+        visible: statusBar.height>0
+    }
+
+    StatusBar {
         id: statusBar
         anchors {
             left: parent.left
+            leftMargin: 5
             right: parent.right
+            rightMargin: 5
             bottom: parent.bottom
+            bottomMargin: 5
         }
-        height: 14
-        onTextChanged: print (text);
     }
 
     function isMounted (udi) {
