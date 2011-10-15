@@ -45,7 +45,7 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
 
     // Listen for KUriFilter plugin config changes and update state...
     QDBusConnection sessionDbus = QDBusConnection::sessionBus();
-    sessionDbus.connect(QString(), QString(), "org.kde.KUriFilterPlugin",
+    sessionDbus.connect(QString(), "/", "org.kde.KUriFilterPlugin",
                         "configure", this, SLOT(readFiltersConfig()));
 
     connect(this, SIGNAL(teardown()), this, SLOT(resetState()));
