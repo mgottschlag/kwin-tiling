@@ -1158,14 +1158,20 @@ void Klipper::slotAskClearHistory()
 
 void Klipper::slotCycleNext()
 {
-    m_history->cycleNext();
-    emit passivePopup(i18n("Clipboard history"), cycleText());
+    //do cycle and show popup only if we have something in clipboard
+    if (m_history->first()) {
+        m_history->cycleNext();
+        emit passivePopup(i18n("Clipboard history"), cycleText());
+    }
 }
 
 void Klipper::slotCyclePrev()
 {
-    m_history->cyclePrev();
-    emit passivePopup(i18n("Clipboard history"), cycleText());
+    //do cycle and show popup only if we have something in clipboard
+    if (m_history->first()) {
+        m_history->cyclePrev();
+        emit passivePopup(i18n("Clipboard history"), cycleText());
+    }
 }
 
 QString Klipper::cycleText() const
