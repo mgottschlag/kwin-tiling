@@ -102,12 +102,7 @@ void GeneralPage::fillUi()
     }
 
     eventsIconLabel->setPixmap(KIcon("preferences-desktop-notification").pixmap(24));
-    profileIconLabel->setPixmap(KIcon("preferences-system-power-management").pixmap(24));
-
-    reloadAvailableProfiles();
-
-    tabWidget->setTabIcon(0, KIcon("preferences-other"));
-    tabWidget->setTabIcon(1, KIcon("battery"));
+    batteryLevelsIconLabel->setPixmap(KIcon("battery").pixmap(24));
 
     QSet< Solid::PowerManagement::SleepState > methods = Solid::PowerManagement::supportedSleepStates();
 
@@ -129,22 +124,15 @@ void GeneralPage::fillUi()
     connect(notificationsButton, SIGNAL(clicked()), SLOT(configureNotifications()));
 
     connect(lowSpin, SIGNAL(valueChanged(int)), SLOT(changed()));
-    connect(warningSpin, SIGNAL(valueChanged(int)), SLOT(changed()));
     connect(criticalSpin, SIGNAL(valueChanged(int)), SLOT(changed()));
 
     connect(BatteryCriticalCombo, SIGNAL(currentIndexChanged(int)), SLOT(changed()));
 
-    connect(acProfile, SIGNAL(currentIndexChanged(int)), SLOT(changed()));
-    connect(lowProfile, SIGNAL(currentIndexChanged(int)), SLOT(changed()));
-    connect(warningProfile, SIGNAL(currentIndexChanged(int)), SLOT(changed()));
-    connect(batteryProfile, SIGNAL(currentIndexChanged(int)), SLOT(changed()));
-
     // Disable stuff, eventually
     if (batteryCount == 0) {
-        batteryProfile->setEnabled(false);
-        lowProfile->setEnabled(false);
-        warningProfile->setEnabled(false);
-        tabWidget->setTabEnabled(1, false);
+        BatteryCriticalCombo->setEnabled(false);
+        lowSpin->setEnabled(false);
+        criticalSpin->setEnabled(false);
     }
 }
 
@@ -153,15 +141,9 @@ void GeneralPage::load()
     lockScreenOnResume->setChecked(PowerDevilSettings::configLockScreen());
 
     lowSpin->setValue(PowerDevilSettings::batteryLowLevel());
-    warningSpin->setValue(PowerDevilSettings::batteryWarningLevel());
     criticalSpin->setValue(PowerDevilSettings::batteryCriticalLevel());
 
     BatteryCriticalCombo->setCurrentIndex(BatteryCriticalCombo->findData(PowerDevilSettings::batteryCriticalAction()));
-
-    acProfile->setCurrentIndex(acProfile->findData(PowerDevilSettings::aCProfile()));
-    lowProfile->setCurrentIndex(lowProfile->findData(PowerDevilSettings::lowProfile()));
-    warningProfile->setCurrentIndex(warningProfile->findData(PowerDevilSettings::warningProfile()));
-    batteryProfile->setCurrentIndex(batteryProfile->findData(PowerDevilSettings::batteryProfile()));
 }
 
 void GeneralPage::configureNotifications()
@@ -174,15 +156,9 @@ void GeneralPage::save()
     PowerDevilSettings::setConfigLockScreen(lockScreenOnResume->isChecked());
 
     PowerDevilSettings::setBatteryLowLevel(lowSpin->value());
-    PowerDevilSettings::setBatteryWarningLevel(warningSpin->value());
     PowerDevilSettings::setBatteryCriticalLevel(criticalSpin->value());
 
     PowerDevilSettings::setBatteryCriticalAction(BatteryCriticalCombo->itemData(BatteryCriticalCombo->currentIndex()).toInt());
-
-    PowerDevilSettings::setACProfile(acProfile->itemData(acProfile->currentIndex()).toString());
-    PowerDevilSettings::setLowProfile(lowProfile->itemData(lowProfile->currentIndex()).toString());
-    PowerDevilSettings::setWarningProfile(warningProfile->itemData(warningProfile->currentIndex()).toString());
-    PowerDevilSettings::setBatteryProfile(batteryProfile->itemData(batteryProfile->currentIndex()).toString());
 
     PowerDevilSettings::self()->writeConfig();
 
@@ -197,54 +173,6 @@ void GeneralPage::save()
     emit changed(false);
 }
 
-void GeneralPage::reloadAvailableProfiles()
-{
-    KSharedConfigPtr profilesConfig = KSharedConfig::openConfig("powerdevil2profilesrc", KConfig::SimpleConfig);
-
-    // Request profiles to the daemon
-    QDBusMessage call = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement",
-                                                       "org.kde.Solid.PowerManagement", "availableProfiles");
-    QDBusPendingReply< StringStringMap > reply = QDBusConnection::sessionBus().asyncCall(call);
-    reply.waitForFinished();
-
-    if (!reply.isValid()) {
-        kDebug() << "Error contacting the daemon!";
-        return;
-    }
-
-    StringStringMap profiles = reply.value();
-
-    if (profiles.isEmpty()) {
-        kDebug() << "No available profiles!";
-        return;
-    }
-
-    acProfile->clear();
-    batteryProfile->clear();
-    lowProfile->clear();
-    warningProfile->clear();
-
-    if (profilesConfig->groupList().isEmpty()) {
-        kDebug() << "No available profiles!";
-        return;
-    }
-
-    for (StringStringMap::const_iterator i = profiles.constBegin(); i != profiles.constEnd(); ++i) {
-        KConfigGroup group(profilesConfig, i.key());
-
-        acProfile->addItem(KIcon(group.readEntry("icon")), i.value(), i.key());
-        batteryProfile->addItem(KIcon(group.readEntry("icon")), i.value(), i.key());
-        lowProfile->addItem(KIcon(group.readEntry("icon")), i.value(), i.key());
-        warningProfile->addItem(KIcon(group.readEntry("icon")), i.value(), i.key());
-    }
-
-    acProfile->setCurrentIndex(acProfile->findData(PowerDevilSettings::aCProfile()));
-    lowProfile->setCurrentIndex(acProfile->findData(PowerDevilSettings::lowProfile()));
-    warningProfile->setCurrentIndex(acProfile->findData(PowerDevilSettings::warningProfile()));
-    batteryProfile->setCurrentIndex(acProfile->findData(PowerDevilSettings::batteryProfile()));
-
-}
-
 void GeneralPage::defaults()
 {
     KCModule::defaults();
@@ -253,11 +181,6 @@ void GeneralPage::defaults()
 void GeneralPage::onServiceRegistered(const QString& service)
 {
     Q_UNUSED(service);
-
-    // Connect to daemon's signal
-    QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement",
-                                          "org.kde.Solid.PowerManagement", "configurationReloaded",
-                                          this, SLOT(reloadAvailableProfiles()));
 
     if (!m_errorOverlay.isNull()) {
         m_errorOverlay.data()->deleteLater();

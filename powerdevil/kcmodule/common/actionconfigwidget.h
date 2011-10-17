@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Dario Freddi <drf@kde.org>                      *
+ *   Copyright (C) 2010 by Sebastian Kugler <sebas@kde.org>                *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,53 +17,29 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef EDITPAGE_H
-#define EDITPAGE_H
+#ifndef ACTIONCONFIG_H
+#define ACTIONCONFIG_H
 
-#include <KCModule>
+#include <QtGui/QMainWindow>
+#include <QtGui/QWidget>
 
-#include "ui_profileEditPage.h"
+#include <QGridLayout>
+#include <QMap>
+#include <QString>
 
-class ActionEditWidget;
-namespace PowerDevil {
-class ActionConfig;
-}
+#include <kdemacros.h>
 
-class ErrorOverlay;
-class QCheckBox;
-class KToolBar;
-
-class EditPage : public KCModule, private Ui_profileEditPage
+class KDE_EXPORT ActionConfigWidget : public QWidget
 {
-    Q_OBJECT
-
+Q_OBJECT
 public:
-    explicit EditPage(QWidget *parent, const QVariantList &args);
-    ~EditPage();
+    ActionConfigWidget(QWidget* parent);
+    ~ActionConfigWidget();
 
-    void load();
-    void save();
-    virtual void defaults();
-
-private slots:
-    void onChanged(bool changed);
-
-    void restoreDefaultProfiles();
-
-    void notifyDaemon(const QStringList &editedProfiles = QStringList());
-
-    void openUrl(const QString &url);
-
-    void onServiceRegistered(const QString &service);
-    void onServiceUnregistered(const QString &service);
-
-    void checkAndEmitChanged();
+    void addWidgets(QList<QPair <QString, QWidget*> > configMap);
 
 private:
-    KSharedConfig::Ptr m_profilesConfig;
-    QHash< QString, bool > m_profileEdited;
-    QWeakPointer< ErrorOverlay > m_errorOverlay;
-    QHash< QString, ActionEditWidget* > m_editWidgets;
+    QGridLayout* m_gridLayout;
 };
 
-#endif /* EDITPAGE_H */
+#endif // ActionConfigWidget_H

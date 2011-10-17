@@ -39,6 +39,7 @@ namespace Plasma
     class ExtenderItem;
     class ComboBox;
     class Slider;
+    class CheckBox;
 }
 
 class Battery : public Plasma::PopupApplet
@@ -93,12 +94,11 @@ class Battery : public Plasma::PopupApplet
         void updateSlider(const float brightness);
         void updateSlider();
         void openConfig();
-        void setProfile(const QString &profile);
         void suspend();
         void hibernate();
         void updateBattery();
         void setupFonts();
-        void toggleInhibit();
+        void toggleInhibit(bool toggle);
 
     private:
         void connectSources();
@@ -133,10 +133,9 @@ class Battery : public Plasma::PopupApplet
         Plasma::Label *m_remainingInfoLabel;
         Plasma::Label *m_statusLabel;
         Plasma::Label *m_brightnessLabel;
-        Plasma::Label *m_profileLabel;
-        Plasma::ComboBox *m_profileCombo;
+        Plasma::Label* m_inhibitLabel;
         Plasma::Slider *m_brightnessSlider;
-        Plasma::IconWidget *m_inhibitButton;
+        Plasma::CheckBox *m_inhibitButton;
 
         /* Show multiple batteries with individual icons and charge info? */
         bool m_showMultipleBatteries;

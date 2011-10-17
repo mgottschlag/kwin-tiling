@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Dario Freddi <drf@kde.org>                      *
+ *   Copyright (C) 2011 by Dario Freddi <drf@kde.org>                      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,53 +17,41 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef EDITPAGE_H
-#define EDITPAGE_H
 
-#include <KCModule>
+#ifndef ACTIVITYWIDGET_H
+#define ACTIVITYWIDGET_H
 
-#include "ui_profileEditPage.h"
+#include <QtGui/QWidget>
+#include <KSharedConfig>
 
 class ActionEditWidget;
-namespace PowerDevil {
-class ActionConfig;
+class KActivityConsumer;
+namespace Ui {
+class ActivityWidget;
 }
 
-class ErrorOverlay;
-class QCheckBox;
-class KToolBar;
-
-class EditPage : public KCModule, private Ui_profileEditPage
+class ActivityWidget : public QWidget
 {
     Q_OBJECT
-
 public:
-    explicit EditPage(QWidget *parent, const QVariantList &args);
-    ~EditPage();
+    explicit ActivityWidget(const QString &activity, QWidget *parent = 0);
+    virtual ~ActivityWidget();
 
+public Q_SLOTS:
     void load();
     void save();
-    virtual void defaults();
 
-private slots:
-    void onChanged(bool changed);
+    void setChanged();
 
-    void restoreDefaultProfiles();
-
-    void notifyDaemon(const QStringList &editedProfiles = QStringList());
-
-    void openUrl(const QString &url);
-
-    void onServiceRegistered(const QString &service);
-    void onServiceUnregistered(const QString &service);
-
-    void checkAndEmitChanged();
+Q_SIGNALS:
+    void changed(bool changed);
 
 private:
+    Ui::ActivityWidget *m_ui;
     KSharedConfig::Ptr m_profilesConfig;
-    QHash< QString, bool > m_profileEdited;
-    QWeakPointer< ErrorOverlay > m_errorOverlay;
-    QHash< QString, ActionEditWidget* > m_editWidgets;
+    QString m_activity;
+    KActivityConsumer *m_activityConsumer;
+    ActionEditWidget* m_actionEditWidget;
 };
 
-#endif /* EDITPAGE_H */
+#endif // ACTIVITYWIDGET_H

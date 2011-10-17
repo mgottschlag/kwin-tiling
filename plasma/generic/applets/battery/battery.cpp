@@ -78,8 +78,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_batteryInfoLabel(0),
       m_acLabelLabel(0),
       m_acInfoLabel(0),
-      m_profileLabel(0),
-      m_profileCombo(0),
       m_brightnessSlider(0),
       m_minutes(0),
       m_hours(0),
@@ -536,6 +534,15 @@ void Battery::initPopupWidget()
     controlsLayout->addItem(m_remainingInfoLabel, row, 1);
     row++;
 
+    m_inhibitLabel = createBuddyLabel(controls);
+    m_inhibitLabel->setText(i18nc("Label for power management inhibition", "Power management enabled:"));
+    m_inhibitButton = new Plasma::CheckBox(controls);
+    m_inhibitButton->setChecked(true);
+    controlsLayout->addItem(m_inhibitLabel, row, 0);
+    controlsLayout->addItem(m_inhibitButton, row, 1);
+    connect(m_inhibitButton, SIGNAL(toggled(bool)), this, SLOT(toggleInhibit(bool)));
+    row++;
+
     Battery *extenderApplet = new Battery(0, QVariantList());
     extenderApplet->setParent(controls);
     extenderApplet->setAcceptsHoverEvents(false);
@@ -548,21 +555,6 @@ void Battery::initPopupWidget()
     extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
     extenderApplet->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     controlsLayout->addItem(extenderApplet, 1, 2, 2, 1);
-
-    m_profileLabel = createBuddyLabel(controls);
-    m_profileLabel->setText(i18n("Power Profile:"));
-    controlsLayout->addItem(m_profileLabel, row, 0);
-
-
-    m_profileCombo = new Plasma::ComboBox(controls);
-    // Workaround for bug 219873
-    m_profileCombo->nativeWidget()->setMaxVisibleItems(4);
-    // This is necessary until QTBUG-2368 is fixed
-    m_profileCombo->setZValue(110);
-    connect(m_profileCombo, SIGNAL(activated(QString)),
-            this, SLOT(setProfile(QString)));
-    controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
-    row++;
 
     m_brightnessLabel = createBuddyLabel(controls);
     m_brightnessLabel->setText(i18n("Screen Brightness:"));
@@ -582,12 +574,6 @@ void Battery::initPopupWidget()
     QGraphicsLinearLayout *buttonLayout = new QGraphicsLinearLayout;
     buttonLayout->setSpacing(0.0);
     buttonLayout->addStretch();
-
-    m_inhibitButton = createButton(controls);
-    m_inhibitButton->setIcon("media-playback-stop");
-    m_inhibitButton->setText(i18nc("Suspend the computer to disk; translation should be short", "Inhibit"));
-    buttonLayout->addItem(m_inhibitButton);
-    connect(m_inhibitButton, SIGNAL(clicked()), this, SLOT(toggleInhibit()));
 
     // Sleep and Hibernate buttons
     QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
@@ -648,7 +634,6 @@ void Battery::setupFonts()
     if (m_batteryLabelLabel) {
         QFont infoFont = KGlobalSettings::generalFont();
         m_brightnessLabel->setFont(infoFont);
-        m_profileLabel->setFont(infoFont);
 
         QFont boldFont = infoFont;
         boldFont.setBold(true);
@@ -740,24 +725,6 @@ void Battery::updateStatus()
         kDebug() << batteriesLabel;
     }
 
-    if (!m_availableProfiles.empty() && m_profileCombo) {
-        m_profileCombo->clear();
-        for (StringStringMap::const_iterator i = m_availableProfiles.constBegin(); i != m_availableProfiles.constEnd(); ++i) {
-            m_profileCombo->addItem(i.value());
-        }
-        m_profileCombo->setCurrentIndex(m_profileCombo->nativeWidget()->findText(m_availableProfiles[m_currentProfile]));
-    }
-
-    if (m_profileLabel && m_profileCombo) {
-        if (m_availableProfiles.empty()) {
-            m_profileCombo->hide();
-            m_profileLabel->hide();
-        } else {
-            m_profileCombo->show();
-            m_profileLabel->show();
-        }
-    }
-
     if (m_brightnessSlider) {
         updateSlider();
     }
@@ -772,15 +739,6 @@ void Battery::openConfig()
         << QLatin1String("powerdevilglobalconfig")
         << QLatin1String("powerdevilprofilesconfig");
     KToolInvocation::kdeinitExec("kcmshell4", args);
-}
-
-void Battery::setProfile(const QString &profile)
-{
-    if (m_currentProfile != profile) {
-        kDebug() << "Changing power profile to " << profile;
-        QDBusInterface iface( "org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement" );
-        iface.call( "loadProfile", m_availableProfiles.key(profile) );
-    }
 }
 
 void Battery::showLabel(bool show)
@@ -1109,29 +1067,23 @@ qreal Battery::acAlpha() const
     return m_acAlpha;
 }
 
-void Battery::toggleInhibit()
+void Battery::toggleInhibit(bool toggle)
 {
     using namespace Solid::PowerManagement;
 
-    if (m_inhibitCookies.first > 0) {
+    if (m_inhibitCookies.first > 0 && m_inhibitCookies.second > 0 && !toggle) {
         // Release inhibition
         stopSuppressingSleep(m_inhibitCookies.first);
         stopSuppressingScreenPowerManagement(m_inhibitCookies.second);
 
-        m_inhibitButton->setText(i18n("Inhibit"));
-        m_inhibitButton->setIcon("media-playback-stop");
-
         m_inhibitCookies = qMakePair< int, int >(-1, -1);
-    } else {
+    } else if (m_inhibitCookies.first < 0 && m_inhibitCookies.second < 0 && toggle) {
         // Trigger inhibition
         QString reason = i18n("The battery applet has enabled system-wide inhibition");
         m_inhibitCookies = qMakePair< int, int >(beginSuppressingSleep(reason),
                                                  beginSuppressingScreenPowerManagement(reason));
-
-        if (m_inhibitCookies.first >= 0 && m_inhibitCookies.second >= 0) {
-            m_inhibitButton->setText("Uninhibit");
-            m_inhibitButton->setIcon("media-playback-start");
-        }
+    } else {
+        kWarning() << "The requested action conflicts with the current inhibition state";
     }
 }
 
