@@ -86,6 +86,9 @@ Item {
             top: deviceLabel.bottom
             left: deviceLabel.left
         }
+        // FIXME: state changes do not reach the plasmoid if the
+        // device was already attached when the plasmoid was
+        // initialized
         text: parent.state==0 ? idleStatus() : (parent.state==1 ? "Accessing..." : "Removing...")
         font.italic: true
         font.pointSize: 8
