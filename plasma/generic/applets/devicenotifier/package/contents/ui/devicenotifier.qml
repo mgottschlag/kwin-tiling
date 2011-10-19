@@ -198,7 +198,7 @@ Item {
             left: parent.left
             right: parent.right
         }
-        visible: statusBar.visible
+        visible: statusBar.height>0
     }
 
     StatusBar {

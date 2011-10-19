@@ -23,9 +23,7 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 Item {
     id: statusBar
     visible: statusText.text!=""
-    // FIXME: determine the height according to the contents
-    // instead of just 28
-    height: visible ? 28 : 0
+    height: visible ? statusText.paintedHeight : 0
 
     Behavior on height { NumberAnimation { duration: 200 } }
 
