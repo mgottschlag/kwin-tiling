@@ -107,7 +107,7 @@ Item {
     }
 
     PlasmaWidgets.Separator {
-        id: separator
+        id: headerSeparator
         anchors { top: header.bottom; left: parent.left; right: parent.right }
         anchors { topMargin: 3 }
     }
@@ -115,9 +115,9 @@ Item {
     ListView {
         id: notifierDialog
         anchors {
-            top : separator.bottom
+            top : headerSeparator.bottom
             topMargin: 10
-            bottom: devicenotifier.bottom
+            bottom: statusBarSeparator.top
             left: parent.left
             right: parent.right
         }
@@ -191,9 +191,14 @@ Item {
     }
 
     PlasmaWidgets.Separator {
-        id: separatorNotifications
-        anchors { bottom: statusBar.top; bottomMargin: 3; left: parent.left; right: parent.right }
-        visible: statusBar.height>0
+        id: statusBarSeparator
+        anchors {
+            bottom: statusBar.top
+            bottomMargin: statusBar.visible ? 3:0
+            left: parent.left
+            right: parent.right
+        }
+        visible: statusBar.visible
     }
 
     StatusBar {

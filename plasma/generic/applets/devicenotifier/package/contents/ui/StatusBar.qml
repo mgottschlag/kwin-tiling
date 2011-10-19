@@ -22,45 +22,78 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 
 Item {
     id: statusBar
-    height: statusText.height
+    visible: statusText.text!=""
+    // FIXME: determine the height according to the contents
+    // instead of just 28
+    height: visible ? 28 : 0
+
+    Behavior on height { NumberAnimation { duration: 200 } }
 
     function show(error, details, udi) {
         statusText.text = error;
         hideStatusTextTimer.restart();
     }
 
+    function close() {
+        statusText.text="";
+    }
+
     Timer {
         id: hideStatusTextTimer
         interval: 7500
-        onTriggered: statusText.text="";
+        onTriggered: close();
     }
 
-    // FIXME: This SVG does not show up!
-    PlasmaCore.FrameSvgItem {
-        id: closeBtn
-        width: 16
+    PlasmaCore.Svg {
+        id: iconsSvg
         imagePath: "widgets/configuration-icons"
-        prefix: "close"
+    }
+
+    PlasmaCore.SvgItem {
+        id: closeBtn
+        property int size: 16
+        width: size
+        height: size
+        svg: iconsSvg
+        elementId: "close"
         anchors {
             top: parent.top
             right: parent.right
         }
     }
 
+    MouseArea {
+        id: closeBtnMouseArea
+        anchors.fill: closeBtn
+        onClicked: {
+            hideStatusTextTimer.stop();
+            close();
+        }
+    }
+
+    PlasmaCore.SvgItem {
+        id: detailsBtn
+        width: closeBtn.size
+        height: closeBtn.size
+        svg: iconsSvg
+        elementId: "restore"
+        anchors {
+            top: parent.top
+            right: closeBtn.left
+            rightMargin: 5
+        }
+    }
+
     Text {
         id: statusText
         anchors {
+            top: parent.top
             left: parent.left
-            right: closeBtn.left
+            right: detailsBtn.left
             bottom: parent.bottom
         }
         clip: true
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignBottom
-        // FIXME: determine the height according to the contents
-        // instead of just 28
-        height: text=="" ? 0 : 28
-
-        Behavior on height { NumberAnimation { duration: 200 } }
     }
 }
