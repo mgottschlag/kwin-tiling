@@ -88,7 +88,7 @@ Item {
     }
 
     function setPopupIcon (icon, timeout) {
-        plasmoid.popupIcon = QIcon (icon);
+        plasmoid.popupIcon = QIcon(icon);
         popupIconTimer.interval = timeout;
         popupIconTimer.restart();
     }
@@ -151,6 +151,7 @@ Item {
             icon: hpSource.data[udi]["icon"]
             deviceName: hpSource.data[udi]["text"]
             emblemIcon: Emblems[0]
+            state: model["State"]
             
             percentUsage: {
                 var freeSpace = Number(model["Free Space"]);

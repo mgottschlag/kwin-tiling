@@ -28,6 +28,7 @@ Item {
     property string icon
     property alias deviceName: deviceLabel.text
     property string emblemIcon
+    property int state
     property alias leftActionIcon: leftAction.icon
     property bool mounted
     property bool expanded: (notifierDialog.currentExpanded==index)
@@ -36,6 +37,9 @@ Item {
 
     property int deviceIconMargin: 10
     height: deviceIcon.height+(deviceIconMargin*2)+actionsList.height
+
+    // FIXME: Device item loses focus on mounting/unmounting it,
+    // or specifically, when some UI element changes.
     
     QIconItem {
         id: deviceIcon
@@ -82,20 +86,22 @@ Item {
             top: deviceLabel.bottom
             left: deviceLabel.left
         }
-        text: {
-            var actions = hpSource.data[udi]["actions"];
-            if (actions.length>1) {
-                return actions.length+" actions for this device";
-            } else {
-                return actions[0]["text"];
-            }
-        }
+        text: parent.state==0 ? idleStatus() : (parent.state==1 ? "Accessing..." : "Removing...")
         font.italic: true
         font.pointSize: 8
         color: "#99"+(theme.textColor.toString().substr(1))
         opacity: mouseArea.containsMouse || expanded ? 1 : 0;
 
         Behavior on opacity { NumberAnimation { duration: 150 } }
+    }
+
+    function idleStatus() {
+        var actions = hpSource.data[udi]["actions"];
+        if (actions.length>1) {
+            return actions.length+" actions for this device";
+        } else {
+            return actions[0]["text"];
+        }
     }
 
     PlasmaWidgets.Meter {
@@ -125,6 +131,20 @@ Item {
             rightMargin: 10
             verticalCenter: deviceIcon.verticalCenter
         }
+        visible: !busySpinner.visible
+    }
+
+    PlasmaWidgets.BusyWidget {
+        id: busySpinner
+        width: 22
+        height: 22
+        anchors {
+            right: parent.right
+            rightMargin: 10
+            verticalCenter: deviceIcon.verticalCenter
+        }
+        running: visible
+        visible: state!=0
     }
 
     MouseArea {
@@ -146,7 +166,8 @@ Item {
             notifierDialog.highlightItem.opacity = expanded ? 1 : 0;
         }
         onClicked: {
-            if (mouse.x>=leftAction.x && mouse.x<=leftAction.x+leftAction.width
+            if (leftAction.visible
+             && mouse.x>=leftAction.x && mouse.x<=leftAction.x+leftAction.width
              && mouse.y>=leftAction.y && mouse.y<=leftAction.y+leftAction.height)
             {
                 leftActionTriggered();

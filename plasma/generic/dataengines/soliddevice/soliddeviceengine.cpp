@@ -114,6 +114,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     setData(name, I18N_NOOP("Product"), device.product());
     setData(name, I18N_NOOP("Icon"), device.icon());
     setData(name, I18N_NOOP("Emblems"), device.emblems());
+    setData(name, I18N_NOOP("State"), Idle);
 
     if (device.is<Solid::Processor>()) {
         Solid::Processor *processor = device.as<Solid::Processor>();
@@ -520,6 +521,44 @@ void SolidDeviceEngine::deviceAdded(const QString& udi)
             setData(query, predicatemap[query]);
         }
     }
+
+    if (device.is<Solid::OpticalDisc>()) {
+        Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
+        if (drive) {
+            connect(drive, SIGNAL(ejectRequested(QString)),
+                    this, SLOT(setUnmountingState(QString)));
+            connect(drive, SIGNAL(ejectDone(Solid::ErrorType,QVariant,QString)),
+                    this, SLOT(setIdleState(Solid::ErrorType,QVariant,QString)));
+        }
+    }
+    else if (device.is<Solid::StorageVolume>()) {
+        Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+        if (access) {
+            connect(access, SIGNAL(setupRequested(const QString&)),
+                    this, SLOT(setMountingState(const QString&)));
+            connect(access, SIGNAL(setupDone(Solid::ErrorType,QVariant,QString)),
+                    this, SLOT(setIdleState(Solid::ErrorType,QVariant,QString)));
+            connect(access, SIGNAL(teardownRequested(QString)),
+                    this, SLOT(setUnmountingState(QString)));
+            connect(access, SIGNAL(teardownDone(Solid::ErrorType,QVariant,QString)),
+                    this, SLOT(setIdleState(Solid::ErrorType,QVariant,QString)));
+        }
+    }
+}
+
+void SolidDeviceEngine::setMountingState(const QString &udi)
+{
+    setData(udi, I18N_NOOP("State"), Mounting);
+}
+
+void SolidDeviceEngine::setUnmountingState(const QString &udi)
+{
+    setData(udi, I18N_NOOP("State"), Unmounting);
+}
+
+void SolidDeviceEngine::setIdleState(Solid::ErrorType error, QVariant errorData, const QString &udi)
+{
+    setData(udi, I18N_NOOP("State"), Idle);
 }
 
 qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
@@ -613,6 +652,20 @@ void SolidDeviceEngine::deviceRemoved(const QString& udi)
     foreach (const QString &query, predicatemap.keys()) {
         predicatemap[query].removeAll(udi);
         setData(query, predicatemap[query]);
+    }
+
+    Solid::Device device(udi);
+    if (device.is<Solid::StorageVolume>()) {
+        Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+        if (access) {
+            disconnect(access, 0, this, 0);
+        }
+    }
+    else if (device.is<Solid::OpticalDisc>()) {
+        Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
+        if (drive) {
+            disconnect(drive, 0, this, 0);
+        }
     }
 
     devicemap.remove(udi);

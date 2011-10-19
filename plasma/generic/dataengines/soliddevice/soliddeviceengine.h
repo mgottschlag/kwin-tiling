@@ -36,6 +36,12 @@
 #include "devicesignalmapper.h"
 #include "hddtemp.h"
 
+enum State {
+    Idle = 0,
+    Mounting = 1,
+    Unmounting = 2
+};
+
 /**
  * This class evaluates the basic expressions given in the interface.
  */
@@ -77,6 +83,9 @@ private Q_SLOTS:
     void deviceRemoved(const QString &udi);
     void deviceChanged(const QString& udi, const QString &property, const QVariant &value);
     void sourceWasRemoved(const QString &source);
+    void setMountingState(const QString &udi);
+    void setUnmountingState(const QString &udi);
+    void setIdleState(Solid::ErrorType error, QVariant errorData, const QString &udi);
 };
 
 #endif
