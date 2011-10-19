@@ -97,8 +97,9 @@ Item {
 
     PlasmaCore.SvgItem {
         id: detailsBtn
-        width: iconSize
-        height: iconSize
+        visible: detailsText.text!=""
+        width: visible ? iconSize : 0
+        height: visible ? iconSize : 0
         svg: iconsSvg
         elementId: expanded ? "collapse" : "restore"
         anchors {
@@ -110,6 +111,7 @@ Item {
 
     MouseArea {
         anchors.fill: detailsBtn
+        enabled: detailsBtn.visible
         onClicked: toggleDetails();
     }
 
