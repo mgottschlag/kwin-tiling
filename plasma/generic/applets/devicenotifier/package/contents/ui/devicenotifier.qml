@@ -52,7 +52,7 @@ Item {
         }
         onDataChanged: {
             if (last!="")
-                statusBar.show(data[last]["error"], data[last]["errorDetails"], data[last]["udi"]);
+                statusBar.setData(data[last]["error"], data[last]["errorDetails"], data[last]["udi"]);
         }
     }
 

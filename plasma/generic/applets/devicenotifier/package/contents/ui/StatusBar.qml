@@ -22,24 +22,53 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 
 Item {
     id: statusBar
-    visible: statusText.text!=""
-    height: visible ? statusText.paintedHeight : 0
+    property bool expanded: false
+    visible: false
+    height: visible ? (expanded ? statusText.paintedHeight+detailsText.paintedHeight+3 : statusText.paintedHeight) : 0
 
     Behavior on height { NumberAnimation { duration: 200 } }
 
-    function show(error, details, udi) {
+    function setData(error, details, udi) {
+        shown = visible;
+        if (shown)
+            close();
         statusText.text = error;
-        hideStatusTextTimer.restart();
+        detailsText.text = details;
+        if (shown)
+            showTimer.restart();
+        else
+            show();
+    }
+
+    function show() {
+        expanded = false;
+        visible = true;
+        showTimer.stop();
+        hideTimer.restart();
+    }
+
+    function toggleDetails() {
+        expanded = !expanded;
+        hideTimer.running = !expanded;
     }
 
     function close() {
-        statusText.text="";
+        hideTimer.stop();
+        showTimer.stop();
+        expanded = false;
+        visible = false;
     }
 
     Timer {
-        id: hideStatusTextTimer
+        id: hideTimer
         interval: 7500
         onTriggered: close();
+    }
+
+    Timer {
+        id: showTimer
+        interval: 300
+        onTriggered: show();
     }
 
     PlasmaCore.Svg {
@@ -47,11 +76,12 @@ Item {
         imagePath: "widgets/configuration-icons"
     }
 
+    property int iconSize: 16
+
     PlasmaCore.SvgItem {
         id: closeBtn
-        property int size: 16
-        width: size
-        height: size
+        width: iconSize
+        height: iconSize
         svg: iconsSvg
         elementId: "close"
         anchors {
@@ -61,25 +91,26 @@ Item {
     }
 
     MouseArea {
-        id: closeBtnMouseArea
         anchors.fill: closeBtn
-        onClicked: {
-            hideStatusTextTimer.stop();
-            close();
-        }
+        onClicked: close();
     }
 
     PlasmaCore.SvgItem {
         id: detailsBtn
-        width: closeBtn.size
-        height: closeBtn.size
+        width: iconSize
+        height: iconSize
         svg: iconsSvg
-        elementId: "restore"
+        elementId: expanded ? "collapse" : "restore"
         anchors {
             top: parent.top
             right: closeBtn.left
             rightMargin: 5
         }
+    }
+
+    MouseArea {
+        anchors.fill: detailsBtn
+        onClicked: toggleDetails();
     }
 
     Text {
@@ -88,10 +119,25 @@ Item {
             top: parent.top
             left: parent.left
             right: detailsBtn.left
-            bottom: parent.bottom
+            bottom: detailsText.top
+            bottomMargin: expanded ? 3 : 0
         }
         clip: true
         wrapMode: Text.WordWrap
-        verticalAlignment: Text.AlignBottom
+    }
+
+    Text {
+        id: detailsText
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom 
+        }
+        font.pointSize: 8
+        clip: true
+        wrapMode: Text.WordWrap
+        height: expanded ? paintedHeight : 0
+
+        Behavior on height { NumberAnimation { duration: 200 } }
     }
 }
