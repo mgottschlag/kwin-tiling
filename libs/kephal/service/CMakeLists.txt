@@ -1,4 +1,4 @@
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/../kephal ${CMAKE_CURRENT_BINARY_DIR}/../kephal ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${kephal_SOURCE_DIR}/kephal)
 
 configure_file (../kephal/config-kephal.h.cmake
 ${CMAKE_CURRENT_BINARY_DIR}/config-kephal.h )

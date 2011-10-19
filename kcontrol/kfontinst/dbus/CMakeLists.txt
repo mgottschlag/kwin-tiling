@@ -1,4 +1,4 @@
-include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/lib
+include_directories(${CMAKE_SOURCE_DIR} 
                     ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR}
                     ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/fonts)
 add_definitions(${QT_DEFINITIONS})

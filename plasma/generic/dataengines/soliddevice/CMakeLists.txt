@@ -1,5 +1,3 @@
-include_directories(${CMAKE_SOURCE_DIR}/workspace/libs)
-
 set(soliddevice_engine_SRCS
     soliddeviceengine.cpp
     devicesignalmapper.cpp
