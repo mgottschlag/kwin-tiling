@@ -10,6 +10,7 @@ X-KDE-ParentApp=kcontrol
 
 Name=Font Management
 Name[bg]=Управление на шрифтове
+Name[bn]=ফন্ট ব্যবস্থাপনা
 Name[cs]=Správa písem
 Name[de]=Schriftarten-Verwaltung
 Name[et]=Fondihaldur
