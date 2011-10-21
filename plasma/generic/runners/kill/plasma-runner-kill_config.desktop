@@ -3,7 +3,7 @@ Type=Service
 X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_krunner_kill
-X-KDE-ParentComponents=kill
+X-KDE-ParentComponents=Kill Runner
 X-KDE-PluginKeyword=kcm_krunner_kill
 
 Name=Kill Applications
