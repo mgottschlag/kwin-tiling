@@ -25,6 +25,7 @@
 #include <KIcon>
 #include <KProcess>
 #include <KUser>
+#include <kauth.h>
 
 #include "ksysguard/processcore/processes.h"
 #include "ksysguard/processcore/process.h"
@@ -168,23 +169,30 @@ void KillRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMa
     QVariantList data = match.data().value<QVariantList>();
     quint64 pid = data[0].toUInt();
     QString user = data[1].toString();
-    QString signal;
+
+    int signal;
     if (match.selectedAction() != NULL) {
-        signal = match.selectedAction()->data().toString();
+        signal = match.selectedAction()->data().toInt();
     } else {
-        signal = "KILL";
+        signal = 9; //default: SIGKILL
     }
 
-    QStringList args; //Arguments for KDE-su
-    args << QString("-c kill -s") << signal; //Set kill-command and kill-signal
-    args << QString("%1").arg(pid); //Set PID
-    args << "--noignorebutton"; //No ignore button
-    args << "-i"; //That we want to use an icon
-    args << "process-stop"; //What icon we want to use
-    args << "-u"; //We want to set the user
-    args << user; //We set the user
+    QStringList args;
+    args << QString("-%1").arg(signal) << QString("%1").arg(pid);
     KProcess *process = new KProcess(this);
-    process->execute("kdesu",args);
+    int returnCode = process->execute("kill", args);
+
+    if (returnCode == 0)
+    {
+        return;
+    }
+
+    KAuth::Action killAction = QString("org.kde.ksysguard.processlisthelper.sendsignal");
+    killAction.setHelperID("org.kde.ksysguard.processlisthelper");
+    killAction.addArgument("pid0", pid);
+    killAction.addArgument("pidcount", 1);
+    killAction.addArgument("signal", signal);
+    killAction.execute();
 }
 
 QList<QAction*> KillRunner::actionsForMatch(const Plasma::QueryMatch &match)
@@ -194,8 +202,8 @@ QList<QAction*> KillRunner::actionsForMatch(const Plasma::QueryMatch &match)
     QList<QAction*> ret;
 
     if (!action("SIGTERM")) {
-        (addAction("SIGTERM", KIcon("application-exit"), i18n("Send SIGTERM")))->setData("TERM");
-        (addAction("SIGKILL", KIcon("process-stop"), i18n("Send SIGKILL")))->setData("KILL");
+        (addAction("SIGTERM", KIcon("application-exit"), i18n("Send SIGTERM")))->setData(15);
+        (addAction("SIGKILL", KIcon("process-stop"), i18n("Send SIGKILL")))->setData(9);
     }
     ret << action("SIGTERM") << action("SIGKILL");
     return ret;
