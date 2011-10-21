@@ -144,7 +144,7 @@ void KillRunner::match(Plasma::RunnerContext &context)
 
         // Set the relevance
         switch (m_sorting) {
-        case KillRunnerConfig::CPU: 
+        case KillRunnerConfig::CPU:
             match.setRelevance((process->userUsage + process->sysUsage) / 100);
             break;
         case KillRunnerConfig::CPUI:
