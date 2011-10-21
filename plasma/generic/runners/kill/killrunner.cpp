@@ -37,7 +37,7 @@ KillRunner::KillRunner(QObject *parent, const QVariantList& args)
           m_processes(0)
 {
     Q_UNUSED(args);
-    setObjectName( QLatin1String("Kill Runner" ));
+    setObjectName( QLatin1String("Kill Runner") );
     reloadConfiguration();
 
     connect(this, SIGNAL(prepare()), this, SLOT(prep()));
@@ -166,6 +166,7 @@ void KillRunner::match(Plasma::RunnerContext &context)
 void KillRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
     Q_UNUSED(context)
+
     QVariantList data = match.data().value<QVariantList>();
     quint64 pid = data[0].toUInt();
     QString user = data[1].toString();
@@ -218,4 +219,5 @@ QString KillRunner::getUserName(qlonglong uid)
     kDebug() << QString("No user with UID %1 was found").arg(uid);
     return "root";//No user with UID uid was found, so root is used
 }
+
 #include "killrunner.moc"
