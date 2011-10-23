@@ -1,7 +1,3 @@
-CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
-
-FIND_PACKAGE (Qt4 REQUIRED)
-
 SET (kephalapp_SRCS kephalapp.cpp)
 QT4_WRAP_CPP (kephalapp_SRCS kephalapp.h)
 
