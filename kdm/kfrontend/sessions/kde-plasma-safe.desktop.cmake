@@ -1,8 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=XSession
-Exec=${KDE4_BIN_INSTALL_DIR}/startkde --failsafe
-TryExec=${KDE4_BIN_INSTALL_DIR}/startkde
+Exec=${BIN_INSTALL_DIR}/startkde --failsafe
+TryExec=${BIN_INSTALL_DIR}/startkde
 Name=KDE Plasma Workspace (failsafe session)
 Name[ca]=Espai de treball del Plasma del KDE (sessió a prova de fallades)
 Name[cs]=Pracovní plocha plasma (bezpečná relace)
