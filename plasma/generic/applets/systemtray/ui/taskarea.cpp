@@ -55,6 +55,8 @@ public:
     Private(SystemTray::Applet *h)
         : host(h),
           unhider(0),
+          hiddenRelayoutTimer(new QTimer(h)),
+          delayedUpdateTimer(new QTimer(h)),
           topLayout(new QGraphicsLinearLayout(Qt::Horizontal)),
           firstTasksLayout(new CompactLayout()),
           normalTasksLayout(new CompactLayout()),
@@ -89,6 +91,8 @@ public:
 
     SystemTray::Applet *host;
     Plasma::IconWidget *unhider;
+    QTimer *hiddenRelayoutTimer;
+    QTimer *delayedUpdateTimer;
     QGraphicsLinearLayout *topLayout;
     CompactLayout *firstTasksLayout;
     CompactLayout *normalTasksLayout;
@@ -99,7 +103,6 @@ public:
     QGraphicsGridLayout *hiddenTasksLayout;
     Plasma::Location location;
     Plasma::ItemBackground *itemBackground;
-    QTimer *hiddenRelayoutTimer;
     bool sizeHintChanged;
 
     QSet<QString> hiddenTypes;
@@ -124,9 +127,13 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
     d->hiddenTasksLayout = new QGraphicsGridLayout(d->hiddenTasksWidget);
     d->hiddenTasksLayout->setHorizontalSpacing(0);
 
-    d->hiddenRelayoutTimer = new QTimer(this);
     d->hiddenRelayoutTimer->setSingleShot(true);
+    d->delayedUpdateTimer->setInterval(50);
     connect(d->hiddenRelayoutTimer, SIGNAL(timeout()), this, SLOT(relayoutHiddenTasks()));
+
+    d->delayedUpdateTimer->setSingleShot(true);
+    d->delayedUpdateTimer->setInterval(0);
+    connect(d->delayedUpdateTimer, SIGNAL(timeout()), this, SLOT(delayedAppletUpdate()));
 }
 
 
@@ -238,7 +245,7 @@ bool TaskArea::removeFromHiddenArea(SystemTray::Task *task)
 
     checkUnhideTool();
     d->hiddenTasks.remove(task);
-    d->hiddenRelayoutTimer->start(250);
+    d->hiddenRelayoutTimer->start();
     return true;
 }
 
@@ -252,7 +259,11 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
 
 
     checkVisibility(task);
-    QGraphicsWidget *widget = task->widget(d->host);
+    QGraphicsWidget *widget = task->widget(d->host, false);
+    const bool newWidget = !widget;
+    if (!widget) {
+        widget = task->widget(d->host);
+    }
 
     if (!widget) {
         //kDebug() << "embeddable, but we received no widget?!";
@@ -307,6 +318,12 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
             d->hiddenTasksLayout->addItem(widget, row, 0);
             d->hiddenTasksLayout->addItem(hiddenLabel, row, 1);
             adjustHiddentTasksWidget();
+            if (!newWidget) {
+                d->sizeHintChanged = true;
+                d->delayedUpdateTimer->start();
+            }
+
+            d->hiddenRelayoutTimer->start();
         }
 
         widget->show();
@@ -358,7 +375,7 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
     widget->show();
 
     //the applet could have to be repainted due to easement change
-    QTimer::singleShot(0, this, SLOT(delayedAppletUpdate()));
+    d->delayedUpdateTimer->start();
     return true;
 }
 
@@ -396,7 +413,6 @@ void TaskArea::removeTask(Task *task)
 
     if (sizeChanged) {
         emit sizeHintChanged(Qt::PreferredSize);
-
     }
 }
 
@@ -410,13 +426,20 @@ void TaskArea::relayoutHiddenTasks()
         d->hiddenTasksLayout->setRowFixedHeight(i, 0);
     }
 
-    QHash<SystemTray::Task*, HiddenTaskLabel *>::const_iterator i = d->hiddenTasks.constBegin();
+    QHashIterator<SystemTray::Task *, HiddenTaskLabel *> it(d->hiddenTasks);
+    QMultiMap<QString, SystemTray::Task *> sorted;
+    while (it.hasNext()) {
+        it.next();
+        sorted.insertMulti(it.value()->text(), it.key());
+    }
+
+    QMapIterator<QString, SystemTray::Task *> sortedIt(sorted);
     int row = 0;
-    while (i != d->hiddenTasks.constEnd()) {
-        d->hiddenTasksLayout->addItem(i.key()->widget(d->host), row, 0);
-        d->hiddenTasksLayout->addItem(i.value(), row, 1);
+    while (sortedIt.hasNext()) {
+        sortedIt.next();
+        d->hiddenTasksLayout->addItem(sortedIt.value()->widget(d->host), row, 0);
+        d->hiddenTasksLayout->addItem(d->hiddenTasks.value(sortedIt.value()), row, 1);
         d->hiddenTasksLayout->setRowFixedHeight(row, 24);
-        ++i;
         ++row;
     }
 
@@ -432,8 +455,6 @@ void TaskArea::adjustHiddentTasksWidget()
 int TaskArea::leftEasement() const
 {
     if (d->firstTasksLayout->count() > 0) {
-//        d->firstTasksLayout->invalidate();
-//        d->firstTasksLayout->updateGeometry();
         QGraphicsLayoutItem *item = d->firstTasksLayout->itemAt(d->firstTasksLayout->count() - 1);
 
         if (d->topLayout->orientation() == Qt::Vertical) {
@@ -451,8 +472,6 @@ int TaskArea::leftEasement() const
 int TaskArea::rightEasement() const
 {
     if (d->lastTasksLayout->count() > 0) {
-//        d->lastTasksLayout->invalidate();
-//        d->lastTasksLayout->updateGeometry();
         QGraphicsLayoutItem *item = d->lastTasksLayout->itemAt(0);
 
         if (d->topLayout->orientation() == Qt::Vertical) {
@@ -495,6 +514,7 @@ void TaskArea::updateUnhideToolIcon()
         data.setSubText(i18n("Hide icons"));
     } else {
         data.setSubText(i18n("Show hidden icons"));
+        d->itemBackground->hide();
     }
     Plasma::ToolTipManager::self()->setContent(d->unhider, data);
 

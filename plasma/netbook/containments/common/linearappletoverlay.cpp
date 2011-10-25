@@ -278,8 +278,8 @@ void LinearAppletOverlay::showSpacer(const QPointF &pos)
     if (insertIndex != -1) {
         if (!m_spacer) {
             m_spacer = new AppletMoveSpacer(this);
-            connect (m_spacer, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)), 
-                     this, SLOT(spacerRequestedDrop(QGraphicsSceneDragDropEvent *)));
+            connect (m_spacer, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent*)), 
+                     this, SLOT(spacerRequestedDrop(QGraphicsSceneDragDropEvent*)));
         }
 
         m_layout->removeItem(m_spacer);

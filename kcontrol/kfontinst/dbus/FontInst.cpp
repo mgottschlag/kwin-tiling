@@ -90,9 +90,14 @@ static void registerSignalHandler(SignalHandler handler)
 
 void signalHander(int)
 {
-    registerSignalHandler(0L);
-    theFolders[isSystem ? FontInst::FOLDER_SYS : FontInst::FOLDER_USER].saveDisabled();
-    registerSignalHandler(signalHander);
+    static bool inHandler=false;
+    
+    if(!inHandler)
+    {
+        inHandler=true;
+        theFolders[isSystem ? FontInst::FOLDER_SYS : FontInst::FOLDER_USER].saveDisabled();
+        inHandler=false;
+    }
 }
 
 FontInst::FontInst()
@@ -205,8 +210,8 @@ void FontInst::install(const QString &file, bool createAfm, bool toSystem, int p
 
         if(STATUS_OK==result)
         {
-            QString name(Utils::modifyName(Misc::getFile(file))),
-                    destFolder(Utils::getDestFolder(theFolders[folder].location(), name));
+            QString name(Misc::modifyName(Misc::getFile(file))),
+                    destFolder(Misc::getDestFolder(theFolders[folder].location(), name));
 
             result=Utils::FILE_AFM!=type && Utils::FILE_PFM!=type && Misc::fExists(destFolder+name) ? (int)KIO::ERR_FILE_ALREADY_EXIST : (int)STATUS_OK;
             if(STATUS_OK==result)
@@ -377,20 +382,29 @@ void FontInst::move(const QString &family, quint32 style, bool toSystem, int pid
     {
         FamilyCont::ConstIterator fam;
         StyleCont::ConstIterator  st;
-        if(findFont(family, style, toSystem ? FOLDER_USER : FOLDER_SYS, fam, st))
+        EFolder                   from=toSystem ? FOLDER_USER : FOLDER_SYS,
+                                  to=toSystem ? FOLDER_SYS : FOLDER_USER;
+
+        if(findFont(family, style, from, fam, st))
         {
             FileCont::ConstIterator it((*st).files().begin()),
                                     end((*st).files().end());
             QStringList files;
 
             for(; it!=end; ++it)
+            {
                 files.append((*it).path());
+                theFolders[from].addModifiedDir(Misc::getDir((*it).path()));
+                // Actual 'to' folder does not really matter, as we only want to call fc-cache
+                // ...actual folders only matter for xreating fonts.dir, etc, and we wont be doing this...
+                theFolders[to].addModifiedDir(theFolders[to].location());
+            }
 
             QVariantMap args;
             args["method"] = "move";
             args["files"] = files;
             args["toSystem"] = toSystem;
-            args["dest"] = theFolders[toSystem ? FOLDER_SYS : FOLDER_USER].location();
+            args["dest"] = theFolders[to].location();
             args["uid"] = getuid();
             args["gid"] = getgid();
             int result=performAction(args);
@@ -493,16 +507,16 @@ void FontInst::removeFile(const QString &family, quint32 style, const QString &f
     emit status(pid, result);
 }
 
-void FontInst::reconfigure(int pid)
+void FontInst::reconfigure(int pid, bool force)
 {
-    KFI_DBUG << pid;
+    KFI_DBUG << pid << force;
     bool sysModified(theFolders[FOLDER_SYS].isModified());
 
     saveDisabled();
 
     KFI_DBUG << theFolders[FOLDER_USER].isModified() << sysModified;
-    if(!isSystem && theFolders[FOLDER_USER].isModified())
-        theFolders[FOLDER_USER].configure();
+    if(!isSystem && (force || theFolders[FOLDER_USER].isModified()))
+        theFolders[FOLDER_USER].configure(force);
 
     if(sysModified)
     {
@@ -524,6 +538,11 @@ void FontInst::reconfigure(int pid)
 
     updateFontList();
     emit status(pid, isSystem ? constSystemReconfigured : STATUS_OK);
+}
+
+QString FontInst::folderName(bool sys)
+{
+    return theFolders[sys || isSystem ? FOLDER_SYS : FOLDER_USER].location();
 }
 
 void FontInst::saveDisabled()

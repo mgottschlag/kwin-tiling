@@ -44,11 +44,13 @@ public:
 
     void reconfigure(ReconfigureFlags flags);
     void prePaintScreen(ScreenPrePaintData &data, int time);
+    void prePaintWindow(EffectWindow* w, WindowPrePaintData& data, int time);
     void drawWindow(EffectWindow *w, int mask, QRegion region, WindowPaintData &data);
     void paintEffectFrame(EffectFrame *frame, QRegion region, double opacity, double frameOpacity);
 
 public Q_SLOTS:
     void slotWindowAdded(EffectWindow *w);
+    void slotWindowDeleted(EffectWindow *w);
     void slotPropertyNotify(EffectWindow *w, long atom);
 
 private:
@@ -59,13 +61,25 @@ private:
     void updateBlurRegion(EffectWindow *w) const;
     void drawRegion(const QRegion &region);
     void doBlur(const QRegion &shape, const QRect &screen, const float opacity);
+    void doCachedBlur(EffectWindow *w, const QRegion& region, const float opacity);
 
 private:
     BlurShader *shader;
     QVector<QVector2D> vertices;
     GLRenderTarget *target;
-    GLTexture *tex;
+    GLTexture tex;
     long net_wm_blur_region;
+    QRegion m_damagedArea; // keeps track of the area which has been damaged (from bottom to top)
+    QRegion m_paintedArea; // actually painted area which is greater than m_damagedArea
+    QRegion m_currentBlur; // keeps track of the currently blured area of non-caching windows(from bottom to top)
+    bool m_shouldCache;
+
+    struct BlurWindowInfo {
+        GLTexture blurredBackground; // keeps the horizontally blurred background
+        QRegion damagedRegion;
+    };
+
+    QHash< const EffectWindow*, BlurWindowInfo > windows;
 };
 
 } // namespace KWin

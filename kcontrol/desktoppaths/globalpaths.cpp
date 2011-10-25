@@ -364,8 +364,8 @@ bool DesktopPathConfig::moveDir( const KUrl & src, const KUrl & dest, const QStr
             job->setAutoDelete(false); // see <noautodelete> below
             job->ui()->setWindow(this);
             job->ui()->setAutoErrorHandlingEnabled(true);
-            connect(job, SIGNAL(entries(KIO::Job *,KIO::UDSEntryList)),
-                    this, SLOT(slotEntries(KIO::Job *,KIO::UDSEntryList)));
+            connect(job, SIGNAL(entries(KIO::Job*,KIO::UDSEntryList)),
+                    this, SLOT(slotEntries(KIO::Job*,KIO::UDSEntryList)));
             // slotEntries will move every file/subdir individually into the dest
             job->exec();
             if (m_ok) {
@@ -378,7 +378,7 @@ bool DesktopPathConfig::moveDir( const KUrl & src, const KUrl & dest, const QStr
             kDebug() << "Direct move from" << src << "to" << dest;
             KIO::Job * job = KIO::move( src, dest );
             job->ui()->setWindow(this);
-            connect(job, SIGNAL(result(KJob *)), this, SLOT(slotResult(KJob *)));
+            connect(job, SIGNAL(result(KJob*)), this, SLOT(slotResult(KJob*)));
             job->exec();
         }
     }
@@ -398,7 +398,7 @@ void DesktopPathConfig::slotEntries(KIO::Job*, const KIO::UDSEntryList& list)
 
         KIO::Job * moveJob = KIO::move(file.url(), m_copyToDest);
         moveJob->ui()->setWindow(this);
-        connect(moveJob, SIGNAL(result(KJob *)), this, SLOT(slotResult(KJob *)));
+        connect(moveJob, SIGNAL(result(KJob*)), this, SLOT(slotResult(KJob*)));
         moveJob->exec(); // sub-event loop here. <noautodelete>: the main job is not autodeleted because it would be deleted here
     }
 }

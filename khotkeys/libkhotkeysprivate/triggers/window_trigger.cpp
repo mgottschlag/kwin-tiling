@@ -79,13 +79,13 @@ void WindowTrigger::accept(TriggerVisitor& visitor)
 void WindowTrigger::init()
     {
     kDebug() << "WindowTrigger::init()";
-    connect( windows_handler, SIGNAL( window_added( WId )), this, SLOT( window_added( WId )));
-    connect( windows_handler, SIGNAL( window_removed( WId )), this, SLOT( window_removed( WId )));
+    connect( windows_handler, SIGNAL(window_added(WId)), this, SLOT(window_added(WId)));
+    connect( windows_handler, SIGNAL(window_removed(WId)), this, SLOT(window_removed(WId)));
     if( window_actions & ( WINDOW_ACTIVATES | WINDOW_DEACTIVATES /*| WINDOW_DISAPPEARS*/ ))
-        connect( windows_handler, SIGNAL( active_window_changed( WId )),
-            this, SLOT( active_window_changed( WId )));
-    connect( windows_handler, SIGNAL( window_changed( WId, unsigned int )),
-        this, SLOT( window_changed( WId, unsigned int )));
+        connect( windows_handler, SIGNAL(active_window_changed(WId)),
+            this, SLOT(active_window_changed(WId)));
+    connect( windows_handler, SIGNAL(window_changed(WId,uint)),
+        this, SLOT(window_changed(WId,uint)));
     }
 
 

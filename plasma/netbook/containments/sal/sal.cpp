@@ -180,7 +180,7 @@ void SearchLaunch::init()
 
     connect(m_resultsView, SIGNAL(dragStartRequested(QModelIndex)), this, SLOT(resultsViewRequestedDrag(QModelIndex)));
     connect(m_resultsView, SIGNAL(itemActivated(QModelIndex)), this, SLOT(launch(QModelIndex)));
-    connect(m_resultsView, SIGNAL(addActionTriggered(const QModelIndex &)), this, SLOT(addFavourite(const QModelIndex &)));
+    connect(m_resultsView, SIGNAL(addActionTriggered(QModelIndex)), this, SLOT(addFavourite(QModelIndex)));
 
 
     //TODO how to do the strip widget?
@@ -215,7 +215,7 @@ void SearchLaunch::init()
     m_searchField->nativeWidget()->setClearButtonShown(true);
     m_searchField->nativeWidget()->setClickMessage(i18n("Search..."));
     connect(m_searchField, SIGNAL(returnPressed()), this, SLOT(searchReturnPressed()));
-    connect(m_searchField->nativeWidget(), SIGNAL(textEdited(const QString &)), this, SLOT(delayedQuery()));
+    connect(m_searchField->nativeWidget(), SIGNAL(textEdited(QString)), this, SLOT(delayedQuery()));
     m_searchTimer = new QTimer(this);
     m_searchTimer->setSingleShot(true);
     connect(m_searchTimer, SIGNAL(timeout()), this, SLOT(query()));
@@ -581,8 +581,8 @@ void SearchLaunch::updateConfigurationMode(bool config)
         }
         m_appletOverlay = new LinearAppletOverlay(this, m_appletsLayout);
         m_appletOverlay->resize(size());
-        connect (m_appletOverlay, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)),
-                 this, SLOT(overlayRequestedDrop(QGraphicsSceneDragDropEvent *)));
+        connect (m_appletOverlay, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent*)),
+                 this, SLOT(overlayRequestedDrop(QGraphicsSceneDragDropEvent*)));
     } else if (!config) {
         delete m_appletOverlay;
         m_appletOverlay = 0;

@@ -201,4 +201,4 @@ int main( int argc, char **argv )
 #include "main.moc"
 
 #define KDM_NO_SHUTDOWN
-#include <kdisplaymanager.cpp>
+#include <kworkspace/kdisplaymanager.cpp>

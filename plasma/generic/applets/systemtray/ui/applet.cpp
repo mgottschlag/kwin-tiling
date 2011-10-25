@@ -91,7 +91,6 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
       m_taskArea(0),
       m_background(0),
-      m_separator(0),
       m_firstRun(true)
 {
     if (!s_manager) {
@@ -105,9 +104,6 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/systemtray");
     m_background->setCacheAllRenderedFrames(true);
-    m_separator = new Plasma::FrameSvg(this);
-    m_separator->setImagePath("widgets/line");
-    m_separator->setCacheAllRenderedFrames(true);
     m_taskArea = new TaskArea(this);
     lay->addItem(m_taskArea);
     connect(m_taskArea, SIGNAL(toggleHiddenItems()), this, SLOT(togglePopup()));
@@ -216,24 +212,6 @@ void Applet::configChanged()
 void Applet::popupEvent(bool)
 {
     m_taskArea->updateUnhideToolIcon();
-}
-
-bool Applet::isPopupShowing() const
-{
-    if (PopupApplet::isPopupShowing()) {
-        return true;
-    }
-
-    foreach (Task *task, s_manager->tasks()) {
-        Plasma::Applet *applet = qobject_cast<Plasma::Applet*>(task->widget(const_cast<Applet *>(this), false));
-        if (applet) {
-            if (applet->isPopupShowing()) {
-                return true;
-            }
-        }
-    }
-
-    return false;
 }
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)
@@ -345,7 +323,7 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     m_background->setElementPrefix(QString());
 
     const int leftEasement = m_taskArea->leftEasement();
-    if(leftEasement > 0)
+    if (leftEasement > 0)
     {
         QRect firstRect(normalRect);
 
@@ -377,7 +355,7 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     }
 
     const int rightEasement = m_taskArea->rightEasement();
-    if(rightEasement > 0)
+    if (rightEasement > 0)
     {
         QRect lastRect(normalRect);
 
@@ -411,25 +389,6 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     painter->setClipRect(normalRect, Qt::IntersectClip);
     m_background->paintFrame(painter, contentsRect, QRectF(QPointF(0, 0), contentsRect.size()));
     painter->restore();
-
-    if (leftEasement > 0) {
-        if (formFactor() == Plasma::Vertical) {
-            if (m_separator->hasElement("horizontal-line")) {
-                QSize s = m_separator->elementRect("horizontal-line").size().toSize();
-                m_separator->paint(painter, QRect(normalRect.topLeft() - QPoint(0, s.height() / 2),
-                                    QSize(normalRect.width(), s.height())), "horizontal-line");
-            }
-        } else if (m_separator->hasElement("vertical-line")) {
-            QSize s = m_separator->elementRect("vertical-line").size().toSize();
-            if (QApplication::layoutDirection() == Qt::RightToLeft) {
-                m_separator->paint(painter, QRect(normalRect.topRight() - QPoint(s.width() / 2, 0),
-                                    QSize(s.width(), normalRect.height())), "vertical-line");
-            } else {
-                m_separator->paint(painter, QRect(normalRect.topLeft() - QPoint(s.width() / 2, 0),
-                                    QSize(s.width(), normalRect.height())), "vertical-line");
-            }
-        }
-    }
 }
 
 
@@ -446,6 +405,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         m_visibleItemsInterface = new QWidget();
 
         m_autoHideUi.setupUi(m_autoHideInterface.data());
+        m_autoHideUi.icons->header()->setResizeMode(QHeaderView::ResizeToContents);
 
         m_visibleItemsUi.setupUi(m_visibleItemsInterface.data());
 
@@ -569,7 +529,6 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         connect(itemCombo, SIGNAL(currentIndexChanged(int)), parent, SLOT(settingsModified()));
         connect(button, SIGNAL(keySequenceChanged(QKeySequence)), parent, SLOT(settingsModified()));
     }
-
 
     const QString itemCategories = i18nc("Categories of items in the systemtray that will be shown or hidden", "Shown Item Categories");
 

@@ -302,6 +302,11 @@ void TaskGroup::remove(AbstractGroupableItem *item)
     emit itemRemoved(item);
 }
 
+GroupManager *TaskGroup::manager() const
+{
+    return d->groupingStrategy;
+}
+
 ItemList TaskGroup::members() const
 {
     return d->members;

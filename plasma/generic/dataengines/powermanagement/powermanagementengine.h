@@ -41,6 +41,7 @@ public:
     PowermanagementEngine( QObject* parent, const QVariantList& args );
     ~PowermanagementEngine();
     QStringList sources() const;
+    Plasma::Service* serviceForSource(const QString &source);
 
 protected:
     bool sourceRequestEvent(const QString &name);

@@ -62,17 +62,17 @@ KUrl KActivityInfo::Private::urlForType(KActivityInfo::ResourceType resourceType
     }
 }
 
-#define IMPLEMENT_SIGNAL_HANDLER(ORIGINAL, INTERNAL) \
+#define IMPLEMENT_SIGNAL_HANDLER(ORIGINAL,INTERNAL) \
     void KActivityInfo::Private::INTERNAL(const QString & _id) const  \
     {                                                                 \
         if (id == _id) emit q->INTERNAL();                            \
     }
 
-IMPLEMENT_SIGNAL_HANDLER(ActivityAdded,   added)
-IMPLEMENT_SIGNAL_HANDLER(ActivityRemoved, removed)
-IMPLEMENT_SIGNAL_HANDLER(ActivityStarted, started)
-IMPLEMENT_SIGNAL_HANDLER(ActivityStopped, stopped)
-IMPLEMENT_SIGNAL_HANDLER(ActivityChanged, infoChanged)
+IMPLEMENT_SIGNAL_HANDLER(ActivityAdded,added)
+IMPLEMENT_SIGNAL_HANDLER(ActivityRemoved,removed)
+IMPLEMENT_SIGNAL_HANDLER(ActivityStarted,started)
+IMPLEMENT_SIGNAL_HANDLER(ActivityStopped,stopped)
+IMPLEMENT_SIGNAL_HANDLER(ActivityChanged,infoChanged)
 
 #undef IMPLEMENT_SIGNAL_HANDLER
 
@@ -90,23 +90,23 @@ KActivityInfo::KActivityInfo(const QString &activityId, QObject *parent)
       d(new Private(this, activityId))
 {
     d->id = activityId;
-    connect(KActivityManager::self(), SIGNAL(ActivityStateChanged(const QString &, int)),
-            this, SLOT(activityStateChanged(const QString &, int)));
+    connect(KActivityManager::self(), SIGNAL(ActivityStateChanged(QString,int)),
+            this, SLOT(activityStateChanged(QString,int)));
 
-    connect(KActivityManager::self(), SIGNAL(ActivityChanged(const QString &)),
-            this, SLOT(infoChanged(const QString &)));
+    connect(KActivityManager::self(), SIGNAL(ActivityChanged(QString)),
+            this, SLOT(infoChanged(QString)));
 
-    connect(KActivityManager::self(), SIGNAL(ActivityAdded(const QString &)),
-            this, SLOT(added(const QString &)));
+    connect(KActivityManager::self(), SIGNAL(ActivityAdded(QString)),
+            this, SLOT(added(QString)));
 
-    connect(KActivityManager::self(), SIGNAL(ActivityRemoved(const QString &)),
-            this, SLOT(removed(const QString &)));
+    connect(KActivityManager::self(), SIGNAL(ActivityRemoved(QString)),
+            this, SLOT(removed(QString)));
 
-    connect(KActivityManager::self(), SIGNAL(ActivityStarted(const QString &)),
-            this, SLOT(started(const QString &)));
+    connect(KActivityManager::self(), SIGNAL(ActivityStarted(QString)),
+            this, SLOT(started(QString)));
 
-    connect(KActivityManager::self(), SIGNAL(ActivityStopped(const QString &)),
-            this, SLOT(stopped(const QString &)));
+    connect(KActivityManager::self(), SIGNAL(ActivityStopped(QString)),
+            this, SLOT(stopped(QString)));
 }
 
 KActivityInfo::~KActivityInfo()

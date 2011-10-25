@@ -154,8 +154,8 @@ CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList
 
     CPreviewSelectAction *displayTypeAction=new CPreviewSelectAction(this, CPreviewSelectAction::BlocksAndScripts);
     actionCollection()->addAction("displayType", displayTypeAction);
-    connect(displayTypeAction, SIGNAL(range(const QList<CFcEngine::TRange> &)),
-            SLOT(displayType(const QList<CFcEngine::TRange> &)));
+    connect(displayTypeAction, SIGNAL(range(QList<CFcEngine::TRange>)),
+            SLOT(displayType(QList<CFcEngine::TRange>)));
 
     QAction *zoomIn=actionCollection()->addAction(KStandardAction::ZoomIn, itsPreview, SLOT(zoomIn())),
             *zoomOut=actionCollection()->addAction(KStandardAction::ZoomOut, itsPreview, SLOT(zoomOut()));
@@ -168,8 +168,8 @@ CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList
     itsExtension->enablePrint(false);
 
     FontInst::registerTypes();
-    connect(itsInterface, SIGNAL(status(int, int)), SLOT(dbusStatus(int, int)));
-    connect(itsInterface, SIGNAL(fontStat(int, const KFI::Family &)), SLOT(fontStat(int, const KFI::Family &)));
+    connect(itsInterface, SIGNAL(status(int,int)), SLOT(dbusStatus(int,int)));
+    connect(itsInterface, SIGNAL(fontStat(int,KFI::Family)), SLOT(fontStat(int,KFI::Family)));
 }
 
 CFontViewPart::~CFontViewPart()
@@ -273,7 +273,7 @@ void CFontViewPart::timeout()
     }
     else
     {
-        QString path(url().path());
+        QString path(localFilePath());
 
         // Is this a application/vnd.kde.fontspackage file? If so, extract 1 scalable font...
         if((package=Misc::isPackage(path)))
@@ -333,7 +333,7 @@ void CFontViewPart::timeout()
         FcInitReinitialize();
 
     itsPreview->showFont(!package && itsFontDetails.family.isEmpty()
-                            ? url().path()
+                            ? localFilePath()
                             : fontFile.isEmpty()
                                 ? itsFontDetails.family
                                 : fontFile,
@@ -360,8 +360,12 @@ void CFontViewPart::previewStatus(bool st)
         if(st)
         {
             checkInstallable();
+            if(Misc::app(KFI_PRINTER).isEmpty())
+                printable=false;
             if(KFI_KIO_FONTS_PROTOCOL==url().protocol())
                 printable=!Misc::isHidden(url());
+            else if(!FC::decode(url()).family.isEmpty())
+                printable=!Misc::isHidden(FC::getFile(url()));
 #ifdef KFI_PRINT_APP_FONTS
             else
             {
@@ -401,8 +405,8 @@ void CFontViewPart::install()
              << "--icon" << "kfontview"
              << url().prettyUrl();
 
-        connect(itsProc, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(installlStatus()));
-        itsProc->start(KFI_INSTALLER, args);
+        connect(itsProc, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(installlStatus()));
+        itsProc->start(Misc::app(KFI_INSTALLER), args);
         itsInstallButton->setEnabled(false);
     }
 }
@@ -421,7 +425,7 @@ void CFontViewPart::dbusStatus(int pid, int status)
 void CFontViewPart::fontStat(int pid, const KFI::Family &font)
 {
     if(pid==getpid())
-        itsInstallButton->setEnabled(font.styles().count()==0);
+        itsInstallButton->setEnabled(!Misc::app(KFI_INSTALLER).isEmpty() && font.styles().count()==0);
 }
     
 void CFontViewPart::changeText()
@@ -443,35 +447,28 @@ void CFontViewPart::changeText()
 
 void CFontViewPart::print()
 {
-    QString exe(KStandardDirs::findExe(QLatin1String(KFI_PRINTER), KStandardDirs::installPath("libexec")));
+    QStringList args;
 
-    if(exe.isEmpty())
-        KMessageBox::error(itsFrame, i18n("Failed to locate font printer."));
-    else
+    if(!itsFontDetails.family.isEmpty())
     {
-        QStringList args;
-
-        if(!itsFontDetails.family.isEmpty())
-        {
-            args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->window()->winId()))
-                 << "--caption" << KGlobal::caption().toUtf8()
-                 << "--icon" << "kfontview"
-                 << "--size" << "0"
-                 << "--pfont" << QString(itsFontDetails.family+','+QString().setNum(itsFontDetails.styleInfo));
-        }
+        args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->window()->winId()))
+             << "--caption" << KGlobal::caption().toUtf8()
+             << "--icon" << "kfontview"
+             << "--size" << "0"
+             << "--pfont" << QString(itsFontDetails.family+','+QString().setNum(itsFontDetails.styleInfo));
+    }
 #ifdef KFI_PRINT_APP_FONTS
-        else
-            args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->window()->winId()))
-                 << "--caption" << KGlobal::caption().toUtf8()
-                 << "--icon" << "kfontview"
-                 << "--size " << "0"
-                 << localFilePath()
-                 << QString().setNum(KFI_NO_STYLE_INFO);
+    else
+        args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->window()->winId()))
+             << "--caption" << KGlobal::caption().toUtf8()
+             << "--icon" << "kfontview"
+             << "--size " << "0"
+             << localFilePath()
+             << QString().setNum(KFI_NO_STYLE_INFO);
 #endif
 
-        if(args.count())
-            QProcess::startDetached(exe, args);
-    }
+    if(args.count())
+        QProcess::startDetached(Misc::app(KFI_PRINTER), args);
 }
 
 void CFontViewPart::displayType(const QList<CFcEngine::TRange> &range)
@@ -545,13 +542,14 @@ BrowserExtension::BrowserExtension(CFontViewPart *parent)
 
 void BrowserExtension::enablePrint(bool enable)
 {
-    if(enable!=isActionEnabled("print"))
+    if(enable!=isActionEnabled("print") && (!enable || !Misc::app(KFI_PRINTER).isEmpty()))
         emit enableAction("print", enable);
 }
 
 void BrowserExtension::print()
 {
-    static_cast<CFontViewPart*>(parent())->print();
+    if(!Misc::app(KFI_PRINTER).isEmpty())
+        static_cast<CFontViewPart*>(parent())->print();
 }
 
 }

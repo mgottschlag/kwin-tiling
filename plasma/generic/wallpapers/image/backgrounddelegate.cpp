@@ -91,12 +91,20 @@ void BackgroundDelegate::paint(QPainter *painter,
     }
 
     //Set the text color according to the item state
+    QPalette::ColorGroup cg = QPalette::Active;
+    if (!(option.state & QStyle::State_Enabled)) {
+        cg = QPalette::Disabled;
+    } else if (!(option.state & QStyle::State_Active)) {
+        cg = QPalette::Inactive;
+    }
+
     QColor color;
     if (option.state & QStyle::State_Selected) {
-        color = QApplication::palette().brush(QPalette::HighlightedText).color();
-    }else{
-        color = QApplication::palette().brush(QPalette::Text).color();
+        color = QApplication::palette().brush(cg, QPalette::HighlightedText).color();
+    } else {
+        color = QApplication::palette().brush(cg, QPalette::Text).color();
     }
+
     html = QString("<div style=\"color: %1\" align=\"center\">%2</div>").arg(color.name()).arg(html);
 
     document.setHtml(html);

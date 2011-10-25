@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QHash>
 
-#include "kactivityinfo.h"
+#include "kworkspace/kactivityinfo.h"
 
 class QSize;
 class QString;

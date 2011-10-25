@@ -39,10 +39,6 @@ SceneOpenGL::SceneOpenGL(Workspace* ws)
     : Scene(ws)
     , init_ok(false)
 {
-    if (!Extensions::glxAvailable()) {
-        kDebug(1212) << "No glx extensions available";
-        return; // error
-    }
     initGLX();
     // check for FBConfig support
     if (!hasGLExtension("GLX_SGIX_fbconfig") || !glXGetFBConfigAttrib || !glXGetFBConfigs ||
@@ -59,6 +55,7 @@ SceneOpenGL::SceneOpenGL(Workspace* ws)
         return; // error
     // Initialize OpenGL
     initGL();
+
     GLPlatform *glPlatform = GLPlatform::instance();
     if (glPlatform->isSoftwareEmulation()) {
         kError(1212) << "OpenGL Software Rasterizer detected. Falling back to XRender.";
@@ -95,6 +92,10 @@ SceneOpenGL::SceneOpenGL(Workspace* ws)
     if (GLPlatform::instance()->supports(GLSL)) {
         if (!ShaderManager::instance()->isValid()) {
             kDebug(1212) << "No Scene Shaders available";
+        } else {
+            // push one shader on the stack so that one is always bound
+            // consistency with GLES
+            ShaderManager::instance()->pushShader(ShaderManager::SimpleShader);
         }
     }
 
@@ -128,7 +129,7 @@ SceneOpenGL::~SceneOpenGL()
 {
     if (!init_ok) {
         // TODO this probably needs to clean up whatever has been created until the failure
-        wspace->destroyOverlay();
+        m_overlayWindow->destroy();
         return;
     }
     foreach (Window * w, windows)
@@ -137,11 +138,11 @@ SceneOpenGL::~SceneOpenGL()
     cleanupGL();
     glXMakeCurrent(display(), None, NULL);
     glXDestroyContext(display(), ctxbuffer);
-    if (wspace->overlayWindow()) {
+    if (m_overlayWindow->window()) {
         if (hasGLXVersion(1, 3))
             glXDestroyWindow(display(), glxbuffer);
         XDestroyWindow(display(), buffer);
-        wspace->destroyOverlay();
+        m_overlayWindow->destroy();
     } else {
         glXDestroyPixmap(display(), glxbuffer);
         XFreeGC(display(), gcroot);
@@ -196,19 +197,19 @@ bool SceneOpenGL::initBuffer()
 {
     if (!initBufferConfigs())
         return false;
-    if (fbcbuffer_db != NULL && wspace->createOverlay()) {
+    if (fbcbuffer_db != NULL && m_overlayWindow->create()) {
         // we have overlay, try to create double-buffered window in it
         fbcbuffer = fbcbuffer_db;
         XVisualInfo* visual = glXGetVisualFromFBConfig(display(), fbcbuffer);
         XSetWindowAttributes attrs;
         attrs.colormap = XCreateColormap(display(), rootWindow(), visual->visual, AllocNone);
-        buffer = XCreateWindow(display(), wspace->overlayWindow(), 0, 0, displayWidth(), displayHeight(),
+        buffer = XCreateWindow(display(), m_overlayWindow->window(), 0, 0, displayWidth(), displayHeight(),
                                0, visual->depth, InputOutput, visual->visual, CWColormap, &attrs);
         if (hasGLXVersion(1, 3))
             glxbuffer = glXCreateWindow(display(), fbcbuffer, buffer, NULL);
         else
             glxbuffer = buffer;
-        wspace->setupOverlay(buffer);
+        m_overlayWindow->setup(buffer);
         db = true;
         XFree(visual);
     } else if (fbcbuffer_nondb != NULL) {
@@ -440,7 +441,7 @@ bool SceneOpenGL::initDrawableConfigs()
 // the entry function for painting
 void SceneOpenGL::paint(QRegion damage, ToplevelList toplevels)
 {
-    QTime t = QTime::currentTime();
+    m_renderTimer.restart();
     foreach (Toplevel * c, toplevels) {
         assert(windows.contains(c));
         stacking_order.append(windows[ c ]);
@@ -458,9 +459,10 @@ void SceneOpenGL::paint(QRegion damage, ToplevelList toplevels)
 #endif
     glPopMatrix();
     ungrabXServer(); // ungrab before flushBuffer(), it may wait for vsync
-    if (wspace->overlayWindow())  // show the window only after the first pass, since
-        wspace->showOverlay();   // that pass may take long
-    lastRenderTime = t.elapsed();
+    if (m_overlayWindow->window())  // show the window only after the first pass, since
+        m_overlayWindow->show();   // that pass may take long
+    lastRenderTime = m_renderTimer.elapsed();
+    m_renderTimer.invalidate();
     flushBuffer(mask, damage);
     // do cleanup
     stacking_order.clear();
@@ -492,12 +494,17 @@ void SceneOpenGL::flushBuffer(int mask, QRegion damage)
                     glXCopySubBuffer(display(), glxbuffer, r.x(), y, r.width(), r.height());
                 }
             } else {
-                // if a shader is bound, copy pixels results in a black screen
+                // if a shader is bound or the texture unit is enabled, copy pixels results in a black screen
                 // therefore unbind the shader and restore after copying the pixels
                 GLint shader = 0;
                 if (ShaderManager::instance()->isShaderBound()) {
-                   glGetIntegerv(GL_CURRENT_PROGRAM, &shader);
-                   glUseProgram(0);
+                    glGetIntegerv(GL_CURRENT_PROGRAM, &shader);
+                    glUseProgram(0);
+                }
+                bool reenableTexUnit = false;
+                if (glIsEnabled(GL_TEXTURE_2D)) {
+                    glDisable(GL_TEXTURE_2D);
+                    reenableTexUnit = true;
                 }
                 // no idea why glScissor() is used, but Compiz has it and it doesn't seem to hurt
                 glEnable(GL_SCISSOR_TEST);
@@ -520,9 +527,12 @@ void SceneOpenGL::flushBuffer(int mask, QRegion damage)
                 glBitmap(0, 0, 0, 0, -xpos, -ypos, NULL);   // move position back to 0,0
                 glDrawBuffer(GL_BACK);
                 glDisable(GL_SCISSOR_TEST);
+                if (reenableTexUnit) {
+                    glEnable(GL_TEXTURE_2D);
+                }
                 // rebind previously bound shader
                 if (ShaderManager::instance()->isShaderBound()) {
-                   glUseProgram(shader);
+                    glUseProgram(shader);
                 }
             }
         } else {
@@ -548,33 +558,39 @@ void SceneOpenGL::flushBuffer(int mask, QRegion damage)
 // SceneOpenGL::Texture
 //****************************************
 
-void SceneOpenGL::Texture::init()
+SceneOpenGL::TexturePrivate::TexturePrivate()
 {
-    glxpixmap = None;
+    m_glxpixmap = None;
 }
 
-void SceneOpenGL::Texture::release()
+SceneOpenGL::TexturePrivate::~TexturePrivate()
 {
-    if (glxpixmap != None) {
+    release();
+}
+
+void SceneOpenGL::TexturePrivate::release()
+{
+    if (m_glxpixmap != None) {
         if (!options->glStrictBinding) {
-            glXReleaseTexImageEXT(display(), glxpixmap, GLX_FRONT_LEFT_EXT);
+            glXReleaseTexImageEXT(display(), m_glxpixmap, GLX_FRONT_LEFT_EXT);
         }
-        glXDestroyPixmap(display(), glxpixmap);
-        glxpixmap = None;
+        glXDestroyPixmap(display(), m_glxpixmap);
+        m_glxpixmap = None;
     }
 }
 
 void SceneOpenGL::Texture::findTarget()
 {
+    Q_D(Texture);
     unsigned int new_target = 0;
-    if (glXQueryDrawable && glxpixmap != None)
-        glXQueryDrawable(display(), glxpixmap, GLX_TEXTURE_TARGET_EXT, &new_target);
+    if (glXQueryDrawable && d->m_glxpixmap != None)
+        glXQueryDrawable(display(), d->m_glxpixmap, GLX_TEXTURE_TARGET_EXT, &new_target);
     // HACK: this used to be a hack for Xgl.
     // without this hack the NVIDIA blob aborts when trying to bind a texture from
     // a pixmap icon
     if (new_target == 0) {
         if (NPOTTextureSupported() ||
-            (isPowerOfTwo(mSize.width()) && isPowerOfTwo(mSize.height()))) {
+            (isPowerOfTwo(d->m_size.width()) && isPowerOfTwo(d->m_size.height()))) {
             new_target = GLX_TEXTURE_2D_EXT;
         } else {
             new_target = GLX_TEXTURE_RECTANGLE_EXT;
@@ -582,14 +598,14 @@ void SceneOpenGL::Texture::findTarget()
     }
     switch(new_target) {
     case GLX_TEXTURE_2D_EXT:
-        mTarget = GL_TEXTURE_2D;
-        mScale.setWidth(1.0f / mSize.width());
-        mScale.setHeight(1.0f / mSize.height());
+        d->m_target = GL_TEXTURE_2D;
+        d->m_scale.setWidth(1.0f / d->m_size.width());
+        d->m_scale.setHeight(1.0f / d->m_size.height());
         break;
     case GLX_TEXTURE_RECTANGLE_EXT:
-        mTarget = GL_TEXTURE_RECTANGLE_ARB;
-        mScale.setWidth(1.0f);
-        mScale.setHeight(1.0f);
+        d->m_target = GL_TEXTURE_RECTANGLE_ARB;
+        d->m_scale.setWidth(1.0f);
+        d->m_scale.setHeight(1.0f);
         break;
     default:
         abort();
@@ -599,6 +615,10 @@ void SceneOpenGL::Texture::findTarget()
 bool SceneOpenGL::Texture::load(const Pixmap& pix, const QSize& size,
                                 int depth, QRegion region)
 {
+    // decrease the reference counter for the old texture
+    d_ptr = new TexturePrivate();
+
+    Q_D(Texture);
 #ifdef CHECK_GL_ERROR
     checkGLError("TextureLoad1");
 #endif
@@ -610,78 +630,64 @@ bool SceneOpenGL::Texture::load(const Pixmap& pix, const QSize& size,
         return false;
     }
 
-    mSize = size;
-    if (mTexture == None || !region.isEmpty()) {
-        // new texture, or texture contents changed; mipmaps now invalid
-        setDirty();
-    }
+    d->m_size = size;
+    // new texture, or texture contents changed; mipmaps now invalid
+    setDirty();
 
 #ifdef CHECK_GL_ERROR
     checkGLError("TextureLoad2");
 #endif
     // tfp mode, simply bind the pixmap to texture
-    if (mTexture == None)
-        createTexture();
+    glGenTextures(1, &d->m_texture);
     // The GLX pixmap references the contents of the original pixmap, so it doesn't
     // need to be recreated when the contents change.
     // The texture may or may not use the same storage depending on the EXT_tfp
     // implementation. When options->glStrictBinding is true, the texture uses
     // a different storage and needs to be updated with a call to
     // glXBindTexImageEXT() when the contents of the pixmap has changed.
-    if (glxpixmap != None)
-        glBindTexture(mTarget, mTexture);
-    else {
-        int attrs[] = {
-            GLX_TEXTURE_FORMAT_EXT, fbcdrawableinfo[ depth ].bind_texture_format,
-            GLX_MIPMAP_TEXTURE_EXT, fbcdrawableinfo[ depth ].mipmap,
-            None, None, None
-        };
-        // Specifying the texture target explicitly is reported to cause a performance
-        // regression with R300G (see bug #256654).
-        if (GLPlatform::instance()->driver() != Driver_R300G) {
-            if ((fbcdrawableinfo[ depth ].texture_targets & GLX_TEXTURE_2D_BIT_EXT) &&
-                    (GLTexture::NPOTTextureSupported() ||
-                     (isPowerOfTwo(size.width()) && isPowerOfTwo(size.height())))) {
-                attrs[ 4 ] = GLX_TEXTURE_TARGET_EXT;
-                attrs[ 5 ] = GLX_TEXTURE_2D_EXT;
-            } else if (fbcdrawableinfo[ depth ].texture_targets & GLX_TEXTURE_RECTANGLE_BIT_EXT) {
-                attrs[ 4 ] = GLX_TEXTURE_TARGET_EXT;
-                attrs[ 5 ] = GLX_TEXTURE_RECTANGLE_EXT;
-            }
+    int attrs[] = {
+        GLX_TEXTURE_FORMAT_EXT, fbcdrawableinfo[ depth ].bind_texture_format,
+        GLX_MIPMAP_TEXTURE_EXT, fbcdrawableinfo[ depth ].mipmap,
+        None, None, None
+    };
+    // Specifying the texture target explicitly is reported to cause a performance
+    // regression with R300G (see bug #256654).
+    if (GLPlatform::instance()->driver() != Driver_R300G) {
+        if ((fbcdrawableinfo[ depth ].texture_targets & GLX_TEXTURE_2D_BIT_EXT) &&
+                (GLTexture::NPOTTextureSupported() ||
+                  (isPowerOfTwo(size.width()) && isPowerOfTwo(size.height())))) {
+            attrs[ 4 ] = GLX_TEXTURE_TARGET_EXT;
+            attrs[ 5 ] = GLX_TEXTURE_2D_EXT;
+        } else if (fbcdrawableinfo[ depth ].texture_targets & GLX_TEXTURE_RECTANGLE_BIT_EXT) {
+            attrs[ 4 ] = GLX_TEXTURE_TARGET_EXT;
+            attrs[ 5 ] = GLX_TEXTURE_RECTANGLE_EXT;
         }
-        glxpixmap = glXCreatePixmap(display(), fbcdrawableinfo[ depth ].fbconfig, pix, attrs);
-#ifdef CHECK_GL_ERROR
-        checkGLError("TextureLoadTFP1");
-#endif
-        findTarget();
-        y_inverted = fbcdrawableinfo[ depth ].y_inverted ? true : false;
-        can_use_mipmaps = fbcdrawableinfo[ depth ].mipmap ? true : false;
-        glBindTexture(mTarget, mTexture);
-#ifdef CHECK_GL_ERROR
-        checkGLError("TextureLoadTFP2");
-#endif
-        if (!options->glStrictBinding)
-            glXBindTexImageEXT(display(), glxpixmap, GLX_FRONT_LEFT_EXT, NULL);
     }
-    if (options->glStrictBinding)
-        // Mark the texture as damaged so it will be updated on the next call to bind()
-        glXBindTexImageEXT(display(), glxpixmap, GLX_FRONT_LEFT_EXT, NULL);
+    d->m_glxpixmap = glXCreatePixmap(display(), fbcdrawableinfo[ depth ].fbconfig, pix, attrs);
+#ifdef CHECK_GL_ERROR
+    checkGLError("TextureLoadTFP1");
+#endif
+    findTarget();
+    d->m_yInverted = fbcdrawableinfo[ depth ].y_inverted ? true : false;
+    d->m_canUseMipmaps = fbcdrawableinfo[ depth ].mipmap ? true : false;
+    glBindTexture(d->m_target, d->m_texture);
+#ifdef CHECK_GL_ERROR
+    checkGLError("TextureLoadTFP2");
+#endif
+    glXBindTexImageEXT(display(), d->m_glxpixmap, GLX_FRONT_LEFT_EXT, NULL);
 #ifdef CHECK_GL_ERROR
     checkGLError("TextureLoad0");
 #endif
     return true;
 }
 
-void SceneOpenGL::Texture::bind()
+void SceneOpenGL::TexturePrivate::bind()
 {
-    glEnable(mTarget);
-    glBindTexture(mTarget, mTexture);
-    // if one of the GLTexture::load functions is called, the glxpixmap doesnt
-    // have to exist
-    if (options->glStrictBinding && glxpixmap) {
-        glXReleaseTexImageEXT(display(), glxpixmap, GLX_FRONT_LEFT_EXT);
-        glXBindTexImageEXT(display(), glxpixmap, GLX_FRONT_LEFT_EXT, NULL);
-        setDirty(); // Mipmaps have to be regenerated after updating the texture
+    GLTexturePrivate::bind();
+    if (options->glStrictBinding && m_glxpixmap) {
+        glXReleaseTexImageEXT(display(), m_glxpixmap, GLX_FRONT_LEFT_EXT);
+        glXBindTexImageEXT(display(), m_glxpixmap, GLX_FRONT_LEFT_EXT, NULL);
+        m_hasValidMipmaps = false; // Mipmaps have to be regenerated after updating the texture
     }
     enableFilter();
     if (hasGLVersion(1, 4, 0)) {
@@ -690,17 +696,16 @@ void SceneOpenGL::Texture::bind()
     }
 }
 
-void SceneOpenGL::Texture::unbind()
+void SceneOpenGL::TexturePrivate::unbind()
 {
     if (hasGLVersion(1, 4, 0)) {
         glTexEnvf(GL_TEXTURE_FILTER_CONTROL, GL_TEXTURE_LOD_BIAS, 0.0f);
     }
-    // if one of the GLTexture::load functions is called, the glxpixmap doesnt
-    // have to exist
-    if (options->glStrictBinding && glxpixmap) {
-        glBindTexture(mTarget, mTexture);
-        glXReleaseTexImageEXT(display(), glxpixmap, GLX_FRONT_LEFT_EXT);
+    if (options->glStrictBinding && m_glxpixmap) {
+        glBindTexture(m_target, m_texture);
+        glXReleaseTexImageEXT(display(), m_glxpixmap, GLX_FRONT_LEFT_EXT);
     }
 
-    GLTexture::unbind();
+    GLTexturePrivate::unbind();
 }
+

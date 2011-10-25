@@ -45,6 +45,7 @@ public:
     TaskGroup(GroupManager *parent);
     ~TaskGroup();
 
+    GroupManager *manager() const;
     ItemList members() const;
     WindowList winIds() const;
     WindowList directMemberwinIds() const;

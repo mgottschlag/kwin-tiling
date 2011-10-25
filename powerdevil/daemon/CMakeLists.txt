@@ -11,7 +11,6 @@ set(POWERDEVIL_CORE_VERSION_STRING ${POWERDEVIL_CORE_VERSION_MAJOR}.${POWERDEVIL
 # Add bundled actions
 set(powerdevil_bundled_actions_SRCS
     actions/bundled/suspendsession.cpp
-    actions/bundled/disabledesktopeffects.cpp
     actions/bundled/brightnesscontrol.cpp
     actions/bundled/dimdisplay.cpp
     actions/bundled/runscript.cpp
@@ -26,6 +25,8 @@ set(powerdevilcore_SRCS
     powerdevilcore.cpp
     powerdevilpolicyagent.cpp
     powerdevilprofilegenerator.cpp
+
+    brightnessosdwidget.cpp
 )
 
 kde4_add_kcfg_files(powerdevilcore_SRCS ../PowerDevilSettings.kcfgc)
@@ -40,6 +41,7 @@ target_link_libraries(powerdevilcore
     ${KDE4_KDECORE_LIBS}
     ${KDE4_SOLID_LIBS}
     ${KDE4_KIDLETIME_LIBS}
+    ${KDE4_PLASMA_LIBS}
     kworkspace
 )
 

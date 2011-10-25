@@ -260,6 +260,7 @@ private:
     bool m_showText : 1;
     bool m_layoutAnimationLock : 1;
     bool m_firstGeometryUpdate : 1;
+    QPointF m_oldDragPos;
 };
 
 #endif

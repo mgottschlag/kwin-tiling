@@ -34,9 +34,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <signal.h>
 
+#ifdef KWIN_BUILD_SCRIPTING
 #include "scripting/client.h"
 #include "scripting/scripting.h"
 #include "scripting/workspaceproxy.h"
+#endif
 
 #include "bridge.h"
 #include "group.h"
@@ -44,11 +46,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "atoms.h"
 #include "notifications.h"
 #include "rules.h"
-#include "scene.h"
 #include "shadow.h"
 #include "deleted.h"
 #include "paintredirector.h"
+#ifdef KWIN_BUILD_TABBOX
 #include "tabbox.h"
+#endif
 
 #include <X11/extensions/shape.h>
 #include <QX11Info>
@@ -91,7 +94,6 @@ Client::Client(Workspace* ws)
     , wrapper(None)
     , decoration(NULL)
     , bridge(new Bridge(this))
-    , move_faked_activity(false)
     , move_resize_grab_window(None)
     , move_resize_has_keyboard_grab(false)
     , transient_for (NULL)
@@ -112,12 +114,6 @@ Client::Client(Workspace* ws)
     , block_geometry_updates(0)
     , pending_geometry_update(PendingGeometryNone)
     , shade_geometry_change(false)
-#ifdef HAVE_XSYNC
-    , sync_counter(None)
-    , sync_alarm(None)
-#endif
-    , sync_timeout(NULL)
-    , sync_resize_pending(false)
     , border_left(0)
     , border_right(0)
     , border_top(0)
@@ -136,7 +132,14 @@ Client::Client(Workspace* ws)
 {
     // TODO: Do all as initialization
 
+#ifdef KWIN_BUILD_SCRIPTING
     scriptCache = new QHash<QScriptEngine*, ClientResolution>();
+#endif
+#ifdef HAVE_XSYNC
+    syncRequest.counter = syncRequest.alarm = None;
+    syncRequest.timeout = syncRequest.failsafeTimeout = NULL;
+    syncRequest.isPending = false;
+#endif
 
     // Set the initial mapping state
     mapping_state = Withdrawn;
@@ -188,17 +191,17 @@ Client::Client(Workspace* ws)
     //Client to workspace connections require that each
     //client constructed be connected to the workspace wrapper
 
+#ifdef KWIN_BUILD_TABBOX
     // TabBoxClient
     m_tabBoxClient = new TabBox::TabBoxClientImpl();
     m_tabBoxClient->setClient(this);
+#endif
 
     geom = QRect(0, 0, 100, 100);   // So that decorations don't start with size being (0,0)
     client_size = QSize(100, 100);
-#if defined(HAVE_XSYNC) || defined(HAVE_XDAMAGE)
     ready_for_painting = false; // wait for first damage or sync reply
-#endif
 
-    connect(this, SIGNAL(clientGeometryShapeChanged(KWin::Client*,QRect)), SIGNAL(geometryChanged()));
+    connect(this, SIGNAL(geometryShapeChanged(KWin::Toplevel*,QRect)), SIGNAL(geometryChanged()));
     connect(this, SIGNAL(clientMaximizedStateChanged(KWin::Client*,KDecorationDefines::MaximizeMode)), SIGNAL(geometryChanged()));
     connect(this, SIGNAL(clientStepUserMovedResized(KWin::Client*,QRect)), SIGNAL(geometryChanged()));
 
@@ -212,8 +215,8 @@ Client::~Client()
 {
     //SWrapper::Client::clientRelease(this);
 #ifdef HAVE_XSYNC
-    if (sync_alarm != None)
-        XSyncDestroyAlarm(display(), sync_alarm);
+    if (syncRequest.alarm != None)
+        XSyncDestroyAlarm(display(), syncRequest.alarm);
 #endif
     assert(!moveResizeMode);
     assert(client == None);
@@ -223,8 +226,12 @@ Client::~Client()
     assert(block_geometry_updates == 0);
     assert(!check_active_modal);
     delete bridge;
+#ifdef KWIN_BUILD_TABBOX
     delete m_tabBoxClient;
+#endif
+#ifdef KWIN_BUILD_SCRIPTING
     delete scriptCache;
+#endif
 }
 
 // Use destroyClient() or releaseWindow(), Client instances cannot be deleted directly
@@ -241,10 +248,9 @@ void Client::releaseWindow(bool on_shutdown)
     assert(!deleting);
     deleting = true;
     Deleted* del = Deleted::create(this);
-    emit clientClosed(this);
-    if (scene) {
-        scene->windowClosed(this, del);
-    }
+    if (moveResizeMode)
+        emit clientFinishUserMovedResized(this);
+    emit windowClosed(this, del);
     finishCompositing();
     workspace()->discardUsedWindowRules(this, true);   // Remove ForceTemporarily rules
     StackingUpdatesBlocker blocker(workspace());
@@ -309,10 +315,9 @@ void Client::destroyClient()
     assert(!deleting);
     deleting = true;
     Deleted* del = Deleted::create(this);
-    emit clientClosed(this);
-    if (scene) {
-        scene->windowClosed(this, del);
-    }
+    if (moveResizeMode)
+        emit clientFinishUserMovedResized(this);
+    emit windowClosed(this, del);
     finishCompositing();
     workspace()->discardUsedWindowRules(this, true);   // Remove ForceTemporarily rules
     StackingUpdatesBlocker blocker(workspace());
@@ -371,13 +376,11 @@ void Client::updateDecoration(bool check_workspace_pos, bool force)
         resizeDecorationPixmaps();
         if (compositing())
             discardWindowPixmap();
-        if (scene != NULL)
-            scene->windowGeometryShapeChanged(this);
-        emit clientGeometryShapeChanged(this, oldgeom);
+        emit geometryShapeChanged(this, oldgeom);
     } else
         destroyDecoration();
     if (check_workspace_pos)
-        checkWorkspacePosition();
+        checkWorkspacePosition(oldgeom);
     blockGeometryUpdates(false);
     if (!noBorder())
         decoration->widget()->show();
@@ -407,10 +410,8 @@ void Client::destroyDecoration()
         decorationPixmapLeft = decorationPixmapRight = decorationPixmapTop = decorationPixmapBottom = QPixmap();
         if (compositing())
             discardWindowPixmap();
-        if (scene != NULL && !deleting)
-            scene->windowGeometryShapeChanged(this);
         if (!deleting) {
-            emit clientGeometryShapeChanged(this, oldgeom);
+            emit geometryShapeChanged(this, oldgeom);
         }
     }
 }
@@ -447,8 +448,9 @@ bool Client::checkBorderSizes(bool also_resize)
     border_top = new_top;
     border_bottom = new_bottom;
     move(calculateGravitation(false));
+    QRect oldgeom = geometry();
     plainResize(sizeForClientSize(clientSize()), ForceGeometrySet);
-    checkWorkspacePosition();
+    checkWorkspacePosition(oldgeom);
     return true;
 }
 
@@ -499,10 +501,10 @@ void Client::repaintDecorationPending()
         // The scene will update the decoration pixmaps in the next painting pass
         // if it has not been already repainted before
         const QRegion r = paintRedirector->scheduledRepaintRegion();
-        if (!r.isEmpty())
-            Workspace::self()->addRepaint(r.translated(x() - padding_left, y() - padding_top));
-    } else
-        ensureDecorationPixmapsPainted();
+        if (!r.isEmpty()) {
+            addRepaint(r.translated(-padding_left,-padding_top));
+        }
+    }
 }
 
 bool Client::decorationPixmapRequiresRepaint()
@@ -515,7 +517,7 @@ bool Client::decorationPixmapRequiresRepaint()
 
 void Client::ensureDecorationPixmapsPainted()
 {
-    if (!paintRedirector)
+    if (!paintRedirector || !compositing())
         return;
 
     QRegion r = paintRedirector->pendingRegion();
@@ -532,42 +534,7 @@ void Client::ensureDecorationPixmapsPainted()
     repaintDecorationPixmap(decorationPixmapTop, tr, p, r);
     repaintDecorationPixmap(decorationPixmapBottom, br, p, r);
 
-    if (!compositing()) {
-        // Blit the pixmaps to the frame window
-        layoutDecorationRects(lr, tr, rr, br, WindowRelative);
-#ifdef HAVE_XRENDER
-        if (Extensions::renderAvailable()) {
-            XRenderPictFormat* format = XRenderFindVisualFormat(display(), visual());
-            XRenderPictureAttributes pa;
-            pa.subwindow_mode = IncludeInferiors;
-            Picture pic = XRenderCreatePicture(display(), frameId(), format, CPSubwindowMode, &pa);
-            XRenderComposite(display(), PictOpSrc, decorationPixmapLeft.x11PictureHandle(), None, pic,
-                             0, 0, 0, 0, lr.x(), lr.y(), lr.width(), lr.height());
-            XRenderComposite(display(), PictOpSrc, decorationPixmapRight.x11PictureHandle(), None, pic,
-                             0, 0, 0, 0, rr.x(), rr.y(), rr.width(), rr.height());
-            XRenderComposite(display(), PictOpSrc, decorationPixmapTop.x11PictureHandle(), None, pic,
-                             0, 0, 0, 0, tr.x(), tr.y(), tr.width(), tr.height());
-            XRenderComposite(display(), PictOpSrc, decorationPixmapBottom.x11PictureHandle(), None, pic,
-                             0, 0, 0, 0, br.x(), br.y(), br.width(), br.height());
-            XRenderFreePicture(display(), pic);   // TODO don't recreate pictures all the time?
-        } else
-#endif
-        {
-            XGCValues values;
-            values.subwindow_mode = IncludeInferiors;
-            GC gc = XCreateGC(display(), rootWindow(), GCSubwindowMode, &values);
-            XCopyArea(display(), decorationPixmapLeft.handle(), frameId(), gc, 0, 0,
-                      lr.width(), lr.height(), lr.x(), lr.y());
-            XCopyArea(display(), decorationPixmapRight.handle(), frameId(), gc, 0, 0,
-                      rr.width(), rr.height(), rr.x(), rr.y());
-            XCopyArea(display(), decorationPixmapTop.handle(), frameId(), gc, 0, 0,
-                      tr.width(), tr.height(), tr.x(), tr.y());
-            XCopyArea(display(), decorationPixmapBottom.handle(), frameId(), gc, 0, 0,
-                      br.width(), br.height(), br.x(), br.y());
-            XFreeGC(display(), gc);
-        }
-    } else
-        XSync(display(), false);
+    XSync(display(), false);
 }
 
 void Client::repaintDecorationPixmap(QPixmap& pix, const QRect& r, const QPixmap& src, QRegion reg)
@@ -588,6 +555,11 @@ void Client::repaintDecorationPixmap(QPixmap& pix, const QRect& r, const QPixmap
 
 void Client::resizeDecorationPixmaps()
 {
+    if (!compositing()) {
+        // compositing disabled - we render directly on screen
+        triggerDecorationRepaint();
+        return;
+    }
     QRect lr, rr, tr, br;
     layoutDecorationRects(lr, tr, rr, br, DecorationRelative);
 
@@ -815,9 +787,7 @@ void Client::updateShape()
         addRepaintFull();
         addWorkspaceRepaint(visibleRect());   // In case shape change removes part of this window
     }
-    if (scene != NULL)
-        scene->windowGeometryShapeChanged(this);
-    emit clientGeometryShapeChanged(this, geometry());
+    emit geometryShapeChanged(this, geometry());
 }
 
 static Window shape_helper_window = None;
@@ -893,9 +863,7 @@ void Client::setMask(const QRegion& reg, int mode)
         XShapeCombineShape(display(), frameId(), ShapeBounding, 0, 0,
                            shape_helper_window, ShapeBounding, ShapeSet);
     }
-    if (scene != NULL)
-        scene->windowGeometryShapeChanged(this);
-    emit clientGeometryShapeChanged(this, geometry());
+    emit geometryShapeChanged(this, geometry());
     updateShape();
 }
 
@@ -955,6 +923,7 @@ void Client::minimize(bool avoid_animation)
     if (!isMinimizable() || isMinimized())
         return;
 
+#ifdef KWIN_BUILD_SCRIPTING
     //Scripting call. Does not use a signal/slot mechanism
     //as ensuring connections was a bit difficult between
     //so many clients and the workspace
@@ -962,6 +931,7 @@ void Client::minimize(bool avoid_animation)
     if (ws_wrap != 0) {
         ws_wrap->sl_clientMinimized(this);
     }
+#endif
 
     emit s_minimized();
 
@@ -977,9 +947,6 @@ void Client::minimize(bool avoid_animation)
     // TODO: merge signal with s_minimized
     emit clientMinimized(this, !avoid_animation);
 
-    // when tiling, request a rearrangement
-    workspace()->notifyTilingWindowMinimizeToggled(this);
-
     // Update states of all other windows in this group
     if (clientGroup())
         clientGroup()->updateStates(this);
@@ -990,10 +957,12 @@ void Client::unminimize(bool avoid_animation)
     if (!isMinimized())
         return;
 
+#ifdef KWIN_BUILD_SCRIPTING
     SWrapper::WorkspaceProxy* ws_wrap = SWrapper::WorkspaceProxy::instance();
     if (ws_wrap != 0) {
         ws_wrap->sl_clientUnminimized(this);
     }
+#endif
 
     emit s_unminimized();
 
@@ -1003,11 +972,7 @@ void Client::unminimize(bool avoid_animation)
     updateAllowedActions();
     workspace()->updateMinimizedOfTransients(this);
     updateWindowRules();
-    workspace()->updateAllTiles();
     emit clientUnminimized(this, !avoid_animation);
-
-    // when tiling, request a rearrangement
-    workspace()->notifyTilingWindowMinimizeToggled(this);
 
     // Update states of all other windows in this group
     if (clientGroup())
@@ -1175,16 +1140,18 @@ void Client::updateVisibility()
             internalHide(Allowed);
         return;
     }
-    bool belongs_to_desktop = false;
-    for (ClientList::ConstIterator it = group()->members().constBegin();
-            it != group()->members().constEnd();
-            ++it)
-        if ((*it)->isDesktop()) {
-            belongs_to_desktop = true;
-            break;
-        }
-    if (!belongs_to_desktop && workspace()->showingDesktop())
-        workspace()->resetShowingDesktop(true);
+    if( workspace()->showingDesktop()) {
+        bool belongs_to_desktop = false;
+        for (ClientList::ConstIterator it = group()->members().constBegin();
+                it != group()->members().constEnd();
+                ++it)
+            if ((*it)->isDesktop()) {
+                belongs_to_desktop = true;
+                break;
+            }
+        if (!belongs_to_desktop)
+            workspace()->resetShowingDesktop(true);
+    }
     internalShow(Allowed);
 }
 
@@ -1420,7 +1387,7 @@ void Client::gotPing(Time timestamp)
         process_killer->kill();
         // Recycle when the process manager has noticed that the process exited
         // a delete process_killer here sometimes causes a hang in waitForFinished
-        connect(process_killer, SIGNAL(finished(int, QProcess::ExitStatus)),
+        connect(process_killer, SIGNAL(finished(int,QProcess::ExitStatus)),
                 process_killer, SLOT(deleteLater()));
         process_killer = NULL;
     }
@@ -1454,7 +1421,7 @@ void Client::killProcess(bool ask, Time timestamp)
     } else {
         process_killer = new QProcess(this);
         connect(process_killer, SIGNAL(error(QProcess::ProcessError)), SLOT(processKillerExited()));
-        connect(process_killer, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(processKillerExited()));
+        connect(process_killer, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(processKillerExited()));
         process_killer->start(KStandardDirs::findExe("kwin_killer_helper"),
                               QStringList() << "--pid" << QByteArray().setNum(unsigned(pid)) << "--hostname" << machine
                               << "--windowname" << caption()
@@ -2071,19 +2038,19 @@ void Client::getSyncCounter()
                                  0, 1, false, XA_CARDINAL, &retType, &formatRet, &nItemRet, &byteRet, &propRet);
 
     if (ret == Success && formatRet == 32) {
-        sync_counter = *(long*)(propRet);
-        XSyncIntToValue(&sync_counter_value, 0);
+        syncRequest.counter = *(long*)(propRet);
+        XSyncIntToValue(&syncRequest.value, 0);
         XSyncValue zero;
         XSyncIntToValue(&zero, 0);
-        XSyncSetCounter(display(), sync_counter, zero);
-        if (sync_alarm == None) {
+        XSyncSetCounter(display(), syncRequest.counter, zero);
+        if (syncRequest.alarm == None) {
             XSyncAlarmAttributes attrs;
-            attrs.trigger.counter = sync_counter;
+            attrs.trigger.counter = syncRequest.counter;
             attrs.trigger.value_type = XSyncRelative;
             attrs.trigger.test_type = XSyncPositiveTransition;
             XSyncIntToValue(&attrs.trigger.wait_value, 1);
             XSyncIntToValue(&attrs.delta, 1);
-            sync_alarm = XSyncCreateAlarm(display(),
+            syncRequest.alarm = XSyncCreateAlarm(display(),
                                           XSyncCACounter | XSyncCAValueType | XSyncCATestType | XSyncCADelta | XSyncCAValue,
                                           &attrs);
         }
@@ -2100,8 +2067,17 @@ void Client::getSyncCounter()
 void Client::sendSyncRequest()
 {
 #ifdef HAVE_XSYNC
-    if (sync_counter == None)
-        return;
+    if (syncRequest.counter == None || syncRequest.isPending)
+        return; // do NOT, NEVER send a sync request when there's one on the stack. the clients will just stop respoding. FOREVER! ...
+
+    if (!syncRequest.failsafeTimeout) {
+        syncRequest.failsafeTimeout = new QTimer(this);
+        connect(syncRequest.failsafeTimeout, SIGNAL(timeout()), SLOT(removeSyncSupport()));
+        syncRequest.failsafeTimeout->setSingleShot(true);
+    }
+    // if there's no response within 10 seconds, sth. went wrong and we remove XSYNC support from this client.
+    // see events.cpp Client::syncEvent()
+    syncRequest.failsafeTimeout->start(ready_for_painting ? 10000 : 1000);
 
     // We increment before the notify so that after the notify
     // syncCounterSerial will equal the value we are expecting
@@ -2110,7 +2086,7 @@ void Client::sendSyncRequest()
     XSyncValue one;
     XSyncIntToValue(&one, 1);
 #undef XSyncValueAdd // It causes a warning :-/
-    XSyncValueAdd(&sync_counter_value, sync_counter_value, one, &overflow);
+    XSyncValueAdd(&syncRequest.value, syncRequest.value, one, &overflow);
 
     // Send the message to client
     XEvent ev;
@@ -2120,12 +2096,26 @@ void Client::sendSyncRequest()
     ev.xclient.message_type = atoms->wm_protocols;
     ev.xclient.data.l[0] = atoms->net_wm_sync_request;
     ev.xclient.data.l[1] = xTime();
-    ev.xclient.data.l[2] = XSyncValueLow32(sync_counter_value);
-    ev.xclient.data.l[3] = XSyncValueHigh32(sync_counter_value);
+    ev.xclient.data.l[2] = XSyncValueLow32(syncRequest.value);
+    ev.xclient.data.l[3] = XSyncValueHigh32(syncRequest.value);
     ev.xclient.data.l[4] = 0;
+    syncRequest.isPending = true;
     XSendEvent(display(), window(), False, NoEventMask, &ev);
     XSync(display(), false);
 #endif
+}
+
+void Client::removeSyncSupport()
+{
+    if (!ready_for_painting) {
+        ready_for_painting = true;
+        addRepaintFull();
+        return;
+    }
+    syncRequest.isPending = false;
+    syncRequest.counter = syncRequest.alarm = None;
+    delete syncRequest.timeout; delete syncRequest.failsafeTimeout;
+    syncRequest.timeout = syncRequest.failsafeTimeout = NULL;
 }
 
 bool Client::wantsTabFocus() const
@@ -2141,7 +2131,7 @@ bool Client::wantsInput() const
 bool Client::isSpecialWindow() const
 {
     // TODO
-    return isDesktop() || isDock() || isSplash() || isTopMenu() || isToolbar();
+    return isDesktop() || isDock() || isSplash() || isToolbar();
 }
 
 /**
@@ -2319,7 +2309,10 @@ void Client::setSessionInteract(bool needed)
 QRect Client::decorationRect() const
 {
     if (decoration && decoration->widget()) {
-        return decoration->widget()->rect().translated(-padding_left, -padding_top);
+        QRect r = decoration->widget()->rect().translated(-padding_left, -padding_top);
+        if (hasShadow())
+            r |= shadow()->shadowRegion().boundingRect();
+        return r;
     } else if (hasShadow()) {
         return shadow()->shadowRegion().boundingRect();
     } else {

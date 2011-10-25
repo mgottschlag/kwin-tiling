@@ -101,7 +101,6 @@ class Image : public Plasma::Wallpaper
         static bool s_startupSuspended;
 
         int m_delay;
-        Plasma::Wallpaper::ResizeMethod m_resizeMethod;
         QStringList m_dirs;
         QString m_wallpaper;
         QColor m_color;

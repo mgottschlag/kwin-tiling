@@ -58,7 +58,7 @@ KeyboardDaemon::KeyboardDaemon(QObject *parent, const QList<QVariant>&)
     QDBusConnection dbus = QDBusConnection::sessionBus();
 	dbus.registerService(KEYBOARD_DBUS_SERVICE_NAME);
 	dbus.registerObject(KEYBOARD_DBUS_OBJECT_PATH, this, QDBusConnection::ExportScriptableSlots | QDBusConnection::ExportScriptableSignals);
-    dbus.connect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT( configureKeyboard() ));
+    dbus.connect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT(configureKeyboard()));
 
 	configureKeyboard();
 	registerListeners();
@@ -78,7 +78,7 @@ KeyboardDaemon::~KeyboardDaemon()
 	layoutMemoryPersister.save(KGlobal::mainComponent().componentName());
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.disconnect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT( configureKeyboard() ));
+    dbus.disconnect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT(configureKeyboard()));
 	dbus.unregisterObject(KEYBOARD_DBUS_OBJECT_PATH);
 	dbus.unregisterService(KEYBOARD_DBUS_SERVICE_NAME);
 

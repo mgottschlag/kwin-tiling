@@ -4,7 +4,6 @@ set(libklipper_common_SRCS
     klipper.cpp
     urlgrabber.cpp
     configdialog.cpp
-    clipboardpoll.cpp
     history.cpp
     historyitem.cpp
     historystringitem.cpp

@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QObject>
 
 #include <kapplication.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 #include <kmessagebox.h>
 #include <QTimer>
 #include <QTime>

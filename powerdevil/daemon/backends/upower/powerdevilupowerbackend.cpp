@@ -36,14 +36,14 @@
 
 PowerDevilUPowerBackend::PowerDevilUPowerBackend(QObject* parent)
     : BackendInterface(parent),
-      m_brightNessControl(0),
+      m_brightnessControl(0),
       m_lidIsPresent(false), m_lidIsClosed(false), m_onBattery(false)
 {
 }
 
 PowerDevilUPowerBackend::~PowerDevilUPowerBackend()
 {
-    delete m_brightNessControl;
+    delete m_brightnessControl;
 }
 
 bool PowerDevilUPowerBackend::isAvailable()
@@ -87,7 +87,7 @@ void PowerDevilUPowerBackend::init()
 
     m_upowerInterface = new OrgFreedesktopUPowerInterface(UPOWER_SERVICE, "/org/freedesktop/UPower", QDBusConnection::systemBus(), this);
     m_kbdBacklight = new OrgFreedesktopUPowerKbdBacklightInterface(UPOWER_SERVICE, "/org/freedesktop/UPower/KbdBacklight", QDBusConnection::systemBus(), this);
-    m_brightNessControl = new XRandrBrightness();
+    m_brightnessControl = new XRandrBrightness();
 
     // Capabilities
     setCapabilities(SignalResumeFromSuspend);
@@ -95,9 +95,9 @@ void PowerDevilUPowerBackend::init()
     // devices
     enumerateDevices();
     connect(m_upowerInterface, SIGNAL(Changed()), this, SLOT(slotPropertyChanged()));
-    connect(m_upowerInterface, SIGNAL(DeviceAdded(const QString &)), this, SLOT(slotDeviceAdded(const QString &)));
-    connect(m_upowerInterface, SIGNAL(DeviceRemoved(const QString &)), this, SLOT(slotDeviceRemoved(const QString &)));
-    connect(m_upowerInterface, SIGNAL(DeviceChanged(const QString &)), this, SLOT(slotDeviceChanged(const QString &)));
+    connect(m_upowerInterface, SIGNAL(DeviceAdded(QString)), this, SLOT(slotDeviceAdded(QString)));
+    connect(m_upowerInterface, SIGNAL(DeviceRemoved(QString)), this, SLOT(slotDeviceRemoved(QString)));
+    connect(m_upowerInterface, SIGNAL(DeviceChanged(QString)), this, SLOT(slotDeviceChanged(QString)));
 
     // Brightness Controls available
     BrightnessControlsList controls;
@@ -187,9 +187,9 @@ float PowerDevilUPowerBackend::brightness(PowerDevil::BackendInterface::Brightne
     float result = 0.0;
 
     if (type == Screen) {
-        if (m_brightNessControl->isSupported()) {
+        if (m_brightnessControl->isSupported()) {
             //kDebug() << "Calling xrandr brightness";
-            result = m_brightNessControl->brightness();
+            result = m_brightnessControl->brightness();
         } else {
             //kDebug() << "Falling back to helper to get brightness";
             KAuth::Action action("org.kde.powerdevil.backlighthelper.brightness");
@@ -216,8 +216,8 @@ bool PowerDevilUPowerBackend::setBrightness(float brightnessValue, PowerDevil::B
 {
     if (type == Screen) {
         kDebug() << "set screen brightness: " << brightnessValue;
-        if (m_brightNessControl->isSupported()) {
-            m_brightNessControl->setBrightness(brightnessValue);
+        if (m_brightnessControl->isSupported()) {
+            m_brightnessControl->setBrightness(brightnessValue);
         } else {
             //kDebug() << "Falling back to helper to set brightness";
             KAuth::Action action("org.kde.powerdevil.backlighthelper.setbrightness");

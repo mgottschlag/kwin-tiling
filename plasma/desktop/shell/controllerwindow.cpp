@@ -80,7 +80,7 @@ ControllerWindow::ControllerWindow(QWidget* parent)
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(onActiveWindowChanged(WId)));
     connect(m_background, SIGNAL(repaintNeeded()), SLOT(backgroundChanged()));
     Kephal::Screens *screens = Kephal::Screens::self();
-    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
+    connect(screens, SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)),
             this, SLOT(adjustAndSetMaxSize()));
     m_adjustViewTimer = new QTimer(this);
     m_adjustViewTimer->setSingleShot(true);

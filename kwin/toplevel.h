@@ -33,9 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "utils.h"
 #include "workspace.h"
 
-#ifdef HAVE_XDAMAGE
 #include <X11/extensions/Xdamage.h>
-#endif
 
 class NETWinInfo2;
 
@@ -79,7 +77,6 @@ public:
     bool isDesktop() const;
     bool isDock() const;
     bool isToolbar() const;
-    bool isTopMenu() const;
     bool isMenu() const;
     bool isNormalWindow() const; // normal as in 'NET::Normal or NET::Unknown non-transient'
     bool isDialog() const;
@@ -125,6 +122,7 @@ public:
     bool unredirected() const;
     void suspendUnredirect(bool suspend);
     void addRepaint(const QRect& r);
+    void addRepaint(const QRegion& r);
     void addRepaint(int x, int y, int w, int h);
     virtual void addRepaintFull();
     // these call workspace->addRepaint(), but first transform the damage if needed
@@ -158,20 +156,27 @@ public:
      **/
     void getShadow();
 
+    /**
+     * This method returns the area that the Toplevel window reports to be opaque.
+     * It is supposed to only provide valueable information if @link hasAlpha is @c true .
+     * @see hasAlpha
+     **/
+    const QRegion& opaqueRegion() const;
+
 signals:
     void opacityChanged(KWin::Toplevel* toplevel, qreal oldOpacity);
     void damaged(KWin::Toplevel* toplevel, const QRect& damage);
     void propertyNotify(KWin::Toplevel* toplevel, long a);
     void geometryChanged();
+    void geometryShapeChanged(KWin::Toplevel* toplevel, const QRect& old);
+    void windowClosed(KWin::Toplevel* toplevel, KWin::Deleted* deleted);
 
 protected:
     virtual ~Toplevel();
     void setWindowHandles(Window client, Window frame);
     void detectShape(Window id);
     virtual void propertyNotifyEvent(XPropertyEvent* e);
-#ifdef HAVE_XDAMAGE
     virtual void damageNotifyEvent(XDamageNotifyEvent* e);
-#endif
     Pixmap createWindowPixmap();
     void discardWindowPixmap();
     void addDamage(const QRect& r);
@@ -179,6 +184,13 @@ protected:
     void addDamageFull();
     void getWmClientLeader();
     void getWmClientMachine();
+
+    /**
+     * This function fetches the opaque region from this Toplevel.
+     * Will only be called on corresponding property changes and for initialization.
+     **/
+    void getWmOpaqueRegion();
+
     void getResourceClass();
     void getWindowRole();
     virtual void debug(QDebug& stream) const = 0;
@@ -204,10 +216,9 @@ private:
     Window frame;
     Workspace* wspace;
     Pixmap window_pix;
-#ifdef HAVE_XDAMAGE
     Damage damage_handle;
-#endif
     QRegion damage_region; // damage is really damaged window (XDamage) and texture needs
+    float damageRatio;
     bool is_shape;
     EffectWindowImpl* effect_window;
     QByteArray resource_name;
@@ -217,6 +228,7 @@ private:
     QByteArray window_role;
     bool unredirect;
     bool unredirectSuspend; // when unredirected, but pixmap is needed temporarily
+    QRegion opaque_region;
     // when adding new data members, check also copyToDeleted()
 };
 
@@ -283,11 +295,6 @@ inline QRect Toplevel::rect() const
     return QRect(0, 0, width(), height());
 }
 
-inline QRect Toplevel::decorationRect() const
-{
-    return rect();
-}
-
 inline QRegion Toplevel::decorationPendingRegion() const
 {
     return QRegion();
@@ -313,14 +320,9 @@ inline bool Toplevel::isDock() const
     return windowType() == NET::Dock;
 }
 
-inline bool Toplevel::isTopMenu() const
-{
-    return windowType() == NET::TopMenu;
-}
-
 inline bool Toplevel::isMenu() const
 {
-    return windowType() == NET::Menu && !isTopMenu(); // because of backwards comp.
+    return windowType() == NET::Menu;
 }
 
 inline bool Toplevel::isToolbar() const
@@ -408,6 +410,11 @@ inline int Toplevel::depth() const
 inline bool Toplevel::hasAlpha() const
 {
     return depth() == 32;
+}
+
+inline const QRegion& Toplevel::opaqueRegion() const
+{
+    return opaque_region;
 }
 
 inline

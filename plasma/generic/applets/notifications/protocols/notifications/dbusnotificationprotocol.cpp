@@ -59,10 +59,10 @@ void DBusNotificationProtocol::init()
         return;
     }
 
-    connect(m_engine, SIGNAL(sourceAdded(const QString&)),
-            this, SLOT(prepareNotification(const QString&)));
-    connect(m_engine, SIGNAL(sourceRemoved(const QString&)),
-            this, SLOT(hideNotification(const QString&)));
+    connect(m_engine, SIGNAL(sourceAdded(QString)),
+            this, SLOT(prepareNotification(QString)));
+    connect(m_engine, SIGNAL(sourceRemoved(QString)),
+            this, SLOT(hideNotification(QString)));
 }
 
 
@@ -80,12 +80,12 @@ void DBusNotificationProtocol::dataUpdated(const QString &source, const Plasma::
 
     if (isNew) {
         DBusNotification * notification = new DBusNotification(source, this);
-        connect(notification, SIGNAL(unregisterNotification(const QString&)),
-                this, SLOT(unregisterNotification(const QString&)));
-        connect(notification, SIGNAL(notificationDeleted(const QString&)),
-                this, SLOT(notificationDeleted(const QString&)));
-        connect(notification, SIGNAL(actionTriggered(const QString&, const QString&)),
-                this, SLOT(relayAction(const QString&, const QString&)));
+        connect(notification, SIGNAL(unregisterNotification(QString)),
+                this, SLOT(unregisterNotification(QString)));
+        connect(notification, SIGNAL(notificationDeleted(QString)),
+                this, SLOT(notificationDeleted(QString)));
+        connect(notification, SIGNAL(actionTriggered(QString,QString)),
+                this, SLOT(relayAction(QString,QString)));
         m_notifications[source] = notification;
     }
 

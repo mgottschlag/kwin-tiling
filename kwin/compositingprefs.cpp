@@ -69,7 +69,6 @@ bool CompositingPrefs::compositingPossible()
         gl_workaround_group.readEntry("OpenGLIsUnsafe", false))
         return false;
 
-#ifdef KWIN_HAVE_COMPOSITING
     Extensions::init();
     if (!Extensions::compositeAvailable()) {
         kDebug(1212) << "No composite extension available";
@@ -79,10 +78,8 @@ bool CompositingPrefs::compositingPossible()
         kDebug(1212) << "No damage extension available";
         return false;
     }
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
-    if (Extensions::glxAvailable())
+    if (hasGlx())
         return true;
-#endif
 #ifdef KWIN_HAVE_XRENDER_COMPOSITING
     if (Extensions::renderAvailable() && Extensions::fixesAvailable())
         return true;
@@ -92,14 +89,10 @@ bool CompositingPrefs::compositingPossible()
 #endif
     kDebug(1212) << "No OpenGL or XRender/XFixes support";
     return false;
-#else
-    return false;
-#endif
 }
 
 QString CompositingPrefs::compositingNotPossibleReason()
 {
-#ifdef KWIN_HAVE_COMPOSITING
     // first off, check whether we figured that we'll crash on detection because of a buggy driver
     KSharedConfigPtr config = KSharedConfig::openConfig("kwinrc");
     KConfigGroup gl_workaround_group(config, "Compositing");
@@ -115,24 +108,32 @@ QString CompositingPrefs::compositingNotPossibleReason()
     if (!Extensions::compositeAvailable() || !Extensions::damageAvailable()) {
         return i18n("Required X extensions (XComposite and XDamage) are not available.");
     }
-#if defined( KWIN_HAVE_OPENGL_COMPOSITING ) && !defined( KWIN_HAVE_XRENDER_COMPOSITING )
-    if (!Extensions::glxAvailable())
+#if !defined( KWIN_HAVE_XRENDER_COMPOSITING )
+    if (!hasGlx())
         return i18n("GLX/OpenGL are not available and only OpenGL support is compiled.");
-#elif !defined( KWIN_HAVE_OPENGL_COMPOSITING ) && defined( KWIN_HAVE_XRENDER_COMPOSITING )
-    if (!(Extensions::renderAvailable() && Extensions::fixesAvailable()))
-        return i18n("XRender/XFixes extensions are not available and only XRender support"
-                    " is compiled.");
 #else
-    if (!(Extensions::glxAvailable()
+    if (!(hasGlx()
             || (Extensions::renderAvailable() && Extensions::fixesAvailable()))) {
         return i18n("GLX/OpenGL and XRender/XFixes are not available.");
     }
 #endif
     return QString();
-#else
-    return i18n("Compositing was disabled at compile time.\n"
-                "It is likely Xorg development headers were not installed.");
+}
+
+static bool s_glxDetected = false;
+static bool s_hasGlx = false;
+
+bool CompositingPrefs::hasGlx()
+{
+    if (s_glxDetected) {
+        return s_hasGlx;
+    }
+#ifndef KWIN_HAVE_OPENGLES
+    int event_base, error_base;
+    s_hasGlx = glXQueryExtension(display(), &event_base, &error_base);
 #endif
+    s_glxDetected = true;
+    return s_hasGlx;
 }
 
 void CompositingPrefs::detect()
@@ -150,7 +151,6 @@ void CompositingPrefs::detect()
     gl_workaround_config.writeEntry("OpenGLIsUnsafe", true);
     gl_workaround_config.sync();
 
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
 #ifdef KWIN_HAVE_OPENGLES
     bool haveContext = false;
     bool canDetect = false;
@@ -174,7 +174,8 @@ void CompositingPrefs::detect()
     }
 #else
     // HACK: This is needed for AIGLX
-    if (qstrcmp(qgetenv("KWIN_DIRECT_GL"), "1") != 0) {
+    const bool forceIndirect = qstrcmp(qgetenv("LIBGL_ALWAYS_INDIRECT"), "1") == 0;
+    if (!forceIndirect && qstrcmp(qgetenv("KWIN_DIRECT_GL"), "1") != 0) {
         // Start an external helper program that initializes GLX and returns
         // 0 if we can use direct rendering, and 1 otherwise.
         // The reason we have to use an external program is that after GLX
@@ -183,10 +184,16 @@ void CompositingPrefs::detect()
         // Direct rendering is preferred, since not all OpenGL extensions are
         // available with indirect rendering.
         const QString opengl_test = KStandardDirs::findExe("kwin_opengl_test");
-        if (QProcess::execute(opengl_test) != 0)
+        if (QProcess::execute(opengl_test) != 0) {
+            mEnableDirectRendering = false;
             setenv("LIBGL_ALWAYS_INDIRECT", "1", true);
+        } else {
+            mEnableDirectRendering = true;
+        }
+    } else {
+        mEnableDirectRendering = !forceIndirect;
     }
-    if (!Extensions::glxAvailable()) {
+    if (!hasGlx()) {
         kDebug(1212) << "No GLX available";
         gl_workaround_config.writeEntry("OpenGLIsUnsafe", false);
         gl_workaround_config.sync();
@@ -216,12 +223,10 @@ void CompositingPrefs::detect()
 #endif
     gl_workaround_config.writeEntry("OpenGLIsUnsafe", false);
     gl_workaround_config.sync();
-#endif
 }
 
 bool CompositingPrefs::initGLXContext()
 {
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
 #ifndef KWIN_HAVE_OPENGLES
     mGLContext = NULL;
     KXErrorHandler handler;
@@ -266,20 +271,15 @@ bool CompositingPrefs::initGLXContext()
 #else
     return false;
 #endif
-#else
-    return false;
-#endif
 }
 
 void CompositingPrefs::deleteGLXContext()
 {
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
 #ifndef KWIN_HAVE_OPENGLES
     if (mGLContext == NULL)
         return;
     glXDestroyContext(display(), mGLContext);
     XDestroyWindow(display(), mGLWindow);
-#endif
 #endif
 }
 
@@ -371,17 +371,14 @@ void CompositingPrefs::deleteEGLContext()
 
 void CompositingPrefs::detectDriverAndVersion()
 {
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
     GLPlatform *gl = GLPlatform::instance();
     gl->detect();
     gl->printResults();
-#endif
 }
 
 // See http://techbase.kde.org/Projects/KWin/HW for a list of some cards that are known to work.
 void CompositingPrefs::applyDriverSpecificOptions()
 {
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
     // Always recommend
     mRecommendCompositing = true;
 
@@ -389,7 +386,6 @@ void CompositingPrefs::applyDriverSpecificOptions()
     mStrictBinding = !gl->supports(LooseBinding);
     if (gl->driver() == Driver_Intel)
         mEnableVSync = false;
-#endif
 }
 
 } // namespace

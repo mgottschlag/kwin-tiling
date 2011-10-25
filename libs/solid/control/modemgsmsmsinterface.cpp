@@ -110,10 +110,10 @@ void Solid::Control::ModemGsmSmsInterface::setIndication(const int mode, const i
 void Solid::Control::ModemGsmSmsInterface::makeConnections(QObject * source)
 {
     if (source) {
-        QObject::connect(source, SIGNAL(smsReceived(int, bool)),
-                this, SIGNAL(smsReceived(int, bool)));
-        QObject::connect(source, SIGNAL(completed(int, bool)),
-                this, SIGNAL(completed(int, bool)));
+        QObject::connect(source, SIGNAL(smsReceived(int,bool)),
+                this, SIGNAL(smsReceived(int,bool)));
+        QObject::connect(source, SIGNAL(completed(int,bool)),
+                this, SIGNAL(completed(int,bool)));
     }
 }
 

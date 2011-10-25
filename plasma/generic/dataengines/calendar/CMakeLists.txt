@@ -1,7 +1,6 @@
 project(calendar_engine)
 
 include_directories(
-        ${CMAKE_SOURCE_DIR}/calendar
         ${KDEPIMLIBS_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIR}
 )

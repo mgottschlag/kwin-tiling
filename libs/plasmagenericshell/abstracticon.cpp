@@ -29,6 +29,8 @@
 #include <QPropertyAnimation>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
+#include <QtGui/QTextLayout>
+#include <QtGui/QTextLine>
 
 #include <KIconLoader>
 #include <KIcon>
@@ -38,6 +40,8 @@
 #include <Plasma/Theme>
 #include <Plasma/PaintUtils>
 #include <QWidget>
+
+const int LINE_COUNT=2; //maximum lines for icon name
 
 namespace Plasma
 {
@@ -89,8 +93,8 @@ QSizeF AbstractIcon::sizeHint(Qt::SizeHint which, const QSizeF &constraint) cons
         qreal l, t, r, b;
         getContentsMargins(&l, &t, &r, &b);
         QFontMetrics fm(font());
-        const int minHeight = m_iconHeight + 2 + fm.height();
-        QSizeF s(qMax(m_iconHeight, fm.width(m_name)) + l + r, minHeight + t + b);
+        const int minHeight = m_iconHeight + 2 + fm.height() * LINE_COUNT;
+        QSizeF s(m_iconHeight * 2 + l + r, minHeight + t + b);
         return s;
     }
 
@@ -289,19 +293,42 @@ void AbstractIcon::paintForeground(QPainter *painter, const QStyleOptionGraphics
     painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
     painter->setFont(font());
 
-    int flags = Qt::AlignTop;// | Qt::TextWordWrap;
+    int flags = Qt::AlignHCenter | Qt::AlignVCenter | Qt::TextWordWrap;
     QFontMetrics fm(font());
-    if (fm.width(m_name) < textRect.width()) {
-        flags |= Qt::AlignCenter;
-    }
+    qreal l, t, r, b;
+    getContentsMargins(&l, &t, &r, &b);
 
-    if (!m_name.isEmpty() && qGray(painter->pen().color().rgb()) < 192) {
-        const QRectF haloRect = fm.boundingRect(textRect.toAlignedRect(), flags, m_name);
+    int availableWidth = width - l - r;
+    int totalWidth = availableWidth;
+    int lineCreated = 0;
+    QTextLayout textLayout(m_name, painter->font());
+
+    textLayout.beginLayout();
+
+    while (lineCreated < LINE_COUNT - 1) {
+        QTextLine line = textLayout.createLine();
+
+        if (!line.isValid()) {
+            break;
+        }
+
+        line.setLineWidth(availableWidth);
+        totalWidth += line.naturalTextWidth();
+
+        lineCreated++;
+    }
+    textLayout.endLayout();
+
+    QString newText = fm.elidedText(m_name, Qt::ElideRight, totalWidth);
+    //kDebug() << "Name=" << m_name << ", line=" << lineCreated << ", totalWidth=" <<  totalWidth << ",width=" << availableWidth;
+    if (!newText.isEmpty() && qGray(painter->pen().color().rgb()) < 192) {
+        const QRectF haloRect = fm.boundingRect(textRect.toAlignedRect(), flags, newText);
         PaintUtils::drawHalo(painter, haloRect);
     }
 
     painter->drawPixmap(iconRect, pixmap(QSize(m_iconHeight, m_iconHeight)));
-    painter->drawText(textRect, flags, m_name);
+
+    painter->drawText(textRect, flags, newText);
 }
 
 qreal AbstractIcon::backgroundFadeAlpha() const

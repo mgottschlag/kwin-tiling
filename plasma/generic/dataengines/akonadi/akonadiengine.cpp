@@ -54,9 +54,9 @@ void AkonadiEngine::initEmailMonitor()
     m_emailMonitor->setMimeTypeMonitored("message/rfc822");
     //m_emailMonitor->setCollectionMonitored(Collection::root(), false);
     m_emailMonitor->itemFetchScope().fetchFullPayload( true );
-    connect(m_emailMonitor, SIGNAL(itemAdded(Akonadi::Item, Akonadi::Collection)),
+    connect(m_emailMonitor, SIGNAL(itemAdded(Akonadi::Item,Akonadi::Collection)),
             SLOT(emailItemAdded(Akonadi::Item)) );
-    connect(m_emailMonitor, SIGNAL(itemChanged(Akonadi::Item, QSet<QByteArray>)),
+    connect(m_emailMonitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)),
             SLOT(emailItemAdded(Akonadi::Item)) );
     // remove the monitor on a source that's not used
     connect(this, SIGNAL(sourceRemoved(QString)), SLOT(stopMonitor(QString)));
@@ -68,9 +68,9 @@ void AkonadiEngine::initContactMonitor()
     m_contactMonitor->setMimeTypeMonitored("text/directory");
     m_contactMonitor->setCollectionMonitored(Collection::root(), false);
     m_contactMonitor->itemFetchScope().fetchFullPayload();
-    connect(m_contactMonitor, SIGNAL(itemAdded(Akonadi::Item, Akonadi::Collection)),
+    connect(m_contactMonitor, SIGNAL(itemAdded(Akonadi::Item,Akonadi::Collection)),
             SLOT(contactItemAdded(Akonadi::Item)) );
-    connect(m_contactMonitor, SIGNAL(itemChanged(Akonadi::Item, QSet<QByteArray>)),
+    connect(m_contactMonitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)),
             SLOT(contactItemAdded(Akonadi::Item)) );
     // remove the monitor on a source that's not used
     connect(this, SIGNAL(sourceRemoved(QString)), SLOT(stopMonitor(QString)));
@@ -83,9 +83,9 @@ void AkonadiEngine::initMicroBlogMonitor()
     m_microBlogMonitor->setMimeTypeMonitored( "application/x-vnd.kde.microblog" );
     m_microBlogMonitor->setCollectionMonitored(Collection::root(), false);
     m_microBlogMonitor->itemFetchScope().fetchFullPayload();
-    connect(m_microBlogMonitor, SIGNAL(itemAdded(Akonadi::Item, Akonadi::Collection)),
+    connect(m_microBlogMonitor, SIGNAL(itemAdded(Akonadi::Item,Akonadi::Collection)),
             SLOT(microBlogItemAdded(Akonadi::Item)) );
-    connect(m_microBlogMonitor, SIGNAL(itemChanged(Akonadi::Item, QSet<QByteArray>)),
+    connect(m_microBlogMonitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)),
             SLOT(microBlogItemAdded(Akonadi::Item)) );
     // remove the monitor on a source that's not used
     connect(this, SIGNAL(sourceRemoved(QString)), SLOT(stopMonitor(QString)));
@@ -182,7 +182,7 @@ bool AkonadiEngine::sourceRequestEvent(const QString &name)
         m_emailMonitor->setCollectionMonitored(Collection( id ), true);
         fetch->fetchScope().fetchPayloadPart( MessagePart::Envelope );
         connect( fetch, SIGNAL(result(KJob*)), SLOT(fetchEmailCollectionDone(KJob*)) );
-        connect( fetch, SIGNAL(itemsReceived(const Akonadi::Item::List&)), SLOT(emailItemsReceived(const Akonadi::Item::List&)) );
+        connect( fetch, SIGNAL(itemsReceived(Akonadi::Item::List)), SLOT(emailItemsReceived(Akonadi::Item::List)) );
         m_jobCollections[fetch] = name;
         setData(name, DataEngine::Data());
         return true;
@@ -196,7 +196,7 @@ bool AkonadiEngine::sourceRequestEvent(const QString &name)
         m_emailMonitor->setItemMonitored(Item( id ), true);
         fetch->fetchScope().fetchFullPayload( true );
         connect( fetch, SIGNAL(result(KJob*)), SLOT(fetchEmailCollectionDone(KJob*)) );
-        connect( fetch, SIGNAL(itemsReceived(const Akonadi::Item::List&)), SLOT(emailItemsReceived(const Akonadi::Item::List&)) );
+        connect( fetch, SIGNAL(itemsReceived(Akonadi::Item::List)), SLOT(emailItemsReceived(Akonadi::Item::List)) );
         m_jobCollections[fetch] = name;
         setData(name, DataEngine::Data());
         return true;

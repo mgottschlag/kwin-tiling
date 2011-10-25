@@ -178,7 +178,7 @@ void StatusNotifierItemSource::performRefresh()
     message << m_statusNotifierItemInterface->interface();
     QDBusPendingCall call = m_statusNotifierItemInterface->connection().asyncCall(message);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher *)), this, SLOT(refreshCallback(QDBusPendingCallWatcher *)));
+    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(refreshCallback(QDBusPendingCallWatcher*)));
 }
 
 /**

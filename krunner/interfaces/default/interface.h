@@ -69,6 +69,7 @@ class Interface : public KRunnerDialog
 
     private slots:
         void fitWindow();
+        void reenableHoverEvents();
         void run(ResultItem *item);
         void runDefaultResultItem();
         void queryTextEdited(const QString &query);
@@ -92,6 +93,7 @@ class Interface : public KRunnerDialog
         void resetResultsArea();
 
         QTimer m_hideResultsTimer;
+        QTimer m_reenableHoverEventsTimer;
 
         QWidget *m_buttonContainer;
         QVBoxLayout* m_layout;

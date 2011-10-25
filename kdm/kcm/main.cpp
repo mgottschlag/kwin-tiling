@@ -254,20 +254,20 @@ KDModule::KDModule(QWidget *parent, const QVariantList &)
     users = new KDMUsersWidget(this);
     tab->addTab(users, i18n("&Users"));
     connect(users, SIGNAL(changed()), SLOT(changed()));
-    connect(users, SIGNAL(setMinMaxUID(int, int)), SLOT(slotMinMaxUID(int, int)));
-    connect(this, SIGNAL(addUsers(const QMap<QString, int> &)),
-            users, SLOT(slotAddUsers(const QMap<QString, int> &)));
-    connect(this, SIGNAL(delUsers(const QMap<QString, int> &)),
-            users, SLOT(slotDelUsers(const QMap<QString, int> &)));
+    connect(users, SIGNAL(setMinMaxUID(int,int)), SLOT(slotMinMaxUID(int,int)));
+    connect(this, SIGNAL(addUsers(QMap<QString,int>)),
+            users, SLOT(slotAddUsers(QMap<QString,int>)));
+    connect(this, SIGNAL(delUsers(QMap<QString,int>)),
+            users, SLOT(slotDelUsers(QMap<QString,int>)));
     connect(this, SIGNAL(clearUsers()), users, SLOT(slotClearUsers()));
 
     convenience = new KDMConvenienceWidget(this);
     tab->addTab(convenience, i18n("&Convenience"));
     connect(convenience, SIGNAL(changed()), SLOT(changed()));
-    connect(this, SIGNAL(addUsers(const QMap<QString, int> &)),
-            convenience, SLOT(slotAddUsers(const QMap<QString, int> &)));
-    connect(this, SIGNAL(delUsers(const QMap<QString, int> &)),
-            convenience, SLOT(slotDelUsers(const QMap<QString, int> &)));
+    connect(this, SIGNAL(addUsers(QMap<QString,int>)),
+            convenience, SLOT(slotAddUsers(QMap<QString,int>)));
+    connect(this, SIGNAL(delUsers(QMap<QString,int>)),
+            convenience, SLOT(slotDelUsers(QMap<QString,int>)));
     connect(this, SIGNAL(clearUsers()), convenience, SLOT(slotClearUsers()));
 
     top->addWidget(tab);

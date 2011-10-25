@@ -313,18 +313,18 @@ void KCMHotkeysPrivate::load()
     global_settings->setModel(model);
 
     QObject::connect(
-        model, SIGNAL( rowsRemoved( QModelIndex, int, int )),
-        q,  SLOT( slotChanged() ));
+        model, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+        q,  SLOT(slotChanged()));
     QObject::connect(
-        model, SIGNAL( rowsInserted( QModelIndex, int, int )),
-        q,  SLOT( slotChanged() ));
+        model, SIGNAL(rowsInserted(QModelIndex,int,int)),
+        q,  SLOT(slotChanged()));
     QObject::connect(
-        model, SIGNAL( dataChanged( QModelIndex, QModelIndex )),
-        q,  SLOT( slotChanged() ));
+        model, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+        q,  SLOT(slotChanged()));
 
     QObject::connect(
-            model, SIGNAL( modelAboutToBeReset()),
-            q,  SLOT( slotReset() ));
+            model, SIGNAL(modelAboutToBeReset()),
+            q,  SLOT(slotReset()));
 
     // reconnect the signals
     QObject::connect(

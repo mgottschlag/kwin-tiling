@@ -29,8 +29,8 @@ ActionsTreeWidget::ActionsTreeWidget(QWidget* parent)
     QAbstractItemModel *treeModel = model();
     if (treeModel)
     {
-        connect(treeModel, SIGNAL(rowsInserted(const QModelIndex&,int,int)), SLOT(onItemChanged()));
-        connect(treeModel, SIGNAL(rowsRemoved(const QModelIndex&,int,int)), SLOT(onItemChanged()));
+        connect(treeModel, SIGNAL(rowsInserted(QModelIndex,int,int)), SLOT(onItemChanged()));
+        connect(treeModel, SIGNAL(rowsRemoved(QModelIndex,int,int)), SLOT(onItemChanged()));
     }
 }
 

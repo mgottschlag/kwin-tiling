@@ -1,5 +1,4 @@
 include_directories(
-        ${CMAKE_SOURCE_DIR}/akonadi
         ${Boost_INCLUDE_DIR}
         ${KDEPIMLIBS_INCLUDE_DIRS}
 )

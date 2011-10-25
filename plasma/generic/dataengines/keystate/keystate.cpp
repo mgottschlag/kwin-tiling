@@ -70,11 +70,11 @@ void KeyStatesEngine::init()
         setData(it2.value(), data);
     }
 
-    connect(&m_keyInfo, SIGNAL(keyPressed(Qt::Key, bool)), this, SLOT(keyPressed(Qt::Key, bool)));
-    connect(&m_keyInfo, SIGNAL(keyLatched(Qt::Key, bool)), this, SLOT(keyLatched(Qt::Key, bool)));
-    connect(&m_keyInfo, SIGNAL(keyLocked(Qt::Key, bool)), this, SLOT(keyLocked(Qt::Key, bool)));
-    connect(&m_keyInfo, SIGNAL(buttonPressed(Qt::MouseButton, bool)),
-            this, SLOT(mouseButtonPressed(Qt::MouseButton, bool)));
+    connect(&m_keyInfo, SIGNAL(keyPressed(Qt::Key,bool)), this, SLOT(keyPressed(Qt::Key,bool)));
+    connect(&m_keyInfo, SIGNAL(keyLatched(Qt::Key,bool)), this, SLOT(keyLatched(Qt::Key,bool)));
+    connect(&m_keyInfo, SIGNAL(keyLocked(Qt::Key,bool)), this, SLOT(keyLocked(Qt::Key,bool)));
+    connect(&m_keyInfo, SIGNAL(buttonPressed(Qt::MouseButton,bool)),
+            this, SLOT(mouseButtonPressed(Qt::MouseButton,bool)));
     connect(&m_keyInfo, SIGNAL(keyAdded(Qt::Key)), this, SLOT(keyAdded(Qt::Key)));
     connect(&m_keyInfo, SIGNAL(keyRemoved(Qt::Key)), this, SLOT(keyRemoved(Qt::Key)));
 }

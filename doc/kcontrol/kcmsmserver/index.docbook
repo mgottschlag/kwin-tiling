@@ -111,6 +111,7 @@ have saved manually.</para>
 separated list of applications that should not be saved in sessions,
 and therefore will not be started when restoring a session.  For example
 <userinput>xterm:konsole</userinput> or <userinput>xterm,konsole</userinput>.</para>
+<!-- does this need the full path here? -->
 </sect3>
 
 </sect2>

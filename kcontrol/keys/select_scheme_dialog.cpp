@@ -49,8 +49,8 @@ SelectSchemeDialog::SelectSchemeDialog(QWidget *parent)
 
     connect(ui->m_schemes, SIGNAL(activated(int)),
             this, SLOT(schemeActivated(int)));
-    connect(ui->m_url->lineEdit(), SIGNAL(textChanged(const QString&)),
-            this, SLOT(slotUrlChanged(const QString&)));
+    connect(ui->m_url->lineEdit(), SIGNAL(textChanged(QString)),
+            this, SLOT(slotUrlChanged(QString)));
     enableButtonOk(false);
 }
 

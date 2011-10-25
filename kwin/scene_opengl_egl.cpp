@@ -26,6 +26,7 @@ EGLDisplay dpy;
 EGLConfig config;
 EGLSurface surface;
 EGLContext ctx;
+int surfaceHasSubPost;
 
 SceneOpenGL::SceneOpenGL(Workspace* ws)
     : Scene(ws)
@@ -35,8 +36,10 @@ SceneOpenGL::SceneOpenGL(Workspace* ws)
         return;
 
     initEGL();
-    if (!hasGLExtension("EGL_KHR_image_pixmap")) {
-        kError(1212) << "Required extension EGL_KHR_image_pixmap not found, disabling compositing";
+    if (!hasGLExtension("EGL_KHR_image") &&
+        (!hasGLExtension("EGL_KHR_image_base") ||
+         !hasGLExtension("EGL_KHR_image_pixmap"))) {
+        kError(1212) << "Required support for binding pixmaps to EGLImages not found, disabling compositing";
         return;
     }
     initGL();
@@ -62,7 +65,7 @@ SceneOpenGL::~SceneOpenGL()
 {
     if (!init_ok) {
         // TODO this probably needs to clean up whatever has been created until the failure
-        wspace->destroyOverlay();
+        m_overlayWindow->destroy();
         return;
     }
     foreach (Window * w, windows)
@@ -76,8 +79,8 @@ SceneOpenGL::~SceneOpenGL()
     eglReleaseThread();
     SceneOpenGL::EffectFrame::cleanup();
     checkGLError("Cleanup");
-    if (wspace->overlayWindow()) {
-        wspace->destroyOverlay();
+    if (m_overlayWindow->window()) {
+        m_overlayWindow->destroy();
     }
 }
 
@@ -96,13 +99,17 @@ bool SceneOpenGL::initRenderingContext()
         return false;
     eglBindAPI(EGL_OPENGL_ES_API);
     initBufferConfigs();
-    if (!wspace->createOverlay()) {
+    if (!m_overlayWindow->create()) {
         kError(1212) << "Could not get overlay window";
         return false;
     } else {
-        wspace->setupOverlay(None);
+        m_overlayWindow->setup(None);
     }
-    surface = eglCreateWindowSurface(dpy, config, wspace->overlayWindow(), 0);
+    surface = eglCreateWindowSurface(dpy, config, m_overlayWindow->window(), 0);
+
+    eglSurfaceAttrib(dpy, surface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_PRESERVED);
+
+    eglQuerySurface(dpy, surface, EGL_POST_SUB_BUFFER_SUPPORTED_NV, &surfaceHasSubPost);
 
     const EGLint context_attribs[] = {
         EGL_CONTEXT_CLIENT_VERSION, 2,
@@ -167,7 +174,7 @@ bool SceneOpenGL::initDrawableConfigs()
 // the entry function for painting
 void SceneOpenGL::paint(QRegion damage, ToplevelList toplevels)
 {
-    QTime t = QTime::currentTime();
+    m_renderTimer.restart();
     foreach (Toplevel * c, toplevels) {
         assert(windows.contains(c));
         stacking_order.append(windows[ c ]);
@@ -177,9 +184,10 @@ void SceneOpenGL::paint(QRegion damage, ToplevelList toplevels)
     int mask = 0;
     paintScreen(&mask, &damage);   // call generic implementation
     ungrabXServer(); // ungrab before flushBuffer(), it may wait for vsync
-    if (wspace->overlayWindow())  // show the window only after the first pass, since
-        wspace->showOverlay();   // that pass may take long
-    lastRenderTime = t.elapsed();
+    if (m_overlayWindow->window())  // show the window only after the first pass, since
+        m_overlayWindow->show();   // that pass may take long
+    lastRenderTime = m_renderTimer.elapsed();
+    m_renderTimer.invalidate();
     flushBuffer(mask, damage);
     // do cleanup
     stacking_order.clear();
@@ -195,9 +203,10 @@ void SceneOpenGL::flushBuffer(int mask, QRegion damage)
 {
     Q_UNUSED(damage)
     glFlush();
-    if (mask & PAINT_SCREEN_REGION) {
-        // TODO: implement me properly
-        eglSwapBuffers(dpy, surface);
+    if (mask & PAINT_SCREEN_REGION && surfaceHasSubPost && eglPostSubBufferNV) {
+        QRect damageRect = damage.boundingRect();
+
+        eglPostSubBufferNV(dpy, surface, damageRect.left(), displayHeight() - damageRect.bottom() - 1, damageRect.width(), damageRect.height());
     } else {
         eglSwapBuffers(dpy, surface);
     }
@@ -210,65 +219,71 @@ void SceneOpenGL::flushBuffer(int mask, QRegion damage)
 // SceneOpenGL::Texture
 //****************************************
 
-void SceneOpenGL::Texture::init()
+SceneOpenGL::TexturePrivate::TexturePrivate()
 {
-    findTarget();
+    m_target = GL_TEXTURE_2D;
 }
 
-void SceneOpenGL::Texture::release()
+SceneOpenGL::TexturePrivate::~TexturePrivate()
 {
-    mTexture = None;
 }
 
 void SceneOpenGL::Texture::findTarget()
 {
-    mTarget = GL_TEXTURE_2D;
+    Q_D(Texture);
+    d->m_target = GL_TEXTURE_2D;
+}
+
+void SceneOpenGL::TexturePrivate::release()
+{
 }
 
 bool SceneOpenGL::Texture::load(const Pixmap& pix, const QSize& size,
                                 int depth, QRegion region)
 {
-    Q_UNUSED(size)
+    // decrease the reference counter for the old texture
+    d_ptr = new TexturePrivate();
+
+    Q_D(Texture);
     Q_UNUSED(depth)
     Q_UNUSED(region)
 
     if (pix == None)
         return false;
 
-    if (mTexture == None) {
-        createTexture();
-        bind();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        const EGLint attribs[] = {
-            EGL_IMAGE_PRESERVED_KHR, EGL_TRUE,
-            EGL_NONE
-        };
-        EGLImageKHR image = eglCreateImageKHR(dpy, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR,
-                                              (EGLClientBuffer)pix, attribs);
+    glGenTextures(1, &d->m_texture);
+    bind();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    const EGLint attribs[] = {
+        EGL_IMAGE_PRESERVED_KHR, EGL_TRUE,
+        EGL_NONE
+    };
+    EGLImageKHR image = eglCreateImageKHR(dpy, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR,
+                                          (EGLClientBuffer)pix, attribs);
 
-        if (EGL_NO_IMAGE_KHR == image) {
-            kDebug(1212) << "failed to create egl image";
-            unbind();
-            return false;
-        }
-        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, (GLeglImageOES)image);
-        eglDestroyImageKHR(dpy, image);
+    if (EGL_NO_IMAGE_KHR == image) {
+        kDebug(1212) << "failed to create egl image";
         unbind();
-        checkGLError("load texture");
-        setYInverted(true);
+        return false;
     }
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, (GLeglImageOES)image);
+    eglDestroyImageKHR(dpy, image);
+    unbind();
+    checkGLError("load texture");
+    setYInverted(true);
+    d->m_size = size;
     return true;
 }
 
-void SceneOpenGL::Texture::bind()
+void SceneOpenGL::TexturePrivate::bind()
 {
-    GLTexture::bind();
+    GLTexturePrivate::bind();
 }
 
-void SceneOpenGL::Texture::unbind()
+void SceneOpenGL::TexturePrivate::unbind()
 {
-    GLTexture::unbind();
+    GLTexturePrivate::unbind();
 }

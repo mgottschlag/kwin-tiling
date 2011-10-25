@@ -50,7 +50,6 @@ protected slots:
     void wmclassMatchChanged();
     void roleMatchChanged();
     void titleMatchChanged();
-    void extraMatchChanged();
     void machineMatchChanged();
     void shortcutEditClicked();
 private slots:
@@ -81,7 +80,6 @@ private slots:
     void updateEnabletilingoption();
     // workarounds tab
     void updateEnablefsplevel();
-    void updateEnablemoveresizemode();
     void updateEnabletype();
     void updateEnableignoreposition();
     void updateEnableminsize();

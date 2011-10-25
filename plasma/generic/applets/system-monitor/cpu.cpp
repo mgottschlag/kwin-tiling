@@ -47,8 +47,8 @@ void SM::Cpu::init()
     setTitle(i18n("CPU"));
 
     /* At the time this method is running, not all source may be connected. */
-    connect(engine(), SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceChanged(const QString&)));
-    connect(engine(), SIGNAL(sourceRemoved(const QString&)), this, SLOT(sourceChanged(const QString&)));
+    connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(sourceChanged(QString)));
+    connect(engine(), SIGNAL(sourceRemoved(QString)), this, SLOT(sourceChanged(QString)));
     foreach (const QString& source, engine()->sources()) {
         sourceChanged(source);
     }

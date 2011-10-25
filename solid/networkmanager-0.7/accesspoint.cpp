@@ -61,8 +61,8 @@ NMAccessPoint::NMAccessPoint( const QString& path, QObject * parent ) : Solid::C
         d->maxBitRate = d->iface.maxBitrate();
         // make this a static on WirelessNetworkInterface
         d->mode = NMWirelessNetworkInterface::convertOperationMode(d->iface.mode());
-        connect( &d->iface, SIGNAL(PropertiesChanged(const QVariantMap &)),
-                this, SLOT(propertiesChanged(const QVariantMap &)));
+        connect( &d->iface, SIGNAL(PropertiesChanged(QVariantMap)),
+                this, SLOT(propertiesChanged(QVariantMap)));
     }
 }
 

@@ -78,7 +78,6 @@ public:
     bool checkBlockCompositing(bool block) const;
     int checkFSP(int fsp) const;
     bool checkAcceptFocus(bool focus) const;
-    Options::MoveResizeMode checkMoveResizeMode(Options::MoveResizeMode mode) const;
     bool checkCloseable(bool closeable) const;
     bool checkAutogrouping(bool autogroup) const;
     bool checkAutogroupInForeground(bool fg) const;
@@ -136,7 +135,6 @@ public:
     bool applyBlockCompositing(bool& block) const;
     bool applyFSP(int& fsp) const;
     bool applyAcceptFocus(bool& focus) const;
-    bool applyMoveResizeMode(Options::MoveResizeMode& mode) const;
     bool applyCloseable(bool& closeable) const;
     bool applyAutogrouping(bool& autogroup) const;
     bool applyAutogroupInForeground(bool& fg) const;
@@ -197,8 +195,6 @@ private:
     StringMatch windowrolematch;
     QString title;
     StringMatch titlematch;
-    QByteArray extrarole;
-    StringMatch extrarolematch;
     QByteArray clientmachine;
     StringMatch clientmachinematch;
     unsigned long types; // types for matching
@@ -252,8 +248,6 @@ private:
     ForceRule fsplevelrule;
     bool acceptfocus;
     ForceRule acceptfocusrule;
-    Options::MoveResizeMode moveresizemode;
-    ForceRule moveresizemoderule;
     bool closeable;
     ForceRule closeablerule;
     bool autogroup;

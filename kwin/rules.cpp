@@ -41,7 +41,6 @@ Rules::Rules()
     , wmclasscomplete(UnimportantMatch)
     , windowrolematch(UnimportantMatch)
     , titlematch(UnimportantMatch)
-    , extrarolematch(UnimportantMatch)
     , clientmachinematch(UnimportantMatch)
     , types(NET::AllTypesMask)
     , placementrule(UnusedForceRule)
@@ -69,7 +68,6 @@ Rules::Rules()
     , blockcompositingrule(UnusedForceRule)
     , fsplevelrule(UnusedForceRule)
     , acceptfocusrule(UnusedForceRule)
-    , moveresizemoderule(UnusedForceRule)
     , closeablerule(UnusedForceRule)
     , autogrouprule(UnusedForceRule)
     , autogroupfgrule(UnusedForceRule)
@@ -138,7 +136,6 @@ void Rules::readFromCfg(const KConfigGroup& cfg)
     wmclasscomplete = cfg.readEntry("wmclasscomplete" , false);
     READ_MATCH_STRING(windowrole, .toLower().toLatin1());
     READ_MATCH_STRING(title,);
-    READ_MATCH_STRING(extrarole, .toLower().toLatin1());
     READ_MATCH_STRING(clientmachine, .toLower().toLatin1());
     types = cfg.readEntry("types", uint(NET::AllTypesMask));
     READ_FORCE_RULE2(placement, QString(), Placement::policyFromString, false);
@@ -177,7 +174,6 @@ void Rules::readFromCfg(const KConfigGroup& cfg)
     READ_FORCE_RULE(blockcompositing, , false);
     READ_FORCE_RULE(fsplevel, limit0to4, 0); // fsp is 0-4
     READ_FORCE_RULE(acceptfocus, , false);
-    READ_FORCE_RULE(moveresizemode, Options::stringToMoveResizeMode, QString());
     READ_FORCE_RULE(closeable, , false);
     READ_FORCE_RULE(autogroup, , false);
     READ_FORCE_RULE(autogroupfg, , true);
@@ -236,7 +232,6 @@ void Rules::write(KConfigGroup& cfg) const
     cfg.writeEntry("wmclasscomplete", wmclasscomplete);
     WRITE_MATCH_STRING(windowrole, (const char*), false);
     WRITE_MATCH_STRING(title, , false);
-    WRITE_MATCH_STRING(extrarole, (const char*), false);
     WRITE_MATCH_STRING(clientmachine, (const char*), false);
     if (types != NET::AllTypesMask)
         cfg.writeEntry("types", uint(types));
@@ -267,7 +262,6 @@ void Rules::write(KConfigGroup& cfg) const
     WRITE_FORCE_RULE(blockcompositing,);
     WRITE_FORCE_RULE(fsplevel,);
     WRITE_FORCE_RULE(acceptfocus,);
-    WRITE_FORCE_RULE(moveresizemode, Options::moveResizeModeToString);
     WRITE_FORCE_RULE(closeable,);
     WRITE_FORCE_RULE(autogroup,);
     WRITE_FORCE_RULE(autogroupfg,);
@@ -309,7 +303,6 @@ bool Rules::isEmpty() const
            && blockcompositingrule == UnusedForceRule
            && fsplevelrule == UnusedForceRule
            && acceptfocusrule == UnusedForceRule
-           && moveresizemoderule == UnusedForceRule
            && closeablerule == UnusedForceRule
            && autogrouprule == UnusedForceRule
            && autogroupfgrule == UnusedForceRule
@@ -427,7 +420,6 @@ bool Rules::match(const Client* c) const
         return false;
     if (!matchTitle(c->caption(false)))
         return false;
-    // TODO extrarole
     if (!matchClientMachine(c->wmClientMachine(false)))
         return false;
     return true;
@@ -619,7 +611,6 @@ APPLY_RULE(noborder, NoBorder, bool)
 APPLY_FORCE_RULE(blockcompositing, BlockCompositing, bool)
 APPLY_FORCE_RULE(fsplevel, FSP, int)
 APPLY_FORCE_RULE(acceptfocus, AcceptFocus, bool)
-APPLY_FORCE_RULE(moveresizemode, MoveResizeMode, Options::MoveResizeMode)
 APPLY_FORCE_RULE(closeable, Closeable, bool)
 APPLY_FORCE_RULE(autogroup, Autogrouping, bool)
 APPLY_FORCE_RULE(autogroupfg, AutogroupInForeground, bool)
@@ -686,7 +677,6 @@ void Rules::discardUsed(bool withdrawn)
     DISCARD_USED_FORCE_RULE(blockcompositing);
     DISCARD_USED_FORCE_RULE(fsplevel);
     DISCARD_USED_FORCE_RULE(acceptfocus);
-    DISCARD_USED_FORCE_RULE(moveresizemode);
     DISCARD_USED_FORCE_RULE(closeable);
     DISCARD_USED_FORCE_RULE(autogroup);
     DISCARD_USED_FORCE_RULE(autogroupfg);
@@ -810,7 +800,6 @@ CHECK_RULE(NoBorder, bool)
 CHECK_FORCE_RULE(BlockCompositing, bool)
 CHECK_FORCE_RULE(FSP, int)
 CHECK_FORCE_RULE(AcceptFocus, bool)
-CHECK_FORCE_RULE(MoveResizeMode, Options::MoveResizeMode)
 CHECK_FORCE_RULE(Closeable, bool)
 CHECK_FORCE_RULE(Autogrouping, bool)
 CHECK_FORCE_RULE(AutogroupInForeground, bool)
@@ -828,8 +817,6 @@ void Client::setupWindowRules(bool ignore_temporary)
 {
     client_rules = workspace()->findWindowRules(this, ignore_temporary);
     // check only after getting the rules, because there may be a rule forcing window type
-    if (isTopMenu())  // TODO cannot have restrictions
-        client_rules = WindowRules();
 }
 
 // Applies Force, ForceTemporarily and ApplyNow rules
@@ -866,7 +853,6 @@ void Client::applyWindowRules()
     if (workspace()->mostRecentlyActivatedClient() == this
             && !client_rules.checkAcceptFocus(true))
         workspace()->activateNextClient(this);
-    // MoveResizeMode
     // Closeable
     QSize s = adjustedSize();
     if (s != size())

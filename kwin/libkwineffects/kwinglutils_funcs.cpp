@@ -32,7 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     if ( !function ) \
         function = (function ## _func)getProcAddress( #backup );
 
-#ifdef KWIN_HAVE_OPENGL
 #ifndef KWIN_HAVE_OPENGLES
 
 namespace KWin
@@ -80,6 +79,7 @@ glFramebufferTexture3D_func glFramebufferTexture3D;
 glFramebufferRenderbuffer_func glFramebufferRenderbuffer;
 glGetFramebufferAttachmentParameteriv_func glGetFramebufferAttachmentParameteriv;
 glGenerateMipmap_func glGenerateMipmap;
+glBlitFramebuffer_func glBlitFramebuffer;
 // Shader functions
 glCreateShader_func glCreateShader;
 glShaderSource_func glShaderSource;
@@ -226,6 +226,11 @@ void glResolveFunctions()
         glGetFramebufferAttachmentParameteriv = NULL;
         glGenerateMipmap = NULL;
     }
+    if (hasGLExtension("GL_EXT_framebuffer_blit")) {
+        glBlitFramebuffer = (glBlitFramebuffer_func) getProcAddress("glBlitFramebufferEXT");
+    } else {
+        glBlitFramebuffer = NULL;
+    }
     if (hasGLExtension("GL_ARB_shading_language_100") && hasGLExtension("GL_ARB_fragment_shader")) {
         GL_RESOLVE_WITH_EXT(glCreateShader, glCreateShaderObjectARB);
         GL_RESOLVE_WITH_EXT(glShaderSource, glShaderSourceARB);
@@ -291,17 +296,26 @@ namespace KWin
 // EGL
 eglCreateImageKHR_func eglCreateImageKHR;
 eglDestroyImageKHR_func eglDestroyImageKHR;
+eglPostSubBufferNV_func eglPostSubBufferNV;
 // GLES
 glEGLImageTargetTexture2DOES_func glEGLImageTargetTexture2DOES;
 
 void eglResolveFunctions()
 {
-    if (hasGLExtension("EGL_KHR_image_pixmap")) {
+    if (hasGLExtension("EGL_KHR_image") ||
+        (hasGLExtension("EGL_KHR_image_base") &&
+         hasGLExtension("EGL_KHR_image_pixmap"))) {
         eglCreateImageKHR = (eglCreateImageKHR_func)eglGetProcAddress("eglCreateImageKHR");
         eglDestroyImageKHR = (eglDestroyImageKHR_func)eglGetProcAddress("eglDestroyImageKHR");
     } else {
         eglCreateImageKHR = NULL;
         eglDestroyImageKHR = NULL;
+    }
+
+    if (hasGLExtension("EGL_NV_post_sub_buffer")) {
+        eglPostSubBufferNV = (eglPostSubBufferNV_func)eglGetProcAddress("eglPostSubBufferNV");
+    } else {
+        eglPostSubBufferNV = NULL;
     }
 }
 
@@ -315,5 +329,4 @@ void glResolveFunctions()
 }
 
 } // namespace
-#endif
 #endif

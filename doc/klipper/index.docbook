@@ -30,8 +30,8 @@
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2010-01-14</date>
-<releaseinfo>0.9.7 (&kde; 4.4)</releaseinfo>
+<date>2011-06-20</date>
+<releaseinfo>0.9.7 (&kde; 4.7)</releaseinfo>
 
 <abstract>
 <para>&klipper; is the &kde; clipboard cut &amp; paste utility.</para>
@@ -71,6 +71,7 @@ url="http://bugs.kde.org">KDEs bugzilla</ulink> or use the "report bug" feature.
 </mediaobject>
 </screenshot>
 
+ <!-- shortcut Ctrl+ALt+V is defined in System Tray Setting on page Items -->
 <para>To display the clipboard history, click on the &klipper; icon in
  the &kde; panel, or press <keycombo
  action="simul">&Ctrl;&Alt;<keycap>V</keycap> </keycombo>. Previous
@@ -122,7 +123,7 @@ file path part using the option <guilabel>Enable MIME-based actions</guilabel> u
 the <guilabel>Actions</guilabel> page.</para>
   
 <para>Actions can be disabled completely by clicking on &klipper; and
-deselecting <guimenuitem>Actions Enabled</guimenuitem>, or by pressing
+deselecting <guimenuitem>Enable Clipboard Actions</guimenuitem>, or by pressing
 <keycombo action="simul">&Ctrl;&Alt;<keycap>X</keycap></keycombo>.</para>
 
 <para>Clipboard contents which match a regular expression can also be
@@ -230,12 +231,12 @@ below.</para>
 
 <variablelist>
 
-<varlistentry>
+<!-- not in 4.7 varlistentry>
 <term><guilabel>Popup menu at mouse-cursor position</guilabel></term>
 <listitem><para>Make the &klipper; popup menus appear at the position of
 the mouse cursor, instead of their default position (in the &kde; Panel).
 Useful if you use the mouse more than the keyboard.</para></listitem>
-</varlistentry>
+</varlistentry-->
 
 
 <varlistentry>
@@ -251,25 +252,6 @@ history will be saved when &klipper; exits, allowing you to use it next time
 <listitem><para>If selected, the clipboard will never be empty: &klipper; will
 insert the most recent item from the clipboard history into the clipboard
 instead of allowing it to be empty.</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><guilabel>Replay actions on an item selected from
-history</guilabel></term>
-<listitem><para>If this is switched on, selecting an item from the history
-causes &klipper; to display the actions pop-up on that item, if 
-appropriate.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><guilabel>Remove white space when executing actions</guilabel></term>
-<listitem><para>If selected, any white space (spaces, tabs, &etc;) at the
-beginning and end of the clipboard contents will be removed before passing the
-clipboard contents to an application. This is useful, for example, if the
-clipboard contains a &URL; with spaces which, if opened by a web browser, would
-cause an error.</para>
-</listitem>
 </varlistentry>
 
 <varlistentry>
@@ -336,6 +318,25 @@ in the clipboard history.</para></listitem>
 <title>Actions Options</title>
 
 <variablelist>
+<varlistentry>
+<term><guilabel>Replay actions on an item selected from
+history</guilabel></term>
+<listitem><para>If this is switched on, selecting an item from the history
+causes &klipper; to display the actions pop-up on that item, if 
+appropriate.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Remove white space when executing actions</guilabel></term>
+<listitem><para>If selected, any white space (spaces, tabs, &etc;) at the
+beginning and end of the clipboard contents will be removed before passing the
+clipboard contents to an application. This is useful, for example, if the
+clipboard contains a &URL; with spaces which, if opened by a web browser, would
+cause an error.</para>
+</listitem>
+</varlistentry>
+
 <varlistentry>
 <term>Editing Expressions/Actions</term>
 <listitem><para>On the <guilabel>Actions</guilabel> page, double-click

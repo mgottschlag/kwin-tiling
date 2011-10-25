@@ -66,8 +66,8 @@ Solid::Control::NetworkInterface::Type Solid::Control::BtNetworkInterface::type(
 
 void Solid::Control::BtNetworkInterface::makeConnections(QObject * source)
 {
-    connect(source, SIGNAL(networkNameChanged(const QString &)),
-            this, SIGNAL(networkNameChanged(const QString &)));
+    connect(source, SIGNAL(networkNameChanged(QString)),
+            this, SIGNAL(networkNameChanged(QString)));
 }
 
 Solid::Control::BtNetworkInterface::Capabilities Solid::Control::BtNetworkInterface::btCapabilities() const

@@ -98,6 +98,7 @@ SettingsContainer::SettingsContainer(QWidget *parent)
 {
   QWidget *w = new QWidget;
   QVBoxLayout *helperLay = new QVBoxLayout(w);
+  helperLay->setMargin(0);
   d->layout = new QVBoxLayout;
   helperLay->addLayout( d->layout );
   helperLay->addStretch(1);
@@ -115,7 +116,7 @@ CollapsibleWidget* SettingsContainer::insertWidget( QWidget *w, const QString& n
    if (w && w->layout()) {
      QLayout *lay = w->layout();
      lay->setMargin(2);
-     lay->setSpacing(0);
+     lay->setSpacing(2);
    }
 
    CollapsibleWidget *cw = new CollapsibleWidget( name );

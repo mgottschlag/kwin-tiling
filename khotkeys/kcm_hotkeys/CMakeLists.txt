@@ -1,6 +1,3 @@
-# Qt Designer Files
-include_directories(ui)
-
 set(
     kcm_hotkeys_PART_SRCS
     kcm_hotkeys.cpp

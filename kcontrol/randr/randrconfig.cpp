@@ -40,8 +40,6 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	m_display = display;
 	Q_ASSERT(m_display);
 	
-	m_changed = false;
-
 	if (!m_display->isValid()) {
 		// FIXME: this needs much better handling of this error...
 		return;
@@ -50,13 +48,15 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	setupUi(this);
 	layout()->setMargin(0);
 
-	connect( identifyOutputsButton, SIGNAL( clicked()), SLOT( identifyOutputs()));
-	connect( &identifyTimer, SIGNAL( timeout()), SLOT( clearIndicators()));
-	connect( &compressUpdateViewTimer, SIGNAL( timeout()), SLOT( slotDelayedUpdateView()));
+	connect( identifyOutputsButton, SIGNAL(clicked()), SLOT(identifyOutputs()));
+	connect( &identifyTimer, SIGNAL(timeout()), SLOT(clearIndicators()));
+	connect( &compressUpdateViewTimer, SIGNAL(timeout()), SLOT(slotDelayedUpdateView()));
+	connect(unifyOutputs, SIGNAL(toggled(bool)), SLOT(unifiedOutputChanged(bool)));
+
 	identifyTimer.setSingleShot( true );
 	compressUpdateViewTimer.setSingleShot( true );
 
-	connect( saveAsDefaultButton, SIGNAL( clicked()), SLOT( saveStartup()));
+	connect( saveAsDefaultButton, SIGNAL(clicked()), SLOT(saveStartup()));
 	QMenu* saveMenu = new QMenu(saveAsDefaultButton);
 	saveMenu->addAction(i18n("Save as Default"),this, SLOT(saveStartup()));
 	saveMenu->addAction(i18n("Reset"),this, SLOT(disableStartup()));
@@ -74,16 +74,22 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 #ifdef HAS_RANDR_1_3
         if (RandR::has_1_3)
         {
-            primaryDisplaySelector->setVisible(true);
+            primaryDisplayBox->setVisible(true);
+            label->setVisible(true);
         }
         else
 #endif //HAS_RANDR_1_3
         {
-            primaryDisplaySelector->setVisible(false);
+            primaryDisplayBox->setVisible(false);
+            label->setVisible(false);
         }
 
+	KConfig config("krandrrc");
+	if (config.hasGroup("Screen_0") && config.group("Screen_0").readEntry("OutputsUnified", false)) {
+		unifyOutputs->setChecked(true);
+	}
 	// create the scene
-	m_scene = new QGraphicsScene(m_display->currentScreen()->rect());	
+	m_scene = new QGraphicsScene(m_display->currentScreen()->rect(), screenView);
 	screenView->setScene(m_scene);
 	screenView->installEventFilter(this);
 
@@ -93,7 +99,6 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 RandRConfig::~RandRConfig()
 {
 	clearIndicators();
-	delete m_scene;
 }
 
 void RandRConfig::load(void)
@@ -114,7 +119,8 @@ void RandRConfig::load(void)
 	if (RandR::has_1_3)
 	{
 		// disconnect while we repopulate the combo box
-		disconnect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SLOT(slotChanged()));
+		disconnect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(changed()));
+		disconnect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updatePrimaryDisplay()));
 		primaryDisplayBox->clear();
 		primaryDisplayBox->addItem(i18nc("No display selected", "None"));
 	}
@@ -126,7 +132,7 @@ void RandRConfig::load(void)
 	OutputConfigList preceding;
 	foreach(RandROutput *output, outputs)
 	{
-		OutputConfig *config = new OutputConfig(this, output, preceding);
+		OutputConfig *config = new OutputConfig(this, output, preceding, unifyOutputs->isChecked());
 		m_configs.append( config );
 		preceding.append( config );
 		
@@ -138,6 +144,7 @@ void RandRConfig::load(void)
 			w->setExpanded(true);
 			kDebug() << "Output rect:" << output->rect();
 		}
+		connect(config, SIGNAL(connectedChanged(bool)), this, SLOT(outputConnectedChanged(bool)));
 		m_outputList.append(w);
 		
 		o = new OutputGraphicsItem(config);
@@ -147,7 +154,7 @@ void RandRConfig::load(void)
 		        this, SLOT(slotAdjustOutput(OutputGraphicsItem*)));
 
 		connect(config, SIGNAL(updateView()), this, SLOT(slotUpdateView()));
-		connect(config, SIGNAL(optionChanged()), this, SLOT(slotChanged()));
+		connect(config, SIGNAL(optionChanged()), this, SIGNAL(changed()));
 
 #ifdef HAS_RANDR_1_3
 		if (RandR::has_1_3 && output->isConnected())
@@ -163,10 +170,21 @@ void RandRConfig::load(void)
 #ifdef HAS_RANDR_1_3
 	if (RandR::has_1_3)
 	{
-		connect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SLOT(slotChanged()));
+		connect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(changed()));
+		connect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updatePrimaryDisplay()));
 	}
 #endif //HAS_RANDR_1_3
 	slotUpdateView();
+}
+
+void RandRConfig::outputConnectedChanged(bool connected)
+{
+	OutputConfig *config = static_cast <OutputConfig *> (sender());
+	int index = m_configs.indexOf(config);
+	QString description = connected
+			? i18n("%1 (Connected)", config->output()->name())
+			: config->output()->name();
+	m_outputList.at(index)->setCaption(description);
 }
 
 void RandRConfig::save()
@@ -174,6 +192,11 @@ void RandRConfig::save()
 	if (!m_display->isValid())
 		return;
 
+	KConfig config("krandrrc");
+	if (config.hasGroup("Screen_0")) {
+		config.group("Screen_0").writeEntry("OutputsUnified", unifyOutputs->isChecked());
+		config.sync();
+	}
 	apply();
 }
 
@@ -262,17 +285,20 @@ void RandRConfig::apply()
 	update();
 }
 
-void RandRConfig::slotChanged(void)
+void RandRConfig::updatePrimaryDisplay()
 {
-	m_changed = true;
-	
-	emit changed(true);
+	QString primary=primaryDisplayBox->currentText();
+	foreach( QGraphicsItem* item, m_scene->items()) {
+		OutputGraphicsItem* itemo = dynamic_cast< OutputGraphicsItem* >( item );
+		if(itemo && (itemo->objectName()==primary)!=itemo->isPrimary()) {
+			itemo->setPrimary(itemo->objectName()==primary);
+		}
+	}
 }
 
 void RandRConfig::update()
 {
 	// TODO: implement
-	m_changed = false;
 	emit changed(false);
 }
 
@@ -312,6 +338,15 @@ void RandRConfig::disableStartup()
 	KMessageBox::information( window(), i18n( "Default desktop setup has been reset." ));
 }
 
+void RandRConfig::unifiedOutputChanged(bool checked)
+{
+	Q_FOREACH(OutputConfig *config, m_configs) {
+		config->setUnifyOutput(checked);
+		config->updateSizeList();
+	}
+	
+	emit changed(true);
+}
 
 bool RandRConfig::eventFilter(QObject *obj, QEvent *event)
 {
@@ -335,8 +370,6 @@ void RandRConfig::slotUpdateView()
 {
 	compressUpdateViewTimer.start( 0 );
 }
-
-#include <typeinfo>
 
 void RandRConfig::slotDelayedUpdateView()
 {
@@ -370,6 +403,7 @@ void RandRConfig::slotDelayedUpdateView()
 		if( OutputGraphicsItem* itemo = dynamic_cast< OutputGraphicsItem* >( item ))
 			itemo->configUpdated();
 	}
+	updatePrimaryDisplay();
 	screenView->update();
 }
 
@@ -432,6 +466,12 @@ void RandRConfig::insufficientVirtualSize()
         else
             KMessageBox::sorry( this, i18n( "Changing configuration failed. Please adjust your xorg.conf manually." ));
         }
+}
+
+bool RandRConfig::x11Event(XEvent* e)
+{
+    kDebug() << "PAPAPAPA";
+    return QWidget::x11Event(e);
 }
 
 #include "randrconfig.moc"

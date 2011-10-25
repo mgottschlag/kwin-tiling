@@ -51,6 +51,7 @@ private:
 	XineramaWidget *xw;
 	QTimer _timer;
 	QList<QWidget *> _indicators;
+  QWidget* m_noXineramaMessage;
 
 	int _displays;
 

@@ -454,6 +454,31 @@ QMap<QString, QString> getFontFileMap(const QSet<QString> &files)
     return map;
 }
 
+QString modifyName(const QString &fname)
+{
+    static const char constSymbols[]={ '-', ' ', ':', ';', '/', '~', 0 };
+
+    QString rv(fname);
+
+    for(int s=0; constSymbols[s]; ++s)
+        rv=rv.replace(constSymbols[s], '_');
+
+    int dotPos(rv.lastIndexOf('.'));
+
+    return -1==dotPos
+            ? rv
+            : rv.left(dotPos+1)+rv.mid(dotPos+1).toLower();
+}
+
+QString app(const QString &name, const char *path)
+{
+    static QMap<QString, QString> apps;
+    
+    if(!apps.contains(name))
+        apps[name]=KStandardDirs::findExe(name, path ? KStandardDirs::installPath(path) : QString());
+    return apps[name];
+}
+
 } // Misc::
 
 } // KFI::

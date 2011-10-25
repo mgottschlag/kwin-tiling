@@ -339,8 +339,8 @@ void UrlItemView::setModel(QAbstractItemModel *model)
     QAbstractItemView::setModel(model);
 
     if (model) {
-        connect(model, SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(updateLayout()));
-        connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(updateLayout()));
+        connect(model, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(updateLayout()));
+        connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(updateLayout()));
         connect(model, SIGNAL(modelReset()), this, SLOT(updateLayout()));
     }
 

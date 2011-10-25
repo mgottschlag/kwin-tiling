@@ -89,7 +89,7 @@ public:
 
 	bool applyProposed(bool confirm);
 
-	void load(KConfig &config);
+	void load(KConfig &config, bool skipOutputs = false);
 	void save(KConfig &config);
 	QStringList startupCommands() const;
 

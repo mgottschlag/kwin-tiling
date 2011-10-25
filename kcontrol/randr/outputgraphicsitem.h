@@ -46,6 +46,8 @@ public:
 	void setBottom(OutputGraphicsItem *output);
 
 	bool isConnected();
+	bool isPrimary() const;
+	void setPrimary(bool);
     
 protected:
 	void disconnect();
@@ -56,6 +58,7 @@ signals:
 	void itemChanged(OutputGraphicsItem *item);
 
 private:
+        void calculateSetRect( OutputConfig* config );
 	OutputGraphicsItem *m_left;
 	OutputGraphicsItem *m_right;
 	OutputGraphicsItem *m_top;

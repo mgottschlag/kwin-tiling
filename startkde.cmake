@@ -89,7 +89,7 @@ mkdir -m 700 -p $kdehome
 mkdir -m 700 -p $kdehome/share
 mkdir -m 700 -p $kdehome/share/config
 cat >$kdehome/share/config/startupconfigkeys <<EOF
-kcminputrc Mouse cursorTheme 'Oxygen_Black'
+kcminputrc Mouse cursorTheme 'Oxygen_White'
 kcminputrc Mouse cursorSize ''
 ksplashrc KSplash Theme Default
 ksplashrc KSplash Engine KSplashX
@@ -130,13 +130,9 @@ fi
 
 . krandrstartup
 
-if test "$kcmfonts_general_forcefontdpi" -eq 120; then
+if test "$kcmfonts_general_forcefontdpi" -ne 0; then
     xrdb -quiet -merge -nocpp <<EOF
-Xft.dpi: 120
-EOF
-elif test "$kcmfonts_general_forcefontdpi" -eq 96; then
-    xrdb -quiet -merge -nocpp <<EOF
-Xft.dpi: 96
+Xft.dpi: $kcmfonts_general_forcefontdpi
 EOF
 fi
 

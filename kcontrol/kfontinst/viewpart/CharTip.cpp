@@ -166,16 +166,18 @@ void CCharTip::showTip()
     if(!itsParent->underMouse())
         return;
 
+    static const int constPixSize=96;
+
     EUnicodeCategory cat(getCategory(itsItem.ucs4));
     QString          details("<table>");
 
-    details+="<tr><td><b>"+i18n("Category")+"</b></td><td>"+
+    details+="<tr><td align=\"right\"><b>"+i18n("Category")+"&nbsp;</b></td><td>"+
              toStr(cat)+"</td></tr>";
-    details+="<tr><td><b>"+i18n("UCS-4")+"</b></td><td>"+
-             QString().sprintf("U+%4.4X", itsItem.ucs4)+"</td></tr>";
+    details+="<tr><td align=\"right\"><b>"+i18n("UCS-4")+"&nbsp;</b></td><td>"+
+             QString().sprintf("U+%4.4X", itsItem.ucs4)+"&nbsp;</td></tr>";
 
     QString str(QString::fromUcs4(&(itsItem.ucs4), 1));
-    details+="<tr><td><b>"+i18n("UTF-16")+"</b></td><td>";
+    details+="<tr><td align=\"right\"><b>"+i18n("UTF-16")+"&nbsp;</b></td><td>";
 
     const ushort *utf16(str.utf16());
 
@@ -186,7 +188,7 @@ void CCharTip::showTip()
         details+=QString().sprintf("0x%4.4X",  utf16[i]);
     }
     details+="</td></tr>";
-    details+="<tr><td><b>"+i18n("UTF-8")+"</b></td><td>";
+    details+="<tr><td align=\"right\"><b>"+i18n("UTF-8")+"&nbsp;</b></td><td>";
 
     QByteArray utf8(str.toUtf8());
 
@@ -203,7 +205,7 @@ void CCharTip::showTip()
     if ((0x0001 <= itsItem.ucs4 && itsItem.ucs4 <= 0xD7FF) ||
         (0xE000 <= itsItem.ucs4 && itsItem.ucs4 <= 0xFFFD) ||
         (0x10000 <= itsItem.ucs4 && itsItem.ucs4 <= 0x10FFFF))
-        details+="<tr><td><b>"+i18n("XML Decimal Entity")+"</b></td><td>"+
+        details+="<tr><td align=\"right\"><b>"+i18n("XML Decimal Entity")+"&nbsp;</b></td><td>"+
                  QString().sprintf("&#<b></b>%d;", itsItem.ucs4)+"</td></tr>";
 
     details+="</table>";
@@ -217,7 +219,7 @@ void CCharTip::showTip()
 
     QImage img=itsParent->engine()->draw(itsParent->itsFontName, itsParent->itsStyleInfo,
                                          itsParent->itsCurrentFace-1, palette().text().color(), bgnd,
-                                         (int)(itsItem.width()*2.5), (int)(itsItem.height()*2.5), false, range, NULL);
+                                         constPixSize, constPixSize, false, range, NULL);
 
     if(!img.isNull())
         itsPixmapLabel->setPixmap(QPixmap::fromImage(img));

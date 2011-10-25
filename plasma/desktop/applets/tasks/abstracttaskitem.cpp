@@ -514,6 +514,9 @@ void AbstractTaskItem::paint(QPainter *painter,
                              const QStyleOptionGraphicsItem *option,
                              QWidget *widget)
 {
+    if (!m_abstractItem) {
+        return;
+    }
     //kDebug() << "painting" << (QObject*)this << text();
     painter->setRenderHint(QPainter::Antialiasing);
 
@@ -647,7 +650,7 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
     if (m_abstractItem->itemType() != TaskManager::LauncherItemType) {
         bounds = bounds.adjusted(m_applet->itemLeftMargin(), m_applet->itemTopMargin(), -m_applet->itemRightMargin(), -m_applet->itemBottomMargin());
     } else {
-        bounds = bounds.adjusted(5,5,-5,-5);
+        bounds = bounds.adjusted(4,4,-5,-5);
     }
 
     WindowTaskItem *window = qobject_cast<WindowTaskItem *>(this);
@@ -874,8 +877,8 @@ void AbstractTaskItem::setBackgroundFadeAlpha(qreal progress)
 
 bool AbstractTaskItem::shouldIgnoreDragEvent(QGraphicsSceneDragDropEvent *event)
 {
-   if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
-       event->mimeData()->hasFormat(TaskManager::Task::groupMimetype())) {
+    if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
+        event->mimeData()->hasFormat(TaskManager::Task::groupMimetype())) {
         return true;
     }
 
@@ -886,13 +889,15 @@ bool AbstractTaskItem::shouldIgnoreDragEvent(QGraphicsSceneDragDropEvent *event)
         if (!uris.isEmpty()) {
             foreach (const QUrl &uri, uris) {
                 KUrl url(uri);
-                if (url.isLocalFile()) {
-                    const QString path = url.toLocalFile();
-                    QFileInfo info(path);
-                    if (info.isDir() || !info.isExecutable()) {
-                        return false;
-                        break;
-                    }
+                if (!url.isLocalFile()) {
+                    return false;
+                }
+
+                const QString path = url.toLocalFile();
+                QFileInfo info(path);
+                if (info.isDir() || !info.isExecutable()) {
+                    return false;
+                    break;
                 }
             }
 
@@ -913,19 +918,19 @@ void AbstractTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     event->accept();
 
     if (!m_activateTimerId) {
-        m_activateTimerId = startTimer(500);
+        m_activateTimerId = startTimer(250);
+        m_oldDragPos = event->pos();
     }
 }
 
 void AbstractTaskItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
-    Q_UNUSED(event);
-
     // restart the timer so that activate() is only called after the mouse
     // stops moving
-    if (m_activateTimerId) {
+    if (m_activateTimerId && event->pos() != m_oldDragPos) {
+        m_oldDragPos = event->pos();
         killTimer(m_activateTimerId);
-        m_activateTimerId = startTimer(500);
+        m_activateTimerId = startTimer(250);
     }
 }
 

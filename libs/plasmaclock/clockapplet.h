@@ -52,7 +52,6 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         QString currentTimezone() const;
         QString prettyTimezone() const;
         bool isLocalTimezone() const;
-        QStringList getSelectedTimezones() const;
         bool shouldDisplayTimezone() const;
         QList<QAction*> contextualActions();
 
@@ -100,7 +99,6 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         Private * const d;
 
         Q_PRIVATE_SLOT(d, void createCalendarExtender())
-        Q_PRIVATE_SLOT(d, void createToday())
 };
 
 #endif

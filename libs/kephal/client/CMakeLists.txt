@@ -1,4 +1,4 @@
-INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR}/../kephal ${CMAKE_CURRENT_BINARY_DIR}/../kephal ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${kephal_SOURCE_DIR}/kephal)
 
 ADD_DEFINITIONS (-DSCREENS_FACTORY=libkephal_factory)
 ADD_DEFINITIONS (-DOUTPUTS_FACTORY=libkephal_factory)

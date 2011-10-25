@@ -42,6 +42,8 @@
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
 
+#include <kworkspace/kactivityconsumer.h>
+
 #include <QtCore/QTimer>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusConnectionInterface>
@@ -54,6 +56,7 @@ Core::Core(QObject* parent, const KComponentData &componentData)
     , m_backend(0)
     , m_applicationData(componentData)
     , m_criticalBatteryTimer(new QTimer(this))
+    , m_activityConsumer(new KActivityConsumer(this))
 {
 }
 
@@ -88,7 +91,7 @@ void Core::onBackendReady()
 {
     kDebug() << "Backend is ready, KDE Power Management system initialized";
 
-    m_profilesConfig = KSharedConfig::openConfig("powerdevil2profilesrc", KConfig::SimpleConfig);
+    m_profilesConfig = KSharedConfig::openConfig("powermanagementprofilesrc", KConfig::FullConfig);
 
     // Is it brand new?
     if (m_profilesConfig->groupList().isEmpty()) {
@@ -128,6 +131,8 @@ void Core::onBackendReady()
             this, SLOT(onKIdleTimeoutReached(int,int)));
     connect(KIdleTime::instance(), SIGNAL(resumingFromIdle()),
             this, SLOT(onResumingFromIdle()));
+    connect(m_activityConsumer, SIGNAL(currentActivityChanged(QString)),
+            this, SLOT(loadProfile()));
 
     // Set up the policy agent
     PowerDevil::PolicyAgent::instance()->init();
@@ -175,25 +180,25 @@ void Core::onBackendReady()
     connect(globalAction, SIGNAL(triggered(bool)), SLOT(powerOffButtonTriggered()));
 }
 
-void Core::checkBatteryStatus()
+QString Core::checkBatteryStatus(bool notify)
 {
+    QString lastMessage;
     // Any batteries below 50% of capacity?
     for (QHash< QString, uint >::const_iterator i = m_backend->capacities().constBegin();
          i != m_backend->capacities().constEnd(); ++i) {
         if (i.value() < 50) {
             // Notify, we have a broken battery.
             if (m_loadedBatteriesUdi.size() == 1) {
-                emitNotification("brokenbattery",
-                                 i18n("Your battery capacity is %1%. This means your battery is broken and "
-                                      "needs a replacement. Please contact your hardware vendor for more details.",
-                                      i.value()),
-                                 "dialog-warning");
+                lastMessage = i18n("Your battery capacity is %1%. This means your battery is broken and "
+                                   "needs a replacement. Please contact your hardware vendor for more details.",
+                                   i.value());
             } else {
-                emitNotification("brokenbattery",
-                                 i18n("One of your batteries (ID %2) has a capacity of %1%. This means it is broken "
-                                      "and needs a replacement. Please contact your hardware vendor for more details.",
-                                      i.value(), i.key()),
-                                 "dialog-warning");
+                lastMessage = i18n("One of your batteries (ID %2) has a capacity of %1%. This means it is broken "
+                                   "and needs a replacement. Please contact your hardware vendor for more details.",
+                                   i.value(), i.key());
+            }
+            if (notify) {
+                emitNotification("brokenbattery", lastMessage, "dialog-warning");
             }
         }
     }
@@ -202,24 +207,23 @@ void Core::checkBatteryStatus()
     foreach (const BackendInterface::RecallNotice &notice, m_backend->recallNotices()) {
         // Notify, a battery has been recalled
         if (m_loadedBatteriesUdi.size() == 1) {
-            emitNotification("brokenbattery",
-                             i18n("Your battery might have been recalled by %1. Usually, when vendors recall the "
-                                  "hardware, it is because of factory defects which are usually eligible for a "
-                                  "free repair or substitution. Please check <a href=\"%2\">%1's website</a> to "
-                                  "verify if your battery is faulted.",
-                                  notice.vendor, notice.url),
-                             "dialog-warning");
+            lastMessage = i18n("Your battery might have been recalled by %1. Usually, when vendors recall the "
+                               "hardware, it is because of factory defects which are usually eligible for a "
+                               "free repair or substitution. Please check <a href=\"%2\">%1's website</a> to "
+                               "verify if your battery is faulted.", notice.vendor, notice.url);
         } else {
-            emitNotification("brokenbattery",
-                             i18n("One of your batteries (ID %3) might have been recalled by %1. "
-                                  "Usually, when vendors recall the hardware, it is because of factory defects "
-                                  "which are usually eligible for a free repair or substitution. "
-                                  "Please check <a href=\"%2\">%1's website</a> to "
-                                  "verify if your battery is faulted.",
-                                  notice.vendor, notice.url, notice.batteryId),
-                             "dialog-warning");
+            lastMessage = i18n("One of your batteries (ID %3) might have been recalled by %1. "
+                               "Usually, when vendors recall the hardware, it is because of factory defects "
+                               "which are usually eligible for a free repair or substitution. "
+                               "Please check <a href=\"%2\">%1's website</a> to "
+                               "verify if your battery is faulted.", notice.vendor, notice.url, notice.batteryId);
+        }
+        if (notify) {
+            emitNotification("brokenbattery", lastMessage, "dialog-warning");
         }
     }
+
+    return lastMessage;
 }
 
 void Core::refreshStatus()
@@ -229,22 +233,7 @@ void Core::refreshStatus()
      */
     reparseConfiguration();
 
-    reloadProfile();
-}
-
-void Core::reloadProfile()
-{
-    reloadProfile(m_backend->acAdapterState());
-}
-
-void Core::reloadCurrentProfile()
-{
-    /* The configuration could have changed if this function was called, so
-     * let's resync it.
-     */
-    reparseConfiguration();
-
-    loadProfile(m_currentProfile);
+    loadProfile(true);
 }
 
 void Core::reparseConfiguration()
@@ -256,96 +245,177 @@ void Core::reparseConfiguration()
     emit configurationReloaded();
 }
 
-StringStringMap Core::availableProfiles() const
+void Core::loadProfile(bool force)
 {
-    QMap< QString, QString > retmap;
-    foreach (const QString &ent, m_profilesConfig->groupList()) {
-        if (ent == "Performance") {
-            retmap.insert(ent, i18nc("Name of a power profile", "Performance"));
-        } else if (ent == "Powersave") {
-            retmap.insert(ent, i18nc("Name of a power profile", "Powersave"));
-        } else if (ent == "Aggressive powersave") {
-            retmap.insert(ent, i18nc("Name of a power profile", "Aggressive powersave"));
-        } else {
-            KConfigGroup group(m_profilesConfig, ent);
-            if (group.hasKey("name")) {
-                retmap.insert(ent, group.readEntry("name"));
-            } else {
-                retmap.insert(ent, ent);
-            }
-        }
-    }
+    QString profileId;
 
-    return retmap;
-}
-
-void Core::reloadProfile(int state)
-{
-    if (m_loadedBatteriesUdi.isEmpty()) {
-        kDebug() << "No batteries found, loading AC";
-        loadProfile(PowerDevilSettings::aCProfile());
-    } else {
-        // Compute the previous and current global percentage
-        int percent = 0;
-        for (QHash<QString,int>::const_iterator i = m_batteriesPercent.constBegin(); i != m_batteriesPercent.constEnd(); ++i) {
-            percent += i.value();
-        }
-
-        if (state == BackendInterface::Plugged) {
-            kDebug() << "Loading profile for plugged AC";
-            loadProfile(PowerDevilSettings::aCProfile());
-        } else if (percent <= PowerDevilSettings::batteryWarningLevel()) {
-            loadProfile(PowerDevilSettings::warningProfile());
-            kDebug() << "Loading profile for warning battery";
-        } else if (percent <= PowerDevilSettings::batteryLowLevel()) {
-            loadProfile(PowerDevilSettings::lowProfile());
-            kDebug() << "Loading profile for low battery";
-        } else {
-            loadProfile(PowerDevilSettings::batteryProfile());
-            kDebug() << "Loading profile for unplugged AC";
-        }
-    }
-}
-
-void Core::loadProfile(const QString& id)
-{
     // Policy check
     if (PolicyAgent::instance()->requirePolicyCheck(PolicyAgent::ChangeProfile) != PolicyAgent::None) {
         kDebug() << "Policy Agent prevention: on";
         return;
     }
 
-    // First of all, let's clean the old actions. This will also call the onProfileUnload callback
-    ActionPool::instance()->unloadAllActiveActions();
+    KConfigGroup config;
 
-    // Now, let's retrieve our profile
-    KConfigGroup config(m_profilesConfig, id);
+    // Check the activity in which we are in
+    QString activity = m_activityConsumer->currentActivity();
+    kDebug() << "We are now into activity " << activity;
+    KConfigGroup activitiesConfig(m_profilesConfig, "Activities");
+    kDebug() << activitiesConfig.groupList() << activitiesConfig.keyList();
+
+    // Are we mirroring an activity?
+    if (activitiesConfig.group(activity).readEntry("mode", "None") == "ActLike" &&
+        activitiesConfig.group(activity).readEntry("actLike", QString()) != "AC" &&
+        activitiesConfig.group(activity).readEntry("actLike", QString()) != "Battery" &&
+        activitiesConfig.group(activity).readEntry("actLike", QString()) != "LowBattery") {
+        // Yes, let's use that then
+        activity = activitiesConfig.group(activity).readEntry("actLike", QString());
+        kDebug() << "Activity is a mirror";
+    }
+
+    KConfigGroup activityConfig = activitiesConfig.group(activity);
+    kDebug() << activityConfig.groupList() << activityConfig.keyList();
+
+    // See if this activity has priority
+    if (activityConfig.readEntry("mode", "None") == "SeparateSettings") {
+        // Prioritize this profile over anything
+        config = activityConfig.group("SeparateSettings");
+        kDebug() << "Activity is enforcing a different profile";
+        profileId = activity;
+    } else if (activityConfig.readEntry("mode", "None") == "ActLike") {
+        if (activityConfig.readEntry("actLike", QString()) == "AC" ||
+            activityConfig.readEntry("actLike", QString()) == "Battery" ||
+            activityConfig.readEntry("actLike", QString()) == "LowBattery") {
+            // Same as above, but with an existing profile
+            config = m_profilesConfig.data()->group(activityConfig.readEntry("actLike", QString()));
+            profileId = activityConfig.readEntry("actLike", QString());
+            kDebug() << "Activity is mirroring a different profile";
+        }
+    } else {
+        // It doesn't, let's load the current state's profile
+        if (m_loadedBatteriesUdi.isEmpty()) {
+            kDebug() << "No batteries found, loading AC";
+            profileId = "AC";
+        } else {
+            // Compute the previous and current global percentage
+            int percent = 0;
+            for (QHash<QString,int>::const_iterator i = m_batteriesPercent.constBegin();
+                 i != m_batteriesPercent.constEnd(); ++i) {
+                percent += i.value();
+            }
+
+            if (backend()->acAdapterState() == BackendInterface::Plugged) {
+                profileId = "AC";
+                kDebug() << "Loading profile for plugged AC";
+            } else if (percent <= PowerDevilSettings::batteryLowLevel()) {
+                profileId = "LowBattery";
+                kDebug() << "Loading profile for low battery";
+            } else {
+                profileId = "Battery";
+                kDebug() << "Loading profile for unplugged AC";
+            }
+        }
+
+        config = m_profilesConfig.data()->group(profileId);
+        kDebug() << "Activity is not forcing a profile";
+    }
+
+    // Release any special inhibitions
+    {
+        QHash<QString,int>::iterator i = m_sessionActivityInhibit.begin();
+        while (i != m_sessionActivityInhibit.end()) {
+            PolicyAgent::instance()->ReleaseInhibition(i.value());
+            i = m_sessionActivityInhibit.erase(i);
+        }
+
+        i = m_screenActivityInhibit.begin();
+        while (i != m_screenActivityInhibit.end()) {
+            PolicyAgent::instance()->ReleaseInhibition(i.value());
+            i = m_screenActivityInhibit.erase(i);
+        }
+    }
 
     if (!config.isValid()) {
         emitNotification("powerdevilerror", i18n("The profile \"%1\" has been selected, "
                          "but it does not exist.\nPlease check your PowerDevil configuration.",
-                         id), "dialog-error");
+                         profileId), "dialog-error");
         return;
     }
 
-    // Cool, now let's load the needed actions
-    foreach (const QString &actionName, config.groupList()) {
-        Action *action = ActionPool::instance()->loadAction(actionName, config.group(actionName), this);
-        if (action) {
-            action->onProfileLoad();
-        } else {
-            // Ouch, error. But let's just warn and move on anyway
-            emitNotification("powerdevilerror", i18n("The profile \"%1\" tried to activate %2, "
-                             "a non existent action. This is usually due to an installation problem"
-                             " or to a configuration problem.",
-                             id, actionName), "dialog-warning");
+    // Check: do we need to change profile at all?
+    if (m_currentProfile == profileId && !force) {
+        // No, let's leave things as they are
+        kDebug() << "Skipping action reload routine as profile has not changed";
+
+        // Do we need to force a wakeup?
+        if (m_pendingWakeupEvent) {
+            // Fake activity at this stage, when no timeouts are registered
+            KIdleTime::instance()->simulateUserActivity();
+            m_pendingWakeupEvent = false;
         }
+    } else {
+        // First of all, let's clean the old actions. This will also call the onProfileUnload callback
+        ActionPool::instance()->unloadAllActiveActions();
+
+        // Do we need to force a wakeup?
+        if (m_pendingWakeupEvent) {
+            // Fake activity at this stage, when no timeouts are registered
+            KIdleTime::instance()->simulateUserActivity();
+            m_pendingWakeupEvent = false;
+        }
+
+        // Cool, now let's load the needed actions
+        foreach (const QString &actionName, config.groupList()) {
+            Action *action = ActionPool::instance()->loadAction(actionName, config.group(actionName), this);
+            if (action) {
+                action->onProfileLoad();
+            } else {
+                // Ouch, error. But let's just warn and move on anyway
+                emitNotification("powerdevilerror", i18n("The profile \"%1\" tried to activate %2, "
+                                "a non existent action. This is usually due to an installation problem"
+                                " or to a configuration problem.",
+                                profileId, actionName), "dialog-warning");
+            }
+        }
+
+        // We are now on a different profile
+        m_currentProfile = profileId;
+        emit profileChanged(m_currentProfile);
     }
 
-    // Set the current profile. Notify if different.
-    if (m_currentProfile != id) {
-        m_currentProfile = id;
-        emit profileChanged(m_currentProfile);
+    // Now... any special behaviors we'd like to consider?
+    if (activityConfig.readEntry("mode", "None") == "SpecialBehavior") {
+        kDebug() << "Activity has special behaviors";
+        KConfigGroup behaviorGroup = activityConfig.group("SpecialBehavior");
+        if (behaviorGroup.readEntry("performAction", false)) {
+            // Let's override the configuration for this action at all times
+            ActionPool::instance()->loadAction("SuspendSession", behaviorGroup.group("ActionConfig"), this);
+            kDebug() << "Activity overrides suspend session action";
+        }
+
+        if (behaviorGroup.readEntry("noSuspend", false)) {
+            kDebug() << "Activity triggers a suspend inhibition";
+            // Trigger a special inhibition - if we don't have one yet
+            if (!m_sessionActivityInhibit.contains(activity)) {
+                int cookie =
+                PolicyAgent::instance()->AddInhibition(PolicyAgent::InterruptSession, i18n("Activity Manager"),
+                                                       i18n("This activity's policies prevent the system from suspending"));
+
+                m_sessionActivityInhibit.insert(activity, cookie);
+            }
+        }
+
+        if (behaviorGroup.readEntry("noScreenManagement", false)) {
+            kDebug() << "Activity triggers a screen management inhibition";
+            // Trigger a special inhibition - if we don't have one yet
+            if (!m_screenActivityInhibit.contains(activity)) {
+                int cookie =
+                PolicyAgent::instance()->AddInhibition(PolicyAgent::ChangeScreenSettings, i18n("Activity Manager"),
+                                                       i18n("This activity's policies prevent screen power management"));
+
+                m_screenActivityInhibit.insert(activity, cookie);
+            }
+        }
     }
 
     // If the lid is closed, retrigger the lid close signal
@@ -416,9 +486,9 @@ void Core::emitNotification(const QString &evid, const QString &message, const Q
 void Core::onAcAdapterStateChanged(PowerDevil::BackendInterface::AcAdapterState state)
 {
     kDebug();
-    // Fake an activity event - usually adapters don't plug themselves out :)
-    KIdleTime::instance()->simulateUserActivity();
-    reloadProfile(state);
+    // Post request for faking an activity event - usually adapters don't plug themselves out :)
+    m_pendingWakeupEvent = true;
+    loadProfile();
 
     if (state == BackendInterface::Plugged) {
         // If the AC Adaptor has been plugged in, let's clear some pending suspend actions
@@ -485,11 +555,6 @@ void Core::onBatteryChargePercentChanged(int percent, const QString &udi)
                              "dialog-warning");
             break;
         }
-    } else if (currentPercent <= PowerDevilSettings::batteryWarningLevel() &&
-               previousPercent > PowerDevilSettings::batteryWarningLevel()) {
-        emitNotification("warningbattery", i18n("Your battery has reached the warning level."),
-                         "dialog-warning");
-        refreshStatus();
     } else if (currentPercent <= PowerDevilSettings::batteryLowLevel() &&
                previousPercent > PowerDevilSettings::batteryLowLevel()) {
         emitNotification("lowbattery", i18n("Your battery has reached a low level."),
@@ -559,17 +624,8 @@ void Core::onKIdleTimeoutReached(int identifier, int msec)
 
 void Core::registerActionTimeout(Action* action, int timeout)
 {
-    int identifier = -1;
-    // Are there any registered timeouts with the same value?
-    if (m_registeredIdleTimeouts.contains(timeout)) {
-        // Easy game
-        identifier = m_registeredIdleTimeouts[timeout];
-    } else {
-        // Register the timeout with KIdleTime
-        identifier = KIdleTime::instance()->addIdleTimeout(timeout);
-        // And add it to the hash
-        m_registeredIdleTimeouts.insert(timeout, identifier);
-    }
+    // Register the timeout with KIdleTime
+    int identifier = KIdleTime::instance()->addIdleTimeout(timeout);
 
     // Add the identifier to the action hash
     QList< int > timeouts = m_registeredActionTimeouts[action];
@@ -579,24 +635,14 @@ void Core::registerActionTimeout(Action* action, int timeout)
 
 void Core::unregisterActionTimeouts(Action* action)
 {
-    // Clear all timeouts from the action: if the timeouts are not used anywhere else, just remove
-    // them from KIdleTime as well.
+    // Clear all timeouts from the action
     QList< int > timeoutsToClean = m_registeredActionTimeouts[action];
-    m_registeredActionTimeouts.remove(action);
-    for (QHash< Action*, QList< int > >::const_iterator i = m_registeredActionTimeouts.constBegin();
-        i != m_registeredActionTimeouts.constEnd(); ++i) {
-        foreach (int timeoutId, i.value()) {
-            if (timeoutsToClean.contains(timeoutId)) {
-                timeoutsToClean.removeOne(timeoutId);
-            }
-        }
-    }
 
-    // Clean the remaining ones
     foreach (int id, timeoutsToClean) {
         KIdleTime::instance()->removeIdleTimeout(id);
-        m_registeredIdleTimeouts.remove(m_registeredIdleTimeouts.key(id));
     }
+
+    m_registeredActionTimeouts.remove(action);
 }
 
 void Core::onResumingFromIdle()
@@ -639,6 +685,11 @@ void Core::suspendToRam()
     triggerSuspendSession(1);
 }
 
+bool Core::isLidClosed()
+{
+    return m_backend->isLidClosed();
+}
+
 qulonglong Core::batteryRemainingTime() const
 {
     return m_backend->batteryRemainingTime();
@@ -647,11 +698,6 @@ qulonglong Core::batteryRemainingTime() const
 int Core::brightness() const
 {
     return m_backend->brightness();
-}
-
-QString Core::currentProfile() const
-{
-    return m_currentProfile;
 }
 
 uint Core::backendCapabilities()

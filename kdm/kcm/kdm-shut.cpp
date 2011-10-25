@@ -76,7 +76,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent)
     shutdown_lined = new KUrlRequester(group1);
     QLabel *shutdown_label = new QLabel(i18nc("command for ...", "H&alt:"), group1);
     shutdown_label->setBuddy(shutdown_lined);
-    connect(shutdown_lined, SIGNAL(textChanged(const QString &)),
+    connect(shutdown_lined, SIGNAL(textChanged(QString)),
             SIGNAL(changed()));
     wtstr = i18n("Command to initiate the system halt. Typical value: /sbin/halt");
     shutdown_label->setWhatsThis(wtstr);
@@ -85,7 +85,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent)
     restart_lined = new KUrlRequester(group1);
     QLabel *restart_label = new QLabel(i18nc("command for ...", "Reb&oot:"), group1);
     restart_label->setBuddy(restart_lined);
-    connect(restart_lined, SIGNAL(textChanged(const QString &)),
+    connect(restart_lined, SIGNAL(textChanged(QString)),
             SIGNAL(changed()));
     wtstr = i18n("Command to initiate the system reboot. Typical value: /sbin/reboot");
     restart_label->setWhatsThis(wtstr);

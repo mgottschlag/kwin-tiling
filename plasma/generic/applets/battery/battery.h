@@ -39,9 +39,8 @@ namespace Plasma
     class ExtenderItem;
     class ComboBox;
     class Slider;
+    class CheckBox;
 }
-
-class BrightnessOSDWidget;
 
 class Battery : public Plasma::PopupApplet
 {
@@ -95,12 +94,11 @@ class Battery : public Plasma::PopupApplet
         void updateSlider(const float brightness);
         void updateSlider();
         void openConfig();
-        void setProfile(const QString &profile);
         void suspend();
         void hibernate();
         void updateBattery();
         void setupFonts();
-        void showBrightnessOSD(int brightness);
+        void toggleInhibit(bool toggle);
 
     private:
         void connectSources();
@@ -135,10 +133,9 @@ class Battery : public Plasma::PopupApplet
         Plasma::Label *m_remainingInfoLabel;
         Plasma::Label *m_statusLabel;
         Plasma::Label *m_brightnessLabel;
-        Plasma::Label *m_profileLabel;
-        Plasma::ComboBox *m_profileCombo;
+        Plasma::Label* m_inhibitLabel;
         Plasma::Slider *m_brightnessSlider;
-        int m_inhibitCookie;
+        Plasma::CheckBox *m_inhibitButton;
 
         /* Show multiple batteries with individual icons and charge info? */
         bool m_showMultipleBatteries;
@@ -182,7 +179,8 @@ class Battery : public Plasma::PopupApplet
         QPropertyAnimation *m_acAnimation;
 
         bool m_ignoreBrightnessChange;
-        BrightnessOSDWidget* m_brightnessOSD;
+
+        QPair< int, int > m_inhibitCookies;
 };
 
 Q_DECLARE_METATYPE(StringStringMap)

@@ -133,7 +133,7 @@ void Notifications::init()
     lay->addItem(m_busyWidget);
 
     configChanged();
-    setStatus(Plasma::ActiveStatus);
+    setStatus(Plasma::PassiveStatus);
 }
 
 void Notifications::configChanged()
@@ -360,6 +360,10 @@ void Notifications::initExtenderItem(Plasma::ExtenderItem *extenderItem)
 
 void Notifications::popupEvent(bool show)
 {
+    if (m_busyWidget) {
+        m_busyWidget->suppressToolTips(show);
+    }
+
     //decide about showing the tiny progressbar or not
     if (m_standaloneJobSummaryDialog) {
         if (show || !m_manager->jobs().isEmpty()) {

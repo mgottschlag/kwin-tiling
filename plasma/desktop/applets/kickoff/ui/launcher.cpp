@@ -197,7 +197,7 @@ public:
                                                     i18n("Sort Alphabetically (Z to A)"), q);
 
 
-        connect(favoritesModel, SIGNAL(rowsInserted(QModelIndex, int, int)), q, SLOT(focusFavoritesView()));
+        connect(favoritesModel, SIGNAL(rowsInserted(QModelIndex,int,int)), q, SLOT(focusFavoritesView()));
         connect(sortAscendingAction, SIGNAL(triggered()), favoritesModel, SLOT(sortFavoritesAscending()));
         connect(sortDescendingAction, SIGNAL(triggered()), favoritesModel, SLOT(sortFavoritesDescending()));
 

@@ -72,14 +72,14 @@ Solid::Control::NetworkInterface::Type Solid::Control::WirelessNetworkInterface:
 
 void Solid::Control::WirelessNetworkInterface::makeConnections(QObject * source)
 {
-    connect(source, SIGNAL(accessPointAppeared(const QString &)),
-            this, SLOT(_k_accessPointAdded(const QString &)));
-    connect(source, SIGNAL(accessPointDisappeared(const QString &)),
-            this, SLOT(_k_accessPointRemoved(const QString &)));
+    connect(source, SIGNAL(accessPointAppeared(QString)),
+            this, SLOT(_k_accessPointAdded(QString)));
+    connect(source, SIGNAL(accessPointDisappeared(QString)),
+            this, SLOT(_k_accessPointRemoved(QString)));
     connect(source, SIGNAL(bitRateChanged(int)),
             this, SIGNAL(bitRateChanged(int)));
-    connect(source, SIGNAL(activeAccessPointChanged(const QString&)),
-            this, SIGNAL(activeAccessPointChanged(const QString&)));
+    connect(source, SIGNAL(activeAccessPointChanged(QString)),
+            this, SIGNAL(activeAccessPointChanged(QString)));
     connect(source, SIGNAL(modeChanged(Solid::Control::WirelessNetworkInterface::OperationMode)),
             this, SIGNAL(modeChanged(Solid::Control::WirelessNetworkInterface::OperationMode)));
 }
@@ -226,8 +226,8 @@ Solid::Control::WirelessNetworkInterfacePrivate::createAP(const QString &uni) co
 
         if (ap != 0) {
             AccessPointPair pair(ap, iface);
-            QObject::connect(iface, SIGNAL(destroyed(QObject *)),
-                             parent(), SLOT(_k_destroyed(QObject *)));
+            QObject::connect(iface, SIGNAL(destroyed(QObject*)),
+                             parent(), SLOT(_k_destroyed(QObject*)));
 
             return pair;
         }

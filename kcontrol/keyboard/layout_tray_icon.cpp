@@ -66,16 +66,16 @@ LayoutTrayIcon::~LayoutTrayIcon()
 
 void LayoutTrayIcon::init()
 {
-    connect(m_notifierItem, SIGNAL(activateRequested(bool, QPoint)), this, SLOT(toggleLayout()));
-    connect(m_notifierItem, SIGNAL(scrollRequested(int, Qt::Orientation)), this, SLOT(scrollRequested(int, Qt::Orientation)));
+    connect(m_notifierItem, SIGNAL(activateRequested(bool,QPoint)), this, SLOT(toggleLayout()));
+    connect(m_notifierItem, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(scrollRequested(int,Qt::Orientation)));
 	connect(flags, SIGNAL(pixmapChanged()), this, SLOT(layoutChanged()));
 }
 
 void LayoutTrayIcon::destroy()
 {
 	disconnect(flags, SIGNAL(pixmapChanged()), this, SLOT(layoutChanged()));
-    disconnect(m_notifierItem, SIGNAL(scrollRequested(int, Qt::Orientation)), this, SLOT(scrollRequested(int, Qt::Orientation)));
-    disconnect(m_notifierItem, SIGNAL(activateRequested(bool, QPoint)), this, SLOT(toggleLayout()));
+    disconnect(m_notifierItem, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(scrollRequested(int,Qt::Orientation)));
+    disconnect(m_notifierItem, SIGNAL(activateRequested(bool,QPoint)), this, SLOT(toggleLayout()));
 }
 
 void LayoutTrayIcon::layoutMapChanged()

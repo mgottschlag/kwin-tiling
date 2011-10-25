@@ -89,12 +89,6 @@ KWinCompositingConfig::KWinCompositingConfig(QWidget *parent, const QVariantList
 
 #define OPENGL_INDEX 0
 #define XRENDER_INDEX 1
-#ifndef KWIN_HAVE_OPENGL_COMPOSITING
-    ui.compositingType->removeItem(OPENGL_INDEX);
-    ui.glGroup->setEnabled(false);
-#define OPENGL_INDEX -1
-#define XRENDER_INDEX 0
-#endif
 #ifndef KWIN_HAVE_XRENDER_COMPOSITING
     ui.compositingType->removeItem(XRENDER_INDEX);
     ui.xrenderGroup->setEnabled(false);
@@ -109,8 +103,8 @@ KWinCompositingConfig::KWinCompositingConfig(QWidget *parent, const QVariantList
     connect(ui.effectAnimations, SIGNAL(toggled(bool)), this, SLOT(changed()));
 
     connect(ui.effectSelector, SIGNAL(changed(bool)), this, SLOT(changed()));
-    connect(ui.effectSelector, SIGNAL(configCommitted(const QByteArray&)),
-            this, SLOT(reparseConfiguration(const QByteArray&)));
+    connect(ui.effectSelector, SIGNAL(configCommitted(QByteArray)),
+            this, SLOT(reparseConfiguration(QByteArray)));
 
     connect(ui.windowSwitchingCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
     connect(ui.desktopSwitchingCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
@@ -119,12 +113,10 @@ KWinCompositingConfig::KWinCompositingConfig(QWidget *parent, const QVariantList
     connect(ui.compositingType, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
     connect(ui.compositingType, SIGNAL(currentIndexChanged(int)), this, SLOT(toogleSmoothScaleUi(int)));
     connect(ui.windowThumbnails, SIGNAL(activated(int)), this, SLOT(changed()));
-    connect(ui.disableChecks, SIGNAL(toggled(bool)), this, SLOT(changed()));
     connect(ui.unredirectFullscreen , SIGNAL(toggled(bool)), this, SLOT(changed()));
     connect(ui.glScaleFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
     connect(ui.xrScaleFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
 
-    connect(ui.glDirect, SIGNAL(toggled(bool)), this, SLOT(changed()));
     connect(ui.glVSync, SIGNAL(toggled(bool)), this, SLOT(changed()));
     connect(ui.glShaders, SIGNAL(toggled(bool)), this, SLOT(changed()));
 
@@ -143,7 +135,7 @@ KWinCompositingConfig::KWinCompositingConfig(QWidget *parent, const QVariantList
     KAction* a = static_cast<KAction*>(m_actionCollection->addAction( "Suspend Compositing" ));
     a->setProperty("isConfigurationAction", true);
     a->setGlobalShortcut( KShortcut( Qt::ALT + Qt::SHIFT + Qt::Key_F12 ));
-    connect(ui.toggleEffectsShortcut, SIGNAL(keySequenceChanged(const QKeySequence&)), this, SLOT(toggleEffectShortcutChanged(const QKeySequence&)));
+    connect(ui.toggleEffectsShortcut, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(toggleEffectShortcutChanged(QKeySequence)));
 
     // Initialize the user interface with the config loaded from kwinrc.
     load();
@@ -391,13 +383,11 @@ void KWinCompositingConfig::loadAdvancedTab()
         ui.windowThumbnails->setCurrentIndex(2);
     else // shown, or default
         ui.windowThumbnails->setCurrentIndex(1);
-    ui.disableChecks->setChecked(config.readEntry("DisableChecks", false));
     ui.unredirectFullscreen->setChecked(config.readEntry("UnredirectFullscreen", false));
 
     ui.xrScaleFilter->setCurrentIndex((int)config.readEntry("XRenderSmoothScale", false));
     ui.glScaleFilter->setCurrentIndex(config.readEntry("GLTextureFilter", 2));
 
-    ui.glDirect->setChecked(config.readEntry("GLDirect", mDefaultPrefs.enableDirectRendering()));
     ui.glVSync->setChecked(config.readEntry("GLVSync", mDefaultPrefs.enableVSync()));
     ui.glShaders->setChecked(!config.readEntry<bool>("GLLegacy", false));
 
@@ -553,10 +543,7 @@ bool KWinCompositingConfig::saveAdvancedTab()
 
     if (config.readEntry("Backend", "OpenGL")
             != ((ui.compositingType->currentIndex() == OPENGL_INDEX) ? "OpenGL" : "XRender")
-            || config.readEntry("GLDirect", mDefaultPrefs.enableDirectRendering())
-            != ui.glDirect->isChecked()
             || config.readEntry("GLVSync", mDefaultPrefs.enableVSync()) != ui.glVSync->isChecked()
-            || config.readEntry("DisableChecks", false) != ui.disableChecks->isChecked()
             || config.readEntry<bool>("GLLegacy", false) == ui.glShaders->isChecked()) {
         m_showConfirmDialog = true;
         advancedChanged = true;
@@ -567,13 +554,11 @@ bool KWinCompositingConfig::saveAdvancedTab()
 
     config.writeEntry("Backend", (ui.compositingType->currentIndex() == OPENGL_INDEX) ? "OpenGL" : "XRender");
     config.writeEntry("HiddenPreviews", hps[ ui.windowThumbnails->currentIndex()]);
-    config.writeEntry("DisableChecks", ui.disableChecks->isChecked());
     config.writeEntry("UnredirectFullscreen", ui.unredirectFullscreen->isChecked());
 
     config.writeEntry("XRenderSmoothScale", ui.xrScaleFilter->currentIndex() == 1);
     config.writeEntry("GLTextureFilter", ui.glScaleFilter->currentIndex());
 
-    config.writeEntry("GLDirect", ui.glDirect->isChecked());
     config.writeEntry("GLVSync", ui.glVSync->isChecked());
     config.writeEntry("GLLegacy", !ui.glShaders->isChecked());
 
@@ -722,11 +707,9 @@ void KWinCompositingConfig::defaults()
 
     ui.compositingType->setCurrentIndex(0);
     ui.windowThumbnails->setCurrentIndex(1);
-    ui.disableChecks->setChecked(false);
     ui.unredirectFullscreen->setChecked(false);
     ui.xrScaleFilter->setCurrentIndex(0);
     ui.glScaleFilter->setCurrentIndex(2);
-    ui.glDirect->setChecked(mDefaultPrefs.enableDirectRendering());
     ui.glVSync->setChecked(mDefaultPrefs.enableVSync());
     ui.glShaders->setChecked(true);
 }

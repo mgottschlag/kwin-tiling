@@ -130,18 +130,18 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     readSettings();
 
     mSetupProc = new KProcess;
-    connect(mSetupProc, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotSetupDone()));
+    connect(mSetupProc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotSetupDone()));
 
     mPreviewProc = new KProcess;
-    connect(mPreviewProc, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotPreviewExited()));
+    connect(mPreviewProc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotPreviewExited()));
 
     mSaverListView->setColumnCount(1);
     mSaverListView->header()->hide();
     mSelected = -1;
-    connect( mSaverListView, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(slotSetup()));
+    connect( mSaverListView, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(slotSetup()));
 
-    connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
-    connect( mTestBt, SIGNAL( clicked() ), SLOT( slotTest() ) );
+    connect( mSetupBt, SIGNAL(clicked()), SLOT(slotSetup()) );
+    connect( mTestBt, SIGNAL(clicked()), SLOT(slotTest()) );
 
     mEnabledCheckBox->setChecked(mEnabled);
     connect(mEnabledCheckBox, SIGNAL(toggled(bool)),
@@ -157,8 +157,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
 
     mLockCheckBox->setEnabled( mEnabled );
     mLockCheckBox->setChecked( mLock );
-    connect( mLockCheckBox, SIGNAL( toggled( bool ) ),
-             this, SLOT( slotLock( bool ) ) );
+    connect( mLockCheckBox, SIGNAL(toggled(bool)),
+             this, SLOT(slotLock(bool)) );
 
     mWaitLockEdit->setRange(1, 300);
     mWaitLockEdit->setSuffix(ki18np(" second", " seconds"));
@@ -466,8 +466,8 @@ void KScreenSaver::findSavers()
         mTestBt->setEnabled(true);
     }
 
-    connect( mSaverListView, SIGNAL( itemSelectionChanged() ),
-             this, SLOT( slotSelectionChanged() ) );
+    connect( mSaverListView, SIGNAL(itemSelectionChanged()),
+             this, SLOT(slotSelectionChanged()) );
 
     setMonitor();
 

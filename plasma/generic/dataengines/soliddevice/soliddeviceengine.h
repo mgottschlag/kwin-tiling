@@ -58,6 +58,12 @@ protected:
     bool sourceRequestEvent(const QString &name);
     bool updateSourceEvent(const QString& source);
 
+private Q_SLOTS:
+    void deviceAdded(const QString &udi);
+    void deviceRemoved(const QString &udi);
+    void deviceChanged(const QString& udi, const QString &property, const QVariant &value);
+    void sourceWasRemoved(const QString &source);
+
 private:
     bool populateDeviceData(const QString &name);
     qlonglong freeDiskSpace(const QString &mountPoint);
@@ -68,12 +74,12 @@ private:
     void listenForNewDevices();
 
     //predicate in string form, list of devices by udi
-    QMap<QString, QStringList> predicatemap;
+    QMap<QString, QStringList> m_predicatemap;
     //udi, corresponding device
-    QMap<QString, Solid::Device> devicemap;
+    QMap<QString, Solid::Device> m_devicemap;
     //udi, corresponding encrypted container udi;
-    QMap<QString, QString> encryptedContainerMap;
-    DeviceSignalMapManager *signalmanager;
+    QMap<QString, QString> m_encryptedContainerMap;
+    DeviceSignalMapManager *m_signalmanager;
 
     HddTemp *temperature;
     Solid::DeviceNotifier *notifier;

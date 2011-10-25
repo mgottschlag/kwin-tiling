@@ -93,9 +93,9 @@ void Ip::update()
 
     if (datajob) {
         kDebug() << "Fetching http://iplocationtools.com/ip_query.php";
-        connect(datajob, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(readData(KIO::Job *, const QByteArray &)));
-        connect(datajob, SIGNAL(result(KJob *)), this, SLOT(result(KJob *)));
+        connect(datajob, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(readData(KIO::Job*,QByteArray)));
+        connect(datajob, SIGNAL(result(KJob*)), this, SLOT(result(KJob*)));
     } else {
         kDebug() << "Could not create job";
     }

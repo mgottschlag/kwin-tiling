@@ -55,8 +55,8 @@ public:
         view = new Plasma::WebView(applet);
         QObject::connect(view, SIGNAL(loadFinished(bool)),
                          q, SLOT(loadFinished(bool)));
-        QObject::connect(view->page(), SIGNAL(frameCreated(QWebFrame *)),
-                         q, SLOT(connectFrame(QWebFrame *)));
+        QObject::connect(view->page(), SIGNAL(frameCreated(QWebFrame*)),
+                         q, SLOT(connectFrame(QWebFrame*)));
         q->connectFrame(view->mainFrame());
 
         view->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);

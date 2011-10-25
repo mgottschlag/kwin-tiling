@@ -24,7 +24,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <config-workspace.h>
 #include <fontconfig/fontconfig.h>
 
 #if (FC_VERSION>=20402)

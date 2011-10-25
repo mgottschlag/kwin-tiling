@@ -293,7 +293,8 @@ void TaskGroupItem::updateToolTip()
         return;
     }
 
-    Plasma::ToolTipContent data(m_group.data()->name(), QString());
+    QString groupName = i18nc("@title:group Name of a group of windows", "%1", m_group.data()->name());
+    Plasma::ToolTipContent data(groupName, QString());
     int desktop = m_group.data()->desktop();
     if (desktop != 0 &&
         (!m_applet->groupManager().showOnlyCurrentDesktop() || !m_group.data()->isOnCurrentDesktop())) {
@@ -373,14 +374,14 @@ void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
     if (m_group) {
         connect(m_abstractItem, SIGNAL(destroyed(QObject*)), this, SLOT(clearAbstractItem()));
         connect(group, SIGNAL(destroyed(QObject*)), this, SLOT(clearGroup()));
-        connect(group, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(itemRemoved(AbstractGroupableItem *)));
-        connect(group, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(itemAdded(AbstractGroupableItem *)));
+        connect(group, SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(itemRemoved(AbstractGroupableItem*)));
+        connect(group, SIGNAL(itemAdded(AbstractGroupableItem*)), this, SLOT(itemAdded(AbstractGroupableItem*)));
 
         //connect(group, SIGNAL(destroyed()), this, SLOT(close()));
 
         connect(group, SIGNAL(changed(::TaskManager::TaskChanges)), this, SLOT(updateTask(::TaskManager::TaskChanges)));
 
-        connect(group, SIGNAL(itemPositionChanged(AbstractGroupableItem *)), this, SLOT(itemPositionChanged(AbstractGroupableItem *)));
+        connect(group, SIGNAL(itemPositionChanged(AbstractGroupableItem*)), this, SLOT(itemPositionChanged(AbstractGroupableItem*)));
         connect(group, SIGNAL(groupEditRequest()), this, SLOT(editGroup()));
     }
 
@@ -468,9 +469,14 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupab
         AppLauncherItem *launcherItem = new AppLauncherItem(this, m_applet, static_cast<TaskManager::LauncherItem*>(groupableItem));
         item = launcherItem;
     } else {
-        //it's a window task
+        TaskManager::TaskItem * taskItem = static_cast<TaskManager::TaskItem*>(groupableItem);
+        //if the taskItem is not either a startup o a task, return 0;
+        if (!taskItem->startup() && !taskItem->task()) {
+            return item;
+        }
+
         WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet);
-        windowItem->setTask(static_cast<TaskManager::TaskItem*>(groupableItem));
+        windowItem->setTask(taskItem);
         item = windowItem;
     }
 

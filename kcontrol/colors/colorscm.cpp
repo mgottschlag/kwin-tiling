@@ -94,8 +94,8 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     schemeKnsButton->setIcon( KIcon("get-hot-new-stuff") );
     schemeKnsUploadButton->setIcon( KIcon("get-hot-new-stuff") );
     connect(colorSet, SIGNAL(currentIndexChanged(int)), this, SLOT(updateColorTable()));
-    connect(schemeList, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
-            this, SLOT(loadScheme(QListWidgetItem*, QListWidgetItem*)));
+    connect(schemeList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+            this, SLOT(loadScheme(QListWidgetItem*,QListWidgetItem*)));
     connect(applyToAlien, SIGNAL(toggled(bool)), this, SLOT(emitChanged()));
 
     // only needs to be called once
@@ -539,7 +539,7 @@ void KColorCm::createColorEntry(const QString &text, const QString &key, QList<K
 {
     KColorButton *button = new KColorButton(this);
     button->setObjectName(QString::number(index));
-    connect(button, SIGNAL(changed(const QColor &)), this, SLOT(colorChanged(const QColor &)));
+    connect(button, SIGNAL(changed(QColor)), this, SLOT(colorChanged(QColor)));
     list.append(button);
 
     m_colorKeys.insert(index, key);
@@ -743,7 +743,7 @@ void KColorCm::setupColorTable()
         KColorButton * button = new KColorButton(this);
         commonColorTable->setRowHeight(i, button->sizeHint().height());
         button->setObjectName(QString::number(i));
-        connect(button, SIGNAL(changed(const QColor &)), this, SLOT(colorChanged(const QColor &)));
+        connect(button, SIGNAL(changed(QColor)), this, SLOT(colorChanged(QColor)));
         m_commonColorButtons << button;
 
         if (i > 8 && i < 18)

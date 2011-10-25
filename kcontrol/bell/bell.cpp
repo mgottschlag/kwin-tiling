@@ -90,7 +90,7 @@ KBellConfig::KBellConfig(QWidget *parent, const QVariantList &args):
 				  "more sophisticated system notification, see the "
 				  "\"System Notifications\" control module for the "
 				  "\"Something Special Happened in the Program\" event."));
-  connect(m_useBell, SIGNAL( toggled( bool )), SLOT( useBell( bool )));
+  connect(m_useBell, SIGNAL(toggled(bool)), SLOT(useBell(bool)));
   form->addRow(m_useBell);
 
   setQuickHelp( i18n("<h1>System Bell</h1> Here you can customize the sound of the standard system bell,"

@@ -48,6 +48,7 @@ private:
     KAutostart m_plasmaNetbookAutostart;
     KAutostart m_krunnerAutostart;
     bool m_currentlyIsDesktop;
+    bool m_currentlyFixedDashboard;
 
     Ui::MainPage *m_ui;
 };

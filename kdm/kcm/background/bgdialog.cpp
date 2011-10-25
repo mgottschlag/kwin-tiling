@@ -95,7 +95,7 @@ BGDialog::BGDialog(QWidget *parent, const KSharedConfigPtr &_config)
     // preview monitor
     m_pMonitorArrangement = new BGMonitorArrangement(m_screenArrangement);
     m_pMonitorArrangement->setObjectName("monitor arrangement");
-    connect(m_pMonitorArrangement, SIGNAL(imageDropped(const QString &)), SLOT(slotImageDropped(const QString &)));
+    connect(m_pMonitorArrangement, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
     if (m_numScreens > 1) {
         connect(m_comboScreen, SIGNAL(activated(int)),
                 SLOT(slotSelectScreen(int)));
@@ -121,10 +121,10 @@ BGDialog::BGDialog(QWidget *parent, const KSharedConfigPtr &_config)
             SLOT(slotSetupMulti()));
 
     // set up the background colour stuff
-    connect(m_colorPrimary, SIGNAL(changed(const QColor &)),
-            SLOT(slotPrimaryColor(const QColor &)));
-    connect(m_colorSecondary, SIGNAL(changed(const QColor &)),
-            SLOT(slotSecondaryColor(const QColor &)));
+    connect(m_colorPrimary, SIGNAL(changed(QColor)),
+            SLOT(slotPrimaryColor(QColor)));
+    connect(m_colorSecondary, SIGNAL(changed(QColor)),
+            SLOT(slotSecondaryColor(QColor)));
     connect(m_comboPattern, SIGNAL(activated(int)),
             SLOT(slotPattern(int)));
 

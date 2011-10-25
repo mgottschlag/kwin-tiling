@@ -208,8 +208,8 @@ int KBackgroundRenderer::doBackground(bool quit)
         m_pProc = new KProcess;
         m_pProc->setShellCommand(file);
         connect(m_pProc,
-                SIGNAL(finished(int, QProcess::ExitStatus)),
-                SLOT(slotBackgroundDone(int, QProcess::ExitStatus)));
+                SIGNAL(finished(int,QProcess::ExitStatus)),
+                SLOT(slotBackgroundDone(int,QProcess::ExitStatus)));
         m_pProc->start();
         retval = Wait;
         break;

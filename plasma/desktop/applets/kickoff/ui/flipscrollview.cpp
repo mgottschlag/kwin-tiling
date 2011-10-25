@@ -243,7 +243,7 @@ bool FlipScrollView::isIndexHidden(const QModelIndex&) const
 
 QRect FlipScrollView::visualRect(const QModelIndex& index) const
 {
-    const int leftOffset = ItemDelegate::ItemDelegate::ITEM_LEFT_MARGIN;
+    const int leftOffset = ItemDelegate::ITEM_LEFT_MARGIN;
 
     if (index.parent() != d->currentRoot() &&
             index.parent() != d->previousRoot() &&

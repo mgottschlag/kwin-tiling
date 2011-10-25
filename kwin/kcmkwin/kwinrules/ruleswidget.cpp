@@ -41,9 +41,9 @@ namespace KWin
 {
 
 #define SETUP( var, type ) \
-    connect( enable_##var, SIGNAL( toggled( bool )), rule_##var, SLOT( setEnabled( bool ))); \
-    connect( enable_##var, SIGNAL( toggled( bool )), this, SLOT( updateEnable##var())); \
-    connect( rule_##var, SIGNAL( activated( int )), this, SLOT( updateEnable##var())); \
+    connect( enable_##var, SIGNAL(toggled(bool)), rule_##var, SLOT(setEnabled(bool))); \
+    connect( enable_##var, SIGNAL(toggled(bool)), this, SLOT(updateEnable##var())); \
+    connect( rule_##var, SIGNAL(activated(int)), this, SLOT(updateEnable##var())); \
     enable_##var->setWhatsThis( enableDesc ); \
     rule_##var->setWhatsThis( type##RuleDesc );
 
@@ -108,7 +108,6 @@ RulesWidget::RulesWidget(QWidget* parent)
     SETUP(shortcut, force);
     // workarounds tab
     SETUP(fsplevel, force);
-    SETUP(moveresizemode, force);
     SETUP(type, force);
     SETUP(ignoreposition, force);
     SETUP(minsize, force);
@@ -116,6 +115,16 @@ RulesWidget::RulesWidget(QWidget* parent)
     SETUP(strictgeometry, force);
     SETUP(disableglobalshortcuts, force);
     SETUP(blockcompositing, force);
+
+    connect (title_match, SIGNAL(currentIndexChanged(int)), SLOT(titleMatchChanged()));
+    connect (machine_match, SIGNAL(currentIndexChanged(int)), SLOT(machineMatchChanged()));
+    connect (shortcut_edit, SIGNAL(clicked()), SLOT(shortcutEditClicked()));
+
+    edit_reg_wmclass->hide();
+    edit_reg_role->hide();
+    edit_reg_title->hide();
+    edit_reg_machine->hide();
+
     int i;
     for (i = 1;
             i <= KWindowSystem::numberOfDesktops();
@@ -126,7 +135,7 @@ RulesWidget::RulesWidget(QWidget* parent)
 
 #undef SETUP
 
-#define UPDATE_ENABLE_SLOT( var ) \
+#define UPDATE_ENABLE_SLOT(var) \
     void RulesWidget::updateEnable##var() \
     { \
         /* leave the label readable label_##var->setEnabled( enable_##var->isChecked() && rule_##var->currentIndex() != 0 );*/ \
@@ -165,7 +174,6 @@ void RulesWidget::updateEnableshortcut()
 }
 // workarounds tab
 UPDATE_ENABLE_SLOT(fsplevel)
-UPDATE_ENABLE_SLOT(moveresizemode)
 UPDATE_ENABLE_SLOT(type)
 UPDATE_ENABLE_SLOT(ignoreposition)
 UPDATE_ENABLE_SLOT(minsize)
@@ -319,16 +327,6 @@ static Placement::Policy comboToPlacement(int val)
     return conv[ val ];
 }
 
-static int moveresizeToCombo(Options::MoveResizeMode mode)
-{
-    return mode == Options::Opaque ? 0 : 1;
-}
-
-static Options::MoveResizeMode comboToMoveResize(int val)
-{
-    return val == 0 ? Options::Opaque : Options::Transparent;
-}
-
 static int typeToCombo(NET::WindowType type)
 {
     if (type < NET::Normal || type > NET::Splash ||
@@ -419,9 +417,6 @@ void RulesWidget::setRules(Rules* rules)
     title->setText(rules->title);
     title_match->setCurrentIndex(rules->titlematch);
     titleMatchChanged();
-    extra->setText(rules->extrarole);
-    extra_match->setCurrentIndex(rules->extrarolematch);
-    extraMatchChanged();
     machine->setText(rules->clientmachine);
     machine_match->setCurrentIndex(rules->clientmachinematch);
     machineMatchChanged();
@@ -450,7 +445,6 @@ void RulesWidget::setRules(Rules* rules)
     COMBOBOX_FORCE_RULE(tilingoption, tilingToCombo);
     LINEEDIT_SET_RULE(shortcut,);
     COMBOBOX_FORCE_RULE(fsplevel,);
-    COMBOBOX_FORCE_RULE(moveresizemode, moveresizeToCombo);
     COMBOBOX_FORCE_RULE(type, typeToCombo);
     CHECKBOX_FORCE_RULE(ignoreposition,);
     LINEEDIT_FORCE_RULE(minsize, sizeToStr);
@@ -518,8 +512,6 @@ Rules* RulesWidget::rules() const
     }
     rules->title = title->text();
     rules->titlematch = static_cast< Rules::StringMatch >(title_match->currentIndex());
-    rules->extrarole = extra->text().toUtf8();
-    rules->extrarolematch = static_cast< Rules::StringMatch >(extra_match->currentIndex());
     rules->clientmachine = machine->text().toUtf8();
     rules->clientmachinematch = static_cast< Rules::StringMatch >(machine_match->currentIndex());
     LINEEDIT_SET_RULE(position, strToPosition);
@@ -547,7 +539,6 @@ Rules* RulesWidget::rules() const
     COMBOBOX_FORCE_RULE(tilingoption, comboToTiling);
     LINEEDIT_SET_RULE(shortcut,);
     COMBOBOX_FORCE_RULE(fsplevel,);
-    COMBOBOX_FORCE_RULE(moveresizemode, comboToMoveResize);
     COMBOBOX_FORCE_RULE(type, comboToType);
     CHECKBOX_FORCE_RULE(ignoreposition,);
     LINEEDIT_FORCE_RULE(minsize, strToSize);
@@ -577,7 +568,6 @@ Rules* RulesWidget::rules() const
 STRING_MATCH_COMBO(wmclass)
 STRING_MATCH_COMBO(role)
 STRING_MATCH_COMBO(title)
-STRING_MATCH_COMBO(extra)
 STRING_MATCH_COMBO(machine)
 
 #undef STRING_MATCH_COMBO
@@ -668,7 +658,6 @@ void RulesWidget::prefillUnusedValues(const KWindowInfo& info)
     COMBOBOX_PREFILL(tilingoption, tilingToCombo, 0);
     //LINEEDIT_PREFILL( shortcut, );
     //COMBOBOX_PREFILL( fsplevel, );
-    //COMBOBOX_PREFILL( moveresizemode, moveresizeToCombo );
     COMBOBOX_PREFILL(type, typeToCombo, info.windowType(SUPPORTED_MANAGED_WINDOW_TYPES_MASK));
     //CHECKBOX_PREFILL( ignoreposition, );
     LINEEDIT_PREFILL(minsize, sizeToStr, info.frameGeometry().size());

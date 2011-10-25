@@ -91,8 +91,8 @@ void StatusNotifierItemEngine::registerWatcher(const QString& service)
 								      QDBusConnection::sessionBus());
         if (m_statusNotifierWatcher->isValid() &&
             m_statusNotifierWatcher->property("ProtocolVersion").toBool() == s_protocolVersion) {
-            connect(m_statusNotifierWatcher, SIGNAL(StatusNotifierItemRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
-            connect(m_statusNotifierWatcher, SIGNAL(StatusNotifierItemUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
+            connect(m_statusNotifierWatcher, SIGNAL(StatusNotifierItemRegistered(QString)), this, SLOT(serviceRegistered(QString)));
+            connect(m_statusNotifierWatcher, SIGNAL(StatusNotifierItemUnregistered(QString)), this, SLOT(serviceUnregistered(QString)));
 
             m_statusNotifierWatcher->call(QDBus::NoBlock, "RegisterStatusNotifierHost", m_serviceName);
 
@@ -113,8 +113,8 @@ void StatusNotifierItemEngine::unregisterWatcher(const QString& service)
     if (service == s_watcherServiceName) {
         kDebug()<< s_watcherServiceName << "disappeared";
 
-        disconnect(m_statusNotifierWatcher, SIGNAL(StatusNotifierItemRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
-        disconnect(m_statusNotifierWatcher, SIGNAL(StatusNotifierItemUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
+        disconnect(m_statusNotifierWatcher, SIGNAL(StatusNotifierItemRegistered(QString)), this, SLOT(serviceRegistered(QString)));
+        disconnect(m_statusNotifierWatcher, SIGNAL(StatusNotifierItemUnregistered(QString)), this, SLOT(serviceUnregistered(QString)));
 
         removeAllSources();
 

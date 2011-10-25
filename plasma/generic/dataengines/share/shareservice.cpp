@@ -99,10 +99,10 @@ void ShareJob::start()
         if (m_action) {
             m_provider = new ShareProvider(this);
             connect(m_provider, SIGNAL(readyToPublish()), this, SLOT(publish()));
-            connect(m_provider, SIGNAL(finished(const QString&)),
-                    this, SLOT(showResult(const QString&)));
-            connect(m_provider, SIGNAL(finishedError(const QString&)),
-                    this, SLOT(showError(const QString&)));
+            connect(m_provider, SIGNAL(finished(QString)),
+                    this, SLOT(showResult(QString)));
+            connect(m_provider, SIGNAL(finishedError(QString)),
+                    this, SLOT(showError(QString)));
 
             // automatically connects signals and slots with the script
             m_action->addObject(m_provider, "provider",

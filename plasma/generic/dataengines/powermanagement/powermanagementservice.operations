@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kcfg SYSTEM
+    "http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+<kcfg>
+    <group name="suspend"> </group>
+    <group name="suspendToRam"> </group>
+    <group name="suspendToDisk"> </group>
+    <group name="suspendHybrid"> </group>
+    <group name="requestShutDown"> </group>
+</kcfg>

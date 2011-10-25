@@ -101,8 +101,9 @@ int main( int argc, char* argv[] )
                     }
                 // Calculate the array size: part before the dot + length of the screen
                 // string (which is log10 + 1) + 1 for the dot itself + 8 for "DISPLAY=" + \0
-                char envir[breakpos + (int)log10(number_of_screens) + 11];
-                char server_name[breakpos + 1];
+                const int envir_len = breakpos + log10(static_cast<double>(number_of_screens)) + 11;
+                char *envir = new char[envir_len];
+                char *server_name = new char[breakpos + 1];
                 strncpy(server_name, display_name, breakpos);
                 server_name[breakpos] = '\0';
 
@@ -122,8 +123,10 @@ int main( int argc, char* argv[] )
                             }
                         }
                     }
-                sprintf(envir, "DISPLAY=%s.%d", server_name, screen_number);
+                snprintf(envir, envir_len, "DISPLAY=%s.%d", server_name, screen_number);
                 putenv(strdup(envir));
+                delete[] envir;
+                delete[] server_name;
                 }
             else
                 XCloseDisplay(dpy);

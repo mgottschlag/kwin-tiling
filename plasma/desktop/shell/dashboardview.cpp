@@ -121,6 +121,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *vie
     m_closeButton->setIcon(KIcon("window-close"));
     connect(m_closeButton, SIGNAL(clicked()), this, SLOT(hideView()));
     connect(scene(), SIGNAL(releaseVisualFocus()), SLOT(hideView()));
+    connect(KWindowSystem::self(), SIGNAL(compositingChanged(bool)), this, SLOT(compositingChanged(bool)));
 }
 
 DashboardView::~DashboardView()
@@ -128,10 +129,14 @@ DashboardView::~DashboardView()
     delete m_widgetExplorer.data();
 }
 
-void DashboardView::drawBackground(QPainter * painter, const QRectF & rect)
+void DashboardView::compositingChanged(bool changed)
+{
+    setWallpaperEnabled(!changed);
+}
+
+void DashboardView::drawBackground(QPainter *painter, const QRectF & rect)
 {
     if (PlasmaApp::hasComposite()) {
-        setWallpaperEnabled(false);
         painter->setCompositionMode(QPainter::CompositionMode_Source);
  
 	// KWin dahsboard plugin draws its own background for the dashboard
@@ -141,7 +146,6 @@ void DashboardView::drawBackground(QPainter * painter, const QRectF & rect)
             painter->fillRect(rect, QColor(0, 0, 0, 0));
 	}
     } else {
-        setWallpaperEnabled(true);
         Plasma::View::drawBackground(painter, rect);
     }
 }

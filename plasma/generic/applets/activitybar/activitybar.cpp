@@ -90,12 +90,12 @@ void ActivityBar::init()
 
                 insertContainment(cont);
 
-                connect(cont, SIGNAL(destroyed(QObject *)), this, SLOT(containmentDestroyed(QObject *)));
-                connect(cont, SIGNAL(screenChanged(int, int, Plasma::Containment *)), this, SLOT(screenChanged(int, int, Plasma::Containment *)));
-                connect(cont, SIGNAL(contextChanged(Plasma::Context *)), this, SLOT(contextChanged(Plasma::Context *)));
+                connect(cont, SIGNAL(destroyed(QObject*)), this, SLOT(containmentDestroyed(QObject*)));
+                connect(cont, SIGNAL(screenChanged(int,int,Plasma::Containment*)), this, SLOT(screenChanged(int,int,Plasma::Containment*)));
+                connect(cont, SIGNAL(contextChanged(Plasma::Context*)), this, SLOT(contextChanged(Plasma::Context*)));
             }
 
-            connect(c, SIGNAL(containmentAdded(Plasma::Containment *)), this, SLOT(containmentAdded(Plasma::Containment *)));
+            connect(c, SIGNAL(containmentAdded(Plasma::Containment*)), this, SLOT(containmentAdded(Plasma::Containment*)));
         }
 
         connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchContainment(int)));
@@ -241,9 +241,9 @@ void ActivityBar::containmentAdded(Plasma::Containment *cont)
 
     insertContainment(cont);
 
-    connect(cont, SIGNAL(destroyed(QObject *)), this, SLOT(containmentDestroyed(QObject *)));
-    connect(cont, SIGNAL(screenChanged(int, int, Plasma::Containment *)), this, SLOT(screenChanged(int, int, Plasma::Containment *)));
-    connect(cont, SIGNAL(contextChanged(Plasma::Context *)), this, SLOT(contextChanged(Plasma::Context *)));
+    connect(cont, SIGNAL(destroyed(QObject*)), this, SLOT(containmentDestroyed(QObject*)));
+    connect(cont, SIGNAL(screenChanged(int,int,Plasma::Containment*)), this, SLOT(screenChanged(int,int,Plasma::Containment*)));
+    connect(cont, SIGNAL(contextChanged(Plasma::Context*)), this, SLOT(contextChanged(Plasma::Context*)));
 
     setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
     emit sizeHintChanged(Qt::PreferredSize);

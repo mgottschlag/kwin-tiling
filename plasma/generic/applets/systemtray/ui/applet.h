@@ -60,7 +60,6 @@ public:
     Manager *manager() const;
     QSet<Task::Category> shownCategories() const;
     bool isFirstRun();
-    bool isPopupShowing() const;
 
 protected:
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
@@ -93,7 +92,6 @@ private:
     QDateTime m_lastActivity;
 
     Plasma::FrameSvg *m_background;
-    Plasma::FrameSvg *m_separator;
     Plasma::Svg *m_icons;
 
     Ui::AutoHideConfig m_autoHideUi;

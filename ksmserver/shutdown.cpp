@@ -58,15 +58,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QTimer>
 #include <QtDBus/QtDBus>
 
-#include <klocale.h>
-#include <kglobal.h>
-#include <kconfig.h>
-#include <kstandarddirs.h>
-#include <kapplication.h>
-#include <ktemporaryfile.h>
-#include <kconfiggroup.h>
-#include <knotification.h>
-#include <kdisplaymanager.h>
+#include <KApplication>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KGlobal>
+#include <KLocale>
+#include <KNotification>
+#include <KStandardDirs>
+#include <KTemporaryFile>
+#include <kworkspace/kdisplaymanager.h>
 #include "server.h"
 #include "global.h"
 #include "client.h"
@@ -152,9 +152,9 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
     dialogActive = true;
     QString bopt;
     if ( !logoutConfirmed ) {
+        KApplication::kApplication()->updateUserTimestamp();
         KSMShutdownFeedback::start(); // make the screen gray
-        logoutConfirmed =
-            KSMShutdownDlg::confirmShutdown( maysd, choose, sdtype, bopt );
+        logoutConfirmed = KSMShutdownDlg::confirmShutdown( maysd, choose, sdtype, bopt );
         // ###### We can't make the screen remain gray while talking to the apps,
         // because this prevents interaction ("do you want to save", etc.)
         // TODO: turn the feedback widget into a list of apps to be closed,
@@ -459,7 +459,7 @@ void KSMServer::completeShutdownOrCheckpoint()
 
     if ( state == Shutdown ) {
         KNotification *n = KNotification::event( "exitkde" , QString() , QPixmap() , 0l ,  KNotification::DefaultEvent  ); // KDE says good bye
-        connect(n, SIGNAL( closed() ) , this, SLOT(logoutSoundFinished()) );
+        connect(n, SIGNAL(closed()) , this, SLOT(logoutSoundFinished()) );
         kDebug( 1218 ) << "Starting logout event";
 	state = WaitingForKNotify;
         createLogoutEffectWidget();
@@ -490,7 +490,7 @@ void KSMServer::startKilling()
     kDebug( 1218 ) << " We killed all clients. We have now clients.count()=" <<
     clients.count() << endl;
     completeKilling();
-    QTimer::singleShot( 10000, this, SLOT( timeoutQuit() ) );
+    QTimer::singleShot( 10000, this, SLOT(timeoutQuit()) );
 }
 
 void KSMServer::completeKilling()
@@ -527,7 +527,7 @@ void KSMServer::killWM()
     }
     if( iswm ) {
         completeKillingWM();
-        QTimer::singleShot( 5000, this, SLOT( timeoutWMQuit() ) );
+        QTimer::singleShot( 5000, this, SLOT(timeoutWMQuit()) );
     }
     else
         killingCompleted();
@@ -644,7 +644,7 @@ void KSMServer::startKillingSubSession()
     kDebug( 1218 ) << " We killed some clients. We have now clients.count()=" <<
     clients.count() << endl;
     completeKillingSubSession();
-    QTimer::singleShot( 10000, this, SLOT( signalSubSessionClosed() ) );
+    QTimer::singleShot( 10000, this, SLOT(signalSubSessionClosed()) );
 }
 
 void KSMServer::completeKillingSubSession()

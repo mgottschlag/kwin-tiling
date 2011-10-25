@@ -57,7 +57,7 @@
 #include "interfaces/default/resultscene.h"
 #include "interfaces/default/resultitem.h"
 #include "interfaces/default/krunnerhistorycombobox.h"
-#include "interfaces/default/resultsview.h"
+#include "interfaces/default/resultview.h"
 #include "toolbutton.h"
 
 static const int MIN_WIDTH = 420;
@@ -70,9 +70,14 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 {
     m_resultData.processHoverEvents = true;
     m_resultData.mouseHovering = false;
+    m_resultData.runnerManager = runnerManager;
 
     m_hideResultsTimer.setSingleShot(true);
     connect(&m_hideResultsTimer, SIGNAL(timeout()), this, SLOT(hideResultsArea()));
+
+    m_reenableHoverEventsTimer.setSingleShot(true);
+    m_reenableHoverEventsTimer.setInterval(50);
+    connect(&m_reenableHoverEventsTimer, SIGNAL(timeout()), this, SLOT(reenableHoverEvents()));
 
     m_layout = new QVBoxLayout(this);
     m_layout->setMargin(0);
@@ -94,7 +99,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_activityButton->setDefaultAction(showSystemActivityAction);
 
     updateSystemActivityToolTip();
-    connect(showSystemActivityAction, SIGNAL(globalShortcutChanged(const QKeySequence &)), this, SLOT(updateSystemActivityToolTip()));
+    connect(showSystemActivityAction, SIGNAL(globalShortcutChanged(QKeySequence)), this, SLOT(updateSystemActivityToolTip()));
     connect(showSystemActivityAction, SIGNAL(triggered(bool)), this, SLOT(resetAndClose()));
     bottomLayout->addWidget(m_activityButton);
 
@@ -155,7 +160,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     connect(m_resultsScene, SIGNAL(viewableHeightChanged()), this, SLOT(fitWindow()));
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
-    connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
+    connect(m_resultsScene, SIGNAL(itemActivated(ResultItem*)), this, SLOT(run(ResultItem*)));
 
     connect(m_searchTerm, SIGNAL(queryTextEdited(QString)), this, SLOT(queryTextEdited(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
@@ -202,7 +207,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_resultsView->hide();
 
     m_delayedQueryTimer.setSingleShot(true);
-    m_delayedQueryTimer.setInterval(100);
+    m_delayedQueryTimer.setInterval(50);
     connect(&m_delayedQueryTimer, SIGNAL(timeout()), this, SLOT(delayedQueryLaunch()));
 
     QTimer::singleShot(0, this, SLOT(resetInterface()));
@@ -374,8 +379,9 @@ void Interface::resetInterface()
     m_delayedRun = false;
     m_searchTerm->setCurrentItem(QString(), true, 0);
     m_singleRunnerSearchTerm->clear();
+    m_resultsScene->queryCleared();
     if (!m_running) {
-        m_resultsScene->clearQuery();
+        m_runnerManager->reset();
     }
     resetResultsArea();
     m_minimumHeight = height();
@@ -485,7 +491,7 @@ void Interface::run(ResultItem *item)
     // in a way that will cause the results scene to be cleared and
     // the RunnerManager to be cleared of context as a result
     close();
-    m_resultsScene->run(item);
+    item->run(m_runnerManager);
     m_running = false;
 
     resetInterface();
@@ -509,7 +515,13 @@ void Interface::runDefaultResultItem()
 
 void Interface::queryTextEdited(const QString &query)
 {
-    m_delayedRun = false;
+    if (query.isEmpty() || query.trimmed() != m_runnerManager->query()) {
+        // if the query is empty and the query is NOT what we are currently looking for ... then
+        // reset m_delayedRun. it does happen, however, that a search is being made already for the
+        // query text and this method gets called again, in which case we do NOT want to reset
+        // m_delayedRun
+        m_delayedRun = false;
+    }
 
     if (query.isEmpty() && !m_runnerManager->singleMode()) {
         m_delayedQueryTimer.stop();
@@ -523,14 +535,12 @@ void Interface::queryTextEdited(const QString &query)
 void Interface::delayedQueryLaunch()
 {
     const QString query = (m_runnerManager->singleMode() ? m_singleRunnerSearchTerm->userText()
-                                                         : static_cast<KLineEdit*>(m_searchTerm->lineEdit())->userText());
-    QString runnerId;
-    if (m_runnerManager->singleMode()) {
-        runnerId = m_runnerManager->singleModeRunnerId();
-    }
+                                                         : static_cast<KLineEdit*>(m_searchTerm->lineEdit())->userText()).trimmed();
+    const QString runnerId = m_runnerManager->singleMode() ? m_runnerManager->singleModeRunnerId() : QString();
 
     if (!query.isEmpty() || m_runnerManager->singleMode()) {
-        m_queryRunning = m_resultsScene->launchQuery(query, runnerId) || m_queryRunning; //lazy OR?
+        m_queryRunning = m_runnerManager->query() != query || !runnerId.isEmpty();
+        m_runnerManager->launchQuery(query, runnerId);
     }
 
     if (!m_queryRunning && m_delayedRun) {
@@ -541,7 +551,7 @@ void Interface::delayedQueryLaunch()
 void Interface::matchCountChanged(int count)
 {
     m_queryRunning = false;
-    bool show = count > 0;
+    const bool show = count > 0;
     m_hideResultsTimer.stop();
 
     if (show && m_delayedRun) {
@@ -552,10 +562,9 @@ void Interface::matchCountChanged(int count)
 
     if (show) {
         //kDebug() << "showing!" << minimumSizeHint();
-
-        //fitWindow();
-
         if (!m_resultsView->isVisible()) {
+            fitWindow();
+
             // Next 2 lines are a workaround to allow arrow
             // keys navigation in krunner's result list.
             // Patch submited in bugreport #211578
@@ -573,8 +582,15 @@ void Interface::matchCountChanged(int count)
     }
 }
 
+void Interface::reenableHoverEvents()
+{
+    //kDebug() << "reenabling hover events, for better or worse";
+    m_resultData.processHoverEvents = true;
+}
+
 void Interface::fitWindow()
 {
+    m_resultData.processHoverEvents = false;
     QSize s = m_defaultSize;
     const int resultsHeight = m_resultsScene->viewableHeight() + 2;
     int spacing = m_layout->spacing();
@@ -599,6 +615,7 @@ void Interface::fitWindow()
     }
 
     resize(s);
+    m_reenableHoverEventsTimer.start();
 }
 
 void Interface::hideResultsArea()

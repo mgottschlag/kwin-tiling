@@ -274,11 +274,11 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
 
     Kephal::Screens *screens = Kephal::Screens::self();
-    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
+    connect(screens, SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)),
             this, SLOT(pinchContainmentToCurrentScreen()));
-    connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)),
+    connect(screens, SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)),
             this, SLOT(updatePanelGeometry()));
-    connect(screens, SIGNAL(screenAdded(Kephal::Screen *)),
+    connect(screens, SIGNAL(screenAdded(Kephal::Screen*)),
             this, SLOT(updateStruts()));
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()), Qt::QueuedConnection);
 }
@@ -309,7 +309,7 @@ void PanelView::setContainment(Plasma::Containment *containment)
     connect(containment, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(statusUpdated(Plasma::ItemStatus)));
     connect(containment, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
     connect(containment, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
-    connect(containment, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)), this, SLOT(appletAdded(Plasma::Applet *)));
+    connect(containment, SIGNAL(appletAdded(Plasma::Applet*,QPointF)), this, SLOT(appletAdded(Plasma::Applet*)));
     connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
     connect(containment, SIGNAL(screenChanged(int,int,Plasma::Containment*)), this, SLOT(pinchContainmentToCurrentScreen()));
     connect(containment, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)), this, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
@@ -713,7 +713,8 @@ void PanelView::pinchContainment(const QRect &screenGeom)
             c->setMinimumSize(thisSize.readEntry("min", min));
             c->setMaximumSize(thisSize.readEntry("max", max));
             m_offset = thisSize.readEntry("offset", 0);
-        } else if (m_lastSeenSize < (horizontal ? sw : sh) &&
+        }
+        if (m_lastSeenSize < (horizontal ? sw : sh) &&
                    (horizontal ? c->geometry().width() :
                                  c->geometry().height()) >= m_lastSeenSize) {
             // we are moving from a smaller space where we are 100% to a larger one
@@ -867,7 +868,7 @@ void PanelView::togglePanelController()
 
         connect(m_panelController, SIGNAL(destroyed(QObject*)), this, SLOT(editingComplete()));
         connect(m_panelController, SIGNAL(offsetChanged(int)), this, SLOT(setOffset(int)));
-        connect(m_panelController, SIGNAL(partialMove(const QPoint&)), this, SLOT(setPanelDragPosition(const QPoint&)));
+        connect(m_panelController, SIGNAL(partialMove(QPoint)), this, SLOT(setPanelDragPosition(QPoint)));
         connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));
         connect(m_panelController, SIGNAL(locationChanged(Plasma::Location)), this, SLOT(setLocation(Plasma::Location)));
         connect(m_panelController, SIGNAL(panelVisibilityModeChanged(PanelView::VisibilityMode)), this, SLOT(setVisibilityMode(PanelView::VisibilityMode)));
