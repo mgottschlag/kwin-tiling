@@ -5,7 +5,6 @@ include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs
 )
 
 add_subdirectory(configupdates)
-add_subdirectory(toolbox)
 
 set(activitymanager_SRCS
     activitymanager/activitycontrols.cpp
