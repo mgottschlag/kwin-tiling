@@ -70,6 +70,8 @@ Item {
         onDataChanged: {
             if (last!="") {
                 statusBar.setData(data[last]["error"], data[last]["errorDetails"], data[last]["udi"]);
+                plasmoid.status = "NeedsAttentionStatus";
+                plasmoid.showPopup()
             }
         }
     }
