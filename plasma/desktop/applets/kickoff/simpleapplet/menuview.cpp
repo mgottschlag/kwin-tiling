@@ -180,40 +180,43 @@ QAction *MenuView::createLeafAction(const QModelIndex &index, QObject *parent)
 void MenuView::updateAction(QAbstractItemModel *model, QAction *action, const QModelIndex& index)
 {
     bool isSeparator = index.data(Kickoff::SeparatorRole).value<bool>();
-    QString name = index.data(Qt::DisplayRole).value<QString>().replace('&', "&&"); // the generic name, e.g. "kspread" or "OpenOffice.org Spreadsheet" or just "" (right, it's a mess too)
-    QString text = index.data(Kickoff::SubTitleRole).value<QString>().replace('&', "&&"); // describing text, e.g. "Spreadsheet" or "Rekall" (right, sometimes the text is also used for the generic app-name)
+
+    // if Description or DescriptionName -> displayOrder = Kickoff::NameAfterDescription
+    //    Qt::DisplayRole returns genericName, the generic name e.g. "Advanced Text Editor" or "Spreadsheet" or just "" (right, it's a mess too)
+    //    Kickoff::SubTitleRole returns appName, the name  e.g. "Kate" or "OpenOffice.org Calc" (right, sometimes the text is also used for the generic app-name)
+    //
+    // if Name or NameDescription or NameDashDescription -> displayOrder = Kickoff::NameBeforeDescription
+    //    Qt::DisplayRole returns appName,
+    //    Kickoff::SubTitleRole returns genericName.
+
+    QString mainText = index.data(Qt::DisplayRole).value<QString>().replace('&', "&&");
+    QString altText = index.data(Kickoff::SubTitleRole).value<QString>().replace('&', "&&");
     if (action->menu() != 0) { // if it is an item with sub-menuitems, we probably like to thread them another way...
-        action->setText(name);
+        action->setText(mainText);
     } else {
         switch (d->formattype) {
-        case Name: {
-
-            action->setText(name.isEmpty() ? text : name);
-            action->setToolTip(text);
-        } break;
+        case Name:
         case Description: {
-            action->setText(name.contains(text, Qt::CaseInsensitive) ? name : text);
-            action->setToolTip(name);
+            action->setText(mainText);
+            action->setToolTip(altText);
         } break;
         case NameDescription: // fall through
         case NameDashDescription: // fall through
         case DescriptionName: {
-            if (!name.isEmpty()) { // seems we have a program, but some of them don't define a name at all
-                if (text.contains(name, Qt::CaseInsensitive)) { // sometimes the description contains also the name
-                    action->setText(text);
-                } else if (name.contains(text, Qt::CaseInsensitive)) { // and sometimes the name also contains the description
-                    action->setText(name);
+            if (!mainText.isEmpty()) { // seems we have a program, but some of them don't define a name at all
+                if (mainText.contains(altText, Qt::CaseInsensitive)) { // sometimes the description contains also the name
+                    action->setText(mainText);
+                } else if (altText.contains(mainText, Qt::CaseInsensitive)) { // and sometimes the name also contains the description
+                    action->setText(altText);
                 } else { // seems we have a perfect desktop-file (likely a KDE one, heh) and name+description are clear separated
-                    if (d->formattype == NameDescription) {
-                        action->setText(QString("%1 (%2)").arg(name).arg(text));
-                    } else if (d->formattype == NameDashDescription) {
-                        action->setText(QString("%1 - %2").arg(name).arg(text));
+                    if (d->formattype == NameDashDescription) {
+                        action->setText(QString("%1 - %2").arg(mainText).arg(altText));
                     } else {
-                        action->setText(QString("%1 (%2)").arg(text).arg(name));
+                        action->setText(QString("%1 (%2)").arg(mainText).arg(altText));
                     }
                 }
             } else { // if there is no name, let's just use the describing text
-                action->setText(text);
+                action->setText(altText);
             }
         } break;
         }
