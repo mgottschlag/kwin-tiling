@@ -39,8 +39,20 @@ Item {
         id: sdSource
         engine: "soliddevice"
         connectedSources: hpSource.sources
-        onSourceAdded: expandDevice(source)
         interval: 0
+        property string last
+        onSourceAdded: {
+            last = source;
+        }
+        onDataChanged: {
+            if (last != "") {
+                if (devicesType == "all" ||
+                    (devicesType == "removable" && data[last]["Removable"] == true) ||
+                    (devicesType == "nonRemovable" && data[last]["Removable"] == false)) {
+                    expandDevice(last)
+                }
+            }
+        }
     }
 
     PlasmaCore.DataSource {
@@ -64,10 +76,10 @@ Item {
     function configChanged() {
         var all = plasmoid.readConfig("allDevices");
         var removable = plasmoid.readConfig("removableDevices");
-        if (all==true) {
+        if (all == true) {
             devicesType = "all";
             filterModel.filterRegExp = "";
-        } else if (removable==true) {
+        } else if (removable == true) {
             devicesType = "removable";
             filterModel.filterRegExp = "true";
         } else {
@@ -78,15 +90,12 @@ Item {
         notifierDialog.currentExpanded = -1;
     }
 
-    function expandDevice(udi) {
-        // FIXME: Get index of udi from filterModel
-        //i = notifierDialog.model.indexOf (udi);
-        //notifierDialog.currentExpanded = i;
-        //notifierDialog.currentIndex = i;
-        //notifierDialog.highlightItem.opacity = 1;
+    function expandDevice(udi)
+    {
         expandedDevice = udi
         setPopupIcon ("preferences-desktop-notification", 7500);
         plasmoid.status = "NeedsAttentionStatus";
+        plasmoid.showPopup()
     }
 
     function setPopupIcon (icon, timeout) {
@@ -178,10 +187,9 @@ Item {
                 service.startOperationCall(operation);
                 setPopupIcon("dialog-ok", 2500);
             }
-
-            Component.onCompleted: {
-print("AAAAA"+expandedDevice+"--"+wrapper.udi)
-                if (expandedDevice == wrapper.udi) {
+            property bool isLast: (expandedDevice == udi)
+            onIsLastChanged: {
+                if (isLast) {
                     notifierDialog.currentExpanded = index
                 }
             }

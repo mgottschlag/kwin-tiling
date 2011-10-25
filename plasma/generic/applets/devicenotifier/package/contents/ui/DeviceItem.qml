@@ -40,7 +40,6 @@ Item {
 
     // FIXME: Device item loses focus on mounting/unmounting it,
     // or specifically, when some UI element changes.
-    
     QIconItem {
         id: deviceIcon
         width: 32
