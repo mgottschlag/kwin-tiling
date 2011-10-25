@@ -17,14 +17,14 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import Qt 4.7
+import QtQuick 1.0
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 
 Item {
     id: devicenotifier
-    width: 290
-    height: 340
+    property int minimumWidth: 290
+    property int minimumHeight: 340
     property string devicesType: "removable"
 
     PlasmaCore.DataSource {
@@ -88,7 +88,7 @@ Item {
     }
 
     function setPopupIcon (icon, timeout) {
-        plasmoid.popupIcon = QIcon(icon);
+        plasmoid.setPopupIconByName(icon);
         popupIconTimer.interval = timeout;
         popupIconTimer.restart();
     }
@@ -96,7 +96,7 @@ Item {
 
     Timer {
         id: popupIconTimer
-        onTriggered: plasmoid.popupIcon = QIcon("device-notifier");
+        onTriggered: plasmoid.setPopupIconByName("device-notifier");
     }
 
     Text {
