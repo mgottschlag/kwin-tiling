@@ -28,6 +28,10 @@ Item {
     property string devicesType: "removable"
     property string expandedDevice
 
+    PlasmaCore.Theme {
+        id: theme
+    }
+
     PlasmaCore.DataSource {
         id: hpSource
         engine: "hotplug"
@@ -64,8 +68,9 @@ Item {
             connectSource(source);
         }
         onDataChanged: {
-            if (last!="")
+            if (last!="") {
                 statusBar.setData(data[last]["error"], data[last]["errorDetails"], data[last]["udi"]);
+            }
         }
     }
 
