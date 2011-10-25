@@ -26,6 +26,7 @@ Item {
     property int minimumWidth: 290
     property int minimumHeight: 340
     property string devicesType: "removable"
+    property string expandedDevice
 
     PlasmaCore.DataSource {
         id: hpSource
@@ -45,7 +46,7 @@ Item {
     PlasmaCore.DataSource {
         id: statusSource
         engine: "devicenotifications"
-        property string last: ""
+        property string last
         onSourceAdded: {
             last = source;
             connectSource(source);
@@ -83,6 +84,7 @@ Item {
         //notifierDialog.currentExpanded = i;
         //notifierDialog.currentIndex = i;
         //notifierDialog.highlightItem.opacity = 1;
+        expandedDevice = udi
         setPopupIcon ("preferences-desktop-notification", 7500);
         plasmoid.status = "NeedsAttentionStatus";
     }
@@ -135,7 +137,7 @@ Item {
         highlight: deviceHighlighter
         highlightMoveDuration: 250
         highlightMoveSpeed: 1
-        clip: true        
+        clip: true
 
         property int currentExpanded: -1
         Component.onCompleted: currentIndex=-1
@@ -152,7 +154,7 @@ Item {
             deviceName: hpSource.data[udi]["text"]
             emblemIcon: Emblems[0]
             state: model["State"]
-            
+
             percentUsage: {
                 var freeSpace = Number(model["Free Space"]);
                 var size = Number(model["Size"]);
@@ -175,6 +177,13 @@ Item {
                 operation = service.operationDescription(operationName);
                 service.startOperationCall(operation);
                 setPopupIcon("dialog-ok", 2500);
+            }
+
+            Component.onCompleted: {
+print("AAAAA"+expandedDevice+"--"+wrapper.udi)
+                if (expandedDevice == wrapper.udi) {
+                    notifierDialog.currentExpanded = index
+                }
             }
         }
     }
