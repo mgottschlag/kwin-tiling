@@ -148,6 +148,13 @@ Item {
         highlightMoveSpeed: 1
         clip: true
 
+        section {
+            property: "Removable"
+            delegate: Text {
+                text: section
+            }
+        }
+
         property int currentExpanded: -1
         Component.onCompleted: currentIndex=-1
     }
