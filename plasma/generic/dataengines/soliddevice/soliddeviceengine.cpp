@@ -19,6 +19,8 @@
 #include "soliddeviceengine.h"
 #include "soliddeviceservice.h"
 
+#include <QMetaEnum>
+
 #include <KDebug>
 #include <KDiskFreeSpaceInfo>
 #include <KLocale>
@@ -156,6 +158,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 
         m_signalmanager->mapDevice(storageaccess, device.udi());
     }
+
     if (device.is<Solid::StorageDrive>()) {
         Solid::StorageDrive *storagedrive = device.as<Solid::StorageDrive>();
         if (!storagedrive) {
@@ -499,6 +502,17 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
             handles << video->driverHandle(driver).toString();
         }
         setData(name, I18N_NOOP("Driver Handles"), handles);
+    }
+
+    int index = Solid::DeviceInterface::staticMetaObject.indexOfEnumerator("Type");
+    QMetaEnum typeEnum = Solid::DeviceInterface::staticMetaObject.enumerator(index);
+    for (int i = typeEnum.keyCount() - 1 ; i > 0; i--) {
+        Solid::DeviceInterface::Type type = (Solid::DeviceInterface::Type)typeEnum.value(i);
+        const Solid::DeviceInterface *interface = device.asDeviceInterface(type);
+        if (interface) {
+            setData(name, I18N_NOOP("Type Description"), Solid::DeviceInterface::typeDescription(type));
+            break;
+        }
     }
 
     setData(name, I18N_NOOP("Device Types"), devicetypes);

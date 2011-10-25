@@ -112,15 +112,27 @@ Item {
 
     Text {
         id: header
-        text: filterModel.count>0 ? "Available Devices" : "No Devices Available"
+        text: filterModel.count>0 ? i18n("Available Devices") : i18n("No Devices Available")
         anchors { top: parent.top; topMargin: 3; left: parent.left; right: parent.right }
         horizontalAlignment: Text.AlignHCenter
     }
 
-    PlasmaWidgets.Separator {
+
+    PlasmaCore.Svg {
+        id: lineSvg
+        imagePath: "widgets/line"
+    }
+    PlasmaCore.SvgItem {
         id: headerSeparator
-        anchors { top: header.bottom; left: parent.left; right: parent.right }
-        anchors { topMargin: 3 }
+        svg: lineSvg
+        elementId: "horizontal-line"
+        anchors {
+            top: header.bottom
+            left: parent.left
+            right: parent.right
+            topMargin: 3
+        }
+        height: lineSvg.elementSize("horizontal-line").height
     }
 
     ListView {
@@ -149,9 +161,27 @@ Item {
         clip: true
 
         section {
-            property: "Removable"
-            delegate: Text {
-                text: section
+            property: "Type Description"
+            delegate: Item {
+                height: childrenRect.height
+                width: notifierDialog.width
+                PlasmaCore.SvgItem {
+                    visible: parent.y > 0
+                    svg: lineSvg
+                    elementId: "horizontal-line"
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+                    height: lineSvg.elementSize("horizontal-line").height
+                }
+                Text {
+                    x: 8
+                    y: 8
+                    opacity: 0.6
+                    text: section
+                    color: theme.textColor
+                }
             }
         }
 
