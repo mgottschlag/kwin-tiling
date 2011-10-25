@@ -58,12 +58,6 @@ protected:
     bool sourceRequestEvent(const QString &name);
     bool updateSourceEvent(const QString& source);
 
-private Q_SLOTS:
-    void deviceAdded(const QString &udi);
-    void deviceRemoved(const QString &udi);
-    void deviceChanged(const QString& udi, const QString &property, const QVariant &value);
-    void sourceWasRemoved(const QString &source);
-
 private:
     bool populateDeviceData(const QString &name);
     qlonglong freeDiskSpace(const QString &mountPoint);
@@ -81,8 +75,8 @@ private:
     QMap<QString, QString> m_encryptedContainerMap;
     DeviceSignalMapManager *m_signalmanager;
 
-    HddTemp *temperature;
-    Solid::DeviceNotifier *notifier;
+    HddTemp *m_temperature;
+    Solid::DeviceNotifier *m_notifier;
 
 private Q_SLOTS:
     void deviceAdded(const QString &udi);
