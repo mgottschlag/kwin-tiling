@@ -89,9 +89,9 @@ class LightDMDBus : public QDBusInterface
 public:
     LightDMDBus() :
         QDBusInterface(
-                QLatin1String("org.lightdm.LightDisplayManager"),
-                "/org/lightdm/LightDisplayManager",
-                QLatin1String("org.lightdm.LightDisplayManager"),
+                QLatin1String("org.freedesktop.DisplayManager"),
+                qgetenv("XDG_SEAT_PATH"),
+                QLatin1String("org.freedesktop.DisplayManager.Seat"),
                 QDBusConnection::systemBus()) {}
 };
 
@@ -122,14 +122,10 @@ KDisplayManager::KDisplayManager() : d(new Private)
             DMType = NewKDM;
         else if ((ctl = ::getenv("XDM_MANAGED")) && ctl[0] == '/')
             DMType = OldKDM;
-        else if (::getenv("GDMSESSION")) {
-            //lightDM identifies itself as GDM at the moment.
-            if (LightDMDBus().isValid()) {
-                DMType = LightDM;
-            } else {
-                DMType = GDMFactory().isValid() ? NewGDM : OldGDM;
-            }
-        }
+        else if (LightDMDBus().isValid())
+            DMType = LightDM;
+        else if (::getenv("GDMSESSION"))
+            DMType = GDMFactory().isValid() ? NewGDM : OldGDM;
         else
             DMType = NoDM;
     }
@@ -457,7 +453,7 @@ KDisplayManager::startReserve()
         exec("FLEXI_XSERVER\n");
     else if (DMType == LightDM) {
         LightDMDBus lightDM;
-        lightDM.call("SwitchToUser", QVariant::fromValue<QString>(""));
+        lightDM.call("SwitchToGreeter");
     }
     else
         exec("reserve\n");
