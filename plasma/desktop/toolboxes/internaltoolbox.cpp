@@ -389,31 +389,35 @@ void InternalToolBox::restore(const KConfigGroup &containmentGroup)
     m_userMoved = true;
     setCorner(Corner(group.readEntry("corner", int(corner()))));
 
-    int offset = group.readEntry("offset", 0);
+    const int offset = group.readEntry("offset", 0);
+    const int w = boundingRect().width();
+    const int h = boundingRect().height();
+    const int maxW = m_containment ? m_containment->geometry().width() - w : offset;
+    const int maxH = m_containment ? m_containment->geometry().height() - h : offset;
     switch (corner()) {
         case InternalToolBox::TopLeft:
             setPos(0, 0);
             break;
         case InternalToolBox::Top:
-            setPos(offset, 0);
+            setPos(qMin(offset, maxW), 0);
             break;
         case InternalToolBox::TopRight:
             setPos(m_containment->size().width() - boundingRect().width(), 0);
             break;
         case InternalToolBox::Right:
-            setPos(m_containment->size().width() - boundingRect().width(), offset);
+            setPos(m_containment->size().width() - boundingRect().width(), qMin(offset, maxH));
             break;
         case InternalToolBox::BottomRight:
             setPos(m_containment->size().width() - boundingRect().width(), m_containment->size().height() - boundingRect().height());
             break;
         case InternalToolBox::Bottom:
-            setPos(offset, m_containment->size().height() - boundingRect().height());
+            setPos(qMin(offset, maxW), m_containment->size().height() - boundingRect().height());
             break;
         case InternalToolBox::BottomLeft:
             setPos(0, m_containment->size().height() - boundingRect().height());
             break;
         case InternalToolBox::Left:
-            setPos(0, offset);
+            setPos(0, qMin(offset, maxH));
             break;
     }
     //kDebug() << "marked as user moved" << pos()
@@ -438,7 +442,6 @@ void InternalToolBox::reposition()
     updateToolBox();
 
     if (m_userMoved) {
-        //FIXME: adjust for situations like changing of the available space
         restore(m_containment->config());
         return;
     }
@@ -515,7 +518,6 @@ void InternalToolBox::reposition()
         }
     }
 }
-
 
 #include "internaltoolbox.moc"
 
