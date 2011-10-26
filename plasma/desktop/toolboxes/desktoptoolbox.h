@@ -22,15 +22,15 @@
 #define PLASMA_DESKTOPTOOLBOX_P_H
 
 #include <QGraphicsItem>
-#include <QObject>
+#include <QPropertyAnimation>
 #include <QTime>
 
-#include <kicon.h>
-
-#include <internaltoolbox_p.h>
+#include <KIcon>
 
 #include <Plasma/Animator>
+#include <Plasma/IconWidget>
 
+#include "internaltoolbox.h"
 
 class Widget;
 class EmptyGraphicsItem;
@@ -80,10 +80,24 @@ protected Q_SLOTS:
      * show/hide the toolbox
      */
     void toggle();
+
 private:
     void highlight(bool highlighting);
     void adjustToolBackerGeometry();
-    DesktopToolBoxPrivate *d;
+    void adjustBackgroundBorders() const;
+
+    Plasma::Containment *m_containment;
+    Plasma::FrameSvg *m_background;
+    QMultiMap<Plasma::AbstractToolBox::ToolType, Plasma::IconWidget *> m_tools;
+    KIcon m_icon;
+    EmptyGraphicsItem *m_toolBacker;
+    QWeakPointer<QPropertyAnimation> m_anim;
+    qreal m_animCircleFrame;
+    qreal m_animHighlightFrame;
+    QRect m_shapeRect;
+    QColor m_fgColor;
+    QColor m_bgColor;
+    bool m_hovering;
 };
 
 K_EXPORT_PLASMA_TOOLBOX(desktoptoolbox, DesktopToolBox)

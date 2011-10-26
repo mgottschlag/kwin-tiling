@@ -113,7 +113,21 @@ protected Q_SLOTS:
     void immutabilityChanged(Plasma::ImmutabilityType immutability);
 
 private:
-    InternalToolBoxPrivate *d;
+    void init();
+
+    Plasma::Containment *m_containment;
+    InternalToolBox::Corner m_corner;
+    int m_size;
+    QSize m_iconSize;
+    QPoint m_dragStartRelative;
+    QTransform m_viewTransform;
+    QList<QAction *> m_actions;
+    bool m_hidden : 1;
+    bool m_showing : 1;
+    bool m_movable : 1;
+    bool m_dragging : 1;
+    bool m_userMoved : 1;
+    bool m_iconic : 1;
 };
 
 

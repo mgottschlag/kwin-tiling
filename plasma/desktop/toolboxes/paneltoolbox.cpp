@@ -18,18 +18,16 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "paneltoolbox_p.h"
+#include "paneltoolbox.h"
 
 #include <QGraphicsSceneHoverEvent>
 #include <QPainter>
 #include <QRadialGradient>
 #include <QApplication>
-#include <QPropertyAnimation>
 #include <QWeakPointer>
 
-#include <kcolorscheme.h>
-#include <kdebug.h>
-#include <kiconloader.h>
+#include <KDebug>
+#include <KIconLoader>
 
 #include <plasma/applet.h>
 #include <plasma/paintutils.h>
@@ -38,48 +36,29 @@
 #include <plasma/tooltipcontent.h>
 #include <plasma/tooltipmanager.h>
 
-
-class PanelToolBoxPrivate
-{
-public:
-    PanelToolBoxPrivate()
-      : icon("plasma"),
-        animFrame(0),
-        highlighting(false)
-    {
-    }
-
-    KIcon icon;
-    QWeakPointer<QPropertyAnimation> anim;
-    qreal animFrame;
-    QColor fgColor;
-    QColor bgColor;
-    Plasma::Svg *background;
-    bool highlighting;
-};
-
 PanelToolBox::PanelToolBox(Plasma::Containment *parent)
-    : InternalToolBox(parent),
-      d(new PanelToolBoxPrivate)
+    : InternalToolBox(parent)
 {
     init();
 }
 
 PanelToolBox::PanelToolBox(QObject *parent, const QVariantList &args)
-   : InternalToolBox(parent, args),
-     d(new PanelToolBoxPrivate)
+   : InternalToolBox(parent, args)
 {
     init();
 }
 
 PanelToolBox::~PanelToolBox()
 {
-    d->anim.clear();
-    delete d;
+    m_anim.clear();
 }
 
 void PanelToolBox::init()
 {
+    m_icon = KIcon("plasma");
+    m_animFrame = 0;
+    m_highlighting = false;
+
     setIconSize(QSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
     setSize(KIconLoader::SizeSmallMedium);
     connect(this, SIGNAL(toggled()), this, SLOT(toggle()));
@@ -93,9 +72,9 @@ void PanelToolBox::init()
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
             this, SLOT(assignColors()));
 
-    d->background = new Plasma::Svg(this);
-    d->background->setImagePath("widgets/toolbox");
-    d->background->setContainsMultipleImages(true);
+    m_background = new Plasma::Svg(this);
+    m_background->setImagePath("widgets/toolbox");
+    m_background->setContainsMultipleImages(true);
 
     Plasma::ToolTipManager::self()->registerWidget(this);
 
@@ -107,8 +86,8 @@ void PanelToolBox::init()
 
 void PanelToolBox::assignColors()
 {
-    d->bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-    d->fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    m_bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+    m_fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     update();
 }
 
@@ -150,7 +129,7 @@ void PanelToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    const qreal progress = d->animFrame / size();
+    const qreal progress = m_animFrame / size();
 
     QRect backgroundRect;
     QPoint gradientCenter;
@@ -161,29 +140,26 @@ void PanelToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         gradientCenter = QPoint(rect.center().x(), rect.bottom());
         cornerElement = "panel-south";
 
-        backgroundRect = d->background->elementRect(cornerElement).toRect();
+        backgroundRect = m_background->elementRect(cornerElement).toRect();
         backgroundRect.moveBottomLeft(shape().boundingRect().bottomLeft().toPoint());
     } else if (corner() == InternalToolBox::Right) {
         gradientCenter = QPoint(rect.right(), rect.center().y());
         cornerElement = "panel-east";
 
-        backgroundRect = d->background->elementRect(cornerElement).toRect();
+        backgroundRect = m_background->elementRect(cornerElement).toRect();
         backgroundRect.moveTopRight(shape().boundingRect().topRight().toPoint());
     } else {
         gradientCenter = QPoint(rect.right(), rect.center().y());
         cornerElement = "panel-west";
 
-        backgroundRect = d->background->elementRect(cornerElement).toRect();
+        backgroundRect = m_background->elementRect(cornerElement).toRect();
         backgroundRect.moveTopLeft(shape().boundingRect().topLeft().toPoint());
     }
 
-
-    d->background->paint(painter, backgroundRect, cornerElement);
-
-
-    QRect iconRect;
+    m_background->paint(painter, backgroundRect, cornerElement);
 
     //Only Left,Right and Bottom supported, default to Right
+    QRect iconRect;
     if (corner() == InternalToolBox::Bottom) {
         iconRect = QRect(QPoint(gradientCenter.x() - iconSize().width() / 2,
                                 (int)rect.bottom() - iconSize().height() - 2), iconSize());
@@ -195,15 +171,15 @@ void PanelToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     }
 
     if (qFuzzyCompare(qreal(1.0), progress)) {
-        d->icon.paint(painter, iconRect);
+        m_icon.paint(painter, iconRect);
     } else if (qFuzzyCompare(qreal(1.0), 1 + progress)) {
-        d->icon.paint(painter, iconRect, Qt::AlignCenter, QIcon::Disabled, QIcon::Off);
+        m_icon.paint(painter, iconRect, Qt::AlignCenter, QIcon::Disabled, QIcon::Off);
     } else {
-        QPixmap disabled = d->icon.pixmap(iconSize(), QIcon::Disabled, QIcon::Off);
-        QPixmap enabled = d->icon.pixmap(iconSize());
+        QPixmap disabled = m_icon.pixmap(iconSize(), QIcon::Disabled, QIcon::Off);
+        QPixmap enabled = m_icon.pixmap(iconSize());
         QPixmap result = Plasma::PaintUtils::transition(
-            d->icon.pixmap(iconSize(), QIcon::Disabled, QIcon::Off),
-            d->icon.pixmap(iconSize()), progress);
+            m_icon.pixmap(iconSize(), QIcon::Disabled, QIcon::Off),
+            m_icon.pixmap(iconSize()), progress);
         painter->drawPixmap(iconRect, result);
     }
 }
@@ -211,7 +187,7 @@ void PanelToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 QPainterPath PanelToolBox::shape() const
 {
     QPainterPath path;
-    int toolSize = size();// + (int)d->animFrame;
+    int toolSize = size();// + (int)m_animFrame;
     QRectF rect = boundingRect();
 
     //Only Left,Right and Bottom supported, default to Right
@@ -288,20 +264,20 @@ void PanelToolBox::toolTipHidden()
 
 void PanelToolBox::highlight(bool highlighting)
 {
-    if (d->highlighting == highlighting) {
+    if (m_highlighting == highlighting) {
         return;
     }
 
-    d->highlighting = highlighting;
+    m_highlighting = highlighting;
 
-    QPropertyAnimation *anim = d->anim.data();
-    if (d->highlighting) {
+    QPropertyAnimation *anim = m_anim.data();
+    if (m_highlighting) {
         if (anim) {
             anim->stop();
-            d->anim.clear();
+            m_anim.clear();
         }
         anim = new QPropertyAnimation(this, "highlight", this);
-        d->anim = anim;
+        m_anim = anim;
     }
 
     if (anim->state() != QAbstractAnimation::Stopped) {
@@ -312,7 +288,7 @@ void PanelToolBox::highlight(bool highlighting)
     anim->setStartValue(0);
     anim->setEndValue(size());
 
-    if(d->highlighting) {
+    if (m_highlighting) {
         anim->start();
     } else {
         anim->setDirection(QAbstractAnimation::Backward);
@@ -323,13 +299,13 @@ void PanelToolBox::highlight(bool highlighting)
 
 void PanelToolBox::setHighlightValue(qreal progress)
 {
-    d->animFrame = progress;
+    m_animFrame = progress;
     update();
 }
 
 qreal PanelToolBox::highlightValue() const
 {
-    return d->animFrame;
+    return m_animFrame;
 }
 
 void PanelToolBox::toggle()
@@ -338,5 +314,5 @@ void PanelToolBox::toggle()
 }
 
 
-#include "paneltoolbox_p.moc"
+#include "paneltoolbox.moc"
 

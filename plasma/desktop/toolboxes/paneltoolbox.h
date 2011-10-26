@@ -23,14 +23,14 @@
 
 #include <QGraphicsItem>
 #include <QObject>
+#include <QPropertyAnimation>
 #include <QTime>
 
 #include <KIcon>
 
-#include "internaltoolbox_p.h"
-
 #include <Plasma/Animator>
 
+#include "internaltoolbox.h"
 
 class Widget;
 class EmptyGraphicsItem;
@@ -72,7 +72,14 @@ protected slots:
 
 private:
     void highlight(bool highlighting);
-    PanelToolBoxPrivate *d;
+
+    KIcon m_icon;
+    QWeakPointer<QPropertyAnimation> m_anim;
+    qreal m_animFrame;
+    QColor m_fgColor;
+    QColor m_bgColor;
+    Plasma::Svg *m_background;
+    bool m_highlighting;
 };
 
 K_EXPORT_PLASMA_TOOLBOX(paneltoolbox, PanelToolBox)
