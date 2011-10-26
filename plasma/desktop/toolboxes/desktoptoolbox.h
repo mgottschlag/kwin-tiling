@@ -81,6 +81,11 @@ protected Q_SLOTS:
      */
     void toggle();
 
+    // basic desktop controls
+    void startLogout();
+    void logout();
+    void lockScreen();
+
 private:
     void highlight(bool highlighting);
     void adjustToolBackerGeometry();

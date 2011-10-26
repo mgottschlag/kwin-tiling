@@ -21,12 +21,16 @@
 #include "desktoptoolbox.h"
 
 #include <QAction>
+#include <QDBusInterface>
+#include <QDBusPendingCall>
 #include <QGraphicsSceneHoverEvent>
 #include <QPainter>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsView>
+#include <QTimer>
 #include <QWeakPointer>
 
+#include <KAuthorized>
 #include <KDebug>
 #include <KIconLoader>
 
@@ -40,6 +44,7 @@
 #include <Plasma/ToolTipManager>
 #include <Plasma/ItemBackground>
 
+#include <kworkspace/kworkspace.h>
 
 class EmptyGraphicsItem : public QGraphicsWidget
 {
@@ -167,6 +172,20 @@ void DesktopToolBox::init()
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
             this, SLOT(updateTheming()));
     Plasma::ToolTipManager::self()->registerWidget(this);
+
+    if (KAuthorized::authorizeKAction("logout")) {
+        QAction *action = new QAction(i18n("Leave..."), this);
+        action->setIcon(KIcon("system-shutdown"));
+        connect(action, SIGNAL(triggered()), this, SLOT(startLogout()));
+        addTool(action);
+    }
+
+    if (KAuthorized::authorizeKAction("lock_screen")) {
+        QAction *action = new QAction(i18n("Lock Screen"), this);
+        action->setIcon(KIcon("system-lock-screen"));
+        connect(action, SIGNAL(triggered(bool)), this, SLOT(lockScreen()));
+        addTool(action);
+    }
 }
 
 QSize DesktopToolBox::cornerSize() const
@@ -768,5 +787,56 @@ void DesktopToolBox::adjustBackgroundBorders() const
     }
 }
 
+void DesktopToolBox::lockScreen()
+{
+    if (m_containment) {
+        m_containment->closeToolBox();
+    } else {
+        setShowing(false);
+    }
+
+    if (!KAuthorized::authorizeKAction("lock_screen")) {
+        return;
+    }
+
+#ifndef Q_OS_WIN
+    const QString interface("org.freedesktop.ScreenSaver");
+    QDBusInterface screensaver(interface, "/ScreenSaver");
+    screensaver.asyncCall("Lock");
+#else
+    LockWorkStation();
+#endif // !Q_OS_WIN
+}
+
+void DesktopToolBox::startLogout()
+{
+    if (m_containment) {
+        m_containment->closeToolBox();
+    } else {
+        setShowing(false);
+    }
+
+    // this short delay is due to two issues:
+    // a) KWorkSpace's DBus alls are all syncronous
+    // b) the destrution of the menu that this action is in is delayed
+    //
+    // (a) leads to the menu hanging out where everyone can see it because
+    // the even loop doesn't get returned to allowing it to close.
+    //
+    // (b) leads to a 0ms timer not working since a 0ms timer just appends to
+    // the event queue, and then the menu closing event gets appended to that.
+    //
+    // ergo a timer with small timeout
+    QTimer::singleShot(10, this, SLOT(logout()));
+}
+
+void DesktopToolBox::logout()
+{
+    if (!KAuthorized::authorizeKAction("logout")) {
+        return;
+    }
+
+    KWorkSpace::requestShutDown();
+}
 
 #include "desktoptoolbox.moc"
