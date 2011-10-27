@@ -62,10 +62,12 @@ private Q_SLOTS:
         layoutUnit1.setDisplayName("usi");
         LayoutUnit layoutUnit2("us", "other");
 
+        keyboardConfig.indicatorType = KeyboardConfig::SHOW_FLAG;
         const QIcon iconUsFlag = flags->getIconWithText(layoutUnit, keyboardConfig);
         QVERIFY( ! iconUsFlag.isNull() );
         QCOMPARE( image(iconUsFlag), image(iconUs) );
 
+        keyboardConfig.indicatorType = KeyboardConfig::SHOW_LABEL;
         const QIcon iconUsText = flags->getIconWithText(layoutUnit, keyboardConfig);
         QVERIFY( ! iconUsText.isNull() );
         QVERIFY( image(iconUsText) != image(iconUs) );
