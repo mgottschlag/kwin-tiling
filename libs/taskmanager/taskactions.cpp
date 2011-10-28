@@ -351,7 +351,7 @@ ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGrou
 
         case TaskItemType:
             m_name = static_cast<TaskItem *>(item)->task()->classClass();
-            setText(i18n("&Show A Launcher For %1 When It Is Not Running", m_name));
+            setText(i18n("&Show A Launcher When Not Running"));
             setCheckable(true);
             break;
     }
