@@ -475,7 +475,7 @@ GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableIte
 }
 
 
-BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QList<QAction *> visualizationActions, QList <QAction*> appActions)
+BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QList<QAction *> visualizationActions, QList <QAction*> appActions, bool simple)
     : ToolTipMenu(parent)
 {
     Q_ASSERT(item);
@@ -484,21 +484,27 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
     setTitle(item->name());
     setIcon(item->icon());
     addAppActions(appActions);
-
-    if (TaskManager::self()->numberOfDesktops() > 1) {
+    
+    if (!simple && TaskManager::self()->numberOfDesktops() > 1) {
         addMenu(new DesktopsMenu(this, item));
         addAction(new ToCurrentDesktopActionImpl(this, item));
     }
 
-    addAction(new MoveActionImpl(this, item));
-    addAction(new ResizeActionImpl(this, item));
+    if(!simple) {
+        addAction(new MoveActionImpl(this, item));
+        addAction(new ResizeActionImpl(this, item));
+    }
     addAction(new MinimizeActionImpl(this, item));
     addAction(new MaximizeActionImpl(this, item));
-    addAction(new ShadeActionImpl(this, item));
+    if(!simple) {
+        addAction(new ShadeActionImpl(this, item));
+    }
     addAction(new NewInstanceActionImpl(this, item));
     addAction(new ToggleLauncherActionImpl(this, item, strategy));
 
-    addMenu(new AdvancedMenu(this, item, strategy));
+    if(!simple) {
+        addMenu(new AdvancedMenu(this, item, strategy));
+    }
 
     foreach (QAction *action, visualizationActions) {
         addAction(action);
@@ -508,7 +514,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
     addAction(new CloseActionImpl(this, item));
 }
 
-BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, QList <QAction*> visualizationActions, QList <QAction*> appActions)
+BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, QList <QAction*> visualizationActions, QList <QAction*> appActions, bool simple)
     : ToolTipMenu(parent)
 {
     Q_ASSERT(group);
@@ -518,29 +524,35 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     setIcon(group->icon());
     addAppActions(appActions);
 
-    foreach (AbstractGroupableItem *item, group->members()) {
-        if (item->itemType() == GroupItemType) {
-            addMenu(new BasicMenu(this, dynamic_cast<TaskGroup*>(item), strategy));
-        } else {
-            addMenu(new BasicMenu(this, dynamic_cast<TaskItem*>(item), strategy));
+    if(!simple) {
+        foreach (AbstractGroupableItem *item, group->members()) {
+            if (item->itemType() == GroupItemType) {
+                addMenu(new BasicMenu(this, dynamic_cast<TaskGroup*>(item), strategy));
+            } else {
+                addMenu(new BasicMenu(this, dynamic_cast<TaskItem*>(item), strategy));
+            }
         }
+        addSeparator();
     }
 
-    addSeparator();
 
-    if (TaskManager::self()->numberOfDesktops() > 1) {
+    if (!simple && TaskManager::self()->numberOfDesktops() > 1) {
         addMenu(new DesktopsMenu(this, group));
         addAction(new ToCurrentDesktopActionImpl(this, group));
     }
 
     addAction(new MinimizeActionImpl(this, group));
     addAction(new MaximizeActionImpl(this, group));
-    addAction(new ShadeActionImpl(this, group));
+    if(!simple) {
+        addAction(new ShadeActionImpl(this, group));
+    }
     addAction(new NewInstanceActionImpl(this, group));
     addAction(new ToggleLauncherActionImpl(this, group, strategy));
 
-    addMenu(new AdvancedMenu(this, group, strategy));
-    addAction(new EditGroupActionImpl(this, group, strategy));
+    if(!simple) {
+        addMenu(new AdvancedMenu(this, group, strategy));
+        addAction(new EditGroupActionImpl(this, group, strategy));
+    }
 
     foreach (QAction *action, visualizationActions) {
         addAction(action);
@@ -550,11 +562,12 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     addAction(new CloseActionImpl(this, group));
 }
 
-BasicMenu::BasicMenu(QWidget *parent, LauncherItem* item, GroupManager *strategy, QList<QAction *> visualizationActions, QList <QAction*> appActions)
+BasicMenu::BasicMenu(QWidget *parent, LauncherItem* item, GroupManager *strategy, QList<QAction *> visualizationActions, QList <QAction*> appActions, bool simple)
     : ToolTipMenu(parent)
 {
     Q_ASSERT(item);
     Q_ASSERT(strategy);
+    Q_UNUSED(simple)
 
     setTitle(item->name());
     setIcon(item->icon());
@@ -562,10 +575,11 @@ BasicMenu::BasicMenu(QWidget *parent, LauncherItem* item, GroupManager *strategy
 
     addAction(new ToggleLauncherActionImpl(this, item, strategy));
 
-    addSeparator();
-
-    foreach (QAction *action, visualizationActions) {
-        addAction(action);
+    if(!visualizationActions.isEmpty()) {
+        addSeparator();
+        foreach (QAction *action, visualizationActions) {
+            addAction(action);
+        }
     }
 }
 
