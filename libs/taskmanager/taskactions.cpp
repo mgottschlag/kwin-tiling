@@ -294,12 +294,10 @@ AdvancedMenu::AdvancedMenu(QWidget *parent, AbstractGroupableItem *item, GroupMa
     addAction(new KeepBelowActionImpl(this, item));
     addAction(new ViewFullscreenActionImpl(this, item));
 
-    addSeparator();
-
-    addAction(new ToggleLauncherActionImpl(this, item, strategy));
     if (strategy->taskGrouper()) {
         QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, item);
         if (!groupingStrategyActions.isEmpty()) {
+            addSeparator();
             foreach (QAction *action, groupingStrategyActions) {
                 addAction(action);
             }
@@ -470,6 +468,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
     addAction(new MaximizeActionImpl(this, item));
     addAction(new ShadeActionImpl(this, item));
     addAction(new NewInstanceActionImpl(this, item));
+    addAction(new ToggleLauncherActionImpl(this, item, strategy));
 
     addMenu(new AdvancedMenu(this, item, strategy));
 
@@ -508,6 +507,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     addAction(new MaximizeActionImpl(this, group));
     addAction(new ShadeActionImpl(this, group));
     addAction(new NewInstanceActionImpl(this, group));
+    addAction(new ToggleLauncherActionImpl(this, group, strategy));
 
     addMenu(new AdvancedMenu(this, group, strategy));
     addAction(new EditGroupActionImpl(this, group, strategy));
