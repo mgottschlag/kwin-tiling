@@ -40,6 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
 #include <KDesktopFile>
+#include <KRun>
 
 namespace TaskManager
 {
@@ -76,6 +77,9 @@ QAction *standardGroupableAction(GroupableAction action, AbstractGroupableItem *
             break;
         case ToggleLauncherAction:
             return new ToggleLauncherActionImpl(parent, item, strategy);
+            break;
+        case NewInstanceAction:
+            return new NewInstanceActionImpl(parent, item);
             break;
     }
 
@@ -380,6 +384,35 @@ void ToggleLauncherActionImpl::toggleLauncher()
     }
 }
 
+NewInstanceActionImpl::NewInstanceActionImpl(QObject *parent, AbstractGroupableItem *item)
+    : QAction(parent), m_abstractItem(item)
+{
+    if (LauncherItemType==item->itemType()) {
+        setVisible(false);
+    }
+    else {
+        setIcon(KIcon("system-run"));
+        setText(i18n("Start New Instance"));
+
+        connect(this, SIGNAL(triggered()), this, SLOT(launchNewInstance()));
+        m_url = item->launcherUrl();
+        if (m_url.isEmpty()) {
+            //don't show the possibility to add a launcher if we don't have a url for it
+            //kDebug() << "No executable found for" << m_name;
+            setVisible(false);
+        }
+    }
+}
+
+void NewInstanceActionImpl::launchNewInstance()
+{
+    if (!m_url.isValid()) {
+        return;
+    }
+
+    new KRun(m_url, 0);
+}
+
 EditGroupActionImpl::EditGroupActionImpl(QObject *parent, TaskGroup *group, GroupManager *groupManager)
     : QAction(parent)
 {
@@ -436,6 +469,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
     addAction(new MinimizeActionImpl(this, item));
     addAction(new MaximizeActionImpl(this, item));
     addAction(new ShadeActionImpl(this, item));
+    addAction(new NewInstanceActionImpl(this, item));
 
     addMenu(new AdvancedMenu(this, item, strategy));
 
@@ -473,6 +507,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     addAction(new MinimizeActionImpl(this, group));
     addAction(new MaximizeActionImpl(this, group));
     addAction(new ShadeActionImpl(this, group));
+    addAction(new NewInstanceActionImpl(this, group));
 
     addMenu(new AdvancedMenu(this, group, strategy));
     addAction(new EditGroupActionImpl(this, group, strategy));

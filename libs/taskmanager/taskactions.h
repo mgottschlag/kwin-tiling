@@ -46,7 +46,8 @@ enum GroupableAction { MaximizeAction = 0,
                        CloseAction,
                        ViewFullscreenAction,
                        KeepBelowAction,
-                       ToggleLauncherAction // adds/removes Launcher for the task
+                       ToggleLauncherAction, // adds/removes Launcher for the task
+                       NewInstanceAction // lauch a new instance of a launcher
                     };
 
 enum TaskAction { ResizeAction = 0,
