@@ -60,17 +60,24 @@ void LayoutsMenu::actionTriggered(QAction* action)
 	}
 	else {
 		LayoutUnit layoutUnit(LayoutUnit(action->data().toString()));
-		if( X11Helper::getCurrentLayouts().layouts.contains(layoutUnit) ) {
-			X11Helper::setLayout(layoutUnit);
-		}
-		else {
-			QList<LayoutUnit> layouts(keyboardConfig.getDefaultLayouts());
-			layouts.removeLast();
-			layouts.append(layoutUnit);
-			XkbHelper::initializeKeyboardLayouts(layouts);
-			X11Helper::setLayout(layoutUnit);
-		}
+		switchToLayout(layoutUnit, keyboardConfig);
 	}
+}
+
+int LayoutsMenu::switchToLayout(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig)
+{
+	bool res;
+	if( X11Helper::getCurrentLayouts().layouts.contains(layoutUnit) ) {
+		res = X11Helper::setLayout(layoutUnit);
+	}
+	else {
+		QList<LayoutUnit> layouts(keyboardConfig.getDefaultLayouts());
+		layouts.removeLast();
+		layouts.append(layoutUnit);
+		XkbHelper::initializeKeyboardLayouts(layouts);
+		res = X11Helper::setLayout(layoutUnit);
+	}
+	return res;
 }
 
 QAction* LayoutsMenu::createAction(const LayoutUnit& layoutUnit) const

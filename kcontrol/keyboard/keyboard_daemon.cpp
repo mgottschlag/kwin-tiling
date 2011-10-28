@@ -39,6 +39,7 @@
 #include "keyboard_hardware.h"
 #include "layout_tray_icon.h"
 #include "layout_memory_persister.h"
+#include "layouts_menu.h"
 
 
 K_PLUGIN_FACTORY(KeyboardFactory, registerPlugin<KeyboardDaemon>();)
@@ -218,7 +219,9 @@ void KeyboardDaemon::switchToNextLayout()
 
 bool KeyboardDaemon::setLayout(QAction* action)
 {
-	return X11Helper::setLayout(LayoutUnit(action->data().toString()));
+	LayoutUnit layoutUnit(LayoutUnit(action->data().toString()));
+	return LayoutsMenu::switchToLayout(layoutUnit, keyboardConfig);	// need this to be able to switch to spare layouts
+//	return X11Helper::setLayout(LayoutUnit(action->data().toString()));
 }
 
 bool KeyboardDaemon::setLayout(const QString& layout)
