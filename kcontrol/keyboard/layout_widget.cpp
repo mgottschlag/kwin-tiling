@@ -47,8 +47,8 @@ LayoutWidget::LayoutWidget(QWidget* parent, const QList<QVariant>& /*args*/):
 	}
 
 	keyboardConfig->load();
-	bool show = keyboardConfig->showIndicator
-			&& ( keyboardConfig->showSingle || X11Helper::getLayoutsList().size() > 1 );
+	bool show = // keyboardConfig->showIndicator &&
+			( keyboardConfig->showSingle || X11Helper::getLayoutsList().size() > 1 );
 	if( ! show ) {
 		hide();
 		return;
