@@ -79,6 +79,7 @@ public:
     bool isActionSupported(NET::Action) const;
     void addMimeData(QMimeData *mimeData) const;
     KUrl launcherUrl() const;
+    void resetLauncherCheck();
 
 public Q_SLOTS:
     void toDesktop(int);

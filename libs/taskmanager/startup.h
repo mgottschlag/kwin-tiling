@@ -60,6 +60,8 @@ public:
      * The name of the starting task (if known).
      */
     QString text() const;
+    QString desktopId() const;
+    QString wmClass() const;
 
     /**
      * The name of the executable of the starting task.

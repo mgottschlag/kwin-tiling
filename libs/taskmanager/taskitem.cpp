@@ -1,6 +1,7 @@
 /*****************************************************************
 
 Copyright 2008 Christian Mollekopf <chrigi_1@hotmail.com>
+Copyright (C) 2011 Craig Drummond <craig.p.drummond@gmail.com> 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,10 +25,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // Own
 #include "taskitem.h"
 
+#include <KConfig>
+#include <KConfigGroup>
 #include <KDebug>
+#include <KDesktopFile>
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
+#include <ksysguard/processes.h>
+#include <ksysguard/process.h>
+
+#include <QtCore/QFile>
+#include <QtCore/QTimer>
+
+#include "groupmanager.h"
 
 namespace TaskManager
 {
@@ -38,11 +49,14 @@ class TaskItem::Private
 public:
     Private()
         : startupTask(0)
+        , checkedForLauncher(false)
     {
     }
 
     QWeakPointer<Task> task;
     StartupPtr startupTask;
+    KUrl launcherUrl;
+    bool checkedForLauncher;
 };
 
 
@@ -357,18 +371,162 @@ void TaskItem::addMimeData(QMimeData *mimeData) const
     d->task.data()->addMimeData(mimeData);
 }
 
+static KService::List getServicesViaPid(int pid)
+{
+    // Attempt to find using commandline...
+    KService::List services;
+    KSysGuard::Processes *procs=new KSysGuard::Processes();
+    
+    procs->updateOrAddProcess(pid);
+
+    KSysGuard::Process *proc=procs->getProcess(pid);
+    QString cmdline=proc ? proc->command.simplified() : QString(); // proc->command has a trailing space???
+    
+    delete procs;
+
+    if(!cmdline.isEmpty()) {
+        int firstSpace=cmdline.indexOf(' ');
+ 
+        services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline));
+        if(services.empty()) {
+            // Could not find with complete commandline, so strip out path part...
+            int slash=cmdline.lastIndexOf('/', firstSpace);
+            if(slash>0) {
+                services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash+1)));
+            }
+        }
+        
+        if(services.empty() && firstSpace>0) {
+            // Could not find with arguments, so try without...
+            cmdline=cmdline.left(firstSpace);
+            services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline));
+
+            int slash=cmdline.lastIndexOf('/');
+            if(slash>0) {
+                services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash+1)));
+            }
+        }
+    }
+
+    return services;
+}
+
 KUrl TaskItem::launcherUrl() const
 {
-    if (!d->task) {
+    if (!d->task && !isStartupItem()) {
         return KUrl();
+    }
+
+    if (!d->launcherUrl.isEmpty() || d->checkedForLauncher) {
+        return d->launcherUrl;
     }
 
     // Search for applications which are executable and case-insensitively match the windowclass of the task and
     // See http://techbase.kde.org/Development/Tutorials/Services/Traders#The_KTrader_Query_Language
-    QString query = QString("exist Exec and ('%1' =~ Name)").arg(d->task.data()->classClass());
-    KService::List services = KServiceTypeTrader::self()->query("Application", query);
+    KService::List services;
+    bool triedPid=false;
+
+    // Set a flag so that we remeber that we have already checked for a launcher. This is becasue if we fail, then
+    // we will keep on failing so the isEmpty()  check above is not enough.
+    d->checkedForLauncher=true;
+
+    if(d->task && !d->task.data()->classClass().isEmpty()) {
+        // Check to see if this wmClass matched a saved one...      
+        KConfig cfg("taskmanagerrulesrc");
+        KConfigGroup grp(&cfg, "Mapping");
+        KConfigGroup set(&cfg, "Settings");
+
+        // Some apps have different laucnhers depending upon commandline...
+        QStringList matchCommandLineFirst=set.readEntry("MatchCommandLineFirst", QStringList());
+        if(matchCommandLineFirst.contains(d->task.data()->classClass())) {
+            triedPid=true;
+            services=getServicesViaPid(d->task.data()->pid());
+        }
+
+        // If the user has manualy set a mapping, respect this first...
+        QString mapped(grp.readEntry(d->task.data()->classClass()+"::"+d->task.data()->className(), QString()));
+        
+        if(mapped.endsWith(".desktop")) {
+            d->launcherUrl=mapped;
+            return d->launcherUrl;
+        }
+        
+        if(mapped.isEmpty()) {
+            mapped=grp.readEntry(d->task.data()->classClass(), QString());
+        
+            if(mapped.endsWith(".desktop")) {
+                d->launcherUrl=mapped;
+                return d->launcherUrl;
+            }
+        }
+        
+        // Some apps, such as Wine, cannot use className to map to launcher name - as Wine itself is not a GUI app
+        // So, Settings/ManualOnly lists window classes where the user will always ahve to manual set the launcher...
+        QStringList manualOnly=set.readEntry("ManualOnly", QStringList());
+        
+        if(manualOnly.contains(d->task.data()->classClass())) {
+            return d->launcherUrl;
+        }
+        
+        if(!mapped.isEmpty()) {
+            services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ DesktopEntryName)").arg(mapped));
+        }
+
+        if(!mapped.isEmpty() && services.empty()) {
+            services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Name)").arg(mapped));
+        }
+
+        // To match other docks (docky, unity, etc.) attempt to match on DesktopEntryName first...
+        if(services.empty()) {
+            services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ DesktopEntryName)").arg(d->task.data()->classClass()));
+        }
+
+        // Try StartupWMClass
+        if(services.empty()) {
+            services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ StartupWMClass)").arg(d->task.data()->classClass()));
+        }
+
+        // Try 'Name' - unfortunately this can be translated, so has a good chance of failing! (As it does for KDE's own "System Settings" (even in English!!))
+        if(services.empty()) {
+            services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Name)").arg(d->task.data()->classClass()));
+        }
+        
+        // Ok, absolute *last* chance, try matching via pid (but only if we have not already tried this!)...
+        if(services.empty() && !triedPid) {
+            services=getServicesViaPid(d->task.data()->pid());
+        }
+    }
+    
+    if(services.empty() && isStartupItem()) {
+        // Try to match via desktop filename...
+        if(!startup()->desktopId().isNull() && startup()->desktopId().endsWith(".desktop")) {
+            if(startup()->desktopId().startsWith("/")) {
+                d->launcherUrl=KUrl::fromPath(startup()->desktopId());
+                return d->launcherUrl;
+            } else {
+                QString desktopName=startup()->desktopId();
+            
+                if(desktopName.endsWith(".desktop")) {
+                    desktopName=desktopName.mid(desktopName.length()-8);
+                }
+     
+                services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ DesktopEntryName)").arg(desktopName));
+            }
+        }
+        
+        // Try StartupWMClass
+        if(services.empty() && !startup()->wmClass().isNull()) {
+            services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ StartupWMClass)").arg(startup()->wmClass()));
+        }
+        
+        // Try via name...
+        if(services.empty() && !startup()->text().isNull()) {
+            services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Name)").arg(startup()->text()));
+        }
+    }
+
     if (!services.empty()) {
-        return KUrl::fromPath((services[0]->entryPath()));
+        d->launcherUrl=KUrl::fromPath(services[0]->entryPath());
     } else {
         // No desktop-file was found, so try to find at least the executable
         // usually it's the lower cased window class class, but if that fails let's trust it
@@ -378,11 +536,18 @@ KUrl TaskItem::launcherUrl() const
         }
 
         if (!path.isEmpty()) {
-            return KUrl::fromPath(path);
+            d->launcherUrl=KUrl::fromPath(path);
         }
     }
 
-    return KUrl();
+    return d->launcherUrl;
+}
+
+void TaskItem::resetLauncherCheck()
+{
+    if(d->launcherUrl.isEmpty()) {
+        d->checkedForLauncher=false;
+    }
 }
 
 void TaskItem::close()

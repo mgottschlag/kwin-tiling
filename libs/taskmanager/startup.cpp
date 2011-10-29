@@ -70,6 +70,16 @@ QString Startup::text() const
     return d->data.findName();
 }
 
+QString Startup::desktopId() const
+{
+    return d->data.applicationId();
+}
+
+QString Startup::wmClass() const
+{
+    return d->data.WMClass();
+}
+    
 QString Startup::bin() const
 {
     return d->data.bin();

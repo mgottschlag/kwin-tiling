@@ -44,6 +44,11 @@ QString Task::classClass() const
     return QString();
 }
 
+int Task::pid() const
+{
+    return 0; // TODO!!!
+}
+
 void Task::move()
 {
     bool on_current = d->info.isOnCurrentDesktop();

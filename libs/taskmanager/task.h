@@ -101,6 +101,7 @@ public:
     QString name() const;
     QString className() const;
     QString classClass() const;
+    int pid() const;
 
     /**
      * A list of the window ids of all transient windows (dialogs) associated

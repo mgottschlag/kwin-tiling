@@ -80,6 +80,11 @@ QString Task::classClass() const
     return QString();
 }
 
+int Task::pid() const
+{
+    return NETWinInfo( QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMPid ).pid();
+}
+
 void Task::move()
 {
     bool on_current = d->info.isOnCurrentDesktop();
