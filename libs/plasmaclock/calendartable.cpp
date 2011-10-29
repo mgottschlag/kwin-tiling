@@ -424,6 +424,10 @@ class CalendarTablePrivate
         int weekBarSpace;
         int glowRadius;
 
+        QFont weekDayFont;
+        QFont dateFontBold;
+        QFont dateFont;
+
         int pendingPopulations;
         QTimer *delayedPopulationTimer;
 };
@@ -1013,6 +1017,49 @@ void CalendarTable::resizeEvent(QGraphicsSceneResizeEvent * event)
     d->glowRadius = d->cellW * .1;
     d->headerHeight = (int) (d->cellH / 1.5);
     d->centeringSpace = qMax(0, int((r.width() - (rectSizeW * numCols) - (d->cellSpace * (numCols -1))) / 2));
+
+    // Relative to the cell size
+    const qreal weekSize = .75;
+    const qreal dateSize = .8;
+
+    d->weekDayFont = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+    d->weekDayFont.setPixelSize(d->cellH * weekSize);
+
+    d->dateFontBold = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+    d->dateFontBold.setPixelSize(d->cellH * dateSize);
+    d->dateFontBold.setBold(true);
+
+    d->dateFont = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+
+#if QT_VERSION >= 0x040800
+    d->weekDayFont.setHintingPreference(QFont::PreferNoHinting);
+    d->dateFontBold.setHintingPreference(QFont::PreferNoHinting);
+    d->dateFont.setHintingPreference(QFont::PreferNoHinting);
+#endif
+
+    QFontMetrics fm(d->weekDayFont);
+
+    int width = 0;
+    for (int i = 0; i < d->daysInWeek; i++) {
+        const QString name = calendar()->weekDayName(i, KCalendarSystem::ShortDayName);
+        width = qMax(width, fm.width(name));
+    }
+
+    if (width > d->cellW * weekSize) {
+        d->weekDayFont.setPixelSize(d->weekDayFont.pixelSize() * ((d->cellW * weekSize) / width));
+    }
+
+    fm = QFontMetrics(d->dateFontBold);
+    width = 0;
+    for (int i = 10; i <= 52; i++) {
+        width = qMax(width, fm.width(QString::number(i)));
+    }
+
+    if (width > d->cellW * dateSize) {
+        d->dateFontBold.setPixelSize(d->dateFontBold.pixelSize() * ((d->cellW * dateSize) / width));
+    }
+
+    d->dateFont.setPixelSize(d->dateFontBold.pixelSize());
 }
 
 void CalendarTable::paintCell(QPainter *p, int cell, int weekRow, int weekdayColumn, CellTypes type, const QDate &cellDate)
@@ -1030,12 +1077,7 @@ void CalendarTable::paintCell(QPainter *p, int cell, int weekRow, int weekdayCol
     }
 
     p->setPen(numberColor);
-    QFont font = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
-    if (type & Event) {
-        font.setBold(true);
-    }
-    font.setPixelSize(cellArea.height() * 0.7);
-    p->setFont(font);
+    p->setFont(type & Event ? d->dateFontBold : d->dateFont);
     if (!(type & InvalidDate)) {
         p->drawText(cellArea, Qt::AlignCenter, calendar()->dayString(cellDate, KCalendarSystem::ShortFormat), &cellArea); //draw number
     }
@@ -1152,9 +1194,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
             if (weekdayColumn == 0) {
                 QRectF cellRect(r.x() + d->centeringSpace, y, d->cellW, d->cellH);
                 p->setPen(Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-                QFont font = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
-                font.setPixelSize(cellRect.height() * 0.7);
-                p->setFont(font);
+                p->setFont(d->dateFont);
                 p->setOpacity(d->opacity);
                 QString weekString;
                 QString accurateWeekString;
@@ -1180,7 +1220,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
                         }
                     }
                 }
-                QFontMetrics fontMetrics(font);
+                QFontMetrics fontMetrics(d->dateFont);
                 if (fontMetrics.width(accurateWeekString) > d->cellW) {
                     p->drawText(cellRect, Qt::AlignCenter, weekString); //draw number
                 } else {
@@ -1198,9 +1238,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
         for (int i = 0; i < d->daysInWeek; i++){
             int weekDay = ((i + weekStartDay - 1) % d->daysInWeek) + 1;
             QString dayName = calendar()->weekDayName(weekDay, KCalendarSystem::ShortDayName);
-            QFont font = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
-            font.setPixelSize(d->headerHeight * 0.9);
-            p->setFont(font);
+            p->setFont(d->weekDayFont);
             p->drawText(QRectF(cellX(i), r.y(), d->cellW, d->headerHeight),
                         Qt::AlignCenter | Qt::AlignVCenter, dayName);
         }
