@@ -19,7 +19,7 @@
 
 import QtQuick 1.0
 import org.kde.plasma.core 0.1 as PlasmaCore
-import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
+import org.kde.plasma.components 0.1 as Components
 
 Item {
     id: devicenotifier
@@ -149,7 +149,7 @@ Item {
             topMargin: 10
             bottom: statusBarSeparator.top
             left: parent.left
-            right: parent.right
+            right: scrollBar.visible ? scrollBar.left : parent.right
         }
         model: PlasmaCore.SortFilterModel {
             id: filterModel
@@ -196,12 +196,22 @@ Item {
         Component.onCompleted: currentIndex=-1
     }
 
+    Components.ScrollBar {
+        id: scrollBar
+        flickableItem: notifierDialog
+        anchors {
+            right: parent.right
+            top: notifierDialog.top
+            bottom: notifierDialog.bottom
+        }
+    }
+
     Component {
         id: deviceItem
 
         DeviceItem {
             id: wrapper
-            width: devicenotifier.width
+            width: notifierDialog.width
             udi: DataEngineSource
             icon: hpSource.data[udi]["icon"]
             deviceName: hpSource.data[udi]["text"]
@@ -237,6 +247,7 @@ Item {
                     notifierDialog.currentExpanded = index
                 }
             }
+            Behavior on height { NumberAnimation { duration: 150 } }
         }
     }
 
@@ -252,8 +263,11 @@ Item {
         }
     }
 
-    PlasmaWidgets.Separator {
+    PlasmaCore.SvgItem {
         id: statusBarSeparator
+        svg: lineSvg
+        elementId: "horizontal-line"
+        height: lineSvg.elementSize("horizontal-line").height
         anchors {
             bottom: statusBar.top
             bottomMargin: statusBar.visible ? 3:0

@@ -160,7 +160,7 @@ X-Plasma-NotificationArea=true
 
 X-KDE-PluginInfo-Author=Viranch Mehta
 X-KDE-PluginInfo-Email=viranch.mehta@gmail.com
-X-KDE-PluginInfo-Name=org.kde.devicenotifier
+X-KDE-PluginInfo-Name=notifier
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=http://userbase.kde.org/Plasma/DeviceNotifier
 X-KDE-PluginInfo-Category=System Information
