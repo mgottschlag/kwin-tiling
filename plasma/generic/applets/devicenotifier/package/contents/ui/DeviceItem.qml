@@ -196,13 +196,15 @@ Item {
             left: deviceIcon.right
             right: leftAction.right
         }
+        interactive: false
         model: hpSource.data[udi]["actions"]
         property int actionVerticalMargins: 5
         property int actionIconHeight: 30
         height: expanded ? ((actionIconHeight+(2*actionVerticalMargins))*model.length)+anchors.topMargin : 0
-        visible: expanded
+        opacity: expanded ? 1 : 0
         delegate: actionItem
         highlight: actionHighlighter
+        Behavior on opacity { NumberAnimation { duration: 150 } }
     }
     
     Component {
