@@ -7,6 +7,10 @@ X-KDE-StartupNotify=true
 NotShowIn=KDE
 
 GenericName=KDE System Settings
+GenericName[hu]=KDE Rendszerbeállítások
+GenericName[ia]=Preferentias de systema KDE
+GenericName[kk]=KDE жүйелік параметрлері
+GenericName[nl]=KDE-systeeminstellingen
 GenericName[pt]=Configuração do Sistema KDE
 GenericName[pt_BR]=Configurações do sistema KDE
 GenericName[sv]=KDE:s systeminställningar
@@ -14,6 +18,10 @@ GenericName[uk]=Системні параметри KDE
 GenericName[x-test]=xxKDE System Settingsxx
 
 Name=KDE System Settings
+Name[hu]=KDE Rendszerbeállítások
+Name[ia]=Preferentias de systema KDE
+Name[kk]=KDE жүйелік параметрлері
+Name[nl]=KDE-systeeminstellingen
 Name[pt]=Configuração do Sistema KDE
 Name[pt_BR]=Configurações do sistema KDE
 Name[sv]=KDE:s systeminställningar

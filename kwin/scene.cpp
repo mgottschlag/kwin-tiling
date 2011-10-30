@@ -93,11 +93,13 @@ Scene* scene = 0;
 
 Scene::Scene(Workspace* ws)
     : QObject(ws)
+    , lastRenderTime(0)
     , wspace(ws)
     , has_waitSync(false)
     , lanczos_filter(new LanczosFilter())
     , m_overlayWindow(new OverlayWindow())
 {
+    last_time.invalidate(); // Initialize the timer
 }
 
 Scene::~Scene()
@@ -170,18 +172,19 @@ void Scene::updateTimeDiff()
         // Simply set it to one (zero would mean no change at all and could
         // cause problems).
         time_diff = 1;
+        last_time.start();
     } else
-        time_diff = last_time.elapsed();
+        time_diff = last_time.restart();
+
     if (time_diff < 0)   // check time rollback
         time_diff = 1;
-    last_time.restart();;
 }
 
 // Painting pass is optimized away.
 void Scene::idle()
 {
     // Don't break time since last paint for the next pass.
-    last_time.invalidate();;
+    last_time.invalidate();
 }
 
 // the function that'll be eventually called by paintScreen() above

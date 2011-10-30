@@ -18,75 +18,71 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef PLASMA_DESKTOPTOOLBOX_P_H
-#define PLASMA_DESKTOPTOOLBOX_P_H
+#ifndef PLASMA_PANELTOOLBOX_P_H
+#define PLASMA_PANELTOOLBOX_P_H
 
 #include <QGraphicsItem>
 #include <QObject>
+#include <QPropertyAnimation>
 #include <QTime>
 
-#include <kicon.h>
-
-#include <internaltoolbox_p.h>
+#include <KIcon>
 
 #include <Plasma/Animator>
 
+#include "internaltoolbox.h"
 
 class Widget;
 class EmptyGraphicsItem;
-class DesktopToolBoxPrivate;
+class PanelToolBoxPrivate;
 
-class DesktopToolBox : public InternalToolBox
+class PanelToolBox : public InternalToolBox
 {
     Q_OBJECT
-    Q_PROPERTY(qreal highlight READ highlight WRITE setHighlight)
+    Q_PROPERTY(qreal highlight READ highlightValue WRITE setHighlightValue)
 
 public:
-    explicit DesktopToolBox(Plasma::Containment *parent = 0);
-    explicit DesktopToolBox(QObject *parent = 0, const QVariantList &args = QVariantList());
-    ~DesktopToolBox();
+    explicit PanelToolBox(Plasma::Containment *parent);
+    explicit PanelToolBox(QObject *parent = 0, const QVariantList &args = QVariantList());
+    ~PanelToolBox();
     QRectF boundingRect() const;
     QPainterPath shape() const;
 
-    void addTool(QAction *action);
-    void removeTool(QAction *action);
     void showToolBox();
     void hideToolBox();
-
-    QSize cornerSize() const;
-    QSize fullWidth() const;
-    QSize fullHeight() const;
-
-    QGraphicsWidget *toolParent();
+    void setShowing(bool show);
 
 public Q_SLOTS:
     void toolTipAboutToShow();
     void toolTipHidden();
-    void updateToolBox();
 
 protected:
     void init();
+
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
-protected Q_SLOTS:
-    void setHighlight(qreal progress);
-    qreal highlight();
-    void updateTheming();
-    void toolTriggered(bool);
-    void hideToolBacker();
-    /**
-     * show/hide the toolbox
-     */
+protected slots:
+    void immutabilityChanged(Plasma::ImmutabilityType immutability);
+    void setHighlightValue(qreal progress);
+    qreal highlightValue() const;
     void toggle();
+    void assignColors();
+
 private:
     void highlight(bool highlighting);
-    void adjustToolBackerGeometry();
-    DesktopToolBoxPrivate *d;
+
+    KIcon m_icon;
+    QWeakPointer<QPropertyAnimation> m_anim;
+    qreal m_animFrame;
+    QColor m_fgColor;
+    QColor m_bgColor;
+    Plasma::Svg *m_background;
+    bool m_highlighting;
 };
 
-K_EXPORT_PLASMA_TOOLBOX(desktoptoolbox, DesktopToolBox)
+K_EXPORT_PLASMA_TOOLBOX(paneltoolbox, PanelToolBox)
 
 #endif // multiple inclusion guard
 

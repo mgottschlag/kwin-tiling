@@ -27,7 +27,7 @@
 #include "ui_kcm_add_layout_dialog.h"
 
 
-AddLayoutDialog::AddLayoutDialog(const Rules* rules_, Flags* flags_, QWidget* parent):
+AddLayoutDialog::AddLayoutDialog(const Rules* rules_, Flags* flags_, bool showLabel, QWidget* parent):
 		QDialog(parent),
 		rules(rules_),
 		flags(flags_),
@@ -54,13 +54,12 @@ AddLayoutDialog::AddLayoutDialog(const Rules* rules_, Flags* flags_, QWidget* pa
 	layoutDialogUi->languageComboBox->insertItem(0, i18n("Any language"), "");
 	layoutDialogUi->languageComboBox->setCurrentIndex(0);
 
-	bool noLabel = flags != NULL;
-	if( noLabel ) {
-		layoutDialogUi->labelLabel->setVisible(false);
-		layoutDialogUi->labelEdit->setVisible(false);
+	if( showLabel ) {
+		layoutDialogUi->labelEdit->setMaxLength(LayoutUnit::MAX_LABEL_LENGTH);
 	}
 	else {
-		layoutDialogUi->labelEdit->setMaxLength(LayoutUnit::MAX_LABEL_LENGTH);
+		layoutDialogUi->labelLabel->setVisible(false);
+		layoutDialogUi->labelEdit->setVisible(false);
 	}
 
     languageChanged(0);

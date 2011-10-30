@@ -18,7 +18,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "internaltoolbox_p.h"
+#include "internaltoolbox.h"
 
 #include <QAction>
 #include <QApplication>
@@ -27,78 +27,65 @@
 #include <QPainter>
 #include <QRadialGradient>
 
-#include <kcolorscheme.h>
-#include <kconfiggroup.h>
-#include <kiconloader.h>
-#include <kdebug.h>
+#include <KColorScheme>
+#include <KConfigGroup>
+#include <KIconLoader>
+#include <KDebug>
 
 #include <Plasma/Corona>
 #include <Plasma/Theme>
 #include <Plasma/IconWidget>
 
 
-class InternalToolBoxPrivate
-{
-public:
-    InternalToolBoxPrivate(InternalToolBox *toolbox, Plasma::Containment *c)
-      : q(toolbox),
-        containment(c),
-        corner(InternalToolBox::TopRight),
-        size(KIconLoader::SizeSmallMedium),
-        iconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall),
-        hidden(false),
-        showing(false),
-        movable(false),
-        dragging(false),
-        userMoved(false),
-        iconic(true)
-    {
-        if (c) {
-            QObject::connect(c, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
-                    q, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
-        }
-    }
-
-    InternalToolBox *q;
-    Plasma::Containment *containment;
-    InternalToolBox::Corner corner;
-    int size;
-    QSize iconSize;
-    QPoint dragStartRelative;
-    QTransform viewTransform;
-    QList<QAction *> actions;
-    bool hidden : 1;
-    bool showing : 1;
-    bool movable : 1;
-    bool dragging : 1;
-    bool userMoved : 1;
-    bool iconic : 1;
-};
-
 InternalToolBox::InternalToolBox(Plasma::Containment *parent)
     : AbstractToolBox(parent),
-      d(new InternalToolBoxPrivate(this, parent))
+      m_containment(parent),
+      m_corner(InternalToolBox::TopRight),
+      m_size(KIconLoader::SizeSmallMedium),
+      m_iconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall),
+      m_hidden(false),
+      m_showing(false),
+      m_movable(false),
+      m_dragging(false),
+      m_userMoved(false),
+      m_iconic(true)
 {
-    d->userMoved = false;
-    setAcceptsHoverEvents(true);
+    init();
 }
 
 InternalToolBox::InternalToolBox(QObject *parent, const QVariantList &args)
     : AbstractToolBox(parent, args),
-      d(new InternalToolBoxPrivate(this, qobject_cast<Plasma::Containment *>(parent)))
+      m_containment(qobject_cast<Plasma::Containment *>(parent)),
+      m_corner(InternalToolBox::TopRight),
+      m_size(KIconLoader::SizeSmallMedium),
+      m_iconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall),
+      m_hidden(false),
+      m_showing(false),
+      m_movable(false),
+      m_dragging(false),
+      m_userMoved(false),
+      m_iconic(true)
 {
-    d->userMoved = false;
-    setAcceptsHoverEvents(true);
+    init();
 }
 
 InternalToolBox::~InternalToolBox()
 {
-    delete d;
+}
+
+void InternalToolBox::init()
+{
+    if (m_containment) {
+        connect(m_containment, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
+                this, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
+    }
+
+    setAcceptsHoverEvents(true);
 }
 
 Plasma::Containment *InternalToolBox::containment()
 {
-    return d->containment;
+    return m_containment;
 }
 
 QPoint InternalToolBox::toolPosition(int toolHeight)
@@ -117,7 +104,7 @@ QPoint InternalToolBox::toolPosition(int toolHeight)
     case BottomLeft:
         return QPoint(-boundingRect().width(), toolHeight);
     case Bottom:
-        return QPoint((int)boundingRect().center().x() - d->iconSize.width(), toolHeight);
+        return QPoint((int)boundingRect().center().x() - m_iconSize.width(), toolHeight);
     case BottomRight:
     default:
         return QPoint(boundingRect().width(), toolHeight);
@@ -131,7 +118,7 @@ QGraphicsWidget *InternalToolBox::toolParent()
 
 QList<QAction *> InternalToolBox::actions() const
 {
-    return d->actions;
+    return m_actions;
 }
 
 void InternalToolBox::addTool(QAction *action)
@@ -140,29 +127,29 @@ void InternalToolBox::addTool(QAction *action)
         return;
     }
 
-    if (d->actions.contains(action)) {
+    if (m_actions.contains(action)) {
         return;
     }
 
     connect(action, SIGNAL(destroyed(QObject*)), this, SLOT(actionDestroyed(QObject*)));
     connect(action, SIGNAL(triggered(bool)), this, SLOT(toolTriggered(bool)));
-    d->actions.append(action);
+    m_actions.append(action);
 }
 
 void InternalToolBox::removeTool(QAction *action)
 {
     disconnect(action, 0, this, 0);
-    d->actions.removeAll(action);
+    m_actions.removeAll(action);
 }
 
 void InternalToolBox::actionDestroyed(QObject *object)
 {
-    d->actions.removeAll(static_cast<QAction*>(object));
+    m_actions.removeAll(static_cast<QAction*>(object));
 }
 
 bool InternalToolBox::isEmpty() const
 {
-    return d->actions.isEmpty();
+    return m_actions.isEmpty();
 }
 
 void InternalToolBox::toolTriggered(bool)
@@ -171,27 +158,27 @@ void InternalToolBox::toolTriggered(bool)
 
 int InternalToolBox::size() const
 {
-    return  d->size;
+    return  m_size;
 }
 
 void InternalToolBox::setSize(const int newSize)
 {
-    d->size = newSize;
+    m_size = newSize;
 }
 
 QSize InternalToolBox::iconSize() const
 {
-    return d->iconSize;
+    return m_iconSize;
 }
 
 void InternalToolBox::setIconSize(const QSize newSize)
 {
-    d->iconSize = newSize;
+    m_iconSize = newSize;
 }
 
 bool InternalToolBox::isShowing() const
 {
-    return d->showing;
+    return m_showing;
 }
 
 void InternalToolBox::setShowing(const bool show)
@@ -201,7 +188,7 @@ void InternalToolBox::setShowing(const bool show)
     } else {
         hideToolBox();
     }
-    d->showing = show;
+    m_showing = show;
 }
 
 void InternalToolBox::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -209,7 +196,7 @@ void InternalToolBox::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if (event->button() == Qt::LeftButton) {
         event->accept();
         // set grab position relative to toolbox
-        d->dragStartRelative = mapToParent(event->pos()).toPoint() - pos().toPoint();
+        m_dragStartRelative = mapToParent(event->pos()).toPoint() - pos().toPoint();
     } else {
         event->ignore();
     }
@@ -232,12 +219,12 @@ QSize  InternalToolBox::fullHeight() const
 
 void InternalToolBox::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (!d->movable || (!d->dragging && boundingRect().contains(event->pos()))) {
+    if (!m_movable || (!m_dragging && boundingRect().contains(event->pos()))) {
         return;
     }
 
-    d->dragging = true;
-    d->userMoved = true;
+    m_dragging = true;
+    m_userMoved = true;
     const QPoint newPos = mapToParent(event->pos()).toPoint();
     const QPoint curPos = pos().toPoint();
 
@@ -254,13 +241,13 @@ void InternalToolBox::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     int y = curPos.y();
 
     // jump to the nearest desktop border
-    int distanceToLeft = newPos.x() - d->dragStartRelative.x();
+    int distanceToLeft = newPos.x() - m_dragStartRelative.x();
     int distanceToRight = areaWidth - w - distanceToLeft;
-    int distanceToTop = newPos.y() - d->dragStartRelative.y();
+    int distanceToTop = newPos.y() - m_dragStartRelative.y();
     int distanceToBottom = areaHeight - h - distanceToTop;
 
-    int distancetoHorizontalMiddle = qAbs((newPos.x() + boundingRect().size().width()/2) - areaWidth/2 - d->dragStartRelative.x());
-    int distancetoVerticalMiddle = qAbs((newPos.y() + boundingRect().size().height()/2) - areaHeight/2 - d->dragStartRelative.y());
+    int distancetoHorizontalMiddle = qAbs((newPos.x() + boundingRect().size().width()/2) - areaWidth/2 - m_dragStartRelative.x());
+    int distancetoVerticalMiddle = qAbs((newPos.y() + boundingRect().size().height()/2) - areaHeight/2 - m_dragStartRelative.y());
 
     if (distancetoHorizontalMiddle < 10) {
         x = areaWidth/2 - boundingRect().size().width()/2;
@@ -271,19 +258,19 @@ void InternalToolBox::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         if (distanceToLeft < distanceToTop && distanceToLeft < distanceToRight &&
             distanceToLeft < distanceToBottom ) {
             x = 0;
-            y = (newPos.y() - d->dragStartRelative.y());
+            y = (newPos.y() - m_dragStartRelative.y());
         } else if (distanceToRight < distanceToTop && distanceToRight < distanceToLeft &&
                 distanceToRight < distanceToBottom) {
             x = areaWidth - w;
-            y = (newPos.y() - d->dragStartRelative.y());
+            y = (newPos.y() - m_dragStartRelative.y());
         } else if (distanceToTop < distanceToLeft && distanceToTop < distanceToRight &&
                 distanceToTop < distanceToBottom ) {
             y = 0;
-            x = (newPos.x() - d->dragStartRelative.x());
+            x = (newPos.x() - m_dragStartRelative.x());
         } else if (distanceToBottom < distanceToLeft && distanceToBottom < distanceToRight &&
                 distanceToBottom < distanceToTop) {
             y = areaHeight - h;
-            x = (newPos.x() - d->dragStartRelative.x());
+            x = (newPos.x() - m_dragStartRelative.x());
         }
     }
 
@@ -332,44 +319,44 @@ void InternalToolBox::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void InternalToolBox::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton && !d->dragging && boundingRect().contains(event->pos())) {
+    if (event->button() == Qt::LeftButton && !m_dragging && boundingRect().contains(event->pos())) {
         emit toggled();
         return;
     }
 
-    d->dragging = false;
-    KConfigGroup cg(d->containment->config());
+    m_dragging = false;
+    KConfigGroup cg(m_containment->config());
     save(cg);
 }
 
 bool InternalToolBox::isMovable() const
 {
-    return d->movable;
+    return m_movable;
 }
 
 void InternalToolBox::setIsMovable(bool movable)
 {
-    d->movable = movable;
+    m_movable = movable;
 }
 
 void InternalToolBox::setCorner(const Corner corner)
 {
-    d->corner = corner;
+    m_corner = corner;
 }
 
 InternalToolBox::Corner InternalToolBox::corner() const
 {
-    return d->corner;
+    return m_corner;
 }
 
 void InternalToolBox::save(KConfigGroup &cg) const
 {
-    if (!d->movable) {
+    if (!m_movable) {
         return;
     }
 
     KConfigGroup group(&cg, "ToolBox");
-    if (!d->userMoved) {
+    if (!m_userMoved) {
         group.deleteGroup();
         return;
     }
@@ -389,7 +376,7 @@ void InternalToolBox::save(KConfigGroup &cg) const
 
 void InternalToolBox::restore(const KConfigGroup &containmentGroup)
 {
-    if (!d->movable) {
+    if (!m_movable) {
         return;
     }
 
@@ -399,38 +386,42 @@ void InternalToolBox::restore(const KConfigGroup &containmentGroup)
         return;
     }
 
-    d->userMoved = true;
+    m_userMoved = true;
     setCorner(Corner(group.readEntry("corner", int(corner()))));
 
-    int offset = group.readEntry("offset", 0);
+    const int offset = group.readEntry("offset", 0);
+    const int w = boundingRect().width();
+    const int h = boundingRect().height();
+    const int maxW = m_containment ? m_containment->geometry().width() - w : offset;
+    const int maxH = m_containment ? m_containment->geometry().height() - h : offset;
     switch (corner()) {
         case InternalToolBox::TopLeft:
             setPos(0, 0);
             break;
         case InternalToolBox::Top:
-            setPos(offset, 0);
+            setPos(qMin(offset, maxW), 0);
             break;
         case InternalToolBox::TopRight:
-            setPos(d->containment->size().width() - boundingRect().width(), 0);
+            setPos(m_containment->size().width() - boundingRect().width(), 0);
             break;
         case InternalToolBox::Right:
-            setPos(d->containment->size().width() - boundingRect().width(), offset);
+            setPos(m_containment->size().width() - boundingRect().width(), qMin(offset, maxH));
             break;
         case InternalToolBox::BottomRight:
-            setPos(d->containment->size().width() - boundingRect().width(), d->containment->size().height() - boundingRect().height());
+            setPos(m_containment->size().width() - boundingRect().width(), m_containment->size().height() - boundingRect().height());
             break;
         case InternalToolBox::Bottom:
-            setPos(offset, d->containment->size().height() - boundingRect().height());
+            setPos(qMin(offset, maxW), m_containment->size().height() - boundingRect().height());
             break;
         case InternalToolBox::BottomLeft:
-            setPos(0, d->containment->size().height() - boundingRect().height());
+            setPos(0, m_containment->size().height() - boundingRect().height());
             break;
         case InternalToolBox::Left:
-            setPos(0, offset);
+            setPos(0, qMin(offset, maxH));
             break;
     }
     //kDebug() << "marked as user moved" << pos()
-    //         << (d->containment->containmentType() == Containment::PanelContainment);
+    //         << (m_containment->containmentType() == Containment::PanelContainment);
 }
 
 void InternalToolBox::immutabilityChanged(Plasma::ImmutabilityType immutability)
@@ -450,50 +441,49 @@ void InternalToolBox::reposition()
 {
     updateToolBox();
 
-    if (d->userMoved) {
-        //FIXME: adjust for situations like changing of the available space
-        restore(d->containment->config());
+    if (m_userMoved) {
+        restore(m_containment->config());
         return;
     }
 
-    if (d->containment->containmentType() == Plasma::Containment::PanelContainment ||
-        d->containment->containmentType() == Plasma::Containment::CustomPanelContainment) {
+    if (m_containment->containmentType() == Plasma::Containment::PanelContainment ||
+        m_containment->containmentType() == Plasma::Containment::CustomPanelContainment) {
         QRectF rect = boundingRect();
-        if (d->containment->formFactor() == Plasma::Vertical) {
+        if (m_containment->formFactor() == Plasma::Vertical) {
             setCorner(InternalToolBox::Bottom);
-            setPos(d->containment->geometry().width() / 2 - rect.width() / 2,
-                   d->containment->geometry().height() - rect.height());
+            setPos(m_containment->geometry().width() / 2 - rect.width() / 2,
+                   m_containment->geometry().height() - rect.height());
         } else {
             //defaulting to Horizontal right now
             if (QApplication::layoutDirection() == Qt::RightToLeft) {
-                setPos(d->containment->geometry().left(),
-                       d->containment->geometry().height() / 2 - rect.height() / 2);
+                setPos(m_containment->geometry().left(),
+                       m_containment->geometry().height() / 2 - rect.height() / 2);
                 setCorner(InternalToolBox::Left);
             } else {
-                setPos(d->containment->geometry().width() - rect.width(),
-                       d->containment->geometry().height() / 2 - rect.height() / 2);
+                setPos(m_containment->geometry().width() - rect.width(),
+                       m_containment->geometry().height() / 2 - rect.height() / 2);
                 setCorner(InternalToolBox::Right);
             }
         }
 
         //kDebug() << "got ourselves a panel containment, moving to" << pos();
-    } else if (d->containment->corona()) {
+    } else if (m_containment->corona()) {
         //kDebug() << "desktop";
 
-        int screen = d->containment->screen();
-        QRectF avail = d->containment->geometry();
+        int screen = m_containment->screen();
+        QRectF avail = m_containment->geometry();
         QRectF screenGeom = avail;
 
-        if (screen > -1 && screen < d->containment->corona()->numScreens()) {
-            avail = d->containment->corona()->availableScreenRegion(screen).boundingRect();
-            screenGeom = d->containment->corona()->screenGeometry(screen);
+        if (screen > -1 && screen < m_containment->corona()->numScreens()) {
+            avail = m_containment->corona()->availableScreenRegion(screen).boundingRect();
+            screenGeom = m_containment->corona()->screenGeometry(screen);
             avail.translate(-screenGeom.topLeft());
         }
 
         // Transform to the containment's coordinate system.
         screenGeom.moveTo(0, 0);
 
-        if (!d->containment->view() || !d->containment->view()->transform().isScaling()) {
+        if (!m_containment->view() || !m_containment->view()->transform().isScaling()) {
             if (QApplication::layoutDirection() == Qt::RightToLeft) {
                 if (avail.top() > screenGeom.top()) {
                     setPos(avail.topLeft() - QPoint(0, avail.top()));
@@ -519,16 +509,15 @@ void InternalToolBox::reposition()
             }
         } else {
             if (QApplication::layoutDirection() == Qt::RightToLeft) {
-                setPos(d->containment->mapFromScene(QPointF(d->containment->geometry().topLeft())));
+                setPos(m_containment->mapFromScene(QPointF(m_containment->geometry().topLeft())));
                 setCorner(InternalToolBox::Top);
             } else {
-                setPos(d->containment->mapFromScene(QPointF(d->containment->geometry().topRight())));
+                setPos(m_containment->mapFromScene(QPointF(m_containment->geometry().topRight())));
                 setCorner(InternalToolBox::Top);
             }
         }
     }
 }
 
-
-#include "internaltoolbox_p.moc"
+#include "internaltoolbox.moc"
 

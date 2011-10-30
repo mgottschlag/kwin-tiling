@@ -48,45 +48,9 @@
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
-     <property name="buddy">
-      <cstring>interval</cstring>
-     </property>
     </widget>
    </item>
-   <item row="1" column="2">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="KIntSpinBox" name="interval">
-       <property name="specialValueText">
-        <string>Never</string>
-       </property>
-       <property name="suffix">
-        <string>th minute</string>
-       </property>
-       <property name="prefix">
-        <string>Every </string>
-       </property>
-       <property name="maximum">
-        <number>60</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>138</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="2">
+   <item row="2" column="3">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -99,13 +63,16 @@
      </property>
     </spacer>
    </item>
+   <item row="1" column="2">
+    <widget class="KComboBox" name="intervalCombo"/>
+   </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KIntSpinBox</class>
-   <extends>QSpinBox</extends>
-   <header>knuminput.h</header>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

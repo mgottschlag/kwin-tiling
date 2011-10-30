@@ -18,31 +18,33 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "desktoptoolbox_p.h"
+#include "desktoptoolbox.h"
 
 #include <QAction>
+#include <QDBusInterface>
+#include <QDBusPendingCall>
 #include <QGraphicsSceneHoverEvent>
 #include <QPainter>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsView>
+#include <QTimer>
 #include <QWeakPointer>
-#include <QPropertyAnimation>
 
-#include <kcolorscheme.h>
-#include <kdebug.h>
-#include <kiconloader.h>
+#include <KAuthorized>
+#include <KDebug>
+#include <KIconLoader>
 
-#include <plasma/animations/animation.h>
-#include <plasma/applet.h>
-#include <plasma/containment.h>
-#include <plasma/framesvg.h>
-#include <plasma/paintutils.h>
-#include <plasma/theme.h>
-#include <plasma/tooltipcontent.h>
-#include <plasma/tooltipmanager.h>
-#include <plasma/widgets/iconwidget.h>
-#include <plasma/widgets/itembackground.h>
+#include <Plasma/Animation>
+#include <Plasma/Applet>
+#include <Plasma/Containment>
+#include <Plasma/FrameSvg>
+#include <Plasma/PaintUtils>
+#include <Plasma/Theme>
+#include <Plasma/ToolTipContent>
+#include <Plasma/ToolTipManager>
+#include <Plasma/ItemBackground>
 
+#include <kworkspace/kworkspace.h>
 
 class EmptyGraphicsItem : public QGraphicsWidget
 {
@@ -133,94 +135,33 @@ class EmptyGraphicsItem : public QGraphicsWidget
         Plasma::ItemBackground *m_itemBackground;
 };
 
-// used with QGrahphicsItem::setData
-static const int ToolName = 7001;
-
-class DesktopToolBoxPrivate
-{
-public:
-    DesktopToolBoxPrivate(DesktopToolBox *toolbox)
-      : q(toolbox),
-        background(0),
-        containment(0),
-        icon("plasma"),
-        toolBacker(0),
-        animCircleFrame(0),
-        animHighlightFrame(0),
-        hovering(false)
-    {}
-
-    void adjustBackgroundBorders()
-    {
-        switch (q->corner()) {
-          case InternalToolBox::TopRight:
-            background->setEnabledBorders(Plasma::FrameSvg::BottomBorder|Plasma::FrameSvg::LeftBorder);
-            break;
-        case InternalToolBox::Top:
-            background->setEnabledBorders(Plasma::FrameSvg::BottomBorder|Plasma::FrameSvg::LeftBorder|Plasma::FrameSvg::RightBorder);
-            break;
-        case InternalToolBox::TopLeft:
-            background->setEnabledBorders(Plasma::FrameSvg::BottomBorder|Plasma::FrameSvg::RightBorder);
-            break;
-        case InternalToolBox::Left:
-            background->setEnabledBorders(Plasma::FrameSvg::BottomBorder|Plasma::FrameSvg::TopBorder|Plasma::FrameSvg::RightBorder);
-            break;
-        case InternalToolBox::Right:
-            background->setEnabledBorders(Plasma::FrameSvg::BottomBorder|Plasma::FrameSvg::TopBorder|Plasma::FrameSvg::LeftBorder);
-            break;
-        case InternalToolBox::BottomLeft:
-            background->setEnabledBorders(Plasma::FrameSvg::TopBorder|Plasma::FrameSvg::RightBorder);
-            break;
-        case InternalToolBox::Bottom:
-            background->setEnabledBorders(Plasma::FrameSvg::TopBorder|Plasma::FrameSvg::LeftBorder|Plasma::FrameSvg::RightBorder);
-            break;
-        case InternalToolBox::BottomRight:
-        default:
-            background->setEnabledBorders(Plasma::FrameSvg::TopBorder|Plasma::FrameSvg::LeftBorder);
-            break;
-        }
-    }
-
-    DesktopToolBox *q;
-    Plasma::FrameSvg *background;
-    Plasma::Containment *containment;
-    KIcon icon;
-    EmptyGraphicsItem *toolBacker;
-    QWeakPointer<QPropertyAnimation> anim;
-    qreal animCircleFrame;
-    qreal animHighlightFrame;
-    QRect shapeRect;
-    QColor fgColor;
-    QColor bgColor;
-    bool hovering : 1;
-    QMultiMap<Plasma::AbstractToolBox::ToolType, Plasma::IconWidget *> tools;
-};
-
 DesktopToolBox::DesktopToolBox(Plasma::Containment *parent)
-    : InternalToolBox(parent),
-      d(new DesktopToolBoxPrivate(this))
+    : InternalToolBox(parent)
 {
-    d->containment = parent;
+    m_containment = parent;
     init();
 }
 
 DesktopToolBox::DesktopToolBox(QObject *parent, const QVariantList &args)
-   : InternalToolBox(parent, args),
-     d(new DesktopToolBoxPrivate(this))
+   : InternalToolBox(parent, args)
 {
-    d->containment = qobject_cast<Plasma::Containment *>(parent);
+    m_containment = qobject_cast<Plasma::Containment *>(parent);
     init();
 }
 
 DesktopToolBox::~DesktopToolBox()
 {
-    delete d;
 }
 
 void DesktopToolBox::init()
 {
-    d->background = new Plasma::FrameSvg(this);
-    d->background->setImagePath("widgets/toolbox");
+    m_icon = KIcon("plasma");
+    m_toolBacker = 0;
+    m_animCircleFrame = 0;
+    m_animHighlightFrame = 0;
+    m_hovering = false;
+    m_background = new Plasma::FrameSvg(this);
+    m_background->setImagePath("widgets/toolbox");
 
     setZValue(INT_MAX);
 
@@ -231,28 +172,42 @@ void DesktopToolBox::init()
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
             this, SLOT(updateTheming()));
     Plasma::ToolTipManager::self()->registerWidget(this);
+
+    if (KAuthorized::authorizeKAction("logout")) {
+        QAction *action = new QAction(i18n("Leave..."), this);
+        action->setIcon(KIcon("system-shutdown"));
+        connect(action, SIGNAL(triggered()), this, SLOT(startLogout()));
+        addTool(action);
+    }
+
+    if (KAuthorized::authorizeKAction("lock_screen")) {
+        QAction *action = new QAction(i18n("Lock Screen"), this);
+        action->setIcon(KIcon("system-lock-screen"));
+        connect(action, SIGNAL(triggered(bool)), this, SLOT(lockScreen()));
+        addTool(action);
+    }
 }
 
 QSize DesktopToolBox::cornerSize() const
 {
-    d->background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+    m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
     qreal left, top, right, bottom;
-    d->background->getMargins(left, top, right, bottom);
-    d->adjustBackgroundBorders();
+    m_background->getMargins(left, top, right, bottom);
+    adjustBackgroundBorders();
 
     return QSize(size() + left, size() + bottom);
 }
 
 QSize DesktopToolBox::fullWidth() const
 {
-    d->background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+    m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
     qreal left, top, right, bottom;
-    d->background->getMargins(left, top, right, bottom);
-    d->adjustBackgroundBorders();
+    m_background->getMargins(left, top, right, bottom);
+    adjustBackgroundBorders();
 
     int extraSpace = 0;
-    if (!d->containment->activity().isNull()) {
-        extraSpace = Plasma::Theme::defaultTheme()->fontMetrics().width(d->containment->activity()+'x');
+    if (!m_containment->activity().isNull()) {
+        extraSpace = Plasma::Theme::defaultTheme()->fontMetrics().width(m_containment->activity()+'x');
     }
 
     return QSize(size() + left + right + extraSpace, size() + bottom);
@@ -260,14 +215,14 @@ QSize DesktopToolBox::fullWidth() const
 
 QSize DesktopToolBox::fullHeight() const
 {
-    d->background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+    m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
     qreal left, top, right, bottom;
-    d->background->getMargins(left, top, right, bottom);
-    d->adjustBackgroundBorders();
+    m_background->getMargins(left, top, right, bottom);
+    adjustBackgroundBorders();
 
     int extraSpace = 0;
-    if (!d->containment->activity().isNull()) {
-        extraSpace = Plasma::Theme::defaultTheme()->fontMetrics().width(d->containment->activity()+'x');
+    if (!m_containment->activity().isNull()) {
+        extraSpace = Plasma::Theme::defaultTheme()->fontMetrics().width(m_containment->activity()+'x');
     }
 
     return QSize(size() + left, size() + top + bottom + extraSpace);
@@ -295,16 +250,15 @@ void DesktopToolBox::toolTipHidden()
 QRectF DesktopToolBox::boundingRect() const
 {
     int extraSpace = size();
-
-    d->adjustBackgroundBorders();
+    adjustBackgroundBorders();
 
     //keep space for the label and a character more
-    if (!d->containment->activity().isNull()) {
-        extraSpace = Plasma::Theme::defaultTheme()->fontMetrics().width(d->containment->activity()+'x');
+    if (!m_containment->activity().isNull()) {
+        extraSpace = Plasma::Theme::defaultTheme()->fontMetrics().width(m_containment->activity()+'x');
     }
 
     qreal left, top, right, bottom;
-    d->background->getMargins(left, top, right, bottom);
+    m_background->getMargins(left, top, right, bottom);
 
     QRectF rect;
 
@@ -323,8 +277,8 @@ QRectF DesktopToolBox::boundingRect() const
 
 void DesktopToolBox::updateTheming()
 {
-    d->bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-    d->fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    m_bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+    m_fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     update();
 }
 
@@ -372,18 +326,17 @@ void DesktopToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     QSize textSize;
     if (cornerElement.isNull()) {
-        activityName = d->containment->activity();
+        activityName = m_containment->activity();
         textSize =  Plasma::Theme::defaultTheme()->fontMetrics().size(Qt::TextSingleLine, activityName+'x');
     }
 
-    d->adjustBackgroundBorders();
-
-    d->background->resizeFrame(rect.size());
+    adjustBackgroundBorders();
+    m_background->resizeFrame(rect.size());
 
     if (!cornerElement.isNull()) {
-        d->background->paint(painter, rect, cornerElement);
+        m_background->paint(painter, rect, cornerElement);
     } else {
-        d->background->paintFrame(painter, rect.topLeft());
+        m_background->paintFrame(painter, rect.topLeft());
     }
 
 
@@ -399,12 +352,12 @@ void DesktopToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
             alignment = Qt::Alignment(Qt::AlignHCenter|Qt::AlignTop);
         }
 
-        iconRect = QStyle::alignedRect(QApplication::layoutDirection(), alignment, iconSize(), d->background->contentsRect().toRect());
+        iconRect = QStyle::alignedRect(QApplication::layoutDirection(), alignment, iconSize(), m_background->contentsRect().toRect());
 
-        QRect boundRect(QPoint(d->background->contentsRect().top(),
-                               d->background->contentsRect().left()),
-                        QSize(d->background->contentsRect().height(),
-                              d->background->contentsRect().width()));
+        QRect boundRect(QPoint(m_background->contentsRect().top(),
+                               m_background->contentsRect().left()),
+                        QSize(m_background->contentsRect().height(),
+                              m_background->contentsRect().width()));
 
         textRect = QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight|Qt::AlignVCenter, textSize, boundRect);
         textRect.moveTopLeft(textRect.topLeft() + QPoint(rect.top(), rect.left()));
@@ -417,9 +370,9 @@ void DesktopToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
             alignment = Qt::Alignment(Qt::AlignLeft|Qt::AlignVCenter);
         }
 
-        iconRect = QStyle::alignedRect(QApplication::layoutDirection(), alignment, iconSize(), d->background->contentsRect().toRect());
+        iconRect = QStyle::alignedRect(QApplication::layoutDirection(), alignment, iconSize(), m_background->contentsRect().toRect());
 
-        textRect = QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight|Qt::AlignVCenter, textSize, d->background->contentsRect().toRect());
+        textRect = QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight|Qt::AlignVCenter, textSize, m_background->contentsRect().toRect());
         textRect.moveTopLeft(textRect.topLeft() + rect.topLeft().toPoint());
     }
 
@@ -428,19 +381,19 @@ void DesktopToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     iconPos = iconRect.topLeft();
 
-    const qreal progress = d->animHighlightFrame;
+    const qreal progress = m_animHighlightFrame;
 
     if (qFuzzyCompare(qreal(1.0), progress)) {
-        d->icon.paint(painter, QRect(iconPos, iconSize()));
+        m_icon.paint(painter, QRect(iconPos, iconSize()));
     } else if (qFuzzyCompare(qreal(1.0), 1 + progress)) {
-        d->icon.paint(painter, QRect(iconPos, iconSize()),
+        m_icon.paint(painter, QRect(iconPos, iconSize()),
                       Qt::AlignCenter, QIcon::Disabled, QIcon::Off);
     } else {
-        QPixmap disabled = d->icon.pixmap(iconSize(), QIcon::Disabled, QIcon::Off);
-        QPixmap enabled = d->icon.pixmap(iconSize());
+        QPixmap disabled = m_icon.pixmap(iconSize(), QIcon::Disabled, QIcon::Off);
+        QPixmap enabled = m_icon.pixmap(iconSize());
         QPixmap result = Plasma::PaintUtils::transition(
-            d->icon.pixmap(iconSize(), QIcon::Disabled, QIcon::Off),
-            d->icon.pixmap(iconSize()), progress);
+            m_icon.pixmap(iconSize(), QIcon::Disabled, QIcon::Off),
+            m_icon.pixmap(iconSize()), progress);
         painter->drawPixmap(QRect(iconPos, iconSize()), result);
     }
 
@@ -507,7 +460,7 @@ QPainterPath DesktopToolBox::shape() const
 
 void DesktopToolBox::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    if (isShowing() || d->hovering) {
+    if (isShowing() || m_hovering) {
         QGraphicsItem::hoverEnterEvent(event);
         return;
     }
@@ -519,12 +472,12 @@ void DesktopToolBox::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 QGraphicsWidget *DesktopToolBox::toolParent()
 {
-    if (!d->toolBacker) {
-        d->toolBacker = new EmptyGraphicsItem(this);
-        d->toolBacker->hide();
+    if (!m_toolBacker) {
+        m_toolBacker = new EmptyGraphicsItem(this);
+        m_toolBacker->hide();
     }
 
-    return d->toolBacker;
+    return m_toolBacker;
 }
 
 void DesktopToolBox::showToolBox()
@@ -533,18 +486,18 @@ void DesktopToolBox::showToolBox()
         return;
     }
 
-    if (!d->toolBacker) {
-        d->toolBacker = new EmptyGraphicsItem(this);
+    if (!m_toolBacker) {
+        m_toolBacker = new EmptyGraphicsItem(this);
     }
 
-    d->toolBacker->setZValue(zValue() + 1);
+    m_toolBacker->setZValue(zValue() + 1);
 
     adjustToolBackerGeometry();
 
-    d->toolBacker->setOpacity(0);
-    d->toolBacker->show();
-    Plasma::Animation *fadeAnim = Plasma::Animator::create(Plasma::Animator::FadeAnimation, d->toolBacker);
-    fadeAnim->setTargetWidget(d->toolBacker);
+    m_toolBacker->setOpacity(0);
+    m_toolBacker->show();
+    Plasma::Animation *fadeAnim = Plasma::Animator::create(Plasma::Animator::FadeAnimation, m_toolBacker);
+    fadeAnim->setTargetWidget(m_toolBacker);
     fadeAnim->setProperty("startOpacity", 0);
     fadeAnim->setProperty("targetOpacity", 1);
     fadeAnim->start(QAbstractAnimation::DeleteWhenStopped);
@@ -589,7 +542,7 @@ void DesktopToolBox::addTool(QAction *action)
         }
     }
 
-    d->tools.insert(type, tool);
+    m_tools.insert(type, tool);
     //kDebug() << "added tool" << type << action->text();
 }
 
@@ -597,7 +550,7 @@ void DesktopToolBox::updateToolBox()
 {
     Plasma::IconWidget *tool = qobject_cast<Plasma::IconWidget *>(sender());
     if (tool && !tool->action()) {
-        QMutableMapIterator<ToolType, Plasma::IconWidget *> it(d->tools);
+        QMutableMapIterator<ToolType, Plasma::IconWidget *> it(m_tools);
         while (it.hasNext()) {
             it.next();
             if (it.value() == tool) {
@@ -621,7 +574,7 @@ void DesktopToolBox::updateToolBox()
 
 void DesktopToolBox::removeTool(QAction *action)
 {
-    QMutableMapIterator<ToolType, Plasma::IconWidget *> it(d->tools);
+    QMutableMapIterator<ToolType, Plasma::IconWidget *> it(m_tools);
     while (it.hasNext()) {
         it.next();
         Plasma::IconWidget *tool = it.value();
@@ -637,12 +590,12 @@ void DesktopToolBox::removeTool(QAction *action)
 
 void DesktopToolBox::adjustToolBackerGeometry()
 {
-    if (!d->toolBacker) {
+    if (!m_toolBacker) {
         return;
     }
 
-    d->toolBacker->clearLayout();
-    QMapIterator<ToolType, Plasma::IconWidget *> it(d->tools);
+    m_toolBacker->clearLayout();
+    QMapIterator<ToolType, Plasma::IconWidget *> it(m_tools);
     while (it.hasNext()) {
         it.next();
         Plasma::IconWidget *icon = it.value();
@@ -650,26 +603,26 @@ void DesktopToolBox::adjustToolBackerGeometry()
         if (icon->isEnabled()) {
             icon->show();
             icon->setDrawBackground(false);
-            d->toolBacker->addToLayout(icon);
+            m_toolBacker->addToLayout(icon);
         } else {
             icon->hide();
         }
     }
 
     qreal left, top, right, bottom;
-    d->toolBacker->getContentsMargins(&left, &top, &right, &bottom);
-    d->toolBacker->adjustSize();
+    m_toolBacker->getContentsMargins(&left, &top, &right, &bottom);
+    m_toolBacker->adjustSize();
 
     int x = 0;
     int y = 0;
     const int iconWidth = KIconLoader::SizeMedium;
     switch (corner()) {
     case TopRight:
-        x = (int)boundingRect().left() - d->toolBacker->size().width();
+        x = (int)boundingRect().left() - m_toolBacker->size().width();
         y = (int)boundingRect().top();
         break;
     case Top:
-        x = (int)boundingRect().center().x() - (d->toolBacker->size().width() / 2);
+        x = (int)boundingRect().center().x() - (m_toolBacker->size().width() / 2);
         y = (int)boundingRect().bottom();
         break;
     case TopLeft:
@@ -681,7 +634,7 @@ void DesktopToolBox::adjustToolBackerGeometry()
         y = (int)boundingRect().y();
         break;
     case Right:
-        x = (int)boundingRect().right() - iconWidth - d->toolBacker->size().width();
+        x = (int)boundingRect().right() - iconWidth - m_toolBacker->size().width();
         y = (int)boundingRect().y();
         break;
     case BottomLeft:
@@ -689,39 +642,39 @@ void DesktopToolBox::adjustToolBackerGeometry()
         y = (int)boundingRect().bottom();
         break;
     case Bottom:
-        x = (int)boundingRect().center().x() - (d->toolBacker->size().width() / 2);
+        x = (int)boundingRect().center().x() - (m_toolBacker->size().width() / 2);
         y = (int)boundingRect().top();
         break;
     case BottomRight:
     default:
-        x = (int)boundingRect().right() - iconWidth - d->toolBacker->size().width();
+        x = (int)boundingRect().right() - iconWidth - m_toolBacker->size().width();
         y = (int)boundingRect().top();
         break;
     }
 
     //kDebug() << "starting at" <<  x << startY;
-    d->toolBacker->setPos(x, y);
+    m_toolBacker->setPos(x, y);
     // now check that it actually fits within the parent's boundaries
-    QRectF backerRect = mapToParent(d->toolBacker->geometry()).boundingRect();
+    QRectF backerRect = mapToParent(m_toolBacker->geometry()).boundingRect();
     QSizeF parentSize = parentWidget()->size();
     if (backerRect.x() < 5) {
-        d->toolBacker->setPos(mapFromParent(QPointF(5, 0)).x(), y);
+        m_toolBacker->setPos(mapFromParent(QPointF(5, 0)).x(), y);
     } else if (backerRect.right() > parentSize.width() - 5) {
-        d->toolBacker->setPos(mapFromParent(QPointF(parentSize.width() - 5 - backerRect.width(), 0)).x(), y);
+        m_toolBacker->setPos(mapFromParent(QPointF(parentSize.width() - 5 - backerRect.width(), 0)).x(), y);
     }
 
     if (backerRect.y() < 5) {
-        d->toolBacker->setPos(x, mapFromParent(QPointF(0, 5)).y());
+        m_toolBacker->setPos(x, mapFromParent(QPointF(0, 5)).y());
     } else if (backerRect.bottom() > parentSize.height() - 5) {
-        d->toolBacker->setPos(x, mapFromParent(QPointF(0, parentSize.height() - 5 - backerRect.height())).y());
+        m_toolBacker->setPos(x, mapFromParent(QPointF(0, parentSize.height() - 5 - backerRect.height())).y());
     }
 }
 
 void DesktopToolBox::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     //kDebug() << event->pos() << event->scenePos()
-    //         << d->toolBacker->rect().contains(event->scenePos().toPoint());
-    if (!d->hovering || isShowing()) {
+    //         << m_toolBacker->rect().contains(event->scenePos().toPoint());
+    if (!m_hovering || isShowing()) {
         QGraphicsItem::hoverLeaveEvent(event);
         return;
     }
@@ -733,10 +686,10 @@ void DesktopToolBox::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void DesktopToolBox::hideToolBox()
 {
-    if (d->toolBacker) {
-        Plasma::Animation *fadeAnim = Plasma::Animator::create(Plasma::Animator::FadeAnimation, d->toolBacker);
+    if (m_toolBacker) {
+        Plasma::Animation *fadeAnim = Plasma::Animator::create(Plasma::Animator::FadeAnimation, m_toolBacker);
         connect(fadeAnim, SIGNAL(finished()), this, SLOT(hideToolBacker()));
-        fadeAnim->setTargetWidget(d->toolBacker);
+        fadeAnim->setTargetWidget(m_toolBacker);
         fadeAnim->setProperty("startOpacity", 1);
         fadeAnim->setProperty("targetOpacity", 0);
         fadeAnim->start(QAbstractAnimation::DeleteWhenStopped);
@@ -747,25 +700,25 @@ void DesktopToolBox::hideToolBox()
 
 void DesktopToolBox::hideToolBacker()
 {
-    d->toolBacker->hide();
+    m_toolBacker->hide();
 }
 
 void DesktopToolBox::highlight(bool highlighting)
 {
-    if (d->hovering == highlighting) {
+    if (m_hovering == highlighting) {
         return;
     }
 
-    d->hovering = highlighting;
+    m_hovering = highlighting;
 
-    QPropertyAnimation *anim = d->anim.data();
-    if (d->hovering) {
+    QPropertyAnimation *anim = m_anim.data();
+    if (m_hovering) {
         if (anim) {
             anim->stop();
-            d->anim.clear();
+            m_anim.clear();
         }
         anim = new QPropertyAnimation(this, "highlight", this);
-        d->anim = anim;
+        m_anim = anim;
     }
 
     if (anim->state() != QAbstractAnimation::Stopped) {
@@ -776,7 +729,7 @@ void DesktopToolBox::highlight(bool highlighting)
     anim->setStartValue(0);
     anim->setEndValue(1);
 
-    if(d->hovering) {
+    if (m_hovering) {
         anim->start();
     } else {
         anim->setDirection(QAbstractAnimation::Backward);
@@ -787,13 +740,13 @@ void DesktopToolBox::highlight(bool highlighting)
 
 void DesktopToolBox::setHighlight(qreal progress)
 {
-    d->animHighlightFrame = progress;
+    m_animHighlightFrame = progress;
     update();
 }
 
 qreal DesktopToolBox::highlight()
 {
-    return d->animHighlightFrame;
+    return m_animHighlightFrame;
 }
 
 void DesktopToolBox::toggle()
@@ -801,6 +754,89 @@ void DesktopToolBox::toggle()
     setShowing(!isShowing());
 }
 
+void DesktopToolBox::adjustBackgroundBorders() const
+{
+    Plasma::FrameSvg *background = const_cast<Plasma::FrameSvg *>(m_background);
 
+    switch (corner()) {
+        case InternalToolBox::TopRight:
+            background->setEnabledBorders(Plasma::FrameSvg::BottomBorder | Plasma::FrameSvg::LeftBorder);
+            break;
+        case InternalToolBox::Top:
+            background->setEnabledBorders(Plasma::FrameSvg::BottomBorder | Plasma::FrameSvg::LeftBorder | Plasma::FrameSvg::RightBorder);
+            break;
+        case InternalToolBox::TopLeft:
+            background->setEnabledBorders(Plasma::FrameSvg::BottomBorder | Plasma::FrameSvg::RightBorder);
+            break;
+        case InternalToolBox::Left:
+            background->setEnabledBorders(Plasma::FrameSvg::BottomBorder | Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::RightBorder);
+            break;
+        case InternalToolBox::Right:
+            background->setEnabledBorders(Plasma::FrameSvg::BottomBorder | Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::LeftBorder);
+            break;
+        case InternalToolBox::BottomLeft:
+            background->setEnabledBorders(Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::RightBorder);
+            break;
+        case InternalToolBox::Bottom:
+            background->setEnabledBorders(Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::LeftBorder | Plasma::FrameSvg::RightBorder);
+            break;
+        case InternalToolBox::BottomRight:
+        default:
+            m_background->setEnabledBorders(Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::LeftBorder);
+            break;
+    }
+}
 
-#include "desktoptoolbox_p.moc"
+void DesktopToolBox::lockScreen()
+{
+    if (m_containment) {
+        m_containment->closeToolBox();
+    } else {
+        setShowing(false);
+    }
+
+    if (!KAuthorized::authorizeKAction("lock_screen")) {
+        return;
+    }
+
+#ifndef Q_OS_WIN
+    const QString interface("org.freedesktop.ScreenSaver");
+    QDBusInterface screensaver(interface, "/ScreenSaver");
+    screensaver.asyncCall("Lock");
+#else
+    LockWorkStation();
+#endif // !Q_OS_WIN
+}
+
+void DesktopToolBox::startLogout()
+{
+    if (m_containment) {
+        m_containment->closeToolBox();
+    } else {
+        setShowing(false);
+    }
+
+    // this short delay is due to two issues:
+    // a) KWorkSpace's DBus alls are all syncronous
+    // b) the destrution of the menu that this action is in is delayed
+    //
+    // (a) leads to the menu hanging out where everyone can see it because
+    // the even loop doesn't get returned to allowing it to close.
+    //
+    // (b) leads to a 0ms timer not working since a 0ms timer just appends to
+    // the event queue, and then the menu closing event gets appended to that.
+    //
+    // ergo a timer with small timeout
+    QTimer::singleShot(10, this, SLOT(logout()));
+}
+
+void DesktopToolBox::logout()
+{
+    if (!KAuthorized::authorizeKAction("logout")) {
+        return;
+    }
+
+    KWorkSpace::requestShutDown();
+}
+
+#include "desktoptoolbox.moc"

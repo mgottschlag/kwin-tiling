@@ -38,6 +38,7 @@ public:
 	virtual ~LayoutsMenu();
 
 	QList<QAction*> contextualActions();
+	static int switchToLayout(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig);
 
 private Q_SLOTS:
 	void actionTriggered(QAction* action);
