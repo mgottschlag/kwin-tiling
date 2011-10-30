@@ -137,7 +137,7 @@ public:
     void reconnect();
 
     /** Adds a Launcher for the executable/.desktop-file at url and returns a reference to the launcher*/
-    bool addLauncher(const KUrl &url, QIcon icon = QIcon(), QString name = QString(), QString genericName = QString());
+    bool addLauncher(const KUrl &url, QIcon icon = QIcon(), QString name = QString(), QString genericName = QString(), int index=-1);
 
     /** Removes the given launcher*/
     void removeLauncher(const KUrl &url);
@@ -153,6 +153,24 @@ public:
         if config() is reimplemented to provide a valid config group */
     void exportLauncherConfig(const KConfigGroup &config);
 
+    /** @return position of launcher */
+    int launcherIndex(const KUrl &url) const;
+
+    /** @return number of launchers */
+    int launcherCount() const;
+
+    /** move a launcher */
+    void moveLauncher(const KUrl &url, int newIndex);
+
+    /** should launchers be show separate from tasks? */
+    bool separateLaunchers() const;
+
+    /** set if launchers should been show separate from tasks */
+    void setSeparateLaunchers(bool s);
+
+    /** @return the list of current launchers */
+    const QList<KUrl> & launchers() const;
+
 protected:
     // reimplement to provide a config group to read/write settings to
     virtual KConfigGroup config() const;
@@ -163,6 +181,9 @@ Q_SIGNALS:
 
     /** Signal that the configuration writen to the config file has changed */
     void configChanged();
+    
+    /** Signal that the order of launchers has changed */
+    void launchersChanged();
 
 private:
     Q_PRIVATE_SLOT(d, void currentDesktopChanged(int))

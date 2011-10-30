@@ -66,7 +66,8 @@ public:
           showOnlyMinimized(false),
           onlyGroupWhenFull(false),
           changingGroupingStrategy(false),
-          readingLauncherConfig(false)
+          readingLauncherConfig(false),
+          separateLaunchers(true)
     {
     }
 
@@ -94,6 +95,10 @@ public:
     void saveLauncher(LauncherItem *launcher);
     void saveLauncher(LauncherItem *launcher, KConfigGroup &group);
     void unsaveLauncher(LauncherItem *launcher);
+    void saveLauncherConfig();
+    void saveLauncherConfig(KConfigGroup &cg);
+    void readLauncherConfig();
+    void readLauncherConfig(KConfigGroup &cg);
     KConfigGroup launcherConfig(const KConfigGroup &config = KConfigGroup());
 
     TaskGroup *currentRootGroup();
@@ -115,6 +120,7 @@ public:
 
     QHash<QString, QHash<int, TaskGroup*> > rootGroups; //container for groups
     QHash<KUrl, LauncherItem *> launchers;
+    QList<KUrl> launcherSort;
     int currentDesktop;
     QString currentActivity;
 
@@ -125,6 +131,7 @@ public:
     bool onlyGroupWhenFull : 1;
     bool changingGroupingStrategy : 1;
     bool readingLauncherConfig : 1;
+    bool separateLaunchers : 1;
 };
 
 
@@ -604,10 +611,19 @@ KConfigGroup GroupManager::config() const
     return KConfigGroup();
 }
 
-bool GroupManager::addLauncher(const KUrl &url, QIcon icon, QString name, QString genericName)
+bool GroupManager::addLauncher(const KUrl &url, QIcon icon, QString name, QString genericName, int index)
 {
     if (url.isEmpty()) {
         return false;
+    }
+
+    if(!d->launcherSort.contains(url)) {
+        if(index>=0 && index<d->launcherSort.count()) {
+            d->launcherSort.insert(index, url);
+        } else {
+            d->launcherSort.append(url);
+        }
+        d->saveLauncherConfig();
     }
 
     LauncherItem *launcher = d->launchers.value(url); // Do not insert launchers twice
@@ -661,6 +677,11 @@ void GroupManager::removeLauncher(const KUrl &url)
         return;
     }
 
+    if(d->launcherSort.contains(url)) {
+        d->launcherSort.removeAll(url);
+        d->saveLauncherConfig();
+    }
+
     d->launchers.remove(url);
 
     typedef QHash<int,TaskGroup*> Metagroup;
@@ -672,6 +693,20 @@ void GroupManager::removeLauncher(const KUrl &url)
 
     d->unsaveLauncher(launcher);
     launcher->deleteLater();
+    
+    if(!d->separateLaunchers && d->abstractSortingStrategy && ManualSorting==d->abstractSortingStrategy->type()) {
+        // Ensure item is placed at end of launchers...
+        foreach (AbstractGroupableItem *item, d->rootGroups[d->currentActivity][d->currentDesktop]->members()) {
+            if(LauncherItemType!=item->itemType() && item->launcherUrl()==url) {
+                manualSortingRequest(item, d->launcherSort.count());
+                break;
+            }
+        }
+
+        if(!d->readingLauncherConfig) {
+            emit launchersChanged();
+        }
+    }
 }
 
 void GroupManagerPrivate::launcherVisibilityChange()
@@ -704,6 +739,15 @@ void GroupManager::readLauncherConfig(const KConfigGroup &cg)
         return;
     }
 
+    QList<KUrl> old=d->launcherSort;
+    d->readLauncherConfig(conf);
+    bool launcherOrderChanged=old!=d->launcherSort;
+
+    if(launcherOrderChanged) {
+        // Launcher order has changed, so we need to re-load tasks - so that these are sorted properly.
+        // First clear current group...
+        d->currentRootGroup()->clear();
+    }
     // prevents re-writing the results out
     d->readingLauncherConfig = true;
     QSet<KUrl> urls;
@@ -747,6 +791,11 @@ void GroupManager::readLauncherConfig(const KConfigGroup &cg)
     foreach (const KUrl &url, removals) {
         removeLauncher(url);
     }
+    
+    if(launcherOrderChanged) {
+        // ...now reload all tasks, as they were cleared...
+        d->actuallyReloadTasks();
+    }
 }
 
 void GroupManager::exportLauncherConfig(const KConfigGroup &cg)
@@ -759,6 +808,44 @@ void GroupManager::exportLauncherConfig(const KConfigGroup &cg)
     foreach (LauncherItem *launcher, d->launchers) {
         d->saveLauncher(launcher, conf);
     }
+}
+
+int GroupManager::launcherIndex(const KUrl &url) const
+{
+    return d->launcherSort.indexOf(url);
+}
+
+int GroupManager::launcherCount() const
+{
+    return d->launcherSort.count();
+}
+
+const QList<KUrl> & GroupManager::launchers() const
+{
+    return d->launcherSort;
+}
+
+void GroupManager::moveLauncher(const KUrl &url, int newIndex)
+{
+    if(!url.isValid()) {
+        return;
+    }
+    int oldIndex=d->launcherSort.indexOf(url);
+    
+    if(oldIndex>=0 && newIndex!=oldIndex) {
+        d->launcherSort.insert(newIndex, d->launcherSort.takeAt(oldIndex));
+        d->saveLauncherConfig();
+    }
+}
+
+bool GroupManager::separateLaunchers() const
+{
+    return d->separateLaunchers;
+}
+
+void GroupManager::setSeparateLaunchers(bool s)
+{
+    d->separateLaunchers=s;
 }
 
 KConfigGroup GroupManagerPrivate::launcherConfig(const KConfigGroup &config)
@@ -820,6 +907,57 @@ void GroupManagerPrivate::unsaveLauncher(LauncherItem *launcher)
     }
 
     emit q->configChanged();
+}
+
+void GroupManagerPrivate::saveLauncherConfig()
+{
+    if (readingLauncherConfig) {
+        return;
+    }
+
+    KConfigGroup cg = launcherConfig();
+    if (!cg.isValid()) {
+        return;
+    }
+    saveLauncherConfig(cg);
+}
+
+void GroupManagerPrivate::saveLauncherConfig(KConfigGroup &cg)
+{
+    QStringList launchers;
+    foreach (KUrl url, launcherSort) {
+        QString u(url.url());
+        if(!u.isEmpty()) {
+            launchers.append(u);
+        }
+    }
+    
+    cg.writeEntry("Items", launchers);
+
+    emit q->configChanged();
+}
+
+void GroupManagerPrivate::readLauncherConfig()
+{
+    if (readingLauncherConfig) {
+        return;
+    }
+
+    KConfigGroup cg = launcherConfig();
+    if (!cg.isValid()) {
+        return;
+    }
+    
+    readLauncherConfig(cg);
+}
+    
+void GroupManagerPrivate::readLauncherConfig(KConfigGroup &cg)
+{
+    QStringList launchers=cg.readEntry("Items", QStringList());
+    launcherSort.clear();
+    foreach (QString launcher, launchers) {
+        launcherSort.append(KUrl(launcher));
+    }
 }
 
 bool GroupManager::onlyGroupWhenFull() const

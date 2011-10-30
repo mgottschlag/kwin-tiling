@@ -133,15 +133,22 @@ TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
     }
 
     TaskGroup *newGroup = new TaskGroup(d->groupManager);
+    ItemList oldGroupMembers=oldGroup->members();
+    int index=oldGroupMembers.count();
     d->createdGroups.append(newGroup);
     //kDebug() << "added group" << d->createdGroups.count();
     connect(newGroup, SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(checkGroup()));
     foreach (AbstractGroupableItem *item, items) {
+        int idx=oldGroupMembers.indexOf(item);
+        if(idx>=0 && idx<index) {
+            index=idx;
+        }
         newGroup->add(item);
     }
 
     Q_ASSERT(oldGroup);
-    oldGroup->add(newGroup);
+    // Place new group where first of the moved items was...
+    oldGroup->add(newGroup, index);
 
     return newGroup;
 }
@@ -164,14 +171,12 @@ void AbstractGroupingStrategy::closeGroup(TaskGroup *group)
     if (parentGroup && d->groupManager) {
         int index = parentGroup->members().indexOf(group);
         foreach (AbstractGroupableItem *item, group->members()) {
-            parentGroup->add(item);
+            parentGroup->add(item, index);
             //move item to the location where its group was
             if (!d->groupManager) {
                 // this means that the above add() caused a change in grouping strategy
                 break;
             }
-
-            d->groupManager->manualSortingRequest(item, index); //move items to position of group
         }
 
         parentGroup->remove(group);

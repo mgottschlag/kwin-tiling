@@ -88,7 +88,7 @@ void LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
 
     QString name;
     if (item->itemType() == TaskItemType && !item->isStartupItem()) {
-        name = static_cast<TaskItem *>(item)->task()->classClass().toLower();
+        name = static_cast<TaskItem *>(item)->taskName().toLower();
     } else {
         name = item->name().toLower();
     }

@@ -25,6 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskitem.h"
 
 #include <KDebug>
+#include <KDesktopFile>
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
@@ -43,6 +44,7 @@ public:
 
     QWeakPointer<Task> task;
     StartupPtr startupTask;
+    QString taskName;
 };
 
 
@@ -164,6 +166,26 @@ QString TaskItem::name() const
     }
 
     return QString();
+}
+
+QString TaskItem::taskName() const
+{
+    if (d->taskName.isEmpty()) {
+        KUrl lUrl=launcherUrl();
+
+        if (!lUrl.isEmpty() && lUrl.isLocalFile() && KDesktopFile::isDesktopFile(lUrl.toLocalFile())) {
+            KDesktopFile f(lUrl.toLocalFile());
+
+            if (f.tryExec()) {
+                d->taskName = f.readName();
+            }
+        }
+        if(d->taskName.isEmpty() && d->task) {
+            d->taskName = d->task.data()->classClass().toLower();
+        }
+    }
+
+    return d->taskName;
 }
 
 ItemType TaskItem::itemType() const

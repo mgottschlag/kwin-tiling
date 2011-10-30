@@ -31,10 +31,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KDebug>
 
 #include "abstractgroupableitem.h"
-
+#include "groupmanager.h"
 
 namespace TaskManager
 {
+
+static bool separateLaunchers=false;
+
+static QString agiName(const AbstractGroupableItem *i)
+{
+    if (i->itemType() == TaskItemType && !i->isStartupItem()) {
+        return static_cast<const TaskItem *>(i)->taskName().toLower();
+    } else {
+        return i->name().toLower();
+    }
+}
 
 DesktopSortingStrategy::DesktopSortingStrategy(QObject *parent)
     : AbstractSortingStrategy(parent)
@@ -44,6 +55,9 @@ DesktopSortingStrategy::DesktopSortingStrategy(QObject *parent)
 
 void DesktopSortingStrategy::sortItems(ItemList &items)
 {
+    GroupManager *gm=qobject_cast<GroupManager *>(parent());
+    separateLaunchers=!gm || gm->separateLaunchers();
+
     qStableSort(items.begin(), items.end(), DesktopSortingStrategy::lessThan);
 }
 
@@ -54,34 +68,35 @@ bool DesktopSortingStrategy::lessThan(const AbstractGroupableItem *left, const A
      * For two items being compared
      *   - Startup items will be sorted out to the end of the list and sorted by name there
      *   - If both are not startup tasks first compare items by desktop number,
-     *     and then for items which belong to the same desktop sort by their id.
+     *     and then for items which belong to the same desktop sort by their NAME.
      */
-    if (left->isStartupItem()) {
+    if(separateLaunchers) {
+        if (left->isStartupItem()) {
+            if (right->isStartupItem()) {
+                return left->name().toLower() < right->name().toLower();
+            }
+            return false;
+        }
+
         if (right->isStartupItem()) {
-            return left->name().toLower() < right->name().toLower();
+                return true;
         }
-        return false;
-    }
 
-    if (right->isStartupItem()) {
+        if (left->itemType() == LauncherItemType) {
+            if (right->itemType() == LauncherItemType) {
+                return left->name().toLower() < right->name().toLower();
+            }
             return true;
-    }
-
-    if (left->itemType() == LauncherItemType) {
-        if (right->itemType() == LauncherItemType) {
-            return left->name().toLower() < right->name().toLower();
         }
-        return true;
-    }
 
-    if (right->itemType() == LauncherItemType) {
-        return false;
+        if (right->itemType() == LauncherItemType) {
+            return false;
+        }
     }
-
     const int leftDesktop = left->desktop();
     const int rightDesktop = right->desktop();
     if (leftDesktop == rightDesktop) {
-            return left->id() < right->id();
+        return agiName(left) < agiName(right);
     }
 
     return leftDesktop < rightDesktop;

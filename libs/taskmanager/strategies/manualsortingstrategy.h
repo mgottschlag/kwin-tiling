@@ -43,7 +43,7 @@ public:
     ManualSortingStrategy(GroupManager *parent);
     ~ManualSortingStrategy();
     bool manualSortingRequest(AbstractGroupableItem *item, int newIndex);
-    
+    void sortItems(ItemList &items);
 };
 
 

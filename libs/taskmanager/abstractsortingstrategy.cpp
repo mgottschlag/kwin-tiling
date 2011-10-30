@@ -186,7 +186,7 @@ bool AbstractSortingStrategy::moveItem(AbstractGroupableItem *item, int newIndex
         return item->parentGroup()->moveItem(oldIndex, newIndex);
     }
 
-    return -1;
+    return false;
 }
 
 } //namespace
