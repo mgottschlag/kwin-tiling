@@ -57,7 +57,7 @@ Startup::Startup(const KStartupInfoId& id, const KStartupInfoData& data,
     : QObject(parent),
       d(new Private(id, data))
 {
-    setObjectName( name );
+    setObjectName(name);
 }
 
 Startup::~Startup()
