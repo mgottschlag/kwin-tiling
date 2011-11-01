@@ -79,7 +79,7 @@ QString Startup::wmClass() const
 {
     return d->data.WMClass();
 }
-    
+
 QString Startup::bin() const
 {
     return d->data.bin();

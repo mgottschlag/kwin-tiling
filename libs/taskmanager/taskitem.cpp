@@ -96,12 +96,19 @@ void TaskItem::taskDestroyed()
 
 void TaskItem::setTaskPointer(TaskPtr task)
 {
+    const bool differentTask = d->task.data() != task.data();
+
     if (d->startupTask) {
         disconnect(d->startupTask.data(), 0, this, 0);
         d->startupTask = 0;
     }
+    else if (differentTask) {
+         // if we aren't moving from startup -> task and the task pointer is changing on us
+         // let's clear the launcher url
+        d->launcherUrl.clear();
+    }
 
-    if (d->task.data() != task.data()) {
+    if (differentTask) {
         if (d->task) {
             disconnect(d->task.data(), 0, this, 0);
         }
@@ -375,14 +382,12 @@ static KService::List getServicesViaPid(int pid)
 {
     // Attempt to find using commandline...
     KService::List services;
-    KSysGuard::Processes *procs=new KSysGuard::Processes();
-    
-    procs->updateOrAddProcess(pid);
+    KSysGuard::Processes procs;
 
-    KSysGuard::Process *proc=procs->getProcess(pid);
+    procs.updateOrAddProcess(pid);
+
+    KSysGuard::Process *proc=procs.getProcess(pid);
     QString cmdline=proc ? proc->command.simplified() : QString(); // proc->command has a trailing space???
-    
-    delete procs;
 
     if(!cmdline.isEmpty()) {
         int firstSpace=cmdline.indexOf(' ');
