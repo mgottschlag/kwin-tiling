@@ -24,6 +24,7 @@
 #include <QObject>
 
 #include <Plasma/DataEngine>
+#include <Plasma/Service>
 
 #include <Solid/Predicate>
 
@@ -40,6 +41,7 @@ class HotplugEngine : public Plasma::DataEngine
         HotplugEngine( QObject* parent, const QVariantList& args);
         ~HotplugEngine();
         void init();
+        Plasma::Service* serviceForSource(const QString& source);
 
     protected Q_SLOTS:
         void onDeviceAdded(const QString &udi);
@@ -61,7 +63,5 @@ class HotplugEngine : public Plasma::DataEngine
         Solid::Predicate m_encryptedPredicate;
         KDirWatch *m_dirWatch;
 };
-
-K_EXPORT_PLASMA_DATAENGINE(hotplug, HotplugEngine)
 
 #endif

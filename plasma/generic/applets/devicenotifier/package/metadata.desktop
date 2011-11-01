@@ -148,13 +148,19 @@ Comment[wa]=Notifiaedjes eyet accès ås noveas éndjins
 Comment[x-test]=xxNotifications and access for new devicesxx
 Comment[zh_CN]=通知和访问新设备
 Comment[zh_TW]=通知與存取新裝置
+
 Icon=device-notifier
 Type=Service
-X-KDE-ServiceTypes=Plasma/Applet
+X-KDE-ServiceTypes=Plasma/Applet,Plasma/PopupApplet
 
-X-KDE-Library=plasma_applet_devicenotifier
-X-KDE-PluginInfo-Author=The Plasma Team
-X-KDE-PluginInfo-Email=plasma-devel@kde.org
+X-Plasma-API=declarativeappletscript
+X-Plasma-MainScript=ui/devicenotifier.qml
+X-Plasma-DefaultSize=290,340
+X-Plasma-NotificationArea=true
+X-Plasma-ConfigPlugins=solid-actions,device_automounter_kcm
+
+X-KDE-PluginInfo-Author=Viranch Mehta
+X-KDE-PluginInfo-Email=viranch.mehta@gmail.com
 X-KDE-PluginInfo-Name=notifier
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=http://userbase.kde.org/Plasma/DeviceNotifier
@@ -162,8 +168,3 @@ X-KDE-PluginInfo-Category=System Information
 X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=true
-
-X-Plasma-Requires-FileDialog=Unused
-X-Plasma-Requires-LaunchApp=Required
-X-Plasma-NotificationArea=true
-

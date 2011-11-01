@@ -18,6 +18,7 @@
 */
 
 #include "hotplugengine.h"
+#include "hotplugservice.h"
 
 #include <QTimer>
 
@@ -27,6 +28,7 @@
 #include <KLocale>
 #include <KStandardDirs>
 #include <KDesktopFile>
+#include <kdesktopfileactions.h>
 #include <Plasma/DataContainer>
 
 //solid specific includes
@@ -78,6 +80,11 @@ void HotplugEngine::init()
     m_encryptedPredicate = Solid::Predicate("StorageVolume", "usage", "Encrypted");
 
     processNextStartupDevice();
+}
+
+Plasma::Service* HotplugEngine::serviceForSource(const QString& source)
+{
+    return new HotplugService (this, source);
 }
 
 void HotplugEngine::processNextStartupDevice()
@@ -218,6 +225,19 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device, bool added)
         data.insert("icon", device.icon());
         data.insert("emblems", device.emblems());
         data.insert("predicateFiles", interestingDesktopFiles);
+
+        QVariantList actions;
+        foreach(const QString& desktop, interestingDesktopFiles) {
+            Plasma::DataEngine::Data action;
+            QString actionUrl = KStandardDirs::locate("data", "solid/actions/" + desktop);
+            QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(actionUrl, true);
+            action.insert("predicate", desktop);
+            action.insert("text", services[0].text());
+            action.insert("icon", services[0].icon());
+            actions << action;
+        }
+        data.insert("actions", actions);
+
         data.insert("isEncryptedContainer", isEncryptedContainer);
 
         setData(device.udi(), data);
@@ -242,5 +262,7 @@ void HotplugEngine::onDeviceRemoved(const QString &udi)
     removeSource(udi);
     scheduleSourcesUpdated();
 }
+
+K_EXPORT_PLASMA_DATAENGINE(hotplug, HotplugEngine)
 
 #include "hotplugengine.moc"
