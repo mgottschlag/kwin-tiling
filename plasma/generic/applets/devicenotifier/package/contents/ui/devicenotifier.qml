@@ -71,7 +71,7 @@ Item {
             if (last!="") {
                 statusBar.setData(data[last]["error"], data[last]["errorDetails"], data[last]["udi"]);
                 plasmoid.status = "NeedsAttentionStatus";
-                plasmoid.showPopup()
+                plasmoid.showPopup(2500)
             }
         }
     }
@@ -100,22 +100,18 @@ Item {
     function expandDevice(udi)
     {
         expandedDevice = udi
-        setPopupIcon ("preferences-desktop-notification", 7500);
-        plasmoid.status = "ActiveStatus";
-        plasmoid.showPopup()
+        plasmoid.setPopupIconByName("preferences-desktop-notification")
+        plasmoid.status = "ActiveStatus"
+        plasmoid.showPopup(7500)
+        popupIconTimer.restart()
     }
-
-    function setPopupIcon (icon, timeout) {
-        plasmoid.setPopupIconByName(icon);
-        popupIconTimer.interval = timeout;
-        popupIconTimer.restart();
-    }
-
 
     Timer {
         id: popupIconTimer
+        interval: 2500
         onTriggered: plasmoid.setPopupIconByName("device-notifier");
     }
+
 
     Text {
         id: header
@@ -244,7 +240,7 @@ Item {
                 service = sdSource.serviceForSource(udi);
                 operation = service.operationDescription(operationName);
                 service.startOperationCall(operation);
-                setPopupIcon("dialog-ok", 2500);
+                plasmoid.setPopupIconByName("dialog-ok")
             }
             property bool isLast: (expandedDevice == udi)
             onIsLastChanged: {
