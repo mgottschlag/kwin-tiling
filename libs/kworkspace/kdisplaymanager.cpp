@@ -122,7 +122,7 @@ KDisplayManager::KDisplayManager() : d(new Private)
             DMType = NewKDM;
         else if ((ctl = ::getenv("XDM_MANAGED")) && ctl[0] == '/')
             DMType = OldKDM;
-        else if (LightDMDBus().isValid())
+        else if (::getenv("XDG_SEAT_PATH") && LightDMDBus().isValid())
             DMType = LightDM;
         else if (::getenv("GDMSESSION"))
             DMType = GDMFactory().isValid() ? NewGDM : OldGDM;
