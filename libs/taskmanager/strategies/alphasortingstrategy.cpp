@@ -64,7 +64,11 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
             if (!groupable) {
                 continue;
             }
-            separateLaunchers ? launcherMap.insertMulti(groupable->name().toLower(), groupable) : map.insertMulti(groupable->name().toLower(), groupable);
+            if(separateLaunchers) {
+                launcherMap.insertMulti(groupable->name().toLower(), groupable);
+            } else {
+                map.insertMulti(groupable->name().toLower(), groupable);
+            }
             continue;
         }
 
