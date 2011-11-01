@@ -101,7 +101,7 @@ Item {
     {
         expandedDevice = udi
         setPopupIcon ("preferences-desktop-notification", 7500);
-        plasmoid.status = "NeedsAttentionStatus";
+        plasmoid.status = "ActiveStatus";
         plasmoid.showPopup()
     }
 
@@ -160,6 +160,11 @@ Item {
             filterRegExp: "true"
             sortRole: "Removable"
             sortOrder: Qt.DescendingOrder
+        }
+        onCountChanged: {
+            if (count == 0) {
+                plasmoid.status = "PassiveStatus"
+            }
         }
         delegate: deviceItem
         highlight: deviceHighlighter
