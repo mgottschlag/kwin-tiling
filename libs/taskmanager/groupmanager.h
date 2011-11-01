@@ -137,7 +137,7 @@ public:
     void reconnect();
 
     /** Adds a Launcher for the executable/.desktop-file at url and returns a reference to the launcher*/
-    bool addLauncher(const KUrl &url, QIcon icon = QIcon(), QString name = QString(), QString genericName = QString(), int index=-1);
+    bool addLauncher(const KUrl &url, QIcon icon = QIcon(), QString name = QString(), QString genericName = QString(), int insertPos=-1);
 
     /** Removes the given launcher*/
     void removeLauncher(const KUrl &url);
@@ -167,9 +167,6 @@ public:
 
     /** set if launchers should been show separate from tasks */
     void setSeparateLaunchers(bool s);
-
-    /** @return the list of current launchers */
-    const QList<KUrl> & launchers() const;
 
 protected:
     // reimplement to provide a config group to read/write settings to
