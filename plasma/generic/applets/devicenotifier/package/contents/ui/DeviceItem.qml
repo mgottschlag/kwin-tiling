@@ -99,8 +99,8 @@ Item {
 
     function idleStatus() {
         var actions = hpSource.data[udi]["actions"];
-        if (actions.length>1) {
-            return i18np("One action for this device", "%1 actions for this device", actions.length);
+        if (actions.length > 1) {
+            return i18n("%1 actions for this device", actions.length);
         } else {
             return actions[0]["text"];
         }
@@ -128,12 +128,51 @@ Item {
         id: leftAction
         width: 22
         height: 22
+        z: 900
         anchors {
             right: parent.right
             rightMargin: 10
             verticalCenter: deviceIcon.verticalCenter
         }
         visible: !busySpinner.visible
+    }
+
+    PlasmaCore.ToolTip {
+        target: leftAction
+        subText: {
+            if (!model["Accessible"]) {
+                return i18n("Click to mount this device.")
+            } else if (model["Device Types"].indexOf("Optical Disk") != -1) {
+                return i18n("Click to eject this disc.")
+            } else if (model["Removable"]) {
+                return i18n("Click to safely remove this device.")
+            } else {
+                return i18n("Click to access this device from other applications.")
+            }
+        }
+    }
+
+    PlasmaCore.ToolTip {
+        target: deviceItem
+        subText: {
+            if (model["Accessible"]) {
+                if (model["Removable"]) {
+                    return i18n("It is currently <b>not safe</b> to remove this device: applications may be accessing it. Click the eject button to safely remove this device.")
+                } else {
+                    return i18n("This device is currently accessible.")
+                }
+            } else {
+                if (model["Removable"]) {
+                     if (model["In Use"]) {
+                        return i18n("It is currently <b>not safe</b> to remove this device: applications may be accessing other volumes on this device. Click the eject button on these other volumes to safely remove this device.");
+                    } else {
+                        return i18n("It is currently safe to remove this device.")
+                    }
+                } else {
+                    return i18n("This device is not currently accessible.")
+                }
+            }
+        }
     }
 
     PlasmaWidgets.BusyWidget {
