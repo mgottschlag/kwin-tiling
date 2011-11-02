@@ -129,8 +129,6 @@ public:
               QList <QAction*> appActions = QList <QAction*>());
     BasicMenu(QWidget *parent, LauncherItem* task, GroupManager *strategy, QList <QAction*> visualizationActions = QList <QAction*>(),
               QList <QAction*> appActions = QList <QAction*>());
-private:
-    void addAppActions(QList <QAction*> &appActions);
 };
 
 /** A Menu that shows  a list of all tasks of the group, and shows a BasicMenu on right click on an item*/

@@ -120,6 +120,24 @@ QAction* standardGroupingAction(GroupingAction action, AbstractGroupableItem *it
     return 0;
 }
 
+static QString qt_strippedText(QString s)
+{
+    s.remove( QString::fromLatin1("...") );
+    int i = 0;
+    while (i < s.size()) { 
+        ++i;                
+        if (s.at(i-1) != QLatin1Char('&')) {
+            continue;                               
+        }   
+
+        if (i < s.size() && s.at(i) == QLatin1Char('&')) {
+            ++i;
+        }   
+        s.remove(i-1,1);
+    }   
+    return s.trimmed();
+}
+
 ToolTipMenu::ToolTipMenu(QWidget *parent, const QString &title)
            : QMenu(title, parent)
 {
@@ -132,7 +150,7 @@ bool ToolTipMenu::event(QEvent* e)
         QHelpEvent *he = dynamic_cast<QHelpEvent*>(e);
         QAction *act = he ? actionAt(he->pos()) : 0;
         if(act) {
-            if(act->property("show-tooltip").toBool()) {
+            if(qt_strippedText(act->text()) != act->toolTip()) {
                 QToolTip::showText(he->globalPos(), act->toolTip(), this); 
             } else {
                 QToolTip::hideText(); 
@@ -483,8 +501,14 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
 
     setTitle(item->name());
     setIcon(item->icon());
-    addAppActions(appActions);
-    
+    if(appActions.count()) { 
+        foreach (QAction *action, appActions) {
+            addAction(action);
+        }
+
+        addSeparator();
+    }
+
     if (TaskManager::self()->numberOfDesktops() > 1) {
         addMenu(new DesktopsMenu(this, item));
         addAction(new ToCurrentDesktopActionImpl(this, item));
@@ -515,7 +539,13 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
 
     setTitle(group->name());
     setIcon(group->icon());
-    addAppActions(appActions);
+    if(appActions.count()) { 
+        foreach (QAction *action, appActions) {
+            addAction(action);
+        }
+
+        addSeparator();
+    }
 
     foreach (AbstractGroupableItem *item, group->members()) {
         if (item->itemType() == GroupItemType) {
@@ -555,7 +585,13 @@ BasicMenu::BasicMenu(QWidget *parent, LauncherItem* item, GroupManager *strategy
 
     setTitle(item->name());
     setIcon(item->icon());
-    addAppActions(appActions);
+    if(appActions.count()) { 
+        foreach (QAction *action, appActions) {
+            addAction(action);
+        }
+
+        addSeparator();
+    }
 
     addAction(new ToggleLauncherActionImpl(this, item, strategy));
 
@@ -564,37 +600,6 @@ BasicMenu::BasicMenu(QWidget *parent, LauncherItem* item, GroupManager *strategy
         foreach (QAction *action, visualizationActions) {
             addAction(action);
         }
-    }
-}
-
-void BasicMenu::addAppActions(QList <QAction*> &appActions)
-{
-    if(appActions.count()) {
-        QMap<QString, ToolTipMenu *> map;
- 
-        foreach (QAction *action, appActions) {
-            if(action->isSeparator()) {
-                addSeparator();
-            } else {
-                QString title=action->property("action-group-name").toString();
-                
-                if(title.isEmpty()) {
-                    addAction(action);
-                } else {
-                    ToolTipMenu *menu;
-                    if(map.contains(title)) {
-                        menu=map[title];
-                    } else {
-                        menu=(new ToolTipMenu(parentWidget(), title));
-                        map[title]=menu;
-                        addMenu(menu);
-                    }
-                    menu->addAction(action);
-                }
-            }
-        }
-
-        addSeparator();
     }
 }
 
