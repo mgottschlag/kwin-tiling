@@ -44,6 +44,7 @@ Item {
         id: deviceIcon
         width: 32
         height: 32
+        z: 900
         icon: QIcon(parent.icon)
         anchors {
             left: parent.left
@@ -88,7 +89,7 @@ Item {
         // FIXME: state changes do not reach the plasmoid if the
         // device was already attached when the plasmoid was
         // initialized
-        text: parent.state==0 ? idleStatus() : (parent.state==1 ? "Accessing..." : "Removing...")
+        text: parent.state==0 ? idleStatus() : (parent.state==1 ? i18nc("Accessing is a less technical word for Mounting; translation should be short and mean \'Currently mounting this device\'", "Accessing...") : i18nc("Removing is a less technical word for Unmounting; translation shoud be short and mean \'Currently unmounting this device\'", "Removing..."))
         font.italic: true
         font.pointSize: 8
         color: "#99"+(theme.textColor.toString().substr(1))
@@ -124,6 +125,17 @@ Item {
         svg: "widgets/bar_meter_horizontal"
     }
 
+    Item {
+        id: freeSpaceBarPlaceholder
+        anchors.fill: freeSpaceBar
+        z: 900
+    }
+
+    PlasmaCore.ToolTip {
+        target: freeSpaceBarPlaceholder
+        subText: i18nc("@info:status Free disk space", "%1 free", model["Free Space Text"])
+    }
+
     QIconItem {
         id: leftAction
         width: 22
@@ -153,7 +165,7 @@ Item {
     }
 
     PlasmaCore.ToolTip {
-        target: deviceItem
+        target: deviceIcon
         subText: {
             if (model["Accessible"]) {
                 if (model["Removable"]) {

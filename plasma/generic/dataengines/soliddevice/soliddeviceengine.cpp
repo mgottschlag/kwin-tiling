@@ -153,6 +153,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
             }
             if (!device.is<Solid::OpticalDisc>()) {
                 setData(name, I18N_NOOP("Free Space"), freeDiskVar );
+                setData(name, I18N_NOOP("Free Space Text"), KGlobal::locale()->formatByteSize(freeDisk));
             }
         }
 
@@ -587,6 +588,7 @@ bool SolidDeviceEngine::updateFreeSpace(const QString &udi)
         return false;
     } else if (!device.as<Solid::StorageAccess>()->isAccessible()) {
         removeData(udi, I18N_NOOP("Free Space"));
+        removeData(udi, I18N_NOOP("Free Space Text"));
     }
 
     Solid::StorageAccess *storageaccess = device.as<Solid::StorageAccess>();
@@ -600,6 +602,7 @@ bool SolidDeviceEngine::updateFreeSpace(const QString &udi)
         freeSpaceVar.setValue( freeSpace );
     }
     setData(udi, I18N_NOOP("Free Space"), freeSpaceVar );
+    setData(udi, I18N_NOOP("Free Space Text"), KGlobal::locale()->formatByteSize(freeSpace));
     return true;
 }
 
