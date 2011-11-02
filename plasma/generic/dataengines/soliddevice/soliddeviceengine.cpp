@@ -282,6 +282,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         setData(name, I18N_NOOP("Label"), storagevolume->label());
         setData(name, I18N_NOOP("UUID"), storagevolume->uuid());
         setData(name, I18N_NOOP("Size"), storagevolume->size());
+        updateInUse(name);
 
         //Check if the volume is part of an encrypted container
         //This needs to trigger an update for the encrypted container volume since
@@ -647,13 +648,37 @@ bool SolidDeviceEngine::forceUpdateAccessibility(const QString &udi)
     return true;
 }
 
+bool SolidDeviceEngine::updateInUse(const QString &udi)
+{
+    Solid::Device device = m_devicemap.value(udi);
+    if (!device.isValid()) {
+        return false;
+    }
+
+    Solid::StorageAccess *storageaccess = device.as<Solid::StorageAccess>();
+    if (!storageaccess) {
+        return false;
+    }
+
+    Solid::Device parent = Solid::Device(udi).parent();
+
+    if (storageaccess->isAccessible()) {
+        setData(udi, I18N_NOOP("In Use"), true);
+    } else if (parent.is<Solid::StorageDrive>()) {
+        setData(udi, I18N_NOOP("In Use"), parent.as<Solid::StorageDrive>()->isInUse());
+    }
+
+    return true;
+}
+
 bool SolidDeviceEngine::updateSourceEvent(const QString& source)
 {
     bool update1 = updateFreeSpace(source);
     bool update2 = updateHardDiskTemperature(source);
     bool update3 = updateEmblems(source);
+    bool update4 = updateInUse(source);
 
-    return (update1 || update2 || update3);
+    return (update1 || update2 || update3 || update4);
 }
 
 void SolidDeviceEngine::deviceRemoved(const QString& udi)

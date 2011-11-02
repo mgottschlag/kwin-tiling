@@ -64,6 +64,7 @@ private:
     bool updateFreeSpace(const QString &udi);
     bool updateHardDiskTemperature(const QString &udi);
     bool updateEmblems(const QString &udi);
+    bool updateInUse(const QString &udi);
     bool forceUpdateAccessibility(const QString &udi);
     void listenForNewDevices();
 
