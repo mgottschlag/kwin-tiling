@@ -168,6 +168,12 @@ public:
     /** set if launchers should been show separate from tasks */
     void setSeparateLaunchers(bool s);
 
+    /** Should grouping *always* happen? */
+    bool forceGrouping() const;
+
+    /** set if grouping should *always* happen */
+    void setForceGrouping(bool s);
+
 protected:
     // reimplement to provide a config group to read/write settings to
     virtual KConfigGroup config() const;

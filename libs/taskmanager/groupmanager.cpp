@@ -67,7 +67,8 @@ public:
           onlyGroupWhenFull(false),
           changingGroupingStrategy(false),
           readingLauncherConfig(false),
-          separateLaunchers(true)
+          separateLaunchers(true),
+          forceGrouping(false)
     {
     }
 
@@ -131,6 +132,7 @@ public:
     bool changingGroupingStrategy : 1;
     bool readingLauncherConfig : 1;
     bool separateLaunchers : 1;
+    bool forceGrouping : 1;
 };
 
 
@@ -333,7 +335,7 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
     }
 
     //Find a fitting group for the task with GroupingStrategies
-    if (abstractGroupingStrategy && !task->demandsAttention()) { //do not group attention tasks
+    if (abstractGroupingStrategy && (forceGrouping || !task->demandsAttention())) { //do not group attention tasks
         abstractGroupingStrategy->handleItem(item);
     } else {
         currentRootGroup()->add(item);
@@ -843,6 +845,16 @@ bool GroupManager::separateLaunchers() const
 void GroupManager::setSeparateLaunchers(bool s)
 {
     d->separateLaunchers=s;
+}
+
+bool GroupManager::forceGrouping() const
+{
+    return d->forceGrouping;
+}
+
+void GroupManager::setForceGrouping(bool s)
+{
+    d->forceGrouping=s;
 }
 
 KConfigGroup GroupManagerPrivate::launcherConfig(const KConfigGroup &config)

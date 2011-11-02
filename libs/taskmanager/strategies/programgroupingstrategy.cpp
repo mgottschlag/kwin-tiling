@@ -70,7 +70,7 @@ QList<QAction*> ProgramGroupingStrategy::strategyActions(QObject *parent, Abstra
 
     GroupManager *gm=qobject_cast<GroupManager *>(AbstractGroupingStrategy::parent());
 
-    if(!gm || gm->separateLaunchers()) {
+    if(!gm || !gm->forceGrouping()) {
         QAction *a = new QAction(parent);
         QString name = className(item);
         if (d->blackList.contains(name)) {
@@ -186,7 +186,7 @@ void ProgramGroupingStrategy::handleItem(AbstractGroupableItem *item)
         //kDebug() << item->name() << "item is groupitem";
         root->add(item);
         return;
-    } else if ( (!gm || gm->separateLaunchers()) && d->blackList.contains((static_cast<TaskItem*>(item))->task()->classClass())) {
+    } else if ( (!gm || !gm->forceGrouping()) && d->blackList.contains((static_cast<TaskItem*>(item))->task()->classClass())) {
         //kDebug() << item->name() << "item is in blacklist";
         root->add(item);
         return;

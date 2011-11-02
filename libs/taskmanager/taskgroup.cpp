@@ -271,6 +271,11 @@ void TaskGroup::Private::signalRemovals()
 
 void TaskGroup::Private::itemChanged(::TaskManager::TaskChanges changes)
 {
+    if(q->manager()->forceGrouping()) {
+        emit q->changed(changes);
+        return;
+    }
+
     if (changes & ::TaskManager::IconChanged) {
         emit q->checkIcon(q);
     }
