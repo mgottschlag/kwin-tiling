@@ -260,7 +260,12 @@ Item {
             imagePath: "widgets/viewitem"
             prefix: "hover"
             opacity: 0
-            Behavior on opacity { NumberAnimation { duration: 150 } }
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 250
+                    easing.type: Easing.OutQuad
+                }
+            }
         }
     }
 
