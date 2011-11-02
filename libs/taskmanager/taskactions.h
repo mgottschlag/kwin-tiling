@@ -48,18 +48,18 @@ enum GroupableAction { MaximizeAction = 0,
                        KeepBelowAction,
                        ToggleLauncherAction, // adds/removes Launcher for the task
                        NewInstanceAction // lauch a new instance of a launcher
-                    };
+                     };
 
 enum TaskAction { ResizeAction = 0,
                   MoveAction
-                 };
+                };
 
 enum GroupingAction { LeaveGroupAction = 0
-                      };
+                    };
 
-/** 
+/**
  * Factory method to create standard actions for groupable items.
- * 
+ *
  * @param action the action to create
  * @param item the groupable item to associate it with
  * @param parent the parent for the action
