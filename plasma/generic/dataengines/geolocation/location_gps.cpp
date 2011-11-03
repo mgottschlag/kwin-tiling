@@ -83,11 +83,11 @@ Gps::Gps(QObject* parent, const QVariantList& args)
 {
 #if GPSD_API_MAJOR_VERSION >= 5
     m_gpsdata = new gps_data_t;
-    gps_open("localhost", DEFAULT_GPSD_PORT, m_gpsdata);
+    if (gps_open("localhost", DEFAULT_GPSD_PORT, m_gpsdata) != -1) {
 #else
     gps_data_t* m_gpsdata = gps_open("localhost", DEFAULT_GPSD_PORT);
-#endif
     if (m_gpsdata) {
+#endif
         kDebug() << "gpsd found.";
         m_gpsd = new Gpsd(m_gpsdata);
         connect(m_gpsd, SIGNAL(dataReady(Plasma::DataEngine::Data)),

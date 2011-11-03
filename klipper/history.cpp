@@ -157,17 +157,28 @@ void History::cycleNext() {
     if (m_top && m_nextCycle && m_nextCycle != m_top) {
         HistoryItem* prev = m_items[m_nextCycle->previous_uuid()];
         HistoryItem* next = m_items[m_nextCycle->next_uuid()];
-        HistoryItem* endofhist = m_items[m_top->previous_uuid()];
-        HistoryItem* aftertop = m_items[m_top->next_uuid()];
-        if (prev == m_top) {
-            prev = m_nextCycle;
-            aftertop = m_top;
+        //if we have only two items in clipboard
+        if (prev == next) {
+            m_top=m_nextCycle;
         }
-        m_top->insertBetweeen(prev, next);
-        m_nextCycle->insertBetweeen(endofhist, aftertop);
-        m_top = m_nextCycle;
-        m_nextCycle = next;
+        else {
+            HistoryItem* endofhist = m_items[m_top->previous_uuid()];
+            HistoryItem* aftertop = m_items[m_top->next_uuid()];
+            if (prev == m_top) {
+                prev = m_nextCycle;
+                aftertop = m_top;
+            }
+            else if (next == m_top) {
+                next = m_nextCycle;
+                endofhist = m_top;
+            }
+            m_top->insertBetweeen(prev, next);
+            m_nextCycle->insertBetweeen(endofhist, aftertop);
+            m_top = m_nextCycle;
+            m_nextCycle = next;
+        }
         emit changed();
+        emit topChanged();
     }
 }
 
@@ -178,17 +189,28 @@ void History::cyclePrev() {
             return;
         }
         HistoryItem* prevprev = m_items[prev->previous_uuid()];
-        HistoryItem* endofhist = m_items[m_top->previous_uuid()];
         HistoryItem* aftertop = m_items[m_top->next_uuid()];
-        if (prevprev == m_top) {
-            prevprev = prev;
-            aftertop = m_top;
+        //if we have only two items in clipboard
+        if (m_nextCycle == prevprev) {
+            m_top=aftertop;
         }
-        m_top->insertBetweeen(prevprev,m_nextCycle);
-        prev->insertBetweeen(endofhist, aftertop);
-        m_nextCycle = m_top;
-        m_top = prev;
+        else {
+            HistoryItem* endofhist = m_items[m_top->previous_uuid()];
+            if (prevprev == m_top) {
+                prevprev = prev;
+                aftertop = m_top;
+            }
+            else if (m_nextCycle == m_top) {
+                m_nextCycle = aftertop;
+                endofhist = m_top;
+            }
+            m_top->insertBetweeen(prevprev,m_nextCycle);
+            prev->insertBetweeen(endofhist, aftertop);
+            m_nextCycle = m_top;
+            m_top = prev;
+        }
         emit changed();
+        emit topChanged();
     }
 }
 

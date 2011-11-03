@@ -27,6 +27,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "plasma/framesvg.h"
 #include "plasma/theme.h"
 
+#include <QApplication>
 #include <QBitmap>
 #include <QDesktopWidget>
 #include <QLabel>
@@ -41,7 +42,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusPendingCall>
 
-#include <KApplication>
 #include <kdialog.h>
 #include <kiconloader.h>
 #include <klocale.h>

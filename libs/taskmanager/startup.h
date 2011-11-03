@@ -53,13 +53,15 @@ class TASKMANAGER_EXPORT Startup: public QObject, public KShared
 
 public:
     Startup(const KStartupInfoId& id, const KStartupInfoData& data, QObject * parent,
-        const char *name = 0);
+            const char *name = 0);
     virtual ~Startup();
 
     /**
      * The name of the starting task (if known).
      */
     QString text() const;
+    QString desktopId() const;
+    QString wmClass() const;
 
     /**
      * The name of the executable of the starting task.
@@ -70,7 +72,7 @@ public:
      * The name of the icon to be used for the starting task.
      */
     QIcon icon() const;
-    void update( const KStartupInfoData& data );
+    void update(const KStartupInfoData& data);
     KStartupInfoId id() const;
 
     void addWindowMatch(WId window);

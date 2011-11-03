@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace TaskManager
 {
 
-bool Task::updateDemandsAttentionState( WId w )
+bool Task::updateDemandsAttentionState(WId w)
 {
     return false;
 }
@@ -44,18 +44,21 @@ QString Task::classClass() const
     return QString();
 }
 
+int Task::pid() const
+{
+    return 0; // FIXME!!!
+}
+
 void Task::move()
 {
     bool on_current = d->info.isOnCurrentDesktop();
 
-    if (!on_current)
-    {
+    if (!on_current) {
         KWindowSystem::setCurrentDesktop(d->info.desktop());
         KWindowSystem::forceActiveWindow(d->win);
     }
 
-    if (d->info.isMinimized())
-    {
+    if (d->info.isMinimized()) {
         KWindowSystem::unminimizeWindow(d->win);
     }
 
@@ -68,14 +71,12 @@ void Task::resize()
 {
     bool on_current = d->info.isOnCurrentDesktop();
 
-    if (!on_current)
-    {
+    if (!on_current) {
         KWindowSystem::setCurrentDesktop(d->info.desktop());
         KWindowSystem::forceActiveWindow(d->win);
     }
 
-    if (d->info.isMinimized())
-    {
+    if (d->info.isMinimized()) {
         KWindowSystem::unminimizeWindow(d->win);
     }
 
@@ -88,18 +89,15 @@ void Task::setMaximized(bool maximize)
     KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
     bool on_current = info.isOnCurrentDesktop();
 
-    if (!on_current)
-    {
+    if (!on_current) {
         KWindowSystem::setCurrentDesktop(info.desktop());
     }
 
-    if (info.isMinimized())
-    {
+    if (info.isMinimized()) {
         KWindowSystem::unminimizeWindow(d->win);
     }
 
-    if (!on_current)
-    {
+    if (!on_current) {
         KWindowSystem::forceActiveWindow(d->win);
     }
 }
@@ -109,25 +107,22 @@ void Task::restore()
     KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
     bool on_current = info.isOnCurrentDesktop();
 
-    if (!on_current)
-    {
+    if (!on_current) {
         KWindowSystem::setCurrentDesktop(info.desktop());
     }
 
-    if( info.isMinimized())
-    {
+    if (info.isMinimized()) {
         KWindowSystem::unminimizeWindow(d->win);
     }
 
-    if (!on_current)
-    {
-        KWindowSystem::forceActiveWindow( d->win );
+    if (!on_current) {
+        KWindowSystem::forceActiveWindow(d->win);
     }
 }
 
 void Task::close()
 {
-    PostMessage( d->win, WM_CLOSE, 0, 0 );
+    PostMessage(d->win, WM_CLOSE, 0, 0);
 }
 
 void Task::toDesktop(int desk)
@@ -159,8 +154,7 @@ void Task::setShaded(bool shade)
 
 void Task::publishIconGeometry(QRect rect)
 {
-    if (rect == d->iconGeometry)
-    {
+    if (rect == d->iconGeometry) {
         return;
     }
 

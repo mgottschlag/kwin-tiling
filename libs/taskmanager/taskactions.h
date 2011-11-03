@@ -46,19 +46,20 @@ enum GroupableAction { MaximizeAction = 0,
                        CloseAction,
                        ViewFullscreenAction,
                        KeepBelowAction,
-                       ToggleLauncherAction // adds/removes Launcher for the task
-                    };
+                       ToggleLauncherAction, // adds/removes Launcher for the task
+                       NewInstanceAction // lauch a new instance of a launcher
+                     };
 
 enum TaskAction { ResizeAction = 0,
                   MoveAction
-                 };
+                };
 
 enum GroupingAction { LeaveGroupAction = 0
-                      };
+                    };
 
-/** 
+/**
  * Factory method to create standard actions for groupable items.
- * 
+ *
  * @param action the action to create
  * @param item the groupable item to associate it with
  * @param parent the parent for the action
@@ -86,8 +87,15 @@ QAction *standardTaskAction(TaskAction action, TaskItem *task, QObject *parent =
 QAction* standardGroupingAction(GroupingAction action, AbstractGroupableItem *item,
                                 GroupManager *strategy, QObject *parent = 0);
 
+class TASKMANAGER_EXPORT ToolTipMenu : public QMenu
+{
+public:
+    explicit ToolTipMenu(QWidget *parent = 0, const QString &title = QString());
+    bool event(QEvent* e);
+};
+
 /** The ToDesktop menu */
-class TASKMANAGER_EXPORT DesktopsMenu : public QMenu
+class TASKMANAGER_EXPORT DesktopsMenu : public ToolTipMenu
 {
     Q_OBJECT
 public:
@@ -95,7 +103,7 @@ public:
 };
 
 /** Menu with the actions that the groupingStrategy provides*/
-class TASKMANAGER_EXPORT GroupingStrategyMenu : public QMenu
+class TASKMANAGER_EXPORT GroupingStrategyMenu : public ToolTipMenu
 {
     Q_OBJECT
 public:
@@ -103,7 +111,7 @@ public:
 };
 
 /** The Advanced menu */
-class TASKMANAGER_EXPORT AdvancedMenu : public QMenu
+class TASKMANAGER_EXPORT AdvancedMenu : public ToolTipMenu
 {
     Q_OBJECT
 public:
@@ -111,17 +119,20 @@ public:
 };
 
 /** The standard menu*/
-class TASKMANAGER_EXPORT BasicMenu : public QMenu
+class TASKMANAGER_EXPORT BasicMenu : public ToolTipMenu
 {
     Q_OBJECT
 public:
-    BasicMenu(QWidget *parent, GroupPtr task, GroupManager *strategy, QList <QAction*> visualizationActions = QList <QAction*>());
-    BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy, QList <QAction*> visualizationActions = QList <QAction*>());
-    BasicMenu(QWidget *parent, LauncherItem* task, GroupManager *strategy, QList <QAction*> visualizationActions = QList <QAction*>());
+    BasicMenu(QWidget *parent, GroupPtr task, GroupManager *strategy, QList <QAction*> visualizationActions = QList <QAction*>(),
+              QList <QAction*> appActions = QList <QAction*>());
+    BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy, QList <QAction*> visualizationActions = QList <QAction*>(),
+              QList <QAction*> appActions = QList <QAction*>());
+    BasicMenu(QWidget *parent, LauncherItem* task, GroupManager *strategy, QList <QAction*> visualizationActions = QList <QAction*>(),
+              QList <QAction*> appActions = QList <QAction*>());
 };
 
 /** A Menu that shows  a list of all tasks of the group, and shows a BasicMenu on right click on an item*/
-class TASKMANAGER_EXPORT GroupPopupMenu : public QMenu
+class TASKMANAGER_EXPORT GroupPopupMenu : public ToolTipMenu
 {
     Q_OBJECT
 public:

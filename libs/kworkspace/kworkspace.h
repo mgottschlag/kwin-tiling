@@ -110,10 +110,8 @@ namespace KWorkSpace
    * ShutdownConfirm
    * @param sdtype The action to take after logging out. ShutdownType
    * @param sdmode If/When the action should be taken. ShutdownMode
-   * @return true on success, false if the session manager could not be
-   * contacted.
    */
-  KDE_EXPORT bool requestShutDown( ShutdownConfirm confirm = ShutdownConfirmDefault,
+  KDE_EXPORT void requestShutDown( ShutdownConfirm confirm = ShutdownConfirmDefault,
                                    ShutdownType    sdtype  = ShutdownTypeDefault,
                                    ShutdownMode    sdmode  = ShutdownModeDefault );
 

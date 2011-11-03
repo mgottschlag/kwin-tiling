@@ -2,20 +2,16 @@
 <node>
   <interface name="org.kde.Solid.PowerManagement">
     <method name="refreshStatus" />
-    <method name="reloadCurrentProfile" />
     <method name="reparseConfiguration" />
     <method name="backendCapabilities">
       <arg type="u" direction="out" />
     </method>
     <method name="loadProfile">
-      <arg type="s" direction="in" />
+      <arg type="b" direction="in" />
     </method>
-    <method name="currentProfile">
+    <method name="checkBatteryStatus">
+      <arg type="b" direction="in" />
       <arg type="s" direction="out" />
-    </method>
-    <method name="availableProfiles">
-      <arg type="a{ss}" direction="out" />
-      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="StringStringMap"/>
     </method>
     <method name="setBrightness">
       <arg type="i" direction="in" />
@@ -32,13 +28,16 @@
     </method>
     <method name="suspendHybrid">
     </method>
+    <method name="isLidClosed">
+        <arg type="b" direction="out" />
+    </method>
     <!--<method name="turnOffScreen" />-->
-    
+
     <!--<method name="getSupportedSuspendMethods">
       <arg type="a{sv}" direction="out" />
       <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap" />
     </method>-->
-    
+
     <!--<signal name="DPMSconfigUpdated">
     </signal>-->
     <signal name="brightnessChanged">

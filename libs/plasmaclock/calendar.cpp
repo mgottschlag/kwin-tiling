@@ -177,6 +177,7 @@ void Calendar::init(const QDate &initialDate)
 
     d->jumpToday = new Plasma::ToolButton(this);
     d->jumpToday->nativeWidget()->setIcon(KIcon("go-jump-today"));
+    d->jumpToday->nativeWidget()->setToolTip(i18n("Select today"));
     d->jumpToday->nativeWidget()->setMinimumWidth(25);
     connect(d->jumpToday, SIGNAL(clicked()), this, SLOT(goToToday()));
     layoutTools->addItem(d->jumpToday);

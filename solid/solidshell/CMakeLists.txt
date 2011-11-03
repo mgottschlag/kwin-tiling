@@ -1,8 +1,6 @@
 
 ########### next target ###############
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../control )
-
 set(solid-network_SRCS solid-network.cpp)
 
 kde4_add_executable(solid-network ${solid-network_SRCS})

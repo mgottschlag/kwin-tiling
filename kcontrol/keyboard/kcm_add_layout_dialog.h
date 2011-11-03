@@ -33,7 +33,7 @@ class AddLayoutDialog: public QDialog
 	Q_OBJECT
 
 public:
-	AddLayoutDialog(const Rules* rules, Flags* flags, QWidget* parent=NULL);
+	AddLayoutDialog(const Rules* rules, Flags* flags, bool showLabel, QWidget* parent=NULL);
 
 	LayoutUnit getSelectedLayoutUnit() { return selectedLayoutUnit; }
 	void accept();

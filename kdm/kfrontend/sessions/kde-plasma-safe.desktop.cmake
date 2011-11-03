@@ -1,8 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=XSession
-Exec=${KDE4_BIN_INSTALL_DIR}/startkde --failsafe
-TryExec=${KDE4_BIN_INSTALL_DIR}/startkde
+Exec=${BIN_INSTALL_DIR}/startkde --failsafe
+TryExec=${BIN_INSTALL_DIR}/startkde
 Name=KDE Plasma Workspace (failsafe session)
 Name[ca]=Espai de treball del Plasma del KDE (sessió a prova de fallades)
 Name[cs]=Pracovní plocha plasma (bezpečná relace)
@@ -22,6 +22,7 @@ Name[lt]=KDE Plasma darbastalio erdvė (saugus seansas)
 Name[nb]=KDE Plasma arbeidsflate (sikker økt)
 Name[nds]=KDE-Arbeitrebeet Plasma (Fehlerseker-Törn)
 Name[nl]=KDE Plasma-werkruimte (sessie met veilig mislukken)
+Name[pa]=ਪਲਾਜ਼ਮਾ ਡੈਸਕਟਾਪ ਵਰਕਸਪੇਸ (ਸੰਕਟਕਾਲੀਨ ਸ਼ੈਸ਼ਨ)
 Name[pt]=Área de Trabalho Plasma do KDE (sessão de recurso)
 Name[pt_BR]=Espaço de trabalho do Plasma do KDE (sessão segura)
 Name[ro]=Spațiu de lucru Plasma KDE (sesiune robustă)
@@ -54,6 +55,7 @@ Comment[lt]=Darbastalis sukurtas su KDE (saugus seansas)
 Comment[nb]=Skrivebordet som KDE laget (sikker økt)
 Comment[nds]=KDE-Schriefdisch (Fehlerseker-Törn)
 Comment[nl]=Het bureaublad gemaakt door KDE (sessie met veilig mislukken)
+Comment[pa]=KDE ਵਲੋਂ ਡੈਸਕਟਾਪ (ਸੰਕਟਕਾਲੀਨ ਸ਼ੈਸ਼ਨ)
 Comment[pt]=O ambiente de trabalho feito pelo KDE (sessão de recurso)
 Comment[pt_BR]=O ambiente de trabalho feito pelo KDE (sessão segura)
 Comment[ro]=Biroul creat de KDE (sesiune robustă)

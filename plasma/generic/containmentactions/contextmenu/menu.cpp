@@ -242,11 +242,8 @@ void ContextMenu::logout()
     if (!KAuthorized::authorizeKAction("logout")) {
         return;
     }
-#ifndef Q_WS_WIN
-    KWorkSpace::requestShutDown(KWorkSpace::ShutdownConfirmDefault,
-                                KWorkSpace::ShutdownTypeDefault,
-                                KWorkSpace::ShutdownModeDefault);
-#endif
+
+    KWorkSpace::requestShutDown();
 }
 
 QWidget* ContextMenu::createConfigurationInterface(QWidget* parent)

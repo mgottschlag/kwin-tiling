@@ -1,8 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=XSession
-Exec=${KDE4_BIN_INSTALL_DIR}/startkde
-TryExec=${KDE4_BIN_INSTALL_DIR}/startkde
+Exec=${BIN_INSTALL_DIR}/startkde
+TryExec=${BIN_INSTALL_DIR}/startkde
 Name=KDE Plasma Workspace
 Name[bg]=Работно пространство Plasma на KDE
 Name[ca]=Espai de treball del Plasma del KDE
@@ -22,6 +22,7 @@ Name[lt]=KDE Plasma darbastalio erdvė
 Name[nb]=KDE Plasma arbeidsflate
 Name[nds]=KDE-Arbeitrebeet Plasma
 Name[nl]=KDE Plasma-werkruimte
+Name[pa]=KDE ਪਲਾਜ਼ਮਾ ਵਰਕਸਪੇਸ
 Name[pt]=Área de Trabalho Plasma do KDE
 Name[pt_BR]=Espaço de trabalho do Plasma do KDE
 Name[ro]=Spațiu de lucru Plasma KDE
@@ -55,6 +56,7 @@ Comment[lt]=Darbastalis sukurtas su KDE
 Comment[nb]=Skrivebordet som KDE laget
 Comment[nds]=KDE-Schriefdisch
 Comment[nl]=Het bureaublad gemaakt door KDE
+Comment[pa]=KDE ਵਲੋਂ ਬਣਾਇਆ ਡੈਸਕਟਾਪ
 Comment[pt]=O ambiente de trabalho feito pelo KDE
 Comment[pt_BR]=O ambiente de trabalho feito pelo KDE
 Comment[ro]=Biroul creat de KDE

@@ -28,6 +28,7 @@
 
 #include <KComponentData>
 
+class KActivityConsumer;
 typedef QMap< QString, QString > StringStringMap;
 
 class KDirWatch;
@@ -67,14 +68,11 @@ public Q_SLOTS:
     // Set of common action - useful for the DBus interface
     uint backendCapabilities();
     void refreshStatus();
-    void reloadProfile();
-    void reloadCurrentProfile();
     void reparseConfiguration();
 
-    StringStringMap availableProfiles() const;
+    QString checkBatteryStatus(bool notify = true);
 
-    void loadProfile(const QString &name);
-    QString currentProfile() const;
+    void loadProfile(bool force = false);
 
     int brightness() const;
     void setBrightness(int percent);
@@ -89,6 +87,8 @@ public Q_SLOTS:
     void suspendHybrid();
 
     void onResumeFromSuspend();
+
+    bool isLidClosed();
 
 Q_SIGNALS:
     void coreReady();
@@ -119,10 +119,16 @@ private:
 
     QTimer *m_criticalBatteryTimer;
 
+    KActivityConsumer *m_activityConsumer;
+
     // Idle time management
-    QHash< int, int > m_registeredIdleTimeouts;
     QHash< Action*, QList< int > > m_registeredActionTimeouts;
     QList< Action* > m_pendingResumeFromIdleActions;
+    bool m_pendingWakeupEvent;
+
+    // Activity inhibition management
+    QHash< QString, int > m_sessionActivityInhibit;
+    QHash< QString, int > m_screenActivityInhibit;
 
 private Q_SLOTS:
     void onBackendReady();
@@ -136,7 +142,6 @@ private Q_SLOTS:
     void onDeviceAdded(const QString &udi);
     void onDeviceRemoved(const QString &udi);
     void onCriticalBatteryTimerExpired();
-    void checkBatteryStatus();
     void powerOffButtonTriggered();
 };
 

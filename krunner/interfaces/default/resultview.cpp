@@ -156,7 +156,6 @@ void ResultsView::paintEvent(QPaintEvent *event)
 {
     QPixmap backBuffer(viewport()->size());
     backBuffer.fill(Qt::transparent);
-    QPainter backBufferPainter(&backBuffer);
 
     QPainter painter(viewport());
 
@@ -191,6 +190,7 @@ void ResultsView::paintEvent(QPaintEvent *event)
         p.fillRect(m_nextFadeout.rect(), g);
     }
 
+    QPainter backBufferPainter(&backBuffer);
     backBufferPainter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
     if (m_previousPage->isVisible()) {
         backBufferPainter.drawPixmap(QPoint(0,0), m_previousFadeout);
@@ -199,7 +199,8 @@ void ResultsView::paintEvent(QPaintEvent *event)
     if (m_nextPage->isVisible()) {
         backBufferPainter.drawPixmap(QPoint(0,height()-m_nextFadeout.height()), m_nextFadeout);
     }
-     painter.drawPixmap(event->rect(), backBuffer, event->rect());
+    backBufferPainter.end();
+    painter.drawPixmap(event->rect(), backBuffer, event->rect());
 }
 
 #include "resultview.moc"

@@ -24,6 +24,7 @@
 #include <QDBusMessage>
 
 #include <KIcon>
+#include <KShortcut>
 
 #include <Plasma/IconWidget>
 #include <Plasma/ToolTipManager>
@@ -39,10 +40,23 @@ ShowActivityManager::ShowActivityManager(QObject *parent, const QVariantList &ar
     connect(m_icon, SIGNAL(clicked()), this, SLOT(showManager()));
 
     layout->addItem(m_icon);
+    configChanged();
+}
 
-    Plasma::ToolTipContent content(i18n("Show Activity Manager"),
-                                   i18n("Click or press the Meta key and 'Q' to show the activity manager"),
-                                   KIcon("preferences-activities"));
+void ShowActivityManager::configChanged()
+{
+    KShortcut shortcut = globalShortcut();
+    QString text;
+
+    if (shortcut.isEmpty()) {
+        text = i18n("Click to show the activity manager");
+    } else if (shortcut == KShortcut(Qt::Key_Meta + Qt::Key_Q)) {
+        text = i18n("Click or press the Meta key and 'Q' to show the activity manager");
+    } else {
+        text = i18n("Click or press the associated keyboard shortcut (%1) to show the activity manager", shortcut.toString());
+    }
+
+    Plasma::ToolTipContent content(i18n("Show Activity Manager"), text, KIcon("preferences-activities"));
     Plasma::ToolTipManager::self()->setContent(this, content);
 }
 

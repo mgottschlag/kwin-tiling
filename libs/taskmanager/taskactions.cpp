@@ -40,6 +40,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
 #include <KDesktopFile>
+#include <KRun>
+
+#include <QtCore/QMap>
+#include <QtGui/QHelpEvent>
+#include <QtGui/QToolTip>
 
 namespace TaskManager
 {
@@ -50,33 +55,36 @@ QAction *standardGroupableAction(GroupableAction action, AbstractGroupableItem *
     Q_ASSERT(item);
 
     switch (action) {
-        case MaximizeAction:
-            return new MaximizeActionImpl(parent, item);
-            break;
-        case MinimizeAction:
-            return new MinimizeActionImpl(parent, item);
-            break;
-        case ToCurrentDesktopAction:
-            return new ToCurrentDesktopActionImpl(parent, item);
-            break;
-        case ToDesktopAction:
-            return new ToDesktopActionImpl(parent, item, desktop);
-            break;
-        case ShadeAction:
-            return new ShadeActionImpl(parent, item);
-            break;
-        case CloseAction:
-            return new CloseActionImpl(parent, item);
-            break;
-        case ViewFullscreenAction:
-            return new ViewFullscreenActionImpl(parent, item);
-            break;
-        case KeepBelowAction:
-            return new KeepBelowActionImpl(parent, item);
-            break;
-        case ToggleLauncherAction:
-            return new ToggleLauncherActionImpl(parent, item, strategy);
-            break;
+    case MaximizeAction:
+        return new MaximizeActionImpl(parent, item);
+        break;
+    case MinimizeAction:
+        return new MinimizeActionImpl(parent, item);
+        break;
+    case ToCurrentDesktopAction:
+        return new ToCurrentDesktopActionImpl(parent, item);
+        break;
+    case ToDesktopAction:
+        return new ToDesktopActionImpl(parent, item, desktop);
+        break;
+    case ShadeAction:
+        return new ShadeActionImpl(parent, item);
+        break;
+    case CloseAction:
+        return new CloseActionImpl(parent, item);
+        break;
+    case ViewFullscreenAction:
+        return new ViewFullscreenActionImpl(parent, item);
+        break;
+    case KeepBelowAction:
+        return new KeepBelowActionImpl(parent, item);
+        break;
+    case ToggleLauncherAction:
+        return new ToggleLauncherActionImpl(parent, item, strategy);
+        break;
+    case NewInstanceAction:
+        return new NewInstanceActionImpl(parent, item);
+        break;
     }
 
     return 0;
@@ -87,12 +95,12 @@ QAction* standardTaskAction(TaskAction action, TaskItem *item, QObject *parent)
     Q_ASSERT(item);
 
     switch (action) {
-        case ResizeAction:
-            return new ResizeActionImpl(parent, item);
-            break;
-        case MoveAction:
-            return new MoveActionImpl(parent, item);
-            break;
+    case ResizeAction:
+        return new ResizeActionImpl(parent, item);
+        break;
+    case MoveAction:
+        return new MoveActionImpl(parent, item);
+        break;
     }
 
     return 0;
@@ -104,12 +112,53 @@ QAction* standardGroupingAction(GroupingAction action, AbstractGroupableItem *it
     Q_ASSERT(strategy);
 
     switch (action) {
-        case LeaveGroupAction:
-            return new LeaveGroupActionImpl(parent, item, strategy);
-            break;
+    case LeaveGroupAction:
+        return new LeaveGroupActionImpl(parent, item, strategy);
+        break;
     }
 
     return 0;
+}
+
+static QString qt_strippedText(QString s)
+{
+    s.remove(QString::fromLatin1("..."));
+    int i = 0;
+    while (i < s.size()) {
+        ++i;
+        if (s.at(i - 1) != QLatin1Char('&')) {
+            continue;
+        }
+
+        if (i < s.size() && s.at(i) == QLatin1Char('&')) {
+            ++i;
+        }
+        s.remove(i - 1, 1);
+    }
+    return s.trimmed();
+}
+
+ToolTipMenu::ToolTipMenu(QWidget *parent, const QString &title)
+    : QMenu(title, parent)
+{
+}
+
+bool ToolTipMenu::event(QEvent* e)
+{
+    if (QEvent::ToolTip == e->type()) {
+        //show action tooltip instead of widget tooltip
+        QHelpEvent *he = dynamic_cast<QHelpEvent*>(e);
+        QAction *act = he ? actionAt(he->pos()) : 0;
+        if (act) {
+            if (qt_strippedText(act->text()) != act->toolTip()) {
+                QToolTip::showText(he->globalPos(), act->toolTip(), this);
+            } else {
+                QToolTip::hideText();
+            }
+            return true;
+        }
+    }
+    return QMenu::event(e);
 }
 
 MinimizeActionImpl::MinimizeActionImpl(QObject *parent, AbstractGroupableItem *item)
@@ -180,12 +229,12 @@ AbstractGroupableItemAction::AbstractGroupableItemAction(QObject *parent, Abstra
         addToTasks(group);
     } else if (TaskItem *taskItem = qobject_cast<TaskItem *>(item)) {
         m_tasks.append(taskItem->task());
-    } 
+    }
 }
 
 void AbstractGroupableItemAction::addToTasks(TaskGroup *group)
 {
-    foreach (AbstractGroupableItem *item, group->members()) {
+    foreach(AbstractGroupableItem * item, group->members()) {
         TaskGroup *subGroup = qobject_cast<TaskGroup *>(item);
         if (subGroup) {
             addToTasks(subGroup);
@@ -203,10 +252,10 @@ ToCurrentDesktopActionImpl::ToCurrentDesktopActionImpl(QObject *parent, Abstract
     setEnabled(!item->isOnCurrentDesktop() && item->isActionSupported(NET::ActionChangeDesktop));
 }
 
-void ToCurrentDesktopActionImpl::slotToCurrentDesktop() 
+void ToCurrentDesktopActionImpl::slotToCurrentDesktop()
 {
     const int desktop = KWindowSystem::currentDesktop();
-    foreach (TaskPtr task, m_tasks) {
+    foreach(TaskPtr task, m_tasks) {
         task->toDesktop(desktop);
     }
 }
@@ -230,9 +279,9 @@ ToDesktopActionImpl::ToDesktopActionImpl(QObject *parent, AbstractGroupableItem 
 
 }
 
-void ToDesktopActionImpl::slotToDesktop() 
+void ToDesktopActionImpl::slotToDesktop()
 {
-    foreach (TaskPtr task, m_tasks) {
+    foreach(TaskPtr task, m_tasks) {
         task->toDesktop(m_desktop);
     }
 }
@@ -240,13 +289,13 @@ void ToDesktopActionImpl::slotToDesktop()
 
 
 DesktopsMenu::DesktopsMenu(QWidget *parent, AbstractGroupableItem *item)
-    : QMenu(parent)
+    : ToolTipMenu(parent)
 {
-    setTitle( i18n("Move To &Desktop") );
-    addAction( new ToDesktopActionImpl(this,item,0) );      //0 means all desktops
+    setTitle(i18n("Move To &Desktop"));
+    addAction(new ToDesktopActionImpl(this, item, 0));      //0 means all desktops
     addSeparator();
     for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
-        addAction( new ToDesktopActionImpl(this,item,i) );
+        addAction(new ToDesktopActionImpl(this, item, i));
     }
     setEnabled(item->isActionSupported(NET::ActionChangeDesktop));
 }
@@ -283,20 +332,18 @@ ViewFullscreenActionImpl::ViewFullscreenActionImpl(QObject *parent, AbstractGrou
 }
 
 AdvancedMenu::AdvancedMenu(QWidget *parent, AbstractGroupableItem *item, GroupManager *strategy)
-    : QMenu(parent)
+    : ToolTipMenu(parent)
 {
     setTitle(i18n("Ad&vanced"));
     addAction(new KeepAboveActionImpl(this, item));
     addAction(new KeepBelowActionImpl(this, item));
     addAction(new ViewFullscreenActionImpl(this, item));
 
-    addSeparator();
-
-    addAction(new ToggleLauncherActionImpl(this, item, strategy));
     if (strategy->taskGrouper()) {
         QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, item);
         if (!groupingStrategyActions.isEmpty()) {
-            foreach (QAction *action, groupingStrategyActions) {
+            addSeparator();
+            foreach(QAction * action, groupingStrategyActions) {
                 addAction(action);
             }
             // delete groupingStrategyActions;
@@ -316,7 +363,7 @@ LeaveGroupActionImpl::LeaveGroupActionImpl(QObject *parent, AbstractGroupableIte
 
 void LeaveGroupActionImpl::leaveGroup()
 {
-    groupingStrategy->manualGroupingRequest(abstractItem,abstractItem->parentGroup()->parentGroup());
+    groupingStrategy->manualGroupingRequest(abstractItem, abstractItem->parentGroup()->parentGroup());
 }
 
 ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGroupableItem *item, GroupManager *strategy)
@@ -325,33 +372,33 @@ ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGrou
     connect(this, SIGNAL(triggered()), this, SLOT(toggleLauncher()));
 
     switch (item->itemType()) {
-        case LauncherItemType:
-            m_name = item->name();
-            setText(i18n("Remove This Launcher"));
-            break;
+    case LauncherItemType:
+        m_name = item->name();
+        setText(i18n("Remove This Launcher"));
+        break;
 
-        case GroupItemType: {
-            TaskGroup *group = static_cast<TaskGroup *>(item);
-            foreach (AbstractGroupableItem *i, group->members()) {
-                if (i->itemType() != GroupItemType) {
-                    item = i;
-                    break;
-                }
-            }
-
-            if (item->itemType() == GroupItemType) {
-                setVisible(false);
-                setChecked(false);
+    case GroupItemType: {
+        TaskGroup *group = static_cast<TaskGroup *>(item);
+        foreach(AbstractGroupableItem * i, group->members()) {
+            if (i->itemType() != GroupItemType) {
+                item = i;
                 break;
             }
+        }
 
-        } // fallthrough to TaskItemType below
-
-        case TaskItemType:
-            m_name = static_cast<TaskItem *>(item)->task()->classClass();
-            setText(i18n("&Show A Launcher For %1 When It Is Not Running", m_name));
-            setCheckable(true);
+        if (item->itemType() == GroupItemType) {
+            setVisible(false);
+            setChecked(false);
             break;
+        }
+
+    } // fallthrough to TaskItemType below
+
+    case TaskItemType:
+        m_name = static_cast<TaskItem *>(item)->task()->classClass();
+        setText(i18n("&Show A Launcher When Not Running"));
+        setCheckable(true);
+        break;
     }
 
     m_url = item->launcherUrl();
@@ -380,6 +427,34 @@ void ToggleLauncherActionImpl::toggleLauncher()
     }
 }
 
+NewInstanceActionImpl::NewInstanceActionImpl(QObject *parent, AbstractGroupableItem *item)
+    : QAction(parent), m_abstractItem(item)
+{
+    if (LauncherItemType == item->itemType()) {
+        setVisible(false);
+    } else {
+        setIcon(KIcon("system-run"));
+        setText(i18n("Start New Instance"));
+
+        connect(this, SIGNAL(triggered()), this, SLOT(launchNewInstance()));
+        m_url = item->launcherUrl();
+        if (m_url.isEmpty()) {
+            //don't show the possibility to add a launcher if we don't have a url for it
+            //kDebug() << "No executable found for" << m_name;
+            setVisible(false);
+        }
+    }
+}
+
+void NewInstanceActionImpl::launchNewInstance()
+{
+    if (!m_url.isValid()) {
+        return;
+    }
+
+    new KRun(m_url, 0);
+}
+
 EditGroupActionImpl::EditGroupActionImpl(QObject *parent, TaskGroup *group, GroupManager *groupManager)
     : QAction(parent)
 {
@@ -399,7 +474,7 @@ EditGroupActionImpl::EditGroupActionImpl(QObject *parent, TaskGroup *group, Grou
 }
 
 GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableItem* item, GroupManager *strategy)
-    : QMenu(parent)
+    : ToolTipMenu(parent)
 {
     Q_ASSERT(item);
     Q_ASSERT(strategy);
@@ -409,7 +484,7 @@ GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableIte
         QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, item);
         if (!groupingStrategyActions.empty()) {
             addSeparator();
-            foreach (QAction *action, groupingStrategyActions) {
+            foreach(QAction * action, groupingStrategyActions) {
                 addAction(action);
             }
         }
@@ -417,14 +492,21 @@ GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableIte
 }
 
 
-BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QList<QAction *> visualizationActions)
-    : QMenu(parent)
+BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QList<QAction *> visualizationActions, QList <QAction*> appActions)
+    : ToolTipMenu(parent)
 {
     Q_ASSERT(item);
     Q_ASSERT(strategy);
 
     setTitle(item->name());
     setIcon(item->icon());
+    if (appActions.count()) {
+        foreach(QAction * action, appActions) {
+            addAction(action);
+        }
+
+        addSeparator();
+    }
 
     if (TaskManager::self()->numberOfDesktops() > 1) {
         addMenu(new DesktopsMenu(this, item));
@@ -436,10 +518,11 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
     addAction(new MinimizeActionImpl(this, item));
     addAction(new MaximizeActionImpl(this, item));
     addAction(new ShadeActionImpl(this, item));
-
+    addAction(new NewInstanceActionImpl(this, item));
+    addAction(new ToggleLauncherActionImpl(this, item, strategy));
     addMenu(new AdvancedMenu(this, item, strategy));
 
-    foreach (QAction *action, visualizationActions) {
+    foreach(QAction * action, visualizationActions) {
         addAction(action);
     }
 
@@ -447,22 +530,29 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
     addAction(new CloseActionImpl(this, item));
 }
 
-BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, QList <QAction*> visualizationActions)
-    : QMenu(parent)
+BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, QList <QAction*> visualizationActions, QList <QAction*> appActions)
+    : ToolTipMenu(parent)
 {
     Q_ASSERT(group);
     Q_ASSERT(strategy);
 
     setTitle(group->name());
     setIcon(group->icon());
-    foreach (AbstractGroupableItem *item, group->members()) {
+    if (appActions.count()) {
+        foreach(QAction * action, appActions) {
+            addAction(action);
+        }
+
+        addSeparator();
+    }
+
+    foreach(AbstractGroupableItem * item, group->members()) {
         if (item->itemType() == GroupItemType) {
             addMenu(new BasicMenu(this, dynamic_cast<TaskGroup*>(item), strategy));
         } else {
             addMenu(new BasicMenu(this, dynamic_cast<TaskItem*>(item), strategy));
         }
     }
-
     addSeparator();
 
     if (TaskManager::self()->numberOfDesktops() > 1) {
@@ -473,11 +563,12 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     addAction(new MinimizeActionImpl(this, group));
     addAction(new MaximizeActionImpl(this, group));
     addAction(new ShadeActionImpl(this, group));
-
+    addAction(new NewInstanceActionImpl(this, group));
+    addAction(new ToggleLauncherActionImpl(this, group, strategy));
     addMenu(new AdvancedMenu(this, group, strategy));
     addAction(new EditGroupActionImpl(this, group, strategy));
 
-    foreach (QAction *action, visualizationActions) {
+    foreach(QAction * action, visualizationActions) {
         addAction(action);
     }
 
@@ -485,37 +576,45 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     addAction(new CloseActionImpl(this, group));
 }
 
-BasicMenu::BasicMenu(QWidget *parent, LauncherItem* item, GroupManager *strategy, QList<QAction *> visualizationActions)
-    : QMenu(parent)
+BasicMenu::BasicMenu(QWidget *parent, LauncherItem* item, GroupManager *strategy, QList<QAction *> visualizationActions, QList <QAction*> appActions)
+    : ToolTipMenu(parent)
 {
     Q_ASSERT(item);
     Q_ASSERT(strategy);
 
     setTitle(item->name());
     setIcon(item->icon());
+    if (appActions.count()) {
+        foreach(QAction * action, appActions) {
+            addAction(action);
+        }
+
+        addSeparator();
+    }
 
     addAction(new ToggleLauncherActionImpl(this, item, strategy));
 
-    addSeparator();
-
-    foreach (QAction *action, visualizationActions) {
-        addAction(action);
+    if (!visualizationActions.isEmpty()) {
+        addSeparator();
+        foreach(QAction * action, visualizationActions) {
+            addAction(action);
+        }
     }
 }
 
 GroupPopupMenu::GroupPopupMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManager)
-    :QMenu(parent)
+    : ToolTipMenu(parent)
 {
     setTitle(group->name());
     setIcon(group->icon());
-    foreach (AbstractGroupableItem *item, group->members()) {
+    foreach(AbstractGroupableItem * item, group->members()) {
         if (!item) {
             kDebug() << "invalid Item";
             continue;
         }
 
         if (item->itemType() == GroupItemType) {
-            QMenu* menu = new GroupPopupMenu (this, qobject_cast<TaskGroup*>(item), groupManager);
+            ToolTipMenu* menu = new GroupPopupMenu(this, qobject_cast<TaskGroup*>(item), groupManager);
             addMenu(menu);
         } else {
             QAction* action = new QAction(item->icon(), item->name(), this);

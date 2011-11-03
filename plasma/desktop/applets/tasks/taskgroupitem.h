@@ -137,6 +137,7 @@ protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget);
 
+    void dragMoveEvent(QGraphicsSceneDragDropEvent* event);
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
     void dropEvent(QGraphicsSceneDragDropEvent *event);
@@ -191,6 +192,8 @@ private:
     int totalSubTasks();
     bool focusSubTask(bool next, bool activate);
     AbstractTaskItem * selectSubTask(int index);
+
+    void manuallyMoveTaskGroupItem(QGraphicsSceneDragDropEvent *event);
 
     QWeakPointer<TaskGroup> m_group;
 

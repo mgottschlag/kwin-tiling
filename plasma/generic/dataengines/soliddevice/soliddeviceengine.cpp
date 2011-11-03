@@ -17,6 +17,9 @@
  */
 
 #include "soliddeviceengine.h"
+#include "soliddeviceservice.h"
+
+#include <QMetaEnum>
 
 #include <KDebug>
 #include <KDiskFreeSpaceInfo>
@@ -40,6 +43,11 @@ SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
 
 SolidDeviceEngine::~SolidDeviceEngine()
 {
+}
+
+Plasma::Service* SolidDeviceEngine::serviceForSource(const QString& source)
+{
+    return new SolidDeviceService (this, source);
 }
 
 void SolidDeviceEngine::listenForNewDevices()
@@ -103,6 +111,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     setData(name, I18N_NOOP("Product"), device.product());
     setData(name, I18N_NOOP("Icon"), device.icon());
     setData(name, I18N_NOOP("Emblems"), device.emblems());
+    setData(name, I18N_NOOP("State"), Idle);
 
     if (device.is<Solid::Processor>()) {
         Solid::Processor *processor = device.as<Solid::Processor>();
@@ -144,11 +153,13 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
             }
             if (!device.is<Solid::OpticalDisc>()) {
                 setData(name, I18N_NOOP("Free Space"), freeDiskVar );
+                setData(name, I18N_NOOP("Free Space Text"), KGlobal::locale()->formatByteSize(freeDisk));
             }
         }
 
         m_signalmanager->mapDevice(storageaccess, device.udi());
     }
+
     if (device.is<Solid::StorageDrive>()) {
         Solid::StorageDrive *storagedrive = device.as<Solid::StorageDrive>();
         if (!storagedrive) {
@@ -169,6 +180,14 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 
         updateHardDiskTemperature(name);
     }
+    else {
+        // Fixes removable property, needs better fix though
+        Solid::Device parentDevice = device.parent();
+        Solid::StorageDrive *drive = parentDevice.as<Solid::StorageDrive>();
+        setData(name, I18N_NOOP("Removable"), ( drive && (drive->isHotpluggable() || drive->isRemovable()) ));
+    }
+
+    
     if (device.is<Solid::OpticalDrive>()) {
         Solid::OpticalDrive *opticaldrive = device.as<Solid::OpticalDrive>();
         if (!opticaldrive) {
@@ -264,6 +283,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         setData(name, I18N_NOOP("Label"), storagevolume->label());
         setData(name, I18N_NOOP("UUID"), storagevolume->uuid());
         setData(name, I18N_NOOP("Size"), storagevolume->size());
+        updateInUse(name);
 
         //Check if the volume is part of an encrypted container
         //This needs to trigger an update for the encrypted container volume since
@@ -486,6 +506,17 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         setData(name, I18N_NOOP("Driver Handles"), handles);
     }
 
+    int index = Solid::DeviceInterface::staticMetaObject.indexOfEnumerator("Type");
+    QMetaEnum typeEnum = Solid::DeviceInterface::staticMetaObject.enumerator(index);
+    for (int i = typeEnum.keyCount() - 1 ; i > 0; i--) {
+        Solid::DeviceInterface::Type type = (Solid::DeviceInterface::Type)typeEnum.value(i);
+        const Solid::DeviceInterface *interface = device.asDeviceInterface(type);
+        if (interface) {
+            setData(name, I18N_NOOP("Type Description"), Solid::DeviceInterface::typeDescription(type));
+            break;
+        }
+    }
+
     setData(name, I18N_NOOP("Device Types"), devicetypes);
     return true;
 }
@@ -501,6 +532,44 @@ void SolidDeviceEngine::deviceAdded(const QString& udi)
             setData(query, m_predicatemap[query]);
         }
     }
+
+    if (device.is<Solid::OpticalDisc>()) {
+        Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
+        if (drive) {
+            connect(drive, SIGNAL(ejectRequested(QString)),
+                    this, SLOT(setUnmountingState(QString)));
+            connect(drive, SIGNAL(ejectDone(Solid::ErrorType,QVariant,QString)),
+                    this, SLOT(setIdleState(Solid::ErrorType,QVariant,QString)));
+        }
+    }
+    else if (device.is<Solid::StorageVolume>()) {
+        Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+        if (access) {
+            connect(access, SIGNAL(setupRequested(const QString&)),
+                    this, SLOT(setMountingState(const QString&)));
+            connect(access, SIGNAL(setupDone(Solid::ErrorType,QVariant,QString)),
+                    this, SLOT(setIdleState(Solid::ErrorType,QVariant,QString)));
+            connect(access, SIGNAL(teardownRequested(QString)),
+                    this, SLOT(setUnmountingState(QString)));
+            connect(access, SIGNAL(teardownDone(Solid::ErrorType,QVariant,QString)),
+                    this, SLOT(setIdleState(Solid::ErrorType,QVariant,QString)));
+        }
+    }
+}
+
+void SolidDeviceEngine::setMountingState(const QString &udi)
+{
+    setData(udi, I18N_NOOP("State"), Mounting);
+}
+
+void SolidDeviceEngine::setUnmountingState(const QString &udi)
+{
+    setData(udi, I18N_NOOP("State"), Unmounting);
+}
+
+void SolidDeviceEngine::setIdleState(Solid::ErrorType error, QVariant errorData, const QString &udi)
+{
+    setData(udi, I18N_NOOP("State"), Idle);
 }
 
 qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
@@ -519,6 +588,7 @@ bool SolidDeviceEngine::updateFreeSpace(const QString &udi)
         return false;
     } else if (!device.as<Solid::StorageAccess>()->isAccessible()) {
         removeData(udi, I18N_NOOP("Free Space"));
+        removeData(udi, I18N_NOOP("Free Space Text"));
     }
 
     Solid::StorageAccess *storageaccess = device.as<Solid::StorageAccess>();
@@ -532,6 +602,7 @@ bool SolidDeviceEngine::updateFreeSpace(const QString &udi)
         freeSpaceVar.setValue( freeSpace );
     }
     setData(udi, I18N_NOOP("Free Space"), freeSpaceVar );
+    setData(udi, I18N_NOOP("Free Space Text"), KGlobal::locale()->formatByteSize(freeSpace));
     return true;
 }
 
@@ -580,13 +651,37 @@ bool SolidDeviceEngine::forceUpdateAccessibility(const QString &udi)
     return true;
 }
 
+bool SolidDeviceEngine::updateInUse(const QString &udi)
+{
+    Solid::Device device = m_devicemap.value(udi);
+    if (!device.isValid()) {
+        return false;
+    }
+
+    Solid::StorageAccess *storageaccess = device.as<Solid::StorageAccess>();
+    if (!storageaccess) {
+        return false;
+    }
+
+    Solid::Device parent = Solid::Device(udi).parent();
+
+    if (storageaccess->isAccessible()) {
+        setData(udi, I18N_NOOP("In Use"), true);
+    } else if (parent.is<Solid::StorageDrive>()) {
+        setData(udi, I18N_NOOP("In Use"), parent.as<Solid::StorageDrive>()->isInUse());
+    }
+
+    return true;
+}
+
 bool SolidDeviceEngine::updateSourceEvent(const QString& source)
 {
     bool update1 = updateFreeSpace(source);
     bool update2 = updateHardDiskTemperature(source);
     bool update3 = updateEmblems(source);
+    bool update4 = updateInUse(source);
 
-    return (update1 || update2 || update3);
+    return (update1 || update2 || update3 || update4);
 }
 
 void SolidDeviceEngine::deviceRemoved(const QString& udi)
@@ -605,6 +700,20 @@ void SolidDeviceEngine::deviceRemoved(const QString& udi)
         setData(query, m_predicatemap[query]);
     }
 
+    Solid::Device device(udi);
+    if (device.is<Solid::StorageVolume>()) {
+        Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+        if (access) {
+            disconnect(access, 0, this, 0);
+        }
+    }
+    else if (device.is<Solid::OpticalDisc>()) {
+        Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
+        if (drive) {
+            disconnect(drive, 0, this, 0);
+        }
+    }
+
     m_devicemap.remove(udi);
     removeSource(udi);
 }
@@ -614,5 +723,7 @@ void SolidDeviceEngine::deviceChanged(const QString& udi, const QString &propert
     setData(udi, property, value);
     updateSourceEvent(udi);
 }
+
+K_EXPORT_PLASMA_DATAENGINE(soliddevice, SolidDeviceEngine)
 
 #include "soliddeviceengine.moc"

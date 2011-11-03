@@ -469,9 +469,14 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupab
         AppLauncherItem *launcherItem = new AppLauncherItem(this, m_applet, static_cast<TaskManager::LauncherItem*>(groupableItem));
         item = launcherItem;
     } else {
-        //it's a window task
+        TaskManager::TaskItem * taskItem = static_cast<TaskManager::TaskItem*>(groupableItem);
+        //if the taskItem is not either a startup o a task, return 0;
+        if (!taskItem->startup() && !taskItem->task()) {
+            return item;
+        }
+
         WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet);
-        windowItem->setTask(static_cast<TaskManager::TaskItem*>(groupableItem));
+        windowItem->setTask(taskItem);
         item = windowItem;
     }
 
@@ -1027,6 +1032,15 @@ void  TaskGroupItem::itemPositionChanged(AbstractGroupableItem * item)
     }
 }
 
+void TaskGroupItem::dragMoveEvent(QGraphicsSceneDragDropEvent* event)
+{
+    if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
+        event->mimeData()->hasFormat(TaskManager::Task::groupMimetype())) {
+        manuallyMoveTaskGroupItem(event);
+    } else {
+        event->ignore();
+    }
+}
 
 void TaskGroupItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
@@ -1078,30 +1092,30 @@ AbstractTaskItem *TaskGroupItem::taskItemForWId(WId id)
     return 0;
 }
 
+void TaskGroupItem::manuallyMoveTaskGroupItem(QGraphicsSceneDragDropEvent* event)
+{
+    bool ok;
+    QList<WId> ids = TaskManager::Task::idsFromMimeData(event->mimeData(), &ok);
+
+    if (!ok) {
+        event->ignore();
+        return;
+    }
+
+    AbstractTaskItem *targetTask = dynamic_cast<AbstractTaskItem *>(scene()->itemAt(mapToScene(event->pos())));
+
+    foreach (WId id, ids) {
+        handleDroppedId(id, targetTask, event);
+    }
+
+    event->acceptProposedAction();
+}
+
 void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-    //kDebug() << "TaskItemLayout dropEvent";
     if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
         event->mimeData()->hasFormat(TaskManager::Task::groupMimetype())) {
-        bool ok;
-        QList<WId> ids = TaskManager::Task::idsFromMimeData(event->mimeData(), &ok);
-
-        if (!ok) {
-            //kDebug() << "FAIL!";
-            event->ignore();
-            return;
-        }
-
-        AbstractTaskItem *targetTask = dynamic_cast<AbstractTaskItem *>(scene()->itemAt(mapToScene(event->pos())));
-        //  kDebug() << "Pos: " << event->pos() << mapToScene(event->pos()) << "item" << scene()->itemAt(mapToScene(event->pos())) << "target Task " << dynamic_cast<QGraphicsItem *>(targetTask);
-
-        //kDebug() << "got" << ids.count() << "windows";
-        foreach (WId id, ids) {
-            handleDroppedId(id, targetTask, event);
-        }
-
-        //kDebug() << "TaskItemLayout dropEvent done";
-        event->acceptProposedAction();
+            manuallyMoveTaskGroupItem(event);
     } else if (event->mimeData()->hasFormat("text/uri-list")) {
         KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
         foreach (const KUrl &url, urls) {

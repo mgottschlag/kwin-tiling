@@ -48,10 +48,13 @@ class RandrMonitorModule
         void poll();
         void switchDisplay();
         void resumedFromSuspend();
+        void checkInhibition();
+        void checkResumeFromSuspend();
     private:
         void initRandr();
         void getRandrInfo( XRROutputChangeNotifyEvent* e, QString* change, QRect* rect );
         QStringList connectedMonitors() const;
+        QStringList activeMonitors() const;
         void enableOutput( RandROutput* output, bool enable );
         QList< RandROutput* > connectedOutputs( RandRDisplay &display );
         QList< RandROutput* > activeOutputs( RandRDisplay &display );
@@ -60,6 +63,7 @@ class RandrMonitorModule
         bool have_randr;
         int randr_base;
         int randr_error;
+        int m_inhibitionCookie;
         Window window;
         QStringList currentMonitors;
         RandrMonitorHelper* helper;

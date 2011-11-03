@@ -29,12 +29,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace TaskManager
 {
 
-bool Task::updateDemandsAttentionState( WId w )
+bool Task::updateDemandsAttentionState(WId w)
 {
     const bool empty = d->transientsDemandingAttention.isEmpty();
     if (window() != w) {
         // 'w' is a transient for this task
-        NETWinInfo i( QX11Info::display(), w, QX11Info::appRootWindow(), NET::WMState );
+        NETWinInfo i(QX11Info::display(), w, QX11Info::appRootWindow(), NET::WMState);
         if (i.state() & NET::DemandsAttention) {
             if (!d->transientsDemandingAttention.contains(w)) {
                 d->transientsDemandingAttention.insert(w);
@@ -47,7 +47,7 @@ bool Task::updateDemandsAttentionState( WId w )
     return empty != d->transientsDemandingAttention.isEmpty();
 }
 
-void Task::addTransient( WId w, const NETWinInfo& info )
+void Task::addTransient(WId w, const NETWinInfo& info)
 {
     d->transients.insert(w);
     if (info.state() & NET::DemandsAttention) {
@@ -59,10 +59,10 @@ void Task::addTransient( WId w, const NETWinInfo& info )
 QString Task::className() const
 {
     XClassHint hint;
-    if(XGetClassHint(QX11Info::display(), d->win, &hint)) {
-        QString nh( hint.res_name );
-        XFree( hint.res_name );
-        XFree( hint.res_class );
+    if (XGetClassHint(QX11Info::display(), d->win, &hint)) {
+        QString nh(hint.res_name);
+        XFree(hint.res_name);
+        XFree(hint.res_class);
         return nh;
     }
     return QString();
@@ -71,27 +71,30 @@ QString Task::className() const
 QString Task::classClass() const
 {
     XClassHint hint;
-    if(XGetClassHint(QX11Info::display(), d->win, &hint)) {
-        QString ch( hint.res_class );
-        XFree( hint.res_name );
-        XFree( hint.res_class );
+    if (XGetClassHint(QX11Info::display(), d->win, &hint)) {
+        QString ch(hint.res_class);
+        XFree(hint.res_name);
+        XFree(hint.res_class);
         return ch;
     }
     return QString();
+}
+
+int Task::pid() const
+{
+    return NETWinInfo(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMPid).pid();
 }
 
 void Task::move()
 {
     bool on_current = d->info.isOnCurrentDesktop();
 
-    if (!on_current)
-    {
+    if (!on_current) {
         KWindowSystem::setCurrentDesktop(d->info.desktop());
         KWindowSystem::forceActiveWindow(d->win);
     }
 
-    if (d->info.isMinimized())
-    {
+    if (d->info.isMinimized()) {
         KWindowSystem::unminimizeWindow(d->win);
     }
 
@@ -107,14 +110,12 @@ void Task::resize()
 {
     bool on_current = d->info.isOnCurrentDesktop();
 
-    if (!on_current)
-    {
+    if (!on_current) {
         KWindowSystem::setCurrentDesktop(d->info.desktop());
         KWindowSystem::forceActiveWindow(d->win);
     }
 
-    if (d->info.isMinimized())
-    {
+    if (d->info.isMinimized()) {
         KWindowSystem::unminimizeWindow(d->win);
     }
 
@@ -131,29 +132,23 @@ void Task::setMaximized(bool maximize)
     KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
     bool on_current = info.isOnCurrentDesktop();
 
-    if (!on_current)
-    {
+    if (!on_current) {
         KWindowSystem::setCurrentDesktop(info.desktop());
     }
 
-    if (info.isMinimized())
-    {
+    if (info.isMinimized()) {
         KWindowSystem::unminimizeWindow(d->win);
     }
 
     NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
 
-    if (maximize)
-    {
+    if (maximize) {
         ni.setState(NET::Max, NET::Max);
-    }
-    else
-    {
+    } else {
         ni.setState(0, NET::Max);
     }
 
-    if (!on_current)
-    {
+    if (!on_current) {
         KWindowSystem::forceActiveWindow(d->win);
     }
 }
@@ -163,29 +158,26 @@ void Task::restore()
     KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
     bool on_current = info.isOnCurrentDesktop();
 
-    if (!on_current)
-    {
+    if (!on_current) {
         KWindowSystem::setCurrentDesktop(info.desktop());
     }
 
-    if( info.isMinimized())
-    {
+    if (info.isMinimized()) {
         KWindowSystem::unminimizeWindow(d->win);
     }
 
     NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
     ni.setState(0, NET::Max);
 
-    if (!on_current)
-    {
-        KWindowSystem::forceActiveWindow( d->win );
+    if (!on_current) {
+        KWindowSystem::forceActiveWindow(d->win);
     }
 }
 
 void Task::close()
 {
-    NETRootInfo ri( QX11Info::display(), NET::CloseWindow );
-    ri.closeWindowRequest( d->win );
+    NETRootInfo ri(QX11Info::display(), NET::CloseWindow);
+    ri.closeWindowRequest(d->win);
 }
 
 void Task::toDesktop(int desk)
@@ -210,23 +202,20 @@ void Task::toDesktop(int desk)
 
 void Task::setAlwaysOnTop(bool stay)
 {
-    NETWinInfo ni( QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
-    if(stay)
-        ni.setState( NET::StaysOnTop, NET::StaysOnTop );
+    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
+    if (stay)
+        ni.setState(NET::StaysOnTop, NET::StaysOnTop);
     else
-        ni.setState( 0, NET::StaysOnTop );
+        ni.setState(0, NET::StaysOnTop);
 }
 
 void Task::setKeptBelowOthers(bool below)
 {
     NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
 
-    if (below)
-    {
+    if (below) {
         ni.setState(NET::KeepBelow, NET::KeepBelow);
-    }
-    else
-    {
+    } else {
         ni.setState(0, NET::KeepBelow);
     }
 }
@@ -235,29 +224,25 @@ void Task::setFullScreen(bool fullscreen)
 {
     NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
 
-    if (fullscreen)
-    {
+    if (fullscreen) {
         ni.setState(NET::FullScreen, NET::FullScreen);
-    }
-    else
-    {
+    } else {
         ni.setState(0, NET::FullScreen);
     }
 }
 
 void Task::setShaded(bool shade)
 {
-    NETWinInfo ni( QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
-    if(shade)
-        ni.setState( NET::Shaded, NET::Shaded );
+    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
+    if (shade)
+        ni.setState(NET::Shaded, NET::Shaded);
     else
-        ni.setState( 0, NET::Shaded );
+        ni.setState(0, NET::Shaded);
 }
 
 void Task::publishIconGeometry(QRect rect)
 {
-    if (rect == d->iconGeometry)
-    {
+    if (rect == d->iconGeometry) {
         return;
     }
 
@@ -265,8 +250,7 @@ void Task::publishIconGeometry(QRect rect)
     NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), 0);
     NETRect r;
 
-    if (rect.isValid())
-    {
+    if (rect.isValid()) {
         r.pos.x = rect.x();
         r.pos.y = rect.y();
         r.size.width = rect.width();

@@ -193,8 +193,15 @@ void LayoutMemory::setCurrentLayoutFromMap()
 	previousLayoutMapKey = layoutMapKey;
 }
 
+#include <kplugininfo.h>
+#include <plasma/containment.h>
+
 void LayoutMemory::windowChanged(WId /*wId*/)
 {
+	KPluginInfo::List plugins = Plasma::Containment::listContainments();
+	foreach(KPluginInfo info, plugins) {
+		kDebug() << "applets" << info.name();
+	}
 	setCurrentLayoutFromMap();
 }
 

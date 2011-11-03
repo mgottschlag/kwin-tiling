@@ -71,6 +71,20 @@ private:
     QString m_name;
 };
 
+class NewInstanceActionImpl : public QAction
+{
+    Q_OBJECT
+public:
+    NewInstanceActionImpl(QObject* parent, AbstractGroupableItem* item);
+
+private Q_SLOTS:
+    void launchNewInstance();
+
+private:
+    AbstractGroupableItem *m_abstractItem;
+    KUrl m_url;
+};
+
 /** Resize a window or all windows in a group*/
 class ResizeActionImpl : public QAction
 {

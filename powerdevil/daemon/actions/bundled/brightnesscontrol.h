@@ -23,6 +23,7 @@
 
 #include <powerdevilaction.h>
 
+class BrightnessOSDWidget;
 
 namespace PowerDevil {
 namespace BundledActions {
@@ -46,8 +47,15 @@ protected:
 public:
     virtual bool loadAction(const KConfigGroup& config);
 
+public Q_SLOTS:
+    void showBrightnessOSD(int brightness);
+    void onBrightnessChangedFromBackend(float brightness);
+
 private:
     int m_defaultValue;
+    QWeakPointer< BrightnessOSDWidget > m_brightnessOSD;
+    QString m_lastProfile;
+    QString m_currentProfile;
 };
 
 }

@@ -44,6 +44,12 @@ public:
 		SWITCH_POLICY_WINDOW = 3
 	};
 
+	enum IndicatorType {
+		SHOW_LABEL = 0,
+		SHOW_FLAG = 1,
+		SHOW_LABEL_ON_FLAG = 2
+	};
+
 	QString keyboardModel;
 	// resetOldXkbOptions is now also "set xkb options"
 	bool resetOldXkbOptions;
@@ -61,7 +67,7 @@ public:
 
 	// display options
 	bool showIndicator;
-	bool showFlag;
+	IndicatorType indicatorType;
 	bool showSingle;
 
 	bool isSpareLayoutsEnabled() const {
@@ -69,6 +75,12 @@ public:
 	}
 	QList<LayoutUnit> getDefaultLayouts() const;
 	QList<LayoutUnit> getExtraLayouts() const;
+	bool isFlagShown() const {
+		return indicatorType == SHOW_FLAG || indicatorType == SHOW_LABEL_ON_FLAG;
+	}
+	bool isLabelShown() const {
+		return indicatorType == SHOW_LABEL || indicatorType == SHOW_LABEL_ON_FLAG;
+	}
 
 	void setDefaults();
 	void load();

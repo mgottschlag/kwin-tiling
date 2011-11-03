@@ -92,7 +92,14 @@ int ClockHelper::date( const QString& newdate, const QString& olddate )
 
     tv.tv_sec = newdate.toULong() - olddate.toULong() + time(0);
     tv.tv_usec = 0;
-    return settimeofday(&tv, 0) ? DateError : 0;
+    if (settimeofday(&tv, 0)) {
+        return DateError;
+    }
+
+    if (!KStandardDirs::findExe("hwclock").isEmpty()) {
+        KProcess::execute("hwclock", QStringList() << "--systohc");
+    }
+    return 0;
 }
 
 // on non-Solaris systems which do not use /etc/timezone?

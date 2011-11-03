@@ -27,7 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 #include <ktoolinvocation.h>
+#include <solid/powermanagement.h>
 
+#include <qdbusservicewatcher.h>
 #include <qdbusconnection.h>
 #include <qdbusconnectioninterface.h>
 #include <qtimer.h>
@@ -42,9 +44,23 @@ RandrMonitorModule::RandrMonitorModule( QObject* parent, const QList<QVariant>& 
     : KDEDModule( parent )
     , have_randr( false )
     {
+    m_inhibitionCookie = -1;
     setModuleName( "randrmonitor" );
     initRandr();
-    QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT(resumedFromSuspend()));
+
+    QDBusReply <bool> re =  QDBusConnection::systemBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement");
+    if (!re.value()) {
+        kDebug(7131) << "PowerManagement not loaded, waiting for it";
+        QDBusServiceWatcher *serviceWatcher = new QDBusServiceWatcher("org.kde.Solid.PowerManagement", QDBusConnection::sessionBus(),
+                                                                  QDBusServiceWatcher::WatchForRegistration, this);
+        connect(serviceWatcher, SIGNAL(serviceRegistered(QString)), this, SLOT(checkInhibition()));
+        connect(serviceWatcher, SIGNAL(serviceRegistered(QString)), this, SLOT(checkResumeFromSuspend()));
+        return;
+    }
+
+    checkInhibition();
+    checkResumeFromSuspend();
+
     }
 
 RandrMonitorModule::~RandrMonitorModule()
@@ -107,8 +123,14 @@ void RandrMonitorModule::processX11Event( XEvent* e )
             {
             kDebug() << "Monitor change detected";
             QStringList newMonitors = connectedMonitors();
-            if( newMonitors == currentMonitors )
+
+            //If we are already inhibiting and we should stop it, do it
+            checkInhibition();
+
+            if( newMonitors == currentMonitors ) {
+                kDebug() << "Same monitors";
                 return;
+            }
             if( QDBusConnection::sessionBus().interface()->isServiceRegistered(
                 "org.kde.internal.KSettingsWidget-kcm_randr" ))
                 { // already running
@@ -152,8 +174,67 @@ QStringList RandrMonitorModule::connectedMonitors() const
     return ret;
     }
 
+QStringList RandrMonitorModule::activeMonitors() const
+{
+    QStringList ret;
+    Display* dpy = QX11Info::display();
+    XRRScreenResources* resources = XRRGetScreenResources( dpy, window );
+    for( int i = 0;
+         i < resources->noutput;
+         ++i )
+        {
+        XRROutputInfo* info = XRRGetOutputInfo( dpy, resources, resources->outputs[ i ] );
+        QString name = QString::fromUtf8( info->name );
+        if(info->crtc != None)
+            ret.append( name );
+        XRRFreeOutputInfo( info );
+        }
+    XRRFreeScreenResources( resources );
+    return ret;
+}
+
+void RandrMonitorModule::checkInhibition()
+{
+    QStringList activeMonitorsList = activeMonitors();
+    kDebug(7131) << "Active monitor list";
+    kDebug(7131) << activeMonitorsList;
+    bool inhibit = false;
+    Q_FOREACH(const QString monitor, activeMonitorsList) {
+        if (!monitor.contains("LVDS")) {
+            inhibit = true;
+            break;
+        }
+    }
+    if (m_inhibitionCookie > 0 && !inhibit) {
+        kDebug(7131) << "Stopping: " << m_inhibitionCookie;
+        Solid::PowerManagement::stopSuppressingSleep(m_inhibitionCookie);
+        m_inhibitionCookie = -1;
+    } else if (m_inhibitionCookie < 0 && inhibit) { // If we are NOT inhibiting and we should, do it
+        m_inhibitionCookie = Solid::PowerManagement::beginSuppressingSleep();
+        kDebug(7131) << "Inhibing: " << m_inhibitionCookie;
+    }
+}
+
+void RandrMonitorModule::checkResumeFromSuspend()
+{
+    QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT(resumedFromSuspend()));
+}
+
 void RandrMonitorModule::switchDisplay()
     {
+    QDBusMessage call = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
+                                                  "/org/kde/Solid/PowerManagement",
+                                                  "org.kde.Solid.PowerManagement",
+                                                  "isLidClosed");
+    QDBusMessage msg =  QDBusConnection::sessionBus().call(call);
+    QDBusReply<bool> reply(msg);
+
+    if (reply.isValid() && reply.value()) {
+        kDebug() << "Lid is closed, ignoring the event";
+        //TODO: When we rewrite this, be sure that in this case LVDS is disabled instead of ignoring
+        return;
+    }
+
     QList< RandROutput* > outputs;
     RandRDisplay display;
     outputs = connectedOutputs( display );

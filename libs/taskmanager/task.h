@@ -51,26 +51,26 @@ namespace TaskManager
 class TASKMANAGER_EXPORT Task : public QObject, public KShared
 {
     Q_OBJECT
-    Q_PROPERTY( QString visibleName READ visibleName )
-    Q_PROPERTY( QString name READ name )
-    Q_PROPERTY( QString className READ className )
-    Q_PROPERTY( QString visibleNameWithState READ visibleNameWithState )
-    Q_PROPERTY( QPixmap pixmap READ pixmap )
-    Q_PROPERTY( bool maximized READ isMaximized )
-    Q_PROPERTY( bool minimized READ isMinimized )
+    Q_PROPERTY(QString visibleName READ visibleName)
+    Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(QString className READ className)
+    Q_PROPERTY(QString visibleNameWithState READ visibleNameWithState)
+    Q_PROPERTY(QPixmap pixmap READ pixmap)
+    Q_PROPERTY(bool maximized READ isMaximized)
+    Q_PROPERTY(bool minimized READ isMinimized)
     // KDE4 deprecated
-    Q_PROPERTY( bool iconified READ isIconified )
-    Q_PROPERTY( bool shaded READ isShaded WRITE setShaded )
-    Q_PROPERTY( bool active READ isActive )
-    Q_PROPERTY( bool onCurrentDesktop READ isOnCurrentDesktop )
-    Q_PROPERTY( bool onAllDesktops READ isOnAllDesktops )
-    Q_PROPERTY( bool alwaysOnTop READ isAlwaysOnTop WRITE setAlwaysOnTop )
-    Q_PROPERTY( bool modified READ isModified )
-    Q_PROPERTY( bool demandsAttention READ demandsAttention )
-    Q_PROPERTY( int desktop READ desktop )
-    Q_PROPERTY( bool onCurrentActivity READ isOnCurrentActivity )
-    Q_PROPERTY( bool onAllActivities READ isOnAllActivities )
-    Q_PROPERTY( QStringList activities READ activities )
+    Q_PROPERTY(bool iconified READ isIconified)
+    Q_PROPERTY(bool shaded READ isShaded WRITE setShaded)
+    Q_PROPERTY(bool active READ isActive)
+    Q_PROPERTY(bool onCurrentDesktop READ isOnCurrentDesktop)
+    Q_PROPERTY(bool onAllDesktops READ isOnAllDesktops)
+    Q_PROPERTY(bool alwaysOnTop READ isAlwaysOnTop WRITE setAlwaysOnTop)
+    Q_PROPERTY(bool modified READ isModified)
+    Q_PROPERTY(bool demandsAttention READ demandsAttention)
+    Q_PROPERTY(int desktop READ desktop)
+    Q_PROPERTY(bool onCurrentActivity READ isOnCurrentActivity)
+    Q_PROPERTY(bool onAllActivities READ isOnAllActivities)
+    Q_PROPERTY(QStringList activities READ activities)
 
 public:
 
@@ -101,6 +101,7 @@ public:
     QString name() const;
     QString className() const;
     QString classClass() const;
+    int pid() const;
 
     /**
      * A list of the window ids of all transient windows (dialogs) associated
@@ -128,7 +129,7 @@ public:
      * @param size Any of the constants in KIconLoader::StdSizes.
      * @param isStaticIcon Set to true if KIconLoader was used, false otherwise.
      */
-    QPixmap bestIcon( int size, bool &isStaticIcon );
+    QPixmap bestIcon(int size, bool &isStaticIcon);
 
     /**
      * Tries to find an icon for the task with the specified size. If there
@@ -139,7 +140,7 @@ public:
      * parameters will only query the NET properties if the icon has changed or
      * none was found.
      */
-    QPixmap icon( int width, int height, bool allowResize = false );
+    QPixmap icon(int width, int height, bool allowResize = false);
 
     /**
      * \return a QIcon for the task
@@ -235,7 +236,7 @@ public:
     /**
     * Returns true if the window is on the specified screen of a multihead configuration
     */
-    bool isOnScreen( int screen ) const;
+    bool isOnScreen(int screen) const;
 
     /**
      * Returns true if the task should be shown in taskbar-like apps
@@ -273,14 +274,14 @@ public:
     ::TaskManager::TaskChanges refresh(WindowProperties dirty);
     //* @internal
 #ifdef Q_WS_X11
-    void addTransient( WId w, const NETWinInfo& info );
+    void addTransient(WId w, const NETWinInfo& info);
 #endif
     //* @internal
-    void removeTransient( WId w );
+    void removeTransient(WId w);
     //* @internal
     bool hasTransient(WId w) const;
     //* @internal
-    bool updateDemandsAttentionState( WId w );
+    bool updateDemandsAttentionState(WId w);
     //* @internal
     void setActive(bool a);
 
@@ -354,9 +355,9 @@ public Q_SLOTS:
      */
     void lower();
 
-   /**
-     * Activate the task's window.
-     */
+    /**
+      * Activate the task's window.
+      */
     void activate();
 
     /**

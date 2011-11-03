@@ -611,11 +611,11 @@ void MenuLauncherApplet::showMenu(bool pressed)
             if(vtname == "Applications") {
                 Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel(menuview, true /*allow separators*/);
 
-                appModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
-
                 appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
-                if (d->formattype == Name || d->formattype == NameDescription || d->formattype == NameDashDescription)
+                if (d->formattype == Name || d->formattype == NameDescription || d->formattype == NameDashDescription) {
+                    appModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
                     appModel->setPrimaryNamePolicy(Kickoff::ApplicationModel::AppNamePrimary);
+                }
                 appModel->setSystemApplicationPolicy(Kickoff::ApplicationModel::ShowApplicationAndSystemPolicy);
 
                 menuview->addModel(appModel, Kickoff::MenuView::None, d->relativePath);
@@ -629,14 +629,25 @@ void MenuLauncherApplet::showMenu(bool pressed)
                     }
                 }
             } else if(vtname == "Favorites") {
-                d->addModel(new Kickoff::FavoritesModel(menuview), Favorites);
+                Kickoff::FavoritesModel *favoritesModel = new Kickoff::FavoritesModel(menuview);
+                if (d->formattype == Name || d->formattype == NameDescription || d->formattype == NameDashDescription) {
+                    favoritesModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
+                }
+                d->addModel(favoritesModel, Favorites);
             } else if(vtname == "Computer") {
                 d->addModel(new Kickoff::SystemModel(menuview), Computer);
             } else if(vtname == "RecentlyUsed") {
-                d->addModel(new Kickoff::RecentlyUsedModel(menuview), RecentlyUsed);
+                Kickoff::RecentlyUsedModel *recentModel = new Kickoff::RecentlyUsedModel(menuview);
+                if (d->formattype == Name || d->formattype == NameDescription || d->formattype == NameDashDescription) {
+                    recentModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
+                }
+                d->addModel(recentModel, RecentlyUsed);
             } else if(vtname == "RecentlyUsedApplications") {
                 if (d->maxRecentApps > 0) {
                     Kickoff::RecentlyUsedModel *recentModel = new Kickoff::RecentlyUsedModel(menuview, Kickoff::RecentlyUsedModel::ApplicationsOnly, d->maxRecentApps);
+                    if (d->formattype == Name || d->formattype == NameDescription || d->formattype == NameDashDescription) {
+                        recentModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
+                    }
                     menuview->addModel(recentModel, Kickoff::MenuView::MergeFirstLevel);
 
                     if (d->showMenuTitles) {

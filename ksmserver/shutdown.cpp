@@ -58,14 +58,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QTimer>
 #include <QtDBus/QtDBus>
 
-#include <klocale.h>
-#include <kglobal.h>
-#include <kconfig.h>
-#include <kstandarddirs.h>
-#include <kapplication.h>
-#include <ktemporaryfile.h>
-#include <kconfiggroup.h>
-#include <knotification.h>
+#include <KApplication>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KGlobal>
+#include <KLocale>
+#include <KNotification>
+#include <KStandardDirs>
+#include <KTemporaryFile>
 #include <kworkspace/kdisplaymanager.h>
 #include "server.h"
 #include "global.h"
@@ -152,9 +152,9 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
     dialogActive = true;
     QString bopt;
     if ( !logoutConfirmed ) {
+        KApplication::kApplication()->updateUserTimestamp();
         KSMShutdownFeedback::start(); // make the screen gray
-        logoutConfirmed =
-            KSMShutdownDlg::confirmShutdown( maysd, choose, sdtype, bopt );
+        logoutConfirmed = KSMShutdownDlg::confirmShutdown( maysd, choose, sdtype, bopt );
         // ###### We can't make the screen remain gray while talking to the apps,
         // because this prevents interaction ("do you want to save", etc.)
         // TODO: turn the feedback widget into a list of apps to be closed,

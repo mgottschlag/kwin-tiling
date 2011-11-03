@@ -1,4 +1,5 @@
 include(UnixAuth)
+macro_log_feature(PAM_FOUND "libpam" "PAM Libraries" "https://www.kernel.org/pub/linux/libs/pam/" FALSE "" "Required for screen unlocking and optionally used by the KDM log in manager")
 include(CheckTypeSize)
 include(FindPkgConfig)
 
@@ -85,10 +86,9 @@ check_type_size("struct ucred" STRUCT_UCRED)       # kio_fonts
 check_function_exists(getpeereid  HAVE_GETPEEREID) # kdesu
 check_function_exists(setpriority  HAVE_SETPRIORITY) # kscreenlocker 
 
-pkg_check_modules (XRANDR_1_2   xrandr>=1.3)
-macro_bool_to_01(XRANDR_1_2_FOUND HAS_RANDR_1_3)
-if (NOT XRANDR_1_2_FOUND)
-   pkg_check_modules (XRANDR_1_2   xrandr>=1.2)
-endif (NOT XRANDR_1_2_FOUND)
+set(CMAKE_REQUIRED_INCLUDES ${X11_Xrandr_INCLUDE_PATH}/Xrandr.h)
+set(CMAKE_REQUIRED_LIBRARIES ${X11_Xrandr_LIB})
+check_function_exists(XRRGetScreenSizeRange XRANDR_1_2_FOUND)
 macro_bool_to_01(XRANDR_1_2_FOUND HAS_RANDR_1_2)
-
+check_function_exists(XRRGetScreenResourcesCurrent XRANDR_1_3_FOUND)
+macro_bool_to_01(XRANDR_1_3_FOUND HAS_RANDR_1_3)

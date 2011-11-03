@@ -160,10 +160,7 @@ void LeaveItemHandler::logout()
         type = KWorkSpace::ShutdownTypeHalt;
     }
 
-//FIXME: the proper fix is to implement the KWorkSpace methods for Windows
-#ifndef Q_WS_WIN
     KWorkSpace::requestShutDown(confirm, type);
-#endif
 }
 
 void LeaveItemHandler::lock()

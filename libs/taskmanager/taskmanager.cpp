@@ -27,6 +27,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // Qt
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QTimer>
 #include <QUuid>
 
 // KDE
@@ -321,7 +322,9 @@ void TaskManager::windowRemoved(WId w)
         }
 
         //kDebug() << "TM: Task for WId " << w << " removed.";
-        t->deleteLater();
+        // FIXME: due to a bug in Qt 4.x, the event loop reference count is incorrect
+        // when going through x11EventFilter .. :/ so we have to singleShot the deleteLater
+        QTimer::singleShot(0, t.data(), SLOT(deleteLater()));
     }
     else
     {

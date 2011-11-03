@@ -29,6 +29,7 @@ class QIcon;
 class LayoutUnit;
 class KeyboardConfig;
 class Rules;
+class QPainter;
 namespace Plasma {
 	class Svg;
 }
@@ -57,7 +58,9 @@ Q_SIGNALS:
 	void pixmapChanged();
 
 private:
+	QIcon createIcon(const QString& layout);
 	QString getCountryFromLayoutName(const QString& fullLayoutName) const;
+	void drawLabel(QPainter& painter, const QString& layoutText, bool flagShown);
 	Plasma::Svg* getSvg();
 
 	QMap<QString, QIcon> iconMap;

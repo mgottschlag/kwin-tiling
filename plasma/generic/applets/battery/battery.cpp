@@ -21,8 +21,6 @@
 
 #include "battery.h"
 
-#include "brightnessosdwidget.h"
-
 #include <QApplication>
 #include <QDBusConnection>
 #include <QDBusInterface>
@@ -80,8 +78,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_batteryInfoLabel(0),
       m_acLabelLabel(0),
       m_acInfoLabel(0),
-      m_profileLabel(0),
-      m_profileCombo(0),
       m_brightnessSlider(0),
       m_minutes(0),
       m_hours(0),
@@ -95,7 +91,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_acAlpha(0),
       m_acAnimation(0),
       m_ignoreBrightnessChange(false),
-      m_brightnessOSD(0)
+      m_inhibitCookies(qMakePair< int, int >(-1, -1))
 {
     //kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
@@ -127,7 +123,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
 
 Battery::~Battery()
 {
-    delete m_brightnessOSD;
 }
 
 void Battery::init()
@@ -167,7 +162,7 @@ void Battery::init()
         initPopupWidget();
         // let's show a brightness OSD
         QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement",
-                                              "brightnessChanged", this, SLOT(showBrightnessOSD(int)));
+                                              "brightnessChanged", this, SLOT(updateSlider(float)));
     }
 
     if (m_acAdapterPlugged) {
@@ -539,6 +534,15 @@ void Battery::initPopupWidget()
     controlsLayout->addItem(m_remainingInfoLabel, row, 1);
     row++;
 
+    m_inhibitLabel = createBuddyLabel(controls);
+    m_inhibitLabel->setText(i18nc("Label for power management inhibition", "Power management enabled:"));
+    m_inhibitButton = new Plasma::CheckBox(controls);
+    m_inhibitButton->setChecked(true);
+    controlsLayout->addItem(m_inhibitLabel, row, 0);
+    controlsLayout->addItem(m_inhibitButton, row, 1);
+    connect(m_inhibitButton, SIGNAL(toggled(bool)), this, SLOT(toggleInhibit(bool)));
+    row++;
+
     Battery *extenderApplet = new Battery(0, QVariantList());
     extenderApplet->setParent(controls);
     extenderApplet->setAcceptsHoverEvents(false);
@@ -551,21 +555,6 @@ void Battery::initPopupWidget()
     extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
     extenderApplet->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     controlsLayout->addItem(extenderApplet, 1, 2, 2, 1);
-
-    m_profileLabel = createBuddyLabel(controls);
-    m_profileLabel->setText(i18n("Power Profile:"));
-    controlsLayout->addItem(m_profileLabel, row, 0);
-
-
-    m_profileCombo = new Plasma::ComboBox(controls);
-    // Workaround for bug 219873
-    m_profileCombo->nativeWidget()->setMaxVisibleItems(4);
-    // This is necessary until QTBUG-2368 is fixed
-    m_profileCombo->setZValue(110);
-    connect(m_profileCombo, SIGNAL(activated(QString)),
-            this, SLOT(setProfile(QString)));
-    controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
-    row++;
 
     m_brightnessLabel = createBuddyLabel(controls);
     m_brightnessLabel->setText(i18n("Screen Brightness:"));
@@ -645,7 +634,6 @@ void Battery::setupFonts()
     if (m_batteryLabelLabel) {
         QFont infoFont = KGlobalSettings::generalFont();
         m_brightnessLabel->setFont(infoFont);
-        m_profileLabel->setFont(infoFont);
 
         QFont boldFont = infoFont;
         boldFont.setBold(true);
@@ -737,24 +725,6 @@ void Battery::updateStatus()
         kDebug() << batteriesLabel;
     }
 
-    if (!m_availableProfiles.empty() && m_profileCombo) {
-        m_profileCombo->clear();
-        for (StringStringMap::const_iterator i = m_availableProfiles.constBegin(); i != m_availableProfiles.constEnd(); ++i) {
-            m_profileCombo->addItem(i.value());
-        }
-        m_profileCombo->setCurrentIndex(m_profileCombo->nativeWidget()->findText(m_availableProfiles[m_currentProfile]));
-    }
-
-    if (m_profileLabel && m_profileCombo) {
-        if (m_availableProfiles.empty()) {
-            m_profileCombo->hide();
-            m_profileLabel->hide();
-        } else {
-            m_profileCombo->show();
-            m_profileLabel->show();
-        }
-    }
-
     if (m_brightnessSlider) {
         updateSlider();
     }
@@ -769,15 +739,6 @@ void Battery::openConfig()
         << QLatin1String("powerdevilglobalconfig")
         << QLatin1String("powerdevilprofilesconfig");
     KToolInvocation::kdeinitExec("kcmshell4", args);
-}
-
-void Battery::setProfile(const QString &profile)
-{
-    if (m_currentProfile != profile) {
-        kDebug() << "Changing power profile to " << profile;
-        QDBusInterface iface( "org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement" );
-        iface.call( "loadProfile", m_availableProfiles.key(profile) );
-    }
 }
 
 void Battery::showLabel(bool show)
@@ -1106,26 +1067,23 @@ qreal Battery::acAlpha() const
     return m_acAlpha;
 }
 
-void Battery::showBrightnessOSD(int brightness)
+void Battery::toggleInhibit(bool toggle)
 {
-    // code adapted from KMix
-    if (!m_brightnessOSD) {
-        m_brightnessOSD = new BrightnessOSDWidget();
-    }
+    using namespace Solid::PowerManagement;
 
-    m_brightnessOSD->setCurrentBrightness(brightness);
-    m_brightnessOSD->show();
-    m_brightnessOSD->activateOSD(); //Enable the hide timer
+    if (m_inhibitCookies.first > 0 && m_inhibitCookies.second > 0 && !toggle) {
+        // Release inhibition
+        stopSuppressingSleep(m_inhibitCookies.first);
+        stopSuppressingScreenPowerManagement(m_inhibitCookies.second);
 
-    //Center the OSD
-    QRect rect = KApplication::kApplication()->desktop()->screenGeometry(QCursor::pos());
-    QSize size = m_brightnessOSD->sizeHint();
-    int posX = rect.x() + (rect.width() - size.width()) / 2;
-    int posY = rect.y() + 4 * rect.height() / 5;
-    m_brightnessOSD->setGeometry(posX, posY, size.width(), size.height());
-
-    if (m_extenderVisible && m_brightnessSlider) {
-        updateSlider(brightness);
+        m_inhibitCookies = qMakePair< int, int >(-1, -1);
+    } else if (m_inhibitCookies.first < 0 && m_inhibitCookies.second < 0 && toggle) {
+        // Trigger inhibition
+        QString reason = i18n("The battery applet has enabled system-wide inhibition");
+        m_inhibitCookies = qMakePair< int, int >(beginSuppressingSleep(reason),
+                                                 beginSuppressingScreenPowerManagement(reason));
+    } else {
+        kWarning() << "The requested action conflicts with the current inhibition state";
     }
 }
 

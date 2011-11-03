@@ -47,8 +47,8 @@ LayoutWidget::LayoutWidget(QWidget* parent, const QList<QVariant>& /*args*/):
 	}
 
 	keyboardConfig->load();
-	bool show = keyboardConfig->showIndicator
-			&& ( keyboardConfig->showSingle || X11Helper::getLayoutsList().size() > 1 );
+	bool show = // keyboardConfig->showIndicator &&
+			( keyboardConfig->showSingle || X11Helper::getLayoutsList().size() > 1 );
 	if( ! show ) {
 		hide();
 		return;
@@ -93,7 +93,7 @@ void LayoutWidget::layoutChanged()
 		return;
 
 	QIcon icon;
-	if( keyboardConfig->showFlag ) {
+	if( keyboardConfig->isFlagShown() ) {
 		icon = flags->getIcon(layoutUnit.layout);
 	}
 
