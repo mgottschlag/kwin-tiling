@@ -32,8 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
-#include <ksysguard/processes.h>
-#include <ksysguard/process.h>
+#include <ksysguard/processcore/processes.h>
+#include <ksysguard/processcore/process.h>
 
 #include <QtCore/QFile>
 #include <QtCore/QTimer>
