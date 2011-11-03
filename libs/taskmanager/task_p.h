@@ -35,8 +35,8 @@ namespace TaskManager
 
 static const unsigned long windowInfoFlags = NET::WMState | NET::XAWMState | NET::WMDesktop |
                                              NET::WMVisibleName | NET::WMGeometry |
-                                             NET::WMWindowType | NET::WM2AllowedActions;
-static const unsigned long windowInfoFlags2 = NET::WM2AllowedActions;
+                                             NET::WMWindowType | NET::WM2WindowClass | NET::WM2AllowedActions;
+static const unsigned long windowInfoFlags2 = NET::WM2WindowClass | NET::WM2AllowedActions;
 
 class Task::Private
 {

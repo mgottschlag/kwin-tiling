@@ -112,6 +112,11 @@ void Task::refreshIcon()
     KWindowInfo info = KWindowSystem::windowInfo(d->win, windowInfoFlags, windowInfoFlags2);
     TaskChanges changes = TaskUnchanged;
 
+    if (d->info.windowClassClass() != info.windowClassClass() ||
+        d->info.windowClassName() != info.windowClassName()) {
+        changes |= ClassChanged;
+    }
+
     if (d->info.visibleName() != info.visibleName() ||
         d->info.visibleNameWithState() != info.visibleNameWithState() ||
         d->info.name() != info.name()) {
