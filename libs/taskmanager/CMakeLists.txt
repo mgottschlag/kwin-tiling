@@ -23,7 +23,11 @@ set(taskmanager_LIB_SRCS
    taskitem.cpp
    taskmanager.cpp
    tasksmodel.cpp
+   launcherconfig.cpp
+   launcherproperties.cpp
    )
+
+kde4_add_ui_files(taskmanager_LIB_SRCS launcherconfig.ui launcherproperties.ui)
 
 if(WIN32)
     set(taskmanager_LIB_SRCS ${taskmanager_LIB_SRCS} task_win.cpp)

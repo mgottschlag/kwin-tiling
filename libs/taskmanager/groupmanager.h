@@ -35,6 +35,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KDE/KUrl>
 #include "launcheritem.h"
 
+class KConfigDialog;
+
 namespace TaskManager
 {
 
@@ -152,6 +154,9 @@ public:
     /** exports the launcher config to a given config group; usually not needed
         if config() is reimplemented to provide a valid config group */
     void exportLauncherConfig(const KConfigGroup &config);
+
+    /** create launcher mapping rules config page */
+    void createConfigurationInterface(KConfigDialog *parent);
 
 protected:
     // reimplement to provide a config group to read/write settings to
