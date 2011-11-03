@@ -1,1 +1,1 @@
-add_subdirectory(qmldefault)
+add_subdirectory(Minimalistic)
