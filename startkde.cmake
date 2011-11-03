@@ -151,6 +151,9 @@ if test -z "$dl"; then
     KSplashX)
       ksplash_pid=`ksplashx "${ksplashrc_ksplash_theme}" --pid`
       ;;
+    KSplashQML)
+      ksplash_pid=`ksplashqml "${ksplashrc_ksplash_theme}" --pid`
+      ;;
     None)
       ;;
     Simple)
@@ -356,11 +359,11 @@ fi
 # if KDEWM is not set, ksmserver will ensure kwin is started.
 # kwrapper4 is used to reduce startup time and memory usage
 # kwrapper4 does not return useful error codes such as the exit code of ksmserver.
-# We only check for 255 which means that the ksmserver process could not be 
-# started, any problems thereafter, e.g. ksmserver failing to initialize, 
+# We only check for 255 which means that the ksmserver process could not be
+# started, any problems thereafter, e.g. ksmserver failing to initialize,
 # will remain undetected.
 test -n "$KDEWM" && KDEWM="--windowmanager $KDEWM"
-kwrapper4 ksmserver $KDEWM 
+kwrapper4 ksmserver $KDEWM
 if test $? -eq 255; then
   # Startup error
   echo 'startkde: Could not start ksmserver. Check your installation.'  1>&2
