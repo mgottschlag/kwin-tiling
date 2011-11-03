@@ -47,7 +47,7 @@ private:
     Display * m_display;
     int m_stage;
     Atom m_kde_splash_progress;
-    SplashWindow * m_window;
+    QList<SplashWindow *> m_windows;
     bool m_testing;
     QBasicTimer m_timer;
 };

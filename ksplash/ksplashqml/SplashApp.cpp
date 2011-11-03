@@ -20,24 +20,31 @@
 #include "SplashWindow.h"
 #include "SplashApp.h"
 
+#include <QDesktopWidget>
+
 #define TEST_STEP_INTERVAL 2000
 
 SplashApp::SplashApp(Display * display, int argc, char ** argv)
     : QApplication(display, argc, argv),
-      m_display(display), m_stage(0), m_window(0),
+      m_display(display), m_stage(0),
       m_testing(false)
 {
     m_kde_splash_progress = XInternAtom(m_display, "_KDE_SPLASH_PROGRESS", False);
     m_testing = arguments().contains("--test");
-    m_window = new SplashWindow(m_testing);
+
+    QDesktopWidget *desktop = QApplication::desktop();
+    int numScreens = desktop->screenCount();
+
+    for (int i = 0; i < numScreens; ++i) {
+        SplashWindow *w = new SplashWindow(m_testing);
+        w->setGeometry(desktop->availableGeometry(i));
+        w->show();
+        m_windows << w;
+    }
 
     setStage(1);
 
-    int sw = WidthOfScreen(ScreenOfDisplay(display, DefaultScreen(display)));
-    int sh = HeightOfScreen(ScreenOfDisplay(display, DefaultScreen(display)));
-
-    m_window->setGeometry(0, 0, sw, sh);
-    m_window->show();
+    
 
     XSelectInput(display, DefaultRootWindow(display), SubstructureNotifyMask);
 
@@ -46,8 +53,9 @@ SplashApp::SplashApp(Display * display, int argc, char ** argv)
     }
 }
 
-SplashApp::~SplashApp() {
-    delete m_window;
+SplashApp::~SplashApp()
+{
+    qDeleteAll(m_windows);
 }
 
 Display * SplashApp::display() const
@@ -111,6 +119,8 @@ void SplashApp::setStage(int stage)
     }
 
     m_stage = stage;
-    m_window->setStage(stage);
+    foreach (SplashWindow *w, m_windows) {
+        w->setStage(stage);
+    }
 }
 
