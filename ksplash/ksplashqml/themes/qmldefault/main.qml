@@ -166,14 +166,6 @@ Item {
 
         opacity: 0
         Behavior on opacity { NumberAnimation { duration: 1000; easing { type: Easing.InOutQuad } } }
-
-        Text {
-            text: "KDE Workspaces 4.7 'Friday'"
-            color: "white"
-
-            x: logo.width + 8
-            y: (logo.height - height) / 2
-        }
     }
 
     /* }}} */
