@@ -417,6 +417,52 @@ static KService::List getServicesViaPid(int pid)
     return services;
 }
 
+static KUrl getServiceLauncherUrl(int pid, const QString &type, const QStringList &cmdRemovals=QStringList())
+{
+    KSysGuard::Processes procs;
+
+    procs.updateOrAddProcess(pid);
+
+    KSysGuard::Process *proc = procs.getProcess(pid);
+    QString cmdline = proc ? proc->command.simplified() : QString(); // proc->command has a trailing space???
+
+    if (!cmdline.isEmpty()) {
+        foreach(const QString &r, cmdRemovals) {
+            cmdline.replace(r, "");
+        }
+
+        KService::List services = KServiceTypeTrader::self()->query(type, QString("exist Exec and ('%1' =~ Exec)").arg(cmdline));
+
+        if (services.empty()) {
+            // Could not find with complete commandline, so strip out path part...
+            int slash = cmdline.lastIndexOf('/', cmdline.indexOf(' '));
+            if (slash > 0) {
+                services = KServiceTypeTrader::self()->query(type, QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash + 1)));
+            }
+        }
+
+        if (!services.empty()) {
+            QString path=services[0]->entryPath();
+
+            if(!path.startsWith("/")) {
+                QStringList dirs=KGlobal::dirs()->resourceDirs("services");
+                foreach(const QString &d, dirs) {
+                    if(QFile::exists(d+path)) {
+                        path=d+path;
+                        break;
+                    }
+                }
+            }
+
+            if(QFile::exists(path)) {
+                return KUrl::fromPath(path);
+            }
+        }
+    }
+
+    return KUrl();
+}
+
 KUrl TaskItem::launcherUrl() const
 {
     if (!d->task && !isStartupItem()) {
@@ -437,6 +483,14 @@ KUrl TaskItem::launcherUrl() const
     d->checkedForLauncher = true;
 
     if (d->task && !d->task.data()->classClass().isEmpty()) {
+
+        if ("Kcmshell4" == d->task.data()->classClass()) {
+            d->launcherUrl=getServiceLauncherUrl(d->task.data()->pid(), "KCModule", QStringList() << "kdeinit4:" << "[kdeinit]");
+            if (!d->launcherUrl.isEmpty()) {
+                return d->launcherUrl;
+            }
+        }
+
         // Check to see if this wmClass matched a saved one...
         KConfig cfg("taskmanagerrulesrc");
         KConfigGroup grp(&cfg, "Mapping");
