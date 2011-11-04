@@ -70,6 +70,7 @@ public:
 
     // bookkeeping methods for showing/not showing
     void associateItemIfMatches(AbstractGroupableItem *item);
+    bool isAssociated(AbstractGroupableItem *item) const;
     void removeItemIfAssociated(AbstractGroupableItem *item);
     bool shouldShow() const;
 

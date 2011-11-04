@@ -109,6 +109,11 @@ void LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
     }
 }
 
+bool LauncherItem::isAssociated(AbstractGroupableItem *item) const
+{
+    return d->associates.contains(item);
+}
+
 void LauncherItem::removeItemIfAssociated(AbstractGroupableItem *item)
 {
     disconnect(item, SIGNAL(destroyed(QObject*)), this, SLOT(associateDestroyed(QObject*)));

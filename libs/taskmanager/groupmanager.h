@@ -184,6 +184,9 @@ public:
     /** @return the window class associated with launcher */
     QString launcherWmClass(const KUrl &url) const;
 
+    /** @return true if item is associated with a launcher */
+    bool itemIsAssociatedwithLauncher(AbstractGroupableItem *item) const;
+
 protected:
     // reimplement to provide a config group to read/write settings to
     virtual KConfigGroup config() const;

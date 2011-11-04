@@ -880,6 +880,33 @@ QString GroupManager::launcherWmClass(const KUrl &url) const
     return l ? l->wmClass() : QString();
 }
 
+bool GroupManager::itemIsAssociatedwithLauncher(AbstractGroupableItem *item) const
+{
+    if (item) {
+        switch (item->itemType()) {
+        case LauncherItemType:
+            return true;
+        case GroupItemType: {
+            foreach (AbstractGroupableItem * i, static_cast<TaskGroup *>(item)->members()) {
+                if (itemIsAssociatedwithLauncher(i)) {
+                    return true;
+                }
+            }
+            break;
+        }
+        case TaskItemType: {
+            foreach (LauncherItem * launcher, d->launchers) {
+                if (launcher->isAssociated(item)) {
+                    return true;
+                }
+            }
+        }
+        }
+    }
+
+    return false;
+}
+
 void GroupManager::moveLauncher(const KUrl &url, int newIndex)
 {
     if (!url.isValid()) {
