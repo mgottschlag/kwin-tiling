@@ -130,10 +130,13 @@ public Q_SLOTS:
     void close();
 
     /** add item to group */
-    void add(AbstractGroupableItem *);
+    void add(AbstractGroupableItem *item, int insertIndex=-1);
 
     /** remove item from group */
     void remove(AbstractGroupableItem *);
+    
+    /** remove all items from group */
+    void clear();
 
 Q_SIGNALS:
     /** inform visualization about wat is added and removed */

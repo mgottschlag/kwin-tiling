@@ -66,18 +66,23 @@ ProgramGroupingStrategy::~ProgramGroupingStrategy()
 
 QList<QAction*> ProgramGroupingStrategy::strategyActions(QObject *parent, AbstractGroupableItem *item)
 {
-    QAction *a = new QAction(parent);
-    QString name = className(item);
-    if (d->blackList.contains(name)) {
-        a->setText(i18n("Allow this program to be grouped"));
-    } else {
-        a->setText(i18n("Do not allow this program to be grouped"));
-    }
-    connect(a, SIGNAL(triggered()), this, SLOT(toggleGrouping()));
-
     QList<QAction*> actionList;
-    actionList.append(a);
-    d->tempItem = item;
+
+    GroupManager *gm=qobject_cast<GroupManager *>(AbstractGroupingStrategy::parent());
+
+    if(!gm || !gm->forceGrouping()) {
+        QAction *a = new QAction(parent);
+        QString name = className(item);
+        if (d->blackList.contains(name)) {
+            a->setText(i18n("Allow this program to be grouped"));
+        } else {
+            a->setText(i18n("Do not allow this program to be grouped"));
+        }
+        connect(a, SIGNAL(triggered()), this, SLOT(toggleGrouping()));
+
+        actionList.append(a);
+        d->tempItem = item;
+    }
     return actionList;
 }
 
@@ -175,11 +180,13 @@ void ProgramGroupingStrategy::handleItem(AbstractGroupableItem *item)
         return;
     }
 
+    GroupManager *gm=qobject_cast<GroupManager *>(AbstractGroupingStrategy::parent());
+        
     if (item->itemType() == GroupItemType) {
         //kDebug() << item->name() << "item is groupitem";
         root->add(item);
         return;
-    } else if (d->blackList.contains((static_cast<TaskItem*>(item))->task()->classClass())) {
+    } else if ( (!gm || !gm->forceGrouping()) && d->blackList.contains((static_cast<TaskItem*>(item))->task()->classClass())) {
         //kDebug() << item->name() << "item is in blacklist";
         root->add(item);
         return;
@@ -206,6 +213,8 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
                 //kDebug() << "    joined subGroup";
                 return true;
             }
+        } else if(item->itemType() == LauncherItemType) {
+            continue;
         } else {
             TaskItem *task = static_cast<TaskItem*>(item);
             //kDebug() << "    testing" << (task->task() ? task->task()->classClass() : "No task!") << "==" << name;

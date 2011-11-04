@@ -161,7 +161,7 @@ int TaskGroup::totalSize()
     return size;
 }
 
-void TaskGroup::add(AbstractGroupableItem *item)
+void TaskGroup::add(AbstractGroupableItem *item, int insertIndex)
 {
 /*    if (!item->itemType() == GroupItemType) {
         if ((dynamic_cast<TaskItem*>(item))->task()) {
@@ -183,7 +183,7 @@ void TaskGroup::add(AbstractGroupableItem *item)
     if (d->groupName.isEmpty()) {
         TaskItem *taskItem = qobject_cast<TaskItem*>(item);
         if (taskItem) {
-            d->groupName = taskItem->task()->classClass();
+            d->groupName = taskItem->taskName();
         }
     }
 
@@ -199,13 +199,30 @@ void TaskGroup::add(AbstractGroupableItem *item)
         }
     }
 
-    int index = d->members.count();
-    if (item->itemType() == LauncherItemType) {
-        // insert launchers together at the head of the list, but still
-        // in the order they appear
-        for (index = 0; index < d->members.count(); ++index) {
-            if (d->members.at(index)->itemType() != LauncherItemType) {
-                break;
+    int index = insertIndex;
+    
+    if(index<0) {
+        index=d->members.count();
+        if(d->groupingStrategy->separateLaunchers()) {
+            if (item->itemType() == LauncherItemType) {
+                // insert launchers together at the head of the list, but still
+                // in the order they appear
+                for (index = 0; index < d->members.count(); ++index) {
+                    if (d->members.at(index)->itemType() != LauncherItemType) {
+                        break;
+                    }
+                }
+            }
+        } else {
+            KUrl lUrl=item->launcherUrl();
+            int urlIdx=d->groupingStrategy->launcherIndex(lUrl);
+            if(urlIdx>=0) {
+                for (index = 0; index < d->members.count(); ++index) {
+                    int idx=d->groupingStrategy->launcherIndex(d->members.at(index)->launcherUrl());
+                    if(urlIdx<idx || idx<0) {
+                        break;
+                    }
+                }
             }
         }
     }
@@ -254,6 +271,11 @@ void TaskGroup::Private::signalRemovals()
 
 void TaskGroup::Private::itemChanged(::TaskManager::TaskChanges changes)
 {
+    if(q->manager()->forceGrouping()) {
+        emit q->changed(changes);
+        return;
+    }
+
     if (changes & ::TaskManager::IconChanged) {
         emit q->checkIcon(q);
     }
@@ -300,6 +322,18 @@ void TaskGroup::remove(AbstractGroupableItem *item)
         emit empty(this);
     }*/
     emit itemRemoved(item);
+}
+
+void TaskGroup::clear()
+{
+    ItemList copy=d->members;
+    
+    foreach(AbstractGroupableItem *ai, copy) {
+        if(qobject_cast<TaskGroup *>(ai)) {
+            static_cast<TaskGroup *>(ai)->clear();
+        }
+        remove(ai);
+    }
 }
 
 GroupManager *TaskGroup::manager() const

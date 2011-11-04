@@ -57,6 +57,7 @@ public:
     StartupPtr startupTask;
     KUrl launcherUrl;
     bool checkedForLauncher;
+    QString taskName;
 };
 
 
@@ -186,6 +187,26 @@ QString TaskItem::name() const
     }
 
     return QString();
+}
+
+QString TaskItem::taskName() const
+{
+    if (d->taskName.isEmpty()) {
+        KUrl lUrl=launcherUrl();
+
+        if (!lUrl.isEmpty() && lUrl.isLocalFile() && KDesktopFile::isDesktopFile(lUrl.toLocalFile())) {
+            KDesktopFile f(lUrl.toLocalFile());
+
+            if (f.tryExec()) {
+                d->taskName = f.readName();
+            }
+        }
+        if(d->taskName.isEmpty() && d->task) {
+            d->taskName = d->task.data()->classClass().toLower();
+        }
+    }
+
+    return d->taskName;
 }
 
 ItemType TaskItem::itemType() const

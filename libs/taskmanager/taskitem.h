@@ -63,6 +63,7 @@ public:
 
     QIcon icon() const;
     QString name() const;
+    QString taskName() const;
 
     bool isStartupItem() const;
     bool isOnCurrentDesktop() const;

@@ -46,6 +46,9 @@ AlphaSortingStrategy::AlphaSortingStrategy(QObject *parent)
 
 void AlphaSortingStrategy::sortItems(ItemList &items)
 {
+    GroupManager *gm=qobject_cast<GroupManager *>(parent());
+    bool         separateLaunchers=!gm || gm->separateLaunchers();
+    
     //kDebug();
     QMap<QString, AbstractGroupableItem*> map;
     QMap<QString, AbstractGroupableItem*> launcherMap;
@@ -61,7 +64,11 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
             if (!groupable) {
                 continue;
             }
-            launcherMap.insertMulti(groupable->name().toLower(), groupable);
+            if(separateLaunchers) {
+                launcherMap.insertMulti(groupable->name().toLower(), groupable);
+            } else {
+                map.insertMulti(groupable->name().toLower(), groupable);
+            }
             continue;
         }
 
@@ -79,11 +86,13 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
 
         //sort by programname not windowname
         //kDebug() << "inserting multi item" <<  item->task()->classClass();
-        map.insertMulti(item->task()->classClass().toLower(), groupable);
+        map.insertMulti(item->taskName().toLower(), groupable);
     }
 
     items.clear();
-    items << launcherMap.values();
+    if(separateLaunchers) {
+        items << launcherMap.values();
+    }
     items << map.values();
 }
 
