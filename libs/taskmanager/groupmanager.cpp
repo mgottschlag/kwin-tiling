@@ -541,7 +541,7 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
         // This way the grouping happens properly.
         AbstractGroupableItem *item = currentRootGroup()->getMemberByWId(task->window());
         if(item && TaskItemType==item->itemType()) {
-            item->resetLauncherCheck();
+            static_cast<TaskItem *>(item)->resetLauncherCheck();
         }
         removeTask(task);
         addTask(task);
