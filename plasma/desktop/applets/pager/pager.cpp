@@ -47,8 +47,9 @@
 #include <Plasma/ToolTipManager>
 #include <Plasma/Animator>
 
+#include <KActivities/Consumer>
+
 #include <kephal/screens.h>
-#include <kworkspace/kactivityconsumer.h>
 
 #include <taskmanager/task.h>
 
@@ -168,7 +169,7 @@ void Pager::init()
 
     m_currentDesktop = KWindowSystem::currentDesktop();
 
-    KActivityConsumer *act = new KActivityConsumer(this);
+    KActivities::Consumer *act = new KActivities::Consumer(this);
     connect(act, SIGNAL(currentActivityChanged(QString)), this, SLOT(currentActivityChanged(QString)));
     m_currentActivity = act->currentActivity();
 

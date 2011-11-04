@@ -114,15 +114,9 @@ void TaskItemLayout::removeTaskItem(AbstractTaskItem *item)
         return;
     }
 
-    //kDebug();
-
     if (m_groupItem->scene()) {
-        //kDebug() << "got scene";
         m_groupItem->scene()->removeItem(item);
-    } else {
-        kDebug() << "No Scene available";
     }
-    //kDebug() << "done";
 }
 
 bool TaskItemLayout::insert(int index, AbstractTaskItem *item)
@@ -152,16 +146,13 @@ bool TaskItemLayout::insert(int index, AbstractTaskItem *item)
 
 bool TaskItemLayout::remove(AbstractTaskItem* item)
 {
-    if (!item) {
-        kDebug() << "null Item";
-        layoutItems();
-        return false;
+    if (item) {
+        disconnect(item, 0, this, 0);
+        m_itemPositions.removeAll(item);
     }
 
-    disconnect(item, 0, this, 0);
-    m_itemPositions.removeAll(item);
     layoutItems();
-    return true;
+    return item != 0;
 }
 
 

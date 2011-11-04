@@ -75,10 +75,11 @@
 #include <Plasma/Wallpaper>
 #include <Plasma/WindowEffects>
 
+#include <KActivities/Controller>
+
 #include <kephal/screens.h>
 
 #include <plasmagenericshell/backgrounddialog.h>
-#include "kworkspace/kactivitycontroller.h"
 
 #include "activity.h"
 #include "appadaptor.h"
@@ -1221,7 +1222,7 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
 
 void PlasmaApp::cloneCurrentActivity()
 {
-    KActivityController controller;
+    KActivities::Controller controller;
     //getting the current activity is *so* much easier than the current containment(s) :) :)
     QString oldId = controller.currentActivity();
     Activity *oldActivity = m_corona->activity(oldId);
@@ -1418,7 +1419,7 @@ void PlasmaApp::plasmoidAccessFinished(Plasma::AccessAppletJob *job)
 
 void PlasmaApp::createActivity(const QString &plugin)
 {
-    KActivityController controller;
+    KActivities::Controller controller;
     QString id = controller.addActivity(i18nc("Default name for a new activity", "New Activity"));
 
     Activity *a = m_corona->activity(id);
@@ -1430,7 +1431,7 @@ void PlasmaApp::createActivity(const QString &plugin)
 
 void PlasmaApp::createActivityFromScript(const QString &script, const QString &name, const QString &icon, const QStringList &startupApps)
 {
-    KActivityController controller;
+    KActivities::Controller controller;
     m_loadingActivity = controller.addActivity(name);
     Activity *a = m_corona->activity(m_loadingActivity);
     Q_ASSERT(a);

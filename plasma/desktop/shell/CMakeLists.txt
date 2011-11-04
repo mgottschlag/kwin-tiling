@@ -53,7 +53,7 @@ kde4_add_app_icon(plasma_SRCS "${KDE4_INSTALL_DIR}/share/icons/oxygen/*/apps/pla
 
 kde4_add_kdeinit_executable(plasma-desktop ${plasma_SRCS})
 
-target_link_libraries(kdeinit_plasma-desktop ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_KTEXTEDITOR_LIBS} ${KDE4_KIDLETIME_LIBS} ${QT_QTSCRIPT_LIBRARY} kworkspace kactivities plasmagenericshell)
+target_link_libraries(kdeinit_plasma-desktop ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_KTEXTEDITOR_LIBS} ${KDE4_KIDLETIME_LIBS} ${QT_QTSCRIPT_LIBRARY} ${KACTIVITIES_LIBRARY} kworkspace kactivities plasmagenericshell)
 
 if(UNIX AND Q_WS_X11)
     target_link_libraries(kdeinit_plasma-desktop ${X11_LIBRARIES})

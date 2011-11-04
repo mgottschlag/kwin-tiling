@@ -24,8 +24,11 @@
 #include <Plasma/DataEngine>
 
 class ActivityService;
-class KActivityController;
-class KActivityInfo;
+
+namespace KActivities
+{
+    class Controller;
+}
 
 class ActivityEngine : public Plasma::DataEngine
 {
@@ -47,7 +50,7 @@ public slots:
 private:
     void insertActivity(const QString &id);
 
-    KActivityController *m_activityController;
+    KActivities::Controller *m_activityController;
     QString m_currentActivity;
 
     friend class ActivityService;

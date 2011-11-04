@@ -29,7 +29,11 @@ class QMenu;
 class QAction;
 
 class Activity;
-class KActivityController;
+
+namespace KActivities
+{
+    class Controller;
+} // namespace 
 
 namespace Plasma
 {
@@ -113,7 +117,7 @@ private:
 
     QAction *m_addPanelAction;
     QMenu *m_addPanelsMenu;
-    KActivityController *m_activityController;
+    KActivities::Controller *m_activityController;
     QHash<QString, Activity*> m_activities;
 };
 

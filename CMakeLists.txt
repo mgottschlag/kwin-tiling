@@ -20,6 +20,7 @@ find_package(ZLIB REQUIRED)
 find_package(KActivities REQUIRED)
 find_package(DBusMenuQt 0.6.0 REQUIRED)
 find_package(QImageBlitz REQUIRED)
+find_package(KActivities REQUIRED)
 macro_optional_find_package(OpenGL)
 macro_optional_find_package(OpenGLES)
 

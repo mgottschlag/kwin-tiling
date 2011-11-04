@@ -128,19 +128,17 @@ ActivityIcon::ActivityIcon(const QString &name, const QString &icon, const QStri
       m_activity(0),
       m_inlineWidgetAnim(0)
 {
-    DesktopCorona *c = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
-
     updateButtons();
 
     connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)),
-            this, SLOT(createActivity(Plasma::AbstractIcon*)));
+            this, SLOT(createActivity()));
     setName(name);
     currentStatusChanged();
 
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 }
 
-void ActivityIcon::createActivity(Plasma::AbstractIcon * icon)
+void ActivityIcon::createActivity()
 {
     KService::Ptr service = KService::serviceByStorageId(m_pluginName);
 
@@ -386,7 +384,7 @@ void ActivityIcon::updateButtons()
         }
 
         switch (m_activity->state()) {
-            case KActivityInfo::Running:
+            case KActivities::Info::Running:
                 DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStart);
                 DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonRemove);
 
@@ -399,7 +397,7 @@ void ActivityIcon::updateButtons()
                 }
                 break;
 
-            case KActivityInfo::Stopped:
+            case KActivities::Info::Stopped:
                 DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStop);
 
                 if (!m_buttonRemove) {
@@ -411,7 +409,7 @@ void ActivityIcon::updateButtons()
                 }
                 break;
 
-            case KActivityInfo::Invalid:
+            case KActivities::Info::Invalid:
                 DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonConfigure);
                 // no break
 

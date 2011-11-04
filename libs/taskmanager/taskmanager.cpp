@@ -49,7 +49,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 
 #include <kephal/screens.h>
-#include <kworkspace/kactivityconsumer.h>
+#include <Activities/Consumer>
 
 namespace TaskManager
 {
@@ -103,7 +103,7 @@ public:
     StartupList startups;
     WindowList skiptaskbarWindows;
     QSet<QUuid> trackGeometryTokens;
-    KActivityConsumer activityConsumer;
+    KActivities::Consumer activityConsumer;
 };
 
 TaskManager::TaskManager()
@@ -587,7 +587,7 @@ int TaskManager::currentDesktop() const
 
 QString TaskManager::currentActivity() const
 {
-    return d->activityConsumer.currentActivity(); //TODO cache
+    return d->activityConsumer.currentActivity();
 }
 
 } // TaskManager namespace
