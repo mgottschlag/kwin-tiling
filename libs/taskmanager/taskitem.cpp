@@ -125,7 +125,9 @@ void TaskItem::setTaskPointer(TaskPtr task)
     }
 
     if (!d->task) {
-        deleteLater();
+        // FIXME: due to a bug in Qt 4.x, the event loop reference count is incorrect
+        // when going through x11EventFilter .. :/ so we have to singleShot the deleteLater
+        QTimer::singleShot(0, this, SLOT(deleteLater()));
     }
 }
 

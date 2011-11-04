@@ -26,6 +26,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KDebug>
 #include <KIcon>
 
+#include <QtCore/QTimer>
+
 #include "task.h"
 
 namespace TaskManager
@@ -183,7 +185,9 @@ void AbstractGroupingStrategy::closeGroup(TaskGroup *group)
     }
 
     emit groupRemoved(group);
-    group->deleteLater();
+    // FIXME: due to a bug in Qt 4.x, the event loop reference count is incorrect
+    // when going through x11EventFilter .. :/ so we have to singleShot the deleteLater
+    QTimer::singleShot(0, group, SLOT(deleteLater()));
 }
 
 void AbstractGroupingStrategy::checkGroup()
