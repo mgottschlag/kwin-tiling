@@ -574,6 +574,14 @@ KUrl TaskItem::launcherUrl() const
             services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Name)").arg(mapped));
         }
 
+        if (services.empty() && qobject_cast<GroupManager *>(parent())) {
+            KUrl savedUrl = static_cast<GroupManager *>(parent())->launcherForWmClass(d->task.data()->classClass());
+            if (savedUrl.isValid()) {
+                d->launcherUrl = savedUrl;
+                return d->launcherUrl;
+            }
+        }
+
         // To match other docks (docky, unity, etc.) attempt to match on DesktopEntryName first...
         if (services.empty()) {
             services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ DesktopEntryName)").arg(d->task.data()->classClass()));

@@ -139,7 +139,8 @@ public:
     void reconnect();
 
     /** Adds a Launcher for the executable/.desktop-file at url and returns a reference to the launcher*/
-    bool addLauncher(const KUrl &url, QIcon icon = QIcon(), QString name = QString(), QString genericName = QString(), int insertPos=-1);
+    bool addLauncher(const KUrl &url, const QIcon &icon = QIcon(), const QString &name = QString(),
+                     const QString &genericName = QString(), const QString &wmClass = QString(), int insertPos = -1);
 
     /** Removes the given launcher*/
     void removeLauncher(const KUrl &url);
@@ -178,6 +179,12 @@ public:
 
     /** create launcher mapping rules config page */
     void createConfigurationInterface(KConfigDialog *parent);
+
+    /** @return the launcher associated with a window class */
+    KUrl launcherForWmClass(const QString &wmClass) const;
+
+    /** @return the window class associated with launcher */
+    QString launcherWmClass(const KUrl &url) const;
 
 protected:
     // reimplement to provide a config group to read/write settings to

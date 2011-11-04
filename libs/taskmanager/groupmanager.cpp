@@ -626,7 +626,7 @@ KConfigGroup GroupManager::config() const
     return KConfigGroup();
 }
 
-bool GroupManager::addLauncher(const KUrl &url, QIcon icon, QString name, QString genericName, int insertPos)
+bool GroupManager::addLauncher(const KUrl &url, const QIcon &icon, const QString &name, const QString &genericName, const QString &wmClass, int insertPos)
 {
     if (url.isEmpty()) {
         return false;
@@ -652,6 +652,10 @@ bool GroupManager::addLauncher(const KUrl &url, QIcon icon, QString name, QStrin
 
         if (!genericName.isEmpty()) {
             launcher->setGenericName(genericName);
+        }
+
+        if (!wmClass.isEmpty()) {
+            launcher->setWmClass(wmClass);
         }
 
         QStack<TaskGroup *> groups;
@@ -705,6 +709,10 @@ bool GroupManager::addLauncher(const KUrl &url, QIcon icon, QString name, QStrin
 
         if (!genericName.isEmpty()) {
             launcher->setGenericName(genericName);
+        }
+
+        if (!wmClass.isEmpty()) {
+            launcher->setWmClass(wmClass);
         }
     }
 
@@ -782,8 +790,11 @@ void GroupManager::readLauncherConfig(const KConfigGroup &cg)
     // prevents re-writing the results out
     d->readingLauncherConfig = true;
     QSet<KUrl> urls;
-    foreach (const KUrl &l, launchers) {
-        if(addLauncher(l)) {
+    foreach (KUrl l, launchers) {
+        QString wmClass(l.queryItem("wmClass"));
+        l.setQuery(QString());
+
+        if (addLauncher(l, QIcon(), QString(), QString(), wmClass)) {
             urls << l;
         }
     }
@@ -804,7 +815,7 @@ void GroupManager::readLauncherConfig(const KConfigGroup &cg)
             QString name(item.at(2));
             QString genericName(item.at(3));
 
-            if (addLauncher(url, icon, name, genericName)) {
+            if (addLauncher(url, icon, name, genericName, genericName)) {
                 urls << url;
             }
         }
@@ -850,6 +861,24 @@ int GroupManager::launcherIndex(const KUrl &url) const
 int GroupManager::launcherCount() const
 {
     return d->launchers.count();
+}
+
+KUrl GroupManager::launcherForWmClass(const QString &wmClass) const
+{
+    foreach(LauncherItem *l, d->launchers) {
+        if(l->wmClass()==wmClass) {
+            return l->launcherUrl();
+        }
+    }
+
+    return KUrl();
+}
+
+QString GroupManager::launcherWmClass(const KUrl &url) const
+{
+    int index=launcherIndex(url);
+    LauncherItem *l=-1!=index ? d->launchers.at(index) : 0L;
+    return l ? l->wmClass() : QString();
 }
 
 void GroupManager::moveLauncher(const KUrl &url, int newIndex)
@@ -972,9 +1001,12 @@ void GroupManagerPrivate::saveLauncherConfig(KConfigGroup &cg)
 {
     QStringList details;
     foreach (LauncherItem *l, launchers) {
-        QString u(l->launcherUrl().url());
+        KUrl u(l->launcherUrl());
         if(!u.isEmpty()) {
-            details.append(u);
+            if (!l->wmClass().isEmpty()) {
+                u.addQueryItem("wmClass", l->wmClass());
+            }
+            details.append(u.url());
         }
     }
 

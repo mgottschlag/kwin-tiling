@@ -419,7 +419,10 @@ void ToggleLauncherActionImpl::toggleLauncher()
     else if (m_groupingStrategy->launcherExists(m_url)) {
         m_groupingStrategy->removeLauncher(m_url);
     } else if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
-        m_groupingStrategy->addLauncher(m_url);
+        m_groupingStrategy->addLauncher(m_url, QIcon(), QString(), QString(),
+                                        static_cast<TaskItem *>(m_abstractItem)->task()
+                                                ? static_cast<TaskItem *>(m_abstractItem)->task()->classClass()
+                                                : QString());
     }
 }
 
@@ -448,7 +451,7 @@ void AppSelectorDialog::launcherSelected()
 
             if (url.isLocalFile() && KDesktopFile::isDesktopFile(url.toLocalFile())) {
                 taskItem->setLauncherUrl(url);
-                m_groupingStrategy->addLauncher(url);
+                m_groupingStrategy->addLauncher(url, QIcon(), QString(), QString(), wmClass);
             }
         } else {
             QString path = text();
@@ -457,7 +460,7 @@ void AppSelectorDialog::launcherSelected()
                 KUrl url = KUrl::fromPath(path);
                 if (url.isLocalFile()) {
                     taskItem->setLauncherUrl(url);
-                    m_groupingStrategy->addLauncher(url, taskItem->icon(), taskItem->name(), wmClass);
+                    m_groupingStrategy->addLauncher(url, taskItem->icon(), taskItem->name(), wmClass, wmClass);
                 }
             }
         }

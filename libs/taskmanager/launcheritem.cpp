@@ -60,6 +60,7 @@ public:
     QIcon       icon;
     QString     name;
     QString     genericName;
+    QString     wmClass;
     QSet<QObject *> associates;
 };
 
@@ -172,6 +173,11 @@ QString LauncherItem::genericName() const
     return d->genericName;
 }
 
+QString LauncherItem::wmClass() const
+{
+    return d->wmClass;
+}
+
 void LauncherItem::setName(const QString& name)
 {
     //NOTE: preferred is NOT a protocol, it's just a magic string
@@ -186,6 +192,11 @@ void LauncherItem::setGenericName(const QString& genericName)
     if (d->url.protocol() != "preferred"){
         d->genericName = genericName;
     }
+}
+
+void LauncherItem::setWmClass(const QString &wmClass)
+{
+    d->wmClass=wmClass;
 }
 
 ItemType LauncherItem::itemType() const

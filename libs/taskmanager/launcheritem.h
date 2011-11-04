@@ -61,10 +61,12 @@ public:
     QIcon icon() const;
     QString name() const;
     QString genericName() const;
+    QString wmClass() const;
 
     void setIcon(const QIcon &icon);
     void setName(const QString &name);
     void setGenericName(const QString &genericName);
+    void setWmClass(const QString &wmClass);
 
     // bookkeeping methods for showing/not showing
     void associateItemIfMatches(AbstractGroupableItem *item);
