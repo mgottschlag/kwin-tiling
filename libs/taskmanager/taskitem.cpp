@@ -406,6 +406,7 @@ void TaskItem::setLauncherUrl(const KUrl &url)
         return;
     }
     d->launcherUrl = url;
+    d->taskName = QString(); // Cause name to be re-generated...
 
     KConfig cfg("taskmanagerrulesrc");
     KConfigGroup grp(&cfg, "Mapping");
