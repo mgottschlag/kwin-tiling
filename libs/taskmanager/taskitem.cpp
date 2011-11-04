@@ -400,6 +400,19 @@ void TaskItem::addMimeData(QMimeData *mimeData) const
     d->task.data()->addMimeData(mimeData);
 }
 
+void TaskItem::setLauncherUrl(const KUrl &url)
+{
+    if (!d->launcherUrl.isEmpty()) {
+        return;
+    }
+    d->launcherUrl = url;
+
+    KConfig cfg("taskmanagerrulesrc");
+    KConfigGroup grp(&cfg, "Mapping");
+    grp.writeEntry(d->task.data()->classClass() + "::" + d->task.data()->className(), url.url());
+    cfg.sync();
+}
+
 static KService::List getServicesViaPid(int pid)
 {
     // Attempt to find using commandline...
@@ -436,19 +449,6 @@ static KService::List getServicesViaPid(int pid)
     }
 
     return services;
-}
-
-void TaskItem::setLauncherUrl(const KUrl &url)
-{
-    if (!d->launcherUrl.isEmpty()) {
-        return;
-    }
-    d->launcherUrl = url;
-
-    KConfig cfg("taskmanagerrulesrc");
-    KConfigGroup grp(&cfg, "Mapping");
-    grp.writeEntry(d->task.data()->classClass() + "::" + d->task.data()->className(), url.url());
-    cfg.sync();
 }
 
 static KUrl getServiceLauncherUrl(int pid, const QString &type, const QStringList &cmdRemovals=QStringList())
