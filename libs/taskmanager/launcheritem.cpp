@@ -87,6 +87,15 @@ void LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
         return;
     }
 
+    KUrl itemUrl=item->launcherUrl();
+
+    if (!itemUrl.isEmpty() && launcherUrl() == itemUrl) {
+        d->associates.insert(item);
+        connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(associateDestroyed(QObject*)));
+        emit associationChanged();
+        return;
+    }
+
     QString name;
     if (item->itemType() == TaskItemType && !item->isStartupItem()) {
         name = static_cast<TaskItem *>(item)->taskName().toLower();
@@ -94,11 +103,7 @@ void LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
         name = item->name().toLower();
     }
 
-    if (name.isEmpty()) {
-        return;
-    }
-
-    if (name.compare(d->name, Qt::CaseInsensitive) == 0) {
+    if (!name.isEmpty() && name.compare(d->name, Qt::CaseInsensitive) == 0) {
         d->associates.insert(item);
         connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(associateDestroyed(QObject*)));
         emit associationChanged();
