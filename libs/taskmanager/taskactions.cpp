@@ -292,6 +292,7 @@ DesktopsMenu::DesktopsMenu(QWidget *parent, AbstractGroupableItem *item)
     : ToolTipMenu(parent)
 {
     setTitle(i18n("Move To &Desktop"));
+    addAction(new ToCurrentDesktopActionImpl(this, item));
     addAction(new ToDesktopActionImpl(this, item, 0));      //0 means all desktops
     addSeparator();
     for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
@@ -334,10 +335,15 @@ ViewFullscreenActionImpl::ViewFullscreenActionImpl(QObject *parent, AbstractGrou
 AdvancedMenu::AdvancedMenu(QWidget *parent, AbstractGroupableItem *item, GroupManager *strategy)
     : ToolTipMenu(parent)
 {
-    setTitle(i18n("Ad&vanced"));
+    setTitle(i18n("More Actions"));
+    if (item->itemType() == TaskItemType) {
+        addAction(new MoveActionImpl(this, static_cast<TaskItem *>(item)));
+        addAction(new ResizeActionImpl(this, static_cast<TaskItem *>(item)));
+    }
     addAction(new KeepAboveActionImpl(this, item));
     addAction(new KeepBelowActionImpl(this, item));
     addAction(new ViewFullscreenActionImpl(this, item));
+    addAction(new ShadeActionImpl(this, item));
 
     if (strategy->taskGrouper()) {
         QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, item);
@@ -547,14 +553,10 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
 
     if (TaskManager::self()->numberOfDesktops() > 1) {
         addMenu(new DesktopsMenu(this, item));
-        addAction(new ToCurrentDesktopActionImpl(this, item));
     }
 
-    addAction(new MoveActionImpl(this, item));
-    addAction(new ResizeActionImpl(this, item));
     addAction(new MinimizeActionImpl(this, item));
     addAction(new MaximizeActionImpl(this, item));
-    addAction(new ShadeActionImpl(this, item));
     addAction(new NewInstanceActionImpl(this, item));
     addAction(new ToggleLauncherActionImpl(this, item, strategy));
     addMenu(new AdvancedMenu(this, item, strategy));
@@ -594,12 +596,10 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
 
     if (TaskManager::self()->numberOfDesktops() > 1) {
         addMenu(new DesktopsMenu(this, group));
-        addAction(new ToCurrentDesktopActionImpl(this, group));
     }
 
     addAction(new MinimizeActionImpl(this, group));
     addAction(new MaximizeActionImpl(this, group));
-    addAction(new ShadeActionImpl(this, group));
     addAction(new NewInstanceActionImpl(this, group));
     addAction(new ToggleLauncherActionImpl(this, group, strategy));
     addMenu(new AdvancedMenu(this, group, strategy));
