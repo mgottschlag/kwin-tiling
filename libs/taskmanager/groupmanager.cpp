@@ -457,7 +457,7 @@ void GroupManagerPrivate::currentActivityChanged(QString newActivity)
         QObject::connect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem*)), q, SLOT(checkIfFull()));
     }
 
-    reloadTasks();
+    actuallyReloadTasks();
 }
 
 void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
@@ -499,7 +499,7 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
         QObject::connect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem*)), q, SLOT(checkIfFull()));
     }
 
-    reloadTasks();
+    actuallyReloadTasks();
 }
 
 
