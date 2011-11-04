@@ -71,6 +71,7 @@ public:
     // bookkeeping methods for showing/not showing
     /** Return true if this is a *new* association */
     bool associateItemIfMatches(AbstractGroupableItem *item);
+    bool isAssociated(AbstractGroupableItem *item) const;
     void removeItemIfAssociated(AbstractGroupableItem *item);
     bool shouldShow() const;
 
