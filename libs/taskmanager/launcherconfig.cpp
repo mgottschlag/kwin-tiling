@@ -67,7 +67,7 @@ void LauncherConfig::load()
     KConfig cfg("taskmanagerrulesrc");
     KConfigGroup grp(&cfg, "Mapping");
 
-    foreach(const QString & key, grp.keyList()) {
+    foreach (const QString & key, grp.keyList()) {
         QString launcher = grp.readEntry(key, QString());
 
         if (launcher.isEmpty()) {
@@ -116,7 +116,7 @@ void LauncherConfig::save()
                            oldKeys = grp.keyList().toSet(),
                            removedKeys = oldKeys.subtract(newKeys);
 
-    foreach(const QString & key, removedKeys) {
+    foreach (const QString & key, removedKeys) {
         grp.deleteEntry(key);
     }
 

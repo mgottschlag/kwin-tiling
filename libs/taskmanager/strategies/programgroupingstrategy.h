@@ -50,14 +50,16 @@ public:
     */
     QList<QAction*> strategyActions(QObject *parent, AbstractGroupableItem *item);
 
-    EditableGroupProperties editableGroupProperties(){return None;};
+    EditableGroupProperties editableGroupProperties() {
+        return None;
+    };
 
 protected Q_SLOTS:
     /** Checks if the group is still necessary */
     void checkGroup();
 private Q_SLOTS:
     /** The program of the sender() of this function is started or stopped being grouped
-    *	by this strategy. This is done by adding the program to d->blackList
+    *   by this strategy. This is done by adding the program to d->blackList
     */
     void toggleGrouping();
     void updateIcon(TaskGroup *group);

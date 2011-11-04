@@ -36,7 +36,7 @@ namespace TaskManager
 
 class LauncherItemPrivate;
 
-/** 
+/**
  * An item shown in the taskmanager, in order to use it to launch the application (or file) the launcher is linked to.
  * If the Application is running the launcher gets hidden, in order to not waste space.
  */
@@ -44,7 +44,7 @@ class TASKMANAGER_EXPORT LauncherItem : public AbstractGroupableItem
 {
     Q_OBJECT
 public:
-    /** 
+    /**
      * Creates a LauncherItem for a executable
      * @param url the URL to the application or file the launcher gets linked to
      */
@@ -121,10 +121,10 @@ Q_SIGNALS:
 private:
     friend class LauncherItemPrivate;
     LauncherItemPrivate * const d;
-    
+
     //preferred applications hack
     QString defaultApplication(QString application, bool storageId = false);
-    
+
     Q_PRIVATE_SLOT(d, void associateDestroyed(QObject *obj))
 };
 

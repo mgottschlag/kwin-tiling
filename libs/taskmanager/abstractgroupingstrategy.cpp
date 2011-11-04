@@ -37,8 +37,7 @@ class AbstractGroupingStrategy::Private
 {
 public:
     Private()
-        : type(GroupManager::NoGrouping)
-    {
+        : type(GroupManager::NoGrouping) {
     }
 
     GroupManager *groupManager;
@@ -69,7 +68,7 @@ void AbstractGroupingStrategy::destroy()
     }
 
     // cleanup all created groups
-    foreach (TaskGroup *group, d->createdGroups) {
+    foreach (TaskGroup * group, d->createdGroups) {
         disconnect(group, 0, this, 0);
 
         TaskGroup *parentGroup = group->parentGroup();
@@ -77,8 +76,8 @@ void AbstractGroupingStrategy::destroy()
             parentGroup = d->groupManager->rootGroup();
         }
 
-        foreach (AbstractGroupableItem *item, group->members()) {
-            if (item->itemType()!= GroupItemType) {
+        foreach (AbstractGroupableItem * item, group->members()) {
+            if (item->itemType() != GroupItemType) {
                 parentGroup->add(item);
             }
         }
@@ -86,7 +85,7 @@ void AbstractGroupingStrategy::destroy()
         parentGroup->remove(group);
     }
 
-    foreach (TaskGroup *group, d->createdGroups) {
+    foreach (TaskGroup * group, d->createdGroups) {
         emit groupRemoved(group);
     }
 
@@ -135,15 +134,15 @@ TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
     }
 
     TaskGroup *newGroup = new TaskGroup(d->groupManager);
-    ItemList oldGroupMembers=oldGroup->members();
-    int index=oldGroupMembers.count();
+    ItemList oldGroupMembers = oldGroup->members();
+    int index = oldGroupMembers.count();
     d->createdGroups.append(newGroup);
     //kDebug() << "added group" << d->createdGroups.count();
     connect(newGroup, SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(checkGroup()));
-    foreach (AbstractGroupableItem *item, items) {
-        int idx=oldGroupMembers.indexOf(item);
-        if(idx>=0 && idx<index) {
-            index=idx;
+    foreach (AbstractGroupableItem * item, items) {
+        int idx = oldGroupMembers.indexOf(item);
+        if (idx >= 0 && idx < index) {
+            index = idx;
         }
         newGroup->add(item);
     }
@@ -172,7 +171,7 @@ void AbstractGroupingStrategy::closeGroup(TaskGroup *group)
 
     if (parentGroup && d->groupManager) {
         int index = parentGroup->members().indexOf(group);
-        foreach (AbstractGroupableItem *item, group->members()) {
+        foreach (AbstractGroupableItem * item, group->members()) {
             parentGroup->add(item, index);
             //move item to the location where its group was
             if (!d->groupManager) {
@@ -192,7 +191,7 @@ void AbstractGroupingStrategy::closeGroup(TaskGroup *group)
 
 void AbstractGroupingStrategy::checkGroup()
 {
-    TaskGroup *group = qobject_cast<TaskGroup*>(sender()); 
+    TaskGroup *group = qobject_cast<TaskGroup*>(sender());
     if (!group) {
         return;
     }
@@ -232,7 +231,7 @@ bool AbstractGroupingStrategy::setName(const QString &name, TaskGroup *group)
         group->setName(name);
         return true;
     }
-    return false; 
+    return false;
 }
 
 //Returns 6 free names
@@ -242,8 +241,8 @@ QList<QString> AbstractGroupingStrategy::nameSuggestions(TaskGroup *)
     int i = 1;
 
     while (nameList.count() < 6) {
-        if (!d->usedNames.contains("Group"+QString::number(i))) {
-            nameList.append("Group"+QString::number(i));
+        if (!d->usedNames.contains("Group" + QString::number(i))) {
+            nameList.append("Group" + QString::number(i));
         }
         i++;
     }
@@ -265,7 +264,7 @@ bool AbstractGroupingStrategy::setColor(const QColor &color, TaskGroup *group)
         return true;
     }
 
-    return false; 
+    return false;
 }
 
 QList<QColor> AbstractGroupingStrategy::colorSuggestions(TaskGroup *)
@@ -277,7 +276,7 @@ QList<QColor> AbstractGroupingStrategy::colorSuggestions(TaskGroup *)
     colorPool.append(Qt::yellow);
 
     QList<QColor> colorList;
-    foreach (const QColor &color, colorPool) {
+    foreach (const QColor & color, colorPool) {
         if (!d->usedColors.contains(color)) {
             colorList.append(color);
         }
@@ -291,7 +290,7 @@ QList<QColor> AbstractGroupingStrategy::colorSuggestions(TaskGroup *)
 }
 
 bool AbstractGroupingStrategy::setIcon(const QIcon &icon, TaskGroup *group)
-{ 
+{
     if (editableGroupProperties() & Icon) {
         group->setIcon(icon);
         return true;

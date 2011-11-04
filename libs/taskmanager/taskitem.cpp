@@ -49,8 +49,7 @@ class TaskItem::Private
 public:
     Private()
         : startupTask(0)
-        , checkedForLauncher(false)
-    {
+        , checkedForLauncher(false) {
     }
 
     QWeakPointer<Task> task;
@@ -82,7 +81,7 @@ TaskItem::~TaskItem()
 {
     emit destroyed(this);
     //kDebug();
-    /*  if (parentGroup()){
+    /*  if (parentGroup()) {
           parentGroup()->remove(this);
       }*/
     delete d;
@@ -194,7 +193,7 @@ QString TaskItem::name() const
 QString TaskItem::taskName() const
 {
     if (d->taskName.isEmpty()) {
-        KUrl lUrl=launcherUrl();
+        KUrl lUrl = launcherUrl();
 
         if (!lUrl.isEmpty() && lUrl.isLocalFile() && KDesktopFile::isDesktopFile(lUrl.toLocalFile())) {
             KDesktopFile f(lUrl.toLocalFile());
@@ -203,7 +202,7 @@ QString TaskItem::taskName() const
                 d->taskName = f.readName();
             }
         }
-        if(d->taskName.isEmpty() && d->task) {
+        if (d->taskName.isEmpty() && d->task) {
             d->taskName = d->task.data()->classClass().toLower();
         }
     }
@@ -454,7 +453,7 @@ static KService::List getServicesViaPid(int pid)
     return services;
 }
 
-static KUrl getServiceLauncherUrl(int pid, const QString &type, const QStringList &cmdRemovals=QStringList())
+static KUrl getServiceLauncherUrl(int pid, const QString &type, const QStringList &cmdRemovals = QStringList())
 {
     KSysGuard::Processes procs;
 
@@ -464,7 +463,7 @@ static KUrl getServiceLauncherUrl(int pid, const QString &type, const QStringLis
     QString cmdline = proc ? proc->command.simplified() : QString(); // proc->command has a trailing space???
 
     if (!cmdline.isEmpty()) {
-        foreach(const QString &r, cmdRemovals) {
+        foreach (const QString & r, cmdRemovals) {
             cmdline.replace(r, "");
         }
 
@@ -479,19 +478,19 @@ static KUrl getServiceLauncherUrl(int pid, const QString &type, const QStringLis
         }
 
         if (!services.empty()) {
-            QString path=services[0]->entryPath();
+            QString path = services[0]->entryPath();
 
-            if(!path.startsWith("/")) {
-                QStringList dirs=KGlobal::dirs()->resourceDirs("services");
-                foreach(const QString &d, dirs) {
-                    if(QFile::exists(d+path)) {
-                        path=d+path;
+            if (!path.startsWith("/")) {
+                QStringList dirs = KGlobal::dirs()->resourceDirs("services");
+                foreach (const QString & d, dirs) {
+                    if (QFile::exists(d + path)) {
+                        path = d + path;
                         break;
                     }
                 }
             }
 
-            if(QFile::exists(path)) {
+            if (QFile::exists(path)) {
                 return KUrl::fromPath(path);
             }
         }
@@ -525,7 +524,7 @@ KUrl TaskItem::launcherUrl() const
         // interested in the actual control module. Thereffore we obtain this via the commandline. This commandline may contain
         // "kdeinit4:" or "[kdeinit]", so we remove these first.
         if ("Kcmshell4" == d->task.data()->classClass()) {
-            d->launcherUrl=getServiceLauncherUrl(d->task.data()->pid(), "KCModule", QStringList() << "kdeinit4:" << "[kdeinit]");
+            d->launcherUrl = getServiceLauncherUrl(d->task.data()->pid(), "KCModule", QStringList() << "kdeinit4:" << "[kdeinit]");
             if (!d->launcherUrl.isEmpty()) {
                 return d->launcherUrl;
             }

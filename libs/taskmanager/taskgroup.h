@@ -130,11 +130,11 @@ public Q_SLOTS:
     void close();
 
     /** add item to group */
-    void add(AbstractGroupableItem *item, int insertIndex=-1);
+    void add(AbstractGroupableItem *item, int insertIndex = -1);
 
     /** remove item from group */
     void remove(AbstractGroupableItem *);
-    
+
     /** remove all items from group */
     void clear();
 

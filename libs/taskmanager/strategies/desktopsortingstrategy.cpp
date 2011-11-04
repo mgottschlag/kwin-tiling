@@ -36,7 +36,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace TaskManager
 {
 
-static bool separateLaunchers=false;
+static bool separateLaunchers = false;
 
 static QString agiName(const AbstractGroupableItem *i)
 {
@@ -55,8 +55,8 @@ DesktopSortingStrategy::DesktopSortingStrategy(QObject *parent)
 
 void DesktopSortingStrategy::sortItems(ItemList &items)
 {
-    GroupManager *gm=qobject_cast<GroupManager *>(parent());
-    separateLaunchers=!gm || gm->separateLaunchers();
+    GroupManager *gm = qobject_cast<GroupManager *>(parent());
+    separateLaunchers = !gm || gm->separateLaunchers();
 
     qStableSort(items.begin(), items.end(), DesktopSortingStrategy::lessThan);
 }
@@ -70,7 +70,7 @@ bool DesktopSortingStrategy::lessThan(const AbstractGroupableItem *left, const A
      *   - If both are not startup tasks first compare items by desktop number,
      *     and then for items which belong to the same desktop sort by their NAME.
      */
-    if(separateLaunchers) {
+    if (separateLaunchers) {
         if (left->isStartupItem()) {
             if (right->isStartupItem()) {
                 return left->name().toLower() < right->name().toLower();
@@ -79,7 +79,7 @@ bool DesktopSortingStrategy::lessThan(const AbstractGroupableItem *left, const A
         }
 
         if (right->isStartupItem()) {
-                return true;
+            return true;
         }
 
         if (left->itemType() == LauncherItemType) {

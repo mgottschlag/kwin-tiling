@@ -41,22 +41,21 @@ class KustodianGroupingStrategy::Private
 {
 public:
     Private()
-        :editableGroupProperties(AbstractGroupingStrategy::None)
-    {
+        : editableGroupProperties(AbstractGroupingStrategy::None) {
     }
     AbstractGroupingStrategy::EditableGroupProperties editableGroupProperties;
 };
 
 
 KustodianGroupingStrategy::KustodianGroupingStrategy(GroupManager *groupManager)
-    :AbstractGroupingStrategy(groupManager),
-     d(new Private)
+    : AbstractGroupingStrategy(groupManager),
+      d(new Private)
 {
     setType(GroupManager::KustodianGrouping);
 
     QStringList defaultApps;
     defaultApps << "dolphin" << "krita" << "konqueror" << "kwrite" << "konsole" << "gwenview" << "kontact" << "konversation" << "amarok" << "kword";
-    foreach (const QString &name, defaultApps) {
+    foreach (const QString & name, defaultApps) {
         QList <AbstractGroupableItem *> list;
         TaskGroup* group = createGroup(list);
         group->setName(name);
@@ -114,9 +113,9 @@ void KustodianGroupingStrategy::handleItem(AbstractGroupableItem *item)
 bool KustodianGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* groupItem)
 {
     //kDebug();
-    QHash <QString,AbstractGroupableItem *> itemMap;
+    QHash <QString, AbstractGroupableItem *> itemMap;
 
-    foreach (AbstractGroupableItem *item, groupItem->members()) { //search for an existing group
+    foreach (AbstractGroupableItem * item, groupItem->members()) { //search for an existing group
         if (item->itemType() == GroupItemType && programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
             //maybe add the condition that the subgroup was created by programGrouping
             //kDebug() << "joined subGroup";
@@ -154,7 +153,7 @@ QString KustodianGroupingStrategy::desktopNameFromClassName(const QString & name
 
 void KustodianGroupingStrategy::checkGroup()
 {
-    TaskGroup *group = qobject_cast<TaskGroup*>(sender()); 
+    TaskGroup *group = qobject_cast<TaskGroup*>(sender());
     if (!group) {
         return;
     }

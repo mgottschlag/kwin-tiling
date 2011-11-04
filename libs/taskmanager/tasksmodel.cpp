@@ -245,8 +245,8 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
         return;
     }
 
-    QObject::connect(group, SIGNAL(itemAboutToBeAdded(AbstractGroupableItem*,int)),
-                     q, SLOT(itemAboutToBeAdded(AbstractGroupableItem*,int)),
+    QObject::connect(group, SIGNAL(itemAboutToBeAdded(AbstractGroupableItem*, int)),
+                     q, SLOT(itemAboutToBeAdded(AbstractGroupableItem*, int)),
                      Qt::UniqueConnection);
     QObject::connect(group, SIGNAL(itemAdded(AbstractGroupableItem*)),
                      q, SLOT(itemAdded(AbstractGroupableItem*)),
@@ -257,8 +257,8 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
     QObject::connect(group, SIGNAL(itemRemoved(AbstractGroupableItem*)),
                      q, SLOT(itemRemoved(AbstractGroupableItem*)),
                      Qt::UniqueConnection);
-    QObject::connect(group, SIGNAL(itemAboutToMove(AbstractGroupableItem*,int,int)),
-                     q, SLOT(itemAboutToMove(AbstractGroupableItem*,int,int)),
+    QObject::connect(group, SIGNAL(itemAboutToMove(AbstractGroupableItem*, int, int)),
+                     q, SLOT(itemAboutToMove(AbstractGroupableItem*, int, int)),
                      Qt::UniqueConnection);
     QObject::connect(group, SIGNAL(itemPositionChanged(AbstractGroupableItem*)),
                      q, SLOT(itemMoved(AbstractGroupableItem*)),
@@ -268,7 +268,7 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
     QList<idxGroupPair> childGroups;
 
     int i = 0;
-    foreach (AbstractGroupableItem *item,  group->members()) {
+    foreach (AbstractGroupableItem * item,  group->members()) {
         if (item->itemType() == GroupItemType) {
             QModelIndex idx(q->index(i, 0, parent));
             childGroups << idxGroupPair(idx, static_cast<TaskGroup *>(item));
@@ -280,7 +280,7 @@ void TasksModelPrivate::populate(const QModelIndex &parent, TaskGroup *group)
         ++i;
     }
 
-    foreach (const idxGroupPair &pair, childGroups) {
+    foreach (const idxGroupPair & pair, childGroups) {
         populate(pair.first, pair.second);
     }
 }
@@ -291,7 +291,7 @@ int TasksModelPrivate::indexOf(AbstractGroupableItem *item)
     int row = 0;
     //kDebug() << item << item->parentGroup();
 
-    foreach (const AbstractGroupableItem *child, item->parentGroup()->members()) {
+    foreach (const AbstractGroupableItem * child, item->parentGroup()->members()) {
         if (child == item) {
             break;
         }

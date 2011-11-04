@@ -41,8 +41,7 @@ class AbstractSortingStrategy::Private
 {
 public:
     Private()
-        : type(GroupManager::NoSorting)
-    {
+        : type(GroupManager::NoSorting) {
     }
 
     QList<TaskGroup*> managedGroups;
@@ -51,8 +50,8 @@ public:
 
 
 AbstractSortingStrategy::AbstractSortingStrategy(QObject *parent)
-    :QObject(parent),
-    d(new Private)
+    : QObject(parent),
+      d(new Private)
 {
 
 }
@@ -87,7 +86,7 @@ void AbstractSortingStrategy::handleGroup(TaskGroup *group)
     ItemList sortedList = group->members();
     sortItems(sortedList); //the sorting doesn't work with totally unsorted lists, therefore we sort it in the correct order the first time
 
-    foreach (AbstractGroupableItem *item, sortedList) {
+    foreach (AbstractGroupableItem * item, sortedList) {
         handleItem(item);
     }
 }

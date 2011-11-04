@@ -234,7 +234,7 @@ AbstractGroupableItemAction::AbstractGroupableItemAction(QObject *parent, Abstra
 
 void AbstractGroupableItemAction::addToTasks(TaskGroup *group)
 {
-    foreach(AbstractGroupableItem * item, group->members()) {
+    foreach (AbstractGroupableItem * item, group->members()) {
         TaskGroup *subGroup = qobject_cast<TaskGroup *>(item);
         if (subGroup) {
             addToTasks(subGroup);
@@ -255,7 +255,7 @@ ToCurrentDesktopActionImpl::ToCurrentDesktopActionImpl(QObject *parent, Abstract
 void ToCurrentDesktopActionImpl::slotToCurrentDesktop()
 {
     const int desktop = KWindowSystem::currentDesktop();
-    foreach(TaskPtr task, m_tasks) {
+    foreach (TaskPtr task, m_tasks) {
         task->toDesktop(desktop);
     }
 }
@@ -281,7 +281,7 @@ ToDesktopActionImpl::ToDesktopActionImpl(QObject *parent, AbstractGroupableItem 
 
 void ToDesktopActionImpl::slotToDesktop()
 {
-    foreach(TaskPtr task, m_tasks) {
+    foreach (TaskPtr task, m_tasks) {
         task->toDesktop(m_desktop);
     }
 }
@@ -343,7 +343,7 @@ AdvancedMenu::AdvancedMenu(QWidget *parent, AbstractGroupableItem *item, GroupMa
         QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, item);
         if (!groupingStrategyActions.isEmpty()) {
             addSeparator();
-            foreach(QAction * action, groupingStrategyActions) {
+            foreach (QAction * action, groupingStrategyActions) {
                 addAction(action);
             }
             // delete groupingStrategyActions;
@@ -378,7 +378,7 @@ ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGrou
 
     case GroupItemType: {
         TaskGroup *group = static_cast<TaskGroup *>(item);
-        foreach(AbstractGroupableItem * i, group->members()) {
+        foreach (AbstractGroupableItem * i, group->members()) {
             if (i->itemType() != GroupItemType) {
                 item = i;
                 break;
@@ -412,25 +412,24 @@ void ToggleLauncherActionImpl::toggleLauncher()
 {
     if (!m_url.isValid()) {
         // No valid desktop file found, so prompt user...
-        AppSelectorDialog *dlg=new AppSelectorDialog(m_abstractItem, m_groupingStrategy);
+        AppSelectorDialog *dlg = new AppSelectorDialog(m_abstractItem, m_groupingStrategy);
         dlg->show();
         return;
-    }
-    else if (m_groupingStrategy->launcherExists(m_url)) {
+    } else if (m_groupingStrategy->launcherExists(m_url)) {
         m_groupingStrategy->removeLauncher(m_url);
     } else if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
         m_groupingStrategy->addLauncher(m_url, QIcon(), QString(), QString(),
                                         static_cast<TaskItem *>(m_abstractItem)->task()
-                                                ? static_cast<TaskItem *>(m_abstractItem)->task()->classClass()
-                                                : QString());
+                                        ? static_cast<TaskItem *>(m_abstractItem)->task()->classClass()
+                                        : QString());
     }
 }
 
 AppSelectorDialog::AppSelectorDialog(AbstractGroupableItem* item, GroupManager* strategy)
     : KOpenWithDialog(KUrl::List(), i18n("The application, to which this task is associated with, could not be determined. "
                                          "Please select the appropriate application from the list below:"), QString(), 0L),
-      m_abstractItem(item),
-      m_groupingStrategy(strategy)
+    m_abstractItem(item),
+    m_groupingStrategy(strategy)
 {
     hideNoCloseOnExit();
     hideRunInTerminal();
@@ -441,7 +440,7 @@ AppSelectorDialog::AppSelectorDialog(AbstractGroupableItem* item, GroupManager* 
 
 void AppSelectorDialog::launcherSelected()
 {
-    if(m_abstractItem && m_groupingStrategy) {
+    if (m_abstractItem && m_groupingStrategy) {
         KService::Ptr srv = service();
         TaskItem *taskItem = static_cast<TaskItem *>(m_abstractItem.data());
         QString wmClass = taskItem->task() ? taskItem->task()->classClass() : QString();
@@ -522,7 +521,7 @@ GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableIte
         QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, item);
         if (!groupingStrategyActions.empty()) {
             addSeparator();
-            foreach(QAction * action, groupingStrategyActions) {
+            foreach (QAction * action, groupingStrategyActions) {
                 addAction(action);
             }
         }
@@ -539,7 +538,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
     setTitle(item->name());
     setIcon(item->icon());
     if (appActions.count()) {
-        foreach(QAction * action, appActions) {
+        foreach (QAction * action, appActions) {
             addAction(action);
         }
 
@@ -560,7 +559,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
     addAction(new ToggleLauncherActionImpl(this, item, strategy));
     addMenu(new AdvancedMenu(this, item, strategy));
 
-    foreach(QAction * action, visualizationActions) {
+    foreach (QAction * action, visualizationActions) {
         addAction(action);
     }
 
@@ -577,14 +576,14 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     setTitle(group->name());
     setIcon(group->icon());
     if (appActions.count()) {
-        foreach(QAction * action, appActions) {
+        foreach (QAction * action, appActions) {
             addAction(action);
         }
 
         addSeparator();
     }
 
-    foreach(AbstractGroupableItem * item, group->members()) {
+    foreach (AbstractGroupableItem * item, group->members()) {
         if (item->itemType() == GroupItemType) {
             addMenu(new BasicMenu(this, dynamic_cast<TaskGroup*>(item), strategy));
         } else {
@@ -606,7 +605,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     addMenu(new AdvancedMenu(this, group, strategy));
     addAction(new EditGroupActionImpl(this, group, strategy));
 
-    foreach(QAction * action, visualizationActions) {
+    foreach (QAction * action, visualizationActions) {
         addAction(action);
     }
 
@@ -623,7 +622,7 @@ BasicMenu::BasicMenu(QWidget *parent, LauncherItem* item, GroupManager *strategy
     setTitle(item->name());
     setIcon(item->icon());
     if (appActions.count()) {
-        foreach(QAction * action, appActions) {
+        foreach (QAction * action, appActions) {
             addAction(action);
         }
 
@@ -634,7 +633,7 @@ BasicMenu::BasicMenu(QWidget *parent, LauncherItem* item, GroupManager *strategy
 
     if (!visualizationActions.isEmpty()) {
         addSeparator();
-        foreach(QAction * action, visualizationActions) {
+        foreach (QAction * action, visualizationActions) {
             addAction(action);
         }
     }
@@ -645,7 +644,7 @@ GroupPopupMenu::GroupPopupMenu(QWidget *parent, TaskGroup *group, GroupManager *
 {
     setTitle(group->name());
     setIcon(group->icon());
-    foreach(AbstractGroupableItem * item, group->members()) {
+    foreach (AbstractGroupableItem * item, group->members()) {
         if (!item) {
             kDebug() << "invalid Item";
             continue;

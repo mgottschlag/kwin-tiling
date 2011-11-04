@@ -141,16 +141,18 @@ void LauncherProperties::slotButtonClicked(int button)
 bool LauncherProperties::eventFilter(QObject *o, QEvent *e)
 {
     // check object and event type
-    if (o != grabber || QEvent::MouseButtonRelease != e->type())
+    if (o != grabber || QEvent::MouseButtonRelease != e->type()) {
         return false;
+    }
 
     // delete old grabber
     delete grabber;
     grabber = 0;
 
     // check button
-    if (Qt::LeftButton != static_cast< QMouseEvent* >(e)->button())
+    if (Qt::LeftButton != static_cast< QMouseEvent* >(e)->button()) {
         return true;
+    }
 
     // read window information
     WId window = findWindow();

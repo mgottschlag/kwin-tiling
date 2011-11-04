@@ -43,8 +43,8 @@ namespace TaskManager
 {
 
 Task::Task(WId w, QObject *parent, const char *name)
-  : QObject(parent),
-    d(new Private(w))
+    : QObject(parent),
+      d(new Private(w))
 {
     setObjectName(name);
 
@@ -79,10 +79,10 @@ void Task::refreshIcon()
     // try to guess the icon from the classhint
     if (d->pixmap.isNull()) {
         d->pixmap = KIconLoader::global()->loadIcon(className().toLower(),
-                                                     KIconLoader::Small,
-                                                     KIconLoader::Small,
-                                                     KIconLoader::DefaultState,
-                                                     QStringList(), 0, true);
+                    KIconLoader::Small,
+                    KIconLoader::Small,
+                    KIconLoader::DefaultState,
+                    QStringList(), 0, true);
 
         // load the icon for X applications
         if (d->pixmap.isNull()) {
@@ -113,13 +113,13 @@ void Task::refreshIcon()
     TaskChanges changes = TaskUnchanged;
 
     if (d->info.windowClassClass() != info.windowClassClass() ||
-        d->info.windowClassName() != info.windowClassName()) {
+            d->info.windowClassName() != info.windowClassName()) {
         changes |= ClassChanged;
     }
 
     if (d->info.visibleName() != info.visibleName() ||
-        d->info.visibleNameWithState() != info.visibleNameWithState() ||
-        d->info.name() != info.name()) {
+            d->info.visibleNameWithState() != info.visibleNameWithState() ||
+            d->info.name() != info.name()) {
         changes |= NameChanged;
     }
 
@@ -170,9 +170,9 @@ void Task::setActive(bool a)
     d->active = a;
     emit changed(StateChanged);
     if (a) {
-      emit activated();
+        emit activated();
     } else {
-      emit deactivated();
+        emit deactivated();
     }
 }
 
@@ -233,12 +233,12 @@ bool Task::isOnTop() const
 
 bool Task::isModified() const
 {
-  static QString modStr = QString::fromUtf8("[") +
-                          i18nc("marks that a task has been modified", "modified") +
-                          QString::fromUtf8("]");
-  int modStrPos = d->info.visibleName().indexOf(modStr);
+    static QString modStr = QString::fromUtf8("[") +
+                            i18nc("marks that a task has been modified", "modified") +
+                            QString::fromUtf8("]");
+    int modStrPos = d->info.visibleName().indexOf(modStr);
 
-  return ( modStrPos != -1 );
+    return (modStrPos != -1);
 }
 
 int Task::desktop() const
@@ -253,12 +253,12 @@ int Task::desktop() const
 bool Task::demandsAttention() const
 {
     return (d->info.valid(true) && (d->info.state() & NET::DemandsAttention)) ||
-            !d->transientsDemandingAttention.isEmpty();
+           !d->transientsDemandingAttention.isEmpty();
 }
 
-bool Task::isOnScreen( int screen ) const
+bool Task::isOnScreen(int screen) const
 {
-    return TaskManager::isOnScreen( screen, d->win );
+    return TaskManager::isOnScreen(screen, d->win);
 }
 
 bool Task::showInTaskbar() const
@@ -316,33 +316,33 @@ QString Task::name() const
     return d->info.name();
 }
 
-QPixmap Task::icon( int width, int height, bool allowResize )
+QPixmap Task::icon(int width, int height, bool allowResize)
 {
-  if (width == d->lastWidth &&
-      height == d->lastHeight &&
-      allowResize == d->lastResize &&
-      !d->lastIcon.isNull()) {
-      return d->lastIcon;
-  }
+    if (width == d->lastWidth &&
+            height == d->lastHeight &&
+            allowResize == d->lastResize &&
+            !d->lastIcon.isNull()) {
+        return d->lastIcon;
+    }
 
-  QPixmap newIcon = KWindowSystem::icon( d->win, width, height, allowResize );
-  if (!newIcon.isNull()) {
-      d->lastIcon = newIcon;
-      d->lastWidth = width;
-      d->lastHeight = height;
-      d->lastResize = allowResize;
-  }
+    QPixmap newIcon = KWindowSystem::icon(d->win, width, height, allowResize);
+    if (!newIcon.isNull()) {
+        d->lastIcon = newIcon;
+        d->lastWidth = width;
+        d->lastHeight = height;
+        d->lastResize = allowResize;
+    }
 
-  return newIcon;
+    return newIcon;
 }
 
 QIcon Task::icon()
 {
     if (d->icon.isNull()) {
-        d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeSmall, KIconLoader::SizeSmall, false));
-        d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium, false));
-        d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeMedium, KIconLoader::SizeMedium, false));
-        d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeLarge, KIconLoader::SizeLarge, false));
+        d->icon.addPixmap(KWindowSystem::icon(d->win, KIconLoader::SizeSmall, KIconLoader::SizeSmall, false));
+        d->icon.addPixmap(KWindowSystem::icon(d->win, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium, false));
+        d->icon.addPixmap(KWindowSystem::icon(d->win, KIconLoader::SizeMedium, KIconLoader::SizeMedium, false));
+        d->icon.addPixmap(KWindowSystem::icon(d->win, KIconLoader::SizeLarge, KIconLoader::SizeLarge, false));
     }
 
     return d->icon;
@@ -358,95 +358,91 @@ QPixmap Task::pixmap() const
     return d->pixmap;
 }
 
-QPixmap Task::bestIcon( int size, bool &isStaticIcon )
+QPixmap Task::bestIcon(int size, bool &isStaticIcon)
 {
-  QPixmap pixmap;
-  isStaticIcon = false;
+    QPixmap pixmap;
+    isStaticIcon = false;
 
-  switch( size ) {
-  case KIconLoader::SizeSmall:
-    {
-      pixmap = icon(16, 16, true);
+    switch (size) {
+    case KIconLoader::SizeSmall: {
+        pixmap = icon(16, 16, true);
 
-      // Icon of last resort
-      if (pixmap.isNull()) {
-        pixmap = KIconLoader::global()->loadIcon( "xorg",
-                                                  KIconLoader::NoGroup,
-                                                  KIconLoader::SizeSmall );
-        isStaticIcon = true;
-      }
+        // Icon of last resort
+        if (pixmap.isNull()) {
+            pixmap = KIconLoader::global()->loadIcon("xorg",
+                     KIconLoader::NoGroup,
+                     KIconLoader::SizeSmall);
+            isStaticIcon = true;
+        }
     }
     break;
-  case KIconLoader::SizeMedium:
-    {
-      //
-      // Try 34x34 first for KDE 2.1 icons with shadows, if we don't
-      // get one then try 32x32.
-      //
-      pixmap = icon( 34, 34, false  );
+    case KIconLoader::SizeMedium: {
+        //
+        // Try 34x34 first for KDE 2.1 icons with shadows, if we don't
+        // get one then try 32x32.
+        //
+        pixmap = icon(34, 34, false);
 
-      if ( (( pixmap.width() != 34 ) || ( pixmap.height() != 34 )) &&
-           (( pixmap.width() != 32 ) || ( pixmap.height() != 32 )) )
-      {
-        pixmap = icon( 32, 32, true  );
-      }
+        if (((pixmap.width() != 34) || (pixmap.height() != 34)) &&
+                ((pixmap.width() != 32) || (pixmap.height() != 32))) {
+            pixmap = icon(32, 32, true);
+        }
 
-      // Icon of last resort
-      if( pixmap.isNull() ) {
-        pixmap = KIconLoader::global()->loadIcon( "xorg",
-                            KIconLoader::NoGroup,
-                            KIconLoader::SizeMedium );
-        isStaticIcon = true;
-      }
+        // Icon of last resort
+        if (pixmap.isNull()) {
+            pixmap = KIconLoader::global()->loadIcon("xorg",
+                     KIconLoader::NoGroup,
+                     KIconLoader::SizeMedium);
+            isStaticIcon = true;
+        }
     }
     break;
-  case KIconLoader::SizeLarge:
-    {
-      // If there's a 48x48 icon in the hints then use it
-      pixmap = icon( size, size, false  );
+    case KIconLoader::SizeLarge: {
+        // If there's a 48x48 icon in the hints then use it
+        pixmap = icon(size, size, false);
 
-      // If not, try to get one from the classname
-      if ( pixmap.isNull() || pixmap.width() != size || pixmap.height() != size ) {
-        pixmap = KIconLoader::global()->loadIcon( className(),
-                            KIconLoader::NoGroup,
-                            size,
-                            KIconLoader::DefaultState,
-                            QStringList(), 0L,
-                            true );
-        isStaticIcon = true;
-      }
+        // If not, try to get one from the classname
+        if (pixmap.isNull() || pixmap.width() != size || pixmap.height() != size) {
+            pixmap = KIconLoader::global()->loadIcon(className(),
+                     KIconLoader::NoGroup,
+                     size,
+                     KIconLoader::DefaultState,
+                     QStringList(), 0L,
+                     true);
+            isStaticIcon = true;
+        }
 
-      // If we still don't have an icon then scale the one in the hints
-      if ( pixmap.isNull() || ( pixmap.width() != size ) || ( pixmap.height() != size ) ) {
-        pixmap = icon( size, size, true  );
-        isStaticIcon = false;
-      }
+        // If we still don't have an icon then scale the one in the hints
+        if (pixmap.isNull() || (pixmap.width() != size) || (pixmap.height() != size)) {
+            pixmap = icon(size, size, true);
+            isStaticIcon = false;
+        }
 
-      // Icon of last resort
-      if( pixmap.isNull() ) {
-        pixmap = KIconLoader::global()->loadIcon( "xorg",
-                                                  KIconLoader::NoGroup,
-                                                  size );
-        isStaticIcon = true;
-      }
+        // Icon of last resort
+        if (pixmap.isNull()) {
+            pixmap = KIconLoader::global()->loadIcon("xorg",
+                     KIconLoader::NoGroup,
+                     size);
+            isStaticIcon = true;
+        }
     }
-  }
+    }
 
-  return pixmap;
+    return pixmap;
 }
 
-bool Task::idMatch( const QString& id1, const QString& id2 )
+bool Task::idMatch(const QString& id1, const QString& id2)
 {
-  if ( id1.isEmpty() || id2.isEmpty() )
+    if (id1.isEmpty() || id2.isEmpty())
+        return false;
+
+    if (id1.contains(id2) > 0)
+        return true;
+
+    if (id2.contains(id1) > 0)
+        return true;
+
     return false;
-
-  if ( id1.contains( id2 ) > 0 )
-    return true;
-
-  if ( id2.contains( id1 ) > 0 )
-    return true;
-
-  return false;
 }
 
 void Task::toggleMaximized()
@@ -456,24 +452,19 @@ void Task::toggleMaximized()
 
 void Task::setIconified(bool iconify)
 {
-    if (iconify)
-    {
+    if (iconify) {
         KWindowSystem::minimizeWindow(d->win);
-    }
-    else
-    {
+    } else {
         KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
         bool on_current = info.isOnCurrentDesktop();
 
-        if (!on_current)
-        {
+        if (!on_current) {
             KWindowSystem::setCurrentDesktop(info.desktop());
         }
 
         KWindowSystem::unminimizeWindow(d->win);
 
-        if (!on_current)
-        {
+        if (!on_current) {
             KWindowSystem::forceActiveWindow(d->win);
         }
     }
@@ -487,13 +478,13 @@ void Task::toggleIconified()
 void Task::raise()
 {
 //    kDebug(1210) << "Task::raise(): " << name();
-    KWindowSystem::raiseWindow( d->win );
+    KWindowSystem::raiseWindow(d->win);
 }
 
 void Task::lower()
 {
 //    kDebug(1210) << "Task::lower(): " << name();
-    KWindowSystem::lowerWindow( d->win );
+    KWindowSystem::lowerWindow(d->win);
 }
 
 void Task::activate()
@@ -528,9 +519,9 @@ void Task::activateRaiseOrIconify()
     if (!isActive() || isIconified()) {
         activate();
     } else if (!isOnTop()) {
-       raise();
+        raise();
     } else {
-       setIconified(true);
+        setIconified(true);
     }
 }
 
@@ -541,7 +532,7 @@ void Task::toCurrentDesktop()
 
 void Task::toggleAlwaysOnTop()
 {
-    setAlwaysOnTop( !isAlwaysOnTop() );
+    setAlwaysOnTop(!isAlwaysOnTop());
 }
 
 void Task::toggleKeptBelowOthers()
@@ -556,7 +547,7 @@ void Task::toggleFullScreen()
 
 void Task::toggleShaded()
 {
-    setShaded( !isShaded() );
+    setShaded(!isShaded());
 }
 
 void Task::clearPixmapData()
@@ -667,7 +658,7 @@ WId Task::idFromMimeData(const QMimeData *mimeData, bool *ok)
 }
 
 Task::WindowProperties::WindowProperties(unsigned int netWinInfoProperties, unsigned int netWinInfoProperties2)
-  : netWindowInfoProperties(netWinInfoProperties), netWindowInfoProperties2(netWinInfoProperties2)
+    : netWindowInfoProperties(netWinInfoProperties), netWindowInfoProperties2(netWinInfoProperties2)
 {
 }
 

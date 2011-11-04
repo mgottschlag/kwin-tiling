@@ -44,7 +44,7 @@ public:
     AbstractSortingStrategy(QObject *parent);
     virtual ~AbstractSortingStrategy();
 
-     /** Returns the strategy type */
+    /** Returns the strategy type */
     GroupManager::TaskSortingStrategy type() const;
 
     /** Adds group under control of sorting strategy. all added subgroups are automatically added to this sortingStrategy*/
@@ -56,9 +56,9 @@ public:
     virtual bool manualSortingRequest(AbstractGroupableItem *item, int newIndex);
 
 protected Q_SLOTS:
-     /** Handles a new item, is typically called after an item was added to a handled group*/
+    /** Handles a new item, is typically called after an item was added to a handled group*/
     virtual void handleItem(AbstractGroupableItem *);
-     /** Checks if the order has to be updated. Must be connected to a AbstractGroupableItem* */
+    /** Checks if the order has to be updated. Must be connected to a AbstractGroupableItem* */
     void check(AbstractGroupableItem *item = 0);
     void removeGroup(); //FIXME necessary?
 

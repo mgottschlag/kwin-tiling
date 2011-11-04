@@ -84,9 +84,9 @@ namespace TaskManager
 class TASKMANAGER_EXPORT TaskManager : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY( int currentDesktop READ currentDesktop )
-    Q_PROPERTY( int numberOfDesktops READ numberOfDesktops )
-    Q_PROPERTY( QString currentActivity READ currentActivity )
+    Q_PROPERTY(int currentDesktop READ currentDesktop)
+    Q_PROPERTY(int numberOfDesktops READ numberOfDesktops)
+    Q_PROPERTY(QString currentActivity READ currentActivity)
 
 public:
     static TaskManager* self();
@@ -209,14 +209,14 @@ protected Q_SLOTS:
     //* @internal
     void currentActivityChanged(const QString&);
     //* @internal
-    void killStartup( const KStartupInfoId& );
+    void killStartup(const KStartupInfoId&);
     //* @internal
     void killStartup(StartupPtr);
 
     //* @internal
-    void gotNewStartup( const KStartupInfoId&, const KStartupInfoData& );
+    void gotNewStartup(const KStartupInfoId&, const KStartupInfoData&);
     //* @internal
-    void gotStartupChange( const KStartupInfoId&, const KStartupInfoData& );
+    void gotStartupChange(const KStartupInfoId&, const KStartupInfoData&);
 
     //* @internal
     void taskChanged(::TaskManager::TaskChanges changes);

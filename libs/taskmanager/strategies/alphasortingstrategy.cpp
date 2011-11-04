@@ -39,21 +39,21 @@ namespace TaskManager
 {
 
 AlphaSortingStrategy::AlphaSortingStrategy(QObject *parent)
-    :AbstractSortingStrategy(parent)
+    : AbstractSortingStrategy(parent)
 {
     setType(GroupManager::AlphaSorting);
 }
 
 void AlphaSortingStrategy::sortItems(ItemList &items)
 {
-    GroupManager *gm=qobject_cast<GroupManager *>(parent());
-    bool         separateLaunchers=!gm || gm->separateLaunchers();
-    
+    GroupManager *gm = qobject_cast<GroupManager *>(parent());
+    bool         separateLaunchers = !gm || gm->separateLaunchers();
+
     //kDebug();
     QMap<QString, AbstractGroupableItem*> map;
     QMap<QString, AbstractGroupableItem*> launcherMap;
 
-    foreach (AbstractGroupableItem *groupable, items) {
+    foreach (AbstractGroupableItem * groupable, items) {
         if (groupable->itemType() == GroupItemType) {
             if (!groupable) {
                 continue;
@@ -64,7 +64,7 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
             if (!groupable) {
                 continue;
             }
-            if(separateLaunchers) {
+            if (separateLaunchers) {
                 launcherMap.insertMulti(groupable->name().toLower(), groupable);
             } else {
                 map.insertMulti(groupable->name().toLower(), groupable);
@@ -90,7 +90,7 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
     }
 
     items.clear();
-    if(separateLaunchers) {
+    if (separateLaunchers) {
         items << launcherMap.values();
     }
     items << map.values();

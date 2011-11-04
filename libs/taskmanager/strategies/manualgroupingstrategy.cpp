@@ -42,8 +42,7 @@ class ManualGroupingStrategy::Private
 public:
     Private()
         : editableGroupProperties(AbstractGroupingStrategy::All),
-          tempItem(0)
-    {
+          tempItem(0) {
     }
 
     AbstractGroupingStrategy::EditableGroupProperties editableGroupProperties;
@@ -54,8 +53,8 @@ public:
 
 
 ManualGroupingStrategy::ManualGroupingStrategy(GroupManager *groupManager)
-    :AbstractGroupingStrategy(groupManager),
-     d(new Private)
+    : AbstractGroupingStrategy(groupManager),
+      d(new Private)
 {
     setType(GroupManager::ManualGrouping);
 }
@@ -109,7 +108,7 @@ void ManualGroupingStrategy::removeGroup()
 
     TaskGroup *parentGroup = tempGroup->parentGroup(); //tempGroup is invalid before last item has been moved to the parentGroup
     if (parentGroup) {
-        foreach (AbstractGroupableItem *item, tempGroup->members()) {
+        foreach (AbstractGroupableItem * item, tempGroup->members()) {
             parentGroup->add(item);
         }
         //Group gets automatically closed on empty signal

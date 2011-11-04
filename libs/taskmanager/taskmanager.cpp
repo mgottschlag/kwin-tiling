@@ -57,10 +57,10 @@ namespace TaskManager
 class TaskManagerSingleton
 {
 public:
-   TaskManager self;
+    TaskManager self;
 };
 
-K_GLOBAL_STATIC( TaskManagerSingleton, privateTaskManagerSelf )
+K_GLOBAL_STATIC(TaskManagerSingleton, privateTaskManagerSelf)
 
 TaskManager* TaskManager::self()
 {
@@ -74,12 +74,10 @@ public:
         : q(manager),
           active(0),
           startupInfo(0),
-          watcher(0)
-    {
+          watcher(0) {
     }
 
-    void onAppExitCleanup()
-    {
+    void onAppExitCleanup() {
         q->disconnect(KWindowSystem::self(), 0, q, 0);
         delete watcher;
         watcher = 0;
@@ -119,8 +117,8 @@ TaskManager::TaskManager()
             this,       SLOT(activeWindowChanged(WId)));
     connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)),
             this,       SLOT(currentDesktopChanged(int)));
-    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,const ulong*)),
-            this,       SLOT(windowChanged(WId,const ulong*)));
+    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId, const ulong*)),
+            this,       SLOT(windowChanged(WId, const ulong*)));
     connect(&d->activityConsumer, SIGNAL(currentActivityChanged(QString)),
             this,       SLOT(currentActivityChanged(QString)));
     if (QCoreApplication::instance()) {
@@ -132,8 +130,7 @@ TaskManager::TaskManager()
     // register existing windows
     const QList<WId> windows = KWindowSystem::windows();
     QList<WId>::ConstIterator end(windows.end());
-    for (QList<WId>::ConstIterator it = windows.begin(); it != end; ++it)
-    {
+    for (QList<WId>::ConstIterator it = windows.begin(); it != end; ++it) {
         windowAdded(*it);
     }
 
@@ -167,15 +164,15 @@ void TaskManager::configureStartup()
     }
 
     if (!d->startupInfo) {
-        d->startupInfo = new KStartupInfo(KStartupInfo::CleanOnCantDetect, this );
+        d->startupInfo = new KStartupInfo(KStartupInfo::CleanOnCantDetect, this);
         connect(d->startupInfo,
-                SIGNAL(gotNewStartup(KStartupInfoId,KStartupInfoData)),
-                SLOT(gotNewStartup(KStartupInfoId,KStartupInfoData)));
+                SIGNAL(gotNewStartup(KStartupInfoId, KStartupInfoData)),
+                SLOT(gotNewStartup(KStartupInfoId, KStartupInfoData)));
         connect(d->startupInfo,
-                SIGNAL(gotStartupChange(KStartupInfoId,KStartupInfoData)),
-                SLOT(gotStartupChange(KStartupInfoId,KStartupInfoData)));
+                SIGNAL(gotStartupChange(KStartupInfoId, KStartupInfoData)),
+                SLOT(gotStartupChange(KStartupInfoId, KStartupInfoData)));
         connect(d->startupInfo,
-                SIGNAL(gotRemoveStartup(KStartupInfoId,KStartupInfoData)),
+                SIGNAL(gotRemoveStartup(KStartupInfoId, KStartupInfoData)),
                 SLOT(killStartup(KStartupInfoId)));
     }
 
@@ -204,25 +201,20 @@ TaskPtr TaskManager::findTask(int desktop, const QPoint& p)
     TaskPtr task;
     int currentIndex = -1;
     TaskDict::iterator itEnd = d->tasksByWId.end();
-    for (TaskDict::iterator it = d->tasksByWId.begin(); it != itEnd; ++it)
-    {
+    for (TaskDict::iterator it = d->tasksByWId.begin(); it != itEnd; ++it) {
         TaskPtr t = it.value();
-        if (!t->isOnAllDesktops() && t->desktop() != desktop)
-        {
+        if (!t->isOnAllDesktops() && t->desktop() != desktop) {
             continue;
         }
         //FIXME activities?
 
-        if (t->isIconified() || t->isShaded())
-        {
+        if (t->isIconified() || t->isShaded()) {
             continue;
         }
 
-        if (t->geometry().contains(p))
-        {
+        if (t->geometry().contains(p)) {
             int index = list.indexOf(t->window());
-            if (index > currentIndex)
-            {
+            if (index > currentIndex) {
                 currentIndex = index;
                 task = t;
             }
@@ -232,7 +224,7 @@ TaskPtr TaskManager::findTask(int desktop, const QPoint& p)
     return task;
 }
 
-void TaskManager::windowAdded(WId w )
+void TaskManager::windowAdded(WId w)
 {
 #ifdef Q_WS_X11
     NETWinInfo info(QX11Info::display(), w, QX11Info::appRootWindow(),
@@ -245,7 +237,7 @@ void TaskManager::windowAdded(WId w )
                                             NET::UtilityMask | NET::SplashMask);
 
     if (wType != NET::Normal && wType != NET::Override && wType != NET::Unknown &&
-        wType != NET::Dialog && wType != NET::Utility) {
+            wType != NET::Dialog && wType != NET::Utility) {
         return;
     }
 
@@ -260,13 +252,13 @@ void TaskManager::windowAdded(WId w )
         WId transient_for = (WId)transient_for_tmp;
 
         // check if it's transient for a skiptaskbar window
-        if (d->skiptaskbarWindows.contains( transient_for )) {
+        if (d->skiptaskbarWindows.contains(transient_for)) {
             return;
         }
 
         // lets see if this is a transient for an existing task
         if (transient_for != QX11Info::appRootWindow() &&
-            transient_for != 0 && wType != NET::Utility) {
+                transient_for != 0 && wType != NET::Utility) {
             TaskPtr t = findTask(transient_for);
             if (t) {
                 if (t->window() != w) {
@@ -306,18 +298,15 @@ void TaskManager::windowRemoved(WId w)
 
     // find task
     TaskPtr t = findTask(w);
-    if (!t)
-    {
+    if (!t) {
         return;
     }
 
-    if (t->window() == w)
-    {
+    if (t->window() == w) {
         d->tasksByWId.remove(w);
         emit taskRemoved(t);
 
-        if (t == d->active)
-        {
+        if (t == d->active) {
             d->active = 0;
         }
 
@@ -325,9 +314,7 @@ void TaskManager::windowRemoved(WId w)
         // FIXME: due to a bug in Qt 4.x, the event loop reference count is incorrect
         // when going through x11EventFilter .. :/ so we have to singleShot the deleteLater
         QTimer::singleShot(0, t.data(), SLOT(deleteLater()));
-    }
-    else
-    {
+    } else {
         t->removeTransient(w);
         //kDebug() << "TM: Transient " << w << " for Task " << t->window() << " removed.";
     }
@@ -337,8 +324,8 @@ void TaskManager::windowChanged(WId w, const unsigned long *dirty)
 {
 #ifdef Q_WS_X11
     if (dirty[NETWinInfo::PROTOCOLS] & NET::WMState) {
-        NETWinInfo info (QX11Info::display(), w, QX11Info::appRootWindow(),
-                         NET::WMState | NET::XAWMState);
+        NETWinInfo info(QX11Info::display(), w, QX11Info::appRootWindow(),
+                        NET::WMState | NET::XAWMState);
 
         if (info.state() & NET::SkipTaskbar) {
             windowRemoved(w);
@@ -358,8 +345,8 @@ void TaskManager::windowChanged(WId w, const unsigned long *dirty)
     if (!(dirty[NETWinInfo::PROTOCOLS] & (NET::WMVisibleName | NET::WMName |
                                           NET::WMState | NET::WMIcon |
                                           NET::XAWMState | NET::WMDesktop) ||
-          (trackGeometry() && dirty[NETWinInfo::PROTOCOLS] & NET::WMGeometry) ||
-         (dirty[NETWinInfo::PROTOCOLS2] & NET::WM2Activities))) {
+            (trackGeometry() && dirty[NETWinInfo::PROTOCOLS] & NET::WMGeometry) ||
+            (dirty[NETWinInfo::PROTOCOLS2] & NET::WM2Activities))) {
         return;
     }
 
@@ -434,36 +421,32 @@ void TaskManager::currentActivityChanged(const QString &activity)
     emit activityChanged(activity);
 }
 
-void TaskManager::gotNewStartup( const KStartupInfoId& id, const KStartupInfoData& data )
+void TaskManager::gotNewStartup(const KStartupInfoId& id, const KStartupInfoData& data)
 {
-    StartupPtr s( new Startup( id, data, 0 ) );
+    StartupPtr s(new Startup(id, data, 0));
     d->startups.append(s);
 
     emit startupAdded(s);
 }
 
-void TaskManager::gotStartupChange( const KStartupInfoId& id, const KStartupInfoData& data )
+void TaskManager::gotStartupChange(const KStartupInfoId& id, const KStartupInfoData& data)
 {
     StartupList::iterator itEnd = d->startups.end();
-    for (StartupList::iterator sIt = d->startups.begin(); sIt != itEnd; ++sIt)
-    {
-        if ((*sIt)->id() == id)
-        {
+    for (StartupList::iterator sIt = d->startups.begin(); sIt != itEnd; ++sIt) {
+        if ((*sIt)->id() == id) {
             (*sIt)->update(data);
             return;
         }
     }
 }
 
-void TaskManager::killStartup( const KStartupInfoId& id )
+void TaskManager::killStartup(const KStartupInfoId& id)
 {
     StartupList::iterator sIt = d->startups.begin();
     StartupList::iterator itEnd = d->startups.end();
     StartupPtr s;
-    for (; sIt != itEnd; ++sIt)
-    {
-        if ((*sIt)->id() == id)
-        {
+    for (; sIt != itEnd; ++sIt) {
+        if ((*sIt)->id() == id) {
             s = *sIt;
             break;
         }
@@ -479,17 +462,14 @@ void TaskManager::killStartup( const KStartupInfoId& id )
 
 void TaskManager::killStartup(StartupPtr s)
 {
-    if (!s)
-    {
+    if (!s) {
         return;
     }
 
     StartupList::iterator sIt = d->startups.begin();
     StartupList::iterator itEnd = d->startups.end();
-    for (; sIt != itEnd; ++sIt)
-    {
-        if ((*sIt) == s)
-        {
+    for (; sIt != itEnd; ++sIt) {
+        if ((*sIt) == s) {
             d->startups.erase(sIt);
             break;
         }

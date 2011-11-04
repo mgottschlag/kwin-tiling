@@ -38,8 +38,7 @@ class ProgramGroupingStrategy::Private
 {
 public:
     Private()
-        :editableGroupProperties(AbstractGroupingStrategy::None)
-    {
+        : editableGroupProperties(AbstractGroupingStrategy::None) {
     }
 
     AbstractGroupingStrategy::EditableGroupProperties editableGroupProperties;
@@ -49,14 +48,14 @@ public:
 
 
 ProgramGroupingStrategy::ProgramGroupingStrategy(GroupManager *groupManager)
-    :AbstractGroupingStrategy(groupManager),
-     d(new Private)
+    : AbstractGroupingStrategy(groupManager),
+      d(new Private)
 {
     setType(GroupManager::ProgramGrouping);
 
-    KConfig groupBlacklist( "taskbargroupblacklistrc", KConfig::NoGlobals );
-    KConfigGroup blackGroup( &groupBlacklist, "Blacklist" );
-    d->blackList = blackGroup.readEntry( "Applications", QStringList() );
+    KConfig groupBlacklist("taskbargroupblacklistrc", KConfig::NoGlobals);
+    KConfigGroup blackGroup(&groupBlacklist, "Blacklist");
+    d->blackList = blackGroup.readEntry("Applications", QStringList());
 }
 
 ProgramGroupingStrategy::~ProgramGroupingStrategy()
@@ -68,9 +67,9 @@ QList<QAction*> ProgramGroupingStrategy::strategyActions(QObject *parent, Abstra
 {
     QList<QAction*> actionList;
 
-    GroupManager *gm=qobject_cast<GroupManager *>(AbstractGroupingStrategy::parent());
+    GroupManager *gm = qobject_cast<GroupManager *>(AbstractGroupingStrategy::parent());
 
-    if(!gm || !gm->forceGrouping()) {
+    if (!gm || !gm->forceGrouping()) {
         QAction *a = new QAction(parent);
         QString name = className(item);
         if (d->blackList.contains(name)) {
@@ -95,7 +94,7 @@ QString ProgramGroupingStrategy::className(AbstractGroupableItem *item)
         return task->task()->classClass();
     }
 
-        return (qobject_cast<TaskItem*>(item))->task()->classClass();
+    return (qobject_cast<TaskItem*>(item))->task()->classClass();
 }
 
 
@@ -111,7 +110,7 @@ void ProgramGroupingStrategy::toggleGrouping()
     if (d->blackList.contains(name)) {
         d->blackList.removeAll(name);
         if (tempItem->itemType() == GroupItemType) {
-            foreach (AbstractGroupableItem *item, (qobject_cast<TaskGroup*>(tempItem))->members()) {
+            foreach (AbstractGroupableItem * item, (qobject_cast<TaskGroup*>(tempItem))->members()) {
                 handleItem(item);
             }
         } else {
@@ -127,7 +126,7 @@ void ProgramGroupingStrategy::toggleGrouping()
         }
 
         if (root) {
-            foreach (AbstractGroupableItem *item, root->members()) {
+            foreach (AbstractGroupableItem * item, root->members()) {
                 if (item->itemType() == GroupItemType) {
                     untoggleGroupingOn(static_cast<TaskGroup*>(item), name);
                 }
@@ -153,13 +152,13 @@ void ProgramGroupingStrategy::untoggleGroupingOn(TaskGroup *group, const QString
         return;
     }
 
-    foreach (AbstractGroupableItem *item, group->members()) {
+    foreach (AbstractGroupableItem * item, group->members()) {
         if (item->itemType() == GroupItemType) {
             untoggleGroupingOn(static_cast<TaskGroup*>(item), name);
         }
     }
 
-    foreach (AbstractGroupableItem *item, group->members()) {
+    foreach (AbstractGroupableItem * item, group->members()) {
         if (!item->itemType() == GroupItemType && name == static_cast<TaskItem *>(item)->task()->classClass())  {
             if (group->parentGroup()) {
                 group->parentGroup()->add(item);
@@ -180,13 +179,13 @@ void ProgramGroupingStrategy::handleItem(AbstractGroupableItem *item)
         return;
     }
 
-    GroupManager *gm=qobject_cast<GroupManager *>(AbstractGroupingStrategy::parent());
-        
+    GroupManager *gm = qobject_cast<GroupManager *>(AbstractGroupingStrategy::parent());
+
     if (item->itemType() == GroupItemType) {
         //kDebug() << item->name() << "item is groupitem";
         root->add(item);
         return;
-    } else if ( (!gm || !gm->forceGrouping()) && d->blackList.contains((static_cast<TaskItem*>(item))->task()->classClass())) {
+    } else if ((!gm || !gm->forceGrouping()) && d->blackList.contains((static_cast<TaskItem*>(item))->task()->classClass())) {
         //kDebug() << item->name() << "item is in blacklist";
         root->add(item);
         return;
@@ -206,14 +205,14 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
     QString name = taskItem->task()->classClass();
 
     //search for an existing group
-    foreach (AbstractGroupableItem *item, groupItem->members()) {
+    foreach (AbstractGroupableItem * item, groupItem->members()) {
         if (item->itemType() == GroupItemType) {
             //TODO: maybe add the condition that the subgroup was created by programGrouping?
             if (programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
                 //kDebug() << "    joined subGroup";
                 return true;
             }
-        } else if(item->itemType() == LauncherItemType) {
+        } else if (item->itemType() == LauncherItemType) {
             continue;
         } else {
             TaskItem *task = static_cast<TaskItem*>(item);
@@ -260,7 +259,7 @@ void ProgramGroupingStrategy::checkGroup()
 
 void ProgramGroupingStrategy::updateIcon(TaskGroup *group)
 {
-    foreach (AbstractGroupableItem *taskItem, group->members()) {
+    foreach (AbstractGroupableItem * taskItem, group->members()) {
         if (!taskItem->icon().isNull()) {
             QIcon icon = taskItem->icon();
             group->setIcon(icon);

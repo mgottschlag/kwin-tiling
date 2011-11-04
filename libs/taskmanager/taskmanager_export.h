@@ -30,10 +30,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #ifndef TASKMANAGER_EXPORT
 # if defined(MAKE_TASKMANAGER_LIB)
-   /* We are building this library */ 
+/* We are building this library */
 #  define TASKMANAGER_EXPORT KDE_EXPORT
 # else
-   /* We are using this library */ 
+/* We are using this library */
 #  define TASKMANAGER_EXPORT KDE_IMPORT
 # endif
 #endif

@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace TaskManager
 {
 
-    /** Sorts the tasks by desktop*/
+/** Sorts the tasks by desktop*/
 class DesktopSortingStrategy : public AbstractSortingStrategy
 {
     Q_OBJECT

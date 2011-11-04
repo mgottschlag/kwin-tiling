@@ -41,18 +41,18 @@ class TASKMANAGER_EXPORT TasksModel : public QAbstractItemModel
 
 public:
     enum DisplayRoles {
-     IsStartup = Qt::UserRole + 1,
-     OnAllDesktops = Qt::UserRole + 2,
-     Desktop = Qt::UserRole + 3,
-     Shaded = Qt::UserRole + 4,
-     Maximized = Qt::UserRole + 5,
-     Minimized = Qt::UserRole + 6,
-     FullScreen = Qt::UserRole + 7,
-     BelowOthers = Qt::UserRole + 8,
-     AlwaysOnTop = Qt::UserRole + 9,
-     Active = Qt::UserRole + 10,
-     DemandsAttention = Qt::UserRole + 11,
-     LauncherUrl = Qt::UserRole + 12
+        IsStartup = Qt::UserRole + 1,
+        OnAllDesktops = Qt::UserRole + 2,
+        Desktop = Qt::UserRole + 3,
+        Shaded = Qt::UserRole + 4,
+        Maximized = Qt::UserRole + 5,
+        Minimized = Qt::UserRole + 6,
+        FullScreen = Qt::UserRole + 7,
+        BelowOthers = Qt::UserRole + 8,
+        AlwaysOnTop = Qt::UserRole + 9,
+        Active = Qt::UserRole + 10,
+        DemandsAttention = Qt::UserRole + 11,
+        LauncherUrl = Qt::UserRole + 12
     };
 
     explicit TasksModel(GroupManager *groupManager, QObject *parent = 0);
@@ -69,7 +69,7 @@ private:
     TasksModelPrivate * const d;
 
     Q_PRIVATE_SLOT(d, void populateModel())
-    Q_PRIVATE_SLOT(d, void itemAboutToBeAdded(AbstractGroupableItem *,int))
+    Q_PRIVATE_SLOT(d, void itemAboutToBeAdded(AbstractGroupableItem *, int))
     Q_PRIVATE_SLOT(d, void itemAdded(AbstractGroupableItem *))
     Q_PRIVATE_SLOT(d, void itemAboutToBeRemoved(AbstractGroupableItem *))
     Q_PRIVATE_SLOT(d, void itemRemoved(AbstractGroupableItem *))

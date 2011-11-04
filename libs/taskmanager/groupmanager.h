@@ -50,7 +50,7 @@ class GroupManagerPrivate;
 class TASKMANAGER_EXPORT GroupManager: public QObject
 {
 
-Q_OBJECT
+    Q_OBJECT
 public:
     GroupManager(QObject *parent);
     ~GroupManager();
@@ -64,8 +64,7 @@ public:
     /**
     * Strategy used to Group new items
     */
-    enum TaskGroupingStrategy
-    {
+    enum TaskGroupingStrategy {
         NoGrouping = 0,
         ManualGrouping = 1, //Allow manual grouping
         ProgramGrouping = 2, //Group automatically  same programs
@@ -80,8 +79,7 @@ public:
     /**
     * How the task are ordered
     */
-    enum TaskSortingStrategy
-    {
+    enum TaskSortingStrategy {
         NoSorting = 0,
         ManualSorting = 1,
         AlphaSorting = 2,
@@ -196,7 +194,7 @@ Q_SIGNALS:
 
     /** Signal that the configuration writen to the config file has changed */
     void configChanged();
-    
+
     /** Signal that the order of launchers has changed */
     void launchersChanged();
 

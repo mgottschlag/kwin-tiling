@@ -42,8 +42,7 @@ class Startup::Private
 {
 public:
     Private(const KStartupInfoId& id, const KStartupInfoData& data)
-        : id(id), data(data)
-    {
+        : id(id), data(data) {
     }
 
     QIcon icon;

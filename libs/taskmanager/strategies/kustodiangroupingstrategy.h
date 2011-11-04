@@ -50,12 +50,14 @@ public:
     */
     QList<QAction*> strategyActions(QObject *parent, AbstractGroupableItem *item);
 
-    EditableGroupProperties editableGroupProperties(){return None;};
+    EditableGroupProperties editableGroupProperties() {
+        return None;
+    };
 
 protected Q_SLOTS:
     /** Checks if the group is still necessary */
     void checkGroup();
-    QString desktopNameFromClassName(const QString & );
+    QString desktopNameFromClassName(const QString &);
 
 private:
     bool programGrouping(TaskItem* taskItem, TaskGroup* groupItem);

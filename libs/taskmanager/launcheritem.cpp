@@ -49,8 +49,7 @@ class LauncherItemPrivate
 {
 public:
     LauncherItemPrivate(LauncherItem *launcher)
-        : q(launcher)
-    {
+        : q(launcher) {
     }
 
     void associateDestroyed(QObject *obj);
@@ -87,7 +86,7 @@ void LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
         return;
     }
 
-    KUrl itemUrl=item->launcherUrl();
+    KUrl itemUrl = item->launcherUrl();
 
     if (!itemUrl.isEmpty() && launcherUrl() == itemUrl) {
         d->associates.insert(item);
@@ -130,15 +129,15 @@ bool LauncherItem::shouldShow() const
     const bool desk = manager->showOnlyCurrentDesktop();
     const bool activity = manager->showOnlyCurrentActivity();
 
-    foreach (QObject *obj, d->associates) {
+    foreach (QObject * obj, d->associates) {
         TaskItem *item = static_cast<TaskItem *>(obj);
         if (!item || !item->task()) {
             continue;
         }
 
         if ((!screen || item->task().data()->isOnScreen(manager->screen())) &&
-            (!desk || item->isOnCurrentDesktop()) &&
-            (!activity || item->task().data()->isOnCurrentActivity())) {
+                (!desk || item->isOnCurrentDesktop()) &&
+                (!activity || item->task().data()->isOnCurrentActivity())) {
             return false;
         }
     }
@@ -176,7 +175,7 @@ QString LauncherItem::wmClass() const
 void LauncherItem::setName(const QString& name)
 {
     //NOTE: preferred is NOT a protocol, it's just a magic string
-    if (d->url.protocol() != "preferred"){
+    if (d->url.protocol() != "preferred") {
         d->name = name;
     }
 }
@@ -184,14 +183,14 @@ void LauncherItem::setName(const QString& name)
 void LauncherItem::setGenericName(const QString& genericName)
 {
     //NOTE: preferred is NOT a protocol, it's just a magic string
-    if (d->url.protocol() != "preferred"){
+    if (d->url.protocol() != "preferred") {
         d->genericName = genericName;
     }
 }
 
 void LauncherItem::setWmClass(const QString &wmClass)
 {
-    d->wmClass=wmClass;
+    d->wmClass = wmClass;
 }
 
 ItemType LauncherItem::itemType() const
@@ -212,16 +211,16 @@ void LauncherItem::launch()
         KService::Ptr service = KService::serviceByStorageId(storageId);
 
         QString desktopFile = KStandardDirs::locate("xdgdata-apps", service->entryPath());
-        if (desktopFile.isNull()){
+        if (desktopFile.isNull()) {
             desktopFile = KStandardDirs::locate("apps", service->entryPath());
         }
         new KRun(desktopFile, 0);
-    }else{
+    } else {
         new KRun(d->url, 0);
     }
 }
 
-void LauncherItem::addMimeData(QMimeData* mimeData ) const
+void LauncherItem::addMimeData(QMimeData* mimeData) const
 {
     mimeData->setData("text/uri-list", d->url.url().toAscii());
 }
@@ -258,7 +257,7 @@ QString LauncherItem::defaultApplication(QString application, bool storageId)
             if (settings.getSetting(KEMailSettings::ClientTerminal) == "true") {
                 KConfigGroup confGroup(KGlobal::config(), "General");
                 const QString preferredTerminal = confGroup.readPathEntry("TerminalApplication",
-                        QString::fromLatin1("konsole"));
+                                                  QString::fromLatin1("konsole"));
                 command = preferredTerminal + QString::fromLatin1(" -e ") + command;
             }
 
@@ -293,9 +292,9 @@ QString LauncherItem::defaultApplication(QString application, bool storageId)
         return storageId ? service->storageId() : service->exec();
     } else {
         // try the files in share/apps/kcm_componentchooser/
-        const QStringList services = KGlobal::dirs()->findAllResources("data","kcm_componentchooser/*.desktop", KStandardDirs::NoDuplicates);
+        const QStringList services = KGlobal::dirs()->findAllResources("data", "kcm_componentchooser/*.desktop", KStandardDirs::NoDuplicates);
         //kDebug() << "ok, trying in" << services.count();
-        foreach (const QString &service, services) {
+        foreach (const QString & service, services) {
             KConfig config(service, KConfig::SimpleConfig);
             KConfigGroup cg = config.group(QByteArray());
             const QString type = cg.readEntry("valueName", QString());
@@ -304,7 +303,7 @@ QString LauncherItem::defaultApplication(QString application, bool storageId)
                 KConfig store(cg.readPathEntry("storeInFile", "null"));
                 KConfigGroup storeCg(&store, cg.readEntry("valueSection", QString()));
                 const QString exec = storeCg.readPathEntry(cg.readEntry("valueName", "kcm_componenchooser_null"),
-                                                           cg.readEntry("defaultImplementation", QString()));
+                                     cg.readEntry("defaultImplementation", QString()));
                 if (!exec.isEmpty()) {
                     return exec;
                 }
@@ -384,7 +383,7 @@ bool LauncherItem::isValid() const
 void LauncherItem::setIcon(const QIcon& icon)
 {
     //NOTE: preferred is NOT a protocol, it's just a magic string
-    if (d->url.protocol() != "preferred"){
+    if (d->url.protocol() != "preferred") {
         d->icon = icon;
     }
 }
@@ -393,7 +392,7 @@ bool LauncherItem::demandsAttention() const
 {
     return false;
 }
-bool LauncherItem::isActionSupported(NET::Action ) const
+bool LauncherItem::isActionSupported(NET::Action) const
 {
     return false;
 }
@@ -438,25 +437,25 @@ int LauncherItem::desktop() const
     return 0;
 }
 
-void LauncherItem::setAlwaysOnTop(bool )
+void LauncherItem::setAlwaysOnTop(bool)
 {
 }
-void LauncherItem::setFullScreen(bool )
+void LauncherItem::setFullScreen(bool)
 {
 }
-void LauncherItem::setKeptBelowOthers(bool )
+void LauncherItem::setKeptBelowOthers(bool)
 {
 }
-void LauncherItem::setMaximized(bool )
+void LauncherItem::setMaximized(bool)
 {
 }
-void LauncherItem::setMinimized(bool )
+void LauncherItem::setMinimized(bool)
 {
 }
-void LauncherItem::setShaded(bool )
+void LauncherItem::setShaded(bool)
 {
 }
-void LauncherItem::toDesktop(int )
+void LauncherItem::toDesktop(int)
 {
 }
 void LauncherItem::toggleAlwaysOnTop()
