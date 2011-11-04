@@ -26,8 +26,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "taskmanager.h"
 #include <KUrl>
-#include <QtCore/QPointer>
 #include <KOpenWithDialog>
+#include <QtCore/QPointer>
 
 namespace TaskManager
 {
@@ -70,7 +70,6 @@ private:
     AbstractGroupableItem *m_abstractItem;
     GroupManager *m_groupingStrategy;
     KUrl m_url;
-    QString m_name;
 };
 
 class AppSelectorDialog : public KOpenWithDialog

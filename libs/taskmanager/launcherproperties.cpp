@@ -107,22 +107,22 @@ void LauncherProperties::launcherSelected()
     KOpenWithDialog *dlg = qobject_cast<KOpenWithDialog*>(sender());
 
     if (dlg) {
-        QString text = dlg->text();
-        if (!text.isEmpty()) {
-            KUrl url = KUrl::fromPath(text);
-            if (url.isLocalFile() && KDesktopFile::isDesktopFile(url.toLocalFile())) {
-                ui.launcher->setText(url.prettyUrl());
-                return;
-            }
-        }
-
         KService::Ptr srv = dlg->service();
 
-        if (srv && srv->isApplication()) {
+        if (srv && srv->isApplication() && !srv->entryPath().isEmpty()) {
             KUrl url = KUrl::fromPath(srv->entryPath());
 
             if (url.isLocalFile() && KDesktopFile::isDesktopFile(url.toLocalFile())) {
                 ui.launcher->setText(url.prettyUrl());
+            }
+        } else {
+            QString path = dlg->text();
+
+            if (!path.isEmpty()) {
+                KUrl url = KUrl::fromPath(path);
+                if (url.isLocalFile()) {
+                    ui.launcher->setText(url.prettyUrl());
+                }
             }
         }
     }

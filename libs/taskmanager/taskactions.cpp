@@ -373,7 +373,6 @@ ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGrou
 
     switch (item->itemType()) {
     case LauncherItemType:
-        m_name = item->name();
         setText(i18n("Remove This Launcher"));
         break;
 
@@ -395,7 +394,6 @@ ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGrou
     } // fallthrough to TaskItemType below
 
     case TaskItemType:
-        m_name = static_cast<TaskItem *>(item)->task()->classClass();
         setText(i18n("&Show A Launcher When Not Running"));
         setCheckable(true);
         break;
@@ -403,8 +401,6 @@ ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGrou
 
     m_url = item->launcherUrl();
     if (m_url.isEmpty()) {
-        //don't show the possibility to add a launcher if we don't have a url for it
-        //kDebug() << "No executable found for" << m_name;
         setVisible(false);
         setChecked(false);
     } else {
@@ -444,13 +440,25 @@ void AppSelectorDialog::launcherSelected()
 {
     if(m_abstractItem && m_groupingStrategy) {
         KService::Ptr srv = service();
+        TaskItem *taskItem = static_cast<TaskItem *>(m_abstractItem.data());
+        QString wmClass = taskItem->task() ? taskItem->task()->classClass() : QString();
 
-        if (srv && srv->isApplication()) {
+        if (srv && srv->isApplication() && !srv->entryPath().isEmpty()) {
             KUrl url = KUrl::fromPath(srv->entryPath());
 
             if (url.isLocalFile() && KDesktopFile::isDesktopFile(url.toLocalFile())) {
-                static_cast<TaskItem *>(m_abstractItem.data())->setLauncherUrl(url);
+                taskItem->setLauncherUrl(url);
                 m_groupingStrategy->addLauncher(url);
+            }
+        } else {
+            QString path = text();
+
+            if (!path.isEmpty()) {
+                KUrl url = KUrl::fromPath(path);
+                if (url.isLocalFile()) {
+                    taskItem->setLauncherUrl(url);
+                    m_groupingStrategy->addLauncher(url, taskItem->icon(), taskItem->name(), wmClass);
+                }
             }
         }
     }
@@ -468,8 +476,6 @@ NewInstanceActionImpl::NewInstanceActionImpl(QObject *parent, AbstractGroupableI
         connect(this, SIGNAL(triggered()), this, SLOT(launchNewInstance()));
         m_url = item->launcherUrl();
         if (m_url.isEmpty()) {
-            //don't show the possibility to add a launcher if we don't have a url for it
-            //kDebug() << "No executable found for" << m_name;
             setVisible(false);
         }
     }

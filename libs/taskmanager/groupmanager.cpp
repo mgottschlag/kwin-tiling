@@ -30,6 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QUuid>
 
 #include <KDebug>
+#include <KDesktopFile>
 
 #include "abstractsortingstrategy.h"
 #include "startup.h"
@@ -95,7 +96,7 @@ public:
     void launcherVisibilityChange();
     void checkLauncherVisibility(LauncherItem *launcher);
     void saveLauncher(LauncherItem *launcher);
-    void saveLauncher(LauncherItem *launcher, KConfigGroup &group);
+    bool saveLauncher(LauncherItem *launcher, KConfigGroup &group);
     void unsaveLauncher(LauncherItem *launcher);
     void saveLauncherConfig();
     void saveLauncherConfig(KConfigGroup &cg);
@@ -691,6 +692,20 @@ bool GroupManager::addLauncher(const KUrl &url, QIcon icon, QString name, QStrin
                 emit launchersChanged();
             }
         }
+    } else if ( d->readingLauncherConfig && !KDesktopFile::isDesktopFile(url.toLocalFile()) ) {
+        // We are reading in config, and have already added this launcher (via the launcher list config). HWoever, this
+        // is for an mebdded non-desktop launcher - so we set the details here...
+        if (!icon.isNull()) {
+            launcher->setIcon(icon);
+        }
+
+        if (!name.isEmpty()) {
+            launcher->setName(name);
+        }
+
+        if (!genericName.isEmpty()) {
+            launcher->setGenericName(genericName);
+        }
     }
 
     return launcher;
@@ -790,12 +805,10 @@ void GroupManager::readLauncherConfig(const KConfigGroup &cg)
             QString genericName(item.at(3));
 
             if (addLauncher(url, icon, name, genericName)) {
-                launchers << url;
+                urls << url;
             }
         }
     }
-
-    d->readingLauncherConfig = false;
 
     // a bit paranoiac, perhaps, but we check the removals first and then
     // remove the launchers after that scan because Qt's iterators operate
@@ -813,6 +826,8 @@ void GroupManager::readLauncherConfig(const KConfigGroup &cg)
     foreach (const KUrl &url, removals) {
         removeLauncher(url);
     }
+
+    d->readingLauncherConfig = false;
 }
 
 void GroupManager::exportLauncherConfig(const KConfigGroup &cg)
@@ -896,12 +911,18 @@ void GroupManagerPrivate::saveLauncher(LauncherItem *launcher)
         return;
     }
 
-    saveLauncher(launcher, cg);
-    emit q->configChanged();
+    if (saveLauncher(launcher, cg)) {
+        emit q->configChanged();
+    }
 }
 
-void GroupManagerPrivate::saveLauncher(LauncherItem *launcher, KConfigGroup &cg)
+bool GroupManagerPrivate::saveLauncher(LauncherItem *launcher, KConfigGroup &cg)
 {
+    // Dont save .desktop file launchers, as these are already stored in the launcher list...
+    if (launcher->launcherUrl().isValid() && KDesktopFile::isDesktopFile(launcher->launcherUrl().toLocalFile())) {
+        return false;
+    }
+
     QVariantList launcherProperties;
     launcherProperties.append(launcher->launcherUrl().url());
     launcherProperties.append(launcher->icon().name());
@@ -918,6 +939,7 @@ void GroupManagerPrivate::saveLauncher(LauncherItem *launcher, KConfigGroup &cg)
     }
 
     cg.writeEntry(launcher->name(), launcherProperties);
+    return true;
 }
 
 void GroupManagerPrivate::unsaveLauncher(LauncherItem *launcher)
@@ -927,13 +949,10 @@ void GroupManagerPrivate::unsaveLauncher(LauncherItem *launcher)
         return;
     }
 
-    if (launcher->launcherUrl().protocol() == "preferred") {
-        cg.deleteEntry(launcher->launcherUrl().host());
-    } else {
+    if (cg.hasKey(launcher->name())) {
         cg.deleteEntry(launcher->name());
+        emit q->configChanged();
     }
-
-    emit q->configChanged();
 }
 
 void GroupManagerPrivate::saveLauncherConfig()
