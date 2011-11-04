@@ -44,6 +44,7 @@ private:
     /** Sorts list of items according to strategy*/
     void sortItems(ItemList&);
     static bool lessThan(const AbstractGroupableItem *left, const AbstractGroupableItem *right);
+    static bool lessThanSeperateLaunchers(const AbstractGroupableItem *left, const AbstractGroupableItem *right);
 };
 
 
