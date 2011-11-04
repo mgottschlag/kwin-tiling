@@ -59,6 +59,7 @@ enum TaskChange { TaskUnchanged = 0,
                   ColorChanged = 2048,
                   ActivitiesChanged = 4096,
                   AttentionChanged = 8192,
+                  ClassChanged = 0x4000,
                   EverythingChanged = 0xffff
                 };
 Q_DECLARE_FLAGS(TaskChanges, TaskChange)

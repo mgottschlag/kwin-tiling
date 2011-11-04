@@ -535,6 +535,18 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
         show = true;
     }
 
+    // Some apps, eg. LibreOffice, change classClass/className after start-up...
+    if (changes & ::TaskManager::ClassChanged) {
+        // Instead of just moving  item (as what happend in the #if below), just remove and re-add the task.
+        // This way the grouping happens properly.
+        AbstractGroupableItem *item = currentRootGroup()->getMemberByWId(task->window());
+        if(item && TaskItemType==item->itemType()) {
+            item->resetLauncherCheck();
+        }
+        removeTask(task);
+        addTask(task);
+    }
+
     if (!takeAction) {
         return;
     }
