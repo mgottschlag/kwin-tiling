@@ -143,13 +143,7 @@ bool LauncherItem::shouldShow() const
 
 void LauncherItemPrivate::associateDestroyed(QObject *obj)
 {
-    if (associates.isEmpty()) {
-        return;
-    }
-
-    associates.remove(obj);
-
-    if (associates.isEmpty()) {
+    if (associates.remove(obj)) {
         emit q->associationChanged();
     }
 }
