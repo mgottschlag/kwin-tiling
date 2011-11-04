@@ -185,7 +185,7 @@ public:
     QString launcherWmClass(const KUrl &url) const;
 
     /** @return true if item is associated with a launcher */
-    bool itemIsAssociatedwithLauncher(AbstractGroupableItem *item) const;
+    bool isItemAssociatedWithLauncher(AbstractGroupableItem *item) const;
 
 protected:
     // reimplement to provide a config group to read/write settings to

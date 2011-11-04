@@ -880,7 +880,7 @@ QString GroupManager::launcherWmClass(const KUrl &url) const
     return l ? l->wmClass() : QString();
 }
 
-bool GroupManager::itemIsAssociatedwithLauncher(AbstractGroupableItem *item) const
+bool GroupManager::isItemAssociatedWithLauncher(AbstractGroupableItem *item) const
 {
     if (item) {
         switch (item->itemType()) {
@@ -888,7 +888,7 @@ bool GroupManager::itemIsAssociatedwithLauncher(AbstractGroupableItem *item) con
             return true;
         case GroupItemType: {
             foreach (AbstractGroupableItem * i, static_cast<TaskGroup *>(item)->members()) {
-                if (itemIsAssociatedwithLauncher(i)) {
+                if (isItemAssociatedWithLauncher(i)) {
                     return true;
                 }
             }
