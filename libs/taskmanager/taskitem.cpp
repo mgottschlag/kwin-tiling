@@ -518,6 +518,9 @@ KUrl TaskItem::launcherUrl() const
 
     if (d->task && !d->task.data()->classClass().isEmpty()) {
 
+        // For KCModules, if we matchd on window class, etc, we would end up matching to kcmshell4 - but we are more than likely
+        // interested in the actual control module. Thereffore we obtain this via the commandline. This commandline may contain
+        // "kdeinit4:" or "[kdeinit]", so we remove these first.
         if ("Kcmshell4" == d->task.data()->classClass()) {
             d->launcherUrl=getServiceLauncherUrl(d->task.data()->pid(), "KCModule", QStringList() << "kdeinit4:" << "[kdeinit]");
             if (!d->launcherUrl.isEmpty()) {
