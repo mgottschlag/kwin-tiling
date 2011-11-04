@@ -80,10 +80,10 @@ LauncherItem::~LauncherItem()
     delete d;
 }
 
-void LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
+bool LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
 {
     if (d->associates.contains(item)) {
-        return;
+        return false;
     }
 
     KUrl itemUrl = item->launcherUrl();
@@ -92,7 +92,7 @@ void LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
         d->associates.insert(item);
         connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(associateDestroyed(QObject*)));
         emit associationChanged();
-        return;
+        return true;
     }
 
     QString name;
@@ -107,6 +107,8 @@ void LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
         connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(associateDestroyed(QObject*)));
         emit associationChanged();
     }
+
+    return false;
 }
 
 void LauncherItem::removeItemIfAssociated(AbstractGroupableItem *item)

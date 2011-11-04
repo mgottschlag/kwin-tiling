@@ -335,7 +335,10 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
                          q, SLOT(taskDestroyed(QObject*)));
 
         foreach (LauncherItem * launcher, launchers) {
-            launcher->associateItemIfMatches(item);
+            if (launcher->associateItemIfMatches(item)) {
+                // Task demands attention, so is to be shown, therefore hide the launcher...
+                currentRootGroup()->remove(launcher);
+            }
         }
     }
 
