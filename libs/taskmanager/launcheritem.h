@@ -69,7 +69,8 @@ public:
     void setWmClass(const QString &wmClass);
 
     // bookkeeping methods for showing/not showing
-    bool associateItemIfMatches(AbstractGroupableItem *item); // Return true if this is a *new* association!!!
+    /** Return true if this is a *new* association */
+    bool associateItemIfMatches(AbstractGroupableItem *item);
     void removeItemIfAssociated(AbstractGroupableItem *item);
     bool shouldShow() const;
 
