@@ -822,6 +822,10 @@ void GroupManager::readLauncherConfig(const KConfigGroup &cg)
     }
 
     foreach (const QString & key, conf.keyList()) {
+        if ("Items"==key) {
+            continue;
+        }
+
         QStringList item = conf.readEntry(key, QStringList());
         if (item.length() >= 4) {
             KUrl url(item.at(0));
