@@ -44,6 +44,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "strategies/kustodiangroupingstrategy.h"
 #include "strategies/manualsortingstrategy.h"
 #include "launcheritem.h"
+#include "launcherconfig.h"
 
 namespace TaskManager
 {
@@ -855,6 +856,11 @@ bool GroupManager::forceGrouping() const
 void GroupManager::setForceGrouping(bool s)
 {
     d->forceGrouping=s;
+}
+
+void GroupManager::createConfigurationInterface(KConfigDialog *parent)
+{
+    new LauncherConfig(parent);
 }
 
 KConfigGroup GroupManagerPrivate::launcherConfig(const KConfigGroup &config)

@@ -438,6 +438,19 @@ static KService::List getServicesViaPid(int pid)
     return services;
 }
 
+void TaskItem::setLauncherUrl(const KUrl &url)
+{
+    if (!d->launcherUrl.isEmpty()) {
+        return;
+    }
+    d->launcherUrl = url;
+
+    KConfig cfg("taskmanagerrulesrc");
+    KConfigGroup grp(&cfg, "Mapping");
+    grp.writeEntry(d->task.data()->classClass() + "::" + d->task.data()->className(), url.url());
+    cfg.sync();
+}
+
 KUrl TaskItem::launcherUrl() const
 {
     if (!d->task && !isStartupItem()) {
@@ -554,17 +567,6 @@ KUrl TaskItem::launcherUrl() const
 
     if (!services.empty()) {
         d->launcherUrl = KUrl::fromPath(services[0]->entryPath());
-    } else {
-        // No desktop-file was found, so try to find at least the executable
-        // usually it's the lower cased window class class, but if that fails let's trust it
-        QString path = KStandardDirs::findExe(d->task.data()->classClass().toLower());
-        if (path.isEmpty()) {
-            path = KStandardDirs::findExe(d->task.data()->classClass());
-        }
-
-        if (!path.isEmpty()) {
-            d->launcherUrl = KUrl::fromPath(path);
-        }
     }
 
     return d->launcherUrl;

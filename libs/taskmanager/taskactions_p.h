@@ -26,6 +26,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "taskmanager.h"
 #include <KUrl>
+#include <QtCore/QPointer>
+#include <KOpenWithDialog>
 
 namespace TaskManager
 {
@@ -69,6 +71,21 @@ private:
     GroupManager *m_groupingStrategy;
     KUrl m_url;
     QString m_name;
+};
+
+class AppSelectorDialog : public KOpenWithDialog
+{
+    Q_OBJECT
+
+public:
+    AppSelectorDialog(AbstractGroupableItem* item, GroupManager* strategy);
+
+private Q_SLOTS:
+    void launcherSelected();
+
+private:
+    QPointer<AbstractGroupableItem> m_abstractItem;
+    QPointer<GroupManager> m_groupingStrategy;
 };
 
 class NewInstanceActionImpl : public QAction

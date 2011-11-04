@@ -35,6 +35,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KDE/KUrl>
 #include "launcheritem.h"
 
+class KConfigDialog;
+
 namespace TaskManager
 {
 
@@ -173,6 +175,9 @@ public:
 
     /** set if grouping should *always* happen */
     void setForceGrouping(bool s);
+
+    /** create launcher mapping rules config page */
+    void createConfigurationInterface(KConfigDialog *parent);
 
 protected:
     // reimplement to provide a config group to read/write settings to

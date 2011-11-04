@@ -79,6 +79,7 @@ public:
     bool demandsAttention() const;
     bool isActionSupported(NET::Action) const;
     void addMimeData(QMimeData *mimeData) const;
+    void setLauncherUrl(const KUrl &url);
     KUrl launcherUrl() const;
     void resetLauncherCheck();
 

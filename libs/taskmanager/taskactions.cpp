@@ -415,15 +415,44 @@ ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGrou
 void ToggleLauncherActionImpl::toggleLauncher()
 {
     if (!m_url.isValid()) {
+        // No valid desktop file found, so prompt user...
+        AppSelectorDialog *dlg=new AppSelectorDialog(m_abstractItem, m_groupingStrategy);
+        dlg->show();
         return;
     }
-
-    if (m_groupingStrategy->launcherExists(m_url)) {
+    else if (m_groupingStrategy->launcherExists(m_url)) {
         m_groupingStrategy->removeLauncher(m_url);
     } else if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
         m_groupingStrategy->addLauncher(m_url);
-    } else {
-        m_groupingStrategy->addLauncher(m_url, m_abstractItem->icon(), m_name);
+    }
+}
+
+AppSelectorDialog::AppSelectorDialog(AbstractGroupableItem* item, GroupManager* strategy)
+    : KOpenWithDialog(KUrl::List(), i18n("The application, to which this task is associated with, could not be determined. "
+                                         "Please select the appropriate application from the list below:"), QString(), 0L),
+      m_abstractItem(item),
+      m_groupingStrategy(strategy)
+{
+    hideNoCloseOnExit();
+    hideRunInTerminal();
+    setAttribute(Qt::WA_DeleteOnClose);
+    setWindowModality(Qt::WindowModal);
+    connect(this, SIGNAL(accepted()), SLOT(launcherSelected()));
+}
+
+void AppSelectorDialog::launcherSelected()
+{
+    if(m_abstractItem && m_groupingStrategy) {
+        KService::Ptr srv = service();
+
+        if (srv && srv->isApplication()) {
+            KUrl url = KUrl::fromPath(srv->entryPath());
+
+            if (url.isLocalFile() && KDesktopFile::isDesktopFile(url.toLocalFile())) {
+                static_cast<TaskItem *>(m_abstractItem.data())->setLauncherUrl(url);
+                m_groupingStrategy->addLauncher(url);
+            }
+        }
     }
 }
 
