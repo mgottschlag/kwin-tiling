@@ -36,8 +36,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace TaskManager
 {
 
-static bool separateLaunchers = false;
-
 static QString agiName(const AbstractGroupableItem *i)
 {
     if (i->itemType() == TaskItemType && !i->isStartupItem()) {
@@ -56,43 +54,20 @@ DesktopSortingStrategy::DesktopSortingStrategy(QObject *parent)
 void DesktopSortingStrategy::sortItems(ItemList &items)
 {
     GroupManager *gm = qobject_cast<GroupManager *>(parent());
-    separateLaunchers = !gm || gm->separateLaunchers();
-
-    qStableSort(items.begin(), items.end(), DesktopSortingStrategy::lessThan);
+    qStableSort(items.begin(), items.end(), (gm && gm->separateLaunchers()) ?
+                                                DesktopSortingStrategy::lessThanSeperateLaunchers :
+                                                DesktopSortingStrategy::lessThan);
 }
 
+/*
+ * Sorting strategy is as follows:
+ * For two items being compared
+ *   - Startup items will be sorted out to the end of the list and sorted by name there
+ *   - If both are not startup tasks first compare items by desktop number,
+ *     and then for items which belong to the same desktop sort by their NAME.
+ */
 bool DesktopSortingStrategy::lessThan(const AbstractGroupableItem *left, const AbstractGroupableItem *right)
 {
-    /*
-     * Sorting strategy is as follows:
-     * For two items being compared
-     *   - Startup items will be sorted out to the end of the list and sorted by name there
-     *   - If both are not startup tasks first compare items by desktop number,
-     *     and then for items which belong to the same desktop sort by their NAME.
-     */
-    if (separateLaunchers) {
-        if (left->isStartupItem()) {
-            if (right->isStartupItem()) {
-                return left->name().toLower() < right->name().toLower();
-            }
-            return false;
-        }
-
-        if (right->isStartupItem()) {
-            return true;
-        }
-
-        if (left->itemType() == LauncherItemType) {
-            if (right->itemType() == LauncherItemType) {
-                return left->name().toLower() < right->name().toLower();
-            }
-            return true;
-        }
-
-        if (right->itemType() == LauncherItemType) {
-            return false;
-        }
-    }
     const int leftDesktop = left->desktop();
     const int rightDesktop = right->desktop();
     if (leftDesktop == rightDesktop) {
@@ -100,6 +75,33 @@ bool DesktopSortingStrategy::lessThan(const AbstractGroupableItem *left, const A
     }
 
     return leftDesktop < rightDesktop;
+}
+
+bool DesktopSortingStrategy::lessThanSeperateLaunchers(const AbstractGroupableItem *left, const AbstractGroupableItem *right)
+{
+    if (left->isStartupItem()) {
+        if (right->isStartupItem()) {
+            return left->name().toLower() < right->name().toLower();
+        }
+        return false;
+    }
+
+    if (right->isStartupItem()) {
+        return true;
+    }
+
+    if (left->itemType() == LauncherItemType) {
+        if (right->itemType() == LauncherItemType) {
+            return left->name().toLower() < right->name().toLower();
+        }
+        return true;
+    }
+
+    if (right->itemType() == LauncherItemType) {
+        return false;
+    }
+
+    return lessThan(left, right);
 }
 
 void DesktopSortingStrategy::handleItem(AbstractGroupableItem *item)
