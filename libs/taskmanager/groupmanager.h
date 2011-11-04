@@ -212,6 +212,7 @@ private:
     Q_PRIVATE_SLOT(d, void removeStartup(StartupPtr))
     Q_PRIVATE_SLOT(d, void actuallyReloadTasks())
     Q_PRIVATE_SLOT(d, void taskDestroyed(QObject *))
+    Q_PRIVATE_SLOT(d, void sycocaChanged(const QStringList &))
     Q_PRIVATE_SLOT(d, void launcherVisibilityChange())
 
     friend class GroupManagerPrivate;

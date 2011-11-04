@@ -28,8 +28,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QStack>
 #include <QTimer>
 #include <QUuid>
+#include <QFile>
 
 #include <KDebug>
+#include <KSycoca>
 #include <KDesktopFile>
 
 #include "abstractsortingstrategy.h"
@@ -92,6 +94,7 @@ public:
     void removeTask(TaskPtr);
     void addStartup(StartupPtr);
     void removeStartup(StartupPtr);
+    void sycocaChanged(const QStringList &types);
     void launcherVisibilityChange();
     void checkLauncherVisibility(LauncherItem *launcher);
     void saveLauncher(LauncherItem *launcher);
@@ -145,6 +148,7 @@ GroupManager::GroupManager(QObject *parent)
     connect(TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)), this, SLOT(removeTask(TaskPtr)));
     connect(TaskManager::self(), SIGNAL(startupAdded(StartupPtr)), this, SLOT(addStartup(StartupPtr)));
     connect(TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)), this, SLOT(removeStartup(StartupPtr)));
+    connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)), this, SLOT(sycocaChanged(const QStringList &)));
 
     d->currentDesktop = TaskManager::self()->currentDesktop();
     d->currentActivity = TaskManager::self()->currentActivity();
@@ -750,6 +754,22 @@ void GroupManager::removeLauncher(const KUrl &url)
 
         if (!d->readingLauncherConfig) {
             emit launchersChanged();
+        }
+    }
+}
+
+void GroupManagerPrivate::sycocaChanged(const QStringList &types)
+{
+    if (types.contains("apps")) {
+        KUrl::List removals;
+        foreach (LauncherItem * launcher, launchers) {
+            if (!QFile::exists(launcher->launcherUrl().toLocalFile())) {
+                removals << launcher->launcherUrl();
+            }
+        }
+
+        foreach (const KUrl & url, removals) {
+            q->removeLauncher(url);
         }
     }
 }
