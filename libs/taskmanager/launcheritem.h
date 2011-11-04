@@ -116,7 +116,7 @@ public Q_SLOTS:
     void launch();
 
 Q_SIGNALS:
-    void show(bool shouldShow);
+    void associationChanged();
 
 private:
     friend class LauncherItemPrivate;

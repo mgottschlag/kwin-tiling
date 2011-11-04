@@ -680,7 +680,7 @@ bool GroupManager::addLauncher(const KUrl &url, const QIcon &icon, const QString
 
         d->saveLauncherConfig();
         d->saveLauncher(launcher);
-        connect(launcher, SIGNAL(show(bool)), this, SLOT(launcherVisibilityChange()));
+        connect(launcher, SIGNAL(associationChanged()), this, SLOT(launcherVisibilityChange()));
         d->checkLauncherVisibility(launcher);
 
         if(!d->separateLaunchers && d->abstractSortingStrategy && ManualSorting==d->abstractSortingStrategy->type()) {

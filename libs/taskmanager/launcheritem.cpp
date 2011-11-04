@@ -101,11 +101,7 @@ void LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
     if (name.compare(d->name, Qt::CaseInsensitive) == 0) {
         d->associates.insert(item);
         connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(associateDestroyed(QObject*)));
-
-        if (d->associates.count() == 1) {
-            // this is our first associated item, means we need to hide
-            emit show(false);
-        }
+        emit associationChanged();
     }
 }
 
@@ -154,7 +150,7 @@ void LauncherItemPrivate::associateDestroyed(QObject *obj)
     associates.remove(obj);
 
     if (associates.isEmpty()) {
-        emit q->show(true);
+        emit q->associationChanged();
     }
 }
 
