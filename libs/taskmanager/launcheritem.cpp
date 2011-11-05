@@ -106,6 +106,12 @@ bool LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
         d->associates.insert(item);
         connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(associateDestroyed(QObject*)));
         emit associationChanged();
+
+        // Store this mapping!
+        if (TaskItemType == item->itemType()) {
+            static_cast<TaskItem *>(item)->setLauncherUrl(this);
+        }
+
         return true;
     }
 

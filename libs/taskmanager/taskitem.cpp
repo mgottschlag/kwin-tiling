@@ -415,6 +415,15 @@ void TaskItem::setLauncherUrl(const KUrl &url)
     cfg.sync();
 }
 
+void TaskItem::setLauncherUrl(const AbstractGroupableItem *item)
+{
+    if (!d->launcherUrl.isEmpty() || !item) {
+        return;
+    }
+    d->launcherUrl = item->launcherUrl();
+    d->taskName = QString(); // Cause name to be re-generated...
+}
+
 static KService::List getServicesViaPid(int pid)
 {
     // Attempt to find using commandline...

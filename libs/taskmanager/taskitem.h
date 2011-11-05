@@ -80,6 +80,7 @@ public:
     bool isActionSupported(NET::Action) const;
     void addMimeData(QMimeData *mimeData) const;
     void setLauncherUrl(const KUrl &url);
+    void setLauncherUrl(const AbstractGroupableItem *item);
     KUrl launcherUrl() const;
     void resetLauncherCheck();
 
