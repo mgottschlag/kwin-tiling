@@ -366,8 +366,9 @@ void LauncherItem::setLauncherUrl(const KUrl &url)
             KConfigGroup cg(&f, "Desktop Entry");
 
             d->icon = KIcon(f.readIcon());
-            const QString exec = cg.readEntry("Exec", "");
-            if (!exec.isNull()) {
+            const QString exec = cg.readEntry("Exec", QString());
+            d->name = cg.readEntry("Name", QString());
+            if (d->name.isEmpty() && !exec.isEmpty()) {
                 d->name = exec.split(' ').at(0);
             }
             d->genericName = f.readGenericName();
