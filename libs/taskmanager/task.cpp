@@ -664,12 +664,12 @@ Task::WindowProperties::WindowProperties(unsigned int netWinInfoProperties, unsi
 
 bool Task::isOnCurrentActivity() const
 {
-    return activities().isEmpty() || activities().contains(TaskManager::self()->currentActivity());
+    return d->activities.isEmpty() || d->activities.contains(TaskManager::self()->currentActivity());
 }
 
 bool Task::isOnAllActivities() const
 {
-    return activities().isEmpty();
+    return d->activities.isEmpty();
 }
 
 QStringList Task::activities() const
@@ -677,32 +677,6 @@ QStringList Task::activities() const
     return d->activities;
 }
 
-/*
-    QStringList newActivitiesList;
-    Atom type;
-    int format, status;
-    unsigned long nitems = 0;
-    unsigned long extra = 0;
-    unsigned char *data = 0;
-    KXErrorHandler handler; // ignore errors
-    status = XGetWindowProperty( display(), window(), "_KDE_NET_WM_ACTIVITIES", 0, 10000,
-                                 false, XA_STRING, &type, &format,
-                                 &nitems, &extra, &data );
-    if (status == Success && data) {
-        QString result = (const char*) data;
-        if (!result.isEmpty()) {
-            newActivitiesList = QString(data).split(',');
-        }
-        XFree(data);
-    }
-    if (newActivitiesList == d->activities) {
-        return;
-    }
-
-    d->activities = newActivitiesList;
-    emit changed(ActivitiesChanged);
-}
-*/
 } // TaskManager namespace
 
 #include "task.moc"
