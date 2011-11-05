@@ -72,7 +72,8 @@ public:
           changingGroupingStrategy(false),
           readingLauncherConfig(false),
           separateLaunchers(true),
-          forceGrouping(false) {
+          forceGrouping(false),
+          launchersLocked(false) {
     }
 
     /** reload all tasks from TaskManager */
@@ -137,6 +138,7 @@ public:
     bool readingLauncherConfig : 1;
     bool separateLaunchers : 1;
     bool forceGrouping : 1;
+    bool launchersLocked : 1;
 };
 
 
@@ -411,7 +413,8 @@ bool GroupManager::manualGroupingRequest(ItemList items)
 
 bool GroupManager::manualSortingRequest(AbstractGroupableItem* taskItem, int newIndex)
 {
-    if (d->abstractSortingStrategy) {
+    if (d->abstractSortingStrategy &&
+            (!launchersLocked() || separateLaunchers() || newIndex >= launcherCount())) {
         return d->abstractSortingStrategy->manualSortingRequest(taskItem, newIndex);
     }
     return false;
@@ -634,7 +637,7 @@ KConfigGroup GroupManager::config() const
 
 bool GroupManager::addLauncher(const KUrl &url, const QIcon &icon, const QString &name, const QString &genericName, const QString &wmClass, int insertPos)
 {
-    if (url.isEmpty()) {
+    if (url.isEmpty() || launchersLocked()) {
         return false;
     }
 
@@ -727,6 +730,10 @@ bool GroupManager::addLauncher(const KUrl &url, const QIcon &icon, const QString
 
 void GroupManager::removeLauncher(const KUrl &url)
 {
+    if (launchersLocked()) {
+        return;
+    }
+
     int index = launcherIndex(url);
     LauncherItem *launcher = -1 != index ? d->launchers.at(index) : 0L;
     if (!launcher) {
@@ -887,6 +894,16 @@ int GroupManager::launcherIndex(const KUrl &url) const
 int GroupManager::launcherCount() const
 {
     return d->launchers.count();
+}
+
+bool GroupManager::launchersLocked() const
+{
+    return d->launchersLocked;
+}
+
+void GroupManager::setLaunchersLocked(bool l)
+{
+    d->launchersLocked = l;
 }
 
 KUrl GroupManager::launcherForWmClass(const QString &wmClass) const

@@ -160,6 +160,12 @@ public:
     /** @return number of launchers */
     int launcherCount() const;
 
+    /** @return true if launchers should not be movable */
+    bool launchersLocked() const;
+
+    /** lock launchers, so that they cannot be moved */
+    void setLaunchersLocked(bool l);
+
     /** move a launcher */
     void moveLauncher(const KUrl &url, int newIndex);
 
