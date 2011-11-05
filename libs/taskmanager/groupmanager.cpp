@@ -448,7 +448,7 @@ void GroupManagerPrivate::currentActivityChanged(QString newActivity)
     currentActivity = newActivity;
 
     foreach (LauncherItem * item, launchers) {
-        if (item->shouldShow()) {
+        if (item->shouldShow(q)) {
             rootGroups[currentActivity][currentDesktop]->add(item);
         } else {
             rootGroups[currentActivity][currentDesktop]->remove(item);
@@ -490,7 +490,7 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
     currentDesktop = newDesktop;
 
     foreach (LauncherItem * item, launchers) {
-        if (item->shouldShow()) {
+        if (item->shouldShow(q)) {
             rootGroups[currentActivity][currentDesktop]->add(item);
         } else {
             rootGroups[currentActivity][currentDesktop]->remove(item);
@@ -795,7 +795,7 @@ void GroupManagerPrivate::checkLauncherVisibility(LauncherItem *launcher)
         return;
     }
 
-    if (launcher->shouldShow()) {
+    if (launcher->shouldShow(q)) {
         rootGroups[currentActivity][currentDesktop]->add(launcher);
     } else {
         rootGroups[currentActivity][currentDesktop]->remove(launcher);

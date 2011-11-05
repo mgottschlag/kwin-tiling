@@ -124,10 +124,8 @@ void LauncherItem::removeItemIfAssociated(AbstractGroupableItem *item)
     d->associateDestroyed(item);
 }
 
-bool LauncherItem::shouldShow() const
+bool LauncherItem::shouldShow(const GroupManager *manager) const
 {
-    GroupManager *manager = parentGroup() ? parentGroup()->manager() : 0;
-
     if (!manager) {
         return d->associates.isEmpty();
     }
