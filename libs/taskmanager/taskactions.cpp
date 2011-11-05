@@ -375,41 +375,40 @@ void LeaveGroupActionImpl::leaveGroup()
 ToggleLauncherActionImpl::ToggleLauncherActionImpl(QObject *parent, AbstractGroupableItem *item, GroupManager *strategy)
     : QAction(parent), m_abstractItem(item), m_groupingStrategy(strategy)
 {
-    connect(this, SIGNAL(triggered()), this, SLOT(toggleLauncher()));
-
-    switch (item->itemType()) {
-    case LauncherItemType:
-        setText(i18n("Remove This Launcher"));
-        break;
-
-    case GroupItemType: {
-        TaskGroup *group = static_cast<TaskGroup *>(item);
-        foreach (AbstractGroupableItem * i, group->members()) {
-            if (i->itemType() != GroupItemType) {
-                item = i;
-                break;
-            }
-        }
-
-        if (item->itemType() == GroupItemType) {
-            setVisible(false);
-            setChecked(false);
-            break;
-        }
-
-    } // fallthrough to TaskItemType below
-
-    case TaskItemType:
-        setText(i18n("&Show A Launcher When Not Running"));
-        setCheckable(true);
-        break;
-    }
-
-    m_url = item->launcherUrl();
-    if (m_url.isEmpty()) {
+    if (strategy->launchersLocked()) {
         setVisible(false);
         setChecked(false);
     } else {
+        m_url = m_abstractItem->launcherUrl();
+        connect(this, SIGNAL(triggered()), this, SLOT(toggleLauncher()));
+
+        switch (m_abstractItem->itemType()) {
+        case LauncherItemType:
+            setText(i18n("Remove This Launcher"));
+            break;
+
+        case GroupItemType: {
+            TaskGroup *group = static_cast<TaskGroup *>(m_abstractItem);
+            foreach (AbstractGroupableItem * i, group->members()) {
+                if (TaskItemType == i->itemType()) {
+                    m_abstractItem = i;
+                    break;
+                }
+            }
+
+            if (TaskItemType != m_abstractItem->itemType()) {
+                setVisible(false);
+                setChecked(false);
+                break;
+            }
+
+        } // fallthrough to TaskItemType below
+
+        case TaskItemType:
+            setText(i18n("&Show A Launcher When Not Running"));
+            setCheckable(true);
+            break;
+        }
         setChecked(m_groupingStrategy->launcherExists(m_url));
     }
 }
