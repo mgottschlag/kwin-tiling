@@ -120,12 +120,12 @@ TaskManager::TaskManager()
     connect(KWindowSystem::self(), SIGNAL(windowChanged(WId, const ulong*)),
             this,       SLOT(windowChanged(WId, const ulong*)));
     connect(&d->activityConsumer, SIGNAL(currentActivityChanged(QString)),
-            this,       SLOT(currentActivityChanged(QString)));
+            this,       SIGNAL(activityChanged(QString)));
     if (QCoreApplication::instance()) {
         connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(onAppExitCleanup()));
     }
 
-    currentActivityChanged(d->activityConsumer.currentActivity());
+    emit activityChanged(d->activityConsumer.currentActivity());
 
     // register existing windows
     const QList<WId> windows = KWindowSystem::windows();
@@ -414,11 +414,6 @@ void TaskManager::activeWindowChanged(WId w)
 void TaskManager::currentDesktopChanged(int desktop)
 {
     emit desktopChanged(desktop);
-}
-
-void TaskManager::currentActivityChanged(const QString &activity)
-{
-    emit activityChanged(activity);
 }
 
 void TaskManager::gotNewStartup(const KStartupInfoId& id, const KStartupInfoData& data)

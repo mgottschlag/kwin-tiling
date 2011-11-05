@@ -86,7 +86,7 @@ class TASKMANAGER_EXPORT TaskManager : public QObject
     Q_OBJECT
     Q_PROPERTY(int currentDesktop READ currentDesktop)
     Q_PROPERTY(int numberOfDesktops READ numberOfDesktops)
-    Q_PROPERTY(QString currentActivity READ currentActivity)
+    Q_PROPERTY(QString currentActivity READ currentActivity NOTIFY activityChanged)
 
 public:
     static TaskManager* self();
@@ -206,8 +206,6 @@ protected Q_SLOTS:
     void activeWindowChanged(WId);
     //* @internal
     void currentDesktopChanged(int);
-    //* @internal
-    void currentActivityChanged(const QString&);
     //* @internal
     void killStartup(const KStartupInfoId&);
     //* @internal
