@@ -21,7 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-// Ownm_preferredInsertIndex
+// Own
 #include "abstractgroupableitem.h"
 
 #include <QWeakPointer>
