@@ -106,6 +106,7 @@ bool LauncherItem::associateItemIfMatches(AbstractGroupableItem *item)
         d->associates.insert(item);
         connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(associateDestroyed(QObject*)));
         emit associationChanged();
+        return true;
     }
 
     return false;
