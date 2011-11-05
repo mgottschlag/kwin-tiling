@@ -35,6 +35,7 @@ namespace TaskManager
 {
 
 class LauncherItemPrivate;
+class GroupManager;
 
 /**
  * An item shown in the taskmanager, in order to use it to launch the application (or file) the launcher is linked to.
@@ -73,7 +74,7 @@ public:
     bool associateItemIfMatches(AbstractGroupableItem *item);
     bool isAssociated(AbstractGroupableItem *item) const;
     void removeItemIfAssociated(AbstractGroupableItem *item);
-    bool shouldShow() const;
+    bool shouldShow(const GroupManager *manager) const;
 
     //reimplemented pure virtual methods from abstractgroupableitem
     bool isOnCurrentDesktop() const;
