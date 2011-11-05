@@ -1,6 +1,6 @@
 /*****************************************************************
 
-Copyright (C) 2011 Craig Drummond <craig.p.drummond@gmail.com>
+Copyright (C) 2011 Craig Drummond <craig@kde.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
