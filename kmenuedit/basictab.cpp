@@ -138,7 +138,7 @@ BasicTab::BasicTab( QWidget *parent )
     // setup icon button
     _iconButton = new KIconButton(general_group);
     _iconButton->setFixedSize(56,56);
-    _iconButton->setIconSize(48);
+    _iconButton->setIconSize(32);
     connect(_iconButton, SIGNAL(iconChanged(QString)), SLOT(slotChanged()));
     grid->addWidget(_iconButton, 0, 2, 2, 1);
     grid->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::MinimumExpanding), 8, 0, 1, 3);
