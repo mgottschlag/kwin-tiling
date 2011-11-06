@@ -25,7 +25,7 @@
 #include <QStringList>
 
 #include <KUrl>
-#include <kdemacros.h>
+#include "kworkspace_export.h"
 
 /**
  * This class provides info about an activity. Most methods in it
@@ -35,7 +35,7 @@
  *
  * @since 4.5
  */
-class KDE_EXPORT KActivityInfo: public QObject
+class KWORKSPACE_EXPORT KActivityInfo: public QObject
 {
     Q_OBJECT
 
