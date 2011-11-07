@@ -132,7 +132,9 @@ float OutputConfig::refreshRate(void) const
 	float rate = float(refreshCombo->itemData(refreshCombo->currentIndex()).toDouble());
 	if(rate == 0.0f) {
 		RateList rates = m_output->refreshRates(resolution());
-		return rates.first();
+		if (!rates.isEmpty()) {
+			return rates.first();
+		}
 	}
 	return rate;
 }
@@ -452,7 +454,7 @@ void OutputConfig::updateSizeList(void)
 
 	if (index != -1) {
 		sizeCombo->setCurrentIndex( index );
-	} else {
+	} else if (!sizes.isEmpty()) {
         kDebug() << "Output size cannot be matched! fallbacking to the first size";
 		sizeCombo->setCurrentIndex(index = sizeCombo->findData(sizes.first()));
 	}
