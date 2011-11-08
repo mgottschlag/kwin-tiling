@@ -44,6 +44,7 @@ StackDialog::StackDialog(QWidget *parent, Qt::WindowFlags f)
         m_applet(0),
         m_windowToTile(0),
         m_notificationStack(0),
+        m_view(0),
         m_drawLeft(true),
         m_drawRight(true),
         m_autoHide(true),
