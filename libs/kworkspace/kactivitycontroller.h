@@ -28,7 +28,7 @@
 
 #include <kworkspace/kactivityconsumer.h>
 
-#include <kdemacros.h>
+#include "kworkspace_export.h"
 
 /**
  * This class provides methods for controlling and managing
@@ -38,7 +38,7 @@
  *
  * @since 4.5
  */
-class KDE_EXPORT KActivityController: public KActivityConsumer
+class KWORKSPACE_EXPORT KActivityController: public KActivityConsumer
 {
     Q_OBJECT
 

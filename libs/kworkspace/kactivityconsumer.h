@@ -26,8 +26,7 @@
 #include <QStringList>
 
 #include "kactivityinfo.h"
-#include <kdemacros.h>
-
+#include "kworkspace_export.h"
 class KActivityConsumerPrivate;
 /**
  * Contextual information can be, from the user's point of view, divided
@@ -54,7 +53,7 @@ class KActivityConsumerPrivate;
  *
  * @since 4.5
  */
-class KDE_EXPORT KActivityConsumer: public QObject {
+class KWORKSPACE_EXPORT KActivityConsumer: public QObject {
     Q_OBJECT
 
     Q_PROPERTY(QString currentActivity READ currentActivity)

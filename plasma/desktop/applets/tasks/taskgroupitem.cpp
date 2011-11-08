@@ -223,6 +223,10 @@ void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
 
 void TaskGroupItem::checkUpdates()
 {
+    if (!m_group) {
+        return;
+    }
+
     bool needsUpdate = false;
     TaskFlags flags = m_flags;
 

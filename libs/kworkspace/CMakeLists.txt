@@ -56,17 +56,11 @@ qt4_add_dbus_interface(
     activitymanager_interface
 )
 
-if(WIN32)
-    set (LIB_MODE)
-else(WIN32)
-    set (LIB_MODE SHARED)
-endif(WIN32)
-
-kde4_add_library(kworkspace ${LIB_MODE} ${kworkspace_LIB_SRCS})
+kde4_add_library(kworkspace SHARED ${kworkspace_LIB_SRCS})
 
 target_link_libraries(kworkspace  ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES} ${KDE4_PLASMA_LIBS} )
 
-set_target_properties(kworkspace PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+set_target_properties(kworkspace PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} DEFINE_SYMBOL MAKE_KWORKSPACE_LIB)
 install(TARGETS kworkspace EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 install( FILES kdisplaymanager.h
