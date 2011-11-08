@@ -428,9 +428,9 @@ static KService::List getServicesViaPid(int pid)
 {
     // Attempt to find using commandline...
     KService::List services;
-    KSysGuard::Processes procs;
 
     if (pid != 0) {
+        KSysGuard::Processes procs;
         procs.updateOrAddProcess(pid);
 
         KSysGuard::Process *proc = procs.getProcess(pid);
@@ -466,9 +466,8 @@ static KService::List getServicesViaPid(int pid)
 
 static KUrl getServiceLauncherUrl(int pid, const QString &type, const QStringList &cmdRemovals = QStringList())
 {
-    KSysGuard::Processes procs;
-
     if (pid != 0) {
+        KSysGuard::Processes procs;
         procs.updateOrAddProcess(pid);
 
         KSysGuard::Process *proc = procs.getProcess(pid);
