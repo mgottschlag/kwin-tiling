@@ -468,41 +468,43 @@ static KUrl getServiceLauncherUrl(int pid, const QString &type, const QStringLis
 {
     KSysGuard::Processes procs;
 
-    procs.updateOrAddProcess(pid);
+    if (pid != 0) {
+        procs.updateOrAddProcess(pid);
 
-    KSysGuard::Process *proc = procs.getProcess(pid);
-    QString cmdline = proc ? proc->command.simplified() : QString(); // proc->command has a trailing space???
+        KSysGuard::Process *proc = procs.getProcess(pid);
+        QString cmdline = proc ? proc->command.simplified() : QString(); // proc->command has a trailing space???
 
-    if (!cmdline.isEmpty()) {
-        foreach (const QString & r, cmdRemovals) {
-            cmdline.replace(r, "");
-        }
-
-        KService::List services = KServiceTypeTrader::self()->query(type, QString("exist Exec and ('%1' =~ Exec)").arg(cmdline));
-
-        if (services.empty()) {
-            // Could not find with complete commandline, so strip out path part...
-            int slash = cmdline.lastIndexOf('/', cmdline.indexOf(' '));
-            if (slash > 0) {
-                services = KServiceTypeTrader::self()->query(type, QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash + 1)));
+        if (!cmdline.isEmpty()) {
+            foreach (const QString & r, cmdRemovals) {
+                cmdline.replace(r, "");
             }
-        }
 
-        if (!services.empty()) {
-            QString path = services[0]->entryPath();
+            KService::List services = KServiceTypeTrader::self()->query(type, QString("exist Exec and ('%1' =~ Exec)").arg(cmdline));
 
-            if (!path.startsWith("/")) {
-                QStringList dirs = KGlobal::dirs()->resourceDirs("services");
-                foreach (const QString & d, dirs) {
-                    if (QFile::exists(d + path)) {
-                        path = d + path;
-                        break;
-                    }
+            if (services.empty()) {
+                // Could not find with complete commandline, so strip out path part...
+                int slash = cmdline.lastIndexOf('/', cmdline.indexOf(' '));
+                if (slash > 0) {
+                    services = KServiceTypeTrader::self()->query(type, QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash + 1)));
                 }
             }
 
-            if (QFile::exists(path)) {
-                return KUrl::fromPath(path);
+            if (!services.empty()) {
+                QString path = services[0]->entryPath();
+
+                if (!path.startsWith("/")) {
+                    QStringList dirs = KGlobal::dirs()->resourceDirs("services");
+                    foreach (const QString & d, dirs) {
+                        if (QFile::exists(d + path)) {
+                            path = d + path;
+                            break;
+                        }
+                    }
+                }
+
+                if (QFile::exists(path)) {
+                    return KUrl::fromPath(path);
+                }
             }
         }
     }
