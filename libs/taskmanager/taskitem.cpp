@@ -430,31 +430,33 @@ static KService::List getServicesViaPid(int pid)
     KService::List services;
     KSysGuard::Processes procs;
 
-    procs.updateOrAddProcess(pid);
+    if (pid != 0) {
+        procs.updateOrAddProcess(pid);
 
-    KSysGuard::Process *proc = procs.getProcess(pid);
-    QString cmdline = proc ? proc->command.simplified() : QString(); // proc->command has a trailing space???
+        KSysGuard::Process *proc = procs.getProcess(pid);
+        QString cmdline = proc ? proc->command.simplified() : QString(); // proc->command has a trailing space???
 
-    if (!cmdline.isEmpty()) {
-        int firstSpace = cmdline.indexOf(' ');
+        if (!cmdline.isEmpty()) {
+            int firstSpace = cmdline.indexOf(' ');
 
-        services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline));
-        if (services.empty()) {
-            // Could not find with complete commandline, so strip out path part...
-            int slash = cmdline.lastIndexOf('/', firstSpace);
-            if (slash > 0) {
-                services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash + 1)));
-            }
-        }
-
-        if (services.empty() && firstSpace > 0) {
-            // Could not find with arguments, so try without...
-            cmdline = cmdline.left(firstSpace);
             services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline));
+            if (services.empty()) {
+                // Could not find with complete commandline, so strip out path part...
+                int slash = cmdline.lastIndexOf('/', firstSpace);
+                if (slash > 0) {
+                    services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash + 1)));
+                }
+            }
 
-            int slash = cmdline.lastIndexOf('/');
-            if (slash > 0) {
-                services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash + 1)));
+            if (services.empty() && firstSpace > 0) {
+                // Could not find with arguments, so try without...
+                cmdline = cmdline.left(firstSpace);
+                services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline));
+
+                int slash = cmdline.lastIndexOf('/');
+                if (slash > 0) {
+                    services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash + 1)));
+                }
             }
         }
     }
