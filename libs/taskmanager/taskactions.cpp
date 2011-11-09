@@ -544,9 +544,12 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
     setIcon(item->icon());
     if (appActions.count()) {
         foreach (QAction * action, appActions) {
-            addAction(action);
+            if (action->isSeparator()) {
+                addSeparator();
+            } else {
+                addAction(action);
+            }
         }
-
         addSeparator();
     }
 
@@ -578,9 +581,12 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     setIcon(group->icon());
     if (appActions.count()) {
         foreach (QAction * action, appActions) {
-            addAction(action);
+            if (action->isSeparator()) {
+                addSeparator();
+            } else {
+                addAction(action);
+            }
         }
-
         addSeparator();
     }
 
@@ -622,9 +628,12 @@ BasicMenu::BasicMenu(QWidget *parent, LauncherItem* item, GroupManager *strategy
     setIcon(item->icon());
     if (appActions.count()) {
         foreach (QAction * action, appActions) {
-            addAction(action);
+            if (action->isSeparator()) {
+                addSeparator();
+            } else {
+                addAction(action);
+            }
         }
-
         addSeparator();
     }
 
