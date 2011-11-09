@@ -30,7 +30,7 @@ class PreviewWidget : public QWidget
         PreviewWidget(QWidget *parent);
         ~PreviewWidget();
 
-        void setTheme(const CursorTheme *theme);
+        void setTheme(const CursorTheme *theme, const int size);
         void setUseLables(bool);
         QSize sizeHint() const;
 
