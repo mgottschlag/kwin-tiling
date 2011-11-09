@@ -429,35 +429,39 @@ static KService::List getServicesViaPid(int pid)
     // Attempt to find using commandline...
     KService::List services;
 
-    if (pid != 0) {
-        KSysGuard::Processes procs;
-        procs.updateOrAddProcess(pid);
+    if (pid == 0) {
+        return services;
+    }
 
-        KSysGuard::Process *proc = procs.getProcess(pid);
-        QString cmdline = proc ? proc->command.simplified() : QString(); // proc->command has a trailing space???
+    KSysGuard::Processes procs;
+    procs.updateOrAddProcess(pid);
 
-        if (!cmdline.isEmpty()) {
-            int firstSpace = cmdline.indexOf(' ');
+    KSysGuard::Process *proc = procs.getProcess(pid);
+    QString cmdline = proc ? proc->command.simplified() : QString(); // proc->command has a trailing space???
 
-            services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline));
-            if (services.empty()) {
-                // Could not find with complete commandline, so strip out path part...
-                int slash = cmdline.lastIndexOf('/', firstSpace);
-                if (slash > 0) {
-                    services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash + 1)));
-                }
-            }
+    if (cmdline.isEmpty()) {
+        return services;
+    }
 
-            if (services.empty() && firstSpace > 0) {
-                // Could not find with arguments, so try without...
-                cmdline = cmdline.left(firstSpace);
-                services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline));
+    const int firstSpace = cmdline.indexOf(' ');
 
-                int slash = cmdline.lastIndexOf('/');
-                if (slash > 0) {
-                    services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash + 1)));
-                }
-            }
+    services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline));
+    if (services.empty()) {
+        // Could not find with complete commandline, so strip out path part...
+        int slash = cmdline.lastIndexOf('/', firstSpace);
+        if (slash > 0) {
+            services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash + 1)));
+        }
+    }
+
+    if (services.empty() && firstSpace > 0) {
+        // Could not find with arguments, so try without...
+        cmdline = cmdline.left(firstSpace);
+        services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline));
+
+        int slash = cmdline.lastIndexOf('/');
+        if (slash > 0) {
+            services = KServiceTypeTrader::self()->query("Application", QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash + 1)));
         }
     }
 
@@ -466,46 +470,51 @@ static KService::List getServicesViaPid(int pid)
 
 static KUrl getServiceLauncherUrl(int pid, const QString &type, const QStringList &cmdRemovals = QStringList())
 {
-    if (pid != 0) {
-        KSysGuard::Processes procs;
-        procs.updateOrAddProcess(pid);
+    if (pid == 0) {
+        return KUrl();
+    }
 
-        KSysGuard::Process *proc = procs.getProcess(pid);
-        QString cmdline = proc ? proc->command.simplified() : QString(); // proc->command has a trailing space???
+    KSysGuard::Processes procs;
+    procs.updateOrAddProcess(pid);
 
-        if (!cmdline.isEmpty()) {
-            foreach (const QString & r, cmdRemovals) {
-                cmdline.replace(r, "");
-            }
+    KSysGuard::Process *proc = procs.getProcess(pid);
+    QString cmdline = proc ? proc->command.simplified() : QString(); // proc->command has a trailing space???
 
-            KService::List services = KServiceTypeTrader::self()->query(type, QString("exist Exec and ('%1' =~ Exec)").arg(cmdline));
+    if (cmdline.isEmpty()) {
+        return KUrl();
+    }
 
-            if (services.empty()) {
-                // Could not find with complete commandline, so strip out path part...
-                int slash = cmdline.lastIndexOf('/', cmdline.indexOf(' '));
-                if (slash > 0) {
-                    services = KServiceTypeTrader::self()->query(type, QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash + 1)));
-                }
-            }
+    foreach (const QString & r, cmdRemovals) {
+        cmdline.replace(r, "");
+    }
 
-            if (!services.empty()) {
-                QString path = services[0]->entryPath();
+    KService::List services = KServiceTypeTrader::self()->query(type, QString("exist Exec and ('%1' =~ Exec)").arg(cmdline));
 
-                if (!path.startsWith("/")) {
-                    QStringList dirs = KGlobal::dirs()->resourceDirs("services");
-                    foreach (const QString & d, dirs) {
-                        if (QFile::exists(d + path)) {
-                            path = d + path;
-                            break;
-                        }
-                    }
-                }
+    if (services.empty()) {
+        // Could not find with complete commandline, so strip out path part...
+        int slash = cmdline.lastIndexOf('/', cmdline.indexOf(' '));
+        if (slash > 0) {
+            services = KServiceTypeTrader::self()->query(type, QString("exist Exec and ('%1' =~ Exec)").arg(cmdline.mid(slash + 1)));
+        }
 
-                if (QFile::exists(path)) {
-                    return KUrl::fromPath(path);
-                }
+        if (services.empty()) {
+            return KUrl();
+        }
+    }
+
+    QString path = services[0]->entryPath();
+    if (!path.startsWith("/")) {
+        QStringList dirs = KGlobal::dirs()->resourceDirs("services");
+        foreach (const QString & d, dirs) {
+            if (QFile::exists(d + path)) {
+                path = d + path;
+                break;
             }
         }
+    }
+
+    if (QFile::exists(path)) {
+        return KUrl::fromPath(path);
     }
 
     return KUrl();
