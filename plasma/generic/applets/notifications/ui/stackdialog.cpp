@@ -136,8 +136,8 @@ void StackDialog::adjustWindowToTilePos()
         m_windowToTileAnimation->setStartValue(m_windowToTile->pos());
 
         if (isVisible()) {
-            //FIXME assumption that y starts from 0
-            if (m_applet->location() == Plasma::TopEdge || pos().y() < m_windowToTile->size().height()) {
+            const QRect realScreenRect = qApp->desktop()->screenGeometry(m_applet->containment()->screen());
+            if (m_applet->location() == Plasma::TopEdge || (pos().y() - realScreenRect.top()) < m_windowToTile->size().height()) {
                 m_windowToTileAnimation->setEndValue(QPoint(m_windowToTile->pos().x(), geometry().bottom()));
             } else {
                 m_windowToTileAnimation->setEndValue(QPoint(m_windowToTile->pos().x(), pos().y() - m_windowToTile->size().height()));
@@ -189,17 +189,21 @@ void StackDialog::paintEvent(QPaintEvent *e)
 
             qreal left, top, right, bottom;
             m_background->getMargins(left, top, right, bottom);
-            m_background->resizeFrame(QSizeF(size().width(), nw->size().height() + top+bottom));
+            m_background->resizeFrame(QSizeF(size().width(), nw->size().height() + top + bottom));
 
-            int topMargin = contentsRect().top();
+            Plasma::FrameSvg::EnabledBorders borders = m_background->enabledBorders();
 
             if (!m_drawLeft) {
-                m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)m_background->enabledBorders()&~Plasma::FrameSvg::LeftBorder);
-            }
-            if (!m_drawRight) {
-                m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)m_background->enabledBorders()&~Plasma::FrameSvg::RightBorder);
+                borders &= ~Plasma::FrameSvg::LeftBorder;
             }
 
+            if (!m_drawRight) {
+                borders &= ~Plasma::FrameSvg::RightBorder;
+            }
+
+            m_background->setEnabledBorders(borders);
+
+            const int topMargin = contentsRect().top();
             m_background->paintFrame(&painter, QPointF(0, nw->pos().y() - top + topMargin));
         }
     }
@@ -210,14 +214,12 @@ void StackDialog::showEvent(QShowEvent *event)
     Q_UNUSED(event)
 
     adjustPosition(adjustedSavedPos());
-
     adjustWindowToTilePos();
 
     if (m_autoHide) {
         m_hideTimer->start(hideTimeout);
     }
 
-    adjustWindowToTilePos();
     Plasma::Dialog::showEvent(event);
 }
 
@@ -276,15 +278,14 @@ void StackDialog::adjustPosition(const QPoint &pos)
         return;
     }
 
-    QPoint customPosition = pos;
-
-    const QPoint popupPosition = m_applet->containment()->corona()->popupPosition(m_applet, size());
-
-    if ((customPosition == QPoint(-1, -1))) {
+    if (pos == QPoint(-1, -1)) {
+        const QPoint popupPosition = m_applet->containment()->corona()->popupPosition(m_applet, size());
         move(popupPosition);
         Plasma::WindowEffects::slideWindow(this, m_applet->location());
         m_hasCustomPosition = false;
     } else {
+        QPoint customPosition = pos;
+
         if (m_applet->containment() &&
             m_applet->containment()->corona() &&
             m_notificationStack) {
@@ -313,8 +314,7 @@ void StackDialog::savePosition(const QPoint& pos)
 {
     QByteArray horizSide, vertSide;
     QPoint pixelsToSave;
-    QDesktopWidget widget;
-    const QRect realScreenRect = widget.screenGeometry(m_applet->containment()->screen());
+    const QRect realScreenRect = qApp->desktop()->screenGeometry(m_applet->containment()->screen());
 
     int screenRelativeX = pos.x() - realScreenRect.x();
     int diffWithRight = realScreenRect.width() - (screenRelativeX + size().width());
@@ -353,8 +353,7 @@ QPoint StackDialog::adjustedSavedPos() const
     QPoint pos = m_applet->config().readEntry("customPosition", QPoint(-1, -1));
 
     if (pos != QPoint(-1, -1)) {
-        QDesktopWidget widget;
-        const QRect realScreenRect = widget.screenGeometry(m_applet->containment()->screen());
+        const QRect realScreenRect = qApp->desktop()->screenGeometry(m_applet->containment()->screen());
         QByteArray horizSide = m_applet->config().readEntry("customPositionAffinityHoriz").toLatin1();
         QByteArray vertSide = m_applet->config().readEntry("customPositionAffinityVert").toLatin1();
 
@@ -370,6 +369,7 @@ QPoint StackDialog::adjustedSavedPos() const
             pos.ry() = realScreenRect.y() + (realScreenRect.height() - pos.ry() - size().height());
         }
     }
+
     return pos;
 }
 

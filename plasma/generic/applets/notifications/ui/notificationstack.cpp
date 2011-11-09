@@ -192,8 +192,6 @@ NotificationWidget *NotificationStack::currentNotificationWidget() const
     }
 }
 
-
-
 bool NotificationStack::eventFilter(QObject *watched, QEvent *event)
 {
     NotificationWidget *nw = qobject_cast<NotificationWidget *>(watched);
