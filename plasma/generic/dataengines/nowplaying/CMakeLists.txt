@@ -12,6 +12,7 @@ set(nowplaying_engine_SRCS
     playerinterface/juk.cpp
     playerinterface/mpris/mpris.cpp
     playerinterface/mpris/mprisdbustypes.cpp
+    playerinterface/mpris2/mpris2.cpp
 )
 
 QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS playerinterface/org.kde.juk.player.xml juk_interface)
