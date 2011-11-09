@@ -66,6 +66,7 @@ install(TARGETS kworkspace EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_D
 install( FILES kdisplaymanager.h
                kwindowlistmenu.h
                kworkspace.h
+               kworkspace_export.h
                kactivityconsumer.h
                kactivitycontroller.h
                kactivityinfo.h
