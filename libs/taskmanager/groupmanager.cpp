@@ -155,7 +155,7 @@ GroupManager::GroupManager(QObject *parent)
     d->currentDesktop = TaskManager::self()->currentDesktop();
     d->currentActivity = TaskManager::self()->currentActivity();
 
-    d->rootGroups[d->currentActivity][d->currentDesktop] = new TaskGroup(this, "RootGroup", Qt::transparent);
+    d->rootGroups[d->currentActivity][d->currentDesktop] = new TaskGroup(this, "RootGroup");
 
     d->reloadTimer.setSingleShot(true);
     d->reloadTimer.setInterval(0);
@@ -434,7 +434,7 @@ void GroupManagerPrivate::currentActivityChanged(QString newActivity)
 
     if (!rootGroups.contains(newActivity) || !rootGroups.value(newActivity).contains(currentDesktop)) {
         kDebug() << "created new desk group";
-        rootGroups[newActivity][currentDesktop] = new TaskGroup(q, "RootGroup", Qt::transparent);
+        rootGroups[newActivity][currentDesktop] = new TaskGroup(q, "RootGroup");
         if (abstractSortingStrategy) {
             abstractSortingStrategy->handleGroup(rootGroups[newActivity][currentDesktop]);
         }
@@ -476,7 +476,7 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
 
     if (!rootGroups[currentActivity].contains(newDesktop)) {
         kDebug() << "created new desk group";
-        rootGroups[currentActivity][newDesktop] = new TaskGroup(q, "RootGroup", Qt::transparent);
+        rootGroups[currentActivity][newDesktop] = new TaskGroup(q, "RootGroup");
         if (abstractSortingStrategy) {
             abstractSortingStrategy->handleGroup(rootGroups[currentActivity][newDesktop]);
         }

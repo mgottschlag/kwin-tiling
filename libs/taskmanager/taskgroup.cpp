@@ -28,7 +28,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "groupmanager.h"
 
 // Qt
-#include <QtGui/QColor>
 #include <QtCore/QMimeData>
 #include <QtCore/QTimer>
 
@@ -46,8 +45,11 @@ namespace TaskManager
 class TaskGroup::Private
 {
 public:
-    Private(TaskGroup *group)
-        : q(group) {
+    Private(TaskGroup *group, GroupManager *manager)
+        : q(group),
+          groupIcon(KIcon("xorg")),
+          groupManager(manager)
+    {
     }
 
     void itemDestroyed(AbstractGroupableItem *item);
@@ -58,34 +60,23 @@ public:
     QList<AbstractGroupableItem *> signalRemovalsFor;
     ItemList members;
     QString groupName;
-    QColor groupColor;
     QIcon groupIcon;
-    bool aboutToDie;
-    GroupManager *groupingStrategy;
+    GroupManager *groupManager;
 };
 
-TaskGroup::TaskGroup(GroupManager *parent, const QString &name, const QColor &color)
+TaskGroup::TaskGroup(GroupManager *parent, const QString &name)
     :   AbstractGroupableItem(parent),
-        d(new Private(this))
+        d(new Private(this, parent))
 {
-    d->groupingStrategy = parent;
     d->groupName = name;
-    d->groupColor = color;
-    d->groupIcon = KIcon("xorg");
-
-    //kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
+    //kDebug() << "Group Created: Name: " << d->groupName;
 }
 
 TaskGroup::TaskGroup(GroupManager *parent)
     :   AbstractGroupableItem(parent),
-        d(new Private(this))
+        d(new Private(this, parent))
 {
-    d->groupingStrategy = parent;
-//    d->groupName = "default";
-    d->groupColor = Qt::red;
-    d->groupIcon = KIcon("xorg");
-
-    //kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
+    //kDebug() << "Group Created: Name: " << d->groupName;
 }
 
 
@@ -199,7 +190,7 @@ void TaskGroup::add(AbstractGroupableItem *item, int insertIndex)
 
     if (index < 0) {
         index = d->members.count();
-        if (d->groupingStrategy->separateLaunchers()) {
+        if (d->groupManager->separateLaunchers()) {
             if (item->itemType() == LauncherItemType) {
                 // insert launchers together at the head of the list, but still
                 // in the order they appear
@@ -211,10 +202,10 @@ void TaskGroup::add(AbstractGroupableItem *item, int insertIndex)
             }
         } else {
             KUrl lUrl = item->launcherUrl();
-            int urlIdx = d->groupingStrategy->launcherIndex(lUrl);
+            int urlIdx = d->groupManager->launcherIndex(lUrl);
             if (urlIdx >= 0) {
                 for (index = 0; index < d->members.count(); ++index) {
-                    int idx = d->groupingStrategy->launcherIndex(d->members.at(index)->launcherUrl());
+                    int idx = d->groupManager->launcherIndex(d->members.at(index)->launcherUrl());
                     if (urlIdx < idx || idx < 0) {
                         break;
                     }
@@ -334,23 +325,12 @@ void TaskGroup::clear()
 
 GroupManager *TaskGroup::manager() const
 {
-    return d->groupingStrategy;
+    return d->groupManager;
 }
 
 ItemList TaskGroup::members() const
 {
     return d->members;
-}
-
-void TaskGroup::setColor(const QColor &color)
-{
-    d->groupColor = color;
-    emit changed(ColorChanged);
-}
-
-QColor TaskGroup::color() const
-{
-    return d->groupColor;
 }
 
 QString TaskGroup::name() const

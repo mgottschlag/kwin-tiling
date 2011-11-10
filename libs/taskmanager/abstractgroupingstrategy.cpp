@@ -42,7 +42,6 @@ public:
 
     GroupManager *groupManager;
     QStringList usedNames;
-    QList<QColor> usedColors;
     QList<TaskGroup*> createdGroups;
     GroupManager::TaskGroupingStrategy type;
 };
@@ -161,7 +160,6 @@ void AbstractGroupingStrategy::closeGroup(TaskGroup *group)
     d->createdGroups.removeAll(group);
     //kDebug() << "closig group" << group->name() << d->createdGroups.count();
     d->usedNames.removeAll(group->name());
-    d->usedColors.removeAll(group->color());
     //d->usedIcons.removeAll(group->icon());//TODO
 
     TaskGroup *parentGroup = group->parentGroup();
@@ -216,7 +214,6 @@ bool AbstractGroupingStrategy::manualGroupingRequest(ItemList items)
     if (editableGroupProperties() & Members) {
         TaskGroup *group = createGroup(items);
         setName(nameSuggestions(group).first(), group);
-        setColor(colorSuggestions(group).first(), group);
         setIcon(iconSuggestions(group).first(), group);
         return true;
     }
@@ -252,41 +249,6 @@ QList<QString> AbstractGroupingStrategy::nameSuggestions(TaskGroup *)
     }
 
     return nameList;
-}
-
-bool AbstractGroupingStrategy::setColor(const QColor &color, TaskGroup *group)
-{
-    d->usedColors.removeAll(group->color());
-
-    if (editableGroupProperties() && (!d->usedColors.contains(color))) {
-        d->usedColors.append(color);
-        group->setColor(color);
-        return true;
-    }
-
-    return false;
-}
-
-QList<QColor> AbstractGroupingStrategy::colorSuggestions(TaskGroup *)
-{
-    QList<QColor> colorPool;
-    //colorPool.append(Qt::red);
-    colorPool.append(Qt::blue);
-    colorPool.append(Qt::green);
-    colorPool.append(Qt::yellow);
-
-    QList<QColor> colorList;
-    foreach (const QColor & color, colorPool) {
-        if (!d->usedColors.contains(color)) {
-            colorList.append(color);
-        }
-    }
-
-    if (colorList.isEmpty()) {
-        colorList.append(Qt::red);
-    }
-
-    return colorList;
 }
 
 bool AbstractGroupingStrategy::setIcon(const QIcon &icon, TaskGroup *group)
