@@ -44,7 +44,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "strategies/desktopsortingstrategy.h"
 #include "strategies/programgroupingstrategy.h"
 #include "strategies/manualgroupingstrategy.h"
-#include "strategies/kustodiangroupingstrategy.h"
 #include "strategies/manualsortingstrategy.h"
 #include "launcheritem.h"
 #include "launcherconfig.h"
@@ -73,7 +72,8 @@ public:
           readingLauncherConfig(false),
           separateLaunchers(true),
           forceGrouping(false),
-          launchersLocked(false) {
+          launchersLocked(false)
+    {
     }
 
     /** reload all tasks from TaskManager */
@@ -1312,10 +1312,6 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
 
     case ProgramGrouping:
         d->abstractGroupingStrategy = new ProgramGroupingStrategy(this);
-        break;
-
-    case KustodianGrouping:
-        d->abstractGroupingStrategy = new KustodianGroupingStrategy(this);
         break;
 
     case NoGrouping:

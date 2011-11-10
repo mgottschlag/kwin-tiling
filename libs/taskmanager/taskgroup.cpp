@@ -62,7 +62,6 @@ public:
     QIcon groupIcon;
     bool aboutToDie;
     GroupManager *groupingStrategy;
-    bool persistentWithLauncher;
 };
 
 TaskGroup::TaskGroup(GroupManager *parent, const QString &name, const QColor &color)
@@ -73,7 +72,6 @@ TaskGroup::TaskGroup(GroupManager *parent, const QString &name, const QColor &co
     d->groupName = name;
     d->groupColor = color;
     d->groupIcon = KIcon("xorg");
-    d->persistentWithLauncher = false;
 
     //kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
 }
@@ -86,7 +84,6 @@ TaskGroup::TaskGroup(GroupManager *parent)
 //    d->groupName = "default";
     d->groupColor = Qt::red;
     d->groupIcon = KIcon("xorg");
-    d->persistentWithLauncher = false;
 
     //kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
 }
@@ -386,16 +383,6 @@ ItemType TaskGroup::itemType() const
 bool TaskGroup::isGroupItem() const
 {
     return true;
-}
-
-bool TaskGroup::isPersistentWithLauncher() const
-{
-    return d->persistentWithLauncher;
-}
-
-void TaskGroup::setPersistentWithLauncher(bool persistentWithLauncher)
-{
-    d->persistentWithLauncher = persistentWithLauncher;
 }
 
 bool TaskGroup::isRootGroup() const

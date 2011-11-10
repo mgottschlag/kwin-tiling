@@ -70,9 +70,6 @@ public:
     KDE_DEPRECATED bool isGroupItem() const;
     bool isRootGroup() const;
 
-    bool isPersistentWithLauncher() const;
-    void setPersistentWithLauncher(bool persistent);
-
     /** only true if item is in this group */
     bool hasDirectMember(AbstractGroupableItem * item) const;
     /** only true if item is in this or any sub group */

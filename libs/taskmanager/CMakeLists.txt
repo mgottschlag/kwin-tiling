@@ -16,7 +16,6 @@ set(taskmanager_LIB_SRCS
    strategies/programgroupingstrategy.cpp
    strategies/manualgroupingstrategy.cpp
    strategies/manualsortingstrategy.cpp
-   strategies/kustodiangroupingstrategy.cpp
    task.cpp
    taskactions.cpp
    taskgroup.cpp
