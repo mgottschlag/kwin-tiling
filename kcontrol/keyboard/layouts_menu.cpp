@@ -66,8 +66,13 @@ void LayoutsMenu::actionTriggered(QAction* action)
 
 int LayoutsMenu::switchToLayout(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig)
 {
+	// safe net when no layouts found
+	QList<LayoutUnit> layouts = X11Helper::getCurrentLayouts().layouts;
+	if( layouts.empty() )
+		return -1;
+
 	bool res;
-	if( X11Helper::getCurrentLayouts().layouts.contains(layoutUnit) ) {
+	if( layouts.contains(layoutUnit) ) {
 		res = X11Helper::setLayout(layoutUnit);
 	}
 	else {
