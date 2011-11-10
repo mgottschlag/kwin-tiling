@@ -54,9 +54,8 @@ NowPlayingEngine::NowPlayingEngine(QObject* parent,
     connect(dbusWatcher, SIGNAL(playerDisappeared(Player::Ptr)),
             this,        SLOT(removePlayer(Player::Ptr)));
 
-    // FIXME: how to stop MPRIS and MPRIS2 picking up the same player?
-    dbusWatcher->addFactory(new MprisFactory(dbusWatcher));
     dbusWatcher->addFactory(new Mpris2Factory(dbusWatcher));
+    dbusWatcher->addFactory(new MprisFactory(dbusWatcher));
     dbusWatcher->addFactory(new JukFactory(dbusWatcher));
 
 #ifdef XMMS_FOUND

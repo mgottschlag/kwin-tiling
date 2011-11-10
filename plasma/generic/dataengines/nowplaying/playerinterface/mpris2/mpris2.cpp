@@ -435,9 +435,12 @@ bool Mpris2::updateBoolProp(const QString &name,
                             bool  currentVal)
 {
     if (changedProperties.contains(name)) {
+        kDebug() << "Property" << name << "changed from" << currentVal << "to" << changedProperties.value(name).toBool();
         return changedProperties.value(name).toBool();
     } else if (invalidatedProperties.contains(name)) {
-        return getPlayerProp(name).toBool();
+        bool newVal = getPlayerProp(name).toBool();
+        kDebug() << "Property" << name << "changed (inv) from" << currentVal << "to" << newVal;
+        return newVal;
     }
     return currentVal;
 }

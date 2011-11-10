@@ -61,6 +61,7 @@ private Q_SLOTS:
                        const QString& newOwner);
 
 private:
+    QStringList m_owners;
     QList<DBusPlayerFactory*> m_factories;
     QHash<QString,Player::Ptr> m_players;
     QDBusConnectionInterface* m_bus;
