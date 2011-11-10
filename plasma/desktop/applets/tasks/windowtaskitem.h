@@ -60,7 +60,6 @@ signals:
 
 public slots:
     void activate();
-    void close();
 
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
@@ -79,7 +78,7 @@ private:
     /** Sets the window represented by this task. */
     void setWindowTask(TaskManager::TaskItem* taskItem);
 
-    TaskManager::TaskItem *m_task;
+    QWeakPointer<TaskManager::TaskItem> m_task;
     Plasma::BusyWidget *m_busyWidget;
 };
 

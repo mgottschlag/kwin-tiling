@@ -203,6 +203,10 @@ QIcon AbstractTaskItem::icon() const
     return QIcon();
 }
 
+void AbstractTaskItem::close()
+{
+}
+
 void AbstractTaskItem::setTaskFlags(const TaskFlags flags)
 {
     if (((m_flags & TaskWantsAttention) != 0) != ((flags & TaskWantsAttention) != 0)) {

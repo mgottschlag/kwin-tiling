@@ -103,7 +103,7 @@ public:
     /** Returns the current icon for this task. */
     QIcon icon() const;
 
-    virtual void close() = 0;
+    virtual void close();
 
     /** Tells the window manager the minimized task's geometry. */
     virtual void publishIconGeometry() const;
