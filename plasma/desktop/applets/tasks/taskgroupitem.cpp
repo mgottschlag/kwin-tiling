@@ -977,16 +977,8 @@ void TaskGroupItem::paint(QPainter *painter,
 {
     if (collapsed()) {
         AbstractTaskItem::paint(painter,option,widget);
-    }/* else {
-        if (m_group) {
-            //painter->fillRect(geometry(), m_group.data()->color());
-        }
-    }*/
-
-    //kDebug() << "painter()";
-    //painter->setBrush(QBrush(background));
+    }
 }
-
 
 // TODO provide a way to edit all group properties
 void TaskGroupItem::editGroup()
