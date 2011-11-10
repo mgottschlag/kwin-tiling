@@ -42,9 +42,6 @@ public:
     /** Sets the window/startup represented by this task. */
     void setTask(TaskManager::TaskItem* taskItem);
 
-    /** Returns the window represented by this task. */
-    TaskManager::TaskPtr windowTask() const;
-
     /** Tells the window manager the minimized task's geometry. */
     void publishIconGeometry() const;
 
