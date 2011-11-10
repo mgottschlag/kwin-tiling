@@ -49,8 +49,8 @@ public:
     ~TaskItem();
     /** Sets the taskpointer after the startup pointer */
     void setTaskPointer(TaskPtr);
-    /** Returns the shared pointer to the  Task */
-    TaskPtr task() const;
+    /** Returns a pointer to the  Task; may be NULL */
+    Task *task() const;
 
     WindowList winIds() const;
 

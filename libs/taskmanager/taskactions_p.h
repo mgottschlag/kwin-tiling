@@ -132,7 +132,7 @@ public:
     AbstractGroupableItemAction(QObject *parent, AbstractGroupableItem *item);
 
 protected:
-    QList<TaskPtr> m_tasks;
+    QList<QWeakPointer<Task> > m_tasks;
 
 private:
     void addToTasks(TaskGroup *group);

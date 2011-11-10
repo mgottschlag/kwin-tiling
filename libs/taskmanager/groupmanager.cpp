@@ -392,7 +392,7 @@ void GroupManagerPrivate::startupItemDestroyed(AbstractGroupableItem *item)
 {
     TaskItem *taskItem = static_cast<TaskItem*>(item);
     startupList.remove(startupList.key(taskItem));
-    geometryTasks.remove(taskItem->task().data());
+    geometryTasks.remove(taskItem->task());
 }
 
 bool GroupManager::manualGroupingRequest(AbstractGroupableItem* item, TaskGroup* groupItem)

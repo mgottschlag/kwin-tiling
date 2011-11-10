@@ -130,12 +130,9 @@ void TaskItem::setTaskPointer(TaskPtr task)
     }
 }
 
-TaskPtr TaskItem::task() const
+Task *TaskItem::task() const
 {
-    if (!d->task) {
-        return TaskPtr(0);
-    }
-    return TaskPtr(d->task.data());
+    return d->task.data();
 }
 
 StartupPtr TaskItem::startup() const
