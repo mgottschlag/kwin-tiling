@@ -128,19 +128,16 @@ ActivityIcon::ActivityIcon(const QString &name, const QString &icon, const QStri
       m_activity(0),
       m_inlineWidgetAnim(0)
 {
-    DesktopCorona *c = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
-
     updateButtons();
 
-    connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)),
-            this, SLOT(createActivity(Plasma::AbstractIcon*)));
+    connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)), this, SLOT(createActivity()));
     setName(name);
     currentStatusChanged();
 
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 }
 
-void ActivityIcon::createActivity(Plasma::AbstractIcon * icon)
+void ActivityIcon::createActivity()
 {
     KService::Ptr service = KService::serviceByStorageId(m_pluginName);
 
