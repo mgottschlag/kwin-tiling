@@ -75,12 +75,15 @@ int LayoutsMenu::switchToLayout(const LayoutUnit& layoutUnit, const KeyboardConf
 	if( layouts.contains(layoutUnit) ) {
 		res = X11Helper::setLayout(layoutUnit);
 	}
-	else {
+	else if ( keyboardConfig.isSpareLayoutsEnabled() && ! keyboardConfig.getDefaultLayouts().empty() ) {
 		QList<LayoutUnit> layouts(keyboardConfig.getDefaultLayouts());
 		layouts.removeLast();
 		layouts.append(layoutUnit);
 		XkbHelper::initializeKeyboardLayouts(layouts);
 		res = X11Helper::setLayout(layoutUnit);
+	}
+	else {
+		res = -1;
 	}
 	return res;
 }
