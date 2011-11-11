@@ -355,3 +355,51 @@ bool RulesHandler::characters(const QString &str)
 	return true;
 }
 
+bool LayoutInfo::isLanguageSupportedByLayout(const QString& lang) const
+{
+	if( languages.contains(lang) || isLanguageSupportedByVariants(lang) )
+		return true;
+
+//	// return yes if no languages found in layout or its variants
+//	if( languages.empty() ) {
+//		foreach(const VariantInfo* info, variantInfos) {
+//			if( ! info->languages.empty() )
+//				return false;
+//		}
+//		return true;
+//	}
+
+	return false;
+}
+
+bool LayoutInfo::isLanguageSupportedByVariants(const QString& lang) const
+{
+	foreach(const VariantInfo* info, variantInfos) {
+		if( info->languages.contains(lang) )
+			return true;
+	}
+	return false;
+}
+
+bool LayoutInfo::isLanguageSupportedByDefaultVariant(const QString& lang) const
+{
+	if( languages.contains(lang) )
+		return true;
+
+	if( languages.empty() && isLanguageSupportedByVariants(lang) )
+		return true;
+
+	return false;
+}
+
+bool LayoutInfo::isLanguageSupportedByVariant(const VariantInfo* variantInfo, const QString& lang) const
+{
+	if( variantInfo->languages.contains(lang) )
+		return true;
+
+	// if variant has no languages try to "inherit" them from layout
+	if( variantInfo->languages.empty() && languages.contains(lang) )
+		return true;
+
+	return false;
+}
