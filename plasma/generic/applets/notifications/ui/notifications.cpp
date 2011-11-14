@@ -179,16 +179,15 @@ void Notifications::syncNotificationBarNeeded()
         return;
     }
 
-    if (m_manager->notifications().count() > 0) {
-        if (!extender()->item("notifications")) {
-            m_notificationGroup = new NotificationGroup(extender());
+    if (m_manager->notifications().isEmpty()) {
+        if (extender()->item("notifications")) {
+            //don't let him in the config file
+            extender()->item("notifications")->destroy();
         }
-    } else if (extender()->item("notifications")) {
-        //don't let him in the config file
-        extender()->item("notifications")->destroy();
+    } else if (!extender()->item("notifications")) {
+        m_notificationGroup = new NotificationGroup(extender());
     }
 }
-
 
 Manager *Notifications::manager() const
 {

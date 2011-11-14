@@ -62,6 +62,11 @@ class CursorTheme
         const QString sample() const       { return m_sample; }
         const QString name() const         { return m_name; }
         const QString path() const         { return m_path; }
+        /** @returns A list of the available sizes in this cursor theme,
+            @warning This list may be empty if the engine doesn't support
+            the recognition of the size. */
+        const QList<int> availableSizes() const
+                                           { return m_availableSizes; }
         bool isWritable() const            { return m_writable; }
         bool isHidden() const              { return m_hidden; }
         QPixmap icon() const;
@@ -72,16 +77,27 @@ class CursorTheme
         /// Loads the cursor image @p name, with the nominal size @p size.
         /// The image should be autocropped to the smallest possible size.
         /// If the theme doesn't have the cursor @p name, it should return a null image.
-        virtual QImage loadImage(const QString &name, int size = -1) const = 0;
+        virtual QImage loadImage(const QString &name, int size = 0) const = 0;
 
         /// Convenience function. Default implementation calls
         /// QPixmap::fromImage(loadImage());
-        virtual QPixmap loadPixmap(const QString &name, int size = -1) const;
+        virtual QPixmap loadPixmap(const QString &name, int size = 0) const;
 
         /// Loads the cursor @p name, with the nominal size @p size.
         /// If the theme doesn't have the cursor @p name, it should return
         /// the default cursor from the active theme instead.
-        virtual QCursor loadCursor(const QString &name, int size = -1) const = 0;	
+        virtual QCursor loadCursor(const QString &name, int size = 0) const = 0;
+
+        /** Creates the icon returned by @ref icon(). Don't use this function
+            directly but use @ref icon() instead, because @ref icon() caches
+            the icon.
+            @returns A pixmap with a cursor (usually left_ptr) that can
+            be used as icon for this theme. The size is adopted to
+            standard icon sizes.*/
+        virtual QPixmap createIcon() const;
+        /** @returns A pixmap with a cursor (usually left_ptr) that can
+            be used as icon for this theme. */
+        virtual QPixmap createIcon(int size) const;
 
     protected:
         void setTitle( const QString &title )      { m_title       = title; }
@@ -89,12 +105,11 @@ class CursorTheme
         void setSample( const QString &sample )    { m_sample      = sample; }
         inline void setName( const QString &name );
         void setPath( const QString &path )        { m_path        = path; }
+        void setAvailableSizes( const QList<int> &availableSizes )
+                                                   { m_availableSizes = availableSizes; }
         void setIcon( const QPixmap &icon )        { m_icon        = icon; }
         void setIsWritable( bool val )             { m_writable    = val; }
         void setIsHidden( bool val )               { m_hidden      = val; }
-
-        /// Creates the icon returned by @ref icon().
-        virtual QPixmap createIcon() const;
 
         /// Convenience function for cropping an image.
         QImage autoCropImage( const QImage &image ) const;
@@ -105,6 +120,7 @@ class CursorTheme
         QString m_title;
         QString m_description;
         QString m_path;
+        QList<int> m_availableSizes;
         QString m_sample;
         mutable QPixmap m_icon;
         bool m_writable:1;

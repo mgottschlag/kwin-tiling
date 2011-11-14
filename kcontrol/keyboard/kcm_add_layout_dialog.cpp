@@ -68,19 +68,6 @@ AddLayoutDialog::AddLayoutDialog(const Rules* rules_, Flags* flags_, bool showLa
     connect(layoutDialogUi->layoutComboBox, SIGNAL(activated(int)), this, SLOT(layoutChanged(int)));
 }
 
-static
-bool containsLanguage(const LayoutInfo* layoutInfo, const QString& lang)
-{
-	if( layoutInfo->languages.contains(lang) )
-		return true;
-
-	foreach(const VariantInfo* variantInfo, layoutInfo->variantInfos) {
-		if( variantInfo->languages.contains(lang) )
-			return true;
-	}
-	return false;
-}
-
 void AddLayoutDialog::languageChanged(int langIdx)
 {
 	QString lang = layoutDialogUi->languageComboBox->itemData(langIdx).toString();
@@ -91,8 +78,10 @@ void AddLayoutDialog::languageChanged(int langIdx)
 	emptyPixmap.fill(Qt::transparent);
 
 	layoutDialogUi->layoutComboBox->clear();
+	int defaultIndex = -1;
+	int i = 0;
     foreach(const LayoutInfo* layoutInfo, rules->layoutInfos) {
-    	if( lang.isEmpty() || containsLanguage(layoutInfo, lang) ) {
+    	if( lang.isEmpty() || layoutInfo->isLanguageSupportedByLayout(lang) ) {
     		if( flags ) {
     			QIcon icon(flags->getIcon(layoutInfo->name));
     			if( icon.isNull() ) {
@@ -103,11 +92,21 @@ void AddLayoutDialog::languageChanged(int langIdx)
     		else {
     			layoutDialogUi->layoutComboBox->addItem(layoutInfo->description, layoutInfo->name);
     		}
+
+    		// try to guess best default layout selection for given language
+    		if( ! lang.isEmpty() && defaultIndex == -1 && layoutInfo->isLanguageSupportedByDefaultVariant(lang) ) {
+    			defaultIndex = i;
+    		}
+    		i++;
     	}
     }
+    if( defaultIndex == -1 ) {
+    	defaultIndex = 0;
+    }
+
     layoutDialogUi->layoutComboBox->model()->sort(0);
-	layoutDialogUi->layoutComboBox->setCurrentIndex(0);
-	layoutChanged(0);
+	layoutDialogUi->layoutComboBox->setCurrentIndex(defaultIndex);
+	layoutChanged(defaultIndex);
 
 	selectedLanguage = lang;
 }
@@ -123,13 +122,14 @@ void AddLayoutDialog::layoutChanged(int layoutIdx)
 	layoutDialogUi->variantComboBox->clear();
 	const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutName);
     foreach(const VariantInfo* variantInfo, layoutInfo->variantInfos) {
-        if( lang.isEmpty() || variantInfo->languages.contains(lang) ) {
+        if( lang.isEmpty() || layoutInfo->isLanguageSupportedByVariant(variantInfo, lang) ) {
         	layoutDialogUi->variantComboBox->addItem(variantInfo->description, variantInfo->name);
         }
     }
 
-    if( lang.isEmpty() || layoutInfo->languages.contains(lang) ) {
-    	layoutDialogUi->variantComboBox->model()->sort(0);
+	layoutDialogUi->variantComboBox->model()->sort(0);
+
+    if( lang.isEmpty() || layoutInfo->isLanguageSupportedByDefaultVariant(lang) ) {
     	layoutDialogUi->variantComboBox->insertItem(0, i18nc("variant", "Default"), "");
     }
 	layoutDialogUi->variantComboBox->setCurrentIndex(0);

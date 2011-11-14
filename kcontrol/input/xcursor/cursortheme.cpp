@@ -110,23 +110,35 @@ QPixmap CursorTheme::createIcon() const
     int cursorSize = nominalCursorSize(iconSize);
     QSize size = QSize(iconSize, iconSize);
 
+    QPixmap pixmap = createIcon(cursorSize);
+
+    if (!pixmap.isNull())
+    {
+        // Scale the pixmap if it's larger than the preferred icon size
+        if (pixmap.width() > size.width() || pixmap.height() > size.height())
+            pixmap = pixmap.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+
+    return pixmap;
+}
+
+
+QPixmap CursorTheme::createIcon(int size) const
+{
     QPixmap pixmap;
-    QImage image = loadImage(sample(), cursorSize);
+    QImage image = loadImage(sample(), size);
 
     if (image.isNull() && sample() != "left_ptr")
-        image = loadImage("left_ptr", cursorSize);
+        image = loadImage("left_ptr", size);
 
     if (!image.isNull())
     {
-        // Scale the image if it's larger than the preferred icon size
-        if (image.width() > size.width() || image.height() > size.height())
-            image = image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
         pixmap = QPixmap::fromImage(image);
     }
 
     return pixmap;
 }
+
 
 void CursorTheme::setCursorName(QCursor &cursor, const QString &name) const
 {

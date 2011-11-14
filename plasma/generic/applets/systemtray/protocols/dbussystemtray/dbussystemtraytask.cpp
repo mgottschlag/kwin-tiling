@@ -203,18 +203,23 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
     }
 
     if (m_typeId != oldTypeId) {
-        QHash<Plasma::Applet *, QGraphicsWidget *>::const_iterator i = widgetsByHost().constBegin();
-        while (i != widgetsByHost().constEnd()) {
-            Plasma::IconWidget *icon = static_cast<Plasma::IconWidget *>(i.value());
-            icon->action()->setObjectName(QString("Systemtray-%1-%2").arg(m_typeId).arg(i.key()->id()));
+        QHashIterator<Plasma::Applet *, QGraphicsWidget *> it(widgetsByHost());
+        while (it.hasNext()) {
+            it.next();
 
-            KConfigGroup cg = i.key()->config();
+            Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(it.value());
+            if (!icon) {
+                continue;
+            }
+
+            icon->action()->setObjectName(QString("Systemtray-%1-%2").arg(m_typeId).arg(it.key()->id()));
+
+            KConfigGroup cg = it.key()->config();
             KConfigGroup shortcutsConfig = KConfigGroup(&cg, "Shortcuts");
 
             //FIXME: quite ugly, checks if the applet is klipper and if is less than 2 widgets have been created. if so, assign a default global shortcut
             QString shortcutText;
-            if (i.key()->property("firstRun").toBool() == true && name() == "Klipper" && widgetsByHost().count() < 2) {
-
+            if (it.key()->property("firstRun").toBool() == true && name() == "Klipper" && widgetsByHost().count() < 2) {
                 QString file = KStandardDirs::locateLocal("config", "kglobalshortcutsrc");
                 KConfig config(file);
                 KConfigGroup cg(&config, "klipper");
@@ -233,6 +238,7 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
                     shortcutText = "Ctrl+Alt+V";
                 }
             }
+
             shortcutText = shortcutsConfig.readEntryUntranslated(icon->action()->objectName(), shortcutText);
             KAction *action = qobject_cast<KAction *>(icon->action());
             if (action && !shortcutText.isEmpty()) {
@@ -241,8 +247,6 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
                             KAction::NoAutoloading);
                 shortcutsConfig.writeEntry(icon->action()->objectName(), shortcutText);
             }
-
-            ++i;
         }
     }
 
@@ -303,7 +307,7 @@ void DBusSystemTrayTask::blinkAttention()
     foreach (QGraphicsWidget *widget, widgetsByHost()) {
         DBusSystemTrayWidget *iconWidget = qobject_cast<DBusSystemTrayWidget *>(widget);
         if (iconWidget) {
-            iconWidget->setIcon(m_blink?m_attentionIconName:m_iconName, m_blink?m_attentionIcon:m_icon);
+            iconWidget->setIcon(m_blink ? m_attentionIconName : m_iconName, m_blink ? m_attentionIcon : m_icon);
         }
     }
     m_blink = !m_blink;

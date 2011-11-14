@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" 
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
 "dtd/kdex.dtd" [
  <!ENTITY kappname "&kde; Menu Editor">
   <!ENTITY package "kdebase">
@@ -38,7 +38,7 @@
 <date>2011-04-26</date>
 <releaseinfo>0.8 (&kde; 4.7)</releaseinfo>
 
-<abstract><para>&kmenuedit; allows editing one of the &kde; application launchers: &kickoff;, the classic &kmenu; or Lancelot Launcher. 
+<abstract><para>&kmenuedit; allows editing one of the &kde; application launchers: &kickoff;, the classic &kmenu; or Lancelot Launcher.
 </para></abstract>
 
 <keywordset>
@@ -59,9 +59,9 @@
 
 <para>&kmenuedit; allows editing of &kde; application launchers: &kickoff;, classic &kmenu; or Lancelot Launcher.</para>
 
-<para>&kmenuedit; can be started either by &RMB; clicking the application launcher 
+<para>&kmenuedit; can be started either by &RMB; clicking the application launcher
 button on the panel and choosing <guimenuitem>Edit
-Applications...</guimenuitem>, or 
+Applications...</guimenuitem>, or
 by typing <userinput>kmenuedit</userinput> in the &krunner; line.</para>
 
 <para>&kmenuedit; allows you to:</para>
@@ -84,8 +84,8 @@ and <guimenuitem>Paste</guimenuitem> menu items</para></listitem>
 <title>Adding a Menu Entry</title>
 
   <para>In this example, we will add &firefox; to the <guisubmenu>Internet</guisubmenu> submenu.</para>
-  <para>To start off, we need to open &kmenuedit;, so &RMB; on the application 
-launcher menu, click <guimenuitem>Edit Applications...</guimenuitem> to start 
+  <para>To start off, we need to open &kmenuedit;, so &RMB; on the application
+launcher menu, click <guimenuitem>Edit Applications...</guimenuitem> to start
 &kmenuedit;. After &kmenuedit; has started, select <guisubmenu>Internet</guisubmenu> as shown in picture below.
 <screenshot>
 <screeninfo>Select <guisubmenu>Internet</guisubmenu></screeninfo>
@@ -99,7 +99,7 @@ launcher menu, click <guimenuitem>Edit Applications...</guimenuitem> to start
 </mediaobject>
 </screenshot></para>
   <para>
-    Once you have selected <guisubmenu>Internet</guisubmenu>, click on <menuchoice><guimenu>File</guimenu><guimenuitem>New Item...</guimenuitem></menuchoice>, opening the <guilabel>New Item</guilabel> dialog, as shown below. Type the name of the program you want to add, in this case, type <userinput>firefox</userinput>. 
+    Once you have selected <guisubmenu>Internet</guisubmenu>, click on <menuchoice><guimenu>File</guimenu><guimenuitem>New Item...</guimenuitem></menuchoice>, opening the <guilabel>New Item</guilabel> dialog, as shown below. Type the name of the program you want to add, in this case, type <userinput>firefox</userinput>.
 <screenshot>
 <screeninfo><guilabel>New Item</guilabel> dialog</screeninfo>
 <mediaobject>
@@ -125,7 +125,7 @@ Press return, and you should see something like the picture below in the main wi
 </textobject>
 </mediaobject>
 </screenshot></para>
-  
+
 <para>
     Now lets fill in the <guilabel>Description:</guilabel>, in this case type <userinput>Web Browser</userinput>. <note><para>The description and name will be displayed on the application launcher as <quote>Web Browser (Firefox)</quote>.</para></note> We will need to fill in the executable name in the <guilabel>Command:</guilabel> field, in this instance we will type <userinput><command>firefox</command></userinput>.</para>
 <note><para>Following the command, you can have several place holders which will be replaced with actual values when the program is run:
@@ -142,8 +142,8 @@ Press return, and you should see something like the picture below in the main wi
 </simplelist></para>
 <informalexample><para>For example: if you want to firefox to start your web browsing at www.kde.org - instead of <command>firefox</command> you would type <command>firefox %u www.kde.org</command>.</para></informalexample></note>
 <para>Most applications accept additional options &eg; the name of a defined profile like &konqueror; or &konsole;.
-To see all options for an application launch <userinput><command><replaceable>applicationname</replaceable></command> <option>--help</option></userinput> in &konsole;.</para> 
-<para>We would like to have a more creative icon, so we will click the generic icon sitting beside <guilabel>Name:</guilabel>. It will bring the <guilabel>Select Icon</guilabel> dialog which will let us choose the new icon, as shown below.
+To see all options for an application launch <userinput><command><replaceable>applicationname</replaceable></command> <option>--help</option></userinput> in &konsole;.</para>
+<para>We would like to have a more creative icon, so we will click the generic icon sitting beside <guilabel>Name:</guilabel> (note, the default icon may be blank, in which case click in the area to the right of the name entry box.) It will bring the <guilabel>Select Icon</guilabel> dialog which will let us choose the new icon, as shown below.
 <screenshot>
 <screeninfo><guilabel>Select Icon</guilabel> dialog</screeninfo>
 <mediaobject>
@@ -156,7 +156,7 @@ To see all options for an application launch <userinput><command><replaceable>ap
 </mediaobject>
 </screenshot></para>
 
-  <para>We choose the firefox icon from the list, and press return. Your finished screen should probably look something like the screenshot below. 
+  <para>We choose the firefox icon from the list, and press return. Your finished screen should probably look something like the screenshot below.
 <screenshot>
 <screeninfo>Done screenshot</screeninfo>
 <mediaobject>
@@ -242,7 +242,7 @@ executable location.</para></listitem>
 <term><guilabel>Run in terminal</guilabel></term>
 <listitem><para>You must check this if your program requires terminal emulator
 in order to run. This mainly applies to <link
-linkend="gloss-console-application">console 
+linkend="gloss-console-application">console
 applications</link>.</para></listitem>
 </varlistentry>
 <varlistentry>
@@ -277,7 +277,7 @@ fileref="reset.png" format="PNG"/></imageobject></inlinemediaobject>.
 </listitem>
 </varlistentry>
 </variablelist>
-</sect1> 
+</sect1>
 
 </chapter>
 
@@ -286,7 +286,7 @@ fileref="reset.png" format="PNG"/></imageobject></inlinemediaobject>.
 
 <variablelist>
 <varlistentry id="file-new-item">
-<term><menuchoice> 
+<term><menuchoice>
 <shortcut><keycombo
 action="simul">&Ctrl;<keycap>N</keycap></keycombo></shortcut>
 <guimenu>File</guimenu> <guimenuitem>New Item...</guimenuitem>
@@ -344,7 +344,7 @@ Edit</guimenu> <guimenuitem>Cut</guimenuitem>
 you want to move menu item, you should first cut it to the clipboard, move to
 the destination place using the left panel, and use the
 <guimenuitem>Paste</guimenuitem> function to paste the menu item from the
-clipboard.</para></listitem> 
+clipboard.</para></listitem>
 </varlistentry>
 
 <varlistentry id="edit-copy">
@@ -442,7 +442,7 @@ Toolbars...</guimenuitem></menuchoice></term>
 <para>Contributors:</para>
 <itemizedlist>
 <listitem><para>&Matthias.Elter; &Matthias.Elter.mail; - Original
-Author</para> 
+Author</para>
 </listitem>
 <listitem><para>&Matthias.Ettrich; &Matthias.Ettrich.mail;</para>
 </listitem>
@@ -465,7 +465,7 @@ Author</para>
 </chapter>
 
 <glossary id="glossary">
-<title>Glossary</title> 
+<title>Glossary</title>
 
 <glossentry id="gloss-terminal-emulator">
 <glossterm>Terminal emulator</glossterm>
@@ -485,7 +485,7 @@ information or provides a control shortcut. For instance the
 <application>Clock</application> applet shows current time and date
 (and even a month diary if you click it), and <application>System
 Monitor</application> applet shows how busy your machine currently is
-in real-time.</para> </glossdef> 
+in real-time.</para> </glossdef>
 </glossentry>
 
 <glossentry id="gloss-legacy-application">
@@ -536,7 +536,7 @@ work.</para></footnote>.</para>
 
 </glossary>
 
-&documentation.index; 
+&documentation.index;
 
 </book>
 <!--

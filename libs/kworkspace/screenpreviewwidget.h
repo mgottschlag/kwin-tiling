@@ -23,7 +23,7 @@
 
 #include <QWidget>
 
-#include <kdemacros.h>
+#include "kworkspace_export.h"
 
 class Wallpaper;
 
@@ -34,7 +34,7 @@ namespace Plasma
     class Wallpaper;
 }
 
-class KDE_EXPORT ScreenPreviewWidget : public QWidget
+class KWORKSPACE_EXPORT ScreenPreviewWidget : public QWidget
 {
     Q_OBJECT
 

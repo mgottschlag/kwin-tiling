@@ -79,7 +79,11 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet)
 
 TaskGroupItem::~TaskGroupItem()
 {
-    delete m_tasksLayout;
+    if (!m_offscreenLayout && !m_mainLayout) {
+        // only delete this if we have neither an offscreen layout or a mainlayout
+        // if we do, then they will delete the layout for us.
+        delete m_tasksLayout;
+    }
 }
 
 bool TaskGroupItem::isSplit()
@@ -223,6 +227,10 @@ void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
 
 void TaskGroupItem::checkUpdates()
 {
+    if (!m_group) {
+        return;
+    }
+
     bool needsUpdate = false;
     TaskFlags flags = m_flags;
 
@@ -969,16 +977,8 @@ void TaskGroupItem::paint(QPainter *painter,
 {
     if (collapsed()) {
         AbstractTaskItem::paint(painter,option,widget);
-    }/* else {
-        if (m_group) {
-            //painter->fillRect(geometry(), m_group.data()->color());
-        }
-    }*/
-
-    //kDebug() << "painter()";
-    //painter->setBrush(QBrush(background));
+    }
 }
-
 
 // TODO provide a way to edit all group properties
 void TaskGroupItem::editGroup()

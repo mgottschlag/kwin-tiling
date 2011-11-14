@@ -195,8 +195,7 @@ ShadeActionImpl::ShadeActionImpl(QObject *parent, AbstractGroupableItem *item)
 ResizeActionImpl::ResizeActionImpl(QObject *parent, TaskItem* item)
     : QAction(parent)
 {
-    TaskPtr task = item->task();
-    connect(this, SIGNAL(triggered()), task.data(), SLOT(resize()));
+    connect(this, SIGNAL(triggered()), item->task(), SLOT(resize()));
     setText(i18n("Re&size"));
     setEnabled(item->isActionSupported(NET::ActionResize));
 }
@@ -204,8 +203,7 @@ ResizeActionImpl::ResizeActionImpl(QObject *parent, TaskItem* item)
 MoveActionImpl::MoveActionImpl(QObject *parent, TaskItem* item)
     : QAction(parent)
 {
-    TaskPtr task = item->task();
-    connect(this, SIGNAL(triggered()), task.data(), SLOT(move()));
+    connect(this, SIGNAL(triggered()), item->task(), SLOT(move()));
     setText(i18n("&Move"));
     setIcon(KIcon("transform-move"));
     setEnabled(item->isActionSupported(NET::ActionMove));
@@ -255,12 +253,12 @@ ToCurrentDesktopActionImpl::ToCurrentDesktopActionImpl(QObject *parent, Abstract
 void ToCurrentDesktopActionImpl::slotToCurrentDesktop()
 {
     const int desktop = KWindowSystem::currentDesktop();
-    foreach (TaskPtr task, m_tasks) {
-        task->toDesktop(desktop);
+    foreach (QWeakPointer<Task> task, m_tasks) {
+        if (task) {
+            task.data()->toDesktop(desktop);
+        }
     }
 }
-
-
 
 ToDesktopActionImpl::ToDesktopActionImpl(QObject *parent, AbstractGroupableItem *item, int desktop)
     : AbstractGroupableItemAction(parent, item),
@@ -281,11 +279,12 @@ ToDesktopActionImpl::ToDesktopActionImpl(QObject *parent, AbstractGroupableItem 
 
 void ToDesktopActionImpl::slotToDesktop()
 {
-    foreach (TaskPtr task, m_tasks) {
-        task->toDesktop(m_desktop);
+    foreach (QWeakPointer<Task> task, m_tasks) {
+        if (task) {
+            task.data()->toDesktop(m_desktop);
+        }
     }
 }
-
 
 
 DesktopsMenu::DesktopsMenu(QWidget *parent, AbstractGroupableItem *item)
@@ -544,9 +543,12 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
     setIcon(item->icon());
     if (appActions.count()) {
         foreach (QAction * action, appActions) {
-            addAction(action);
+            if (action->isSeparator()) {
+                addSeparator();
+            } else {
+                addAction(action);
+            }
         }
-
         addSeparator();
     }
 
@@ -578,9 +580,12 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     setIcon(group->icon());
     if (appActions.count()) {
         foreach (QAction * action, appActions) {
-            addAction(action);
+            if (action->isSeparator()) {
+                addSeparator();
+            } else {
+                addAction(action);
+            }
         }
-
         addSeparator();
     }
 
@@ -622,9 +627,12 @@ BasicMenu::BasicMenu(QWidget *parent, LauncherItem* item, GroupManager *strategy
     setIcon(item->icon());
     if (appActions.count()) {
         foreach (QAction * action, appActions) {
-            addAction(action);
+            if (action->isSeparator()) {
+                addSeparator();
+            } else {
+                addAction(action);
+            }
         }
-
         addSeparator();
     }
 
@@ -653,9 +661,12 @@ GroupPopupMenu::GroupPopupMenu(QWidget *parent, TaskGroup *group, GroupManager *
             ToolTipMenu* menu = new GroupPopupMenu(this, qobject_cast<TaskGroup*>(item), groupManager);
             addMenu(menu);
         } else {
-            QAction* action = new QAction(item->icon(), item->name(), this);
-            connect(action, SIGNAL(triggered(bool)), (qobject_cast<TaskItem*>(item))->task().data() , SLOT(activateRaiseOrIconify()));
-            addAction(action);
+            TaskItem *taskItem = qobject_cast<TaskItem*>(item);
+            if (taskItem && taskItem->task()) {
+                QAction* action = new QAction(item->icon(), item->name(), this);
+                connect(action, SIGNAL(triggered(bool)), taskItem->task(), SLOT(activateRaiseOrIconify()));
+                addAction(action);
+            }
         }
     }
 }

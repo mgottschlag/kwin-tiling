@@ -90,6 +90,7 @@ public:
     Client(Workspace* ws);
     Window wrapperId() const;
     Window decorationId() const;
+    Window inputId() const { return input_window; }
 
     const Client* transientFor() const;
     Client* transientFor();
@@ -137,6 +138,7 @@ public:
     virtual QPoint clientPos() const; // Inside of geometry()
     virtual QSize clientSize() const;
     virtual QRect visibleRect() const;
+    QPoint inputPos() const { return input_offset; } // Inside of geometry()
 
     bool windowEvent(XEvent* e);
     virtual bool eventFilter(QObject* o, QEvent* e);
@@ -571,6 +573,8 @@ private:
 
     void checkOffscreenPosition (QRect* geom, const QRect& screenArea);
 
+    void updateInputWindow();
+
     Window client;
     Window wrapper;
     KDecoration* decoration;
@@ -582,6 +586,7 @@ private:
     Window move_resize_grab_window;
     bool move_resize_has_keyboard_grab;
     bool unrestrictedMoveResize;
+    int moveResizeStartScreen;
 
     Position mode;
     QPoint moveOffset;
@@ -726,6 +731,9 @@ private:
     bool activitiesDefined; //whether the x property was actually set
 
     bool needsSessionInteract;
+
+    Window input_window;
+    QPoint input_offset;
 };
 
 /**
@@ -816,11 +824,6 @@ inline const Group* Client::group() const
 inline Group* Client::group()
 {
     return in_group;
-}
-
-inline void Client::setClientGroup(ClientGroup* group)
-{
-    client_group = group;
 }
 
 inline ClientGroup* Client::clientGroup() const
@@ -1027,6 +1030,7 @@ inline bool Client::hiddenPreview() const
 }
 
 KWIN_COMPARE_PREDICATE(WrapperIdMatchPredicate, Client, Window, cl->wrapperId() == value);
+KWIN_COMPARE_PREDICATE(InputIdMatchPredicate, Client, Window, cl->inputId() == value);
 
 } // namespace
 

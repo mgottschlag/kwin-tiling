@@ -101,7 +101,7 @@ QHash<Plasma::Applet *, QGraphicsWidget *> Task::widgetsByHost() const
 
 void Task::abandon(Plasma::Applet *host)
 {
-    QGraphicsWidget *widget = d->widgetsByHost.value(host);
+    QGraphicsWidget *widget = d->widgetsByHost.take(host);
     if (widget) {
         widget->deleteLater();
     }
@@ -116,7 +116,7 @@ void Task::widgetDeleted()
 {
     bool wasEmbeddable = isEmbeddable();
 
-    QGraphicsWidget * w = static_cast<QGraphicsWidget*>(sender());
+    QGraphicsWidget *w = static_cast<QGraphicsWidget*>(sender());
     QMutableHashIterator<Plasma::Applet *, QGraphicsWidget *> it(d->widgetsByHost);
     while (it.hasNext()) {
         it.next();

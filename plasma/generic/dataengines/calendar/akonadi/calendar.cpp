@@ -584,6 +584,18 @@ void Calendar::Private::itemsRemoved( const Akonadi::Item::List &items )
       return;
     }
 
+    if ( !m_itemMap.contains( item.id() ) ) {
+      /** There's an off by one error in the ETM which steveire doesn't have time right now to look at.
+       *  When removing an item in korganizer, the plasma's calendar ETM emits rowsAboutToBeRemoved()
+       *  for the wrong item, which makes plasma crash.
+       *
+       * I won't remove this hack in the future because this code is to be deleted and replaced by
+       * kdepimlibs/akonadi/calendar/etmcalendar.cpp ( branch calendaring ), which i'm currently writting
+       * unit tests. So until then no need to crash with an empty payload exception.
+       */
+      return;
+    }
+
     Akonadi::Item oldItem( m_itemMap.take( item.id() ) );
 
     removeItemFromMaps( oldItem );

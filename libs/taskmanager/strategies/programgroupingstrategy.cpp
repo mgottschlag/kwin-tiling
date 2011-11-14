@@ -230,7 +230,6 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
             list.append(taskItem);
             TaskGroup* group = createGroup(list);
             group->setName(name);
-            group->setColor(Qt::red);
             group->setIcon(icon);
             connect(group, SIGNAL(checkIcon(TaskGroup*)), this, SLOT(updateIcon(TaskGroup*)));
         } else {

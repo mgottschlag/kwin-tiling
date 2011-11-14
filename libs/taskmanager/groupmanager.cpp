@@ -44,7 +44,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "strategies/desktopsortingstrategy.h"
 #include "strategies/programgroupingstrategy.h"
 #include "strategies/manualgroupingstrategy.h"
-#include "strategies/kustodiangroupingstrategy.h"
 #include "strategies/manualsortingstrategy.h"
 #include "launcheritem.h"
 #include "launcherconfig.h"
@@ -73,7 +72,8 @@ public:
           readingLauncherConfig(false),
           separateLaunchers(true),
           forceGrouping(false),
-          launchersLocked(false) {
+          launchersLocked(false)
+    {
     }
 
     /** reload all tasks from TaskManager */
@@ -155,7 +155,7 @@ GroupManager::GroupManager(QObject *parent)
     d->currentDesktop = TaskManager::self()->currentDesktop();
     d->currentActivity = TaskManager::self()->currentActivity();
 
-    d->rootGroups[d->currentActivity][d->currentDesktop] = new TaskGroup(this, "RootGroup", Qt::transparent);
+    d->rootGroups[d->currentActivity][d->currentDesktop] = new TaskGroup(this, "RootGroup");
 
     d->reloadTimer.setSingleShot(true);
     d->reloadTimer.setInterval(0);
@@ -392,7 +392,7 @@ void GroupManagerPrivate::startupItemDestroyed(AbstractGroupableItem *item)
 {
     TaskItem *taskItem = static_cast<TaskItem*>(item);
     startupList.remove(startupList.key(taskItem));
-    geometryTasks.remove(taskItem->task().data());
+    geometryTasks.remove(taskItem->task());
 }
 
 bool GroupManager::manualGroupingRequest(AbstractGroupableItem* item, TaskGroup* groupItem)
@@ -434,7 +434,7 @@ void GroupManagerPrivate::currentActivityChanged(QString newActivity)
 
     if (!rootGroups.contains(newActivity) || !rootGroups.value(newActivity).contains(currentDesktop)) {
         kDebug() << "created new desk group";
-        rootGroups[newActivity][currentDesktop] = new TaskGroup(q, "RootGroup", Qt::transparent);
+        rootGroups[newActivity][currentDesktop] = new TaskGroup(q, "RootGroup");
         if (abstractSortingStrategy) {
             abstractSortingStrategy->handleGroup(rootGroups[newActivity][currentDesktop]);
         }
@@ -476,7 +476,7 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
 
     if (!rootGroups[currentActivity].contains(newDesktop)) {
         kDebug() << "created new desk group";
-        rootGroups[currentActivity][newDesktop] = new TaskGroup(q, "RootGroup", Qt::transparent);
+        rootGroups[currentActivity][newDesktop] = new TaskGroup(q, "RootGroup");
         if (abstractSortingStrategy) {
             abstractSortingStrategy->handleGroup(rootGroups[currentActivity][newDesktop]);
         }
@@ -1312,10 +1312,6 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
 
     case ProgramGrouping:
         d->abstractGroupingStrategy = new ProgramGroupingStrategy(this);
-        break;
-
-    case KustodianGrouping:
-        d->abstractGroupingStrategy = new KustodianGroupingStrategy(this);
         break;
 
     case NoGrouping:

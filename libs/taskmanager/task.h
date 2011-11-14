@@ -48,7 +48,7 @@ namespace TaskManager
  *
  * @see TaskManager
  */
-class TASKMANAGER_EXPORT Task : public QObject, public KShared
+class TASKMANAGER_EXPORT Task : public QObject, public QSharedData
 {
     Q_OBJECT
     Q_PROPERTY(QString visibleName READ visibleName)

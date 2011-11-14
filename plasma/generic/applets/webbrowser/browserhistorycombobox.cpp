@@ -238,6 +238,12 @@ void BrowserHistoryComboBox::paint(QPainter *painter,
     }
 
     if (nativeWidget()->isEditable()) {
+        if (d->displayProgress) {
+            painter->fillRect(QRectF(option->rect.x() + 2, option->rect.y() + 3, (int) (((qreal) (option->rect.width() - 4) / 100) * d->progressValue), option->rect.height() - 4), Theme::defaultTheme()->color(Theme::LinkColor));
+        }
+        if (d->lineEditBackground->hasElement("hint-focus-over-base")) {
+            QGraphicsProxyWidget::paint(painter, option, widget);
+        }
         if (animState != QAbstractAnimation::Stopped || hasFocus() || d->underMouse) {
             if (hasFocus()) {
                 d->lineEditBackground->setElementPrefix("focus");
@@ -258,10 +264,9 @@ void BrowserHistoryComboBox::paint(QPainter *painter,
                 painter->drawPixmap(bufferPixmap.rect().translated(QPoint(-left, -top)), bufferPixmap, bufferPixmap.rect());
             }
         }
-        if (d->displayProgress){
-            painter->fillRect(QRectF(option->rect.x() + 2, option->rect.y() + 3, (int) (((qreal) (option->rect.width() - 4) / 100) * d->progressValue), option->rect.height() - 4), Theme::defaultTheme()->color(Theme::LinkColor));
-	}
-        QGraphicsProxyWidget::paint(painter, option, widget);
+        if (!d->lineEditBackground->hasElement("hint-focus-over-base")) {
+            QGraphicsProxyWidget::paint(painter, option, widget);
+        }
         return;
     }
 

@@ -90,7 +90,7 @@ int main( int argc, char* argv[] )
                 screen_number = DefaultScreen(dpy);
                 char* display_name;
                 display_name = XDisplayString(dpy);
-                int breakpos;
+                int breakpos = strlen(display_name);
                 for (int i = strlen(display_name) - 1; i >= 0; i--)
                     {
                     if (display_name[i] == '.')

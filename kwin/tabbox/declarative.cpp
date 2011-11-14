@@ -37,6 +37,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDE/Plasma/WindowEffects>
 #include <kdeclarative.h>
 #include <kephal/screens.h>
+// KWin
+#include "thumbnailitem.h"
 
 namespace KWin
 {
@@ -61,7 +63,13 @@ QPixmap ImageProvider::requestPixmap(const QString &id, QSize *size, const QSize
     if (!index.isValid()) {
         return QDeclarativeImageProvider::requestPixmap(id, size, requestedSize);
     }
+    if (index.model()->data(index, ClientModel::EmptyRole).toBool()) {
+        return QDeclarativeImageProvider::requestPixmap(id, size, requestedSize);
+    }
     TabBoxClient* client = static_cast< TabBoxClient* >(index.model()->data(index, ClientModel::ClientRole).value<void *>());
+    if (!client) {
+        return QDeclarativeImageProvider::requestPixmap(id, size, requestedSize);
+    }
 
     QSize s(32, 32);
     if (requestedSize.isValid()) {
@@ -69,6 +77,14 @@ QPixmap ImageProvider::requestPixmap(const QString &id, QSize *size, const QSize
     }
     *size = s;
     QPixmap icon = client->icon(s);
+    if (s.width() > icon.width() || s.height() > icon.height()) {
+        // icon is smaller than what we requested - QML would scale it which looks bad
+        QPixmap temp(s);
+        temp.fill(Qt::transparent);
+        QPainter p(&temp);
+        p.drawPixmap(s.width()/2 - icon.width()/2, s.height()/2 - icon.height()/2, icon);
+        icon = temp;
+    }
     if (parts.size() > 2) {
         KIconEffect *effect = KIconLoader::global()->iconEffect();
         KIconLoader::States state = KIconLoader::DefaultState;
@@ -103,6 +119,8 @@ DeclarativeView::DeclarativeView(QAbstractItemModel *model, QWidget *parent)
     kdeclarative.setDeclarativeEngine(engine());
     kdeclarative.initialize();
     kdeclarative.setupBindings();
+    qmlRegisterType<ThumbnailItem>("org.kde.kwin", 0, 1, "ThumbnailItem");
+    rootContext()->setContextProperty("viewId", static_cast<qulonglong>(winId()));
     rootContext()->setContextProperty("clientModel", model);
     setSource(QUrl(KStandardDirs::locate("data", "kwin/tabbox/tabbox.qml")));
 

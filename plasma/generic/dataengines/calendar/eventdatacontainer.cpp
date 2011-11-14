@@ -105,14 +105,14 @@ void EventDataContainer::updateTodoData()
             todoData["TodoHasStartDate"] = todo->hasStartDate();
             todoData["TodoIsOpenEnded"] = todo->isOpenEnded();
             todoData["TodoHasDueDate"] = todo->hasDueDate();
-            var.setValue(todo->dtDue());
+            var.setValue(todo->dtDue().toTimeSpec(m_calendar->timeSpec()));
             todoData["TodoDueDate"] = var;
             todoData["TodoIsCompleted"] = todo->isCompleted();
             todoData["TodoIsInProgress"] = todo->isInProgress(false); // ???
             todoData["TodoIsNotStarted"] = todo->isNotStarted(false); // ???
             todoData["TodoPercentComplete"] = todo->percentComplete();
             todoData["TodoHasCompletedDate"] = todo->hasCompletedDate();
-            var.setValue(todo->completed());
+            var.setValue(todo->completed().toTimeSpec(m_calendar->timeSpec()));
             todoData["TodoCompletedDate"] = var;
 
             setData(todo->uid(), todoData);
@@ -157,12 +157,12 @@ void EventDataContainer::populateIncidenceData(KCalCore::Incidence::Ptr incidenc
     incidenceData["OrganizerName"] = incidence->organizer()->name();
     incidenceData["OrganizerEmail"] = incidence->organizer()->email();
     incidenceData["Priority"] = incidence->priority();
-    var.setValue(incidence->dtStart());
+    var.setValue(incidence->dtStart().toTimeSpec(m_calendar->timeSpec()));
     incidenceData["StartDate"] = var;
 
     KCalCore::Event* event = dynamic_cast<KCalCore::Event*>(incidence.data());
     if (event) {
-        var.setValue(event->dtEnd());
+        var.setValue(event->dtEnd().toTimeSpec(m_calendar->timeSpec()));
         incidenceData["EndDate"] = var;
     }
     // Build the Occurance Index, this lists all occurences of the Incidence in the required range
@@ -170,27 +170,27 @@ void EventDataContainer::populateIncidenceData(KCalCore::Incidence::Ptr incidenc
     // Recurring Events use each recurrence start/end date
     // The OccurenceUid is redundant, but it makes it easy for clients to just take() the data structure intact as a separate index
     QList<QVariant> occurences;
-    // Build the recurrence list of start dates only for recurring incidences only
+    // Build the recurrence list of start dates for recurring incidences only
     QList<QVariant> recurrences;
     if (incidence->recurs()) {
-        KCalCore::DateTimeList recurList = incidence->recurrence()->timesInInterval(m_startDate, m_endDate);
+        KCalCore::DateTimeList recurList = incidence->recurrence()->timesInInterval(m_startDate.toTimeSpec(m_calendar->timeSpec()), m_endDate.toTimeSpec(m_calendar->timeSpec()));
         foreach(const KDateTime &recurDateTime, recurList) {
-            var.setValue(recurDateTime);
+            var.setValue(recurDateTime.toTimeSpec(m_calendar->timeSpec()));
             recurrences.append(var);
             Plasma::DataEngine::Data occurence;
             occurence.insert("OccurrenceUid", incidence->uid());
             occurence.insert("OccurrenceStartDate", var);
-            var.setValue(incidence->endDateForStart(recurDateTime));
+            var.setValue(incidence->endDateForStart(recurDateTime).toTimeSpec(m_calendar->timeSpec()));
             occurence.insert("OccurrenceEndDate", var);
             occurences.append(QVariant(occurence));
         }
     } else {
         Plasma::DataEngine::Data occurence;
         occurence.insert("OccurrenceUid", incidence->uid());
-        var.setValue(incidence->dtStart());
+        var.setValue(incidence->dtStart().toTimeSpec(m_calendar->timeSpec()));
         occurence.insert("OccurrenceStartDate", var);
 	if (event) {
-            var.setValue(event->dtEnd());
+            var.setValue(event->dtEnd().toTimeSpec(m_calendar->timeSpec()));
             occurence.insert("OccurrenceEndDate", var);
         }
         occurences.append(QVariant(occurence));

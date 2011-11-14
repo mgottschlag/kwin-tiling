@@ -10,6 +10,8 @@ else(NOT WIN32)
 find_program(INKSCAPE inkscape "$ENV{PROGRAMFILES}/Inkscape" "$ENV{INKSCAPE_DIR}")
 endif(NOT WIN32)
 
+# For a given cursor, this macro defines a variable ${cursor}_inputs that contains
+# a list of the necessary png files.
 macro(set_dependencies cursor)
     file(READ ${CONFIGDIR}/${cursor}.in config_contents)
     string(REPLACE "\n" ";" config_contents ${config_contents})

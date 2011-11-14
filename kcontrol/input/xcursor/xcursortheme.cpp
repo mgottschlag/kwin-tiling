@@ -45,6 +45,39 @@ XCursorTheme::XCursorTheme(const QDir &themeDir)
 
     if (themeDir.exists("index.theme"))
         parseIndexFile();
+
+    QString cursorFile = path() + "/cursors/left_ptr";
+    QList<int> sizeList;
+    XcursorImages *images = XcursorFilenameLoadAllImages(qPrintable(cursorFile));
+    if (images)
+    {
+        for (int i = 0; i < images->nimage; ++i)
+        {
+            if (!sizeList.contains(images->images[i]->size))
+                sizeList.append(images->images[i]->size);
+        };
+        XcursorImagesDestroy(images);
+        qSort(sizeList.begin(), sizeList.end());
+        m_availableSizes = sizeList;
+    };
+    if (!sizeList.isEmpty())
+    {
+        QString sizeListString = QString::number(sizeList.takeFirst());
+        while (!sizeList.isEmpty())
+        {
+            sizeListString.append(", ");
+            sizeListString.append(QString::number(sizeList.takeFirst()));
+        };
+        QString tempString = i18nc(
+            "@info/plain The argument is the list of available sizes (in pixel). Example: "
+                "'Available sizes: 24' or 'Available sizes: 24, 36, 48'",
+            "(Available sizes: %1)",
+            sizeListString);
+        if (m_description.isEmpty())
+          m_description = tempString;
+        else
+          m_description = m_description + ' ' + tempString;
+    };
 }
 
 
@@ -116,10 +149,41 @@ XcursorImages *XCursorTheme::xcLoadImages(const QString &image, int size) const
 }
 
 
+int XCursorTheme::autodetectCursorSize() const
+{
+    /* This code is basically borrowed from display.c of the XCursor library
+       We can't use "int XcursorGetDefaultSize(Display *dpy)" because if
+       previously the cursor size was set to a custom value, it would return
+       this custom value. */
+    int size = 0;
+    int dpi = 0;
+    Display *dpy = QX11Info::display();
+    // The string "v" is owned and will be destroyed by Xlib
+    char *v = XGetDefault(dpy, "Xft", "dpi");
+    if (v)
+        dpi = atoi(v);
+    if (dpi)
+        size = dpi * 16 / 72;
+    if (size == 0)
+    {
+        int dim;
+        if (DisplayHeight(dpy, DefaultScreen(dpy)) <
+            DisplayWidth(dpy, DefaultScreen(dpy)))
+        {
+            dim = DisplayHeight(dpy, DefaultScreen(dpy));
+        } else {
+            dim = DisplayWidth(dpy, DefaultScreen(dpy));
+        };
+        size = dim / 48;
+    }
+    return size;
+}
+
+
 QCursor XCursorTheme::loadCursor(const QString &name, int size) const
 {
-    if (size == -1)
-        size = XcursorGetDefaultSize(QX11Info::display());
+    if (size <= 0)
+        size = autodetectCursorSize();
 
     // Load the cursor images
     XcursorImages *images = xcLoadImages(name, size);
@@ -143,8 +207,8 @@ QCursor XCursorTheme::loadCursor(const QString &name, int size) const
 
 QImage XCursorTheme::loadImage(const QString &name, int size) const
 {
-    if (size == -1)
-        size = XcursorGetDefaultSize(QX11Info::display());
+    if (size <= 0)
+        size = autodetectCursorSize();
 
     // Load the image
     XcursorImage *xcimage = xcLoadImage(name, size);

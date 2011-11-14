@@ -67,8 +67,7 @@ public:
     enum TaskGroupingStrategy {
         NoGrouping = 0,
         ManualGrouping = 1, //Allow manual grouping
-        ProgramGrouping = 2, //Group automatically  same programs
-        KustodianGrouping = 3 //Group always same programs and and even groups of 0 active
+        ProgramGrouping = 2
     };
 
     TaskGroupingStrategy groupingStrategy() const;

@@ -51,17 +51,23 @@ void DBusWatcher::addFactory(DBusPlayerFactory* factory)
         QStringList services = reply.value();
         foreach (const QString &name, services) {
             if (factory->matches(name)) {
+                QDBusReply<QString> ownerReply = m_bus->serviceOwner(name);
                 if (m_players.contains(name)) {
-                    kWarning() << "Already got a player called" << name;
-                } else {
-                    QVariantList args;
-                    args << QVariant(name);
-                    Player::Ptr player = factory->create(args);
-                    if (!player.isNull()) {
-                        m_players[name] = player;
-                        emit(newPlayer(player));
-                    } else {
-                        kWarning() << "Failed to get player" << name;
+                    kWarning() << "Two factories tried to claim the same service:" << name;
+                } else if (ownerReply.isValid()) {
+                    QString owner = ownerReply.value();
+                    kDebug() << "Service" << name << "has owner" << owner;
+                    if (!m_owners.contains(owner)) {
+                        QVariantList args;
+                        args << QVariant(name);
+                        Player::Ptr player = factory->create(args);
+                        if (!player.isNull()) {
+                            m_players[name] = player;
+                            m_owners << owner;
+                            emit(newPlayer(player));
+                        } else {
+                            kDebug() << "Failed to get player" << name;
+                        }
                     }
                 }
             }
@@ -76,30 +82,43 @@ void DBusWatcher::serviceChange(const QString& name,
                                 const QString& newOwner)
 {
     if (oldOwner.isEmpty() && !newOwner.isEmpty()) {
+        kDebug() << "Service" << name << "has owner" << newOwner;
+        if (m_owners.contains(newOwner)) {
+            kDebug() << "Owner" << newOwner << "is already being dealt with";
+            // something is already dealing with this media player
+            return;
+        }
         // got a new service
         foreach (DBusPlayerFactory* factory, m_factories) {
             if (factory->matches(name)) {
                 if (m_players.contains(name)) {
-                    kWarning() << "Already got a player at" << name;
+                    kWarning() << "Two factories tried to claim the same service:" << name;
                 } else {
                     QVariantList args;
                     args << QVariant(name);
                     Player::Ptr player = factory->create(args);
                     if (!player.isNull()) {
                         m_players[name] = player;
+                        m_owners << newOwner;
                         emit(newPlayer(player));
                     } else {
-                        kWarning() << "Failed to get player" << name;
+                        kDebug() << "Failed to get player" << name << "; trying other factories";
                     }
                 }
             }
         }
     } else if (!oldOwner.isEmpty() && newOwner.isEmpty()) {
+        m_owners.removeAll(oldOwner);
         // an old service disappeared
         if (m_players.contains(name)) {
             Player::Ptr player = m_players[name];
             m_players.remove(name);
             emit(playerDisappeared(player));
+        }
+    } else if (!oldOwner.isEmpty() && !newOwner.isEmpty()) {
+        if (m_owners.removeAll(oldOwner) > 0) {
+            kDebug() << "Service" << name << "had owner" << oldOwner << "and is now owned by" << newOwner;
+            m_owners << newOwner;
         }
     }
 }

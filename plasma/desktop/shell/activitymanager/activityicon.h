@@ -65,7 +65,7 @@ class ActivityIcon : public Plasma::AbstractIcon
         void updateButtons();
         void updateContents();
         void currentStatusChanged();
-        void createActivity(Plasma::AbstractIcon * icon);
+        void createActivity();
         void hideTemplate();
 
     private:

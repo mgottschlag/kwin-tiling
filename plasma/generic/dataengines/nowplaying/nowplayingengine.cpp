@@ -30,6 +30,7 @@
 #include "playerinterface/dbuswatcher.h"
 #include "playerinterface/pollingwatcher.h"
 #include "playerinterface/mpris/mpris.h"
+#include "playerinterface/mpris2/mpris2.h"
 #include "playerinterface/juk.h"
 #ifdef XMMS_FOUND
 #include "playerinterface/xmms.h"
@@ -53,6 +54,7 @@ NowPlayingEngine::NowPlayingEngine(QObject* parent,
     connect(dbusWatcher, SIGNAL(playerDisappeared(Player::Ptr)),
             this,        SLOT(removePlayer(Player::Ptr)));
 
+    dbusWatcher->addFactory(new Mpris2Factory(dbusWatcher));
     dbusWatcher->addFactory(new MprisFactory(dbusWatcher));
     dbusWatcher->addFactory(new JukFactory(dbusWatcher));
 

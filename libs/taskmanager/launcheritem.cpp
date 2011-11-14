@@ -141,15 +141,15 @@ bool LauncherItem::shouldShow(const GroupManager *manager) const
     const bool desk = manager->showOnlyCurrentDesktop();
     const bool activity = manager->showOnlyCurrentActivity();
 
-    foreach (QObject * obj, d->associates) {
-        TaskItem *item = static_cast<TaskItem *>(obj);
+    foreach (QObject *obj, d->associates) {
+        TaskItem *item = qobject_cast<TaskItem *>(obj);
         if (!item || !item->task()) {
             continue;
         }
 
-        if ((!screen || item->task().data()->isOnScreen(manager->screen())) &&
-                (!desk || item->isOnCurrentDesktop()) &&
-                (!activity || item->task().data()->isOnCurrentActivity())) {
+        if ((!screen || item->task()->isOnScreen(manager->screen())) &&
+            (!desk || item->isOnCurrentDesktop()) &&
+            (!activity || item->task()->isOnCurrentActivity())) {
             return false;
         }
     }

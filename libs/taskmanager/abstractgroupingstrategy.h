@@ -70,7 +70,6 @@ public:
     enum EditableGroupProperties {
         None = 0,
         Name = 1,
-        Color = 2,
         Icon =  4,
         Members = 8,
         All = 15
@@ -86,10 +85,6 @@ public:
     virtual bool setName(const QString &, TaskGroup*);
     /** Returns a List of unused Names*/
     virtual QList<QString> nameSuggestions(TaskGroup *);
-
-    virtual bool setColor(const QColor &, TaskGroup*);
-    /** Returns a list of unused colors*/
-    virtual QList<QColor> colorSuggestions(TaskGroup *);
 
     virtual bool setIcon(const QIcon &, TaskGroup*);
     /** Returns a list of icons*/
