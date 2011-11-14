@@ -25,14 +25,6 @@ elif test $kcheckrunning_result -eq 2 ; then
         exit 1
 fi
 
-# Set the background to plain grey.
-# The standard X background is nasty, causing moire effects and exploding
-# people's heads. We use colours from the standard KDE palette for those with
-# palettised displays.
-if test -z "$XDM_MANAGED" || echo "$XDM_MANAGED" | grep ",auto" > /dev/null; then
-  xsetroot -solid "#000000"
-fi
-
 # we have to unset this for Darwin since it will screw up KDE's dynamic-loading
 unset DYLD_FORCE_FLAT_NAMESPACE
 
