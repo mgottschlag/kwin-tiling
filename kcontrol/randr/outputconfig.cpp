@@ -53,6 +53,9 @@ OutputConfig::OutputConfig(QWidget* parent, RandROutput* output, OutputConfigLis
 	connect(orientationCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 	connect(positionCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 	connect(positionOutputCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
+	connect(absolutePosX, SIGNAL(valueChanged(int)), this, SLOT(setConfigDirty()));
+	connect(absolutePosY, SIGNAL(valueChanged(int)), this, SLOT(setConfigDirty()));
+
 	connect(sizeCombo,    SIGNAL(currentIndexChanged(int)), this, SIGNAL(updateView()));
 	connect(orientationCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(updateView()));
 	connect(positionCombo,    SIGNAL(currentIndexChanged(int)), this, SIGNAL(updateView()));
@@ -171,6 +174,8 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 	Q_ASSERT(m_output->id() == output); Q_UNUSED(output);
 	kDebug() << "Output" << m_output->name() << "changed. ( mask =" << QString::number(changes) << ")";
 	
+	disconnect(absolutePosX, SIGNAL(valueChanged(int)), this, SLOT(setConfigDirty()));
+	disconnect(absolutePosY, SIGNAL(valueChanged(int)), this, SLOT(setConfigDirty()));
 	if(changes & RandR::ChangeOutputs) {
 		kDebug() << "Outputs changed.";
 	}
@@ -186,7 +191,7 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 	if(changes & RandR::ChangeRect) {
 		QRect r = m_output->rect();
 		kDebug() << "Output rect changed:" << r;
-        updatePositionList();
+		updatePositionList();
 	}
 	
 	if(changes & RandR::ChangeRotation) {
@@ -214,6 +219,8 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 		QSize modeSize = m_output->mode().size();
 		updateRateList(sizeCombo->findData(modeSize));
 	}
+	connect(absolutePosX, SIGNAL(valueChanged(int)), this, SLOT(setConfigDirty()));
+	connect(absolutePosY, SIGNAL(valueChanged(int)), this, SLOT(setConfigDirty()));
 }
 
 QString OutputConfig::positionName(Relation position)
@@ -290,8 +297,12 @@ void OutputConfig::positionComboChanged(int item)
 		int posX = m_output->rect().topLeft().x();
 		int posY = m_output->rect().topLeft().y();
 		
+		disconnect(absolutePosX, SIGNAL(valueChanged(int)), this, SLOT(setConfigDirty()));
+		disconnect(absolutePosY, SIGNAL(valueChanged(int)), this, SLOT(setConfigDirty()));
 		absolutePosX->setValue(posX);
 		absolutePosY->setValue(posY);
+		connect(absolutePosX, SIGNAL(valueChanged(int)), this, SLOT(setConfigDirty()));
+		connect(absolutePosY, SIGNAL(valueChanged(int)), this, SLOT(setConfigDirty()));
 	}
 }
 
@@ -314,6 +325,8 @@ void OutputConfig::updatePositionListDelayed()
 
 	disconnect(positionCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 	disconnect(positionOutputCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
+	disconnect(absolutePosX, SIGNAL(valueChanged(int)), this, SLOT(setConfigDirty()));
+	disconnect(absolutePosY, SIGNAL(valueChanged(int)), this, SLOT(setConfigDirty()));
 
 	bool enable = !resolution().isEmpty();
 	positionCombo->setEnabled( enable );
@@ -383,6 +396,8 @@ void OutputConfig::updatePositionListDelayed()
 
 	connect(positionCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 	connect(positionOutputCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
+	connect(absolutePosX, SIGNAL(valueChanged(int)), this, SLOT(setConfigDirty()));
+	connect(absolutePosY, SIGNAL(valueChanged(int)), this, SLOT(setConfigDirty()));
 }
 
 void OutputConfig::updateRotationList(void)
