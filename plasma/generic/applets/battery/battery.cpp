@@ -54,8 +54,6 @@
 #include <Plasma/CheckBox>
 #include <Plasma/ComboBox>
 #include <Plasma/IconWidget>
-#include <Plasma/Extender>
-#include <Plasma/ExtenderItem>
 #include <Plasma/Label>
 #include <Plasma/PopupApplet>
 #include <Plasma/PushButton>
