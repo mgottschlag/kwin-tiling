@@ -142,7 +142,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
             }
         }
 
-        setData("Battery", "Has battery", !batterySources.isEmpty());
+        setData("Battery", "Has Battery", !batterySources.isEmpty());
         if (!batterySources.isEmpty()) {
             setData("Battery", "Sources", batterySources);
             QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
@@ -250,7 +250,7 @@ void PowermanagementEngine::deviceRemoved(const QString& udi)
 
         QStringList sourceNames(m_batterySources.values());
         sourceNames.removeAll(source);
-        setData("Battery", "sources", sourceNames);
+        setData("Battery", "Sources", sourceNames);
     }
 }
 
@@ -284,7 +284,7 @@ void PowermanagementEngine::deviceAdded(const QString& udi)
             updateBatteryChargePercent(battery->chargePercent(), device.udi());
             updateBatteryPlugState(battery->isPlugged(), device.udi());
 
-            setData("Battery", "sources", sourceNames);
+            setData("Battery", "Sources", sourceNames);
         }
     }
 }
