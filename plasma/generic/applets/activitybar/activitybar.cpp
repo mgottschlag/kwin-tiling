@@ -349,7 +349,12 @@ void ActivityBar::dataUpdated(const QString &source, const Plasma::DataEngine::D
 
     //update the actual content
     m_tabBar->setTabText(index, data["Name"].toString());
-    m_tabBar->setTabIcon(index, KIcon(data["Icon"].toString()));
+
+    QString iconName = data["Icon"].toString();
+    if (!iconName.isEmpty() && iconName != "user-desktop") {
+        m_tabBar->nativeWidget()->setTabIcon(index, KIcon(iconName));
+    }
+
     if (data["Current"].toBool()) {
         m_tabBar->setCurrentIndex(index);
     }
