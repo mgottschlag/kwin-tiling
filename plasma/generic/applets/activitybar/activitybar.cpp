@@ -348,7 +348,7 @@ void ActivityBar::dataUpdated(const QString &source, const Plasma::DataEngine::D
     }
 
     //update the actual content
-    m_tabBar->setTabText(index, data["Name"].toString());
+    m_tabBar->setTabText(index, data["Name"].toString().replace('&', "&&"));
 
     QString iconName = data["Icon"].toString();
     if (!iconName.isEmpty() && iconName != "user-desktop") {
