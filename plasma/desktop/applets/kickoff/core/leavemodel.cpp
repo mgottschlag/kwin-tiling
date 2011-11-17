@@ -125,7 +125,7 @@ void LeaveModel::updateModel()
     }
 
     // Lock
-    if (KAuthorized::authorizeKAction("lock_screen") && KAuthorized::authorize("logout")) {
+    if (KAuthorized::authorizeKAction("lock_screen")) {
         QStandardItem *lockOption = createStandardItem("leave:/lock");
         sessionOptions->appendRow(lockOption);
     }
