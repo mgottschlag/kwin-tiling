@@ -192,6 +192,8 @@ void ResultItem::setupActions()
     if (!actionList.isEmpty()) {
         m_actionsWidget = new QGraphicsWidget(this);
         m_actionsLayout = new QGraphicsLinearLayout(Qt::Horizontal, m_actionsWidget);
+        m_actionsLayout->setContentsMargins(0, 0, 0, 0);
+        m_actionsLayout->setSpacing(0);
 
         foreach (QAction* action, actionList) {
             Plasma::ToolButton * actionButton = new Plasma::ToolButton(m_actionsWidget);
@@ -611,35 +613,38 @@ void ResultItem::calculateSize(int sceneWidth)
     QSize newSize(sceneWidth, innerHeight + top + bottom);
     //kDebug() << innerHeight << geometry().size();
 
-    if (m_configButton) {
-        QSizeF s = m_configButton->size();
-
-        if (QApplication::layoutDirection() == Qt::RightToLeft) {
-            m_configButton->setPos(left, newSize.height() - s.height() - bottom);
-        } else {
-            m_configButton->setPos(newSize.width() - s.width() - right,
-                                   newSize.height() - s.height() - bottom);
-        }
-    }
-
     if (m_configWidget) {
         m_configWidget->setMaximumWidth(newSize.width());
         m_configWidget->adjustSize();
-        newSize.setHeight(newSize.height() + m_configWidget->size().height());
-        m_configWidget->setPos((newSize.width() - m_configWidget->size().width()) / 2,
-                               newSize.height() - m_configWidget->size().height() - bottom);
+        const QSizeF s = m_configWidget->size();
+        newSize.setHeight(newSize.height() + s.height());
+        m_configWidget->setPos((newSize.width() - s.width()) / 2,
+                               newSize.height() - s.height() - bottom);
+    }
+
+    if (m_configButton) {
+        const QSizeF s = m_configButton->size();
+
+        if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            m_configButton->setPos(left, newSize.height() - s.height() - bottom);
+            left += s.width();
+        } else {
+            m_configButton->setPos(newSize.width() - s.width() - right,
+                                   newSize.height() - s.height() - bottom);
+            right += s.width();
+        }
     }
 
     if (m_actionsWidget) {
         m_actionsWidget->setMaximumWidth(newSize.width()/2);
         m_actionsWidget->adjustSize();
-        QSizeF s = m_actionsWidget->size();
+        const QSizeF s = m_actionsWidget->size();
 
         if (QApplication::layoutDirection() == Qt::RightToLeft) {
             m_actionsWidget->setPos(left, newSize.height() - s.height() - bottom);
         } else {
             m_actionsWidget->setPos(newSize.width() - s.width() - right,
-                                   newSize.height() - s.height() - bottom);
+                                    newSize.height() - s.height() - bottom);
         }
     }
 
