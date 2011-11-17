@@ -186,7 +186,6 @@ QString getPixmapKey(const KeyboardConfig& keyboardConfig)
 void Flags::drawLabel(QPainter& painter, const QString& layoutText, bool flagShown)
 {
 	QFont font = painter.font();
-    kWarning() << "pinter window" << painter.window();
 
     QRect rect = painter.window();
 //	int fontSize = layoutText.length() == 2
@@ -201,10 +200,8 @@ void Flags::drawLabel(QPainter& painter, const QString& layoutText, bool flagSho
 	QFontMetrics fm = painter.fontMetrics();
 	int width = fm.width(layoutText);
 
-	kWarning() << "text width for " << layoutText << "is" << width;
 	if( width > rect.width() * 2 / 3 ) {
 		fontSize = round( (double)fontSize * ((double)rect.width()*2/3) / width );
-		kWarning() << "adjuting font size to" << fontSize;
 	}
 	
 	int smallestReadableSize = KGlobalSettings::smallestReadableFont().pixelSize();
@@ -212,7 +209,6 @@ void Flags::drawLabel(QPainter& painter, const QString& layoutText, bool flagSho
 		fontSize = smallestReadableSize;
 	}
 	font.setPixelSize(fontSize);
-	kWarning() << "font size" << fontSize;
 
 #ifdef DONT_USE_PLASMA
 	painter.setFont(font);
@@ -230,11 +226,9 @@ void Flags::drawLabel(QPainter& painter, const QString& layoutText, bool flagSho
 
     //    QPixmap pixmap = Plasma::PaintUtils::texturedText(layoutText, font, svg);
     QPixmap labelPixmap = Plasma::PaintUtils::shadowText(layoutText, font, textColor, shadowColor, offset, 3);
-    kWarning() << "text pixmap size" << labelPixmap.size() << "offset" << offset;
 
     int y = round((rect.height() - labelPixmap.height()) / 2.0);
     int x = round((rect.width() - labelPixmap.width()) / 2.0);
-    kWarning() << "x" << x << "y" << y;
     painter.drawPixmap(QPoint(x, y), labelPixmap);
 #endif
 }
@@ -273,8 +267,6 @@ const QIcon Flags::getIconWithText(const LayoutUnit& layoutUnit, const KeyboardC
 	drawLabel(painter, layoutText, keyboardConfig.isFlagShown());
 
     painter.end();
-
-    kWarning() << "resulting pixmap size" << pixmap.size();
 
     QIcon icon(pixmap);
 	iconOrTextMap[ key ] = icon;

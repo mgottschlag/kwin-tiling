@@ -192,7 +192,6 @@ void KeyboardApplet::generatePixmap()
 	LayoutUnit layoutUnit = X11Helper::getCurrentLayout();
 	QRect contentsRect = KeyboardApplet::contentsRect().toRect();
 	QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
-	kWarning() << "applet: LayoutChanged" << layoutUnit.toString() << shortText;
 
 	QPixmap pixmap(contentsRect.size());
 	pixmap.fill(Qt::transparent);
