@@ -17,8 +17,11 @@
  */
 
 #include <QDBusConnection>
+#include <QDBusInterface>
 #include <QDBusMessage>
 #include <QDBusPendingReply>
+
+#include <KAuthorized>
 
 // kde-workspace/libs
 #include <kworkspace/kworkspace.h>
@@ -39,9 +42,15 @@ PowerManagementJob::~PowerManagementJob()
 void PowerManagementJob::start()
 {
     const QString operation = operationName();
-    kDebug() << "starting operation  ... " << operation;
+    //kDebug() << "starting operation  ... " << operation;
 
-    if (operation == "suspend" || operation == "suspendToRam") {
+    if (operation == "lockScreen") {
+        if (KAuthorized::authorizeKAction("lock_screen")) {
+            const QString interface("org.freedesktop.ScreenSaver");
+            QDBusInterface screensaver(interface, "/ScreenSaver");
+            screensaver.asyncCall("Lock");
+        }
+    } else if (operation == "suspend" || operation == "suspendToRam") {
         setResult(suspend(Ram));
         return;
     } else if (operation == "suspendToDisk") {
@@ -66,8 +75,7 @@ bool PowerManagementJob::suspend(const SuspendType &type)
                                                       "/org/kde/Solid/PowerManagement",
                                                       "org.kde.Solid.PowerManagement",
                                                       callForType(type));
-    QDBusPendingReply< QString > reply = QDBusConnection::sessionBus().asyncCall(msg);
-
+    QDBusConnection::sessionBus().asyncCall(msg);
     return true;
 }
 
