@@ -957,6 +957,7 @@ void Launcher::addBreadcrumb(const QModelIndex &index, bool isLeaf)
     button->setFont(KGlobalSettings::smallestReadableFont());
     button->setFlat(true);
     button->setStyleSheet("* { padding: 4 }");
+    button->setCursor(Qt::PointingHandCursor);
 
     QPalette palette = button->palette();
     palette.setColor(QPalette::ButtonText, palette.color(QPalette::Disabled, QPalette::ButtonText));
