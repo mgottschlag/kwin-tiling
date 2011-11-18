@@ -22,7 +22,7 @@
 #include "task.h"
 
 #include <QtGui/QGraphicsWidget>
-
+#include "../ui/applet.h"
 
 namespace SystemTray
 {
@@ -85,13 +85,13 @@ QGraphicsWidget *Task::widget(Plasma::Applet *host, bool createIfNecessary)
     return widget;
 }
 
-bool Task::isEmbeddable(Plasma::Applet *host)
+bool Task::isEmbeddable(SystemTray::Applet *host)
 {
     if (!host) {
         return false;
     }
 
-    return d->widgetsByHost.value(host) || isEmbeddable();
+    return (d->widgetsByHost.value(host) || isEmbeddable()) && host->shownCategories().contains(category());
 }
 
 QHash<Plasma::Applet *, QGraphicsWidget *> Task::widgetsByHost() const
