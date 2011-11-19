@@ -207,6 +207,7 @@ void KeyboardDaemon::layoutMapChanged()
 {
 	keyboardConfig.load();
 	layoutMemory.layoutMapChanged();
+	emit layoutListChanged();
 	if( layoutTrayIcon != NULL ) {
 		layoutTrayIcon->layoutMapChanged();
 	}
