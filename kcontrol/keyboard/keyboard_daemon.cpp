@@ -214,12 +214,16 @@ void KeyboardDaemon::layoutMapChanged()
 
 void KeyboardDaemon::switchToNextLayout()
 {
+	kDebug() << "Toggling layout";
 	X11Helper::switchToNextLayout();
 }
 
 bool KeyboardDaemon::setLayout(QAction* action)
 {
-	LayoutUnit layoutUnit(LayoutUnit(action->data().toString()));
+	if( action == actionCollection->getToggeAction() )
+		return false;
+
+	LayoutUnit layoutUnit(action->data().toString());
 	return LayoutsMenu::switchToLayout(layoutUnit, keyboardConfig);	// need this to be able to switch to spare layouts
 //	return X11Helper::setLayout(LayoutUnit(action->data().toString()));
 }

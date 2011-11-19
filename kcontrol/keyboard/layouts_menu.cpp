@@ -21,6 +21,7 @@
 #include <kmenu.h>
 #include <ktoolinvocation.h>
 #include <klocalizedstring.h>
+#include <kdebug.h>
 
 #include <QtGui/QAction>
 #include <QtGui/QMenu>
@@ -66,16 +67,13 @@ void LayoutsMenu::actionTriggered(QAction* action)
 
 int LayoutsMenu::switchToLayout(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig)
 {
-	// safe net when no layouts found
 	QList<LayoutUnit> layouts = X11Helper::getCurrentLayouts().layouts;
-	if( layouts.empty() )
-		return -1;
 
 	bool res;
 	if( layouts.contains(layoutUnit) ) {
 		res = X11Helper::setLayout(layoutUnit);
 	}
-	else if ( keyboardConfig.isSpareLayoutsEnabled() && ! keyboardConfig.getDefaultLayouts().empty() ) {
+	else if ( keyboardConfig.isSpareLayoutsEnabled() && keyboardConfig.layouts.contains(layoutUnit) ) {
 		QList<LayoutUnit> layouts(keyboardConfig.getDefaultLayouts());
 		layouts.removeLast();
 		layouts.append(layoutUnit);
@@ -83,6 +81,7 @@ int LayoutsMenu::switchToLayout(const LayoutUnit& layoutUnit, const KeyboardConf
 		res = X11Helper::setLayout(layoutUnit);
 	}
 	else {
+		kWarning() << "switchToLayout with unknown layout" << layoutUnit.toString();
 		res = -1;
 	}
 	return res;
