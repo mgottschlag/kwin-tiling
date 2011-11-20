@@ -242,7 +242,7 @@ void StackDialog::resizeEvent(QResizeEvent *event)
     Plasma::Dialog::resizeEvent(event);
     if (m_hasCustomPosition) {
         adjustPosition(pos());
-    } else {
+    } else if (m_applet && m_applet->containment() && m_applet->containment()->corona()) {
         move(m_applet->containment()->corona()->popupPosition(m_applet, size()));
     }
 }
@@ -312,6 +312,10 @@ void StackDialog::adjustPosition(const QPoint &pos)
 
 void StackDialog::savePosition(const QPoint& pos)
 {
+    if (!m_applet || !m_applet->containment()) {
+        return;
+    }
+
     QByteArray horizSide, vertSide;
     QPoint pixelsToSave;
     const QRect realScreenRect = qApp->desktop()->screenGeometry(m_applet->containment()->screen());
@@ -350,6 +354,10 @@ void StackDialog::savePosition(const QPoint& pos)
 
 QPoint StackDialog::adjustedSavedPos() const
 {
+    if (!m_applet) {
+        return QPoint(-1, -1);
+    }
+
     QPoint pos = m_applet->config().readEntry("customPosition", QPoint(-1, -1));
 
     if (pos != QPoint(-1, -1)) {
