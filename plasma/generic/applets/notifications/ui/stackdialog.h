@@ -56,6 +56,9 @@ public:
     void setAutoHide(const bool autoHide);
     bool autoHide() const;
 
+public Q_SLOTS:
+    void perhapsShow();
+
 protected:
     void adjustWindowToTilePos();
 

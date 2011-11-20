@@ -209,6 +209,13 @@ void StackDialog::paintEvent(QPaintEvent *e)
     }
 }
 
+void StackDialog::perhapsShow()
+{
+    if (m_applet && m_applet->view()) {
+        show();
+    }
+}
+
 void StackDialog::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)

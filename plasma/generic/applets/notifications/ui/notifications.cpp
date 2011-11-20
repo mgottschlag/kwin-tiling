@@ -254,7 +254,7 @@ void Notifications::addNotification(Notification *notification)
         m_notificationStackDialog->setNotificationStack(m_notificationStack);
         m_notificationStackDialog->setApplet(this);
         connect(m_notificationStack, SIGNAL(stackEmpty()), m_notificationStackDialog, SLOT(hide()));
-        connect(m_notificationStack, SIGNAL(showRequested()), m_notificationStackDialog, SLOT(show()));
+        connect(m_notificationStack, SIGNAL(showRequested()), m_notificationStackDialog, SLOT(perhapsShow()));
         m_notificationStackDialog->setAutoHide(m_autoHidePopup);
 
         if (m_standaloneJobSummaryDialog) {
@@ -272,7 +272,7 @@ void Notifications::addNotification(Notification *notification)
         }
 
         KWindowSystem::setOnAllDesktops(m_notificationStackDialog->winId(), true);
-        m_notificationStackDialog->show();
+        m_notificationStackDialog->perhapsShow();
     }
 
     Plasma::Animation *pulse = Plasma::Animator::create(Plasma::Animator::PulseAnimation, m_busyWidget);
