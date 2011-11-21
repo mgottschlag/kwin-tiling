@@ -49,7 +49,11 @@ void PowerManagementJob::start()
             const QString interface("org.freedesktop.ScreenSaver");
             QDBusInterface screensaver(interface, "/ScreenSaver");
             screensaver.asyncCall("Lock");
+            setResult(true);
+            return;
         }
+        kDebug() << "operation denied " << operation;
+        setResult(false);
     } else if (operation == "suspend" || operation == "suspendToRam") {
         setResult(suspend(Ram));
         return;
