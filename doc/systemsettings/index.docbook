@@ -24,8 +24,8 @@
 </copyright>
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2011-06-25</date>
-<releaseinfo>1.0 (&kde; 4.7)</releaseinfo>
+<date>2011-11-21</date>
+<releaseinfo>1.0 (&kde; 4.8)</releaseinfo>
 
 <abstract>
 <para>
@@ -247,7 +247,7 @@ Information Sources
 Input Devices (Keyboard, Mouse, Joystick, Remote Controls)
 </para></listitem>
 <listitem><para>
-Power Management (Global settings, Power Profiles)
+Power Management (Energy Savings Settings, Activity settings, Advanced settings)
 </para></listitem>
 <listitem><para>
 Removable Devices
@@ -268,7 +268,7 @@ Multimedia (Audio CDs, CDDB Retrieval, Phonon)
 Date &amp; Time
 </para></listitem>
 <listitem><para>
-Font Installer
+Font Management
 </para></listitem>
 <listitem><para>
 Login Screen
