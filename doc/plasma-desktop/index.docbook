@@ -165,17 +165,53 @@ where you can set entries to display and their visibility.
     </textobject>
   </mediaobject>
 </screenshot>
-<para>
+<para id="device-notifier">
 An icon located usually in the system tray is the <application>Device Notifier</application>.
 Plug in a <acronym>USB</acronym> disk and a dialog will open that allows you to
 open the device in &dolphin; or another associated application.
 </para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="device_notifier_widget.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase></phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+<para>The <application>Device Notifier</application> is used for handling pluggable devices such as <acronym>USB</acronym> pendrives (also called flash drives or thumb drives), digital cameras, external <acronym>USB</acronym> hard drives, &etc; It also comes into play when a medium such as a &CD; or DVD is loaded into an optical drive.
+</para>
+<para>When you plug in an external device, or load a new medium into a drive, the <guilabel>Notifier</guilabel> window popus up (you can also open it explicitly by clicking on its Panel icon.) It stays open while the cursor is over it, otherwise it hides itself after a few seconds.
+</para>
+<para>The <guilabel>Notifier</guilabel> window shows a list of all the devices it currently knows about. Moving the mouse cursor over a device will highlight how many possible actions are associated with that device.
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="device_notifier_widget_actions.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase></phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+<para>Clicking anywhere in the shaded box around the device name (but not on the eject/unmount icon if present) expands the entry to show the list of possible actions for that device.  The set of actions depends on the device; it is configurable from &systemsettings;. Simply select one with the mouse or keyboard to launch that action.
+</para>
+<para>There is also a small icon to the right of each entry showing whether that device is currently accessible (or <emphasis>mounted</emphasis>) or not. Only when a device is not mounted is it safe to physically disconnect it from the computer. Clicking on the icon causes the device to be unmounted and/or the medium to be ejected if it is currently mounted, and will mount it if it is not. Note that unmounting/ejecting might fail if the device still has open files on it, &eg; if a large file copy hasn't finished. In most cases you can just wait a while and try again. When an unmounting has succeeded, a success icon will be shown on the <application>Device Notifier</application>'s icon.
+</para>
 
-<para>The <application>System Tray</application> normally holds some more entries like 
+<para>The <application>System Tray</application> normally holds some more entries like
 &klipper;, &kmix; &etc;.</para>
 
-<para>Some of the default entries in the <application>System Tray</application> are hidden 
-to save space in the bar. To display these entries click on the small white triangle 
+<para>Some of the default entries in the <application>System Tray</application> are hidden
+to save space in the bar. To display these entries click on the small white triangle
 <inlinemediaobject><imageobject><imagedata fileref="system-tray-up-arrow.png" format="PNG"/>
 </imageobject></inlinemediaobject>, then use
 the &LMB; to launch a widget or the &RMB; to open its settings dialog.</para>
@@ -266,7 +302,7 @@ or desktop. You add &plasma; widgets by simply dragging them where you want them
 </screenshot>
 
 The <guibutton>Get New Widgets</guibutton> button allows you to add widgets
-you've previously downloaded; and download new &plasma; widgets or google gadgets. 
+you've previously downloaded; and download new &plasma; widgets or google gadgets.
 Currently it supports native &plasmagik; packages
 and some &Mac; OS&nbsp;X dashboard widgets. Widgets you install this way can then be
 accessed just like regular, preinstalled widgets.
@@ -307,8 +343,8 @@ wallpapers through &knewstuff;.
   </mediaobject>
 </screenshot>
 
-<para>To change the &plasma; theme or download a new one through &knewstuff; 
-open the <menuchoice><guimenu>Workspace Appearance</guimenu> <guimenuitem>Desktop 
+<para>To change the &plasma; theme or download a new one through &knewstuff;
+open the <menuchoice><guimenu>Workspace Appearance</guimenu> <guimenuitem>Desktop
 Theme</guimenuitem></menuchoice> page in the &systemsettings;.</para>
 
 <para>
@@ -346,18 +382,18 @@ and processes, with options to monitor their output and kill processes.
 <title>Activities</title>
 
 <para>
-The desktop toolbox, accessed via the upper right corner has a button for 
-displaying your activities, of which &plasma; allows you to have more than one. 
-Basically, that is multiple desktop containments hosting multiple sets of &plasma; widgets. 
-Display the <quote>Activities</quote> bar, select one of the predefined activities 
-or choose <guilabel>Create Activity</guilabel> 
-to create a new containment, select your new containment and customize suiting your taste. 
-&plasma;’s activities and &kwin;’s desktop grid are similar in that respect, but there 
-is a fundamental difference. While virtual desktop are used to group and organize windows, 
-&plasma;’s activities are used to group and organize &plasma; widgets. This way, you can 
-switch between activities and have relevant &plasma; widgets supporting the task you are 
-currently trying to accomplish. You can create a <quote>Free time</quote> activity, with 
-comic strips, a puzzle and other &plasma; widgets, and a <quote>Work</quote> activity, 
+The desktop toolbox, accessed via the upper right corner has a button for
+displaying your activities, of which &plasma; allows you to have more than one.
+Basically, that is multiple desktop containments hosting multiple sets of &plasma; widgets.
+Display the <quote>Activities</quote> bar, select one of the predefined activities
+or choose <guilabel>Create Activity</guilabel>
+to create a new containment, select your new containment and customize suiting your taste.
+&plasma;’s activities and &kwin;’s desktop grid are similar in that respect, but there
+is a fundamental difference. While virtual desktop are used to group and organize windows,
+&plasma;’s activities are used to group and organize &plasma; widgets. This way, you can
+switch between activities and have relevant &plasma; widgets supporting the task you are
+currently trying to accomplish. You can create a <quote>Free time</quote> activity, with
+comic strips, a puzzle and other &plasma; widgets, and a <quote>Work</quote> activity,
 with relevant <acronym>RSS</acronym> feeds, calculator and calendar, for example.
 </para>
 
@@ -379,15 +415,15 @@ Remove this Widget    Alt+D, R
 Run the Associated Application  Alt+D, T
 Run the Associated Application  Alt+D, T
 Widget Settings   Alt+D, S
-Why these duplicated entries? 
+Why these duplicated entries?
 -->
 <sect1 id="shortcuts">
 <title>Shortcuts</title>
 
 <para>
 Most of &plasma;’s functionality is also accessible through keyboard
-shortcuts. The various combinations should be pressed in sequence, that 
-is for example <keycombo action="simul">&Alt;<keycap>D</keycap></keycombo>, <keycap>A</keycap> 
+shortcuts. The various combinations should be pressed in sequence, that
+is for example <keycombo action="simul">&Alt;<keycap>D</keycap></keycombo>, <keycap>A</keycap>
 means: Press &Alt; and <keycap>D</keycap>, release and press <keycap>A</keycap>.
 </para>
 <para>Currently, the following default shortcuts can be used:
@@ -403,7 +439,7 @@ means: Press &Alt; and <keycap>D</keycap>, release and press <keycap>A</keycap>.
 <term><keycombo action="simul">&Alt;<keycap>D</keycap></keycombo>, <keycap>R</keycap></term>
 <listitem><para>Remove Widget</para></listitem>
 </varlistentry>
- 
+
 <varlistentry>
 <term><keycombo action="simul">&Alt;<keycap>D</keycap></keycombo>, <keycap>L</keycap></term>
 <listitem><para>Lock/Unlock Widgets</para></listitem>
@@ -492,7 +528,7 @@ means: Press &Alt; and <keycap>D</keycap>, release and press <keycap>A</keycap>.
 -->
 </variablelist>
 
-<para>To change shortcuts, click with the &LMB; on the desktop <guilabel>Toolbox</guilabel> 
+<para>To change shortcuts, click with the &LMB; on the desktop <guilabel>Toolbox</guilabel>
 (the cashew usually at the top right of the desktop) and select <guilabel>Shortcut Settings</guilabel>.</para>
 
 </sect1>
