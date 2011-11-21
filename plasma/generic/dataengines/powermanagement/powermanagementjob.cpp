@@ -54,6 +54,7 @@ void PowerManagementJob::start()
         }
         kDebug() << "operation denied " << operation;
         setResult(false);
+        return;
     } else if (operation == "suspend" || operation == "suspendToRam") {
         setResult(suspend(Ram));
         return;
