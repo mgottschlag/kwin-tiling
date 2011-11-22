@@ -48,7 +48,7 @@ StackDialog::StackDialog(QWidget *parent, Qt::WindowFlags f)
         m_drawLeft(true),
         m_drawRight(true),
         m_autoHide(true),
-        m_hasCustomPosition(true)
+        m_hasCustomPosition(false)
 {
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/extender-background");
