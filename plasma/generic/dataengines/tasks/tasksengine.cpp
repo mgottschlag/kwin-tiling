@@ -35,14 +35,11 @@ TasksEngine::~TasksEngine()
 Plasma::Service *TasksEngine::serviceForSource(const QString &name)
 {
     TaskSource *source = dynamic_cast<TaskSource*>(containerForSource(name));
-    // if source does not exist, return null service
-    if (!source) {
+    // if source does not exist or it represents a startup task, return a null service
+    if (!source || !source->isTask()) {
         return Plasma::DataEngine::serviceForSource(name);
     }
-    // if source represents a startup task, return null service
-    if (!source->isTask()) {
-        return Plasma::DataEngine::serviceForSource(name);
-    }
+
     // if source represent a proper task, return task service
     Plasma::Service *service = source->createService();
     service->setParent(this);
@@ -116,9 +113,9 @@ bool TasksEngine::sourceRequestEvent(const QString &source)
     if (source == "virtualDesktops") {
         addSource(new VirtualDesktopsSource);
         return true;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 K_EXPORT_PLASMA_DATAENGINE(tasks, TasksEngine)
