@@ -26,6 +26,8 @@
 
 #include <plasmagenericshell/scripting/containment.h>
 
+class PanelView;
+
 namespace WorkspaceScripting
 {
 

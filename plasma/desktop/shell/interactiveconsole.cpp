@@ -480,7 +480,7 @@ void InteractiveConsole::evaluateScript()
     t.start();
 
     {
-        WorkspaceScripting::DesktopScriptEngine scriptEngine(m_corona, this);
+        WorkspaceScripting::DesktopScriptEngine scriptEngine(m_corona, false, this);
         connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(print(QString)));
         connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(print(QString)));
         connect(&scriptEngine, SIGNAL(createPendingPanelViews()), PlasmaApp::self(), SLOT(createWaitingPanels()));

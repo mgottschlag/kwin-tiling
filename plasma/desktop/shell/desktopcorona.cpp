@@ -356,10 +356,10 @@ void DesktopCorona::processUpdateScripts()
     evaluateScripts(WorkspaceScripting::ScriptEngine::pendingUpdateScripts());
 }
 
-void DesktopCorona::evaluateScripts(const QStringList &scripts)
+void DesktopCorona::evaluateScripts(const QStringList &scripts, bool isStartup)
 {
     foreach (const QString &script, scripts) {
-        WorkspaceScripting::DesktopScriptEngine scriptEngine(this);
+        WorkspaceScripting::DesktopScriptEngine scriptEngine(this, isStartup);
         connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(printScriptError(QString)));
         connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(printScriptMessage(QString)));
         connect(&scriptEngine, SIGNAL(createPendingPanelViews()), PlasmaApp::self(), SLOT(createWaitingPanels()));
@@ -494,7 +494,7 @@ void DesktopCorona::addPanel(QAction *action)
 {
     const QString plugin = action->data().toString();
     if (plugin.startsWith("plasma-desktop-template:")) {
-        evaluateScripts(QStringList() << plugin.right(plugin.length() - qstrlen("plasma-desktop-template:")));
+        evaluateScripts(QStringList() << plugin.right(plugin.length() - qstrlen("plasma-desktop-template:")), false);
     } else if (!plugin.isEmpty()) {
         addPanel(plugin);
     }

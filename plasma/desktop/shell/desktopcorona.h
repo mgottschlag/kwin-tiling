@@ -92,7 +92,7 @@ public Q_SLOTS:
     void populateAddPanelsMenu();
     void activateNextActivity();
     void activatePreviousActivity();
-    void evaluateScripts(const QStringList &scripts);
+    void evaluateScripts(const QStringList &scripts, bool isStartup = true);
 
 protected Q_SLOTS:
     void screenAdded(Kephal::Screen *s);
