@@ -352,8 +352,6 @@ void StackDialog::savePosition(const QPoint& pos)
     kDebug() << "Y: " << pixelsToSave.ry();
     kDebug() << "X: " << pixelsToSave.rx();
 
-    const QPoint popupPosition = m_applet->containment()->corona()->popupPosition(m_applet, size());
-
     m_applet->config().writeEntry("customPosition", pixelsToSave);
     m_applet->config().writeEntry("customPositionAffinityHoriz", horizSide);
     m_applet->config().writeEntry("customPositionAffinityVert", vertSide);
