@@ -128,7 +128,7 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
     d->hiddenTasksLayout->setHorizontalSpacing(0);
 
     d->hiddenRelayoutTimer->setSingleShot(true);
-    d->delayedUpdateTimer->setInterval(50);
+    d->hiddenRelayoutTimer->setInterval(50);
     connect(d->hiddenRelayoutTimer, SIGNAL(timeout()), this, SLOT(relayoutHiddenTasks()));
 
     d->delayedUpdateTimer->setSingleShot(true);
