@@ -299,11 +299,7 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
     // it may be autohidden for a while until the final one which will not be hidden
     // therefore we need a way to track the hidden tasks
     // if the task appears in the hidden list, then we know there are hidden tasks
-    if (task->hidden() == Task::NotHidden) {
-        if (removeFromHiddenArea(task)) {
-            widget->setParentItem(this);
-        }
-    } else {
+    if (task->hidden() != Task::NotHidden) {
         // hiddent task, so make sure it's handled
         if (!d->hiddenTasks.contains(task)) {
             HiddenTaskLabel *hiddenLabel = new HiddenTaskLabel(widget, task->name(), d->itemBackground, d->host, d->hiddenTasksWidget);
@@ -330,52 +326,52 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
         return false;
     }
 
-
-    if (task->hidden() == Task::NotHidden) {
-        widget->setParentItem(this);
-        //not really pretty, but for consistency attempts to put the notifications applet always in the same position
-        if (task->typeId() == "notifications") {
-            if (d->firstTasksLayout->count() == 0) {
-                d->topLayout->insertItem(0, d->firstTasksLayout);
-            }
-
-            d->firstTasksLayout->insertItem(0, widget);
-        } else if (task->order() == SystemTray::Task::First) {
-            if (d->firstTasksLayout->count() == 0) {
-                d->topLayout->insertItem(0, d->firstTasksLayout);
-            }
-
-            d->firstTasksLayout->addItem(widget);
-        } else if (task->order() == SystemTray::Task::Normal) {
-            int insertIndex = -1;
-            for (int i = 0; i < d->normalTasksLayout->count(); ++i) {
-                QGraphicsWidget *widget = static_cast<QGraphicsWidget *>(d->normalTasksLayout->itemAt(i));
-                Task *otherTask = d->taskForWidget.value(widget);
-
-                if (task->category() == Task::UnknownCategory) {
-                    insertIndex = i;
-                    break;
-                } else if (otherTask && task->category() <= otherTask->category()) {
-                    insertIndex = i;
-                    break;
-                }
-            }
-
-            if (insertIndex == -1) {
-                insertIndex = d->normalTasksLayout->count();
-            }
-
-            d->normalTasksLayout->insertItem(insertIndex, widget);
-        } else {
-            d->lastTasksLayout->insertItem(0, widget);
+    // the task is set to be shown
+    removeFromHiddenArea(task);
+    widget->setParentItem(this);
+    //not really pretty, but for consistency attempts to put the notifications applet always in the same position
+    if (task->typeId() == "notifications") {
+        if (d->firstTasksLayout->count() == 0) {
+            d->topLayout->insertItem(0, d->firstTasksLayout);
         }
-        d->sizeHintChanged = true;
+
+        d->firstTasksLayout->insertItem(0, widget);
+    } else if (task->order() == SystemTray::Task::First) {
+        if (d->firstTasksLayout->count() == 0) {
+            d->topLayout->insertItem(0, d->firstTasksLayout);
+        }
+
+        d->firstTasksLayout->addItem(widget);
+    } else if (task->order() == SystemTray::Task::Normal) {
+        int insertIndex = -1;
+        for (int i = 0; i < d->normalTasksLayout->count(); ++i) {
+            QGraphicsWidget *widget = static_cast<QGraphicsWidget *>(d->normalTasksLayout->itemAt(i));
+            Task *otherTask = d->taskForWidget.value(widget);
+
+            if (task->category() == Task::UnknownCategory) {
+                insertIndex = i;
+                break;
+            } else if (otherTask && task->category() <= otherTask->category()) {
+                insertIndex = i;
+                break;
+            }
+        }
+
+        if (insertIndex == -1) {
+            insertIndex = d->normalTasksLayout->count();
+        }
+
+        d->normalTasksLayout->insertItem(insertIndex, widget);
+    } else {
+        d->lastTasksLayout->insertItem(0, widget);
     }
+
+    //the applet could have to be repainted due to easement change
+    d->sizeHintChanged = true;
+    d->delayedUpdateTimer->start();
 
     widget->show();
 
-    //the applet could have to be repainted due to easement change
-    d->delayedUpdateTimer->start();
     return true;
 }
 
