@@ -1089,16 +1089,14 @@ void PanelView::updateStruts()
 bool PanelView:: migratedFrom(int screenId) const
 {
     KConfigGroup cg = config();
-    QList<int> migrations;
-    migrations = cg.readEntry("Migrations", migrations);
+    const QList<int> migrations = cg.readEntry("Migrations", migrations);
     return migrations.contains(screenId);
 }
 
 void PanelView::migrateTo(int screenId)
 {
     KConfigGroup cg = config();
-    QList<int> migrations;
-    migrations = cg.readEntry("Migrations", migrations);
+    QList<int> migrations = cg.readEntry("Migrations", migrations);
 
     const int index = migrations.indexOf(screenId);
     if (index == -1) {
