@@ -19,6 +19,7 @@
 
 import Qt 4.7
 import org.kde.plasma.core 0.1 as PlasmaCore
+import org.kde.plasma.components 0.1 as PlasmaComponents
 
 Item {
     id: statusBar
@@ -115,7 +116,7 @@ Item {
         onClicked: toggleDetails();
     }
 
-    Text {
+    PlasmaComponents.Label {
         id: statusText
         anchors {
             top: parent.top
@@ -128,14 +129,14 @@ Item {
         wrapMode: Text.WordWrap
     }
 
-    Text {
+    PlasmaComponents.Label {
         id: detailsText
         anchors {
             left: parent.left
             right: parent.right
             bottom: parent.bottom 
         }
-        font.pointSize: 8
+        font.pointSize: theme.defaultFont.pointSize * 0.8
         clip: true
         wrapMode: Text.WordWrap
         height: expanded ? paintedHeight : 0

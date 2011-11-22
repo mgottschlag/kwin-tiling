@@ -19,6 +19,7 @@
 
 import Qt 4.7
 import org.kde.qtextracomponents 0.1
+import org.kde.plasma.components 0.1 as PlasmaComponents
 
 Item {
     property string icon
@@ -42,7 +43,7 @@ Item {
         }
     }
 
-    Text {
+    PlasmaComponents.Label {
         id: actionText
         anchors {
             top: actionIcon.top

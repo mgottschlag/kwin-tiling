@@ -20,6 +20,7 @@
 import Qt 4.7
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
+import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.qtextracomponents 0.1
 
 Item {
@@ -36,7 +37,7 @@ Item {
     signal leftActionTriggered
 
     property int deviceIconMargin: 10
-    height: deviceIcon.height+(deviceIconMargin*2)+actionsList.height
+    height: childrenRect.height
 
     // FIXME: Device item loses focus on mounting/unmounting it,
     // or specifically, when some UI element changes.
@@ -68,7 +69,7 @@ Item {
     }
 
 
-    Text {
+    PlasmaComponents.Label {
         id: deviceLabel
         anchors {
             top: parent.top
@@ -80,7 +81,7 @@ Item {
 
     PlasmaCore.Theme { id: theme }
 
-    Text {
+    PlasmaComponents.Label {
         id: deviceStatus
         anchors {
             top: deviceLabel.bottom

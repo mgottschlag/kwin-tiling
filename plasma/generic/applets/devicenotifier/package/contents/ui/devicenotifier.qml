@@ -19,7 +19,7 @@
 
 import QtQuick 1.0
 import org.kde.plasma.core 0.1 as PlasmaCore
-import org.kde.plasma.components 0.1 as Components
+import org.kde.plasma.components 0.1 as PlasmaComponents
 
 Item {
     id: devicenotifier
@@ -113,7 +113,7 @@ Item {
     }
 
 
-    Text {
+    PlasmaComponents.Label {
         id: header
         text: filterModel.count>0 ? i18n("Available Devices") : i18n("No Devices Available")
         anchors { top: parent.top; topMargin: 3; left: parent.left; right: parent.right }
@@ -183,7 +183,7 @@ Item {
                     }
                     height: lineSvg.elementSize("horizontal-line").height
                 }
-                Text {
+                PlasmaComponents.Label {
                     x: 8
                     y: 8
                     opacity: 0.6
@@ -197,7 +197,7 @@ Item {
         Component.onCompleted: currentIndex=-1
     }
 
-    Components.ScrollBar {
+    PlasmaComponents.ScrollBar {
         id: scrollBar
         flickableItem: notifierDialog
         anchors {
