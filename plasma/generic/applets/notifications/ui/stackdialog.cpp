@@ -55,9 +55,14 @@ StackDialog::StackDialog(QWidget *parent, Qt::WindowFlags f)
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     KWindowSystem::setType(winId(), NET::Dock);
 
+    m_showTimer = new QTimer(this);
+    m_showTimer->setSingleShot(true);
+    m_showTimer->setInterval(0);
+    connect(m_showTimer, SIGNAL(timeout()), this, SLOT(show()));
+
     m_hideTimer = new QTimer(this);
     m_hideTimer->setSingleShot(true);
-    connect(m_hideTimer, SIGNAL(timeout()), this, SLOT(hide()));
+    connect(m_hideTimer, SIGNAL(timeout()), this, SLOT(hideRequested()));
 }
 
 StackDialog::~StackDialog()
@@ -82,7 +87,7 @@ void StackDialog::setNotificationStack(NotificationStack *stack)
     m_notificationStack = stack;
 
     connect(m_notificationStack, SIGNAL(updateRequested()), this, SLOT(update()));
-    connect(m_notificationStack, SIGNAL(hideRequested()), this, SLOT(hide()));
+    connect(m_notificationStack, SIGNAL(hideRequested()), this, SLOT(hideRequested()));
 }
 
 NotificationStack *StackDialog::notificartionStack() const
@@ -212,7 +217,12 @@ void StackDialog::paintEvent(QPaintEvent *e)
 void StackDialog::perhapsShow()
 {
     if (m_applet && m_applet->view()) {
-        show();
+        // we use a timer here because when the stack is going to be shown, the applet is likely
+        // to also be in movement (e.g. from hidden away to now shown to the user) and that will
+        // likely result in an odd geometry for the applet when popupPosition is called on this
+        // dialog. so instead we wait a bit after the show request to allow the applet to find
+        // it's proper place
+        m_showTimer->start();
     }
 }
 
@@ -230,10 +240,21 @@ void StackDialog::showEvent(QShowEvent *event)
     Plasma::Dialog::showEvent(event);
 }
 
+void StackDialog::hideRequested()
+{
+    // we have this method because hide() may not always cause a hideEvent, e.g. when
+    // the StackDialog has not been shown yet .. however, we always want to ensure the
+    // show timer is stopped. we also stop it in the hideEvent for completeness and to
+    // catch any direct calls to hide() that may happen
+    m_showTimer->stop();
+    hide();
+}
+
 void StackDialog::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
 
+    m_showTimer->stop();
     m_hideTimer->stop();
 
     adjustWindowToTilePos();
