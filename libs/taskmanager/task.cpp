@@ -657,11 +657,6 @@ WId Task::idFromMimeData(const QMimeData *mimeData, bool *ok)
     return id;
 }
 
-Task::WindowProperties::WindowProperties(unsigned int netWinInfoProperties, unsigned int netWinInfoProperties2)
-    : netWindowInfoProperties(netWinInfoProperties), netWindowInfoProperties2(netWinInfoProperties2)
-{
-}
-
 bool Task::isOnCurrentActivity() const
 {
     return d->activities.isEmpty() || d->activities.contains(TaskManager::self()->currentActivity());
@@ -675,6 +670,11 @@ bool Task::isOnAllActivities() const
 QStringList Task::activities() const
 {
     return d->activities;
+}
+
+Task::WindowProperties::WindowProperties(unsigned int netWinInfoProperties, unsigned int netWinInfoProperties2)
+    : netWindowInfoProperties(netWinInfoProperties), netWindowInfoProperties2(netWinInfoProperties2)
+{
 }
 
 } // TaskManager namespace
