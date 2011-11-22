@@ -92,7 +92,12 @@ void TasksEngine::taskAdded(TaskPtr task)
 void TasksEngine::taskRemoved(TaskPtr task)
 {
     Q_ASSERT(task);
-    removeSource(getTaskName(task));
+    const QString name = getTaskName(task);
+    TaskSource *source = dynamic_cast<TaskSource*>(containerForSource(name));
+    if (source) {
+        disconnect(TaskManager::TaskManager::self(), 0, source, 0);
+    }
+    removeSource(name);
 }
 
 void TasksEngine::addStartup(StartupPtr startup)
