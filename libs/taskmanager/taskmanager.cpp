@@ -149,6 +149,14 @@ TaskManager::TaskManager()
 
 TaskManager::~TaskManager()
 {
+    QHash<WId, Task *> tasksByWId = d->tasksByWId;
+    d->tasksByWId.clear();
+    qDeleteAll(tasksByWId);
+
+    QList<Startup *> startups = d->startups;
+    d->startups.clear();
+    qDeleteAll(startups);
+
     KGlobal::locale()->removeCatalog("libtaskmanager");
     delete d;
 }
