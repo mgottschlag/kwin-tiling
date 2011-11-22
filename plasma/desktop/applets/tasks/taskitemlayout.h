@@ -32,9 +32,6 @@
 class TaskGroupItem;
 class AbstractTaskItem;
 
-using TaskManager::StartupPtr;
-using TaskManager::TaskPtr;
-
 /**
  * A Layout for the expanded group
  */
