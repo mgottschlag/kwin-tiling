@@ -360,7 +360,7 @@ void Mpris::trackChanged(const QVariantMap& metadata)
     const QString oldArt = m_metadata.value("arturl").toString();
     m_metadata = metadata;
     if (m_artworkLoaded) {
-        m_artworkLoaded = oldArt != m_metadata.value("arturl");
+        m_artworkLoaded = oldArt == m_metadata.value("arturl");
     }
 }
 
