@@ -317,7 +317,7 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
             d->hiddenTasksLayout->setRowFixedHeight(row, qMax(24, fm.height()));
             d->hiddenTasksLayout->addItem(widget, row, 0);
             d->hiddenTasksLayout->addItem(hiddenLabel, row, 1);
-            adjustHiddentTasksWidget();
+            adjustHiddenTasksWidget();
             if (!newWidget) {
                 d->sizeHintChanged = true;
                 d->delayedUpdateTimer->start();
@@ -443,10 +443,10 @@ void TaskArea::relayoutHiddenTasks()
         ++row;
     }
 
-    adjustHiddentTasksWidget();
+    adjustHiddenTasksWidget();
 }
 
-void TaskArea::adjustHiddentTasksWidget()
+void TaskArea::adjustHiddenTasksWidget()
 {
     d->hiddenTasksLayout->invalidate();
     d->hiddenTasksWidget->resize(d->hiddenTasksWidget->effectiveSizeHint(Qt::PreferredSize));
