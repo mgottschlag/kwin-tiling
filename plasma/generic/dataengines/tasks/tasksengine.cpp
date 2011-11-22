@@ -63,7 +63,7 @@ void TasksEngine::init()
 {
     foreach (const TaskPtr &task, TaskManager::TaskManager::self()->tasks()) {
         Q_ASSERT(task);
-        addTask(task);
+        taskAdded(task);
     }
     connect(TaskManager::TaskManager::self(), SIGNAL(startupAdded(StartupPtr)), this, SLOT(startupAdded(StartupPtr)));
     connect(TaskManager::TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)), this, SLOT(startupRemoved(StartupPtr)));
@@ -71,22 +71,10 @@ void TasksEngine::init()
     connect(TaskManager::TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)), this, SLOT(taskRemoved(TaskPtr)));
 }
 
-void TasksEngine::startupAdded(StartupPtr startup)
-{
-    Q_ASSERT(startup);
-    addStartup(startup);
-}
-
 void TasksEngine::startupRemoved(StartupPtr startup)
 {
     Q_ASSERT(startup);
     removeSource(getStartupName(startup));
-}
-
-void TasksEngine::taskAdded(TaskPtr task)
-{
-    Q_ASSERT(task);
-    addTask(task);
 }
 
 void TasksEngine::taskRemoved(TaskPtr task)
@@ -100,15 +88,17 @@ void TasksEngine::taskRemoved(TaskPtr task)
     removeSource(name);
 }
 
-void TasksEngine::addStartup(StartupPtr startup)
+void TasksEngine::startupAdded(StartupPtr startup)
 {
+    Q_ASSERT(startup);
     TaskSource *taskSource = new TaskSource(startup, this);
     connect(startup.constData(), SIGNAL(changed(::TaskManager::TaskChanges)), taskSource, SLOT(updateStartup(::TaskManager::TaskChanges)));
     addSource(taskSource);
 }
 
-void TasksEngine::addTask(TaskPtr task)
+void TasksEngine::taskAdded(TaskPtr task)
 {
+    Q_ASSERT(task);
     TaskSource *taskSource = new TaskSource(task, this);
     connect(task.constData(), SIGNAL(changed(::TaskManager::TaskChanges)), taskSource, SLOT(updateTask(::TaskManager::TaskChanges)));
     connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)), taskSource, SLOT(updateDesktop(int)));

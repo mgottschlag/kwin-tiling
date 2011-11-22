@@ -66,8 +66,6 @@ class TasksEngine : public Plasma::DataEngine
 
     private:
         friend class TaskSource;
-        void addStartup(StartupPtr startup);
-        void addTask(TaskPtr task);
 };
 
 #endif // TASKSENGINE_H
