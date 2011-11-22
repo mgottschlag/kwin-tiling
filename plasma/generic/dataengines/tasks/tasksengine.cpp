@@ -36,7 +36,7 @@ Plasma::Service *TasksEngine::serviceForSource(const QString &name)
 {
     TaskSource *source = dynamic_cast<TaskSource*>(containerForSource(name));
     // if source does not exist or it represents a startup task, return a null service
-    if (!source || !source->isTask()) {
+    if (!source || !source->task()) {
         return Plasma::DataEngine::serviceForSource(name);
     }
 
@@ -46,63 +46,60 @@ Plasma::Service *TasksEngine::serviceForSource(const QString &name)
     return service;
 }
 
-const QString TasksEngine::getStartupName(StartupPtr startup)
+const QString TasksEngine::getStartupName(::TaskManager::Startup *startup)
 {
     return startup->id().id();
 }
 
-const QString TasksEngine::getTaskName(TaskPtr task)
+const QString TasksEngine::getTaskName(::TaskManager::Task *task)
 {
     return QString::number(task->window());
 }
 
 void TasksEngine::init()
 {
-    foreach (const TaskPtr &task, TaskManager::TaskManager::self()->tasks()) {
+    foreach (TaskManager::Task *task, TaskManager::TaskManager::self()->tasks()) {
         Q_ASSERT(task);
         taskAdded(task);
     }
 
-    connect(TaskManager::TaskManager::self(), SIGNAL(startupAdded(StartupPtr)), this, SLOT(startupAdded(StartupPtr)));
-    connect(TaskManager::TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)), this, SLOT(startupRemoved(StartupPtr)));
-    connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskPtr)), this, SLOT(taskAdded(TaskPtr)));
-    connect(TaskManager::TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)), this, SLOT(taskRemoved(TaskPtr)));
+    TaskManager::TaskManager *manager = TaskManager::TaskManager::self();
+    connect(manager, SIGNAL(startupAdded(::TaskManager::Startup*)), this, SLOT(startupAdded(::TaskManager::Startup*)));
+    connect(manager, SIGNAL(startupRemoved(::TaskManager::Startup*)), this, SLOT(startupRemoved(::TaskManager::Startup*)));
+    connect(manager, SIGNAL(taskAdded(::TaskManager::Task*)), this, SLOT(taskAdded(::TaskManager::Task*)));
+    connect(manager, SIGNAL(taskRemoved(::TaskManager::Task*)), this, SLOT(taskRemoved(::TaskManager::Task*)));
 }
 
-void TasksEngine::startupRemoved(StartupPtr startup)
+void TasksEngine::startupRemoved(::TaskManager::Startup *startup)
 {
     Q_ASSERT(startup);
     removeSource(getStartupName(startup));
 }
 
-void TasksEngine::taskRemoved(TaskPtr task)
+void TasksEngine::taskRemoved(::TaskManager::Task *task)
 {
     Q_ASSERT(task);
     const QString name = getTaskName(task);
-    TaskSource *source = dynamic_cast<TaskSource*>(containerForSource(name));
-    if (source) {
-        disconnect(TaskManager::TaskManager::self(), 0, source, 0);
-    }
     removeSource(name);
 }
 
-void TasksEngine::startupAdded(StartupPtr startup)
+void TasksEngine::startupAdded(::TaskManager::Startup *startup)
 {
     Q_ASSERT(startup);
     if (!containerForSource(getStartupName(startup))) {
-            TaskSource *taskSource = new TaskSource(startup, this);
-            connect(startup.constData(), SIGNAL(changed(::TaskManager::TaskChanges)), taskSource, SLOT(updateStartup(::TaskManager::TaskChanges)));
-            addSource(taskSource);
+        TaskSource *taskSource = new TaskSource(startup, this);
+        connect(startup, SIGNAL(changed(::TaskManager::TaskChanges)), taskSource, SLOT(updateStartup(::TaskManager::TaskChanges)));
+        addSource(taskSource);
     }
 }
 
-void TasksEngine::taskAdded(TaskPtr task)
+void TasksEngine::taskAdded(::TaskManager::Task *task)
 {
     Q_ASSERT(task);
     if (!containerForSource(getTaskName(task))) {
         TaskSource *taskSource = new TaskSource(task, this);
-        connect(task.constData(), SIGNAL(changed(::TaskManager::TaskChanges)), taskSource, SLOT(updateTask(::TaskManager::TaskChanges)));
-        connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)), taskSource, SLOT(updateDesktop(int)));
+        connect(task, SIGNAL(changed(::TaskManager::TaskChanges)), taskSource, SLOT(updateTask(::TaskManager::TaskChanges)));
+        connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)), taskSource, SLOT(updateDesktop()));
         connect(TaskManager::TaskManager::self(), SIGNAL(activityChanged(QString)), taskSource, SLOT(updateActivity()));
         addSource(taskSource);
     }

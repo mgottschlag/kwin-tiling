@@ -84,21 +84,21 @@ public:
         delete startupInfo;
         startupInfo = 0;
 
-        foreach (TaskPtr task, tasksByWId) {
+        foreach (Task *task, tasksByWId) {
             task->clearPixmapData();
         }
 
-        foreach (StartupPtr startup, startups) {
+        foreach (Startup *startup, startups) {
             startup->clearPixmapData();
         }
     }
 
     TaskManager *q;
-    TaskPtr active;
+    Task *active;
     KStartupInfo* startupInfo;
     KDirWatch *watcher;
-    TaskDict tasksByWId;
-    StartupList startups;
+    QHash<WId, Task *> tasksByWId;
+    QList<Startup *> startups;
     WindowList skiptaskbarWindows;
     QSet<QUuid> trackGeometryTokens;
     KActivityConsumer activityConsumer;
@@ -180,29 +180,27 @@ void TaskManager::configureStartup()
     d->startupInfo->setTimeout(c.readEntry("Timeout", 30));
 }
 
-TaskPtr TaskManager::findTask(WId w)
+Task *TaskManager::findTask(WId w)
 {
-    TaskDict::const_iterator it = d->tasksByWId.constBegin();
-    TaskDict::const_iterator itEnd = d->tasksByWId.constEnd();
+    QHashIterator<WId, Task *> it (d->tasksByWId);
 
-    for (; it != itEnd; ++it) {
+    while (it.hasNext()) {
+        it.next();
         if (it.key() == w || it.value()->hasTransient(w)) {
             return it.value();
         }
     }
 
-    return TaskPtr();
+    return 0;
 }
 
-TaskPtr TaskManager::findTask(int desktop, const QPoint& p)
+Task *TaskManager::findTask(int desktop, const QPoint& p)
 {
     QList<WId> list = KWindowSystem::stackingOrder();
 
-    TaskPtr task;
+    Task *task;
     int currentIndex = -1;
-    TaskDict::iterator itEnd = d->tasksByWId.end();
-    for (TaskDict::iterator it = d->tasksByWId.begin(); it != itEnd; ++it) {
-        TaskPtr t = it.value();
+    foreach (Task *t, d->tasksByWId) {
         if (!t->isOnAllDesktops() && t->desktop() != desktop) {
             continue;
         }
@@ -259,7 +257,7 @@ void TaskManager::windowAdded(WId w)
         // lets see if this is a transient for an existing task
         if (transient_for != QX11Info::appRootWindow() &&
                 transient_for != 0 && wType != NET::Utility) {
-            TaskPtr t = findTask(transient_for);
+            Task *t = findTask(transient_for);
             if (t) {
                 if (t->window() != w) {
                     t->addTransient(w, info);
@@ -271,17 +269,17 @@ void TaskManager::windowAdded(WId w)
     }
 #endif
 
-    TaskPtr t(new Task(w, 0));
-    d->tasksByWId[w] = t;
+    Task *t = new Task(w, 0);
+    d->tasksByWId.insert(w, t);
 
-    connect(t.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
+    connect(t, SIGNAL(changed(::TaskManager::TaskChanges)),
             this, SLOT(taskChanged(::TaskManager::TaskChanges)));
 
     if (d->startupInfo) {
         KStartupInfoId startupInfoId;
         // checkStartup modifies startupInfoId
         d->startupInfo->checkStartup(w, startupInfoId);
-        foreach (StartupPtr startup, d->startups) {
+        foreach (Startup *startup, d->startups) {
             if (startup->id() == startupInfoId) {
                 startup->addWindowMatch(w);
             }
@@ -297,7 +295,7 @@ void TaskManager::windowRemoved(WId w)
     d->skiptaskbarWindows.remove(w);
 
     // find task
-    TaskPtr t = findTask(w);
+    Task *t = findTask(w);
     if (!t) {
         return;
     }
@@ -313,7 +311,7 @@ void TaskManager::windowRemoved(WId w)
         //kDebug() << "TM: Task for WId " << w << " removed.";
         // FIXME: due to a bug in Qt 4.x, the event loop reference count is incorrect
         // when going through x11EventFilter .. :/ so we have to singleShot the deleteLater
-        QTimer::singleShot(0, t.data(), SLOT(deleteLater()));
+        QTimer::singleShot(0, t, SLOT(deleteLater()));
     } else {
         t->removeTransient(w);
         //kDebug() << "TM: Transient " << w << " for Task " << t->window() << " removed.";
@@ -351,7 +349,7 @@ void TaskManager::windowChanged(WId w, const unsigned long *dirty)
     }
 
     // find task
-    TaskPtr t = findTask(w);
+    Task *t = findTask(w);
     if (!t) {
         return;
     }
@@ -385,7 +383,7 @@ void TaskManager::taskChanged(::TaskManager::TaskChanges changes)
 void TaskManager::activeWindowChanged(WId w)
 {
     //kDebug() << "TaskManager::activeWindowChanged" << w;
-    TaskPtr t = findTask(w);
+    Task *t = findTask(w);
     if (!t) {
         if (d->active) {
             d->active->setActive(false);
@@ -418,18 +416,16 @@ void TaskManager::currentDesktopChanged(int desktop)
 
 void TaskManager::gotNewStartup(const KStartupInfoId& id, const KStartupInfoData& data)
 {
-    StartupPtr s(new Startup(id, data, 0));
+    Startup *s = new Startup(id, data, 0);
     d->startups.append(s);
-
     emit startupAdded(s);
 }
 
 void TaskManager::gotStartupChange(const KStartupInfoId& id, const KStartupInfoData& data)
 {
-    StartupList::iterator itEnd = d->startups.end();
-    for (StartupList::iterator sIt = d->startups.begin(); sIt != itEnd; ++sIt) {
-        if ((*sIt)->id() == id) {
-            (*sIt)->update(data);
+    foreach (Startup *startup, d->startups) {
+        if (startup->id() == id) {
+            startup->update(data);
             return;
         }
     }
@@ -437,40 +433,13 @@ void TaskManager::gotStartupChange(const KStartupInfoId& id, const KStartupInfoD
 
 void TaskManager::killStartup(const KStartupInfoId& id)
 {
-    StartupList::iterator sIt = d->startups.begin();
-    StartupList::iterator itEnd = d->startups.end();
-    StartupPtr s;
-    for (; sIt != itEnd; ++sIt) {
-        if ((*sIt)->id() == id) {
-            s = *sIt;
-            break;
+    foreach (Startup *startup, d->startups) {
+        if (startup->id() == id) {
+            d->startups.removeAll(startup);
+            emit startupRemoved(startup);
+            delete startup;
         }
     }
-
-    if (!s) {
-        return;
-    }
-
-    d->startups.erase(sIt);
-    emit startupRemoved(s);
-}
-
-void TaskManager::killStartup(StartupPtr s)
-{
-    if (!s) {
-        return;
-    }
-
-    StartupList::iterator sIt = d->startups.begin();
-    StartupList::iterator itEnd = d->startups.end();
-    for (; sIt != itEnd; ++sIt) {
-        if ((*sIt) == s) {
-            d->startups.erase(sIt);
-            break;
-        }
-    }
-
-    emit startupRemoved(s);
 }
 
 QString TaskManager::desktopName(int desk) const
@@ -478,12 +447,12 @@ QString TaskManager::desktopName(int desk) const
     return KWindowSystem::desktopName(desk);
 }
 
-TaskDict TaskManager::tasks() const
+QHash<WId, Task *> TaskManager::tasks() const
 {
     return d->tasksByWId;
 }
 
-StartupList TaskManager::startups() const
+QList<Startup *> TaskManager::startups() const
 {
     return d->startups;
 }
@@ -503,7 +472,7 @@ bool TaskManager::isOnTop(const Task* task) const
     QList<WId>::const_iterator begin(list.constBegin());
     QList<WId>::const_iterator it = list.constBegin() + (list.size() - 1);
     do {
-        TaskPtr t = d->tasksByWId.value(*it);
+        Task *t = d->tasksByWId.value(*it);
         if (t) {
             if (t == task) {
                 return true;

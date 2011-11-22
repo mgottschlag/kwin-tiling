@@ -85,16 +85,16 @@ public:
     */
     void currentDesktopChanged(int);
     void currentActivityChanged(QString);
-    void taskChanged(TaskPtr, ::TaskManager::TaskChanges);
+    void taskChanged(::TaskManager::Task *, ::TaskManager::TaskChanges);
     void checkScreenChange();
     void taskDestroyed(QObject *item);
     void startupItemDestroyed(AbstractGroupableItem *);
     void checkIfFull();
     void actuallyCheckIfFull();
-    bool addTask(TaskPtr);
-    void removeTask(TaskPtr);
-    void addStartup(StartupPtr);
-    void removeStartup(StartupPtr);
+    bool addTask(::TaskManager::Task *);
+    void removeTask(::TaskManager::Task *);
+    void addStartup(::TaskManager::Startup *);
+    void removeStartup(::TaskManager::Startup *);
     void sycocaChanged(const QStringList &types);
     void launcherVisibilityChange();
     void checkLauncherVisibility(LauncherItem *launcher);
@@ -110,7 +110,7 @@ public:
     TaskGroup *currentRootGroup();
 
     GroupManager *q;
-    QHash<StartupPtr, TaskItem*> startupList;
+    QHash<Startup *, TaskItem*> startupList;
     GroupManager::TaskSortingStrategy sortingStrategy;
     GroupManager::TaskGroupingStrategy groupingStrategy;
     GroupManager::TaskGroupingStrategy lastGroupingStrategy;
@@ -146,10 +146,10 @@ GroupManager::GroupManager(QObject *parent)
     : QObject(parent),
       d(new GroupManagerPrivate(this))
 {
-    connect(TaskManager::self(), SIGNAL(taskAdded(TaskPtr)), this, SLOT(addTask(TaskPtr)));
-    connect(TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)), this, SLOT(removeTask(TaskPtr)));
-    connect(TaskManager::self(), SIGNAL(startupAdded(StartupPtr)), this, SLOT(addStartup(StartupPtr)));
-    connect(TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)), this, SLOT(removeStartup(StartupPtr)));
+    connect(TaskManager::self(), SIGNAL(taskAdded(::TaskManager::Task *)), this, SLOT(addTask(::TaskManager::Task *)));
+    connect(TaskManager::self(), SIGNAL(taskRemoved(::TaskManager::Task *)), this, SLOT(removeTask(::TaskManager::Task *)));
+    connect(TaskManager::self(), SIGNAL(startupAdded(::TaskManager::Startup *)), this, SLOT(addStartup(::TaskManager::Startup *)));
+    connect(TaskManager::self(), SIGNAL(startupRemoved(::TaskManager::Startup *)), this, SLOT(removeStartup(::TaskManager::Startup *)));
     connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)), this, SLOT(sycocaChanged(const QStringList &)));
 
     d->currentDesktop = TaskManager::self()->currentDesktop();
@@ -191,8 +191,8 @@ void GroupManagerPrivate::reloadTasks()
 void GroupManagerPrivate::actuallyReloadTasks()
 {
     //kDebug() << "number of tasks available " << TaskManager::self()->tasks().size();
-    QHash<WId, TaskPtr> taskList = TaskManager::self()->tasks();
-    QMutableHashIterator<WId, TaskPtr> it(taskList);
+    QHash<WId, Task *> taskList = TaskManager::self()->tasks();
+    QMutableHashIterator<WId, Task *> it(taskList);
 
     while (it.hasNext()) {
         it.next();
@@ -213,7 +213,7 @@ void GroupManagerPrivate::actuallyReloadTasks()
     emit q->reload();
 }
 
-void GroupManagerPrivate::addStartup(StartupPtr task)
+void GroupManagerPrivate::addStartup(::TaskManager::Startup *task)
 {
     //kDebug();
     if (!startupList.contains(task)) {
@@ -225,7 +225,7 @@ void GroupManagerPrivate::addStartup(StartupPtr task)
     }
 }
 
-void GroupManagerPrivate::removeStartup(StartupPtr task)
+void GroupManagerPrivate::removeStartup(::TaskManager::Startup *task)
 {
     //kDebug();
     if (!startupList.contains(task)) {
@@ -237,11 +237,16 @@ void GroupManagerPrivate::removeStartup(StartupPtr task)
     if (item->parentGroup()) {
         item->parentGroup()->remove(item);
     }
-    item->setTaskPointer(TaskPtr());
+
+    item->setTaskPointer(0);
 }
 
-bool GroupManagerPrivate::addTask(TaskPtr task)
+bool GroupManagerPrivate::addTask(::TaskManager::Task *task)
 {
+    if (!task) {
+        return false;
+    }
+
     //kDebug();
     /* kDebug() << task->visibleName()
              << task->visibleNameWithState()
@@ -290,7 +295,7 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
 
         //TODO: should we check for transiency? if so the following code can detect it.
         /*
-            QHash <TaskPtr, TaskItem*>::iterator it = d->itemList.begin();
+            QHash <Task *, TaskItem*>::iterator it = d->itemList.begin();
 
             while (it != d->itemList.end()) {
                 TaskItem *item = it.value();
@@ -307,8 +312,8 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
     TaskItem *item = qobject_cast<TaskItem*>(currentRootGroup()->getMemberByWId(task->window()));
     if (!item || skip) {
         TaskItem *startupItem = 0;
-        QHash<StartupPtr, TaskItem *>::iterator it = startupList.begin();
-        QHash<StartupPtr, TaskItem *>::iterator itEnd = startupList.end();
+        QHash<Startup *, TaskItem *>::iterator it = startupList.begin();
+        QHash<Startup *, TaskItem *>::iterator itEnd = startupList.end();
         while (it != itEnd) {
             if (it.key()->matchesWindow(task->window())) {
                 //kDebug() << "startup task found";
@@ -333,8 +338,7 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
             item = new TaskItem(q, task);
         }
 
-        QObject::connect(task.data(), SIGNAL(destroyed(QObject*)),
-                         q, SLOT(taskDestroyed(QObject*)));
+        QObject::connect(task, SIGNAL(destroyed(QObject*)), q, SLOT(taskDestroyed(QObject*)));
 
         foreach (LauncherItem * launcher, launchers) {
             if (launcher->associateItemIfMatches(item)) {
@@ -351,15 +355,21 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
         currentRootGroup()->add(item);
     }
 
-    geometryTasks.insert(task.data());
+    if (showOnlyCurrentScreen) {
+        geometryTasks.insert(task);
+    }
+
     return true;
 }
 
-
-void GroupManagerPrivate::removeTask(TaskPtr task)
+void GroupManagerPrivate::removeTask(::TaskManager::Task *task)
 {
+    if (!task) {
+        return;
+    }
+
     //kDebug() << "remove: " << task->visibleName();
-    geometryTasks.remove(task.data());
+    geometryTasks.remove(task);
 
     AbstractGroupableItem *item = currentRootGroup()->getMemberByWId(task->window());
     if (!item) {
@@ -377,13 +387,13 @@ void GroupManagerPrivate::removeTask(TaskPtr task)
         item->parentGroup()->remove(item);
     }
 
-    //the item must exist as long as the TaskPtr does because of activate calls so don't delete the item here, it will delete itself.
+    //the item must exist as long as the Task does because of activate calls so don't delete the item here, it will delete itself.
 }
 
 void GroupManagerPrivate::taskDestroyed(QObject *item)
 {
     Task *task = static_cast<Task*>(item);
-    if (task) {
+    if (showOnlyCurrentScreen) {
         geometryTasks.remove(task);
     }
 }
@@ -506,9 +516,13 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
 }
 
 
-void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges changes)
+void GroupManagerPrivate::taskChanged(::TaskManager::Task *task, ::TaskManager::TaskChanges changes)
 {
     //kDebug();
+    if (!task) {
+        return;
+    }
+
     bool takeAction = false;
     bool show = true;
 
@@ -531,7 +545,7 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
     }
 
     if (showOnlyCurrentScreen && changes & ::TaskManager::GeometryChanged) {
-        geometryTasks.insert(task.data());
+        geometryTasks.insert(task);
 
         if (!screenTimer.isActive()) {
             screenTimer.start();
@@ -587,24 +601,26 @@ int GroupManager::screen() const
 void GroupManagerPrivate::checkScreenChange()
 {
     //kDebug();
-    foreach (Task * task, geometryTasks) {
-        if (task->isOnScreen(currentScreen)) {
-            addTask(TaskPtr(task));
-        } else {
-            removeTask(TaskPtr(task));
+    if (showOnlyCurrentScreen) {
+        foreach (Task *task, geometryTasks) {
+            if (task->isOnScreen(currentScreen)) {
+                addTask(task);
+            } else {
+                removeTask(task);
+            }
         }
     }
+
+    geometryTasks.clear();
 }
 
 void GroupManager::reconnect()
 {
     //kDebug();
-    disconnect(TaskManager::self(), SIGNAL(desktopChanged(int)),
-               this, SLOT(currentDesktopChanged(int)));
-    disconnect(TaskManager::self(), SIGNAL(activityChanged(QString)),
-               this, SLOT(currentActivityChanged(QString)));
-    disconnect(TaskManager::self(), SIGNAL(windowChanged(TaskPtr, ::TaskManager::TaskChanges)),
-               this, SLOT(taskChanged(TaskPtr, ::TaskManager::TaskChanges)));
+    disconnect(TaskManager::self(), SIGNAL(desktopChanged(int)), this, SLOT(currentDesktopChanged(int)));
+    disconnect(TaskManager::self(), SIGNAL(activityChanged(QString)), this, SLOT(currentActivityChanged(QString)));
+    disconnect(TaskManager::self(), SIGNAL(windowChanged(::TaskManager::Task *, ::TaskManager::TaskChanges)),
+               this, SLOT(taskChanged(::TaskManager::Task *, ::TaskManager::TaskChanges)));
 
     if (d->showOnlyCurrentDesktop || d->showOnlyMinimized || d->showOnlyCurrentScreen || d->showOnlyCurrentActivity) {
         // listen to the relevant task manager signals
@@ -617,8 +633,8 @@ void GroupManager::reconnect()
                     this, SLOT(currentActivityChanged(QString)));
         }
 
-        connect(TaskManager::self(), SIGNAL(windowChanged(TaskPtr, ::TaskManager::TaskChanges)),
-                this, SLOT(taskChanged(TaskPtr, ::TaskManager::TaskChanges)));
+        connect(TaskManager::self(), SIGNAL(windowChanged(::TaskManager::Task *, ::TaskManager::TaskChanges)),
+                this, SLOT(taskChanged(::TaskManager::Task *, ::TaskManager::TaskChanges)));
     }
 
     TaskManager::self()->setTrackGeometry(d->showOnlyCurrentScreen, d->configToken);

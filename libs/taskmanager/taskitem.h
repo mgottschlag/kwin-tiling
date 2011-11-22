@@ -36,25 +36,25 @@ namespace TaskManager
 
 
 /**
- * Wrapper class so we do not have to use the Task class directly and the TaskPtr remains guarded
+ * Wrapper class so we do not have to use the Task class directly and the Task* remains guarded
  */
 class TASKMANAGER_EXPORT TaskItem : public AbstractGroupableItem
 {
     Q_OBJECT
 public:
     /** Creates a taskitem for a task*/
-    TaskItem(QObject *parent, TaskPtr item);
+    TaskItem(QObject *parent, Task *item);
     /** Creates a taskitem for a startuptask*/
-    TaskItem(QObject *parent, StartupPtr item);
+    TaskItem(QObject *parent, Startup *item);
     ~TaskItem();
     /** Sets the taskpointer after the startup pointer */
-    void setTaskPointer(TaskPtr);
+    void setTaskPointer(Task *task);
     /** Returns a pointer to the  Task; may be NULL */
     Task *task() const;
 
     WindowList winIds() const;
 
-    StartupPtr startup() const;
+    Startup *startup() const;
     ItemType itemType() const;
     /**
     * @deprecated: use itemType() instead

@@ -24,8 +24,6 @@
 
 // libtaskmanager
 #include <taskmanager/taskmanager.h>
-using TaskManager::StartupPtr;
-using TaskManager::TaskPtr;
 
 /**
  * Task Source
@@ -40,28 +38,22 @@ class TaskSource : public Plasma::DataContainer
     Q_OBJECT
 
     public:
-        TaskSource(StartupPtr startup, QObject *parent);
-        TaskSource(TaskPtr task, QObject *parent);
+        TaskSource(::TaskManager::Startup *startup, QObject *parent);
+        TaskSource(::TaskManager::Task *task, QObject *parent);
         ~TaskSource();
 
-    protected:
         Plasma::Service *createService();
-        TaskPtr getTask();
-        bool isTask() const;
+        ::TaskManager::Task *task();
 
     private slots:
         void updateStartup(::TaskManager::TaskChanges startupChanges);
         void updateTask(::TaskManager::TaskChanges taskChanges);
-        void updateDesktop(int desktop);
+        void updateDesktop();
         void updateActivity();
 
     private:
-        friend class TasksEngine;
-        friend class TaskJob;
-        StartupPtr m_startup;
-        TaskPtr m_task;
-        bool m_isTask;
-
+        QWeakPointer< ::TaskManager::Startup > m_startup;
+        QWeakPointer< ::TaskManager::Task > m_task;
 };
 
 #endif // TASKSOURCE_H

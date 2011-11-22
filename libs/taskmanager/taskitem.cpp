@@ -48,19 +48,18 @@ class TaskItem::Private
 {
 public:
     Private()
-        : startupTask(0)
-        , checkedForLauncher(false) {
+        : checkedForLauncher(false) {
     }
 
     QWeakPointer<Task> task;
-    StartupPtr startupTask;
+    QWeakPointer<Startup> startupTask;
     KUrl launcherUrl;
     bool checkedForLauncher;
     QString taskName;
 };
 
 
-TaskItem::TaskItem(QObject *parent, TaskPtr task)
+TaskItem::TaskItem(QObject *parent, Task *task)
     : AbstractGroupableItem(parent),
       d(new Private)
 {
@@ -68,13 +67,13 @@ TaskItem::TaskItem(QObject *parent, TaskPtr task)
 }
 
 
-TaskItem::TaskItem(QObject *parent, StartupPtr task)
+TaskItem::TaskItem(QObject *parent, Startup *task)
     : AbstractGroupableItem(parent),
       d(new Private)
 {
     d->startupTask = task;
-    connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)), this, SIGNAL(changed(::TaskManager::TaskChanges)));
-    connect(task.data(), SIGNAL(destroyed(QObject*)), this, SLOT(taskDestroyed())); //this item isn't useful anymore if the Task was closed
+    connect(task, SIGNAL(changed(::TaskManager::TaskChanges)), this, SIGNAL(changed(::TaskManager::TaskChanges)));
+    connect(task, SIGNAL(destroyed(QObject*)), this, SLOT(taskDestroyed())); //this item isn't useful anymore if the Task was closed
 }
 
 TaskItem::~TaskItem()
@@ -89,20 +88,20 @@ TaskItem::~TaskItem()
 
 void TaskItem::taskDestroyed()
 {
-    d->startupTask = 0;
+    d->startupTask.clear();
     d->task.clear();
     // FIXME: due to a bug in Qt 4.x, the event loop reference count is incorrect
     // when going through x11EventFilter .. :/ so we have to singleShot the deleteLater
     QTimer::singleShot(0, this, SLOT(deleteLater()));
 }
 
-void TaskItem::setTaskPointer(TaskPtr task)
+void TaskItem::setTaskPointer(Task *task)
 {
-    const bool differentTask = d->task.data() != task.data();
+    const bool differentTask = d->task.data() != task;
 
     if (d->startupTask) {
         disconnect(d->startupTask.data(), 0, this, 0);
-        d->startupTask = 0;
+        d->startupTask.clear();
     } else if (differentTask) {
         // if we aren't moving from startup -> task and the task pointer is changing on us
         // let's clear the launcher url
@@ -114,11 +113,11 @@ void TaskItem::setTaskPointer(TaskPtr task)
             disconnect(d->task.data(), 0, this, 0);
         }
 
-        d->task = task.data();
+        d->task = task;
 
         if (task) {
-            connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)), this, SIGNAL(changed(::TaskManager::TaskChanges)));
-            connect(task.data(), SIGNAL(destroyed(QObject*)), this, SLOT(taskDestroyed()));
+            connect(task, SIGNAL(changed(::TaskManager::TaskChanges)), this, SIGNAL(changed(::TaskManager::TaskChanges)));
+            connect(task, SIGNAL(destroyed(QObject*)), this, SLOT(taskDestroyed()));
             emit gotTaskPointer();
         }
     }
@@ -135,19 +134,19 @@ Task *TaskItem::task() const
     return d->task.data();
 }
 
-StartupPtr TaskItem::startup() const
+Startup *TaskItem::startup() const
 {
     /*
     if (d->startupTask.isNull()) {
         kDebug() << "pointer is Null";
     }
     */
-    return d->startupTask;
+    return d->startupTask.data();
 }
 
 bool TaskItem::isStartupItem() const
 {
-    return !d->startupTask.isNull();
+    return d->startupTask;
 }
 
 WindowList TaskItem::winIds() const
@@ -168,7 +167,7 @@ QIcon TaskItem::icon() const
     }
 
     if (d->startupTask) {
-        return d->startupTask->icon();
+        return d->startupTask.data()->icon();
     }
 
     return QIcon();
@@ -181,7 +180,7 @@ QString TaskItem::name() const
     }
 
     if (d->startupTask) {
-        return d->startupTask->text();
+        return d->startupTask.data()->text();
     }
 
     return QString();
