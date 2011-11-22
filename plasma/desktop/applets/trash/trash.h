@@ -32,6 +32,7 @@
 class QAction;
 
 class KCModuleProxy;
+class KDialog;
 class KFilePlacesModel;
 class KProcess;
 
@@ -50,10 +51,6 @@ class Trash : public Plasma::Applet
 
         void init();
         void constraintsEvent(Plasma::Constraints constraints);
-        
-    public slots:
-        void slotOpen();
-        void slotEmpty();
 
     protected:
         void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
@@ -66,12 +63,15 @@ class Trash : public Plasma::Applet
 
     protected slots:
         void popup();
-        void slotClear();
-        void slotCompleted();
-        void slotDeleteItem(const KFileItem &);
-        void slotApplyConfig();
+        void open();
+        void empty();
+        void clear();
+        void completed();
+        void deleteItem(const KFileItem &);
+        void applyConfig();
+        void emptyTrash();
         void emptyFinished(int exitCode, QProcess::ExitStatus exitStatus);
-        
+
     private slots:
         void iconSizeChanged(int group);
 
@@ -80,7 +80,8 @@ class Trash : public Plasma::Applet
         QList<QAction*> actions;
         KDirLister *m_dirLister;
         KMenu m_menu;
-        QAction *emptyTrash;
+        QAction *m_emptyAction;
+        QWeakPointer<KDialog> m_confirmEmptyDialog;
         int m_count;
         bool m_showText;
         KFilePlacesModel *m_places;

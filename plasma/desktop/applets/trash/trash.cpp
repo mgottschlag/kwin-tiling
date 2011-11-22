@@ -27,18 +27,18 @@
 #include <KCModuleProxy>
 #include <KConfigDialog>
 #include <KDebug>
-#include <KLocale>
+#include <KFilePlacesModel>
+#include <KGlobalSettings>
 #include <KIconLoader>
+#include <KMessageBox>
+#include <KLocale>
+#include <KNotification>
+#include <KProcess>
 #include <KRun>
 #include <KSharedConfig>
-#include <KMessageBox>
-#include <KUrl>
-#include <KProcess>
 #include <KStandardDirs>
-#include <KNotification>
-#include <KGlobalSettings>
-
-#include <kfileplacesmodel.h>
+#include <KUrl>
+#include <KWindowSystem>
 
 #include <KIO/CopyJob>
 #include <KIO/JobUiDelegate>
@@ -47,8 +47,6 @@
 #include <Plasma/IconWidget>
 #include <Plasma/Containment>
 #include <Plasma/ToolTipManager>
-
-
 
 //Solid
 #include <solid/devicenotifier.h>
@@ -64,7 +62,7 @@ Trash::Trash(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_icon(0),
       m_dirLister(0),
-      emptyTrash(0),
+      m_emptyAction(0),
       m_count(0),
       m_showText(false),
       m_places(0),
@@ -101,19 +99,15 @@ void Trash::init()
     installSceneEventFilter(m_icon);
 
     m_dirLister = new KDirLister();
-    connect( m_dirLister, SIGNAL(clear()),
-             this, SLOT(slotClear()) );
-    connect( m_dirLister, SIGNAL(completed()),
-             this, SLOT(slotCompleted()) );
-    connect( m_dirLister, SIGNAL(deleteItem(KFileItem)),
-             this, SLOT(slotDeleteItem(KFileItem)) );
+    connect(m_dirLister, SIGNAL(clear()), this, SLOT(clear()));
+    connect(m_dirLister, SIGNAL(completed()), this, SLOT(completed()));
+    connect(m_dirLister, SIGNAL(deleteItem(KFileItem)), this, SLOT(deleteItem(KFileItem)));
 
     m_dirLister->openUrl(KUrl("trash:/"));
 
-    connect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
-    
+    connect(m_icon, SIGNAL(activated()), this, SLOT(open()));
     connect(KGlobalSettings::self(), SIGNAL(iconChanged(int)),
-        this, SLOT(iconSizeChanged(int)));
+            this, SLOT(iconSizeChanged(int)));
 }
 
 void Trash::createConfigurationInterface(KConfigDialog *parent)
@@ -121,7 +115,7 @@ void Trash::createConfigurationInterface(KConfigDialog *parent)
     m_proxy = new KCModuleProxy("kcmtrash");
 
     parent->addPage(m_proxy, i18n("Trash"), icon());
-    connect(parent, SIGNAL(okClicked()), this, SLOT(slotApplyConfig()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(applyConfig()));
 
     m_proxy->load();
 }
@@ -130,15 +124,15 @@ void Trash::createMenu()
 {
     QAction* open = new QAction(SmallIcon("document-open"), i18n("&Open"), this);
     actions.append(open);
-    connect(open, SIGNAL(triggered(bool)), this , SLOT(slotOpen()));
+    connect(open, SIGNAL(triggered(bool)), this , SLOT(open()));
 
-    emptyTrash = new QAction(SmallIcon("trash-empty"), i18n("&Empty Trashcan"), this);
-    actions.append(emptyTrash);
-    connect(emptyTrash, SIGNAL(triggered(bool)), this, SLOT(slotEmpty()));
+    m_emptyAction = new QAction(SmallIcon("trash-empty"), i18n("&Empty Trashcan"), this);
+    actions.append(m_emptyAction);
+    connect(m_emptyAction, SIGNAL(triggered(bool)), this, SLOT(empty()));
 
     m_menu.addTitle(i18n("Trash"));
     m_menu.addAction(open);
-    m_menu.addAction(emptyTrash);
+    m_menu.addAction(m_emptyAction);
 
     //add the menu as an action icon
     QAction* menu = new QAction(SmallIcon("arrow-up-double"),i18n("&Menu"), this);
@@ -161,13 +155,13 @@ void Trash::popup()
 void Trash::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
-        disconnect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
-        disconnect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
+        disconnect(m_icon, SIGNAL(activated()), this, SLOT(open()));
+        disconnect(m_icon, SIGNAL(clicked()), this, SLOT(open()));
 
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
 
-            connect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
+            connect(m_icon, SIGNAL(activated()), this, SLOT(open()));
 
             m_icon->setText(i18n("Trash"));
             m_icon->setInfoText(i18np("One item", "%1 items", m_count));
@@ -177,7 +171,7 @@ void Trash::constraintsEvent(Plasma::Constraints constraints)
             setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop))+=QSizeF(20,0));
         } else {
             //in a panel the icon always behaves like a button
-            connect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
+            connect(m_icon, SIGNAL(clicked()), this, SLOT(open()));
 
             m_icon->setText(0);
             m_icon->setInfoText(0);
@@ -190,40 +184,51 @@ void Trash::constraintsEvent(Plasma::Constraints constraints)
     }
 }
 
-void Trash::slotOpen()
+void Trash::open()
 {
     emit releaseVisualFocus();
     KRun::runUrl(KUrl("trash:/"), "inode/directory", 0);
 }
 
-void Trash::slotEmpty()
+void Trash::empty()
 {
     if (m_emptyProcess) {
         return;
     }
 
     emit releaseVisualFocus();
-    const QString text(i18nc("@info", "Do you really want to empty the trash? All items will be deleted."));
-    //FIXME: should use KMessageBox::createKMessageBox so that it doesn't block the whole app!
-    const bool del = KMessageBox::warningContinueCancel(&m_menu,
-                                                        text,
-                                                        QString(),
-                                                        KGuiItem(i18nc("@action:button", "Empty Trash"),
-                                                                  KIcon("user-trash"))
-                                                        ) == KMessageBox::Continue;
+    if (m_confirmEmptyDialog) {
+        KWindowSystem::forceActiveWindow(m_confirmEmptyDialog.data()->winId());
+    } else {
+        const QString text(i18nc("@info", "Do you really want to empty the trash? All items will be deleted."));
+        KDialog *dialog = new KDialog;
+        dialog->setWindowTitle(i18n("Empty Trash"));
+        dialog->setButtons(KDialog::Yes|KDialog::No);
+        dialog->setButtonText(KDialog::Yes, i18n("Empty Trash"));
+        dialog->setButtonText(KDialog::No, i18n("Cancel"));
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        connect(dialog, SIGNAL(yesClicked()), this, SLOT(emptyTrash()));
 
-    if (del) {
-         // We can't use KonqOperations here. To avoid duplicating its code (small, though),
-        // we can simply call ktrash.
-        //KonqOperations::emptyTrash(&m_menu);
-        emptyTrash->setEnabled(false);
-        emptyTrash->setText(i18n("Emptying Trashcan..."));
-        m_emptyProcess = new KProcess(this);
-        connect(m_emptyProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
-                this, SLOT(emptyFinished(int,QProcess::ExitStatus)));
-        (*m_emptyProcess) << KStandardDirs::findExe("ktrash") << "--empty";
-        m_emptyProcess->start();
+        KMessageBox::createKMessageBox(dialog, KIcon("user-trash"), text, QStringList(), QString(), 0, KMessageBox::NoExec);
+
+        dialog->setModal(false);
+        m_confirmEmptyDialog = dialog;
+        dialog->show();
     }
+}
+
+void Trash::emptyTrash()
+{
+    // We can't use KonqOperations here. To avoid duplicating its code (small, though),
+    // we can simply call ktrash.
+    //KonqOperations::emptyTrash(&m_menu);
+    m_emptyAction->setEnabled(false);
+    m_emptyAction->setText(i18n("Emptying Trashcan..."));
+    m_emptyProcess = new KProcess(this);
+    connect(m_emptyProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
+            this, SLOT(emptyFinished(int,QProcess::ExitStatus)));
+    (*m_emptyProcess) << KStandardDirs::findExe("ktrash") << "--empty";
+    m_emptyProcess->start();
 }
 
 void Trash::emptyFinished(int exitCode, QProcess::ExitStatus exitStatus)
@@ -232,12 +237,12 @@ void Trash::emptyFinished(int exitCode, QProcess::ExitStatus exitStatus)
     Q_UNUSED(exitStatus)
 
     KNotification::event("Trash: emptied", QString() , QPixmap() , 0l, KNotification::DefaultEvent );
-    
+
     //TODO: check the exit status and let the user know if it fails
     delete m_emptyProcess;
     m_emptyProcess = 0;
-    emptyTrash->setEnabled(false);
-    emptyTrash->setText(i18n("&Empty Trashcan"));
+    m_emptyAction->setEnabled(false);
+    m_emptyAction->setText(i18n("&Empty Trashcan"));
 }
 
 void Trash::updateIcon()
@@ -271,28 +276,28 @@ void Trash::updateIcon()
         Plasma::ToolTipManager::self()->clearContent(this);
     }
 
-    emptyTrash->setEnabled(m_count > 0);
+    m_emptyAction->setEnabled(m_count > 0);
 }
 
-void Trash::slotClear()
+void Trash::clear()
 {
     m_count = 0;
     updateIcon();
 }
 
-void Trash::slotCompleted()
+void Trash::completed()
 {
     m_count = m_dirLister->items(KDirLister::AllItems).count();
     updateIcon();
 }
 
-void Trash::slotDeleteItem(const KFileItem &)
+void Trash::deleteItem(const KFileItem &)
 {
     m_count--;
     updateIcon();
 }
 
-void Trash::slotApplyConfig()
+void Trash::applyConfig()
 {
     m_proxy->save();
 }
