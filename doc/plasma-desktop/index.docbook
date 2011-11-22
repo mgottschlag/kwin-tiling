@@ -28,8 +28,8 @@
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2011-09-04</date>
-<releaseinfo>&kde; 4.7</releaseinfo>
+<date>2011-11-22</date>
+<releaseinfo>&kde; 4.8</releaseinfo>
 
 <abstract>
 <para>
@@ -185,7 +185,7 @@ open the device in &dolphin; or another associated application.
 </para>
 <para>The <application>Device Notifier</application> is used for handling pluggable devices such as <acronym>USB</acronym> pendrives (also called flash drives or thumb drives), digital cameras, external <acronym>USB</acronym> hard drives, &etc; It also comes into play when a medium such as a &CD; or DVD is loaded into an optical drive.
 </para>
-<para>When you plug in an external device, or load a new medium into a drive, the <guilabel>Notifier</guilabel> window popus up (you can also open it explicitly by clicking on its Panel icon.) It stays open while the cursor is over it, otherwise it hides itself after a few seconds.
+<para>When you plug in an external device, or load a new medium into a drive, the <guilabel>Notifier</guilabel> window pops up (you can also open it explicitly by clicking on its Panel icon.) It stays open while the cursor is over it, otherwise it hides itself after a few seconds.
 </para>
 <para>The <guilabel>Notifier</guilabel> window shows a list of all the devices it currently knows about. Moving the mouse cursor over a device will highlight how many possible actions are associated with that device.
 </para>
@@ -202,7 +202,7 @@ open the device in &dolphin; or another associated application.
   </mediaobject>
 </screenshot>
 </para>
-<para>Clicking anywhere in the shaded box around the device name (but not on the eject/unmount icon if present) expands the entry to show the list of possible actions for that device.  The set of actions depends on the device; it is configurable from &systemsettings;. Simply select one with the mouse or keyboard to launch that action.
+<para>Clicking anywhere in the shaded box around the device name (but not on the eject/unmount icon if present) expands the entry to show the list of possible actions for that device.  The set of actions depends on the device; it is configurable from the <application>Device Notifier</application>'s context menu or from the &systemsettings; modules <ulink url="help:/kcontrol/solid-actions/index.html">Device Actions</ulink> and <ulink url="help:/kcontrol/solid-device-automounter/index.html">Removable Devices</ulink>. Simply select one with the mouse or keyboard to launch that action.
 </para>
 <para>There is also a small icon to the right of each entry showing whether that device is currently accessible (or <emphasis>mounted</emphasis>) or not. Only when a device is not mounted is it safe to physically disconnect it from the computer. Clicking on the icon causes the device to be unmounted and/or the medium to be ejected if it is currently mounted, and will mount it if it is not. Note that unmounting/ejecting might fail if the device still has open files on it, &eg; if a large file copy hasn't finished. In most cases you can just wait a while and try again. When an unmounting has succeeded, a success icon will be shown on the <application>Device Notifier</application>'s icon.
 </para>
