@@ -44,7 +44,7 @@ namespace TaskManager
  *
  * @see TaskManager
  */
-class TASKMANAGER_EXPORT Startup: public QObject, public QSharedData
+class TASKMANAGER_EXPORT Startup: public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString text READ text)
