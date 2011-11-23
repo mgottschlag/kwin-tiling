@@ -28,6 +28,8 @@ namespace Plasma
     class Package;
 } // namespace Plasma
 
+class Image;
+
 class ImageSizeFinder : public QObject, public QRunnable
 {
     Q_OBJECT
@@ -47,7 +49,7 @@ class BackgroundListModel : public QAbstractListModel
     Q_OBJECT
 
 public:
-    BackgroundListModel(Plasma::Wallpaper *listener, QObject *parent);
+    BackgroundListModel(Image *listener, QObject *parent);
     virtual ~BackgroundListModel();
 
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -74,7 +76,7 @@ protected Q_SLOTS:
 private:
     QSize bestSize(Plasma::Package *package) const;
 
-    Plasma::Wallpaper *m_structureParent;
+    QWeakPointer<Image> m_structureParent;
     QList<Plasma::Package *> m_packages;
     QHash<Plasma::Package *, QSize> m_sizeCache;
     QHash<Plasma::Package *, QPixmap> m_previews;
