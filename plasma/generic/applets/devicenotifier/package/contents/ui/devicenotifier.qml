@@ -59,6 +59,14 @@ Item {
         }
     }
 
+    function popupEventSlot(popped) {
+    if (!popped) {
+        expandedDevice = "";
+        notifierDialog.currentExpanded = -1;
+	notifierDialog.currentIndex = -1;
+        }
+    }
+
     PlasmaCore.DataSource {
         id: statusSource
         engine: "devicenotifications"
@@ -78,6 +86,7 @@ Item {
 
     Component.onCompleted: {
         plasmoid.addEventListener ('ConfigChanged', configChanged);
+        plasmoid.popupEvent.connect(popupEventSlot);
     }
 
     function configChanged() {

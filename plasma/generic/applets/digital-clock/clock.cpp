@@ -217,7 +217,10 @@ void Clock::clockConfigChanged()
     const QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
     const QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
     setMinimumSize(metrics.size(Qt::TextSingleLine, timeString));
-    updateSize();
+
+    if (isUserConfiguring()) {
+        updateSize();
+    }
 }
 
 bool Clock::showTimezone() const

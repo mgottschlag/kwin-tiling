@@ -77,7 +77,7 @@ void TaskSource::updateStartup(::TaskManager::TaskChanges startupChanges)
 void TaskSource::updateTask(::TaskManager::TaskChanges taskChanges)
 {
     ::TaskManager::Task *taskPtr = m_task.data();
-    if (taskPtr) {
+    if (!taskPtr) {
         return;
     }
 

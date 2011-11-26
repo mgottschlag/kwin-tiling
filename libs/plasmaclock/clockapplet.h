@@ -73,7 +73,6 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         virtual Plasma::ToolTipContent toolTipContent();
         void wheelEvent(QGraphicsSceneWheelEvent *event);
         void createConfigurationInterface(KConfigDialog *parent);
-        void initExtenderItem(Plasma::ExtenderItem *item);
         void updateTipContent();
         void updateClockApplet();
         void updateClockApplet(const Plasma::DataEngine::Data &data);
@@ -97,8 +96,6 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
     private:
         class Private;
         Private * const d;
-
-        Q_PRIVATE_SLOT(d, void createCalendarExtender())
 };
 
 #endif

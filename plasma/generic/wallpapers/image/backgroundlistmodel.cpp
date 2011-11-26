@@ -42,7 +42,7 @@ void ImageSizeFinder::run()
 }
 
 
-BackgroundListModel::BackgroundListModel(Plasma::Wallpaper *listener, QObject *parent)
+BackgroundListModel::BackgroundListModel(Image *listener, QObject *parent)
     : QAbstractListModel(parent),
       m_structureParent(listener),
       m_size(0,0),
@@ -84,13 +84,17 @@ void BackgroundListModel::reload(const QStringList &selected)
         endRemoveRows();
     }
 
+    if (!m_structureParent) {
+        return;
+    }
+
     if (!selected.isEmpty()) {
         processPaths(selected);
     }
 
     const QStringList dirs = KGlobal::dirs()->findDirs("wallpaper", "");
     kDebug() << "going looking in" << dirs;
-    BackgroundFinder *finder = new BackgroundFinder(m_structureParent, dirs);
+    BackgroundFinder *finder = new BackgroundFinder(m_structureParent.data(), dirs);
     connect(finder, SIGNAL(backgroundsFound(QStringList,QString)), this, SLOT(backgroundsFound(QStringList,QString)));
     m_findToken = finder->token();
     finder->start();
@@ -105,10 +109,14 @@ void BackgroundListModel::backgroundsFound(const QStringList &paths, const QStri
 
 void BackgroundListModel::processPaths(const QStringList &paths)
 {
+    if (!m_structureParent) {
+        return;
+    }
+
     QList<Plasma::Package *> newPackages;
     foreach (const QString &file, paths) {
         if (!contains(file) && QFile::exists(file)) {
-            Plasma::PackageStructure::Ptr structure = Plasma::Wallpaper::packageStructure(m_structureParent);
+            Plasma::PackageStructure::Ptr structure = Plasma::Wallpaper::packageStructure(m_structureParent.data());
             Plasma::Package *package  = new Plasma::Package(file, structure);
             if (package->isValid()) {
                 newPackages << package;
@@ -136,12 +144,12 @@ void BackgroundListModel::processPaths(const QStringList &paths)
 
 void BackgroundListModel::addBackground(const QString& path)
 {
-    if (!contains(path)) {
+    if (!m_structureParent || !contains(path)) {
         if (!m_dirwatch.contains(path)) {
             m_dirwatch.addFile(path);
         }
         beginInsertRows(QModelIndex(), 0, 0);
-        Plasma::PackageStructure::Ptr structure = Plasma::Wallpaper::packageStructure(m_structureParent);
+        Plasma::PackageStructure::Ptr structure = Plasma::Wallpaper::packageStructure(m_structureParent.data());
         Plasma::Package *pkg = new Plasma::Package(path, structure);
         m_packages.prepend(pkg);
         endInsertRows();
@@ -209,11 +217,15 @@ QSize BackgroundListModel::bestSize(Plasma::Package *package) const
 
 void BackgroundListModel::sizeFound(const QString &path, const QSize &s)
 {
+    if (!m_structureParent) {
+        return;
+    }
+
     QModelIndex index = indexOf(path);
     if (index.isValid()) {
         Plasma::Package *package = m_packages.at(index.row());
         m_sizeCache.insert(package, s);
-        static_cast<Image *>(m_structureParent)->updateScreenshot(index);
+        m_structureParent.data()->updateScreenshot(index);
     }
 }
 
@@ -292,6 +304,10 @@ QVariant BackgroundListModel::data(const QModelIndex &index, int role) const
 
 void BackgroundListModel::showPreview(const KFileItem &item, const QPixmap &preview)
 {
+    if (!m_structureParent) {
+        return;
+    }
+
     QPersistentModelIndex index = m_previewJobs.value(item.url());
     m_previewJobs.remove(item.url());
 
@@ -306,7 +322,7 @@ void BackgroundListModel::showPreview(const KFileItem &item, const QPixmap &prev
 
     m_previews.insert(b, preview);
     //kDebug() << "preview size:" << preview.size();
-    static_cast<Image *>(m_structureParent)->updateScreenshot(index);
+    m_structureParent.data()->updateScreenshot(index);
 }
 
 void BackgroundListModel::previewFailed(const KFileItem &item)
