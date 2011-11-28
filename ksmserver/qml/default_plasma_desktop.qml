@@ -243,7 +243,7 @@ PlasmaCore.FrameSvgItem {
             if (focusedButton != 0) {
                 if (automaticallyDoSeconds <= 0) { // timeout is at 0, do selected action
                     //console.log("Lamarque: focusedButton == " + focusedButton.text);
-                    //focusedButton.clicked()
+                    focusedButton.clicked()
                 // following code is required to provide a clean way to translate strings
                 } else if (focusedButton.text == logoutButton.text) {
                     console.log("Lamarque: focusedButton == " + focusedButton.text);
@@ -378,7 +378,7 @@ PlasmaCore.FrameSvgItem {
                         height:32
 
                         onClicked: {
-                            suspendRequested(2); // Solid::PowerManagement::HibernateState
+                            suspendRequested(3); // Solid::PowerManagement::HibernateState
                         }
                     }
 
