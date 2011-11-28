@@ -723,10 +723,7 @@ void TaskGroupItem::popupMenu()
         m_offscreenWidget->layout()->activate();
         m_offscreenWidget->resize(m_offscreenWidget->effectiveSizeHint(Qt::PreferredSize));
         m_popupDialog->syncToGraphicsWidget();
-
-        if (m_applet->containment() && m_applet->containment()->corona()) {
-            m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size(), Qt::AlignCenter));
-        }
+        m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size(), Qt::AlignCenter));
         KWindowSystem::setState(m_popupDialog->winId(), NET::SkipTaskbar| NET::SkipPager);
         if (m_applet->location() != Plasma::Floating) {
             m_popupDialog->animatedShow(Plasma::locationToDirection(m_applet->location()));
