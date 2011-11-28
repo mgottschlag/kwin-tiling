@@ -91,19 +91,18 @@ private Q_SLOTS:
     void prevYear();
     void nextYear();
     void dateUpdated();
-    void displayEvents(const QDate &date = QDate());
     void goToToday();
     void goToWeek(int week);
     void manualDateChange();
-    void monthsPopup();
     void monthTriggered();
     void showYearSpinBox();
     void hideYearSpinBox();
 
 private:
-    void init(const QDate &date = QDate());
-    void refreshWidgets();
     CalendarPrivate* const d;
+
+    Q_PRIVATE_SLOT(d, void popupMonthsMenu())
+    Q_PRIVATE_SLOT(d, void displayEvents(const QDate &date = QDate()))
 };
 
 }

@@ -22,6 +22,7 @@
 
 //Qt
 #include <QtCore/QDate>
+#include <QtCore/QTimer>
 #include <QtGui/QGraphicsSceneWheelEvent>
 #include <QtGui/QGraphicsGridLayout>
 #include <QtGui/QGraphicsLinearLayout>
@@ -65,8 +66,9 @@ static const int s_yearWidgetIndex = 3;
 class CalendarPrivate
 {
     public:
-        CalendarPrivate()
-            : back(0),
+        CalendarPrivate(Calendar *calendar)
+            : q(calendar),
+              back(0),
               spacer0(0),
               month(0),
               yearSpinBox(0),
@@ -83,8 +85,13 @@ class CalendarPrivate
         {
         }
 
+        void init(const QDate &date = QDate());
+        void refreshWidgets();
         bool addDateDetailsToDisplay(QString &html, const QDate &date);
+        void popupMonthsMenu();
+        void displayEvents(const QDate &date = QDate());
 
+        Calendar *q;
         ToolButton *back;
         Plasma::Label *spacer0;
         Plasma::ToolButton *month;
@@ -104,15 +111,16 @@ class CalendarPrivate
 
 Calendar::Calendar(const QDate &date, QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
-      d(new CalendarPrivate())
+      d(new CalendarPrivate(this))
 {
-    init(date);
+    d->init(date);
 }
 
 Calendar::Calendar(QGraphicsWidget *parent)
-    : QGraphicsWidget(parent), d(new CalendarPrivate())
+    : QGraphicsWidget(parent),
+      d(new CalendarPrivate(this))
 {
-    init();
+    d->init();
 }
 
 Calendar::~Calendar()
@@ -121,84 +129,85 @@ Calendar::~Calendar()
    delete d;
 }
 
-void Calendar::init(const QDate &initialDate)
+void CalendarPrivate::init(const QDate &initialDate)
 {
-    setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+    q->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
-    d->layout = new QGraphicsLinearLayout(Qt::Horizontal, this);
-    QGraphicsLinearLayout *calendarLayout = new QGraphicsLinearLayout(Qt::Vertical, d->layout);
-    QGraphicsLinearLayout *hLayout = new QGraphicsLinearLayout(d->layout);
-    QGraphicsLinearLayout *layoutTools = new QGraphicsLinearLayout(d->layout);
+    layout = new QGraphicsLinearLayout(Qt::Horizontal, q);
+    QGraphicsLinearLayout *calendarLayout = new QGraphicsLinearLayout(Qt::Vertical, layout);
+    QGraphicsLinearLayout *hLayout = new QGraphicsLinearLayout(layout);
+    QGraphicsLinearLayout *layoutTools = new QGraphicsLinearLayout(layout);
 
-    d->calendarTable = new CalendarTable(this);
-    d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(d->calendarTable, SIGNAL(dateChanged(QDate)), this, SLOT(dateUpdated()));
-    connect(d->calendarTable, SIGNAL(dateHovered(QDate)), this, SIGNAL(dateHovered(QDate)));
-    connect(d->calendarTable, SIGNAL(dateSelected(QDate)), this, SLOT(displayEvents(QDate)));
-    connect(d->calendarTable, SIGNAL(eventsChanged()), this, SLOT(displayEvents()));
-    connect(this, SIGNAL(dateHovered(QDate)), this, SLOT(displayEvents(QDate)));
+    calendarTable = new CalendarTable(q);
+    calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QObject::connect(calendarTable, SIGNAL(dateChanged(QDate)), q, SLOT(dateUpdated()));
+    QObject::connect(calendarTable, SIGNAL(dateHovered(QDate)), q, SIGNAL(dateHovered(QDate)));
+    QObject::connect(calendarTable, SIGNAL(dateSelected(QDate)), q, SLOT(displayEvents(QDate)));
+    QObject::connect(calendarTable, SIGNAL(eventsChanged()), q, SLOT(displayEvents()));
+    QObject::connect(q, SIGNAL(dateHovered(QDate)), q, SLOT(displayEvents(QDate)));
 
-    d->back = new Plasma::ToolButton(this);
-    d->back->setText("<");
-    d->back->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(d->back, SIGNAL(clicked()), this, SLOT(prevMonth()));
-    hLayout->addItem(d->back);
-
-    hLayout->addStretch();
-
-    d->month = new WheelyToolButton(this);
-    d->month->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    d->monthMenu = new QMenu();
-    d->month->nativeWidget()->setMenu(d->monthMenu);
-    connect(d->month, SIGNAL(clicked()), this, SLOT(monthsPopup()));
-    connect(d->month, SIGNAL(wheelUp()), this, SLOT(prevMonth()));
-    connect(d->month, SIGNAL(wheelDown()), this, SLOT(nextMonth()));
-    hLayout->addItem(d->month);
-
-    d->year = new WheelyToolButton(this);
-    d->year->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(d->year, SIGNAL(wheelUp()), this, SLOT(prevYear()));
-    connect(d->year, SIGNAL(wheelDown()), this, SLOT(nextYear()));
-    connect(d->year, SIGNAL(clicked()), this, SLOT(showYearSpinBox()));
-    hLayout->addItem(d->year);
-
-    d->yearSpinBox = new Plasma::SpinBox(this);
-    d->yearSpinBox->setRange(calendar()->year(calendar()->earliestValidDate()), calendar()->year(calendar()->latestValidDate()));
-    d->yearSpinBox->hide();
-    connect(d->yearSpinBox->nativeWidget(), SIGNAL(editingFinished()), this, SLOT(hideYearSpinBox()));
+    back = new Plasma::ToolButton(q);
+    back->setText("<");
+    back->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    QObject::connect(back, SIGNAL(clicked()), q, SLOT(prevMonth()));
+    hLayout->addItem(back);
 
     hLayout->addStretch();
 
-    d->forward = new Plasma::ToolButton(this);
-    d->forward->setText(">");
-    d->forward->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(d->forward, SIGNAL(clicked()), this, SLOT(nextMonth()));
-    hLayout->addItem(d->forward);
+    month = new WheelyToolButton(q);
+    month->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    monthMenu = new QMenu();
+    QObject::connect(month, SIGNAL(clicked()), q, SLOT(popupMonthsMenu()));
+    QObject::connect(month, SIGNAL(pressed()), q, SLOT(popupMonthsMenu()));
+    QObject::connect(month, SIGNAL(wheelUp()), q, SLOT(prevMonth()));
+    QObject::connect(month, SIGNAL(wheelDown()), q, SLOT(nextMonth()));
+    hLayout->addItem(month);
 
-    d->jumpToday = new Plasma::ToolButton(this);
-    d->jumpToday->nativeWidget()->setIcon(KIcon("go-jump-today"));
-    d->jumpToday->nativeWidget()->setToolTip(i18n("Select today"));
-    d->jumpToday->nativeWidget()->setMinimumWidth(25);
-    connect(d->jumpToday, SIGNAL(clicked()), this, SLOT(goToToday()));
-    layoutTools->addItem(d->jumpToday);
+    year = new WheelyToolButton(q);
+    year->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    QObject::connect(year, SIGNAL(wheelUp()), q, SLOT(prevYear()));
+    QObject::connect(year, SIGNAL(wheelDown()), q, SLOT(nextYear()));
+    QObject::connect(year, SIGNAL(clicked()), q, SLOT(showYearSpinBox()));
+    hLayout->addItem(year);
+
+    yearSpinBox = new Plasma::SpinBox(q);
+    yearSpinBox->setRange(calendarTable->calendar()->year(calendarTable->calendar()->earliestValidDate()),
+                          calendarTable->calendar()->year(calendarTable->calendar()->latestValidDate()));
+    yearSpinBox->hide();
+    QObject::connect(yearSpinBox->nativeWidget(), SIGNAL(editingFinished()), q, SLOT(hideYearSpinBox()));
+
+    hLayout->addStretch();
+
+    forward = new Plasma::ToolButton(q);
+    forward->setText(">");
+    forward->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    QObject::connect(forward, SIGNAL(clicked()), q, SLOT(nextMonth()));
+    hLayout->addItem(forward);
+
+    jumpToday = new Plasma::ToolButton(q);
+    jumpToday->nativeWidget()->setIcon(KIcon("go-jump-today"));
+    jumpToday->nativeWidget()->setToolTip(i18n("Select today"));
+    jumpToday->nativeWidget()->setMinimumWidth(25);
+    QObject::connect(jumpToday, SIGNAL(clicked()), q, SLOT(goToToday()));
+    layoutTools->addItem(jumpToday);
     layoutTools->addStretch();
 
-    d->dateText = new Plasma::LineEdit(this);
-    connect(d->dateText->nativeWidget(), SIGNAL(returnPressed()), this, SLOT(manualDateChange()));
-    layoutTools->addItem(d->dateText);
+    dateText = new Plasma::LineEdit(q);
+    QObject::connect(dateText->nativeWidget(), SIGNAL(returnPressed()), q, SLOT(manualDateChange()));
+    layoutTools->addItem(dateText);
     layoutTools->addStretch();
 
-    d->weekSpinBox = new Plasma::SpinBox(this);
-    d->weekSpinBox->setMinimum(1);
-    connect(d->weekSpinBox, SIGNAL(valueChanged(int)), this, SLOT(goToWeek(int)));
-    layoutTools->addItem(d->weekSpinBox);
+    weekSpinBox = new Plasma::SpinBox(q);
+    weekSpinBox->setMinimum(1);
+    QObject::connect(weekSpinBox, SIGNAL(valueChanged(int)), q, SLOT(goToWeek(int)));
+    layoutTools->addItem(weekSpinBox);
 
     calendarLayout->addItem(hLayout);
-    calendarLayout->addItem(d->calendarTable);
+    calendarLayout->addItem(calendarTable);
     calendarLayout->addItem(layoutTools);
-    d->layout->addItem(calendarLayout);
+    layout->addItem(calendarLayout);
 
-    setDate(initialDate);
+    q->setDate(initialDate);
     displayEvents();
 }
 
@@ -251,13 +260,13 @@ CalendarTable *Calendar::calendarTable() const
 void Calendar::setCalendar(const QString &newCalendarType)
 {
     calendarTable()->setCalendar(newCalendarType);
-    refreshWidgets();
+    d->refreshWidgets();
 }
 
 void Calendar::setCalendar(const KCalendarSystem *newCalendar)
 {
     calendarTable()->setCalendar(newCalendar);
-    refreshWidgets();
+    d->refreshWidgets();
 }
 
 const KCalendarSystem *Calendar::calendar() const
@@ -272,7 +281,7 @@ void Calendar::setDate(const QDate &toDate)
     //If set date failed force refresh of nav widgets to reset any user entry
     //If set date successful refresh will be triggered through signal/slot
     if (d->calendarTable->date() != toDate) {
-        refreshWidgets();
+        d->refreshWidgets();
     }
 }
 
@@ -359,7 +368,7 @@ void Calendar::configAccepted(KConfigGroup cg)
     } else {
         setPreferredSize(220, 250);
     }
-    displayEvents();
+    d->displayEvents();
 }
 
 void Calendar::manualDateChange()
@@ -375,46 +384,46 @@ void Calendar::goToToday()
 void Calendar::dateUpdated()
 {
     // Ignore the date passed in, only ever show the date to match the CalendarTable
-    refreshWidgets();
+    d->refreshWidgets();
     emit dateChanged(date());
-    displayEvents();
+    d->displayEvents();
 }
 
-void Calendar::displayEvents(const QDate &date)
+void CalendarPrivate::displayEvents(const QDate &date)
 {
-    if (!isDisplayingDateDetails()) {
-        if (d->eventsDisplay) {
+    if (!q->isDisplayingDateDetails()) {
+        if (eventsDisplay) {
             kDebug() << "deleting events display!";
-            delete d->eventsDisplay;
-            d->eventsDisplay = 0;
-            delete d->separator;
-            d->separator = 0;
+            delete eventsDisplay;
+            eventsDisplay = 0;
+            delete separator;
+            separator = 0;
         }
         return;
-    } else if (!d->eventsDisplay) {
-        d->separator = new Plasma::Separator(this);
-        d->separator->setOrientation(Qt::Vertical);
-        d->layout->addItem(d->separator);
+    } else if (!eventsDisplay) {
+        separator = new Plasma::Separator(q);
+        separator->setOrientation(Qt::Vertical);
+        layout->addItem(separator);
 
-        d->eventsDisplay = new Plasma::TextBrowser(this);
-        d->layout->addItem(d->eventsDisplay);
+        eventsDisplay = new Plasma::TextBrowser(q);
+        layout->addItem(eventsDisplay);
     }
 
     QString html;
 
-    if (d->addDateDetailsToDisplay(html, date) < 1) {
-        QDate dt = calendarTable()->date();
-        QDate end = calendarTable()->endDate();
+    if (addDateDetailsToDisplay(html, date) < 1) {
+        QDate dt = calendarTable->date();
+        QDate end = calendarTable->endDate();
 
         if (dt.isValid() && end.isValid()) {
             while (dt <= end) {
-                d->addDateDetailsToDisplay(html, dt);
+                addDateDetailsToDisplay(html, dt);
                 dt = dt.addDays(1);
             }
         }
     }
 
-    d->eventsDisplay->setText(html);
+    eventsDisplay->setText(html);
 }
 
 bool CalendarPrivate::addDateDetailsToDisplay(QString &html, const QDate &date)
@@ -436,25 +445,27 @@ bool CalendarPrivate::addDateDetailsToDisplay(QString &html, const QDate &date)
 }
 
 // Update the nav widgets to show the current date in the CalendarTable
-void Calendar::refreshWidgets()
+void CalendarPrivate::refreshWidgets()
 {
-    d->month->setText(calendar()->monthName(calendar()->month(date()), calendar()->year(date())));
-    d->month->setMinimumSize(static_cast<QToolButton*>(d->month->widget())->sizeHint());
-    d->year->setText(calendar()->formatDate(date(), KLocale::Year, KLocale::LongNumber));
-    d->dateText->setText(calendar()->formatDate(date(),  KLocale::ShortDate));
+    const KCalendarSystem *calendar = calendarTable->calendar();
+    const QDate date = calendarTable->date();
+    month->setText(calendar->monthName(calendar->month(date), calendar->year(date)));
+    month->setMinimumSize(static_cast<QToolButton*>(month->widget())->sizeHint());
+    year->setText(calendar->formatDate(date, KLocale::Year, KLocale::LongNumber));
+    dateText->setText(calendar->formatDate(date,  KLocale::ShortDate));
 
     // Block the signals to prevent changing the date again
-    d->yearSpinBox->blockSignals(true);
-    d->yearSpinBox->setRange(calendar()->year(calendar()->earliestValidDate()),
-                             calendar()->year(calendar()->latestValidDate()));
-    d->yearSpinBox->setValue(calendar()->year(date()));
-    d->yearSpinBox->blockSignals(false);
+    yearSpinBox->blockSignals(true);
+    yearSpinBox->setRange(calendar->year(calendar->earliestValidDate()),
+                          calendar->year(calendar->latestValidDate()));
+    yearSpinBox->setValue(calendar->year(date));
+    yearSpinBox->blockSignals(false);
 
     // Block the signals to prevent changing the date again
-    d->weekSpinBox->blockSignals(true);
-    d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
-    d->weekSpinBox->setValue(calendar()->week(date(), KLocale::IsoWeekNumber));
-    d->weekSpinBox->blockSignals(false);
+    weekSpinBox->blockSignals(true);
+    weekSpinBox->setMaximum(calendar->weeksInYear(date));
+    weekSpinBox->setValue(calendar->week(date, KLocale::IsoWeekNumber));
+    weekSpinBox->blockSignals(false);
 }
 
 void Calendar::prevMonth()
@@ -477,34 +488,38 @@ void Calendar::nextYear()
     setDate(calendar()->addYears(date(), 1));
 }
 
-void Calendar::monthsPopup()
+void CalendarPrivate::popupMonthsMenu()
 {
-    d->monthMenu->clear();
-    const int year = calendar()->year(date());
-    const int monthsInYear = calendar()->monthsInYear(date());
+    monthMenu->clear();
+    const KCalendarSystem *calendar = calendarTable->calendar();
+    const QDate date = calendarTable->date();
+    const int year = calendar->year(date);
+    const int monthsInYear = calendar->monthsInYear(date);
 
     for (int i = 1; i <= monthsInYear; i++){
-        QAction *tmpAction = new QAction(calendar()->monthName(i, year), d->monthMenu);
+        QAction *tmpAction = new QAction(calendar->monthName(i, year), monthMenu);
         tmpAction->setProperty("month", i);
-        connect(tmpAction, SIGNAL(triggered()), this, SLOT(monthTriggered()));
-        d->monthMenu->addAction(tmpAction);
+        QObject::connect(tmpAction, SIGNAL(triggered()), q, SLOT(monthTriggered()));
+        monthMenu->addAction(tmpAction);
     }
 
-    QGraphicsView *view = Plasma::viewFor(d->month);
+    QGraphicsView *view = Plasma::viewFor(month);
     if (view) {
-        d->monthMenu->adjustSize();
-        const int x = d->month->sceneBoundingRect().center().x() - d->monthMenu->width() / 2;
-        QPoint pos(x, d->month->sceneBoundingRect().bottom());
+        monthMenu->adjustSize();
+        const int x = month->sceneBoundingRect().center().x() - monthMenu->width() / 2;
+        QPoint pos(x, month->sceneBoundingRect().bottom());
         pos = view->mapToGlobal(view->mapFromScene(pos));
         QRect r = Kephal::ScreenUtils::screenGeometry(Kephal::ScreenUtils::screenId(view->geometry().center()));
-        if (pos.y() + d->monthMenu->height() > r.bottom()) {
-            pos = QPoint(x, d->month->sceneBoundingRect().top() - d->monthMenu->height());
+        if (pos.y() + monthMenu->height() > r.bottom()) {
+            pos = QPoint(x, month->sceneBoundingRect().top() - monthMenu->height());
             pos = view->mapToGlobal(view->mapFromScene(pos));
         }
-        d->monthMenu->popup(pos);
+        monthMenu->popup(pos);
     } else {
-        d->monthMenu->popup(QCursor::pos());
+        monthMenu->popup(QCursor::pos());
     }
+
+    month->nativeWidget()->setDown(false);
 }
 
 void Calendar::monthTriggered()
