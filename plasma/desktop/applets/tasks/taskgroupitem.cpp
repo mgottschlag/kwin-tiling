@@ -577,6 +577,7 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractGroupableItem * groupableIt
 
         if (m_popupDialog && m_popupDialog->isVisible() && 
             m_applet->containment() && m_applet->containment()->corona()) {
+            m_popupDialog->syncToGraphicsWidget();
             m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size(), Qt::AlignCenter));
         }
     }
