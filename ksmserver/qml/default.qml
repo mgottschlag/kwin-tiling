@@ -20,16 +20,17 @@
 
 import QtQuick 1.0
 import org.kde.plasma.core 0.1 as PlasmaCore
-import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
+import org.kde.plasma.graphicswidgets 0.1
 import org.kde.qtextracomponents 0.1
 //import org.kde.kwin.screenlocker 1.0 as ScreenLocker
 
-PlasmaCore.FrameSvgItem {
+Rectangle {
     id: shutdownUi
-    width: margins.left + 18 + 18 + 2 * buttonsLayout.width + margins.right
-    height: margins.top + 4 + automaticallyDoLabel.height + 4 + 4 + buttonsLayout.height + 4 + margins.bottom
-    imagePath: "dialogs/shutdowndialog"
-    enabledBorders: PlasmaCore.FrameSvg.AllBorders
+    property int iconSize: 128
+    height: iconSize + 3 * 4 + lockScreenLabel.font.pixelSize
+    width: 3 * iconSize + 4 * 4
+    //color: Qt.rgba(215, 215, 215, 0.8)
+    color: theme.backgroundColor
 
     signal logoutRequested()
     signal haltRequested()
@@ -39,372 +40,94 @@ PlasmaCore.FrameSvgItem {
     signal cancelRequested()
     signal lockScreenRequested()
 
-    property variant focusedButton: 0
-    property variant lastButton: 0
-    property int automaticallyDoSeconds: 30
-
     PlasmaCore.Theme {
         id: theme
     }
 
-    PlasmaCore.SvgItem {
-        id: background
-        anchors.fill: parent
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "center"
-    }
-
-/*
-    PlasmaCore.SvgItem {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        width: margins.left
-        height: margins.top
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "topleft"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.top: parent.top
-        x: margins.left
-        width: parent.width - margins.left - margins.right
-        height: margins.top
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "top"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.top: parent.top
-        anchors.right: parent.right
-        width: margins.right
-        height: margins.top
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "topright"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.left: parent.left
-        y: margins.top
-        width: margins.left
-        height: parent.height - margins.top - margins.bottom
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "left"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.horizontalCenter: parent.horizontalCenter
+    Row {
+        spacing: 5
         anchors.verticalCenter: parent.verticalCenter
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "center"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.right: parent.right
-        y: margins.top
-        width: margins.right
-        height: parent.height - margins.top - margins.bottom
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "right"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        width: margins.left
-        height: margins.bottom
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "bottomleft"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.bottom: parent.bottom
-        x: margins.left
-        width: parent.width - margins.left - margins.right
-        height: margins.bottom
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "bottom"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        width: margins.right
-        height: margins.bottom
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "bottomright"
-    }
-    */
-
-    Component.onCompleted: {
-        print("Lamarque margins: " + margins.left + ", " + margins.top + ", " + margins.right + ", " + margins.bottom);
-        //print("Lamarque: styleSheet == " + theme.styleSheet);
-
-        if (background.naturalSize.width < 1) {
-            background.elementId = "background"
-        }
-
-        if (leftPicture.naturalSize.width < 1) {
-            shutdownUi.width -= buttonsLayout.width
-            automaticallyDoLabel.width -= buttonsLayout.width
-        }
-
-        console.log("Lamarque: maysd("+maysd+") choose("+choose+") sdtype("+sdtype+")");
-        if (choose || sdtype == ShutdownType.ShutdownTypeNone) {
-            if (sdtype == ShutdownType.ShutdownTypeNone) {
-                focusedButton = logoutButton
+        anchors.horizontalCenter: parent.horizontalCenter
+        Column {
+            Text {
+                id: lockScreenLabel
+                text: i18n("lock")
+                anchors.horizontalCenter: lockScreenIcon.horizontalCenter
+                color: theme.textColor
+                font.pixelSize: 18
+                // Use theme.defaultFont in plasma-mobile and
+                // theme.font in plasma-desktop.
+                font.family: theme.defaultFont.family
+                font.bold: theme.defaultFont.bold
+                font.capitalization: theme.defaultFont.capitalization
+                font.italic: theme.defaultFont.italic
+                font.weight: theme.defaultFont.weight
+                font.underline: theme.defaultFont.underline
+                font.wordSpacing: theme.defaultFont.wordSpacing
             }
-        } else {
-            logoutButton.opacity = 0
-        }
+            IconWidget {
+                id: lockScreenIcon
+                icon: QIcon("system-lock-screen")
+                minimumIconSize: "128x128"
 
-        if (maysd) {
-            if(choose || sdtype == ShutdownType.ShutdownTypeHalt) {
-                if (sdtype == ShutdownType.ShutdownTypeHalt) {
-                    focusedButton = shutdownButton
+                onClicked: {
+                    print("lockScreen button triggered");
+                    lockScreenRequested();
+
+                    // Requires new kwin's screenLocker (KDE SC 4.8)
+                    //ScreenLocker.lock();
                 }
-
-                if (!spdMethods.StandbyState) {
-                    standbyButton.opacity = 0
-                }
-                if (!spdMethods.SuspendState) {
-                    suspendToRamButton.opacity = 0
-                }
-                if (!spdMethods.HibernateState) {
-                    suspendToDiskButton.opacity = 0
-                }
-                // Lamarque: test
-                    /*suspendToRamButton.opacity = 0
-                    suspendToDiskButton.opacity = 0*/
-            } else {
-                shutdownButton.opacity = 0
-                standbyButton.opacity = 0
-                suspendToRamButton.opacity = 0
-                suspendToDiskButton.opacity = 0
-            }
-
-            if (choose || sdtype == ShutdownType.ShutdownTypeReboot) {
-                if (sdtype == ShutdownType.ShutdownTypeReboot) {
-                    focusedButton = rebootButton
-                }
-
-                // TODO: add reboot menu
-            }
-        } else {
-            shutdownButton.opacity = 0
-            standbyButton.opacity = 0
-            suspendToRamButton.opacity = 0
-            suspendToDiskButton.opacity = 0
-        }
-
-        timer.interval = 1000;
-        timer.running = true;
-    }
-
-    Timer {
-        id: timer
-        repeat: true
-        running: false
-
-        onTriggered: {
-            if (focusedButton != lastButton) {
-                lastButton = focusedButton
-                automaticallyDoSeconds = 30
-            }
-            if (focusedButton != 0) {
-                if (automaticallyDoSeconds <= 0) { // timeout is at 0, do selected action
-                    //console.log("Lamarque: focusedButton == " + focusedButton.text);
-                    //focusedButton.clicked()
-                // following code is required to provide a clean way to translate strings
-                } else if (focusedButton.text == logoutButton.text) {
-                    console.log("Lamarque: focusedButton == " + focusedButton.text);
-                    automaticallyDoLabel.text = i18np("Logging out in 1 second.",
-                                                      "Logging out in %1 seconds.", automaticallyDoSeconds)
-                } else if (focusedButton.text == shutdownButton.text) {
-                    console.log("Lamarque: focusedButton == " + focusedButton.text);
-                    automaticallyDoLabel.text = i18np("Turning off computer in 1 second.",
-                                                      "Turning off computer in %1 seconds.", automaticallyDoSeconds)
-                } else if (focusedButton.text == rebootButton.text) {
-                    console.log("Lamarque: focusedButton == " + focusedButton.text);
-                    automaticallyDoLabel.text = i18np("Restarting computer in 1 second.",
-                                                      "Restarting computer in %1 seconds.", automaticallyDoSeconds)
-                } else {
-                    automaticallyDoLabel.text = ""
-                }
-
-                --automaticallyDoSeconds;
             }
         }
-    }
 
-    Column {
-        id: mainColumn
-        spacing: 4
-        x: shutdownUi.margins.left
-        y: shutdownUi.margins.top + 4
-        width: 2 * buttonsLayout.width
+        Column {
+            Text {
+                text: i18n("sleep")
+                anchors.horizontalCenter: sleepIcon.horizontalCenter
+                color: theme.textColor
+                font.pixelSize: 18
+                font.family: theme.defaultFont.family
+                font.bold: theme.defaultFont.bold
+                font.capitalization: theme.defaultFont.capitalization
+                font.italic: theme.defaultFont.italic
+                font.weight: theme.defaultFont.weight
+                font.underline: theme.defaultFont.underline
+                font.wordSpacing: theme.defaultFont.wordSpacing
+            }
+            IconWidget {
+                id: sleepIcon
+                icon: QIcon("system-suspend")
+                minimumIconSize: "128x128"
 
-        PlasmaWidgets.Label {
-            id: automaticallyDoLabel
-            text: ""
-            font.pixelSize: 11
-            alignment: Qt.AlignRight
-            width: parent.width
-        }
-
-        Row {
-            id: centerRow
-            spacing: 10
-            x: parent.x + 18
-
-            Column {
-                PlasmaCore.SvgItem {
-                    id: leftPicture
-                    width: buttonsLayout.width
-                    height: width * naturalSize.height / naturalSize.width
-                    smooth: true
-
-                    svg: PlasmaCore.Svg {
-                        imagePath: "dialogs/shutdowndialog"
-                    }
-                    elementId: "picture"
+                onClicked: {
+                    print("suspend button triggered");
+                    suspendRequested(2); // Solid::PowerManagement::SuspendState
                 }
             }
-
-            Column {
-                id: buttonsLayout
-                spacing: 9
-
-                Column {
-                    spacing: 4
-
-                    PlasmaWidgets.PushButton {
-                        id: logoutButton
-                        text: i18n("&Logout")
-                        icon: QIcon("system-log-out")
-                        width: parent.width
-                        height: 32
-
-                        onClicked: {
-                            logoutRequested()
-                        }
-                    }
-
-                    PlasmaWidgets.PushButton {
-                        id: shutdownButton
-                        text: i18n("&Turn Off Computer")
-                        icon: QIcon("system-shutdown")
-                        width: parent.width
-                        height:32
-
-                        onClicked: {
-                            haltRequested()
-                        }
-
-/*
-    MouseArea {
-        anchors.fill: shutdownButton
-
-        onClicked: {
-            shutdownButton.Clicked();
         }
 
-        onPressAndHold: {
-            console.log("Lamarque: onPressAndHold");
-        }
-    }*/
+        Column {
+            Text {
+                text: i18n("turn off")
+                anchors.horizontalCenter: shutdownIcon.horizontalCenter
+                color: theme.textColor
+                font.pixelSize: 18
+                font.family: theme.defaultFont.family
+                font.bold: theme.defaultFont.bold
+                font.capitalization: theme.defaultFont.capitalization
+                font.italic: theme.defaultFont.italic
+                font.weight: theme.defaultFont.weight
+                font.underline: theme.defaultFont.underline
+                font.wordSpacing: theme.defaultFont.wordSpacing
+            }
+            IconWidget {
+                id: shutdownIcon
+                icon: QIcon("system-shutdown")
+                minimumIconSize: "128x128"
 
-
-                    }
-
-                    PlasmaWidgets.PushButton {
-                        id: standbyButton
-                        text: i18n("&Standby")
-                        icon: QIcon("system-shutdown")
-                        width: parent.width
-                        height:32
-
-                        onClicked: {
-                            suspendRequested(1); // Solid::PowerManagement::StandbyState
-                        }
-                    }
-
-                    PlasmaWidgets.PushButton {
-                        id: suspendToRamButton
-                        text: i18n("Suspend to &RAM")
-                        icon: QIcon("system-shutdown")
-                        width: parent.width
-                        height:32
-
-                        onClicked: {
-                            suspendRequested(2); // Solid::PowerManagement::SuspendState
-                        }
-                    }
-
-                    PlasmaWidgets.PushButton {
-                        id: suspendToDiskButton
-                        text: i18n("Suspend to &Disk")
-                        icon: QIcon("system-shutdown")
-                        width: parent.width
-                        height:32
-
-                        onClicked: {
-                            suspendRequested(2); // Solid::PowerManagement::HibernateState
-                        }
-                    }
-
-                    PlasmaWidgets.PushButton {
-                        id: rebootButton
-                        text: i18n("&Restart Computer")
-                        icon: QIcon("system-reboot")
-                        width: parent.width
-                        height:32
-
-                        onClicked: {
-                            rebootRequested()
-                        }
-                    }
-                }
-
-                PlasmaWidgets.PushButton {
-                    id: cancelButton
-                    text: i18n("&Cancel")
-                    icon: QIcon("dialog-cancel")
-                    height: 16
-                    anchors.right: parent.right
-
-                    onClicked: {
-                        cancelRequested()
-                    }
+                onClicked: {
+                    print("shutdown button triggered");
+                    haltRequested()
                 }
             }
         }

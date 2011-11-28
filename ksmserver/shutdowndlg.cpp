@@ -599,8 +599,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     // TODO: add option in systemsettings -> Startup and Shutdown -> Session Management
     // to select the qml theme.
-    //view->setSource(QUrl(KStandardDirs::locate("data", "ksmserver/qml/default.qml")));
-    view->setSource(QUrl(KStandardDirs::locate("data", "ksmserver/qml/contour.qml")));
+    view->setSource(QUrl(KStandardDirs::locate("data", "ksmserver/qml/default.qml")));
     view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
     connect(view->rootObject(), SIGNAL(logoutRequested()), SLOT(slotLogout()));
     connect(view->rootObject(), SIGNAL(haltRequested()), SLOT(slotHalt()));
@@ -612,7 +611,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     view->show();
     m_screenViews << view;
     adjustSize();
-    //KSMShutdownFeedback::start(); // make the screen gray
 }
 
 KSMShutdownDlg::~KSMShutdownDlg()
@@ -756,7 +754,6 @@ void KSMShutdownDlg::slotReboot(int opt)
 }
 
 
-// TODO: change this to use kwin's new lock screen.
 void KSMShutdownDlg::slotLockScreen()
 {
     m_bootOption.clear();
