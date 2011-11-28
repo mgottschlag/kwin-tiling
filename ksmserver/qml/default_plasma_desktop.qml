@@ -22,7 +22,6 @@ import QtQuick 1.0
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 import org.kde.qtextracomponents 0.1
-//import org.kde.kwin.screenlocker 1.0 as ScreenLocker
 
 PlasmaCore.FrameSvgItem {
     id: shutdownUi
@@ -57,117 +56,8 @@ PlasmaCore.FrameSvgItem {
         elementId: "center"
     }
 
-/*
-    PlasmaCore.SvgItem {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        width: margins.left
-        height: margins.top
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "topleft"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.top: parent.top
-        x: margins.left
-        width: parent.width - margins.left - margins.right
-        height: margins.top
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "top"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.top: parent.top
-        anchors.right: parent.right
-        width: margins.right
-        height: margins.top
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "topright"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.left: parent.left
-        y: margins.top
-        width: margins.left
-        height: parent.height - margins.top - margins.bottom
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "left"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "center"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.right: parent.right
-        y: margins.top
-        width: margins.right
-        height: parent.height - margins.top - margins.bottom
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "right"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        width: margins.left
-        height: margins.bottom
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "bottomleft"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.bottom: parent.bottom
-        x: margins.left
-        width: parent.width - margins.left - margins.right
-        height: margins.bottom
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "bottom"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        width: margins.right
-        height: margins.bottom
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "bottomright"
-    }
-    */
-
     Component.onCompleted: {
-        print("Lamarque margins: " + margins.left + ", " + margins.top + ", " + margins.right + ", " + margins.bottom);
-        //print("Lamarque: styleSheet == " + theme.styleSheet);
+        //console.log("margins: " + margins.left + ", " + margins.top + ", " + margins.right + ", " + margins.bottom);
 
         if (background.naturalSize.width < 1) {
             background.elementId = "background"
@@ -178,7 +68,7 @@ PlasmaCore.FrameSvgItem {
             automaticallyDoLabel.width -= buttonsLayout.width
         }
 
-        console.log("Lamarque: maysd("+maysd+") choose("+choose+") sdtype("+sdtype+")");
+        //console.log("maysd("+maysd+") choose("+choose+") sdtype("+sdtype+")");
         if (choose || sdtype == ShutdownType.ShutdownTypeNone) {
             if (sdtype == ShutdownType.ShutdownTypeNone) {
                 focusedButton = logoutButton
@@ -202,9 +92,6 @@ PlasmaCore.FrameSvgItem {
                 if (!spdMethods.HibernateState) {
                     suspendToDiskButton.opacity = 0
                 }
-                // Lamarque: test
-                    /*suspendToRamButton.opacity = 0
-                    suspendToDiskButton.opacity = 0*/
             } else {
                 shutdownButton.opacity = 0
                 standbyButton.opacity = 0
@@ -242,19 +129,19 @@ PlasmaCore.FrameSvgItem {
             }
             if (focusedButton != 0) {
                 if (automaticallyDoSeconds <= 0) { // timeout is at 0, do selected action
-                    //console.log("Lamarque: focusedButton == " + focusedButton.text);
+                    //console.log("focusedButton == " + focusedButton.text);
                     focusedButton.clicked()
                 // following code is required to provide a clean way to translate strings
                 } else if (focusedButton.text == logoutButton.text) {
-                    console.log("Lamarque: focusedButton == " + focusedButton.text);
+                    //console.log("focusedButton == " + focusedButton.text);
                     automaticallyDoLabel.text = i18np("Logging out in 1 second.",
                                                       "Logging out in %1 seconds.", automaticallyDoSeconds)
                 } else if (focusedButton.text == shutdownButton.text) {
-                    console.log("Lamarque: focusedButton == " + focusedButton.text);
+                    //console.log("focusedButton == " + focusedButton.text);
                     automaticallyDoLabel.text = i18np("Turning off computer in 1 second.",
                                                       "Turning off computer in %1 seconds.", automaticallyDoSeconds)
                 } else if (focusedButton.text == rebootButton.text) {
-                    console.log("Lamarque: focusedButton == " + focusedButton.text);
+                    //console.log("ocusedButton == " + focusedButton.text);
                     automaticallyDoLabel.text = i18np("Restarting computer in 1 second.",
                                                       "Restarting computer in %1 seconds.", automaticallyDoSeconds)
                 } else {
@@ -329,21 +216,6 @@ PlasmaCore.FrameSvgItem {
                         onClicked: {
                             haltRequested()
                         }
-
-/*
-    MouseArea {
-        anchors.fill: shutdownButton
-
-        onClicked: {
-            shutdownButton.Clicked();
-        }
-
-        onPressAndHold: {
-            console.log("Lamarque: onPressAndHold");
-        }
-    }*/
-
-
                     }
 
                     PlasmaWidgets.PushButton {
