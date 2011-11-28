@@ -69,39 +69,6 @@ private:
     bool initialized;
 };
 
-class KSMPushButton : public QPushButton
-{
-    Q_OBJECT
-
-public:
-    explicit KSMPushButton( const QString &text, QWidget *parent = 0, bool smallButton = false );
-
-    void setPixmap( const QPixmap & );
-    void setPopupMenu( QMenu * );
-protected:
-    void paintEvent(QPaintEvent *e);
-    void resizeEvent(QResizeEvent *e);
-    bool event(QEvent *e);
-
-    void init();
-protected:
-    QPixmap m_pixmap;
-    bool m_highlight;
-    QString m_text;
-private Q_SLOTS:
-    void slotPressed();
-    void slotReleased();
-    void slotTimeout();
-    void animateGlow( qreal );
-private:
-    QMenu* m_popupMenu;
-    QTimer* m_popupTimer;
-    Plasma::Svg* m_glowSvg;
-    qreal m_glowOpacity;
-    QTimeLine *m_glowTimeLine;
-    bool m_smallButton;
-};
-
 class QDeclarativeView;
 
 // The confirmation dialog
@@ -125,7 +92,6 @@ public Q_SLOTS:
 
 protected:
     ~KSMShutdownDlg();
-    //void paintEvent(QPaintEvent *e);
     void resizeEvent(QResizeEvent *e);
 
 private:
@@ -133,20 +99,8 @@ private:
     KWorkSpace::ShutdownType m_shutdownType;
     QString m_bootOption;
     QStringList rebootOptions;
-    QPixmap m_renderedSvg;
     Plasma::FrameSvg* m_svg;
-    QLabel *m_automaticallyDoLabel;
-    QPushButton *m_lastButton;
-    KSMPushButton *m_btnLogout;
-    KSMPushButton *m_btnHalt;
-    KSMPushButton *m_btnReboot;
-    KSMPushButton *btnBack;
     QList<QDeclarativeView*> m_screenViews;
-    int m_automaticallyDoSeconds;
-    int m_pictureWidth;
-
-private Q_SLOTS:
-    void automaticallyDoTimeout();
 };
 
 #endif
