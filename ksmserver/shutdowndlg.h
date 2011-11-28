@@ -102,6 +102,8 @@ private:
     bool m_smallButton;
 };
 
+class QDeclarativeView;
+
 // The confirmation dialog
 class KSMShutdownDlg : public QDialog
 {
@@ -117,10 +119,13 @@ public Q_SLOTS:
     void slotReboot();
     void slotReboot(QAction*);
     void slotSuspend(QAction*);
+    void slotReboot(int);
+    void slotSuspend(int);
+    void slotLockScreen();
 
 protected:
-    ~KSMShutdownDlg() {}
-    void paintEvent(QPaintEvent *e);
+    ~KSMShutdownDlg();
+    //void paintEvent(QPaintEvent *e);
     void resizeEvent(QResizeEvent *e);
 
 private:
@@ -136,6 +141,7 @@ private:
     KSMPushButton *m_btnHalt;
     KSMPushButton *m_btnReboot;
     KSMPushButton *btnBack;
+    QList<QDeclarativeView*> m_screenViews;
     int m_automaticallyDoSeconds;
     int m_pictureWidth;
 

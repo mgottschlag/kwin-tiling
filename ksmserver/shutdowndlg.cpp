@@ -41,6 +41,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusPendingCall>
+#include <QDeclarativeView>
+#include <QDeclarativeContext>
+#include <QDeclarativeEngine>
+#include <QDeclarativePropertyMap>
 
 #include <kdialog.h>
 #include <kiconloader.h>
@@ -49,6 +53,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Solid/PowerManagement>
 #include <kwindowsystem.h>
 #include <netwm.h>
+#include <KStandardDirs>
+#include <kdeclarative.h>
 
 #include <stdio.h>
 #include <kxerrorhandler.h>
@@ -383,6 +389,9 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         (unsigned char *)"logoutdialog", strlen( "logoutdialog" ));
 
 //#endif
+
+// Just for code comparison while migrating the old implementation to QML.
+#if 0
     m_svg = new Plasma::FrameSvg(this);
     m_svg->setImagePath("dialogs/shutdowndialog");
     connect( m_svg, SIGNAL(repaintNeeded()), this, SLOT(update()) );
@@ -535,8 +544,86 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     } else {
         m_pictureWidth = 0;
     }
+#endif
 
     KDialog::centerOnScreen(this, -3);
+
+    //kDebug() << "Creating QML view";
+    QDeclarativeView *view = new QDeclarativeView(this);
+    QDeclarativeContext *context = view->rootContext();
+    context->setContextProperty("maysd", maysd);
+    context->setContextProperty("choose", choose);
+    context->setContextProperty("sdtype", sdtype);
+
+    QDeclarativePropertyMap mapShutdownType;
+    mapShutdownType.insert("ShutdownTypeDefault", QVariant::fromValue((int)KWorkSpace::ShutdownTypeDefault));
+    mapShutdownType.insert("ShutdownTypeNone", QVariant::fromValue((int)KWorkSpace::ShutdownTypeNone));
+    mapShutdownType.insert("ShutdownTypeReboot", QVariant::fromValue((int)KWorkSpace::ShutdownTypeReboot));
+    mapShutdownType.insert("ShutdownTypeHalt", QVariant::fromValue((int)KWorkSpace::ShutdownTypeHalt));
+    mapShutdownType.insert("ShutdownTypeLogout", QVariant::fromValue((int)KWorkSpace::ShutdownTypeLogout));
+    context->setContextProperty("ShutdownType", &mapShutdownType);
+
+    QDeclarativePropertyMap mapSpdMethods;
+    QSet< Solid::PowerManagement::SleepState > spdMethods = Solid::PowerManagement::supportedSleepStates();
+    mapSpdMethods.insert("StandbyState", QVariant::fromValue(spdMethods.contains(Solid::PowerManagement::StandbyState)));
+    mapSpdMethods.insert("SuspendState", QVariant::fromValue(spdMethods.contains(Solid::PowerManagement::SuspendState)));
+    mapSpdMethods.insert("HibernateState", QVariant::fromValue(spdMethods.contains(Solid::PowerManagement::HibernateState)));
+    context->setContextProperty("spdMethods", &mapSpdMethods);
+
+    setModal( true );
+
+    // window stuff
+    view->setFrameShape(QFrame::NoFrame);
+    view->setWindowFlags(Qt::X11BypassWindowManagerHint);
+    view->setAttribute(Qt::WA_TranslucentBackground);
+    QPalette pal = view->palette();
+    pal.setColor(backgroundRole(), Qt::transparent);
+    view->setPalette(pal);
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    // engine stuff
+    foreach(const QString &importPath, KGlobal::dirs()->findDirs("module", "imports")) {
+        view->engine()->addImportPath(importPath);
+    }
+    KDeclarative kdeclarative;
+    kdeclarative.setDeclarativeEngine(view->engine());
+    kdeclarative.initialize();
+    kdeclarative.setupBindings();
+    view->installEventFilter(this);
+
+    m_svg = new Plasma::FrameSvg(this);
+    m_svg->setImagePath("dialogs/shutdowndialog");
+    qreal left, top, right, bottom;
+    m_svg->getMargins(left, top, right, bottom);
+    view->setContentsMargins(left, top, right, bottom);
+
+    // TODO: add option in systemsettings -> Startup and Shutdown -> Session Management
+    // to select the qml theme.
+    //view->setSource(QUrl(KStandardDirs::locate("data", "ksmserver/qml/default.qml")));
+    view->setSource(QUrl(KStandardDirs::locate("data", "ksmserver/qml/contour.qml")));
+    view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    connect(view->rootObject(), SIGNAL(logoutRequested()), SLOT(slotLogout()));
+    connect(view->rootObject(), SIGNAL(haltRequested()), SLOT(slotHalt()));
+    connect(view->rootObject(), SIGNAL(suspendRequested(int)), SLOT(slotSuspend(int)) );
+    connect(view->rootObject(), SIGNAL(rebootRequested()), SLOT(slotReboot()));
+    connect(view->rootObject(), SIGNAL(rebootRequested2(int)), SLOT(slotReboot(int)) );
+    connect(view->rootObject(), SIGNAL(cancelRequested()), SLOT(reject()));
+    connect(view->rootObject(), SIGNAL(lockScreenRequested()), SLOT(slotLockScreen()));
+    view->show();
+    m_screenViews << view;
+    adjustSize();
+    //KSMShutdownFeedback::start(); // make the screen gray
+}
+
+KSMShutdownDlg::~KSMShutdownDlg()
+{
+    foreach (QDeclarativeView *v, m_screenViews) {
+        //kDebug() << "Celeting QML view" << v->source();
+        v->hide();
+        delete v;
+    }
+    m_screenViews.clear();
+
 }
 
 void KSMShutdownDlg::automaticallyDoTimeout()
@@ -569,6 +656,8 @@ void KSMShutdownDlg::automaticallyDoTimeout()
     }
 }
 
+// Just for code comparison while migrating the old implementation to QML.
+#if 0
 void KSMShutdownDlg::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e);
@@ -590,7 +679,7 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
         QRect r = layout()->geometry();
         r.setWidth(m_pictureWidth);
 
-	m_svg->resize();
+        m_svg->resize();
         m_svg->resize(m_svg->elementRect("picture").size());
         QPixmap picture = m_svg->pixmap("picture");
         m_svg->resize();
@@ -619,16 +708,20 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
         p.drawPixmap(dest, picture, picture.rect());
     }
 }
+#endif
 
 void KSMShutdownDlg::resizeEvent(QResizeEvent *e)
 {
     QDialog::resizeEvent( e );
 
+// Just for code comparison while migrating the old implementation to QML.
+#if 0
     if( KWindowSystem::compositingActive()) {
         clearMask();
     } else {
-        setMask(m_svg->mask());
+        setMask(m_svg->mask()); // 25/11/2011: this one prevents the QML dialog to be fully visible
     }
+#endif
 
     KDialog::centerOnScreen(this, -3);
 }
@@ -649,13 +742,31 @@ void KSMShutdownDlg::slotReboot()
 
 void KSMShutdownDlg::slotReboot(QAction* action)
 {
-    int opt = action->data().toInt();
+    slotReboot(action->data().toInt());
+}
+
+// TODO: send rebootOptions to the QML dialog so that it can
+// return the correct index (opt).
+void KSMShutdownDlg::slotReboot(int opt)
+{
     if (int(rebootOptions.size()) > opt)
         m_bootOption = rebootOptions[opt];
     m_shutdownType = KWorkSpace::ShutdownTypeReboot;
     accept();
 }
 
+
+// TODO: change this to use kwin's new lock screen.
+void KSMShutdownDlg::slotLockScreen()
+{
+    m_bootOption.clear();
+    QDBusMessage call = QDBusMessage::createMethodCall("org.kde.screensaver",
+                                                       "/ScreenSaver",
+                                                       "org.freedesktop.ScreenSaver",
+                                                       "Lock");
+    QDBusConnection::sessionBus().asyncCall(call);
+    reject();
+}
 
 void KSMShutdownDlg::slotHalt()
 {
@@ -667,8 +778,12 @@ void KSMShutdownDlg::slotHalt()
 
 void KSMShutdownDlg::slotSuspend(QAction* action)
 {
+    slotSuspend(action->data().value<Solid::PowerManagement::SleepState>());
+}
+
+void KSMShutdownDlg::slotSuspend(int spdMethod)
+{
     m_bootOption.clear();
-    Solid::PowerManagement::SleepState spdMethod = action->data().value<Solid::PowerManagement::SleepState>();
     QDBusMessage call;
     switch (spdMethod) {
         case Solid::PowerManagement::StandbyState:
