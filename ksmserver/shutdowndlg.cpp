@@ -194,20 +194,22 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     context->setContextProperty("choose", choose);
     context->setContextProperty("sdtype", sdtype);
 
-    QDeclarativePropertyMap mapShutdownType;
-    mapShutdownType.insert("ShutdownTypeDefault", QVariant::fromValue((int)KWorkSpace::ShutdownTypeDefault));
-    mapShutdownType.insert("ShutdownTypeNone", QVariant::fromValue((int)KWorkSpace::ShutdownTypeNone));
-    mapShutdownType.insert("ShutdownTypeReboot", QVariant::fromValue((int)KWorkSpace::ShutdownTypeReboot));
-    mapShutdownType.insert("ShutdownTypeHalt", QVariant::fromValue((int)KWorkSpace::ShutdownTypeHalt));
-    mapShutdownType.insert("ShutdownTypeLogout", QVariant::fromValue((int)KWorkSpace::ShutdownTypeLogout));
-    context->setContextProperty("ShutdownType", &mapShutdownType);
+    QDeclarativePropertyMap *mapShutdownType = new QDeclarativePropertyMap(this);
+    mapShutdownType->insert("ShutdownTypeDefault", QVariant::fromValue((int)KWorkSpace::ShutdownTypeDefault));
+    mapShutdownType->insert("ShutdownTypeNone", QVariant::fromValue((int)KWorkSpace::ShutdownTypeNone));
+    mapShutdownType->insert("ShutdownTypeReboot", QVariant::fromValue((int)KWorkSpace::ShutdownTypeReboot));
+    mapShutdownType->insert("ShutdownTypeHalt", QVariant::fromValue((int)KWorkSpace::ShutdownTypeHalt));
+    mapShutdownType->insert("ShutdownTypeLogout", QVariant::fromValue((int)KWorkSpace::ShutdownTypeLogout));
+    context->setContextProperty("ShutdownType", mapShutdownType);
 
-    QDeclarativePropertyMap mapSpdMethods;
-    QSet< Solid::PowerManagement::SleepState > spdMethods = Solid::PowerManagement::supportedSleepStates();
-    mapSpdMethods.insert("StandbyState", QVariant::fromValue(spdMethods.contains(Solid::PowerManagement::StandbyState)));
-    mapSpdMethods.insert("SuspendState", QVariant::fromValue(spdMethods.contains(Solid::PowerManagement::SuspendState)));
-    mapSpdMethods.insert("HibernateState", QVariant::fromValue(spdMethods.contains(Solid::PowerManagement::HibernateState)));
-    context->setContextProperty("spdMethods", &mapSpdMethods);
+    QDeclarativePropertyMap *mapSpdMethods = new QDeclarativePropertyMap(this);
+    QSet<Solid::PowerManagement::SleepState> spdMethods = Solid::PowerManagement::supportedSleepStates();
+    mapSpdMethods->insert("StandbyState", QVariant::fromValue(spdMethods.contains(Solid::PowerManagement::StandbyState)));
+    mapSpdMethods->insert("SuspendState", QVariant::fromValue(spdMethods.contains(Solid::PowerManagement::SuspendState)));
+    mapSpdMethods->insert("HibernateState", QVariant::fromValue(spdMethods.contains(Solid::PowerManagement::HibernateState)));
+    context->setContextProperty("spdMethods", mapSpdMethods);
+
+    //context->setContextProperty("rebootOptions", &m_rebootOptions);
 
     setModal( true );
 
@@ -299,8 +301,8 @@ void KSMShutdownDlg::slotReboot(QAction* action)
 // return the correct index (opt).
 void KSMShutdownDlg::slotReboot(int opt)
 {
-    if (int(rebootOptions.size()) > opt)
-        m_bootOption = rebootOptions[opt];
+    if (int(m_rebootOptions.size()) > opt)
+        m_bootOption = m_rebootOptions[opt];
     m_shutdownType = KWorkSpace::ShutdownTypeReboot;
     accept();
 }

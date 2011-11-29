@@ -98,7 +98,7 @@ private:
     KSMShutdownDlg( QWidget* parent, bool maysd, bool choose, KWorkSpace::ShutdownType sdtype );
     KWorkSpace::ShutdownType m_shutdownType;
     QString m_bootOption;
-    QStringList rebootOptions;
+    QStringList m_rebootOptions;
     Plasma::FrameSvg* m_svg;
     QList<QDeclarativeView*> m_screenViews;
 };
