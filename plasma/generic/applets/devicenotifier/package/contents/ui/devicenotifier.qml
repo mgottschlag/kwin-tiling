@@ -63,7 +63,7 @@ Item {
     if (!popped) {
         expandedDevice = "";
         notifierDialog.currentExpanded = -1;
-	notifierDialog.currentIndex = -1;
+        notifierDialog.currentIndex = -1;
         }
     }
 
@@ -163,8 +163,8 @@ Item {
             }
             filterRole: "Removable"
             filterRegExp: "true"
-            sortRole: "Removable"
-            sortOrder: Qt.DescendingOrder
+            sortRole: "File Path"
+            sortOrder: Qt.AscendingOrder
         }
         onCountChanged: {
             if (count == 0) {
