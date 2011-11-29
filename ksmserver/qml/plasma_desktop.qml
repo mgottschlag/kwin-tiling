@@ -18,8 +18,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import QtQuick 1.0
+import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
+import org.kde.plasma.components 0.1
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 import org.kde.qtextracomponents 0.1
 
@@ -73,8 +74,6 @@ PlasmaCore.FrameSvgItem {
             if (sdtype == ShutdownType.ShutdownTypeNone) {
                 focusedButton = logoutButton
             }
-        } else {
-            logoutButton.opacity = 0
         }
 
         if (maysd) {
@@ -82,21 +81,6 @@ PlasmaCore.FrameSvgItem {
                 if (sdtype == ShutdownType.ShutdownTypeHalt) {
                     focusedButton = shutdownButton
                 }
-
-                if (!spdMethods.StandbyState) {
-                    standbyButton.opacity = 0
-                }
-                if (!spdMethods.SuspendState) {
-                    suspendToRamButton.opacity = 0
-                }
-                if (!spdMethods.HibernateState) {
-                    suspendToDiskButton.opacity = 0
-                }
-            } else {
-                shutdownButton.opacity = 0
-                standbyButton.opacity = 0
-                suspendToRamButton.opacity = 0
-                suspendToDiskButton.opacity = 0
             }
 
             if (choose || sdtype == ShutdownType.ShutdownTypeReboot) {
@@ -160,12 +144,12 @@ PlasmaCore.FrameSvgItem {
         y: shutdownUi.margins.top + 4
         width: 2 * buttonsLayout.width
 
-        PlasmaWidgets.Label {
+        Label {
             id: automaticallyDoLabel
             text: ""
             font.pixelSize: 11
-            alignment: Qt.AlignRight
             width: parent.width
+	    anchors.right: centerRow.right
         }
 
         Row {
@@ -194,71 +178,85 @@ PlasmaCore.FrameSvgItem {
                 Column {
                     spacing: 4
 
-                    PlasmaWidgets.PushButton {
+                    Button {
                         id: logoutButton
-                        text: i18n("&Logout")
-                        icon: QIcon("system-log-out")
-                        width: parent.width
+                        text: i18n("Logout")
+                        //icon: QIcon("system-log-out")
+                        width: buttonsLayout.width
                         height: 32
+			visible: (choose || sdtype == ShutdownType.ShutdownTypeNone)
 
                         onClicked: {
                             logoutRequested()
                         }
                     }
 
-                    PlasmaWidgets.PushButton {
+                    Button {
                         id: shutdownButton
-                        text: i18n("&Turn Off Computer")
-                        icon: QIcon("system-shutdown")
-                        width: parent.width
+                        text: i18n("Turn Off Computer")
+                        //icon: QIcon("system-shutdown")
+                        width: buttonsLayout.width
                         height:32
+                        property ContextMenu contextMenu
+			visible: (choose || sdtype == ShutdownType.ShutdownTypeHalt)
 
                         onClicked: {
-                            haltRequested()
+                            if (!contextMenu) {
+                                contextMenu = shutdownOptionsComponent.createObject(shutdownButton)
+                            }
+                            contextMenu.open()
                         }
                     }
 
-                    PlasmaWidgets.PushButton {
-                        id: standbyButton
-                        text: i18n("&Standby")
-                        icon: QIcon("system-shutdown")
-                        width: parent.width
-                        height:32
-
-                        onClicked: {
-                            suspendRequested(1); // Solid::PowerManagement::StandbyState
+                    Component {
+                        id: shutdownOptionsComponent
+                        ContextMenu {
+                            visualParent: shutdownButton
+                            MenuItem {
+                                id: shutdown
+                                text: i18n("Turn Off Computer")
+                                visible: shutdownButton.visible
+                                onClicked: {
+                                    console.log("haltRequested")
+                                    haltRequested()
+                                }
+                            }
+                            MenuItem {
+                                id: standby
+                                text: i18n("Standby")
+                                visible: shutdownButton.visible && spdMethods.StandbyState
+				height: stan
+                                onClicked: {
+                                    console.log("suspendRequested(Solid::PowerManagement::StandbyState)")
+                                    suspendRequested(1); // Solid::PowerManagement::StandbyState
+                                }
+                            }
+                            MenuItem {
+                                id: sleep
+                                text: i18n("Suspend to RAM")
+                                visible: shutdownButton.visible && spdMethods.SuspendState
+                                onClicked: {
+                                    console.log("suspendRequested(Solid::PowerManagement::SuspendState)")
+                                    suspendRequested(2); // Solid::PowerManagement::SuspendState
+                                }
+                            }
+                            MenuItem {
+                                id: hibernate
+                                text: i18n("Suspend to Disk")
+                                visible: shutdownButton.visible && spdMethods.HibernateState
+                                onClicked: {
+                                    console.log("suspendRequested(Solid::PowerManagement::HibernateState)")
+                                    suspendRequested(3); // Solid::PowerManagement::HibernateState
+                                }
+                            }
                         }
                     }
 
-                    PlasmaWidgets.PushButton {
-                        id: suspendToRamButton
-                        text: i18n("Suspend to &RAM")
-                        icon: QIcon("system-shutdown")
-                        width: parent.width
-                        height:32
-
-                        onClicked: {
-                            suspendRequested(2); // Solid::PowerManagement::SuspendState
-                        }
-                    }
-
-                    PlasmaWidgets.PushButton {
-                        id: suspendToDiskButton
-                        text: i18n("Suspend to &Disk")
-                        icon: QIcon("system-shutdown")
-                        width: parent.width
-                        height:32
-
-                        onClicked: {
-                            suspendRequested(3); // Solid::PowerManagement::HibernateState
-                        }
-                    }
-
-                    PlasmaWidgets.PushButton {
+                    Button {
                         id: rebootButton
-                        text: i18n("&Restart Computer")
-                        icon: QIcon("system-reboot")
-                        width: parent.width
+                        text: i18n("Restart Computer")
+                        //icon: QIcon("system-reboot")
+                        width: buttonsLayout.width
                         height:32
 
                         onClicked: {
@@ -267,11 +265,11 @@ PlasmaCore.FrameSvgItem {
                     }
                 }
 
-                PlasmaWidgets.PushButton {
+                Button {
                     id: cancelButton
-                    text: i18n("&Cancel")
-                    icon: QIcon("dialog-cancel")
-                    height: 16
+                    text: i18n("Cancel")
+                    //icon: QIcon("dialog-cancel")
+                    height: 22
                     anchors.right: parent.right
 
                     onClicked: {
