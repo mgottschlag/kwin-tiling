@@ -63,7 +63,7 @@ Item {
     if (!popped) {
         expandedDevice = "";
         notifierDialog.currentExpanded = -1;
-	notifierDialog.currentIndex = -1;
+        notifierDialog.currentIndex = -1;
         }
     }
 
