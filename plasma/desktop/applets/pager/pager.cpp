@@ -583,7 +583,7 @@ void Pager::recalculateWindowRects()
         unsigned long properties[] = { 0, NET::WM2Activities };
         NETWinInfo netInfo(QX11Info::display(), window, QX11Info::appRootWindow(), properties, 2);
         QString result(netInfo.activities());
-        if (!result.isEmpty()) {
+        if (!result.isEmpty() && result != "ALL") {
             QStringList activities = result.split(',');
             if (!activities.contains(m_currentActivity)) {
                 continue;
