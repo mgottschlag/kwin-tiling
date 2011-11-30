@@ -308,9 +308,7 @@ void ClockApplet::updateTipContent()
 
     // query for custom content
     Plasma::ToolTipContent customContent = toolTipContent();
-    if (customContent.image().isNull()) {
-        tipData.setImage(KIcon(icon()).pixmap(IconSize(KIconLoader::Desktop)));
-    } else {
+    if (!customContent.image().isNull()) {
         tipData.setImage(customContent.image());
     }
 
