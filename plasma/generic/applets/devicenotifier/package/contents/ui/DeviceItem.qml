@@ -19,7 +19,6 @@
 
 import Qt 4.7
 import org.kde.plasma.core 0.1 as PlasmaCore
-import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.qtextracomponents 0.1
 
@@ -184,7 +183,7 @@ Item {
         }
     }
 
-    PlasmaWidgets.BusyWidget {
+    PlasmaComponents.BusyIndicator {
         id: busySpinner
         width: 22
         height: 22
