@@ -64,6 +64,9 @@
 #include "taskgroupitem.h"
 
 static const int HOVER_EFFECT_TIMEOUT = 900;
+// distance (in pixels) between a task's icon and its text
+static const int IconTextSpacing = 4;
+
 
 AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
     : QGraphicsWidget(parent),
