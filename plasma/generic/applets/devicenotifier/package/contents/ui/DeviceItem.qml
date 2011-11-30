@@ -108,22 +108,18 @@ Item {
         }
     }
 
-    PlasmaWidgets.Meter {
+    PlasmaComponents.ProgressBar {
         id: freeSpaceBar
         height: 12
         anchors {
             top: deviceStatus.bottom
-            topMargin: 0
             left: deviceLabel.left
-            leftMargin: -2
             right: parent.right
-            rightMargin: 35
         }
         opacity: mounted ? deviceStatus.opacity : 0
-        minimum: 0
-        maximum: 100
-        meterType: PlasmaWidgets.Meter.BarMeterHorizontal
-        svg: "widgets/bar_meter_horizontal"
+        minimumValue: 0
+        maximumValue: 100
+        orientation: Qt.Horizontal
     }
 
     Item {
