@@ -273,7 +273,6 @@ Item {
         id: deviceHighlighter
 
         PlasmaCore.FrameSvgItem {
-            width: devicenotifier.width
             imagePath: "widgets/viewitem"
             prefix: "hover"
             opacity: 0

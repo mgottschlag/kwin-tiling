@@ -35,17 +35,23 @@ Item {
     property alias percentUsage: freeSpaceBar.value
     signal leftActionTriggered
 
-    property int deviceIconMargin: 10
-    height: container.childrenRect.height + notifierDialog.highlightItem.margins.top + notifierDialog.highlightItem.margins.bottom
+    height: container.childrenRect.height + padding.margins.top + padding.margins.bottom
 
+    PlasmaCore.FrameSvgItem {
+        id: padding
+        imagePath: "widgets/viewitem"
+        prefix: "hover"
+        opacity: 0
+        anchors.fill: parent
+    }
     Item {
         id: container
         anchors {
             fill: parent
-            topMargin: notifierDialog.highlightItem.margins.top
-            leftMargin: notifierDialog.highlightItem.margins.left
-            rightMargin: notifierDialog.highlightItem.margins.right
-            bottomMargin: notifierDialog.highlightItem.margins.bottom
+            topMargin: padding.margins.top
+            leftMargin: padding.margins.left
+            rightMargin: padding.margins.right
+            bottomMargin: padding.margins.bottom
         }
         // FIXME: Device item loses focus on mounting/unmounting it,
         // or specifically, when some UI element changes.
@@ -58,7 +64,6 @@ Item {
             anchors {
                 left: parent.left
                 top: parent.top
-                topMargin: deviceIconMargin
             }
 
             QIconItem {
@@ -74,32 +79,49 @@ Item {
         }
 
 
-        PlasmaComponents.Label {
-            id: deviceLabel
+        Column {
+            id: labelsColumn
+            spacing: padding.margins.top/2
             anchors {
                 top: parent.top
                 left: deviceIcon.right
+                right: leftAction.left
+                leftMargin: padding.margins.left
             }
-        }
-
-        PlasmaCore.Theme { id: theme }
-
-        PlasmaComponents.Label {
-            id: deviceStatus
-            anchors {
-                top: deviceLabel.bottom
-                left: deviceLabel.left
+            PlasmaComponents.Label {
+                id: deviceLabel
+                height: paintedHeight
             }
-            // FIXME: state changes do not reach the plasmoid if the
-            // device was already attached when the plasmoid was
-            // initialized
-            text: parent.state==0 ? idleStatus() : (parent.state==1 ? i18nc("Accessing is a less technical word for Mounting; translation should be short and mean \'Currently mounting this device\'", "Accessing...") : i18nc("Removing is a less technical word for Unmounting; translation shoud be short and mean \'Currently unmounting this device\'", "Removing..."))
-            font.italic: true
-            font.pointSize: 8
-            color: "#99"+(theme.textColor.toString().substr(1))
-            opacity: mouseArea.containsMouse || expanded ? 1 : 0;
 
-            Behavior on opacity { NumberAnimation { duration: 150 } }
+            PlasmaComponents.Label {
+                id: deviceStatus
+
+                height: paintedHeight
+                // FIXME: state changes do not reach the plasmoid if the
+                // device was already attached when the plasmoid was
+                // initialized
+                text: deviceItem.state==0 ? container.idleStatus() : (deviceItem.state==1 ? i18nc("Accessing is a less technical word for Mounting; translation should be short and mean \'Currently mounting this device\'", "Accessing...") : i18nc("Removing is a less technical word for Unmounting; translation shoud be short and mean \'Currently unmounting this device\'", "Removing..."))
+                font.italic: true
+                font.pointSize: theme.smallestFont.pointSize
+                color: "#99"+(theme.textColor.toString().substr(1))
+                opacity: mouseArea.containsMouse || expanded ? 1 : 0;
+
+                Behavior on opacity { NumberAnimation { duration: 150 } }
+            }
+
+            PlasmaComponents.ProgressBar {
+                id: freeSpaceBar
+                height: deviceStatus.height
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+                opacity: mounted ? deviceStatus.opacity : 0
+                minimumValue: 0
+                maximumValue: 100
+                orientation: Qt.Horizontal
+                z: 900
+            }
         }
 
         function idleStatus() {
@@ -111,28 +133,9 @@ Item {
             }
         }
 
-        PlasmaComponents.ProgressBar {
-            id: freeSpaceBar
-            height: 12
-            anchors {
-                top: deviceStatus.bottom
-                left: deviceLabel.left
-                right: parent.right
-            }
-            opacity: mounted ? deviceStatus.opacity : 0
-            minimumValue: 0
-            maximumValue: 100
-            orientation: Qt.Horizontal
-        }
-
-        Item {
-            id: freeSpaceBarPlaceholder
-            anchors.fill: freeSpaceBar
-            z: 900
-        }
 
         PlasmaCore.ToolTip {
-            target: freeSpaceBarPlaceholder
+            target: freeSpaceBar
             subText: i18nc("@info:status Free disk space", "%1 free", model["Free Space Text"])
         }
 
@@ -204,7 +207,7 @@ Item {
                 top: parent.top
                 left: parent.left
                 right: parent.right
-                bottom: freeSpaceBar.bottom
+                bottom: labelsColumn.bottom
                 // to remove the gap between device items
             }
             hoverEnabled: true
@@ -239,7 +242,7 @@ Item {
         ListView {
             id: actionsList
             anchors {
-                top: freeSpaceBar.bottom
+                top: labelsColumn.bottom
                 left: deviceIcon.right
                 right: leftAction.right
             }
