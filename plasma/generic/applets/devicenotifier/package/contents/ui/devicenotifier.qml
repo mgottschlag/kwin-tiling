@@ -108,7 +108,9 @@ Item {
 
     function expandDevice(udi)
     {
-        expandedDevice = udi
+        if (hpSource.data[udi]["actions"].length > 1) {
+            expandedDevice = udi
+        }
         plasmoid.setPopupIconByName("preferences-desktop-notification")
         plasmoid.status = "ActiveStatus"
         plasmoid.showPopup(7500)
