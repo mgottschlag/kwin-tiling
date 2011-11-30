@@ -47,8 +47,13 @@ Item {
         property string last
         onSourceAdded: {
             last = source;
+            processLastDevice()
         }
         onDataChanged: {
+            processLastDevice()
+        }
+
+        function processLastDevice() {
             if (last != "") {
                 if (devicesType == "all" ||
                     (devicesType == "removable" && data[last]["Removable"] == true) ||
