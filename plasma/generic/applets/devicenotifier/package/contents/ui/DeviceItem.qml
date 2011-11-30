@@ -82,6 +82,7 @@ Item {
         Column {
             id: labelsColumn
             spacing: padding.margins.top/2
+            z: 900
             anchors {
                 top: parent.top
                 left: deviceIcon.right
@@ -120,7 +121,6 @@ Item {
                 minimumValue: 0
                 maximumValue: 100
                 orientation: Qt.Horizontal
-                z: 900
             }
         }
 
