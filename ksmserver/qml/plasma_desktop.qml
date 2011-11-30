@@ -149,7 +149,7 @@ PlasmaCore.FrameSvgItem {
             text: ""
             font.pixelSize: 11
             width: parent.width
-	    anchors.right: centerRow.right
+            anchors.right: centerRow.right
         }
 
         Row {
@@ -184,7 +184,7 @@ PlasmaCore.FrameSvgItem {
                         //icon: QIcon("system-log-out")
                         width: buttonsLayout.width
                         height: 32
-			visible: (choose || sdtype == ShutdownType.ShutdownTypeNone)
+                        visible: (choose || sdtype == ShutdownType.ShutdownTypeNone)
 
                         onClicked: {
                             logoutRequested()
@@ -198,7 +198,7 @@ PlasmaCore.FrameSvgItem {
                         width: buttonsLayout.width
                         height:32
                         property ContextMenu contextMenu
-			visible: (choose || sdtype == ShutdownType.ShutdownTypeHalt)
+                        visible: (choose || sdtype == ShutdownType.ShutdownTypeHalt)
 
                         onClicked: {
                             if (!contextMenu) {
@@ -225,7 +225,7 @@ PlasmaCore.FrameSvgItem {
                                 id: standby
                                 text: i18n("Standby")
                                 visible: shutdownButton.visible && spdMethods.StandbyState
-				height: stan
+                                height: stan
                                 onClicked: {
                                     console.log("suspendRequested(Solid::PowerManagement::StandbyState)")
                                     suspendRequested(1); // Solid::PowerManagement::StandbyState
