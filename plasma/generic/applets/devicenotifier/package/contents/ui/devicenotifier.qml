@@ -163,8 +163,8 @@ Item {
             }
             filterRole: "Removable"
             filterRegExp: "true"
-            sortRole: "File Path"
-            sortOrder: Qt.AscendingOrder
+            sortRole: "Timestamp"
+            sortOrder: Qt.DescendingOrder
         }
         onCountChanged: {
             if (count == 0) {
