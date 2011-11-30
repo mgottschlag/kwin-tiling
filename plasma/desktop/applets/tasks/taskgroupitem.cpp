@@ -377,10 +377,9 @@ void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
     }
 
     m_group = group;
-    m_abstractItem = group;
+    setAbstractItem(group);
 
-    if (m_group) {
-        connect(m_abstractItem, SIGNAL(destroyed(QObject*)), this, SLOT(clearAbstractItem()));
+    if (group) {
         connect(group, SIGNAL(destroyed(QObject*)), this, SLOT(clearGroup()));
         connect(group, SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(itemRemoved(AbstractGroupableItem*)));
         connect(group, SIGNAL(itemAdded(AbstractGroupableItem*)), this, SLOT(itemAdded(AbstractGroupableItem*)));

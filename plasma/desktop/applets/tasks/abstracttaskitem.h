@@ -195,18 +195,6 @@ protected:
     void stopWindowHoverEffect();
     bool shouldIgnoreDragEvent(QGraphicsSceneDragDropEvent *event);
 
-protected Q_SLOTS:
-    /** Event compression **/
-    void queueUpdate();
-
-    qreal backgroundFadeAlpha() const;
-    void setBackgroundFadeAlpha(qreal progress);
-
-    void syncActiveRect();
-    void checkSettings();
-    void clearAbstractItem();
-
-protected:
     // area of item occupied by task's icon
     QRectF iconRect(const QRectF &bounds);
     // area for the expander arrow for group items
@@ -220,8 +208,19 @@ protected:
     void resizeBackground(const QSize &size);
 
     void resizeEvent(QGraphicsSceneResizeEvent *event);
+    void setAbstractItem(TaskManager::AbstractGroupableItem *item);
 
-    TaskManager::AbstractGroupableItem * m_abstractItem;
+protected Q_SLOTS:
+    /** Event compression **/
+    void queueUpdate();
+
+    qreal backgroundFadeAlpha() const;
+    void setBackgroundFadeAlpha(qreal progress);
+
+    void syncActiveRect();
+    void checkSettings();
+
+protected:
     LayoutWidget *m_layoutWidget;
 
     Tasks *m_applet;
@@ -241,6 +240,7 @@ protected:
     QString m_backgroundPrefix;
 
 private:
+    QWeakPointer<TaskManager::AbstractGroupableItem> m_abstractItem;
     QPixmap m_cachedShadow;
 
     QRectF m_activeRect;

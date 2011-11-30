@@ -246,10 +246,9 @@ void WindowTaskItem::setStartupTask(TaskItem *task)
         return;
     }
 
-    m_abstractItem = task;
+    setAbstractItem(task);
 
-    if (m_abstractItem) {
-        connect(m_abstractItem, SIGNAL(destroyed(QObject*)), this, SLOT(clearAbstractItem()));
+    if (task) {
         textChanged();
 
         connect(task, SIGNAL(gotTaskPointer()), this, SLOT(gotTaskPointer()));
@@ -274,21 +273,17 @@ void WindowTaskItem::gotTaskPointer()
 }
 
 
-void WindowTaskItem::setWindowTask(TaskManager::TaskItem* taskItem)
+void WindowTaskItem::setWindowTask(TaskManager::TaskItem *taskItem)
 {
     if (m_task && m_task.data()->task()) {
         disconnect(m_task.data()->task(), 0, this, 0);
     }
 
     m_task = taskItem;
-    m_abstractItem = qobject_cast<TaskManager::AbstractGroupableItem *>(taskItem);
+    setAbstractItem(taskItem);
 
-    if (m_abstractItem) {
-        connect(m_abstractItem, SIGNAL(destroyed(QObject*)), this, SLOT(clearAbstractItem()));
-    }
-
-    if (m_task) {
-        connect(m_task.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
+    if (taskItem) {
+        connect(taskItem, SIGNAL(changed(::TaskManager::TaskChanges)),
                 this, SLOT(updateTask(::TaskManager::TaskChanges)));
     }
 
