@@ -44,6 +44,24 @@ Rectangle {
         id: theme
     }
 
+    PlasmaCore.SvgItem {
+        id: background
+        anchors.fill: parent
+
+        svg: PlasmaCore.Svg {
+            imagePath: "dialogs/shutdowndialog"
+        }
+        elementId: "center"
+    }
+
+    Component.onCompleted: {
+        //console.log("margins: " + margins.left + ", " + margins.top + ", " + margins.right + ", " + margins.bottom);
+
+        if (background.naturalSize.width < 1) {
+            background.elementId = "background"
+        }
+    }
+
     Row {
         spacing: 5
         anchors.verticalCenter: parent.verticalCenter
