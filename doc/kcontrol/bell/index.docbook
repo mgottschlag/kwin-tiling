@@ -4,7 +4,7 @@
  <!ENTITY % English "INCLUDE" > <!-- change language only here -->
 ]>
 
-<article lang="&language;">
+<article lang="&language;" id="system-bell">
 <title>System Bell</title>
 <articleinfo>
 <authorgroup>
@@ -14,14 +14,8 @@
 
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
-<date>2009-11-18</date>
-<releaseinfo>4.4</releaseinfo>
-<keywordset>
-<keyword>KDE</keyword>
-<keyword>Bell</keyword>
-<keyword>Systemsettings</keyword>
-<keyword>Notifications</keyword>
-</keywordset>
+<date>2011-11-28</date>
+<releaseinfo>&kde; 4.8</releaseinfo>
 </articleinfo>
 
 <para>The system bell or beep is a feature of the X server, which
@@ -47,23 +41,22 @@ then you are able to set the following parameters for the bell:</para>
 
 <varlistentry>
 <term><guilabel>Volume</guilabel> (percentage of <quote>maximum</quote> volume)</term>
-<listitem><para>Here you can customize the volume of the system bell. For further 
-customization of the bell, see the <guilabel>Accessibility</guilabel> &systemsettings; module.</para></listitem>
+<listitem><para>Here you can customize the volume of the system bell.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><guilabel>Pitch</guilabel> (in Hz)</term>
-<listitem><para>Here you can customize the pitch of the system bell. For further 
-customization of the bell, see the <guilabel>Accessibility</guilabel> &systemsettings; module.</para></listitem>
+<listitem><para>Here you can customize the pitch of the system bell.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><guilabel>Duration</guilabel> (in milliseconds)</term>
-<listitem><para>Here you can customize the duration of the system bell. For further 
-customization of the bell, see the <guilabel>Accessibility</guilabel> &systemsettings; module.</para></listitem>
+<listitem><para>Here you can customize the duration of the system bell.</para></listitem>
 </varlistentry>
 
 </variablelist>
+
+<para>For further customization of the bell, see the <guilabel>Accessibility</guilabel> &systemsettings; module.</para>
 
 <para>You can use the <guibutton>Test</guibutton> button to hear how
 the current settings will sound.</para>

@@ -73,14 +73,23 @@ void TasksEngine::init()
 void TasksEngine::startupRemoved(::TaskManager::Startup *startup)
 {
     Q_ASSERT(startup);
-    removeSource(getStartupName(startup));
+    // there is an event loop ref counting bug in Qt that prevents deleteLater() from working
+    // properly, so we need to remove the source our selves with a single shot
+    //removeSource(getStartupName(startup));
+    if (Plasma::DataContainer *container = containerForSource(getStartupName(startup))) {
+        QTimer::singleShot(0, container, SLOT(deleteLater()));
+    }
 }
 
 void TasksEngine::taskRemoved(::TaskManager::Task *task)
 {
     Q_ASSERT(task);
-    const QString name = getTaskName(task);
-    removeSource(name);
+    // there is an event loop ref counting bug in Qt that prevents deleteLater() from working
+    // properly, so we need to remove the source our selves with a single shot
+    //removeSource(getTaskName(task));
+    if (Plasma::DataContainer *container = containerForSource(getTaskName(task))) {
+        QTimer::singleShot(0, container, SLOT(deleteLater()));
+    }
 }
 
 void TasksEngine::startupAdded(::TaskManager::Startup *startup)
