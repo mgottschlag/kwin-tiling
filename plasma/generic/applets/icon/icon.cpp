@@ -50,7 +50,8 @@
 IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_icon(0),
-      m_watcher(0)
+      m_watcher(0),
+      m_hasDesktopFile(false)
 {
     setAcceptDrops(true);
     setBackgroundHints(NoBackground);
@@ -129,8 +130,12 @@ void IconApplet::iconSizeChanged(int group)
     }
 }
 
-void IconApplet::setUrl(const KUrl& url)
+void IconApplet::setUrl(const KUrl& url, bool fromConfigDialog)
 {
+    if (m_dialog && !fromConfigDialog) {
+        delete m_dialog.data();
+    }
+
     m_url = url;
     if (!m_url.protocol().isEmpty()) {
         m_url = KIO::NetAccess::mostLocalUrl(url, 0);
