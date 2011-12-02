@@ -20,6 +20,7 @@
 #include "icon.h"
 
 #include <QFile>
+#include <QFileInfo>
 #include <QGraphicsSceneDragDropEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsItem>
@@ -148,7 +149,32 @@ void IconApplet::setUrl(const KUrl& url)
         connect(m_watcher, SIGNAL(deleted(QString)), this, SLOT(delayedDestroy()));
     }
 
-    if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
+    // if local
+    //   if executable
+    //     make desktop file
+    //    desktop file
+    bool hasDesktopFile = false;
+    if (m_url.isLocalFile()) {
+        QFileInfo fi(m_url.toLocalFile());
+        if (KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
+            hasDesktopFile = true;
+        } else if (fi.isExecutable()) {
+            const QString suggestedName = fi.baseName();
+            const QString file = KService::newServicePath(false, suggestedName);
+            KDesktopFile df(file);
+            KConfigGroup desktopGroup = df.desktopGroup();
+            desktopGroup.writeEntry("Name", suggestedName);
+            QString entryType;
+            desktopGroup.writeEntry("Exec", m_url.toLocalFile());
+            desktopGroup.writeEntry("Icon", KMimeType::iconNameForUrl(url));
+            desktopGroup.writeEntry("Type", "Application");
+            df.sync();
+            m_url.setPath(file);
+            hasDesktopFile = true;
+        }
+    }
+
+    if (hasDesktopFile) {
         KDesktopFile f(m_url.toLocalFile());
         m_text = f.readName();
         //corrupted desktop file?
