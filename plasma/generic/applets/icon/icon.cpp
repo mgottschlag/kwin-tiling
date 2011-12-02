@@ -50,7 +50,6 @@
 IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_icon(0),
-      m_dialog(0),
       m_watcher(0)
 {
     setAcceptDrops(true);
@@ -94,7 +93,7 @@ void IconApplet::init()
 
 IconApplet::~IconApplet()
 {
-    delete m_dialog;
+    delete m_dialog.data();
     delete m_watcher;
 }
 
@@ -301,16 +300,19 @@ void IconApplet::constraintsEvent(Plasma::Constraints constraints)
 
 void IconApplet::showConfigurationInterface()
 {
-    if (m_dialog == 0) {
-        m_dialog = new KPropertiesDialog(m_url, 0 /*no parent widget*/);
-        connect(m_dialog, SIGNAL(applied()), this, SLOT(acceptedPropertiesDialog()));
-        connect(m_dialog, SIGNAL(propertiesClosed()), this, SLOT(propertiesDialogClosed()));
-        m_dialog->setWindowTitle(i18n("%1 Icon Settings", m_url.fileName()));
-        m_dialog->show();
+    KPropertiesDialog *dialog = m_dialog.data();
+    if (dialog) {
+        KWindowSystem::setOnDesktop(dialog->winId(), KWindowSystem::currentDesktop());
+        dialog->show();
+        KWindowSystem::activateWindow(dialog->winId());
     } else {
-        KWindowSystem::setOnDesktop(m_dialog->winId(), KWindowSystem::currentDesktop());
-        m_dialog->show();
-        KWindowSystem::activateWindow(m_dialog->winId());
+        dialog = new KPropertiesDialog(m_url, 0 /*no parent widget*/);
+        m_dialog = dialog;
+        connect(dialog, SIGNAL(applied()), this, SLOT(acceptedPropertiesDialog()));
+        connect(dialog, SIGNAL(propertiesClosed()), this, SLOT(propertiesDialogClosed()));
+        dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+        dialog->setWindowTitle(i18n("%1 Icon Settings", m_url.fileName()));
+        dialog->show();
     }
 }
 
@@ -358,16 +360,17 @@ int IconApplet::displayLines()
 
 void IconApplet::acceptedPropertiesDialog()
 {
+    if (!m_dialog) {
+        return;
+    }
+
+    m_url = m_dialog.data()->kurl();
+
     KConfigGroup cg = config();
-    m_url = m_dialog->kurl();
     cg.writeEntry("Url", m_url);
+
     setUrl(m_url);
     update();
-}
-
-void IconApplet::propertiesDialogClosed()
-{
-    m_dialog = 0;
 }
 
 void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)

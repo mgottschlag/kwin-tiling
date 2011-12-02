@@ -61,7 +61,6 @@ class IconApplet : public Plasma::Applet
 
     private slots:
         void acceptedPropertiesDialog();
-        void propertiesDialogClosed();
         void delayedDestroy();
         void checkExistenceOfUrl();
         void checkService(const QStringList &service);
@@ -76,7 +75,7 @@ class IconApplet : public Plasma::Applet
         Plasma::IconWidget* m_icon;
         QString m_text;
         QString m_genericName;
-        KPropertiesDialog *m_dialog;
+        QWeakPointer<KPropertiesDialog> m_dialog;
         KUrl m_url;
         KDirWatch *m_watcher;
         QSize m_lastFreeSize;
