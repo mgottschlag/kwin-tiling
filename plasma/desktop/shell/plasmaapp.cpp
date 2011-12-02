@@ -674,9 +674,14 @@ void PlasmaApp::screenRemoved(int id)
         }
     }
 
-#if 0
+#if 1
+    /**
+    UPDATE: this was linked to kephal events, which are not optimal, but it seems it may well
+    have been the panel->migrateTo call due to a bug in libplasma fixed in e2108ed. so let's try
+    and re-enable this.
     NOTE: CURRENTLY UNSAFE DUE TO HOW KEPHAL (or rather, it seems, Qt?) PROCESSES EVENTS
           DURING XRANDR EVENTS. REVISIT IN 4.8!
+          */
     Kephal::Screen *primary = Kephal::Screens::self()->primaryScreen();
     QList<Kephal::Screen *> screens = Kephal::Screens::self()->screens();
     screens.removeAll(primary);
