@@ -39,8 +39,9 @@
 #include <KSycoca>
 #include <KUrl>
 #include <KWindowSystem>
-#include <kio/copyjob.h>
-#include <kio/netaccess.h>
+#include <KIO/Job>
+#include <KIO/CopyJob>
+#include <KIO/NetAccess>
 
 #include <Plasma/Theme>
 #include <Plasma/IconWidget>
@@ -132,7 +133,7 @@ void IconApplet::iconSizeChanged(int group)
 
 void IconApplet::setUrl(const KUrl& url, bool fromConfigDialog)
 {
-    if (m_dialog && !fromConfigDialog) {
+    if (!fromConfigDialog) {
         delete m_dialog.data();
     }
 
@@ -157,11 +158,11 @@ void IconApplet::setUrl(const KUrl& url, bool fromConfigDialog)
     //   if executable
     //     make desktop file
     //    desktop file
-    bool hasDesktopFile = false;
+    m_hasDesktopFile = false;
     if (m_url.isLocalFile()) {
         QFileInfo fi(m_url.toLocalFile());
         if (KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
-            hasDesktopFile = true;
+            m_hasDesktopFile = true;
         } else if (fi.isExecutable()) {
             const QString suggestedName = fi.baseName();
             const QString file = KService::newServicePath(false, suggestedName);
@@ -174,11 +175,11 @@ void IconApplet::setUrl(const KUrl& url, bool fromConfigDialog)
             desktopGroup.writeEntry("Type", "Application");
             df.sync();
             m_url.setPath(file);
-            hasDesktopFile = true;
+            m_hasDesktopFile = true;
         }
     }
 
-    if (hasDesktopFile) {
+    if (m_hasDesktopFile) {
         KDesktopFile f(m_url.toLocalFile());
         m_text = f.readName();
         //corrupted desktop file?
@@ -245,7 +246,7 @@ void IconApplet::checkExistenceOfUrl()
 
 void IconApplet::updateDesktopFile()
 {
-    setUrl(m_url);
+    setUrl(m_url, true);
 }
 
 void IconApplet::openUrl()
@@ -306,18 +307,52 @@ void IconApplet::constraintsEvent(Plasma::Constraints constraints)
 void IconApplet::showConfigurationInterface()
 {
     KPropertiesDialog *dialog = m_dialog.data();
+    m_configTarget = m_url;
+    if (m_hasDesktopFile) {
+        const QFileInfo fi(m_url.toLocalFile());
+        if (!fi.isWritable()) {
+            const QString suggestedName = fi.baseName();
+            m_configTarget = KService::newServicePath(false, suggestedName);
+            KIO::Job *job = KIO::file_copy(m_url, m_configTarget);
+            job->exec();
+        }
+    }
+
     if (dialog) {
         KWindowSystem::setOnDesktop(dialog->winId(), KWindowSystem::currentDesktop());
         dialog->show();
         KWindowSystem::activateWindow(dialog->winId());
     } else {
-        dialog = new KPropertiesDialog(m_url, 0 /*no parent widget*/);
+        dialog = new KPropertiesDialog(m_configTarget, 0 /*no parent widget*/);
         m_dialog = dialog;
         connect(dialog, SIGNAL(applied()), this, SLOT(acceptedPropertiesDialog()));
-        connect(dialog, SIGNAL(propertiesClosed()), this, SLOT(propertiesDialogClosed()));
+        connect(dialog, SIGNAL(canceled()), this, SLOT(cancelledPropertiesDialog()));
         dialog->setAttribute(Qt::WA_DeleteOnClose, true);
-        dialog->setWindowTitle(i18n("%1 Icon Settings", m_url.fileName()));
+        dialog->setWindowTitle(i18n("%1 Icon Settings", m_configTarget.fileName()));
         dialog->show();
+    }
+}
+
+void IconApplet::acceptedPropertiesDialog()
+{
+    if (!m_dialog) {
+        return;
+    }
+
+    m_url = m_dialog.data()->kurl();
+
+    KConfigGroup cg = config();
+    cg.writeEntry("Url", m_url);
+
+    setUrl(m_url, true);
+    update();
+}
+
+void IconApplet::cancelledPropertiesDialog()
+{
+    if (m_hasDesktopFile && m_configTarget != m_url) {
+        // clean up after ourselves if we created a temporary file
+        QFile::remove(m_configTarget.toLocalFile());
     }
 }
 
@@ -361,21 +396,6 @@ int IconApplet::displayLines()
         return m_icon->numDisplayLines();
     }
     return 0;
-}
-
-void IconApplet::acceptedPropertiesDialog()
-{
-    if (!m_dialog) {
-        return;
-    }
-
-    m_url = m_dialog.data()->kurl();
-
-    KConfigGroup cg = config();
-    cg.writeEntry("Url", m_url);
-
-    setUrl(m_url);
-    update();
 }
 
 void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)

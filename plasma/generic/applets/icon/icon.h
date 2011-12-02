@@ -42,7 +42,7 @@ class IconApplet : public Plasma::Applet
         ~IconApplet();
 
         void init();
-        void setUrl(const KUrl& url);
+        void setUrl(const KUrl& url, bool fromConfigDialog = false);
         void constraintsEvent(Plasma::Constraints constraints);
         void setDisplayLines(int displayLines);
         int displayLines();
@@ -61,6 +61,7 @@ class IconApplet : public Plasma::Applet
 
     private slots:
         void acceptedPropertiesDialog();
+        void cancelledPropertiesDialog();
         void delayedDestroy();
         void checkExistenceOfUrl();
         void checkService(const QStringList &service);
@@ -77,9 +78,11 @@ class IconApplet : public Plasma::Applet
         QString m_genericName;
         QWeakPointer<KPropertiesDialog> m_dialog;
         KUrl m_url;
+        KUrl m_configTarget;
         KDirWatch *m_watcher;
         QSize m_lastFreeSize;
         KService::Ptr m_service;
+        bool m_hasDesktopFile;
 };
 
 K_EXPORT_PLASMA_APPLET(icon, IconApplet)
