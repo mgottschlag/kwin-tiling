@@ -211,6 +211,7 @@ protected:
 
 private slots:
     void widgetDeleted();
+    void emitChanged();
 
 private:
     class Private;
