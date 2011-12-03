@@ -1147,7 +1147,7 @@ QColor AbstractTaskItem::textColor() const
     }
 
     if (m_flags & TaskIsMinimized) {
-        color.setAlphaF(0.85);
+        color.setAlphaF(0.5);
     }
 
     return color;
