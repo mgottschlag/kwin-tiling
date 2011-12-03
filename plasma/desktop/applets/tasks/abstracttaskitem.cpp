@@ -651,9 +651,12 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
 {
     Q_UNUSED(option)
 
-    QRectF bounds = boundingRect();
-
     TaskManager::AbstractGroupableItem *abstractItem = m_abstractItem.data();
+    if (!abstractItem) {
+        return;
+    }
+
+    QRectF bounds = boundingRect();
     if (abstractItem->itemType() != TaskManager::LauncherItemType) {
         bounds = bounds.adjusted(m_applet->itemLeftMargin(), m_applet->itemTopMargin(), -m_applet->itemRightMargin(), -m_applet->itemBottomMargin());
     } else {
