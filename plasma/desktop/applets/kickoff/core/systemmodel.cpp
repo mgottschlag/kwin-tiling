@@ -50,23 +50,13 @@ static const int REMOVABLE_ROW = 2;
 static const int FIXED_ROW = 3;
 static const int LAST_ROW = FIXED_ROW;
 
-struct UsageInfo {
-    UsageInfo()
-        : used(0),
-          available(0)
-     {}
-
-    quint64 used;
-    quint64 available;
-};
-
 class SystemModel::Private
 {
 public:
     Private(SystemModel *parent)
             : q(parent),
               placesModel(new KFilePlacesModel(parent)),
-              currentPlacesModelUsageIndex(0)
+              refreshRequested(false)
     {
         q->setSourceModel(placesModel);
 
@@ -93,13 +83,15 @@ public:
     QStringList topLevelSections;
     KService::List appsList;
     QMap<QString, UsageInfo> usageByMountpoint;
-    int currentPlacesModelUsageIndex;
+    QWeakPointer<UsageFinder> usageFinder;
+    bool refreshRequested;
 };
 
 SystemModel::SystemModel(QObject *parent)
         : KickoffProxyModel(parent)
         , d(new Private(this))
 {
+    qRegisterMetaType<UsageInfo>("UsageInfo");
     reloadApplications();
 }
 
@@ -331,44 +323,100 @@ QVariant SystemModel::headerData(int section, Qt::Orientation orientation, int r
     }
 }
 
+UsageFinder::UsageFinder(QObject *parent)
+    : QThread(parent)
+{
+
+}
+
+void UsageFinder::add(int index, const QString &mountPoint)
+{
+    //NOTE: this is not particularly perfect for a threaded object ;)
+    //      but the assumption here is that add is called before run()
+    m_toCheck.append(qMakePair(index, mountPoint));
+}
+
+void UsageFinder::run()
+{
+    typedef QPair<int, QString> CheckPair;
+    foreach (CheckPair check, m_toCheck) {
+        KDiskFreeSpaceInfo freeSpace = KDiskFreeSpaceInfo::freeSpaceInfo(check.second);
+        if (freeSpace.isValid()) {
+            UsageInfo info;
+            info.used = freeSpace.used() / 1024;
+            info.available = freeSpace.available() / 1024;
+            emit usageInfo(check.first, check.second, info);
+        }
+    }
+}
+
 void SystemModel::refreshUsageInfo()
 {
-    d->currentPlacesModelUsageIndex = 0;
-    QTimer::singleShot(100, this, SLOT(refreshNextUsageInfo()));
+    if (d->usageFinder) {
+        d->refreshRequested = true;
+    } else {
+        QTimer::singleShot(100, this, SLOT(startUsageInfoFetch()));
+    }
+}
+
+void SystemModel::setUsageInfo(int index, const QString &mountPoint, const UsageInfo &usageInfo)
+{
+    QModelIndex sourceIndex = d->placesModel->index(index, 0);
+    if (sourceIndex.isValid()) {
+        d->usageByMountpoint[mountPoint] = usageInfo;
+        QModelIndex index = mapFromSource(sourceIndex);
+        emit dataChanged(index, index);
+    }
 }
 
 void SystemModel::stopRefreshingUsageInfo()
 {
-    d->currentPlacesModelUsageIndex = d->placesModel->rowCount();
+    d->refreshRequested = false;
 }
 
-void SystemModel::refreshNextUsageInfo()
+void SystemModel::usageFinderFinished()
 {
-    if (d->currentPlacesModelUsageIndex >= d->placesModel->rowCount()) {
+    if (d->refreshRequested) {
+        d->refreshRequested = false;
+        QTimer::singleShot(100, this, SLOT(startUsageInfoFetch()));
+    }
+}
+
+void SystemModel::startUsageInfoFetch()
+{
+    if (d->usageFinder) {
         return;
     }
 
-    QModelIndex sourceIndex = d->placesModel->index(d->currentPlacesModelUsageIndex, 0);
-    if (d->placesModel->isDevice(sourceIndex)) {
-        Solid::Device dev = d->placesModel->deviceForIndex(sourceIndex);
-        Solid::StorageAccess *access = dev.as<Solid::StorageAccess>();
+    UsageFinder *usageFinder = new UsageFinder(this);
+    d->usageFinder = usageFinder;
+    connect(usageFinder, SIGNAL(finished()),
+            this, SLOT(usageFinderFinished()));
+    connect(usageFinder, SIGNAL(finished()),
+            usageFinder, SLOT(deleteLater()));
+    connect(usageFinder, SIGNAL(usageInfo(int,QString,UsageInfo)),
+            this, SLOT(setUsageInfo(int,QString,UsageInfo)));
 
-        if (access && !access->filePath().isEmpty()) {
-            KDiskFreeSpaceInfo freeSpace = KDiskFreeSpaceInfo::freeSpaceInfo(access->filePath());
-            if (freeSpace.isValid()) {
-                UsageInfo info;
-                info.used = freeSpace.used() / 1024;
-                info.available = freeSpace.available() / 1024;
+    bool hasDevices = false;
 
-                d->usageByMountpoint[freeSpace.mountPoint()] = info;
-                QModelIndex index = mapFromSource(sourceIndex);
-                emit dataChanged(index, index);
+    for (int i = 0; i < d->placesModel->rowCount(); ++i) {
+        QModelIndex sourceIndex = d->placesModel->index(i, 0);
+        if (d->placesModel->isDevice(sourceIndex)) {
+            Solid::Device dev = d->placesModel->deviceForIndex(sourceIndex);
+            Solid::StorageAccess *access = dev.as<Solid::StorageAccess>();
+
+            if (access && !access->filePath().isEmpty()) {
+                usageFinder->add(i, access->filePath());
+                hasDevices = true;
             }
         }
     }
 
-    ++d->currentPlacesModelUsageIndex;
-    QTimer::singleShot(0, this, SLOT(refreshNextUsageInfo()));
+    if (hasDevices) {
+        usageFinder->start();
+    } else {
+        delete usageFinder;
+    }
 }
 
 void SystemModel::reloadApplications()
