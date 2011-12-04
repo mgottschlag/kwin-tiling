@@ -30,13 +30,13 @@
 
 //AppletToolTipWidget
 
-AppletToolTipWidget::AppletToolTipWidget(QWidget *parent, AppletIconWidget *applet)
+AppletToolTipWidget::AppletToolTipWidget(Plasma::Location location, QWidget *parent)
         : Plasma::Dialog(parent),
-          m_widget(new AppletInfoWidget())
+          m_widget(new AppletInfoWidget()),
+          m_direction(Plasma::locationToDirection(location))
 {
     setAcceptDrops(true);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
-    m_widget->setApplet(applet);
 }
 
 AppletToolTipWidget::~AppletToolTipWidget()
@@ -214,6 +214,29 @@ void AppletInfoWidget::updateInfo()
     }
 
     adjustSize();
+}
+
+void AppletToolTipWidget::resizeEvent(QResizeEvent *event)
+{
+    Plasma::Dialog::resizeEvent(event);
+
+    if (!isVisible()) {
+        return;
+    }
+
+    //offsets to stop tooltips from jumping when they resize
+    int deltaX = 0;
+    int deltaY = 0;
+    if (m_direction == Plasma::Up) {
+        deltaY = event->oldSize().height() - event->size().height();
+    } else if (m_direction == Plasma::Left) {
+        deltaX = event->oldSize().width() - event->size().width();
+    }
+
+    // resize then move if we're getting smaller, vice versa when getting bigger
+    // this prevents overlap with the item in the smaller case, and a repaint of
+    // the tipped item when getting bigger
+    move(x() + deltaX, y() + deltaY);
 }
 
 void AppletInfoWidget::uninstall()

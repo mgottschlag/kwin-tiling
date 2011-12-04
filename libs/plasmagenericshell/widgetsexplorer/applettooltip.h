@@ -67,7 +67,7 @@ class AppletToolTipWidget : public Plasma::Dialog {
     Q_OBJECT
 
     public:
-        explicit AppletToolTipWidget(QWidget *parent = 0, AppletIconWidget *applet = 0);
+        explicit AppletToolTipWidget(Plasma::Location location, QWidget *parent = 0);
         virtual ~AppletToolTipWidget();
 
         void setAppletIconWidget(AppletIconWidget *applet);
@@ -83,9 +83,11 @@ class AppletToolTipWidget : public Plasma::Dialog {
         void enterEvent(QEvent *event);
         void leaveEvent(QEvent *event);
         void dragEnterEvent(QDragEnterEvent *event);
+        void resizeEvent(QResizeEvent *event);
 
     private:
         AppletInfoWidget *m_widget;
+        Plasma::Direction m_direction;
 };
 
 #endif //APPLETTOOLTIP_H

@@ -44,12 +44,12 @@ AppletsListWidget::AppletsListWidget(Plasma::Location location, QGraphicsItem *p
 {
     toolTipMoveTimeLine.setFrameRange(0, 100);
     toolTipMoveTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
-    toolTipMoveTimeLine.setDuration(500);
+    toolTipMoveTimeLine.setDuration(250);
     connect(&toolTipMoveTimeLine, SIGNAL(frameChanged(int)),
             this, SLOT(toolTipMoveTimeLineFrameChanged(int)));
 
     //init tooltip
-    m_toolTip = new AppletToolTipWidget();
+    m_toolTip = new AppletToolTipWidget(location);
     m_toolTip->setVisible(false);
     connect(m_toolTip, SIGNAL(enter()), this, SLOT(onToolTipEnter()));
     connect(m_toolTip, SIGNAL(leave()), this, SLOT(onToolTipLeave()));
