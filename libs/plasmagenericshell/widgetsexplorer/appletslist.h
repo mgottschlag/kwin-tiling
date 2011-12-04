@@ -48,15 +48,13 @@ public:
 
 private:
     KCategorizedItemsViewModels::AbstractItem *getItemByProxyIndex(const QModelIndex &index) const;
-
-    void populateAllAppletsHash();
-
     //Creates a new applet icon and puts it into the hash
     AppletIconWidget *createAppletIcon(PlasmaAppletItem *appletItem);
 
     void setToolTipPosition();
 
 private slots:
+    void populateAllAppletsHash();
     void filterChanged(int index);
 
     void appletIconDoubleClicked(Plasma::AbstractIcon *icon);
