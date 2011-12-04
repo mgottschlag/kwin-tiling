@@ -27,19 +27,23 @@
 
 using namespace Plasma;
 
-class KActivityController;
+namespace KActivities
+{
+    class Controller;
+} // namespace KActivities
+
 
 class ActivityService : public Plasma::Service
 {
     Q_OBJECT
 
 public:
-    ActivityService(KActivityController *controller, const QString &source);
+    ActivityService(KActivities::Controller *controller, const QString &source);
     ServiceJob *createJob(const QString &operation,
                           QMap<QString, QVariant> &parameters);
 
 private:
-    KActivityController *m_activityController;
+    KActivities::Controller *m_activityController;
     QString m_id;
 };
 

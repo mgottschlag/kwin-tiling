@@ -19,21 +19,22 @@
 
 #include "activitylist.h"
 
-#include "activity.h"
-#include "plasmaapp.h"
-#include "kworkspace/kactivitycontroller.h"
-
 #include <QHash>
-
-#include <Plasma/Containment>
-#include <Plasma/Corona>
 
 #include <KService>
 #include <KServiceTypeTrader>
 
+#include <Plasma/Containment>
+#include <Plasma/Corona>
+
+#include <KActivities/Controller>
+
+#include "activity.h"
+#include "plasmaapp.h"
+
 ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
     : AbstractIconList(location, parent),
-      m_activityController(new KActivityController(this)),
+      m_activityController(new KActivities::Controller(this)),
       m_scheduleHideOnAdd(0)
 {
     QStringList activities = m_activityController->listActivities();
@@ -164,7 +165,7 @@ void ActivityList::updateClosable()
     foreach (Plasma::AbstractIcon *i, m_allAppletsHash) {
         ActivityIcon *icon = qobject_cast<ActivityIcon*>(i);
 
-        if (icon && icon->activity() && icon->activity()->state() == KActivityInfo::Running) {
+        if (icon && icon->activity() && icon->activity()->state() == KActivities::Info::Running) {
             if (running) {
                 //found two, no worries
                 twoRunning = true;

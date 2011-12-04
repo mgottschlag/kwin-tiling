@@ -383,7 +383,7 @@ void ActivityIcon::updateButtons()
         }
 
         switch (m_activity->state()) {
-            case KActivityInfo::Running:
+            case KActivities::Info::Running:
                 DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStart);
                 DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonRemove);
 
@@ -396,7 +396,7 @@ void ActivityIcon::updateButtons()
                 }
                 break;
 
-            case KActivityInfo::Stopped:
+            case KActivities::Info::Stopped:
                 DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonStop);
 
                 if (!m_buttonRemove) {
@@ -408,7 +408,7 @@ void ActivityIcon::updateButtons()
                 }
                 break;
 
-            case KActivityInfo::Invalid:
+            case KActivities::Info::Invalid:
                 DESTROY_ACTIVITY_ACTION_WIDIGET(m_buttonConfigure);
                 // no break
 

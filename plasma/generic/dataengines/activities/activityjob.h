@@ -22,7 +22,10 @@
 // plasma
 #include <Plasma/ServiceJob>
 
-class KActivityController;
+namespace KActivities
+{
+    class Controller;
+} // namespace KActivities
 
 class ActivityJob : public Plasma::ServiceJob
 {
@@ -30,14 +33,14 @@ class ActivityJob : public Plasma::ServiceJob
     Q_OBJECT
 
     public:
-        ActivityJob(KActivityController *controller, const QString &id, const QString &operation, QMap<QString, QVariant> &parameters, QObject *parent = 0);
+        ActivityJob(KActivities::Controller *controller, const QString &id, const QString &operation, QMap<QString, QVariant> &parameters, QObject *parent = 0);
         ~ActivityJob();
 
     protected:
         void start();
 
     private:
-        KActivityController *m_activityController;
+        KActivities::Controller *m_activityController;
         QString m_id;
 
 };

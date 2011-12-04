@@ -36,15 +36,15 @@ ActivityRunner::ActivityRunner(QObject *parent, const QVariantList &args)
     connect(this, SIGNAL(prepare()), this, SLOT(prep()));
     connect(this, SIGNAL(teardown()), this, SLOT(down()));
 
-    serviceStatusChanged(KActivityConsumer::FullFunctionality);
+    serviceStatusChanged(KActivities::Consumer::FullFunctionality);
 }
 
 void ActivityRunner::prep()
 {
     if (!m_activities) {
-        m_activities = new KActivityController(this);
-        connect(m_activities, SIGNAL(serviceStatusChanged(KActivityConsumer::ServiceStatus)),
-                this, SLOT(serviceStatusChanged(KActivityConsumer::ServiceStatus)));
+        m_activities = new KActivities::Controller(this);
+        connect(m_activities, SIGNAL(serviceStatusChanged(KActivities::Consumer::ServiceStatus)),
+                this, SLOT(serviceStatusChanged(KActivities::Consumer::ServiceStatus)));
         serviceStatusChanged(m_activities->serviceStatus());
     }
 }
@@ -55,9 +55,9 @@ void ActivityRunner::down()
     m_activities = 0;
 }
 
-void ActivityRunner::serviceStatusChanged(KActivityConsumer::ServiceStatus status)
+void ActivityRunner::serviceStatusChanged(KActivities::Consumer::ServiceStatus status)
 {
-    const bool active = status != KActivityConsumer::NotRunning;
+    const bool active = status != KActivities::Consumer::NotRunning;
     if (m_enabled == active) {
         return;
     }
@@ -120,7 +120,7 @@ void ActivityRunner::match(Plasma::RunnerContext &context)
                 continue;
             }
 
-            KActivityInfo info(activity);
+            KActivities::Info info(activity);
             addMatch(info, matches);
 
             if (!context.isValid()) {
@@ -133,7 +133,7 @@ void ActivityRunner::match(Plasma::RunnerContext &context)
                 continue;
             }
 
-            KActivityInfo info(activity);
+            KActivities::Info info(activity);
             if (info.name().startsWith(name, Qt::CaseInsensitive)) {
                 addMatch(info, matches);
             }
@@ -147,15 +147,15 @@ void ActivityRunner::match(Plasma::RunnerContext &context)
     context.addMatches(context.query(), matches);
 }
 
-void ActivityRunner::addMatch(const KActivityInfo &activity, QList<Plasma::QueryMatch> &matches)
+void ActivityRunner::addMatch(const KActivities::Info &activity, QList<Plasma::QueryMatch> &matches)
 {
     Plasma::QueryMatch match(this);
     match.setData(activity.id());
     match.setType(Plasma::QueryMatch::ExactMatch);
     match.setIcon(activity.icon().isEmpty() ? KIcon("preferences-activities") : KIcon(activity.icon()));
     match.setText(i18n("Switch to \"%1\"", activity.name()));
-    match.setRelevance(0.7 + ((activity.state() == KActivityInfo::Running ||
-                               activity.state() == KActivityInfo::Starting) ? 0.1 : 0));
+    match.setRelevance(0.7 + ((activity.state() == KActivities::Info::Running ||
+                               activity.state() == KActivities::Info::Starting) ? 0.1 : 0));
     matches << match;
 }
 
