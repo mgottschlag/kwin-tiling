@@ -161,6 +161,12 @@ void AbstractIconList::hideAllIcons()
     m_currentAppearingAppletsOnList.clear();
 }
 
+void AbstractIconList::removeIcon(AbstractIcon *icon)
+{
+    m_appletListLinearLayout->removeItem(icon);
+    disconnect(icon, SIGNAL(clicked(Plasma::AbstractIcon*)), this, SLOT(itemSelected(Plasma::AbstractIcon*)));
+}
+
 void AbstractIconList::addIcon(AbstractIcon *icon)
 {
     icon->setParent(m_appletListWidget); //FIXME redundant?
