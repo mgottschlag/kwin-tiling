@@ -142,29 +142,19 @@ void Battery::init()
     connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()), SLOT(readColors()));
     connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(setupFonts()));
 
-    const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["Sources"].toStringList();
-
-    connectSources();
-
-    foreach (const QString &battery_source, battery_sources) {
-        dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
-    }
-    m_numOfBattery = battery_sources.size();
-    if (m_numOfBattery == 0) {
-        m_acAlpha = 1;
-    }
-
-    dataUpdated("AC Adapter", dataEngine("powermanagement")->query("AC Adapter"));
+    // connecting up the DataEngine
+    Plasma::DataEngine *engine = dataEngine("powermanagement");
+    engine->connectSource("Battery", this);
+    engine->connectSource("AC Adapter", this);
+    engine->connectSource("PowerDevil", this);
+    connect(engine, SIGNAL(sourceAdded(QString)), this, SLOT(sourceAdded(QString)));
+    connect(engine, SIGNAL(sourceRemoved(QString)), this, SLOT(sourceRemoved(QString)));
 
     if (!m_isEmbedded) {
         initPopupWidget();
         // let's show a brightness OSD
         QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement",
                                               "brightnessChanged", this, SLOT(updateSlider(int)));
-    }
-
-    if (m_acAdapterPlugged) {
-        showAcAdapter(true);
     }
 }
 
@@ -308,9 +298,19 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
 {
     if (source == "Battery") {
         m_remainingMSecs = data["Remaining msec"].toULongLong();
-        //kDebug() << "Remaining msecs on battery:" << m_remainingMSecs;
-    }
-    else if (source.startsWith(QLatin1String("Battery"))) {
+        const QStringList batterySources = data["Sources"].toStringList();
+
+        m_numOfBattery = batterySources.size();
+        if (m_numOfBattery == 0) {
+            m_acAlpha = 1;
+        }
+
+        kDebug() << "Remaining msecs on battery:" << m_remainingMSecs << m_numOfBattery;
+
+        foreach (const QString &batterySource, data["Sources"].toStringList()) {
+            dataEngine("powermanagement")->connectSource(batterySource, this);
+        }
+    } else if (source.startsWith(QLatin1String("Battery"))) {
         m_batteriesData[source] = data;
         //kDebug() << "new battery source" << source;
     } else if (source == "AC Adapter") {
@@ -992,24 +992,6 @@ void Battery::setShowBatteryLabel(bool show)
         constraintsEvent(Plasma::FormFactorConstraint);
         showLabel(show);
     }
-}
-
-void Battery::connectSources()
-{
-    const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["Sources"].toStringList();
-
-    foreach (const QString &battery_source, battery_sources) {
-        dataEngine("powermanagement")->connectSource(battery_source, this);
-    }
-
-    dataEngine("powermanagement")->connectSource("AC Adapter", this);
-    dataEngine("powermanagement")->connectSource("PowerDevil", this);
-    dataEngine("powermanagement")->connectSource("Battery", this);
-
-    connect(dataEngine("powermanagement"), SIGNAL(sourceAdded(QString)),
-            this,                          SLOT(sourceAdded(QString)));
-    connect(dataEngine("powermanagement"), SIGNAL(sourceRemoved(QString)),
-            this,                          SLOT(sourceRemoved(QString)));
 }
 
 void Battery::sourceAdded(const QString& source)

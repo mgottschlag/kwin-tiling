@@ -101,7 +101,6 @@ class Battery : public Plasma::PopupApplet
         void toggleInhibit(bool toggle);
 
     private:
-        void connectSources();
         void initPopupWidget();
         void updateStatus();
         bool isConstrained();
