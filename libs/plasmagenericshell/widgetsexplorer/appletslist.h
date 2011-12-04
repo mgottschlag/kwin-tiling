@@ -40,9 +40,6 @@ public:
     AppletsListWidget(Plasma::Location location = Plasma::BottomEdge, QGraphicsItem *parent = 0);
     ~AppletsListWidget();
 
-    //not used yet and probably never will be
-    QList <KCategorizedItemsViewModels::AbstractItem *> selectedItems() const;
-
     void setItemModel(PlasmaAppletItemModel *model);
     void setFilterModel(QStandardItemModel *model);
 

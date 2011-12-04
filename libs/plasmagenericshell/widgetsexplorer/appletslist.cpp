@@ -307,8 +307,6 @@ AppletIconWidget *AppletsListWidget::createAppletIcon(PlasmaAppletItem *appletIt
     connect(applet, SIGNAL(hoverLeave(Plasma::AbstractIcon*)), this, SLOT(appletIconHoverLeave(Plasma::AbstractIcon*)));
     connect(applet, SIGNAL(dragging(Plasma::AbstractIcon*)), this, SLOT(appletIconDragging(Plasma::AbstractIcon*)));
     connect(applet, SIGNAL(doubleClicked(Plasma::AbstractIcon*)), this, SLOT(appletIconDoubleClicked(Plasma::AbstractIcon*)));
-    //FIXME no such signal, needs implementing?
-    //connect(applet, SIGNAL(dragStarted(AbstractIcon*)), m_toolTip, SLOT(hide()));
 
     return applet;
 }
@@ -377,13 +375,6 @@ void AppletsListWidget::populateAllAppletsHash()
 AbstractItem *AppletsListWidget::getItemByProxyIndex(const QModelIndex &index) const
 {
     return (AbstractItem *)m_modelItems->itemFromIndex(m_modelFilterItems->mapToSource(index));
-}
-
-QList <AbstractItem *> AppletsListWidget::selectedItems() const
-{
-//    return m_appletList->selectedItems();
-//FIXME kill this after removing deps
-    return QList<AbstractItem *>();
 }
 
 void AppletsListWidget::rowsAboutToBeRemoved(const QModelIndex& parent, int row, int column)
