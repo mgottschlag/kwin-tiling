@@ -49,6 +49,7 @@ class AppletInfoWidget : public QGraphicsWidget {
 
     protected Q_SLOTS:
         void uninstall();
+        void openLink(const QString &link);
 
     private:
         AppletIconWidget *m_applet;

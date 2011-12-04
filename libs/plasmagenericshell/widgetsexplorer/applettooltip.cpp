@@ -20,9 +20,8 @@
 
 #include "applettooltip.h"
 
-#include <kiconloader.h>
-#include <kpushbutton.h>
-#include <ktextbrowser.h>
+#include <KIconLoader>
+#include <KRun>
 #include <KStandardDirs>
 
 #include <Plasma/Corona>
@@ -119,6 +118,7 @@ void AppletInfoWidget::init()
     m_nameLabel = new Plasma::Label(this);
     m_versionLabel = new Plasma::Label(this);
     m_aboutLabel = new Plasma::Label(this);
+    connect(m_aboutLabel, SIGNAL(linkActivated(QString)), this, SLOT(openLink(QString)));
 
     m_uninstallButton = new Plasma::PushButton(this);
     m_uninstallButton->setText(i18n("Uninstall Widget"));
@@ -255,5 +255,10 @@ void AppletInfoWidget::uninstall()
                                KStandardDirs::locateLocal("data", "plasma/plasmoids/"));
     PlasmaAppletItemModel *model = appletItem->appletItemModel();
     model->takeRow(model->indexFromItem(appletItem).row());
+}
+
+void AppletInfoWidget::openLink(const QString &link)
+{
+    new KRun(link, 0);
 }
 
