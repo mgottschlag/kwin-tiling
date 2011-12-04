@@ -305,7 +305,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
             m_acAlpha = 1;
         }
 
-        kDebug() << "Remaining msecs on battery:" << m_remainingMSecs << m_numOfBattery;
+        //kDebug() << "Remaining msecs on battery:" << m_remainingMSecs << m_numOfBattery;
 
         foreach (const QString &batterySource, data["Sources"].toStringList()) {
             dataEngine("powermanagement")->connectSource(batterySource, this);
@@ -406,6 +406,7 @@ void Battery::readColors()
 {
     m_textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     m_boxColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+    update();
 }
 
 void Battery::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
