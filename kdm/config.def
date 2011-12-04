@@ -1257,6 +1257,7 @@ Type: enum
  None/BO_NONE: no boot manager
  Grub/BO_GRUB: Grub boot manager
  Grub2/BO_GRUB2: Grub2 boot manager
+ Burg/BO_BURG: Burg boot manager
  Lilo/BO_LILO: Lilo boot manager (Linux on i386 &amp; x86-64 only)
 Default: None
 User: core
