@@ -79,7 +79,7 @@ public:
      */
     enum FocusPolicy { ClickToFocus, FocusFollowsMouse, FocusUnderMouse, FocusStrictlyUnderMouse };
     FocusPolicy focusPolicy;
-
+    bool nextFocusPrefersMouse;
 
     /**
        Whether clicking on a window raises it in FocusFollowsMouse
@@ -96,11 +96,6 @@ public:
        autoraise interval
      */
     int autoRaiseInterval;
-
-    /**
-       whether delay focus is enabled or not.
-     */
-    bool delayFocus;
 
     /**
        delayed focus interval

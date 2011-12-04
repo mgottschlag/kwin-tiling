@@ -40,23 +40,18 @@ public:
     AppletsListWidget(Plasma::Location location = Plasma::BottomEdge, QGraphicsItem *parent = 0);
     ~AppletsListWidget();
 
-    //not used yet and probably never will be
-    QList <KCategorizedItemsViewModels::AbstractItem *> selectedItems() const;
-
     void setItemModel(PlasmaAppletItemModel *model);
     void setFilterModel(QStandardItemModel *model);
 
 private:
     KCategorizedItemsViewModels::AbstractItem *getItemByProxyIndex(const QModelIndex &index) const;
-
-    void populateAllAppletsHash();
-
     //Creates a new applet icon and puts it into the hash
     AppletIconWidget *createAppletIcon(PlasmaAppletItem *appletItem);
 
     void setToolTipPosition();
 
 private slots:
+    void populateAllAppletsHash();
     void filterChanged(int index);
 
     void appletIconDoubleClicked(Plasma::AbstractIcon *icon);

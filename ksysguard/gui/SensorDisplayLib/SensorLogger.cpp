@@ -347,6 +347,11 @@ void LogSensor::timerTick( )
   KSGRD::SensorMgr->sendRequest( mHostName, mSensorName, (KSGRD::SensorClient*) this, 42 );
 }
 
+void LogSensor::timerEvent ( QTimerEvent * event )
+{
+  timerTick();
+}
+
 void LogSensor::answerReceived( int id, const QList<QByteArray>& answer ) //virtual
 {
   QFile mLogFile( mFileName );
@@ -411,9 +416,6 @@ SensorLogger::SensorLogger( QWidget *parent, const QString& title, SharedSetting
   mView = new LogSensorView( this );
   layout->addWidget(mView);
   setLayout(layout);
-
-  mView->setContextMenuPolicy( Qt::CustomContextMenu );
-  connect(mView, SIGNAL(customContextMenuRequested(QPoint)), SLOT(showContextMenu(QPoint)));
 
   mView->header()->setStretchLastSection( true );
   mView->setRootIsDecorated( false );

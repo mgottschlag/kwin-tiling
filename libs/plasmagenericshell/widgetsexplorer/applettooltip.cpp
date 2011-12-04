@@ -20,9 +20,8 @@
 
 #include "applettooltip.h"
 
-#include <kiconloader.h>
-#include <kpushbutton.h>
-#include <ktextbrowser.h>
+#include <KIconLoader>
+#include <KRun>
 #include <KStandardDirs>
 
 #include <Plasma/Corona>
@@ -30,13 +29,13 @@
 
 //AppletToolTipWidget
 
-AppletToolTipWidget::AppletToolTipWidget(QWidget *parent, AppletIconWidget *applet)
+AppletToolTipWidget::AppletToolTipWidget(Plasma::Location location, QWidget *parent)
         : Plasma::Dialog(parent),
-          m_widget(new AppletInfoWidget())
+          m_widget(new AppletInfoWidget()),
+          m_direction(Plasma::locationToDirection(location))
 {
     setAcceptDrops(true);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
-    m_widget->setApplet(applet);
 }
 
 AppletToolTipWidget::~AppletToolTipWidget()
@@ -119,6 +118,7 @@ void AppletInfoWidget::init()
     m_nameLabel = new Plasma::Label(this);
     m_versionLabel = new Plasma::Label(this);
     m_aboutLabel = new Plasma::Label(this);
+    connect(m_aboutLabel, SIGNAL(linkActivated(QString)), this, SLOT(openLink(QString)));
 
     m_uninstallButton = new Plasma::PushButton(this);
     m_uninstallButton->setText(i18n("Uninstall Widget"));
@@ -216,6 +216,29 @@ void AppletInfoWidget::updateInfo()
     adjustSize();
 }
 
+void AppletToolTipWidget::resizeEvent(QResizeEvent *event)
+{
+    Plasma::Dialog::resizeEvent(event);
+
+    if (!isVisible()) {
+        return;
+    }
+
+    //offsets to stop tooltips from jumping when they resize
+    int deltaX = 0;
+    int deltaY = 0;
+    if (m_direction == Plasma::Up) {
+        deltaY = event->oldSize().height() - event->size().height();
+    } else if (m_direction == Plasma::Left) {
+        deltaX = event->oldSize().width() - event->size().width();
+    }
+
+    // resize then move if we're getting smaller, vice versa when getting bigger
+    // this prevents overlap with the item in the smaller case, and a repaint of
+    // the tipped item when getting bigger
+    move(x() + deltaX, y() + deltaY);
+}
+
 void AppletInfoWidget::uninstall()
 {
     if (!m_applet) {
@@ -232,5 +255,10 @@ void AppletInfoWidget::uninstall()
                                KStandardDirs::locateLocal("data", "plasma/plasmoids/"));
     PlasmaAppletItemModel *model = appletItem->appletItemModel();
     model->takeRow(model->indexFromItem(appletItem).row());
+}
+
+void AppletInfoWidget::openLink(const QString &link)
+{
+    new KRun(link, 0);
 }
 

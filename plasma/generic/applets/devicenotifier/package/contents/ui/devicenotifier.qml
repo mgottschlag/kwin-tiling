@@ -47,8 +47,13 @@ Item {
         property string last
         onSourceAdded: {
             last = source;
+            processLastDevice()
         }
         onDataChanged: {
+            processLastDevice()
+        }
+
+        function processLastDevice() {
             if (last != "") {
                 if (devicesType == "all" ||
                     (devicesType == "removable" && data[last]["Removable"] == true) ||
@@ -108,7 +113,9 @@ Item {
 
     function expandDevice(udi)
     {
-        expandedDevice = udi
+        if (hpSource.data[udi]["actions"].length > 1) {
+            expandedDevice = udi
+        }
         plasmoid.setPopupIconByName("preferences-desktop-notification")
         plasmoid.status = "ActiveStatus"
         plasmoid.showPopup(7500)
@@ -163,8 +170,8 @@ Item {
             }
             filterRole: "Removable"
             filterRegExp: "true"
-            sortRole: "File Path"
-            sortOrder: Qt.AscendingOrder
+            sortRole: "Timestamp"
+            sortOrder: Qt.DescendingOrder
         }
         onCountChanged: {
             if (count == 0) {
@@ -266,7 +273,6 @@ Item {
         id: deviceHighlighter
 
         PlasmaCore.FrameSvgItem {
-            width: devicenotifier.width
             imagePath: "widgets/viewitem"
             prefix: "hover"
             opacity: 0

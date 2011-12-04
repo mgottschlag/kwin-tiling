@@ -183,6 +183,7 @@ private:
     QAction* m_quitAction;
     KAction* m_cycleNextAction;
     KAction* m_cyclePrevAction;
+    KAction* m_showOnMousePos;
     QPixmap m_pixmap;
     bool m_bKeepContents :1;
     bool m_bURLGrabber   :1;

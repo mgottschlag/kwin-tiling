@@ -195,10 +195,9 @@ void PlasmaAppletItemModel::populateModel(const QStringList &whatChanged)
             // we don't want to show the hidden category
             continue;
         }
-        //kDebug() << info.pluginName() << " is the name of the plugin\n";
 
-        //qDebug() << info.name() << info.property("X-Plasma-Thumbnail");
-        //qDebug() << info.entryPath();
+        //kDebug() << info.pluginName() << " is the name of the plugin at" << info.entryPath();
+        //kDebug() << info.name() << info.property("X-Plasma-Thumbnail");
 
         PlasmaAppletItem::FilterFlags flags(PlasmaAppletItem::NoFilter);
         if (m_favorites.contains(info.pluginName())) {
@@ -207,6 +206,8 @@ void PlasmaAppletItemModel::populateModel(const QStringList &whatChanged)
 
         appendRow(new PlasmaAppletItem(this, info, flags));
     }
+
+    emit modelPopulated();
 }
 
 void PlasmaAppletItemModel::setRunningApplets(const QHash<QString, int> &apps)

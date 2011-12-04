@@ -40,7 +40,7 @@ AppLauncherItem::AppLauncherItem( QGraphicsWidget* parent, Tasks* applet, TaskMa
     : AbstractTaskItem(parent, applet)
 {
     m_launcher = launcher;
-    m_abstractItem = launcher;
+    setAbstractItem(launcher);
 }
 
 void AppLauncherItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
