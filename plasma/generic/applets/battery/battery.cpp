@@ -429,21 +429,15 @@ void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void Battery::suspend()
 {
     hidePopup();
-    QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
-                                                      "/org/kde/Solid/PowerManagement",
-                                                      "org.kde.Solid.PowerManagement",
-                                                      "suspendToRam");
-    QDBusPendingReply< QString > reply = QDBusConnection::sessionBus().asyncCall(msg);
+    Plasma::Service *service = dataEngine("powermanagement")->serviceForSource("PowerDevil");
+    service->startOperationCall(service->operationDescription("suspendToRam"));
 }
 
 void Battery::hibernate()
 {
     hidePopup();
-    QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
-                                                      "/org/kde/Solid/PowerManagement",
-                                                      "org.kde.Solid.PowerManagement",
-                                                      "suspendToDisk");
-    QDBusPendingReply< QString > reply = QDBusConnection::sessionBus().asyncCall(msg);
+    Plasma::Service *service = dataEngine("powermanagement")->serviceForSource("PowerDevil");
+    service->startOperationCall(service->operationDescription("suspendToDisk"));
 }
 
 void Battery::brightnessChanged(const int brightness)
