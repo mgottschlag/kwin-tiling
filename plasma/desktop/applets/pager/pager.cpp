@@ -997,6 +997,7 @@ void Pager::handleHoverLeave()
         animation->setEasingCurve(QEasingCurve::OutQuad);
         animation->setStartValue(1);
         animation->setEndValue(0);
+        m_hoverIndex = -1;
     }
 
     // The applet doesn't always get mouseReleaseEvents, for example when starting a drag
