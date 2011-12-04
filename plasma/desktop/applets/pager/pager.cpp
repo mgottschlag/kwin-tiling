@@ -970,6 +970,8 @@ void Pager::handleHoverMove(const QPointF& pos)
         }
         ++i;
     }
+
+    m_hoverIndex = -1;
     m_hoverRect = QRectF();
     update();
 }
