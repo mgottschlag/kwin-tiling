@@ -148,8 +148,8 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     const int maxItemsAllowed = 50;
 
     if (m_items.isEmpty()) {
-        QTime t;
-        t.start();
+        //QTime t;
+        //t.start();
         for (int i = 0; i < maxItemsAllowed; ++i) {
             ResultItem *item = new ResultItem(m_resultData, 0);
             item->setContentsMargins(m_itemMarginLeft, m_itemMarginTop,
@@ -165,7 +165,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         }
 
         arrangeItems();
-        kDebug() << "creating all items took" << t.elapsed();
+        //kDebug() << "creating all items took" << t.elapsed();
     }
 
     // we keep track of what was previously focused so if the user changes focus
