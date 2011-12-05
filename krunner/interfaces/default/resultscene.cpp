@@ -203,7 +203,9 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     }
 
     const bool keepFocus = currentFocus && currentFocus->isValid() && currentFocus->id() == lastFocusId;
-    if (!keepFocus) {
+    if (keepFocus) {
+        m_selectionBar->show();
+    } else {
         clearSelection();
         ResultItem *first = m_items.at(0);
         setFocusItem(first);
