@@ -781,7 +781,6 @@ bool PlasmaApp::canRelocatePanel(PanelView * view, Kephal::Screen *screen)
             pv->location() == view->location() &&
             pv->geometry().intersects(newGeom)) {
             return false;
-            break;
         }
     }
 

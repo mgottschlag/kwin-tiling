@@ -907,7 +907,6 @@ bool AbstractTaskItem::shouldIgnoreDragEvent(QGraphicsSceneDragDropEvent *event)
                 QFileInfo info(path);
                 if (info.isDir() || !info.isExecutable()) {
                     return false;
-                    break;
                 }
             }
 
