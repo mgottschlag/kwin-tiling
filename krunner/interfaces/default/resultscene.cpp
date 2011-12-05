@@ -85,6 +85,7 @@ QSize ResultScene::minimumSizeHint() const
 void ResultScene::setWidth(int width)
 {
     const bool resizeItems = width != sceneRect().width();
+    m_selectionBar->resize(width, m_selectionBar->size().height());
 
     if (resizeItems) {
         foreach (ResultItem *item, m_items) {
