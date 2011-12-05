@@ -120,7 +120,7 @@ bool CalendarEngine::holidayCalendarSourceRequest(const QString& key, const QStr
                                                         m_defaultHolidayRegionCountry.toLower(),
                                                         m_defaultHolidayRegionLanguage.toLower() );
             if (m_defaultHolidayRegion.isEmpty()) {
-                m_defaultHolidayRegion == "NoDefault";
+                m_defaultHolidayRegion = "NoDefault";
             }
         }
 
