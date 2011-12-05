@@ -201,7 +201,15 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
         restoreDialogSize(interfaceConfig);
         m_defaultSize = size();
     } else {
-        m_defaultSize = QSize(size().width(), 500);
+        const int screenWidth = qApp->desktop()->screenGeometry().width(); //Kephal::Screens::self()->screen(screenId)->geometry().height();
+        int width = size().width();
+        if (screenWidth >= 1024) {
+            width = qMax(width, 300);
+        } else if (screenWidth >= 1920) {
+            width = qMax(width, 550);
+        }
+
+        m_defaultSize = QSize(width, 500);
     }
 
     m_resultsView->hide();
