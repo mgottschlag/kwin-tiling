@@ -18,44 +18,17 @@
 # cmake macro to see if we have libKActivities
 
 # KACTIVITIES_INCLUDE_DIRS
-# KACTIVITIES_FOUND
+# KACTIVITIES_LIBRARY
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
-if (KACTIVITIES_INCLUDE_DIRS AND KACTIVITIES_LIBS)
-   # Already in cache, be silent
-   # This probably means that libKActivities is a part of the current
-   # build or that this script was already invoked
+set( _KActivities_FIND_QUIETLY  ${KActivities_FIND_QUIETLY} )
+find_package( KActivities QUIET NO_MODULE )
+set( KActivities_FIND_QUIETLY ${_KActivities_FIND_QUIETLY} )
 
-   set(KActivities_FIND_QUIETLY TRUE)
-   message("KActivities variables already set")
-endif (KACTIVITIES_INCLUDE_DIRS AND KACTIVITIES_LIBS)
+include( FindPackageHandleStandardArgs )
+find_package_handle_standard_args( KActivities DEFAULT_MSG KActivities_CONFIG )
 
-if (NOT KActivities_FIND_QUIETLY)
-   message("Searching for KActivities")
+mark_as_advanced(KACTIVITIES_INCLUDE_DIRS KACTIVITIES_LIBRARY)
 
-   find_path(KACTIVITIES_INCLUDE_DIR NAMES kactivities/consumer.h
-      PATHS
-      ${KDE4_INCLUDE_DIR}
-      ${INCLUDE_INSTALL_DIR}
-   )
-
-   find_library(KACTIVITIES_LIBS NAMES kactivities
-      PATHS
-      ${KDE4_LIB_DIR}
-      ${LIB_INSTALL_DIR}
-   )
-
-   if(KACTIVITIES_INCLUDE_DIR)
-    set(KACTIVITIES_INCLUDE_DIRS "${KACTIVITIES_INCLUDE_DIR}" "${KACTIVITIES_INCLUDE_DIR}/KDE")
-   endif()
-   include(FindPackageHandleStandardArgs)
-   FIND_PACKAGE_HANDLE_STANDARD_ARGS(i
-       KActivities DEFAULT_MSG KACTIVITIES_LIBS KACTIVITIES_INCLUDE_DIRS )
-
-   mark_as_advanced(KACTIVITIES_INCLUDE_DIRS KACTIVITIES_LIBS)
-endif (NOT KActivities_FIND_QUIETLY)
-
-message("-- Found KActivities include dirs: ${KACTIVITIES_INCLUDE_DIRS}")
-message("-- Found KActivities lib: ${KACTIVITIES_LIBS}")
