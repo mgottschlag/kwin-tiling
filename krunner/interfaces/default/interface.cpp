@@ -300,8 +300,12 @@ void Interface::resizeEvent(QResizeEvent *event)
 {
     // We set m_defaultSize only when the event is spontaneous, i.e. when the user resizes the
     // window, or if they are manually resizing it
-    if ((freeFloating() && event->spontaneous()) || isManualResizing()) {
-        m_defaultSize = size();
+    if ((freeFloating() && event->spontaneous()) || manualResizing() != NotResizing) {
+        if (manualResizing() == HorizontalResizing) {
+            m_defaultSize = QSize(size().width(), m_defaultSize.height());
+        } else {
+            m_defaultSize = QSize(m_defaultSize.width(), size().height());
+        }
     }
 
     m_resultsView->resize(m_buttonContainer->width(), m_resultsView->height());
