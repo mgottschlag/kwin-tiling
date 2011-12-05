@@ -88,7 +88,6 @@
 #include "desktopcorona.h"
 #include "desktopview.h"
 #include "interactiveconsole.h"
-#include "kworkspace/kactivityinfo.h"
 #include "panelshadows.h"
 #include "panelview.h"
 #include "plasma-shell-desktop.h"

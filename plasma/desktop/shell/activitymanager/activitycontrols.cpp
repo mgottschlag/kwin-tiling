@@ -22,7 +22,6 @@
 #include <KPushButton>
 #include <KIconDialog>
 #include <KWindowSystem>
-#include "kworkspace/kactivityinfo.h"
 #include <QApplication>
 
 ActivityControls::ActivityControls(ActivityIcon * parent)
@@ -111,7 +110,7 @@ ActivityConfiguration::ActivityConfiguration(ActivityIcon * parent, Activity * a
     m_activityIcon->setIcon(
             QIcon(parent->pixmap(QSize(32, 32))));
 
-    if (m_activity && m_activity->info() && m_activity->info()->availability() == KActivityInfo::Everything) {
+    if (m_activity && m_activity->info() && m_activity->info()->availability() == KActivities::Info::Everything) {
         m_activityIcon->setEnabled(true);
     } else {
         m_activityIcon->setEnabled(false);

@@ -42,7 +42,6 @@
 
 #include "dashboardview.h"
 #include "desktopcorona.h"
-#include "kworkspace/kactivitycontroller.h"
 #include "plasmaapp.h"
 #include "plasma-shell-desktop.h"
 
