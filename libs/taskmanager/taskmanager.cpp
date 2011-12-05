@@ -49,7 +49,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 
 #include <kephal/screens.h>
-#include <Activities/Consumer>
+#include <KActivities/Consumer>
 
 namespace TaskManager
 {
