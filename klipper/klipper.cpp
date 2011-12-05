@@ -218,6 +218,12 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_cyclePrevAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Up), KAction::DefaultShortcut);
     connect(m_cyclePrevAction, SIGNAL(triggered(bool)), SLOT(slotCyclePrev()));
 
+    // Action to show Klipper popup on mouse position
+    m_showOnMousePos = m_collection->addAction("show-on-mouse-pos");
+    m_showOnMousePos->setText(i18n("Open Klipper at Mouse Position"));
+    m_showOnMousePos->setGlobalShortcut(KShortcut(Qt::CTRL+Qt::SHIFT+Qt::Key_V), KAction::DefaultShortcut);
+    connect(m_showOnMousePos, SIGNAL(triggered(bool)), this, SLOT(slotPopupMenu()));
+
     // Actions toggle
     m_toggleURLGrabAction->setText(i18n("Enable Clipboard Actions"));
     m_toggleURLGrabAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
@@ -361,7 +367,7 @@ void Klipper::showPopupMenu( QMenu *menu )
 
     QSize size = menu->sizeHint(); // geometry is not valid until it's shown
     QPoint pos = QCursor::pos();
-    // ### We can't know where the systray icon is (since it can be hidden or shown 
+    // ### We can't know where the systray icon is (since it can be hidden or shown
     //     in several places), so the cursor position is the only option.
 
     if ( size.height() < pos.y() )
