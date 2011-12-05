@@ -1575,7 +1575,7 @@ void PanelView::createUnhideTrigger()
 
 
     attributes.event_mask = EnterWindowMask | LeaveWindowMask | PointerMotionMask |
-                            KeyPressMask | KeyPressMask | ButtonPressMask |
+                            KeyPressMask | ButtonPressMask |
                             ButtonReleaseMask | ButtonMotionMask |
                             KeymapStateMask | VisibilityChangeMask |
                             StructureNotifyMask | ResizeRedirectMask |
