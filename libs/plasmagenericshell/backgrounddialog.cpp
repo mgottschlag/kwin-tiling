@@ -31,8 +31,6 @@
 #include <Plasma/View>
 
 #include "kworkspace/screenpreviewwidget.h"
-#include "kworkspace/kactivityinfo.h"
-#include "kworkspace/kactivitycontroller.h"
 
 #include "ui_BackgroundDialog.h"
 
