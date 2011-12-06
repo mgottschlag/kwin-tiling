@@ -85,8 +85,7 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
 {
     ClockApplet::constraintsEvent(constraints);
 
-    if (constraints & Plasma::SizeConstraint ||
-        constraints & Plasma::FormFactorConstraint) {
+    if (constraints & Plasma::SizeConstraint || constraints & Plasma::FormFactorConstraint) {
         updateSize();
     }
 }
@@ -164,6 +163,7 @@ void Clock::updateSize()
     }
 
     generatePixmap();
+    update();
 }
 
 void Clock::clockConfigChanged()
