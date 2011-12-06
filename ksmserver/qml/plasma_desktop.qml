@@ -21,13 +21,12 @@
 import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.components 0.1
-import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 import org.kde.qtextracomponents 0.1
 
 PlasmaCore.FrameSvgItem {
     id: shutdownUi
-    width: margins.left + 18 + 18 + 2 * buttonsLayout.width + margins.right
-    height: margins.top + 4 + automaticallyDoLabel.height + 4 + 4 + buttonsLayout.height + 4 + margins.bottom
+    width: margins.left + 2 * buttonsLayout.width + margins.right
+    height: margins.top + automaticallyDoLabel.height + buttonsLayout.height + margins.bottom
     imagePath: "dialogs/shutdowndialog"
     enabledBorders: PlasmaCore.FrameSvg.AllBorders
 
@@ -59,6 +58,11 @@ PlasmaCore.FrameSvgItem {
 
     Component.onCompleted: {
         //console.log("margins: " + margins.left + ", " + margins.top + ", " + margins.right + ", " + margins.bottom);
+
+        // Hacky but works :-)
+        logoutButton.width = buttonsLayout.width
+        shutdownButton.width = buttonsLayout.width
+        rebootButton.width = buttonsLayout.width
 
         if (background.naturalSize.width < 1) {
             background.elementId = "background"
@@ -137,145 +141,156 @@ PlasmaCore.FrameSvgItem {
         }
     }
 
-    Column {
-        id: mainColumn
-        spacing: 4
-        x: shutdownUi.margins.left
-        y: shutdownUi.margins.top + 4
-        width: 2 * buttonsLayout.width
+    Label {
+        id: automaticallyDoLabel
+        text: " "
+        font.pixelSize: 11
+        anchors {
+            top: parent.top
+            topMargin: parent.margins.top
+            rightMargin: parent.margins.right
+            right: parent.right
+        }
+    }
 
-        Label {
-            id: automaticallyDoLabel
-            text: ""
-            font.pixelSize: 11
-            width: parent.width
-            anchors.right: centerRow.right
+    PlasmaCore.SvgItem {
+        id: leftPicture
+        width: buttonsLayout.width
+        height: width * naturalSize.height / naturalSize.width
+        smooth: true
+        anchors {
+            top: automaticallyDoLabel.top
+            left: parent.left
+            leftMargin: parent.margins.left
         }
 
-        Row {
-            id: centerRow
-            spacing: 10
-            x: parent.x + 18
+        svg: PlasmaCore.Svg {
+            imagePath: "dialogs/shutdowndialog"
+        }
+        elementId: "picture"
+    }
 
-            Column {
-                PlasmaCore.SvgItem {
-                    id: leftPicture
-                    width: buttonsLayout.width
-                    height: width * naturalSize.height / naturalSize.width
-                    smooth: true
+    Column {
+        id: buttonsLayout
+        spacing: 9
+        anchors {
+            top: automaticallyDoLabel.bottom
+            right: parent.right
+            rightMargin: parent.margins.right
+        }
 
-                    svg: PlasmaCore.Svg {
-                        imagePath: "dialogs/shutdowndialog"
-                    }
-                    elementId: "picture"
+        Column {
+            spacing: 4
+
+            KSMButton {
+                id: logoutButton
+                text: i18n("Logout")
+                iconSource: "system-log-out"
+                height: 32
+                anchors.right: parent.right
+                visible: (choose || sdtype == ShutdownType.ShutdownTypeNone)
+
+                onClicked: {
+                    console.log("logoutRequested");
+                    logoutRequested()
                 }
             }
 
-            Column {
-                id: buttonsLayout
-                spacing: 9
+            KSMButton {
+                id: shutdownButton
+                text: i18n("Turn Off Computer")
+                iconSource: "system-shutdown"
+                height:32
+                anchors.right: parent.right
+                property ContextMenu contextMenu
+                visible: (choose || sdtype == ShutdownType.ShutdownTypeHalt)
 
-                Column {
-                    spacing: 4
-
-                    Button {
-                        id: logoutButton
-                        text: i18n("Logout")
-                        //icon: QIcon("system-log-out")
-                        width: buttonsLayout.width
-                        height: 32
-                        visible: (choose || sdtype == ShutdownType.ShutdownTypeNone)
-
-                        onClicked: {
-                            logoutRequested()
-                        }
+                onClicked: {
+                    console.log("shutdownMenuRequested");
+                    if (!contextMenu) {
+                        contextMenu = shutdownOptionsComponent.createObject(shutdownButton)
                     }
+                    contextMenu.open()
+                }
 
-                    Button {
-                        id: shutdownButton
+                /*Component.onCompleted: {
+                    console.log("shutdownButton.onCompleted");
+                    if (contextMenu.valid && !contextMenu) {
+                        contextMenu = shutdownOptionsComponent.createObject(shutdownButton)
+                    }
+                }*/
+            }
+
+            Component {
+                id: shutdownOptionsComponent
+                ContextMenu {
+                    visualParent: shutdownButton
+                    MenuItem {
+                        id: shutdown
                         text: i18n("Turn Off Computer")
-                        //icon: QIcon("system-shutdown")
-                        width: buttonsLayout.width
-                        height:32
-                        property ContextMenu contextMenu
-                        visible: (choose || sdtype == ShutdownType.ShutdownTypeHalt)
-
+                        //height: shutdownButton.visible ? height : 0
+                        visible: shutdownButton.visible
                         onClicked: {
-                            if (!contextMenu) {
-                                contextMenu = shutdownOptionsComponent.createObject(shutdownButton)
-                            }
-                            contextMenu.open()
+                            console.log("haltRequested")
+                            haltRequested()
                         }
                     }
-
-                    Component {
-                        id: shutdownOptionsComponent
-                        ContextMenu {
-                            visualParent: shutdownButton
-                            MenuItem {
-                                id: shutdown
-                                text: i18n("Turn Off Computer")
-                                visible: shutdownButton.visible
-                                onClicked: {
-                                    console.log("haltRequested")
-                                    haltRequested()
-                                }
-                            }
-                            MenuItem {
-                                id: standby
-                                text: i18n("Standby")
-                                visible: shutdownButton.visible && spdMethods.StandbyState
-                                height: stan
-                                onClicked: {
-                                    console.log("suspendRequested(Solid::PowerManagement::StandbyState)")
-                                    suspendRequested(1); // Solid::PowerManagement::StandbyState
-                                }
-                            }
-                            MenuItem {
-                                id: sleep
-                                text: i18n("Suspend to RAM")
-                                visible: shutdownButton.visible && spdMethods.SuspendState
-                                onClicked: {
-                                    console.log("suspendRequested(Solid::PowerManagement::SuspendState)")
-                                    suspendRequested(2); // Solid::PowerManagement::SuspendState
-                                }
-                            }
-                            MenuItem {
-                                id: hibernate
-                                text: i18n("Suspend to Disk")
-                                visible: shutdownButton.visible && spdMethods.HibernateState
-                                onClicked: {
-                                    console.log("suspendRequested(Solid::PowerManagement::HibernateState)")
-                                    suspendRequested(3); // Solid::PowerManagement::HibernateState
-                                }
-                            }
+                    MenuItem {
+                        id: standby
+                        text: i18n("Standby")
+                        //height: shutdownButton.visible && spdMethods.StandbyState ? height : 0
+                        visible: shutdownButton.visible && spdMethods.StandbyState
+                        onClicked: {
+                            console.log("suspendRequested(Solid::PowerManagement::StandbyState)")
+                            suspendRequested(1); // Solid::PowerManagement::StandbyState
                         }
                     }
-
-                    Button {
-                        id: rebootButton
-                        text: i18n("Restart Computer")
-                        //icon: QIcon("system-reboot")
-                        width: buttonsLayout.width
-                        height:32
-
+                    MenuItem {
+                        id: sleep
+                        text: i18n("Suspend to RAM")
+                        //height: shutdownButton.visible && spdMethods.SuspendState ? height : 0
+                        visible: shutdownButton.visible && spdMethods.SuspendState
                         onClicked: {
-                            rebootRequested()
+                            console.log("suspendRequested(Solid::PowerManagement::SuspendState)")
+                            suspendRequested(2); // Solid::PowerManagement::SuspendState
+                        }
+                    }
+                    MenuItem {
+                        id: hibernate
+                        text: i18n("Suspend to Disk")
+                        //height: shutdownButton.visible && spdMethods.HibernateState ? height : 0
+                        visible: shutdownButton.visible && spdMethods.HibernateState
+                        onClicked: {
+                            console.log("suspendRequested(Solid::PowerManagement::HibernateState)")
+                            suspendRequested(3); // Solid::PowerManagement::HibernateState
                         }
                     }
                 }
+            }
 
-                Button {
-                    id: cancelButton
-                    text: i18n("Cancel")
-                    //icon: QIcon("dialog-cancel")
-                    height: 22
-                    anchors.right: parent.right
+            KSMButton {
+                id: rebootButton
+                text: i18n("Restart Computer")
+                iconSource: "system-reboot"
+                height:32
+                anchors.right: parent.right
 
-                    onClicked: {
-                        cancelRequested()
-                    }
+                onClicked: {
+                    console.log("rebootRequested");
+                    rebootRequested()
                 }
+            }
+        }
+
+        KSMButton {
+            id: cancelButton
+            text: i18n("Cancel")
+            iconSource: "dialog-cancel"
+            height: 22
+            anchors.right: parent.right
+
+            onClicked: {
+                cancelRequested()
             }
         }
     }
