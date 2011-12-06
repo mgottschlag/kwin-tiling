@@ -85,7 +85,7 @@ private:
     bool m_hasSpacer;
     QGraphicsWidget *m_spacer;
 
-    TaskGroupItem *m_groupItem;
+    QWeakPointer<TaskGroupItem> m_groupItem;
     QList <AbstractTaskItem*> m_itemPositions;
     /** Calculates the number of columns and rows for the layoutItems function and returns <columns/rows>*/
     QPair<int, int> gridLayoutSize();
