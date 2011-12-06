@@ -156,11 +156,3 @@ Comment[zh_CN]=管理自动启动的程序的配置工具。
 Comment[zh_TW]=管理哪些程式要啟動的設定工具。
 
 X-KDE-Keywords=Autostart Manager
-X-KDE-Keywords[de]=Autostart Verwaltung
-X-KDE-Keywords[es]=Administrador de inicio automático
-X-KDE-Keywords[et]=Autostardi haldur
-X-KDE-Keywords[ja]=自動起動マネージャ
-X-KDE-Keywords[pt]=Gestor do Arranque
-X-KDE-Keywords[pt_BR]=Gestor do Arranque
-X-KDE-Keywords[sv]=Autostart hantering
-X-KDE-Keywords[xx]=xxAutostart Managerxx
