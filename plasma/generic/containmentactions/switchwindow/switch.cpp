@@ -21,6 +21,7 @@
 
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
+#include <QTimer>
 
 #include <KDebug>
 #include <KMenu>
@@ -33,7 +34,8 @@ SwitchWindow::SwitchWindow(QObject *parent, const QVariantList &args)
     : Plasma::ContainmentActions(parent, args),
       m_menu(new KMenu()),
       m_action(new QAction(this)),
-      m_mode(AllFlat)
+      m_mode(AllFlat),
+      m_clearOrderTimer(0)
 {
     m_menu->setTitle(i18n("Windows"));
     connect(m_menu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
@@ -201,10 +203,61 @@ void SwitchWindow::switchTo(QAction *action)
     }
 }
 
-void SwitchWindow::wheelEvent(QGraphicsSceneWheelEvent *)
+void SwitchWindow::clearWindowsOrder()
+{
+    kDebug() << "CLEARING>.......................";
+    m_windowsOrder.clear();
+}
+
+void SwitchWindow::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
     //TODO somehow find the "next" or "previous" window
     //without changing hte window order (don't want to always go between two windows)
+    if (m_windowsOrder.isEmpty()) {
+        m_windowsOrder = KWindowSystem::stackingOrder();
+    } else {
+        if (!m_clearOrderTimer) {
+            m_clearOrderTimer = new QTimer(this);
+            connect(m_clearOrderTimer, SIGNAL(timeout()), this, SLOT(clearWindowsOrder()));
+            m_clearOrderTimer->setSingleShot(true);
+            m_clearOrderTimer->setInterval(1000);
+        }
+
+        m_clearOrderTimer->start();
+    }
+
+    const WId activeWindow = KWindowSystem::activeWindow();
+    const bool up = event->delta() > 0;
+    bool next = false;
+    WId first = 0;
+    WId last = 0;
+    for (int i = 0; i < m_windowsOrder.count(); ++i) {
+        const WId id = m_windowsOrder.at(i);
+        const KWindowInfo info(id, NET::WMDesktop | NET::WMVisibleName | NET::WMWindowType);
+        if (info.windowType(NET::NormalMask | NET::DialogMask | NET::UtilityMask) != -1 && info.isOnCurrentDesktop()) {
+            if (next) {
+                KWindowSystem::forceActiveWindow(id);
+                return;
+            }
+
+            if (first == 0) {
+                first = id;
+            }
+
+            if (id == activeWindow) {
+                if (up) {
+                    next = true;
+                } else if (last) {
+                    KWindowSystem::forceActiveWindow(last);
+                    return;
+                }
+            }
+
+            last = id;
+        }
+    }
+
+    KWindowSystem::forceActiveWindow(up ? first : last);
 }
 
 
