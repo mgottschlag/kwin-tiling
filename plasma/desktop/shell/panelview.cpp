@@ -1263,6 +1263,7 @@ void PanelView::unhide(bool destroyTrigger)
     if (!isVisible()) {
         Plasma::WindowEffects::slideWindow(this, location());
         show();
+        KWindowSystem::raiseWindow(winId());
     }
 
     KWindowSystem::setOnAllDesktops(winId(), true);
