@@ -24,6 +24,7 @@
 #include <plasma/containmentactions.h>
 
 class QAction;
+class QTimer;
 class KMenu;
 
 class SwitchWindow : public Plasma::ContainmentActions
@@ -47,6 +48,7 @@ class SwitchWindow : public Plasma::ContainmentActions
         void makeMenu();
 
     private slots:
+        void clearWindowsOrder();
         void switchTo(QAction *action);
 
     private:
@@ -60,6 +62,8 @@ class SwitchWindow : public Plasma::ContainmentActions
         QAction *m_action;
         Ui::Config m_ui;
         MenuMode m_mode;
+        QTimer *m_clearOrderTimer;
+        QList<WId> m_windowsOrder;
 };
 
 K_EXPORT_PLASMA_CONTAINMENTACTIONS(switchwindow, SwitchWindow)
