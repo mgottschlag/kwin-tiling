@@ -61,6 +61,7 @@ void ActivityEngine::insertActivity(const QString &id)
 {
     //id -> name, icon, state
     KActivities::Info *activity = new KActivities::Info(id, this);
+    m_activities[id] = activity;
     setData(id, "Name", activity->name());
     setData(id, "Icon", activity->icon());
     setData(id, "Current", m_currentActivity == id);
@@ -98,8 +99,11 @@ void ActivityEngine::activityAdded(const QString &id)
 
 void ActivityEngine::activityRemoved(const QString &id)
 {
-    //FIXME delete the KActivities::Info
     removeSource(id);
+    KActivities::Info *activity = m_activities.take(id);
+    if (activity) {
+        delete activity;
+    }
     setData("Status", "Running",
             m_activityController->listActivities(KActivities::Info::Running)); //FIXME horribly inefficient
 }
