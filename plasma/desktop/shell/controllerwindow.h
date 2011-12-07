@@ -95,7 +95,6 @@ private:
     Plasma::FrameSvg *m_background;
     QWeakPointer<Plasma::Containment> m_containment;
     int m_screen;
-    Plasma::Corona *m_corona;
     QGraphicsView *m_view;
     QGraphicsWidget *m_watchedWidget;
     ActivityManager *m_activityManager;
