@@ -151,16 +151,6 @@ public:
         return m_svg->elementSize("bottomright") - m_svg->elementSize("hint-glow-radius");
     }
 
-    bool event(QEvent *event)
-    {
-        if (event->type() == QEvent::Paint) {
-            QPainter p(this);
-            p.setCompositionMode(QPainter::CompositionMode_Source);
-            p.fillRect(rect(), Qt::transparent);
-        }
-        return QWidget::event(event);
-    }
-
     void updateStrength(QPoint point)
     {
         QPoint localPoint = mapFromGlobal(point);
@@ -214,6 +204,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_triggerEntered(false),
       m_respectStatus(true)
 {
+    setAttribute(Qt::WA_TranslucentBackground);
     PlasmaApp::self()->panelShadows()->addWindow(this);
 
     // KWin setup
@@ -1424,32 +1415,6 @@ void PanelView::leaveEvent(QEvent *event)
         // startAutoHide calls this with a null event pointer, so we have to check it
         Plasma::View::leaveEvent(event);
     }
-}
-
-void PanelView::drawBackground(QPainter *painter, const QRectF &rect)
-{
-    if (PlasmaApp::hasComposite()) {
-        painter->setCompositionMode(QPainter::CompositionMode_Source);
-        painter->fillRect(rect.toAlignedRect(), Qt::transparent);
-    } else {
-        Plasma::View::drawBackground(painter, rect);
-    }
-}
-
-void PanelView::paintEvent(QPaintEvent *event)
-{
-    Plasma::View::paintEvent(event);
-}
-
-bool PanelView::event(QEvent *event)
-{
-    if (event->type() == QEvent::Paint) {
-        QPainter p(this);
-        p.setCompositionMode(QPainter::CompositionMode_Source);
-        p.fillRect(rect(), Qt::transparent);
-    }
-
-    return Plasma::View::event(event);
 }
 
 void PanelView::appletAdded(Plasma::Applet *applet)

@@ -50,8 +50,6 @@ protected:
     void keyPressEvent(QKeyEvent *event);
     void showEvent(QShowEvent *event);
     void paintEvent(QPaintEvent *event);
-//    bool eventFilter(QObject *watched, QEvent *event);
-    bool event(QEvent *event);
 
 public Q_SLOTS:
     void toggleVisibility();
