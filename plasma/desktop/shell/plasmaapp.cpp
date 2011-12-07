@@ -801,9 +801,9 @@ DesktopView* PlasmaApp::viewForScreen(int screen, int desktop) const
     return 0;
 }
 
-DesktopCorona* PlasmaApp::corona()
+DesktopCorona* PlasmaApp::corona(bool createIfMissing)
 {
-    if (!m_corona) {
+    if (!m_corona && createIfMissing) {
         QTime t;
         t.start();
         DesktopCorona *c = new DesktopCorona(this);

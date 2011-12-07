@@ -63,7 +63,7 @@ public:
     static bool hasComposite();
 
     void suspendStartup(bool completed);
-    DesktopCorona *corona();
+    DesktopCorona *corona(bool createIfMissing = true);
 
     /**
      * Should be called when a panel hides or unhides itself
