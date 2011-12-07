@@ -1,5 +1,8 @@
 /*
+<<<<<<< HEAD
  *   Copyright 2011 Sebastian Kügler <sebas@kde.org>
+=======
+>>>>>>> 677b86151e254a7b0af614312d24a601a2a2e6cd
  *   Copyright 2011 Viranch Mehta <viranch.mehta@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -20,13 +23,19 @@
 #ifndef POWERMANAGEMENT_JOB_H
 #define POWERMANAGEMENT_JOB_H
 
+<<<<<<< HEAD
 // plasma
+=======
+#include "powermanagementengine.h"
+
+>>>>>>> 677b86151e254a7b0af614312d24a601a2a2e6cd
 #include <Plasma/ServiceJob>
 
 typedef QMap<QString, QString> StringStringMap;
 
 class PowermanagementJob : public Plasma::ServiceJob
 {
+<<<<<<< HEAD
 
     Q_OBJECT
 
@@ -43,6 +52,25 @@ class PowermanagementJob : public Plasma::ServiceJob
         bool suspend(const SuspendType &type);
         void requestShutDown();
         QString callForType(const SuspendType &type);
+=======
+    Q_OBJECT
+    
+public:
+    PowermanagementJob (PowermanagementEngine* engine,
+                        const QString& destination,
+                        const QString& operation,
+                        QMap<QString,QVariant>& parameters,
+                        QObject* parent = 0)
+    : ServiceJob (destination, operation, parameters, parent),
+      m_engine(engine)
+    {
+    }
+    
+    void start();
+    
+private:
+    PowermanagementEngine* m_engine;
+>>>>>>> 677b86151e254a7b0af614312d24a601a2a2e6cd
 };
 
 Q_DECLARE_METATYPE (StringStringMap);

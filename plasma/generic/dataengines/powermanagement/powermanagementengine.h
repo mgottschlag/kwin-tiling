@@ -75,5 +75,4 @@ private:
     friend class PowermanagementJob;
 };
 
-
 #endif
