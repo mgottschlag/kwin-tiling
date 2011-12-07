@@ -189,5 +189,8 @@ Comment[zh_CN]=选择程序启动反馈风格
 Comment[zh_TW]=選擇程式啟動時的回饋風格
 
 X-KDE-Keywords=application,start,launch,busy,cursor,feedback,mouse,pointer,bouncing,rotating,spinning,disk,startup,program,report,taskbar
+X-KDE-Keywords[kk]=application,start,launch,busy,cursor,feedback,mouse,pointer,bouncing,rotating,spinning,disk,startup,program,report,taskbar
+X-KDE-Keywords[uk]=application,start,launch,busy,cursor,feedback,mouse,pointer,bouncing,rotating,spinning,disk,startup,program,report,taskbar,програма,запуск,зайнята,зайнятість,вказівник,супровід,миша,підстрибування,стрибунець,обертання,поворот,диск,програма,звіт,панель задач,панель завдань
+X-KDE-Keywords[x-test]=xxapplication,start,launch,busy,cursor,feedback,mouse,pointer,bouncing,rotating,spinning,disk,startup,program,report,taskbarxx
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

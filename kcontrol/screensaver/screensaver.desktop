@@ -197,5 +197,10 @@ Comment[zh_TW]=螢幕保護程式設定
 
 
 X-KDE-Keywords=screensavers,Priority
+X-KDE-Keywords[kk]=screensavers,Priority
+X-KDE-Keywords[nl]=schermbeveiliging,prioriteit
+X-KDE-Keywords[sv]=skärmsläckare,Prioritet
+X-KDE-Keywords[uk]=screensavers,Priority,зберігач,екран,пріоритет
+X-KDE-Keywords[x-test]=xxscreensavers,Priorityxx
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

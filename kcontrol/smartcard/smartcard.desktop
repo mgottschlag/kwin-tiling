@@ -193,5 +193,8 @@ Comment[x-test]=xxConfigure smartcard supportxx
 Comment[zh_CN]=配置智能卡支持
 Comment[zh_TW]=設定智慧卡 (SmartCard) 支援
 X-KDE-Keywords=Smartcard,PKCS,SSL,reader,smart,card
+X-KDE-Keywords[kk]=Smartcard,PKCS,SSL,reader,smart,card
+X-KDE-Keywords[uk]=Smartcard,PKCS,SSL,reader,smart,card,картка пам’яті,пам’ятова картка,смарт-картка,читання,смарт
+X-KDE-Keywords[x-test]=xxSmartcard,PKCS,SSL,reader,smart,cardxx
 
 Categories=Qt;KDE;X-KDE-settings-peripherals;

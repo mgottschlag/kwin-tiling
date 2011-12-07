@@ -193,3 +193,6 @@ Comment[zh_CN]=更改显示的大小和方向
 Comment[zh_TW]=調整大小及旋轉你的螢幕
 
 X-KDE-Keywords=screen,resolution,resize,rotate,orientation,display,color depth,size,horizontal,vertical,refresh rate
+X-KDE-Keywords[kk]=screen,resolution,resize,rotate,orientation,display,color depth,size,horizontal,vertical,refresh rate
+X-KDE-Keywords[uk]=screen,resolution,resize,rotate,orientation,display,color depth,size,horizontal,vertical,refresh rate,екран,роздільна здатність,роздільність,розмір,розміри екрана,обертання,орієнтація,показ,дисплей,глибина кольорів,горизонтальний,вертикальний,частота
+X-KDE-Keywords[x-test]=xxscreen,resolution,resize,rotate,orientation,display,color depth,size,horizontal,vertical,refresh ratexx

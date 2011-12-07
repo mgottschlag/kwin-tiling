@@ -187,4 +187,7 @@ Comment[x-test]=xxManager for Splash Screen Themesxx
 Comment[zh_CN]=欢迎屏幕主题管理器
 Comment[zh_TW]=啟動畫面佈景管理程式
 X-KDE-Keywords=splash screen,splash theme,startup
+X-KDE-Keywords[kk]=splash screen,splash theme,startup
+X-KDE-Keywords[uk]=splash screen,splash theme,startup,вікно,вітання,тема,запуск
+X-KDE-Keywords[x-test]=xxsplash screen,splash theme,startupxx
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

@@ -138,5 +138,8 @@ Comment[zh_TW]=設定輸入動作
 Categories=Qt;KDE;X-KDE-settings-accessibility;
 
 X-KDE-Keywords=global,keyboard shortcuts,hot keys,hotkeys,KHotKeys,input actions,mouse gestures,actions,triggers,launch
+X-KDE-Keywords[kk]=global,keyboard shortcuts,hot keys,hotkeys,KHotKeys,input actions,mouse gestures,actions,triggers,launch
+X-KDE-Keywords[uk]=global,keyboard shortcuts,hot keys,hotkeys,KHotKeys,input actions,mouse gestures,actions,triggers,launch,загальні,глобальні,клавіатура,клавіатурні скорочення,введення,жести,жести мишею,дії,вмикання,запуск
+X-KDE-Keywords[x-test]=xxglobal,keyboard shortcuts,hot keys,hotkeys,KHotKeys,input actions,mouse gestures,actions,triggers,launchxx
 
 

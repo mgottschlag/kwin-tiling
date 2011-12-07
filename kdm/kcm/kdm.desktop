@@ -164,5 +164,8 @@ Comment[zh_CN]=配置登录管理器(KDM)
 Comment[zh_TW]=設定登入管理程式 (KDM)
 
 X-KDE-Keywords=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart
+X-KDE-Keywords[kk]=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart
+X-KDE-Keywords[uk]=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart,керування дисплеями,користувач,користувачі,вхід,вітання,логотип,стиль,стилі,країна,країни,шрифт,шрифти,гарнітура,гарнітури,шпалери,зображення,сеанс,сеанси,вимикання,перезапуск
+X-KDE-Keywords[x-test]=xxkdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restartxx
 
 Categories=Qt;KDE;X-KDE-settings-system;

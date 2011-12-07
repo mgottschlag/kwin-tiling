@@ -169,5 +169,8 @@ Comment[x-test]=xxConfiguration of standard keybindingsxx
 Comment[zh_CN]=标准键绑定配置
 Comment[zh_TW]=標準按鍵組合設定
 X-KDE-Keywords=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts
+X-KDE-Keywords[kk]=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts
+X-KDE-Keywords[uk]=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,клавіатура,скорочення,клавіатурні скорочення,схема,загальні клавіатурні скорочення,клавіатурні скорочення програми
+X-KDE-Keywords[x-test]=xxKeys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcutsxx
 
 Categories=Qt;KDE;X-KDE-settings-accessibility;

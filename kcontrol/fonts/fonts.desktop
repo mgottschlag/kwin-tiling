@@ -198,5 +198,8 @@ Comment[zh_CN]=字体设置
 Comment[zh_TW]=字型設定
 
 X-KDE-Keywords=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI
+X-KDE-Keywords[kk]=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI
+X-KDE-Keywords[uk]=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI,шрифт,шрифти,розмір,розмір шрифту,стиль,стилі,гарнітура,гарнітури,кодування,набір,символ,символи,набір символів,панель,панель керування,стільниця,стільниці,файл,керування,керування файлами,менеджер,панель інструментів,меню,заголовок,заголовок вікна,роздільність
+X-KDE-Keywords[x-test]=xxfonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPIxx
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

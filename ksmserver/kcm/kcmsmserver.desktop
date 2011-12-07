@@ -163,5 +163,8 @@ Comment[zh_CN]=配置会话管理器和注销设置
 Comment[zh_TW]=設定工作階段管理程式與登出設定值
 
 X-KDE-Keywords=ksmserver,session,logout,confirmation,save,restore
+X-KDE-Keywords[kk]=ksmserver,session,logout,confirmation,save,restore
+X-KDE-Keywords[uk]=ksmserver,session,logout,confirmation,save,restore,сеанс,вихід,підтвердження,зберегти,збереження,відновити,відновлення
+X-KDE-Keywords[x-test]=xxksmserver,session,logout,confirmation,save,restorexx
 
 Categories=Qt;KDE;X-KDE-settings-components;

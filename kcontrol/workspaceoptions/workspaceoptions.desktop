@@ -139,5 +139,8 @@ Comment[zh_CN]=Plasma 工作空间的全局选项
 Comment[zh_TW]=Plasma 工作空間的全域選項
 
 X-KDE-Keywords=plasma,workspace,shell,formfactor,dashboard
+X-KDE-Keywords[kk]=plasma,workspace,shell,formfactor,dashboard
+X-KDE-Keywords[uk]=plasma,workspace,shell,formfactor,dashboard,плазма,робочий простір,оболонка,формфактор
+X-KDE-Keywords[x-test]=xxplasma,workspace,shell,formfactor,dashboardxx
 
 Categories=Qt;KDE;X-KDE-settings-system;

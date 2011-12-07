@@ -195,3 +195,6 @@ Comment[x-test]=xxConfigure KDE for multiple monitorsxx
 Comment[zh_CN]=配置 KDE 的多显示器支持
 Comment[zh_TW]=設定 KDE 支援多重顯示器
 X-KDE-Keywords=Xinerama,dual head,multihead,monitor
+X-KDE-Keywords[kk]=Xinerama,dual head,multihead,monitor
+X-KDE-Keywords[uk]=Xinerama,dual head,multihead,monitor,два монітори,декілька моніторів,монітор,дисплей,дисплея,дисплеїв
+X-KDE-Keywords[x-test]=xxXinerama,dual head,multihead,monitorxx
