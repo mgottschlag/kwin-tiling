@@ -74,7 +74,7 @@ public Q_SLOTS:
     void activate();
     void showWidgetExplorer();
     void showActivityManager();
-    void closeIfNotFocussed();
+    virtual void closeIfNotFocussed();
 
 protected:
     void setGraphicsWidget(QGraphicsWidget *widget);
@@ -85,7 +85,6 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event);
 
 private Q_SLOTS:
-    void onActiveWindowChanged(WId id);
     void backgroundChanged();
     void adjustAndSetMaxSize();
     void syncToGraphicsWidget();

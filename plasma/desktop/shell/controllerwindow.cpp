@@ -77,7 +77,7 @@ ControllerWindow::ControllerWindow(QWidget* parent)
 
     m_layout->setContentsMargins(0, 0, 0, 0);
 
-    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(onActiveWindowChanged(WId)));
+    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(closeIfNotFocussed()));
     connect(m_background, SIGNAL(repaintNeeded()), SLOT(backgroundChanged()));
     Kephal::Screens *screens = Kephal::Screens::self();
     connect(screens, SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)),
@@ -486,18 +486,16 @@ void ControllerWindow::setScreen(int screen)
     m_screen = screen;
 }
 
-void ControllerWindow::onActiveWindowChanged(WId id)
-{
-    Q_UNUSED(id)
-
-    // Small delay when closing due to lost focus
-    QTimer::singleShot(300, this, SLOT(closeIfNotFocussed()));
-}
-
 void ControllerWindow::closeIfNotFocussed()
 {
-    if (!QApplication::activeWindow()) {
+    QWidget *widget = QApplication::activeWindow();
+    if (!widget) {
         close();
+    } else if (widget != this) {
+        KWindowInfo info(widget->winId(), NET::WMWindowType);
+        if (info.windowType(NET::DesktopMask | NET::DockMask | NET::PopupMenuMask) == -1) {
+            close();
+        }
     }
 }
 

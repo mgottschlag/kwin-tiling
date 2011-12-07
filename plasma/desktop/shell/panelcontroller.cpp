@@ -510,6 +510,14 @@ void PanelController::switchToWidgetExplorer()
     showWidgetExplorer();
 }
 
+void PanelController::closeIfNotFocussed()
+{
+    QWidget *widget = QApplication::activeWindow();
+    if (!widget || widget != m_optionsDialog) {
+        ControllerWindow::closeIfNotFocussed();
+    }
+}
+
 void PanelController::switchToController()
 {
     setGraphicsWidget(0);
