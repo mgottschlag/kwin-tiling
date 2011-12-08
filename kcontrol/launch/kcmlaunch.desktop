@@ -189,7 +189,12 @@ Comment[zh_CN]=选择程序启动反馈风格
 Comment[zh_TW]=選擇程式啟動時的回饋風格
 
 X-KDE-Keywords=application,start,launch,busy,cursor,feedback,mouse,pointer,bouncing,rotating,spinning,disk,startup,program,report,taskbar
+X-KDE-Keywords[ia]=application,initio,lancea,occupate,cursor,retro information,mus,punctator,saltante,rotante,torneante,disco,initio,programma,reporto,barra de carga
 X-KDE-Keywords[kk]=application,start,launch,busy,cursor,feedback,mouse,pointer,bouncing,rotating,spinning,disk,startup,program,report,taskbar
+X-KDE-Keywords[nl]=toepassing,start,starten,bezet,cursor,terugkoppeling,muis,aanwijzer,op en neergaand,ronddraaiend,tollend,schijf,opstarten,programma,rapport,taakbalk
+X-KDE-Keywords[pt]=aplicação,início,lançamento,ocupado,cursor,reacção,rato,cursor,saltitante,rotação,rodar,disco,arranque,programa,relatório,barra de tarefas
+X-KDE-Keywords[pt_BR]=aplicativo,início,execução,ocupado,cursor,feedback,mouse,ponteiro,saltitante,rotação,rodar,disco,inicialização,programa,relatório,barra de tarefas
+X-KDE-Keywords[sv]=program,start,upptagen,markör,återmatning,mus,pekare,studsande,roterande,skiva,rapportera,aktivitetsrad
 X-KDE-Keywords[uk]=application,start,launch,busy,cursor,feedback,mouse,pointer,bouncing,rotating,spinning,disk,startup,program,report,taskbar,програма,запуск,зайнята,зайнятість,вказівник,супровід,миша,підстрибування,стрибунець,обертання,поворот,диск,програма,звіт,панель задач,панель завдань
 X-KDE-Keywords[x-test]=xxapplication,start,launch,busy,cursor,feedback,mouse,pointer,bouncing,rotating,spinning,disk,startup,program,report,taskbarxx
 

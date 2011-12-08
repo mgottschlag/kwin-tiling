@@ -198,7 +198,12 @@ Comment[zh_CN]=字体设置
 Comment[zh_TW]=字型設定
 
 X-KDE-Keywords=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI
+X-KDE-Keywords[ia]=fonts,grandor de font,stilos,insimules de characteres,insimules de characteres,pannello,pannello de controlo,scriptorios,Gerente de File,Barra de instrumentos,menu,Titulo de Fenestra,Titulo,DPI
 X-KDE-Keywords[kk]=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI
+X-KDE-Keywords[nl]=lettertype,tekengrootte,stijlen,tekensets,paneel,besturingspaneel,bureaubladen,bestandsbeheerder,werkbalken,menu,venstertitel,titel,DPI
+X-KDE-Keywords[pt]=tipos de letra,tamanho de letra,estilos,codificações,codificações de caracteres,painel,painel de controlo,ecrãs,gestor de ficheiros,barras de ferramentas,menu,título da janela,título,PPP
+X-KDE-Keywords[pt_BR]=fontes,tamanho da fonte,estilos,codificações,codificações de caracteres,painel,painel de controle,áreas de trabalho,gerenciador de arquivos,barras de ferramentas,Menu,Título da janela,Título,PPP
+X-KDE-Keywords[sv]=teckensnitt,teckenstorlek,stil,teckenuppsättningar,panel,kontrollpanel,skrivbord,Filhanterare,Verktygsrader,Meny,Fönsternamn,Namn,Punkter/tum
 X-KDE-Keywords[uk]=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI,шрифт,шрифти,розмір,розмір шрифту,стиль,стилі,гарнітура,гарнітури,кодування,набір,символ,символи,набір символів,панель,панель керування,стільниця,стільниці,файл,керування,керування файлами,менеджер,панель інструментів,меню,заголовок,заголовок вікна,роздільність
 X-KDE-Keywords[x-test]=xxfonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPIxx
 

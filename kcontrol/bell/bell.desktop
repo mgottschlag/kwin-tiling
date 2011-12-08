@@ -198,8 +198,12 @@ Comment[zh_CN]=系统铃声配置
 Comment[zh_TW]=系統鈴聲組態
 
 X-KDE-Keywords=Bell,Audio,Sound,Volume,Pitch,Duration
+X-KDE-Keywords[ia]=Campana,Audio,Sono,Volumine,Accordatura,Duration
 X-KDE-Keywords[kk]=Bell,Audio,Sound,Volume,Pitch,Duration
 X-KDE-Keywords[nl]=Bel,audio,geluid,volume,toonhoogte,duur
+X-KDE-Keywords[pt]=Campainha,Áudio,Som,Volume,Frequência,Duração
+X-KDE-Keywords[pt_BR]=Campainha,Áudio,Som,Volume,Frequência,Duração
+X-KDE-Keywords[sv]=Summer,Ljud,Volym,Tonhöjd,Längd
 X-KDE-Keywords[uk]=Bell,Audio,Sound,Volume,Pitch,Duration,дзвінок,гудок,звук,гучність,тон,тривалість
 X-KDE-Keywords[x-test]=xxBell,Audio,Sound,Volume,Pitch,Durationxx
 

@@ -138,7 +138,12 @@ Comment[zh_TW]=設定輸入動作
 Categories=Qt;KDE;X-KDE-settings-accessibility;
 
 X-KDE-Keywords=global,keyboard shortcuts,hot keys,hotkeys,KHotKeys,input actions,mouse gestures,actions,triggers,launch
+X-KDE-Keywords[ia]=global,vias breve de claviero, claves calide,claves calide,KHotKeys, actiones de ingresso,gestos de mus,actiones,discatenator,lancear
 X-KDE-Keywords[kk]=global,keyboard shortcuts,hot keys,hotkeys,KHotKeys,input actions,mouse gestures,actions,triggers,launch
+X-KDE-Keywords[nl]=globaal,toetsenbordsneltoets,hot-keys,hotkeys,KHotKeys,invoeracties,muisbeweging,acties,triggers,opstarten
+X-KDE-Keywords[pt]=global,atalhos de teclado,KHotKeys,acções de entrada,gestos do rato,acções,eventos,lançamento
+X-KDE-Keywords[pt_BR]=global,atalhos de teclado,KHotKeys,ações de entrada,gestos do mouse,ações,eventos,lançamento,execução
+X-KDE-Keywords[sv]=global,tangentbordsgenvägar,KHotKeys,indataåtgärder,musgester,åtgärder,avtryckare,start
 X-KDE-Keywords[uk]=global,keyboard shortcuts,hot keys,hotkeys,KHotKeys,input actions,mouse gestures,actions,triggers,launch,загальні,глобальні,клавіатура,клавіатурні скорочення,введення,жести,жести мишею,дії,вмикання,запуск
 X-KDE-Keywords[x-test]=xxglobal,keyboard shortcuts,hot keys,hotkeys,KHotKeys,input actions,mouse gestures,actions,triggers,launchxx
 

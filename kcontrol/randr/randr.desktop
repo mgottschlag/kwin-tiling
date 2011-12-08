@@ -193,6 +193,11 @@ Comment[zh_CN]=更改显示的大小和方向
 Comment[zh_TW]=調整大小及旋轉你的螢幕
 
 X-KDE-Keywords=screen,resolution,resize,rotate,orientation,display,color depth,size,horizontal,vertical,refresh rate
+X-KDE-Keywords[ia]=schermo,resolution,redimensiona,rota,orientation,monstrator,profunditate de color,dimension,horizontal,vertical,frequentia de refrescar
 X-KDE-Keywords[kk]=screen,resolution,resize,rotate,orientation,display,color depth,size,horizontal,vertical,refresh rate
+X-KDE-Keywords[nl]=scherm,resolutie,afmeting wijzigen,roondraaien,oriëntatie,scherm,kleurdiepte,grootte,horizontaal,verticaal,verversingssnelheid
+X-KDE-Keywords[pt]=ecrã,resolução,dimensionamento,rodar,orientação,ecrã,profundidade de cor,tamanho,horizontal,vertical,taxa de actualização
+X-KDE-Keywords[pt_BR]=tela,resolução,redimensionamento,girar,orientação,monitor,profundidade de cores,tamanho,horizontal,vertical,taxa de atualização
+X-KDE-Keywords[sv]=skärm,upplösning,ändra storlek,rotera,orientering,bildskärm,färgdjup,storlek,horisontell,vertikal,uppdateringsfrekvens
 X-KDE-Keywords[uk]=screen,resolution,resize,rotate,orientation,display,color depth,size,horizontal,vertical,refresh rate,екран,роздільна здатність,роздільність,розмір,розміри екрана,обертання,орієнтація,показ,дисплей,глибина кольорів,горизонтальний,вертикальний,частота
 X-KDE-Keywords[x-test]=xxscreen,resolution,resize,rotate,orientation,display,color depth,size,horizontal,vertical,refresh ratexx

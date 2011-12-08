@@ -142,8 +142,12 @@ Comment[zh_CN]=用于管理当新设备连接到电脑时的系统动作的配�
 Comment[zh_TW]=管理新增裝置到電腦時要做些什麼動作的設定工具
 
 X-KDE-Keywords=Solid Devices Actions
+X-KDE-Keywords[cs]=Činnosti zařízení Solid
+X-KDE-Keywords[ia]=Actiones de dispositivos solid
 X-KDE-Keywords[kk]=Solid Devices Actions
 X-KDE-Keywords[nl]=Solid-apparaatacties
+X-KDE-Keywords[pt]=Acções do Dispositivo Solid
+X-KDE-Keywords[pt_BR]=Ações do dispositivo Solid
 X-KDE-Keywords[sv]=Solid enhetsåtgärder
 X-KDE-Keywords[uk]=solid,пристрій,пристрої,дія,дії
 X-KDE-Keywords[x-test]=xxSolid Devices Actionsxx
