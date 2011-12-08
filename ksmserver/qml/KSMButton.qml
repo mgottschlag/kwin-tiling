@@ -21,13 +21,31 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.qtextracomponents 0.1
 
-PlasmaComponents.Button {
+PlasmaCore.FrameSvgItem {
     id: button
     property string iconSource
     property alias text: labelElement.text
+    property bool smallButton: false
+
+    signal clicked()
+
+    PlasmaCore.Theme {
+        id: theme
+    }
+
+    PlasmaCore.SvgItem {
+        id: background
+        anchors.fill: parent
+
+        svg: PlasmaCore.Svg {
+            imagePath: "dialogs/shutdowndialog"
+        }
+        elementId: "button-normal"
+    }
 
     Text {
         id: labelElement
+        color: theme.textColor
         anchors {
             left: parent.left
             leftMargin: 5
@@ -52,17 +70,28 @@ PlasmaComponents.Button {
         }
     }
 
+    Component.onCompleted: {
+        background.elementId = button.smallButton ? "button-small-normal" : "button-normal"
+    }
+
     MouseArea {
         anchors.fill: parent
+        hoverEnabled: true
         onClicked: button.clicked()
         onPressAndHold: {
-	    /*if (contextMenu.valid && contextMenu) {
+            /*if (contextMenu.valid && contextMenu) {
                 console.log("Lamarque onPressAndHold: opening menu");
-	        contextMenu.open()
-	    }*/
+                contextMenu.open()
+            }*/
         }
         onPressed: button.state = "Pressed"
         onReleased: button.state = "Normal"
+        onEntered: {
+            background.elementId = button.smallButton ? "button-small-hover" : "button-hover"
+        }
+        onExited: {
+            background.elementId = button.smallButton ? "button-small-normal" : "button-normal"
+        }
     }
 
     states: [
