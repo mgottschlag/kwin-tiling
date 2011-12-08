@@ -43,17 +43,17 @@ PlasmaCore.FrameSvgItem {
         elementId: "button-normal"
     }
 
-    Text {
+    PlasmaComponents.Label {
         id: labelElement
         color: theme.textColor
         anchors {
+            verticalCenter: parent.verticalCenter
             left: parent.left
             leftMargin: 5
-            verticalCenter: parent.verticalCenter
         }
 
         onPaintedWidthChanged: {
-            button.width = Math.max(button.width, 5 + labelElement.width + 5 + iconElement.width + 3)
+            button.width = Math.max(button.width, 5 + labelElement.width + 10 + iconElement.width + 5)
         }        
     }
 

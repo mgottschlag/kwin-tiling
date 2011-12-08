@@ -20,7 +20,7 @@
 
 import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
-import org.kde.plasma.components 0.1
+import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.qtextracomponents 0.1
 
 PlasmaCore.FrameSvgItem {
@@ -64,13 +64,21 @@ PlasmaCore.FrameSvgItem {
         shutdownButton.width = buttonsLayout.width
         rebootButton.width = buttonsLayout.width
 
+        if (margins.left == 0) {
+            shutdownUi.width += 24
+            shutdownUi.height += 16
+            automaticallyDoLabel.anchors.topMargin = 9
+            automaticallyDoLabel.anchors.rightMargin = 12
+            leftPicture.anchors.leftMargin = 12
+            buttonsLayout.anchors.rightMargin = 12
+        }
+
         if (background.naturalSize.width < 1) {
             background.elementId = "background"
         }
 
         if (leftPicture.naturalSize.width < 1) {
-            shutdownUi.width -= buttonsLayout.width
-            automaticallyDoLabel.width -= buttonsLayout.width
+            shutdownUi.width -= (buttonsLayout.width - 18)
         }
 
         //console.log("maysd("+maysd+") choose("+choose+") sdtype("+sdtype+")");
@@ -141,15 +149,17 @@ PlasmaCore.FrameSvgItem {
         }
     }
 
-    Label {
+    Text {
         id: automaticallyDoLabel
         text: " "
+        // pixelSize does not work with PlasmaComponents.Label, so I am using a Text element here.
         font.pixelSize: 11
+        color: theme.textColor
         anchors {
             top: parent.top
             topMargin: parent.margins.top
-            rightMargin: parent.margins.right
             right: parent.right
+            rightMargin: parent.margins.right
         }
     }
 
@@ -159,7 +169,7 @@ PlasmaCore.FrameSvgItem {
         height: width * naturalSize.height / naturalSize.width
         smooth: true
         anchors {
-            top: automaticallyDoLabel.top
+            verticalCenter: parent.verticalCenter
             left: parent.left
             leftMargin: parent.margins.left
         }
@@ -175,6 +185,7 @@ PlasmaCore.FrameSvgItem {
         spacing: 9
         anchors {
             top: automaticallyDoLabel.bottom
+            topMargin: 4
             right: parent.right
             rightMargin: parent.margins.right
         }
@@ -202,15 +213,15 @@ PlasmaCore.FrameSvgItem {
                 iconSource: "system-shutdown"
                 height:32
                 anchors.right: parent.right
-                property ContextMenu contextMenu
+                //property ContextMenu contextMenu
                 visible: (choose || sdtype == ShutdownType.ShutdownTypeHalt)
 
                 onClicked: {
-                    console.log("shutdownMenuRequested");
+                    /*console.log("shutdownMenuRequested");
                     if (!contextMenu) {
                         contextMenu = shutdownOptionsComponent.createObject(shutdownButton)
                     }
-                    contextMenu.open()
+                    contextMenu.open()*/
                 }
 
                 /*Component.onCompleted: {
@@ -221,7 +232,7 @@ PlasmaCore.FrameSvgItem {
                 }*/
             }
 
-            Component {
+            /*Component {
                 id: shutdownOptionsComponent
                 ContextMenu {
                     visualParent: shutdownButton
@@ -266,7 +277,7 @@ PlasmaCore.FrameSvgItem {
                         }
                     }
                 }
-            }
+            }*/
 
             KSMButton {
                 id: rebootButton
@@ -286,6 +297,7 @@ PlasmaCore.FrameSvgItem {
             id: cancelButton
             text: i18n("Cancel")
             iconSource: "dialog-cancel"
+            smallButton: true
             height: 22
             anchors.right: parent.right
 
