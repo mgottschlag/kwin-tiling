@@ -213,71 +213,54 @@ PlasmaCore.FrameSvgItem {
                 iconSource: "system-shutdown"
                 height:32
                 anchors.right: parent.right
-                //property ContextMenu contextMenu
                 visible: (choose || sdtype == ShutdownType.ShutdownTypeHalt)
 
                 onClicked: {
-                    /*console.log("shutdownMenuRequested");
-                    if (!contextMenu) {
-                        contextMenu = shutdownOptionsComponent.createObject(shutdownButton)
-                    }
-                    contextMenu.open()*/
+                    console.log("shutdownMenuRequested");
+                    buttonColumn.visible = !buttonColumn.visible
                 }
-
-                /*Component.onCompleted: {
-                    console.log("shutdownButton.onCompleted");
-                    if (contextMenu.valid && !contextMenu) {
-                        contextMenu = shutdownOptionsComponent.createObject(shutdownButton)
-                    }
-                }*/
             }
 
-            /*Component {
-                id: shutdownOptionsComponent
-                ContextMenu {
-                    visualParent: shutdownButton
-                    MenuItem {
-                        id: shutdown
-                        text: i18n("Turn Off Computer")
-                        //height: shutdownButton.visible ? height : 0
-                        visible: shutdownButton.visible
-                        onClicked: {
-                            console.log("haltRequested")
-                            haltRequested()
-                        }
-                    }
-                    MenuItem {
-                        id: standby
-                        text: i18n("Standby")
-                        //height: shutdownButton.visible && spdMethods.StandbyState ? height : 0
-                        visible: shutdownButton.visible && spdMethods.StandbyState
-                        onClicked: {
-                            console.log("suspendRequested(Solid::PowerManagement::StandbyState)")
-                            suspendRequested(1); // Solid::PowerManagement::StandbyState
-                        }
-                    }
-                    MenuItem {
-                        id: sleep
-                        text: i18n("Suspend to RAM")
-                        //height: shutdownButton.visible && spdMethods.SuspendState ? height : 0
-                        visible: shutdownButton.visible && spdMethods.SuspendState
-                        onClicked: {
-                            console.log("suspendRequested(Solid::PowerManagement::SuspendState)")
-                            suspendRequested(2); // Solid::PowerManagement::SuspendState
-                        }
-                    }
-                    MenuItem {
-                        id: hibernate
-                        text: i18n("Suspend to Disk")
-                        //height: shutdownButton.visible && spdMethods.HibernateState ? height : 0
-                        visible: shutdownButton.visible && spdMethods.HibernateState
-                        onClicked: {
-                            console.log("suspendRequested(Solid::PowerManagement::HibernateState)")
-                            suspendRequested(3); // Solid::PowerManagement::HibernateState
-                        }
+            PlasmaComponents.ButtonColumn {
+                id: buttonColumn
+                visible: false
+                PlasmaComponents.Button {
+                    id: shutdown
+                    text: i18n("Turn Off Computer")
+                    visible: shutdownButton.visible
+                    onClicked: {
+                        console.log("haltRequested")
+                        haltRequested()
                     }
                 }
-            }*/
+                PlasmaComponents.Button {
+                    id: standby
+                    text: i18n("Standby")
+                    visible: shutdownButton.visible && spdMethods.StandbyState
+                    onClicked: {
+                        console.log("suspendRequested(Solid::PowerManagement::StandbyState)")
+                        suspendRequested(1); // Solid::PowerManagement::StandbyState
+                    }
+                }
+                PlasmaComponents.Button {
+                    id: sleep
+                    text: i18n("Suspend to RAM")
+                    visible: shutdownButton.visible && spdMethods.SuspendState
+                    onClicked: {
+                        console.log("suspendRequested(Solid::PowerManagement::SuspendState)")
+                        suspendRequested(2); // Solid::PowerManagement::SuspendState
+                    }
+                }
+                PlasmaComponents.Button {
+                    id: hibernate
+                    text: i18n("Suspend to Disk")
+                    visible: shutdownButton.visible && spdMethods.HibernateState
+                    onClicked: {
+                        console.log("suspendRequested(Solid::PowerManagement::HibernateState)")
+                        suspendRequested(3); // Solid::PowerManagement::HibernateState
+                    }
+                }
+            }
 
             KSMButton {
                 id: rebootButton
