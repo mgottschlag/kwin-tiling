@@ -26,8 +26,10 @@ PlasmaCore.FrameSvgItem {
     property string iconSource
     property alias text: labelElement.text
     property bool smallButton: false
+    property bool focusedButton: false
 
     signal clicked()
+    signal pressed()
 
     PlasmaCore.Theme {
         id: theme
@@ -71,43 +73,33 @@ PlasmaCore.FrameSvgItem {
     }
 
     Component.onCompleted: {
-        background.elementId = button.smallButton ? "button-small-normal" : "button-normal"
+        if (focusedButton) {
+            background.elementId = button.smallButton ? "button-small-hover" : "button-hover"
+        } else {
+            background.elementId = button.smallButton ? "button-small-normal" : "button-normal"
+        }
+    }
+
+    onFocusedButtonChanged: {
+        if (focusedButton) {
+            background.elementId = button.smallButton ? "button-small-hover" : "button-hover"
+        } else {
+            background.elementId = button.smallButton ? "button-small-normal" : "button-normal"
+        }
     }
 
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
         onClicked: button.clicked()
-        onPressAndHold: {
-            /*if (contextMenu.valid && contextMenu) {
-                console.log("Lamarque onPressAndHold: opening menu");
-                contextMenu.open()
-            }*/
-        }
-        onPressed: button.state = "Pressed"
-        onReleased: button.state = "Normal"
+        onPressed: button.pressed()
         onEntered: {
             background.elementId = button.smallButton ? "button-small-hover" : "button-hover"
         }
         onExited: {
-            background.elementId = button.smallButton ? "button-small-normal" : "button-normal"
+            if (!focusedButton) {
+                background.elementId = button.smallButton ? "button-small-normal" : "button-normal"
+            }
         }
     }
-
-    states: [
-        State {
-            name: "Normal"
-            PropertyChanges { target: button; scale: 1.0}
-        },
-        State {
-            name: "Pressed"
-            PropertyChanges { target: button; scale: 0.9}
-        }
-    ]
-    
-    transitions: [
-        Transition {
-            NumberAnimation { properties: "scale"; duration: 50 }
-        }
-    ]
 }

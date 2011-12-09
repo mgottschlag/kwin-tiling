@@ -20,14 +20,19 @@
 import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.components 0.1 as PlasmaComponents
-import org.kde.qtextracomponents 0.1
 
 PlasmaCore.FrameSvgItem {
     id: shutdownUi
-    width: margins.left + 2 * buttonsLayout.width + margins.right
-    height: margins.top + automaticallyDoLabel.height + buttonsLayout.height + margins.bottom
+    property int realMarginTop: margins.top
+    property int realMarginBottom: margins.bottom
+    property int realMarginLeft: margins.left
+    property int realMarginRight: margins.right
+
+    width: realMarginLeft + 2 * buttonsLayout.width + realMarginRight
+    height: realMarginTop + automaticallyDoLabel.height + buttonsLayout.height + realMarginBottom
+
     imagePath: "dialogs/shutdowndialog"
-    enabledBorders: PlasmaCore.FrameSvg.AllBorders
+    //enabledBorders: PlasmaCore.FrameSvg.NoBorder
 
     signal logoutRequested()
     signal haltRequested()
@@ -47,7 +52,17 @@ PlasmaCore.FrameSvgItem {
 
     PlasmaCore.SvgItem {
         id: background
-        anchors.fill: parent
+
+        anchors {
+            top: parent.top
+            topMargin: realMarginTop
+            bottom: parent.bottom
+            bottomMargin: realMarginBottom
+            left: parent.left
+            leftMargin: realMarginLeft
+            right: parent.right
+            rightMargin: realMarginRight
+        }
 
         svg: PlasmaCore.Svg {
             imagePath: "dialogs/shutdowndialog"
@@ -56,20 +71,23 @@ PlasmaCore.FrameSvgItem {
     }
 
     Component.onCompleted: {
-        //console.log("margins: " + margins.left + ", " + margins.top + ", " + margins.right + ", " + margins.bottom);
-
         // Hacky but works :-)
         logoutButton.width = buttonsLayout.width
         shutdownButton.width = buttonsLayout.width
         rebootButton.width = buttonsLayout.width
 
         if (margins.left == 0) {
-            shutdownUi.width += 24
-            shutdownUi.height += 16
-            automaticallyDoLabel.anchors.topMargin = 9
-            automaticallyDoLabel.anchors.rightMargin = 12
-            leftPicture.anchors.leftMargin = 12
-            buttonsLayout.anchors.rightMargin = 12
+            realMarginsTop = 9
+            realMarginsBottom = 7
+            realMarginsLeft = 12
+            realMarginsRight = 12
+
+            shutdownUi.width += realMarginsLeft + realMarginsRight
+            shutdownUi.height += realMarginsTop + realMarginsBottom
+            automaticallyDoLabel.anchors.topMargin = realMarginsTop
+            automaticallyDoLabel.anchors.rightMargin = realMarginsRight
+            leftPicture.anchors.leftMargin = realMarginsLeft
+            buttonsLayout.anchors.rightMargin = realMarginsRight
         }
 
         if (leftPicture.naturalSize.width < 1) {
@@ -98,6 +116,8 @@ PlasmaCore.FrameSvgItem {
                 // TODO: add reboot menu
             }
         }
+
+        focusedButton.focusedButton = true
 
         timer.interval = 1000;
         timer.running = true;
@@ -195,6 +215,15 @@ PlasmaCore.FrameSvgItem {
                     console.log("logoutRequested");
                     logoutRequested()
                 }
+
+                onPressed: {
+                    if (shutdownUi.focusedButton != logoutButton) {
+                        shutdownUi.focusedButton.focusedButton = false
+                        shutdownUi.focusedButton = logoutButton
+                        focusedButton = true
+                        focus = true
+                    }
+                }
             }
 
             KSMButton {
@@ -210,6 +239,15 @@ PlasmaCore.FrameSvgItem {
                     buttonColumn.visible = !buttonColumn.visible
                     adjustSizeTimer.running = true
                 }
+
+                onPressed: {
+                    if (shutdownUi.focusedButton != shutdownButton) {
+                        shutdownUi.focusedButton.focusedButton = false
+                        shutdownUi.focusedButton = shutdownButton
+                        focusedButton = true
+                        focus = true
+                    }
+                }
             }
 
             // Some themes do not adjust dialog size automatically, so update it manually.
@@ -217,7 +255,7 @@ PlasmaCore.FrameSvgItem {
                 id: adjustSizeTimer
                 repeat: false
                 running: false
-                interval: 50
+                interval: 100
 
                 onTriggered: {
                     shutdownUi.height = margins.top + automaticallyDoLabel.height + buttonsLayout.height + margins.bottom
@@ -286,6 +324,15 @@ PlasmaCore.FrameSvgItem {
                 onClicked: {
                     console.log("rebootRequested");
                     rebootRequested()
+                }
+
+                onPressed: {
+                    if (shutdownUi.focusedButton != rebootButton) {
+                        shutdownUi.focusedButton.focusedButton = false
+                        shutdownUi.focusedButton = rebootButton
+                        focusedButton = true
+                        focus = true
+                    }
                 }
             }
         }
