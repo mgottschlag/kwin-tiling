@@ -171,25 +171,18 @@ Item {
         id: chargeInfo
         width: percent.paintedWidth+4    // 4 = left/right margins
         height: percent.paintedHeight+4  // 4 = top/bottom margins
-        /*anchors {
-            horizontalCenter: parent.horizontalCenter
-            verticalCenter: parent.verticalCenter
-        }*/
         anchors.centerIn: parent
         color: "white"
         border.color: "grey"
         border.width: 2
         radius: 3
-        visible: show_charge && pmSource.data["Battery"]["Has battery"]
+        visible: show_charge && pmSource.data["Battery"]["Has Battery"]
         opacity: 0.7
 
         Text {
             id: percent
             text: pmSource.data["Battery0"]["Percent"]+"%"
-            /*anchors {
-                horizontalCenter: parent.horizontalCenter
-                verticalCenter: parent.verticalCenter
-            }*/
+            font.bold: true
             anchors.centerIn: parent
             visible: parent.visible
         }
