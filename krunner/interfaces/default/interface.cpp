@@ -518,7 +518,7 @@ void Interface::resetAndClose()
 
 void Interface::runDefaultResultItem()
 {
-    if (m_queryRunning || m_delayedQueryTimer.isActive()) {
+    if (m_queryRunning) {
         m_delayedRun = true;
     } else {
         run(m_resultsScene->defaultResultItem());
@@ -541,6 +541,7 @@ void Interface::queryTextEdited(const QString &query)
         m_queryRunning = false;
     } else {
         m_delayedQueryTimer.start();
+        m_queryRunning = true;
     }
 }
 
