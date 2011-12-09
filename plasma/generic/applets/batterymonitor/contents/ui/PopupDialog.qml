@@ -36,11 +36,11 @@ Item {
     signal sleepClicked
     signal hibernateClicked
     signal brightnessChanged(int screenBrightness)
-    signal profileChanged(string profile)
+    //signal profileChanged(string profile)
 
-    function addProfile(profile)    { profiles.addItem(profile);        }
+    /*function addProfile(profile)    { profiles.addItem(profile);        }
     function setProfile (index)     { profiles.currentIndex = index;    }
-    function clearProfiles()        { profiles.clear();                 }
+    function clearProfiles()        { profiles.clear();                 }*/
 
     Item {
         id: labels
@@ -152,6 +152,7 @@ Item {
             }
             onTextChanged: profileChanged(text)
         }*/
+        // TODO: what to do on check/uncheck?
         Components.CheckBox {
             id: profiles
             checked: true

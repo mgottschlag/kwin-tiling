@@ -71,7 +71,7 @@ Item {
                 operation.brightness = screenBrightness;
                 service.startOperationCall(operation);
             }
-            onProfileChanged: {
+            /*onProfileChanged: {
                 profileKey = findProfile(profile);
                 if (profileKey!="") {
                     service = pmSource.serviceForSource("PowerDevil");
@@ -79,11 +79,11 @@ Item {
                     operation.profile = profileKey;
                     service.startOperationCall(operation);
                 }
-            }
+            }*/
         }
     }
 
-    function findProfile (profile) {
+    /*function findProfile (profile) {
         var profiles = pmSource.data["PowerDevil"]["Available profiles"];
         for (var i in profiles) {
             if (profiles[i] == profile)
@@ -112,7 +112,7 @@ Item {
         if (!found) {
             dialogItem.setProfile(-1);
         }
-    }
+    }*/
 
     MouseArea {
         id: mouseArea
