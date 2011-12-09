@@ -85,9 +85,9 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)),
             this, SLOT(screenRemoved(int)));
     connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)),
-            this, SLOT(screenChanged(Kephal::Screen*)));
+            this, SLOT(screenGeometryChanged(Kephal::Screen*)));
     connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)),
-            this, SLOT(screenChanged(Kephal::Screen*)));
+            this, SLOT(screenGeometryChanged(Kephal::Screen*)));
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(resetScreenPos()));
     connect(KWindowSystem::self(), SIGNAL(compositingChanged(bool)), this, SLOT(compositingChanged(bool)));
 
@@ -113,7 +113,7 @@ void KRunnerDialog::screenRemoved(int screen)
     m_screenPos.remove(screen);
 }
 
-void KRunnerDialog::screenChanged(Kephal::Screen* screen)
+void KRunnerDialog::screenGeometryChanged(Kephal::Screen* screen)
 {
     m_screenPos.remove(screen->id());
     if (m_oldScreen == screen->id()) {

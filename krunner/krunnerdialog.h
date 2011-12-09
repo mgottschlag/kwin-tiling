@@ -94,7 +94,7 @@ class KRunnerDialog : public QWidget
          * React to screen changes
          */
         void screenRemoved(int screen);
-        void screenChanged(Kephal::Screen* screen);
+        void screenGeometryChanged(Kephal::Screen* screen);
         void resetScreenPos();
 
         void compositingChanged(bool);
