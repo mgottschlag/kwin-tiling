@@ -217,6 +217,8 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     m_view->setFrameShape(QFrame::NoFrame);
     m_view->setWindowFlags(Qt::X11BypassWindowManagerHint);
     m_view->setAttribute(Qt::WA_TranslucentBackground);
+    setAttribute(Qt::WA_TranslucentBackground);
+    setStyleSheet("background:transparent;");
     QPalette pal = m_view->palette();
     pal.setColor(backgroundRole(), Qt::transparent);
     m_view->setPalette(pal);
