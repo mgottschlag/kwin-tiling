@@ -113,7 +113,7 @@ void KRunnerDialog::screenRemoved(int screen)
 
 void KRunnerDialog::screenGeometryChanged(Kephal::Screen* screen)
 {
-    if (screen->id() == m_shownOnScreen) {
+    if (isVisible() && screen->id() == m_shownOnScreen) {
         positionOnScreen();
     }
 }
