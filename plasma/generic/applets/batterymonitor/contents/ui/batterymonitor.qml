@@ -56,13 +56,13 @@ Item {
             onSleepClicked: {
                 dialog.visible=false
                 service = pmSource.serviceForSource("PowerDevil");
-                operation = service.operationDescription("suspend");
+                operation = service.operationDescription("suspendToRam");
                 service.startOperationCall(operation);
             }
             onHibernateClicked: {
                 dialog.visible=false
                 service = pmSource.serviceForSource("PowerDevil");
-                operation = service.operationDescription("hibernate");
+                operation = service.operationDescription("suspendToDisk");
                 service.startOperationCall(operation);
             }
             onBrightnessChanged: {

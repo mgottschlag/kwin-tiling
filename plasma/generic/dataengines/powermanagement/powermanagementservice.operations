@@ -8,4 +8,16 @@
     <group name="suspendToDisk"> </group>
     <group name="suspendHybrid"> </group>
     <group name="requestShutDown"> </group>
+
+    <group name="setBrightness">
+        <entry name="brightness" type="Int">
+          <label>The value of the screen brightness</label>
+        </entry>
+    </group>
+
+    <group name="setProfile">
+        <entry name="profile" type="String">
+          <label>The name of the power profile to load</label>
+        </entry>
+    </group>
 </kcfg>
