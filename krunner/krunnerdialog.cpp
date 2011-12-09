@@ -183,7 +183,7 @@ void KRunnerDialog::moveEvent(QMoveEvent *)
         m_customPos = pos();
     } else {
         const int screenWidth = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen).width();
-        m_offset = geometry().center().x() / qreal(screenWidth);
+        m_offset = qRound(geometry().center().x() / qreal(screenWidth) * 100) / 100.0;
     }
 }
 
