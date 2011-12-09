@@ -241,7 +241,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     // TODO: add option in systemsettings -> Startup and Shutdown -> Session Management
     // to select the qml theme.
     view->setSource(QUrl(KStandardDirs::locate("data", "ksmserver/qml/default.qml")));
-    view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    connect(view, SIGNAL(sceneResized(QSize)), SLOT(resizeFromView(QSize)));
     connect(view->rootObject(), SIGNAL(logoutRequested()), SLOT(slotLogout()));
     connect(view->rootObject(), SIGNAL(haltRequested()), SLOT(slotHalt()));
     connect(view->rootObject(), SIGNAL(suspendRequested(int)), SLOT(slotSuspend(int)) );
@@ -252,6 +252,11 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     view->show();
     m_screenViews << view;
     adjustSize();
+}
+
+void KSMShutdownDlg::resizeFromView(const QSize &newSize)
+{
+    resize(newSize);
 }
 
 KSMShutdownDlg::~KSMShutdownDlg()

@@ -101,6 +101,9 @@ private:
     QStringList m_rebootOptions;
     Plasma::FrameSvg* m_svg;
     QList<QDeclarativeView*> m_screenViews;
+
+private Q_SLOTS:
+    void resizeFromView(const QSize &newSize);
 };
 
 #endif

@@ -1,4 +1,3 @@
-// -*- coding: iso-8859-1 -*-
 /*
  *   Copyright 2011 Lamarque V. Souza <lamarque@kde.org>
  *
@@ -73,12 +72,8 @@ PlasmaCore.FrameSvgItem {
             buttonsLayout.anchors.rightMargin = 12
         }
 
-        if (background.naturalSize.width < 1) {
-            background.elementId = "background"
-        }
-
         if (leftPicture.naturalSize.width < 1) {
-            shutdownUi.width -= (buttonsLayout.width - 18)
+            background.elementId = "background"
         }
 
         //console.log("maysd("+maysd+") choose("+choose+") sdtype("+sdtype+")");
@@ -102,11 +97,6 @@ PlasmaCore.FrameSvgItem {
 
                 // TODO: add reboot menu
             }
-        } else {
-            shutdownButton.opacity = 0
-            standbyButton.opacity = 0
-            suspendToRamButton.opacity = 0
-            suspendToDiskButton.opacity = 0
         }
 
         timer.interval = 1000;
@@ -211,21 +201,45 @@ PlasmaCore.FrameSvgItem {
                 id: shutdownButton
                 text: i18n("Turn Off Computer")
                 iconSource: "system-shutdown"
-                height:32
+                height: 32
                 anchors.right: parent.right
                 visible: (choose || sdtype == ShutdownType.ShutdownTypeHalt)
 
                 onClicked: {
                     console.log("shutdownMenuRequested");
                     buttonColumn.visible = !buttonColumn.visible
+                    adjustSizeTimer.running = true
+                }
+            }
+
+            // Some themes do not adjust dialog size automatically, so update it manually.
+            Timer {
+                id: adjustSizeTimer
+                repeat: false
+                running: false
+                interval: 50
+
+                onTriggered: {
+                    shutdownUi.height = margins.top + automaticallyDoLabel.height + buttonsLayout.height + margins.bottom
+                    if (margins.left == 0) {
+                        shutdownUi.height += 16
+                    }
                 }
             }
 
             PlasmaComponents.ButtonColumn {
                 id: buttonColumn
                 visible: false
+
+                Component.onCompleted: {
+                    haltButton.width = buttonColumn.width
+                    standbyButton.width = buttonColumn.width
+                    sleepButton.width = buttonColumn.width
+                    hibernateButton.width = buttonColumn.width
+                }
+
                 PlasmaComponents.Button {
-                    id: shutdown
+                    id: haltButton
                     text: i18n("Turn Off Computer")
                     visible: shutdownButton.visible
                     onClicked: {
@@ -234,7 +248,7 @@ PlasmaCore.FrameSvgItem {
                     }
                 }
                 PlasmaComponents.Button {
-                    id: standby
+                    id: standbyButton
                     text: i18n("Standby")
                     visible: shutdownButton.visible && spdMethods.StandbyState
                     onClicked: {
@@ -243,7 +257,7 @@ PlasmaCore.FrameSvgItem {
                     }
                 }
                 PlasmaComponents.Button {
-                    id: sleep
+                    id: sleepButton
                     text: i18n("Suspend to RAM")
                     visible: shutdownButton.visible && spdMethods.SuspendState
                     onClicked: {
@@ -252,7 +266,7 @@ PlasmaCore.FrameSvgItem {
                     }
                 }
                 PlasmaComponents.Button {
-                    id: hibernate
+                    id: hibernateButton
                     text: i18n("Suspend to Disk")
                     visible: shutdownButton.visible && spdMethods.HibernateState
                     onClicked: {
@@ -266,7 +280,7 @@ PlasmaCore.FrameSvgItem {
                 id: rebootButton
                 text: i18n("Restart Computer")
                 iconSource: "system-reboot"
-                height:32
+                height: 32
                 anchors.right: parent.right
 
                 onClicked: {
