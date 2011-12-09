@@ -20,7 +20,6 @@
 
 import Qt 4.7
 import org.kde.plasma.core 0.1 as PlasmaCore
-import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 
 Item {
     id: batterymonitor
@@ -120,7 +119,7 @@ Item {
         anchors.fill: parent
         onClicked: {
             if (!dialog.visible) {
-                populateProfiles();
+                //populateProfiles();
                 var pos = dialog.popupPosition (batterymonitor, Qt.AlignCenter);
                 dialog.x = pos.x;
                 dialog.y = pos.y;

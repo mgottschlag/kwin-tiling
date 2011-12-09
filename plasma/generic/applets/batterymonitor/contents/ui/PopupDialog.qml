@@ -25,13 +25,13 @@ import org.kde.qtextracomponents 0.1
 
 Item {
     id: dialog
-    width: 387
-    height: 180
+    width: 400
+    height: 170
 
     property int percent
     property bool pluggedIn
     property alias screenBrightness: brightnessSlider.value
-    property alias currentProfileIndex: profiles.currentIndex
+    //property alias currentProfileIndex: profiles.currentIndex
 
     signal sleepClicked
     signal hibernateClicked
@@ -44,7 +44,7 @@ Item {
 
     Item {
         id: labels
-        width: parent.width/3
+        width: 170
         height: parent.height
         anchors {
             left: parent.left
@@ -75,10 +75,13 @@ Item {
 
         Text {
             id: profileLabel
-            text: "Power Profile:"
+            //text: "Power Profile:"
+            text: "Power management\nenabled:"
+            horizontalAlignment: Text.AlignRight
             anchors {
                 top: adapterLabel.bottom
                 topMargin: 10
+                left: parent.left
                 right: parent.right 
                 rightMargin: 10
             }
@@ -139,7 +142,7 @@ Item {
             }
         }
 
-        PlasmaWidgets.ComboBox {
+        /*PlasmaWidgets.ComboBox {
             id: profiles
             anchors {
                 left: parent.left
@@ -148,6 +151,15 @@ Item {
                 right: parent.right
             }
             onTextChanged: profileChanged(text)
+        }*/
+        Components.CheckBox {
+            id: profiles
+            checked: true
+            anchors {
+                left: parent.left
+                top: adapterValue.bottom
+                topMargin: 15
+            }
         }
 
         Components.Slider {
@@ -157,8 +169,8 @@ Item {
             stepSize: 10
             anchors {
                 left: parent.left
-                top: adapterValue.bottom
-                //topMargin: -5
+                top: profiles.bottom
+                topMargin: 6
                 right: parent.right
             }
             onValueChanged: brightnessChanged(value)
@@ -167,15 +179,14 @@ Item {
         IconButton {
             id: sleepButton
             icon: QIcon("system-suspend")
+            iconWidth: 22
+            iconHeight: 22
             text: "Sleep"
-            orientation: Qt.Horizontal
-            iconWidth: 32
-            iconHeight: 32
-            width: parent.width/2
             anchors {
                 left: parent.left
+                leftMargin: 15
                 top: brightnessSlider.bottom
-                bottom: parent.bottom
+                topMargin: 10
             }
             onClicked: sleepClicked()
         }
@@ -183,15 +194,14 @@ Item {
         IconButton {
             id: hibernateButton
             icon: QIcon("system-suspend-hibernate")
+            iconWidth: 22
+            iconHeight: 22
             text: "Hibernate"
-            orientation: Qt.Horizontal
-            iconWidth: 32
-            iconHeight: 32
-            width: parent.width/2
             anchors {
-                right: parent.right
+                left: sleepButton.right
+                leftMargin: 15
                 top: brightnessSlider.bottom
-                bottom: parent.bottom
+                topMargin: 10
             }
             onClicked: hibernateClicked()
         }

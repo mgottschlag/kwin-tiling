@@ -26,7 +26,8 @@ Item {
     property alias iconWidth: iconItem.width
     property alias iconHeight: iconItem.height
     property alias text: buttonText.text
-    property int orientation
+    width: iconItem.anchors.leftMargin + iconWidth + buttonText.anchors.leftMargin + buttonText.paintedWidth + 10
+    height: 10 + Math.max(iconHeight, buttonText.paintedHeight) + 10
 
     signal clicked()
 
@@ -34,33 +35,19 @@ Item {
         id: iconItem
         scale: mouseArea.pressed ? 0.9 : 1
         smooth: true
-        Component.onCompleted: {
-            if (orientation==Qt.Horizontal) {
-                anchors.verticalCenter = parent.verticalCenter;
-                anchors.left = parent.left;
-                anchors.leftMargin = 5;
-            }
-            else if (orientation==Qt.Vertical) {
-                anchors.horizontalCenter = parent.horizontalCenter;
-                anchors.top = parent.top;
-                anchors.topMargin = 5;
-            }
+        anchors {
+            verticalCenter: parent.verticalCenter
+            left: parent.left
+            leftMargin: 10
         }
     }
 
     Text {
         id: buttonText
-        Component.onCompleted: {
-            if (orientation==Qt.Horizontal) {
-                anchors.verticalCenter = parent.verticalCenter;
-                anchors.left = iconItem.right;
-                anchors.leftMargin = 5;
-            }
-            else if (orientation==Qt.Vertical) {
-                anchors.horizontalCenter = parent.horizontalCenter;
-                anchors.top = iconItem.bottom;
-                anchors.topMargin = 5;
-            }
+        anchors {
+            verticalCenter: parent.verticalCenter
+            left: iconItem.right
+            leftMargin: 5
         }
     }
 
