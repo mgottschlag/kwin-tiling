@@ -188,8 +188,8 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     KDialog::centerOnScreen(this, -3);
 
     //kDebug() << "Creating QML view";
-    QDeclarativeView *view = new QDeclarativeView(this);
-    QDeclarativeContext *context = view->rootContext();
+    m_view = new QDeclarativeView(this);
+    QDeclarativeContext *context = m_view->rootContext();
     context->setContextProperty("maysd", maysd);
     context->setContextProperty("choose", choose);
     context->setContextProperty("sdtype", sdtype);
@@ -214,60 +214,43 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     setModal( true );
 
     // window stuff
-    view->setFrameShape(QFrame::NoFrame);
-    view->setWindowFlags(Qt::X11BypassWindowManagerHint);
-    view->setAttribute(Qt::WA_TranslucentBackground);
-    QPalette pal = view->palette();
+    m_view->setFrameShape(QFrame::NoFrame);
+    m_view->setWindowFlags(Qt::X11BypassWindowManagerHint);
+    m_view->setAttribute(Qt::WA_TranslucentBackground);
+    QPalette pal = m_view->palette();
     pal.setColor(backgroundRole(), Qt::transparent);
-    view->setPalette(pal);
-    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_view->setPalette(pal);
+    m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     // engine stuff
     foreach(const QString &importPath, KGlobal::dirs()->findDirs("module", "imports")) {
-        view->engine()->addImportPath(importPath);
+        m_view->engine()->addImportPath(importPath);
     }
     KDeclarative kdeclarative;
-    kdeclarative.setDeclarativeEngine(view->engine());
+    kdeclarative.setDeclarativeEngine(m_view->engine());
     kdeclarative.initialize();
     kdeclarative.setupBindings();
-    view->installEventFilter(this);
-
-    m_svg = new Plasma::FrameSvg(this);
-    m_svg->setImagePath("dialogs/shutdowndialog");
-    qreal left, top, right, bottom;
-    m_svg->getMargins(left, top, right, bottom);
-    view->setContentsMargins(left, top, right, bottom);
+    m_view->installEventFilter(this);
 
     // TODO: add option in systemsettings -> Startup and Shutdown -> Session Management
     // to select the qml theme.
-    view->setSource(QUrl(KStandardDirs::locate("data", "ksmserver/qml/default.qml")));
-    connect(view, SIGNAL(sceneResized(QSize)), SLOT(resizeFromView(QSize)));
-    connect(view->rootObject(), SIGNAL(logoutRequested()), SLOT(slotLogout()));
-    connect(view->rootObject(), SIGNAL(haltRequested()), SLOT(slotHalt()));
-    connect(view->rootObject(), SIGNAL(suspendRequested(int)), SLOT(slotSuspend(int)) );
-    connect(view->rootObject(), SIGNAL(rebootRequested()), SLOT(slotReboot()));
-    connect(view->rootObject(), SIGNAL(rebootRequested2(int)), SLOT(slotReboot(int)) );
-    connect(view->rootObject(), SIGNAL(cancelRequested()), SLOT(reject()));
-    connect(view->rootObject(), SIGNAL(lockScreenRequested()), SLOT(slotLockScreen()));
-    view->show();
-    m_screenViews << view;
+    m_view->setSource(QUrl(KStandardDirs::locate("data", "ksmserver/qml/default.qml")));
+    setFocus();
+    connect(m_view, SIGNAL(sceneResized(QSize)), SLOT(resizeFromView(QSize)));
+    connect(m_view->rootObject(), SIGNAL(logoutRequested()), SLOT(slotLogout()));
+    connect(m_view->rootObject(), SIGNAL(haltRequested()), SLOT(slotHalt()));
+    connect(m_view->rootObject(), SIGNAL(suspendRequested(int)), SLOT(slotSuspend(int)) );
+    connect(m_view->rootObject(), SIGNAL(rebootRequested()), SLOT(slotReboot()));
+    connect(m_view->rootObject(), SIGNAL(rebootRequested2(int)), SLOT(slotReboot(int)) );
+    connect(m_view->rootObject(), SIGNAL(cancelRequested()), SLOT(reject()));
+    connect(m_view->rootObject(), SIGNAL(lockScreenRequested()), SLOT(slotLockScreen()));
+    m_view->show();
     adjustSize();
 }
 
 void KSMShutdownDlg::resizeFromView(const QSize &newSize)
 {
     resize(newSize);
-}
-
-KSMShutdownDlg::~KSMShutdownDlg()
-{
-    foreach (QDeclarativeView *v, m_screenViews) {
-        //kDebug() << "Deleting QML view" << v->source();
-        v->hide();
-        delete v;
-    }
-    m_screenViews.clear();
-
 }
 
 void KSMShutdownDlg::resizeEvent(QResizeEvent *e)
@@ -277,7 +260,7 @@ void KSMShutdownDlg::resizeEvent(QResizeEvent *e)
     if( KWindowSystem::compositingActive()) {
         clearMask();
     } else {
-        setMask(m_svg->mask());
+        setMask(m_view->mask());
     }
 
     KDialog::centerOnScreen(this, -3);

@@ -91,7 +91,6 @@ public Q_SLOTS:
     void slotLockScreen();
 
 protected:
-    ~KSMShutdownDlg();
     void resizeEvent(QResizeEvent *e);
 
 private:
@@ -99,8 +98,7 @@ private:
     KWorkSpace::ShutdownType m_shutdownType;
     QString m_bootOption;
     QStringList m_rebootOptions;
-    Plasma::FrameSvg* m_svg;
-    QList<QDeclarativeView*> m_screenViews;
+    QDeclarativeView* m_view;
 
 private Q_SLOTS:
     void resizeFromView(const QSize &newSize);
