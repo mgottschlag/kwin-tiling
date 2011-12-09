@@ -47,8 +47,9 @@
 #include <Plasma/ToolTipManager>
 #include <Plasma/Animator>
 
+#include <KActivities/Consumer>
+
 #include <kephal/screens.h>
-#include <kworkspace/kactivityconsumer.h>
 
 #include <taskmanager/task.h>
 
@@ -168,7 +169,7 @@ void Pager::init()
 
     m_currentDesktop = KWindowSystem::currentDesktop();
 
-    KActivityConsumer *act = new KActivityConsumer(this);
+    KActivities::Consumer *act = new KActivities::Consumer(this);
     connect(act, SIGNAL(currentActivityChanged(QString)), this, SLOT(currentActivityChanged(QString)));
     m_currentActivity = act->currentActivity();
 
@@ -583,7 +584,7 @@ void Pager::recalculateWindowRects()
         unsigned long properties[] = { 0, NET::WM2Activities };
         NETWinInfo netInfo(QX11Info::display(), window, QX11Info::appRootWindow(), properties, 2);
         QString result(netInfo.activities());
-        if (!result.isEmpty()) {
+        if (!result.isEmpty() && result != "ALL") {
             QStringList activities = result.split(',');
             if (!activities.contains(m_currentActivity)) {
                 continue;
@@ -935,10 +936,10 @@ void Pager::handleHoverMove(const QPointF& pos)
             m_animations[m_hoverIndex]->setAnimation(animation);
         }
 
-        animation->setProperty("duration", s_FadeOutDuration);
-        animation->setProperty("easingCurve", QEasingCurve::OutQuad);
-        animation->setProperty("startValue", 1.0);
-        animation->setProperty("endValue", 0.0);
+        animation->setDuration(s_FadeOutDuration);
+        animation->setEasingCurve(QEasingCurve::OutQuad);
+        animation->setStartValue(1);
+        animation->setEndValue(0);
         animation->start(QAbstractAnimation::DeleteWhenStopped);
     }
 
@@ -957,10 +958,10 @@ void Pager::handleHoverMove(const QPointF& pos)
                     m_animations[m_hoverIndex]->setAnimation(animation);
                 }
 
-                animation->setProperty("duration", s_FadeInDuration);
-                animation->setProperty("easingCurve", QEasingCurve::InQuad);
-                animation->setProperty("startValue", 0.0);
-                animation->setProperty("endValue", 1.0);
+                animation->setDuration(s_FadeInDuration);
+                animation->setEasingCurve(QEasingCurve::InQuad);
+                animation->setStartValue(0);
+                animation->setEndValue(1);
                 animation->start(QAbstractAnimation::DeleteWhenStopped);
 
                 update();
@@ -970,6 +971,8 @@ void Pager::handleHoverMove(const QPointF& pos)
         }
         ++i;
     }
+
+    m_hoverIndex = -1;
     m_hoverRect = QRectF();
     update();
 }
@@ -992,11 +995,12 @@ void Pager::handleHoverLeave()
             m_animations[m_hoverIndex]->setAnimation(animation);
         }
 
-        animation->setProperty("duration", s_FadeOutDuration);
-        animation->setProperty("easingCurve", QEasingCurve::OutQuad);
-        animation->setProperty("startValue", 1.0);
-        animation->setProperty("endValue", 0.0);
         animation->start(QAbstractAnimation::DeleteWhenStopped);
+        animation->setDuration(s_FadeOutDuration);
+        animation->setEasingCurve(QEasingCurve::OutQuad);
+        animation->setStartValue(1);
+        animation->setEndValue(0);
+        m_hoverIndex = -1;
     }
 
     // The applet doesn't always get mouseReleaseEvents, for example when starting a drag

@@ -49,7 +49,6 @@ ControllerWindow::ControllerWindow(QWidget* parent)
      m_layout(new QBoxLayout(QBoxLayout::TopToBottom, this)),
      m_background(new Plasma::FrameSvg(this)),
      m_screen(-1),
-     m_corona(0),
      m_view(0),
      m_watchedWidget(0),
      m_activityManager(0),
@@ -77,7 +76,7 @@ ControllerWindow::ControllerWindow(QWidget* parent)
 
     m_layout->setContentsMargins(0, 0, 0, 0);
 
-    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(onActiveWindowChanged(WId)));
+    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(closeIfNotFocussed()));
     connect(m_background, SIGNAL(repaintNeeded()), SLOT(backgroundChanged()));
     Kephal::Screens *screens = Kephal::Screens::self();
     connect(screens, SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)),
@@ -90,21 +89,14 @@ ControllerWindow::ControllerWindow(QWidget* parent)
 
 ControllerWindow::~ControllerWindow()
 {
-
-    if (m_activityManager) {
-        if (m_corona) {
-            m_corona->removeOffscreenWidget(m_activityManager);
-        }
-        //FIXME the qt4.6 comment below applies here too
-    }
-    if (m_widgetExplorer) {
-        if (m_corona) {
-            m_corona->removeOffscreenWidget(m_widgetExplorer);
+    Plasma::Corona *corona = PlasmaApp::self()->corona(false);
+    if (corona) {
+        if (m_activityManager) {
+            corona->removeOffscreenWidget(m_activityManager);
         }
 
-        if (m_widgetExplorer->scene()) {
-            //FIXME: causes a crash in Qt 4.6 *sigh*
-            //m_widgetExplorer->scene()->removeItem(m_widgetExplorer);
+        if (m_widgetExplorer) {
+            corona->removeOffscreenWidget(m_widgetExplorer);
         }
     }
 
@@ -149,7 +141,6 @@ void ControllerWindow::setContainment(Plasma::Containment *containment)
         return;
     }
 
-    m_corona = containment->corona();
     m_screen = containment->screen();
 
     if (m_widgetExplorer) {
@@ -402,7 +393,7 @@ void ControllerWindow::showWidgetExplorer()
         connect(activityAction, SIGNAL(triggered()), this, SLOT(showActivityManager()));
         m_widgetExplorer->addAction(activityAction);
 
-        m_containment.data()->corona()->addOffscreenWidget(m_widgetExplorer);
+        PlasmaApp::self()->corona()->addOffscreenWidget(m_widgetExplorer);
         m_widgetExplorer->show();
 
         m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
@@ -436,7 +427,7 @@ void ControllerWindow::showActivityManager()
         m_activityManager = new ActivityManager(location());
         m_watchedWidget = m_activityManager;
 
-        m_corona->addOffscreenWidget(m_activityManager);
+        PlasmaApp::self()->corona()->addOffscreenWidget(m_activityManager);
         m_activityManager->show();
 
         if (orientation() == Qt::Horizontal) {
@@ -486,18 +477,16 @@ void ControllerWindow::setScreen(int screen)
     m_screen = screen;
 }
 
-void ControllerWindow::onActiveWindowChanged(WId id)
-{
-    Q_UNUSED(id)
-
-    // Small delay when closing due to lost focus
-    QTimer::singleShot(300, this, SLOT(closeIfNotFocussed()));
-}
-
 void ControllerWindow::closeIfNotFocussed()
 {
-    if (!QApplication::activeWindow()) {
+    QWidget *widget = QApplication::activeWindow();
+    if (!widget) {
         close();
+    } else if (widget != this) {
+        KWindowInfo info(widget->winId(), NET::WMWindowType);
+        if (info.windowType(NET::DesktopMask | NET::DockMask | NET::PopupMenuMask) == -1) {
+            close();
+        }
     }
 }
 

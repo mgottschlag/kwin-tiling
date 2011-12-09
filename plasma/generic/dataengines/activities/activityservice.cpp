@@ -20,16 +20,14 @@
 #include "activityservice.h"
 #include "activityjob.h"
 
-
-ActivityService::ActivityService(KActivityController *controller, const QString &source)
-    :m_activityController(controller),
-    m_id(source)
+ActivityService::ActivityService(KActivities::Controller *controller, const QString &source)
+    : m_activityController(controller),
+      m_id(source)
 {
     setName("activities");
 }
 
-ServiceJob *ActivityService::createJob(const QString &operation,
-                                           QMap<QString, QVariant> &parameters)
+ServiceJob *ActivityService::createJob(const QString &operation, QMap<QString, QVariant> &parameters)
 {
     return new ActivityJob(m_activityController, m_id, operation, parameters, this);
 }

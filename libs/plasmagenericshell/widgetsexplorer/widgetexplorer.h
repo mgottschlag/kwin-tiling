@@ -106,11 +106,6 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     /**
-     * Adds currently selected applets
-     */
-    void addApplet();
-
-    /**
      * Adds applet
      */
     void addApplet(PlasmaAppletItem *appletItem);

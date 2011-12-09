@@ -355,19 +355,6 @@ Plasma::Corona *WidgetExplorer::corona() const
     return 0;
 }
 
-void WidgetExplorer::addApplet()
-{
-    if (!d->containment) {
-        return;
-    }
-
-    foreach (AbstractItem *item, d->appletsListWidget->selectedItems()) {
-        PlasmaAppletItem *selectedItem = (PlasmaAppletItem *) item;
-        kDebug() << "Adding applet " << selectedItem->name() << "to containment";
-        d->containment->addApplet(selectedItem->pluginName());
-    }
-}
-
 void WidgetExplorer::addApplet(PlasmaAppletItem *appletItem)
 {
     if (!d->containment || !appletItem) {

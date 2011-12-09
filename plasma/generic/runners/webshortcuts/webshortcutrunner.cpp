@@ -121,7 +121,7 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
     // filtering
     if (m_lastKey == key) {
         m_filterBeforeRun = true;
-        m_match.setText(i18n("Search %1 for %2", m_lastProvider, term.mid(delimIndex)));
+        m_match.setText(i18n("Search %1 for %2", m_lastProvider, term.mid(delimIndex + 1)));
         context.addMatch(term, m_match);
         return;
     }

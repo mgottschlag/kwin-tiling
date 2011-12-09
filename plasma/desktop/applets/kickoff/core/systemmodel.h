@@ -24,8 +24,38 @@
 #include "core/kickoff_export.h"
 #include "core/kickoffproxymodel.h"
 
+#include <QThread>
+
 namespace Kickoff
 {
+
+struct UsageInfo {
+    UsageInfo()
+        : used(0),
+          available(0)
+     {}
+
+    quint64 used;
+    quint64 available;
+};
+
+class UsageFinder : public QThread
+{
+    Q_OBJECT
+
+public:
+    UsageFinder(QObject *parent);
+    void add(int index, const QString &mountPoint);
+
+Q_SIGNALS:
+    void usageInfo(int index, const QString &mountPoint, const UsageInfo &usageInfo);
+
+protected:
+    void run();
+
+private:
+    QList<QPair<int, QString> > m_toCheck;
+};
 
 /**
  * Model which provides a tree of items for important system setup tools (eg. System Settings) ,
@@ -52,13 +82,15 @@ public:
     void stopRefreshingUsageInfo();
 
 private Q_SLOTS:
-    void refreshNextUsageInfo();
+    void startUsageInfoFetch();
     void reloadApplications();
     void sourceDataChanged(const QModelIndex &start, const QModelIndex &end);
     void sourceRowsAboutToBeInserted(const QModelIndex &parent, int start, int end);
     void sourceRowsInserted(const QModelIndex &parent, int start, int end);
     void sourceRowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
     void sourceRowsRemoved(const QModelIndex &parent, int start, int end);
+    void setUsageInfo(int index, const QString &mountPoint, const UsageInfo &usageInfo);
+    void usageFinderFinished();
 
 private:
     class Private;

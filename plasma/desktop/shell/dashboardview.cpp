@@ -94,7 +94,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *vie
       m_zoomOut(false),
       m_init(false)
 {
-    //setContextMenuPolicy(Qt::NoContextMenu);
+    setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint);
     setWallpaperEnabled(!PlasmaApp::hasComposite());
     if (!PlasmaApp::hasComposite()) {
@@ -138,13 +138,9 @@ void DashboardView::drawBackground(QPainter *painter, const QRectF & rect)
 {
     if (PlasmaApp::hasComposite()) {
         painter->setCompositionMode(QPainter::CompositionMode_Source);
- 
-	// KWin dahsboard plugin draws its own background for the dashboard
-        if (!Plasma::WindowEffects::isEffectAvailable(Plasma::WindowEffects::Dashboard)) {
-            painter->fillRect(rect, QColor(0, 0, 0, 180));
-        } else {
-            painter->fillRect(rect, QColor(0, 0, 0, 0));
-	}
+        const bool kwin = Plasma::WindowEffects::isEffectAvailable(Plasma::WindowEffects::Dashboard);
+        // Note: KWin dahsboard plugin draws its own background for the dashboard
+        painter->fillRect(rect, QColor(0, 0, 0, kwin ? 0 : 180));
     } else {
         Plasma::View::drawBackground(painter, rect);
     }
@@ -229,17 +225,6 @@ bool DashboardView::eventFilter(QObject *watched, QEvent *event)
     }
 
     return false;
-}
-
-bool DashboardView::event(QEvent *event)
-{
-    if (event->type() == QEvent::Paint) {
-        QPainter p(this);
-        p.setCompositionMode(QPainter::CompositionMode_Source);
-        p.fillRect(rect(), Qt::transparent);
-    }
-
-    return Plasma::View::event(event);
 }
 
 void DashboardView::toggleVisibility()

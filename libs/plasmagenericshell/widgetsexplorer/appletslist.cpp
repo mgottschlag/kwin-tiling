@@ -44,12 +44,12 @@ AppletsListWidget::AppletsListWidget(Plasma::Location location, QGraphicsItem *p
 {
     toolTipMoveTimeLine.setFrameRange(0, 100);
     toolTipMoveTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
-    toolTipMoveTimeLine.setDuration(500);
+    toolTipMoveTimeLine.setDuration(250);
     connect(&toolTipMoveTimeLine, SIGNAL(frameChanged(int)),
             this, SLOT(toolTipMoveTimeLineFrameChanged(int)));
 
     //init tooltip
-    m_toolTip = new AppletToolTipWidget();
+    m_toolTip = new AppletToolTipWidget(location);
     m_toolTip->setVisible(false);
     connect(m_toolTip, SIGNAL(enter()), this, SLOT(onToolTipEnter()));
     connect(m_toolTip, SIGNAL(leave()), this, SLOT(onToolTipLeave()));
@@ -74,8 +74,11 @@ void AppletsListWidget::setItemModel(PlasmaAppletItemModel *model)
 
     connect(m_modelFilterItems, SIGNAL(searchTermChanged(QString)), this, SLOT(updateList()));
     connect(m_modelFilterItems, SIGNAL(filterChanged()), this, SLOT(updateList()));
+    connect(m_modelItems, SIGNAL(rowsInserted(QModelIndex,int,int)),
+            this, SLOT(rowsInserted(QModelIndex,int,int)));
     connect(m_modelItems, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)),
             this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int)));
+    connect(m_modelItems, SIGNAL(modelPopulated()), this, SLOT(populateAllAppletsHash()));
 
     updateList();
 }
@@ -136,11 +139,8 @@ QVariant AppletsListWidget::itemChange(GraphicsItemChange change, const QVariant
 void AppletsListWidget::appletIconHoverEnter(Plasma::AbstractIcon *icon)
 {
     AppletIconWidget *applet = static_cast<AppletIconWidget*>(icon);
-    if (!m_toolTip->isVisible()) {
-        m_toolTip->setAppletIconWidget(applet);
-        m_toolTipAppearTimer.start(TOOLTIP_APPEAR_DELAY, this);
-    } else {
-        if(m_toolTip->appletIconWidget()->appletItem() &&
+    if (m_toolTip->isVisible()) {
+        if (m_toolTip->appletIconWidget()->appletItem() &&
             !(m_toolTip->appletIconWidget()->appletItem()->pluginName() ==
             applet->appletItem()->pluginName())) {
             m_toolTip->setAppletIconWidget(applet);
@@ -150,6 +150,9 @@ void AppletsListWidget::appletIconHoverEnter(Plasma::AbstractIcon *icon)
             m_toolTipAppearWhenAlreadyVisibleTimer.start(TOOLTIP_APPEAR_WHEN_VISIBLE_DELAY, this);
         }
         m_toolTipDisappearTimer.stop();
+    } else {
+        m_toolTip->setAppletIconWidget(applet);
+        m_toolTipAppearTimer.start(TOOLTIP_APPEAR_DELAY, this);
     }
 }
 
@@ -294,15 +297,16 @@ void AppletsListWidget::setToolTipPosition()
 
 AppletIconWidget *AppletsListWidget::createAppletIcon(PlasmaAppletItem *appletItem)
 {
+    kDebug() << "adding an applet icon for" << appletItem;
     AppletIconWidget *applet = new AppletIconWidget(appletItem);
+    kDebug() << "adding";
     addIcon(applet);
+    kDebug() << "complete";
 
     connect(applet, SIGNAL(hoverEnter(Plasma::AbstractIcon*)), this, SLOT(appletIconHoverEnter(Plasma::AbstractIcon*)));
     connect(applet, SIGNAL(hoverLeave(Plasma::AbstractIcon*)), this, SLOT(appletIconHoverLeave(Plasma::AbstractIcon*)));
     connect(applet, SIGNAL(dragging(Plasma::AbstractIcon*)), this, SLOT(appletIconDragging(Plasma::AbstractIcon*)));
     connect(applet, SIGNAL(doubleClicked(Plasma::AbstractIcon*)), this, SLOT(appletIconDoubleClicked(Plasma::AbstractIcon*)));
-    //FIXME no such signal, needs implementing?
-    //connect(applet, SIGNAL(dragStarted(AbstractIcon*)), m_toolTip, SLOT(hide()));
 
     return applet;
 }
@@ -352,14 +356,19 @@ void AppletsListWidget::toolTipMoveTimeLineFrameChanged(int frame)
 
 void AppletsListWidget::populateAllAppletsHash()
 {
-    qDeleteAll(m_allAppletsHash);
+    foreach (Plasma::AbstractIcon *icon, m_allAppletsHash) {
+        removeIcon(icon);
+        delete icon;
+    }
     m_allAppletsHash.clear();
 //FIXME only the ones matching the filter? okay, the filter matches everything at the start but
 //this still feels Wrong.
     const int indexesCount = m_modelFilterItems->rowCount();
     for (int i = 0; i < indexesCount ; i++) {
         PlasmaAppletItem *appletItem = static_cast<PlasmaAppletItem*>(getItemByProxyIndex(m_modelFilterItems->index(i, 0)));
-        m_allAppletsHash.insert(appletItem->id(), createAppletIcon(appletItem));
+        if (appletItem) {
+            m_allAppletsHash.insert(appletItem->id(), createAppletIcon(appletItem));
+        }
     }
 }
 
@@ -368,14 +377,6 @@ AbstractItem *AppletsListWidget::getItemByProxyIndex(const QModelIndex &index) c
     return (AbstractItem *)m_modelItems->itemFromIndex(m_modelFilterItems->mapToSource(index));
 }
 
-QList <AbstractItem *> AppletsListWidget::selectedItems() const
-{
-//    return m_appletList->selectedItems();
-//FIXME kill this after removing deps
-    return QList<AbstractItem *>();
-}
-
-//when the crap is *this* called?
 void AppletsListWidget::rowsAboutToBeRemoved(const QModelIndex& parent, int row, int column)
 {
     Q_UNUSED(parent)

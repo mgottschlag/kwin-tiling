@@ -34,8 +34,10 @@ ActionDataGroup::ActionDataGroup(
 
 ActionDataGroup::~ActionDataGroup()
     {
-    qDeleteAll(_list);
-    _list.clear();
+    while (!_list.isEmpty())
+        {
+        delete _list.takeFirst();
+        }
     }
 
 

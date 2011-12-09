@@ -3,7 +3,7 @@ project(KDEBASE_WORKSPACE)
 # Used e.g. in KDE4WorkspaceConfig.cmake, Alex
 set(KDE4WORKSPACE_VERSION_MAJOR 4)
 set(KDE4WORKSPACE_VERSION_MINOR 7)
-set(KDE4WORKSPACE_VERSION_PATCH 80)
+set(KDE4WORKSPACE_VERSION_PATCH 90)
 set(KDE4WORKSPACE_VERSION ${KDE4WORKSPACE_VERSION_MAJOR}.${KDE4WORKSPACE_VERSION_MINOR}.${KDE4WORKSPACE_VERSION_PATCH} )
 
 
@@ -20,6 +20,7 @@ find_package(ZLIB REQUIRED)
 find_package(KActivities REQUIRED)
 find_package(DBusMenuQt 0.6.0 REQUIRED)
 find_package(QImageBlitz REQUIRED)
+find_package(KActivities REQUIRED)
 macro_optional_find_package(OpenGL)
 macro_optional_find_package(OpenGLES)
 
@@ -119,7 +120,7 @@ configure_file(config-workspace.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-works
 
 add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DHAVE_CONFIG_H=1)
 add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
-include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${KACTIVITIES_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/libs)
+include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${KACTIVITIES_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/libs)
 
 add_definitions(-DDISABLE_NEPOMUK_LEGACY)
 

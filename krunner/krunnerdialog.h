@@ -45,7 +45,8 @@ class KRunnerDialog : public QWidget
         void setFreeFloating(bool floating);
         bool freeFloating() const;
 
-        bool isManualResizing() const;
+        enum ResizeMode { NotResizing = 0, VerticalResizing, HorizontalResizing };
+        ResizeMode manualResizing() const;
         virtual void setConfigWidget(QWidget *w) = 0;
 
     public Q_SLOTS:

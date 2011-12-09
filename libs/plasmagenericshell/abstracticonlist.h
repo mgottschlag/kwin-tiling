@@ -63,6 +63,7 @@ protected:
      * this could do with some cleanup still.
      */
     void addIcon(AbstractIcon *applet);
+    void removeIcon(AbstractIcon *applet);
 
     void showIcon(AbstractIcon *icon);
 

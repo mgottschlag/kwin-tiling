@@ -259,7 +259,6 @@ void PlasmaApp::createWaitingViews()
             
             KConfigGroup viewIds(KGlobal::config(), "ViewIds");
             
-            const int id = viewIds.readEntry(QString::number(containment->id()), 0);
             // we have a new screen. neat.
             SaverView *view = viewForScreen(containment->screen());
             if (view) {

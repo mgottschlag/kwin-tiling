@@ -377,10 +377,9 @@ void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
     }
 
     m_group = group;
-    m_abstractItem = group;
+    setAbstractItem(group);
 
-    if (m_group) {
-        connect(m_abstractItem, SIGNAL(destroyed(QObject*)), this, SLOT(clearAbstractItem()));
+    if (group) {
         connect(group, SIGNAL(destroyed(QObject*)), this, SLOT(clearGroup()));
         connect(group, SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(itemRemoved(AbstractGroupableItem*)));
         connect(group, SIGNAL(itemAdded(AbstractGroupableItem*)), this, SLOT(itemAdded(AbstractGroupableItem*)));
@@ -577,6 +576,7 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractGroupableItem * groupableIt
 
         if (m_popupDialog && m_popupDialog->isVisible() && 
             m_applet->containment() && m_applet->containment()->corona()) {
+            m_popupDialog->syncToGraphicsWidget();
             m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size(), Qt::AlignCenter));
         }
     }
@@ -722,10 +722,7 @@ void TaskGroupItem::popupMenu()
         m_offscreenWidget->layout()->activate();
         m_offscreenWidget->resize(m_offscreenWidget->effectiveSizeHint(Qt::PreferredSize));
         m_popupDialog->syncToGraphicsWidget();
-
-        if (m_applet->containment() && m_applet->containment()->corona()) {
-            m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size(), Qt::AlignCenter));
-        }
+        m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size(), Qt::AlignCenter));
         KWindowSystem::setState(m_popupDialog->winId(), NET::SkipTaskbar| NET::SkipPager);
         if (m_applet->location() != Plasma::Floating) {
             m_popupDialog->animatedShow(Plasma::locationToDirection(m_applet->location()));

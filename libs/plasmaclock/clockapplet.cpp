@@ -278,7 +278,7 @@ void ClockApplet::updateTipContent()
     tzs.append(data);
     bool highlightLocal = false;
 
-    const bool hasEvents = d->calendarWidget->dateHasDetails(localDate);
+    const bool hasEvents = d->calendarWidget ? d->calendarWidget->dateHasDetails(localDate) : false;
     tipData.setMainText(hasEvents ? i18n("Current Time and Events") : i18n("Current Time"));
 
     foreach (const QString &tz, d->selectedTimezones) {
@@ -308,9 +308,7 @@ void ClockApplet::updateTipContent()
 
     // query for custom content
     Plasma::ToolTipContent customContent = toolTipContent();
-    if (customContent.image().isNull()) {
-        tipData.setImage(KIcon(icon()).pixmap(IconSize(KIconLoader::Desktop)));
-    } else {
+    if (!customContent.image().isNull()) {
         tipData.setImage(customContent.image());
     }
 

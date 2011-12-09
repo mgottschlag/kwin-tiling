@@ -93,6 +93,9 @@ public:
 
     QString &Application();
 
+Q_SIGNALS:
+    void modelPopulated();
+
 private:
     QString m_application;
     QStringList m_favorites;

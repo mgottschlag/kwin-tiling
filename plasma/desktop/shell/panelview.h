@@ -204,9 +204,6 @@ protected:
     void moveEvent(QMoveEvent *event);
     void resizeEvent(QResizeEvent *event);
     void leaveEvent(QEvent *event);
-    void drawBackground(QPainter * painter, const QRectF & rect);
-    void paintEvent(QPaintEvent *event);
-    bool event(QEvent *event);
     void dragLeaveEvent(QDragLeaveEvent *event);
     void dropEvent(QDropEvent *event);
 

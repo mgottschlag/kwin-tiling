@@ -277,9 +277,15 @@ bool KRunnerDialog::freeFloating() const
     return m_floating;
 }
 
-bool KRunnerDialog::isManualResizing() const
+KRunnerDialog::ResizeMode KRunnerDialog::manualResizing() const
 {
-    return m_resizing;
+    if (!m_resizing) {
+        return NotResizing;
+    } else if (m_vertResize) {
+        return VerticalResizing;
+    } else {
+        return HorizontalResizing;
+    }
 }
 
 void KRunnerDialog::setStaticQueryMode(bool staticQuery)

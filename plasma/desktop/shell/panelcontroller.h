@@ -64,6 +64,9 @@ public:
 
     void switchToController();
 
+public Q_SLOTS:
+    virtual void closeIfNotFocussed();
+
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
     void focusOutEvent(QFocusEvent *event);
@@ -72,9 +75,6 @@ protected:
     void showEvent(QShowEvent *event);
 
 Q_SIGNALS:
-    /**
-     * Emitted when the controller requests an add widgets dialog is shown.
-     */
      void offsetChanged(int offset);
      void alignmentChanged(Qt::Alignment);
      void locationChanged(Plasma::Location);

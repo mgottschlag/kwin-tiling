@@ -44,13 +44,14 @@
 #include <Plasma/DataEngineManager>
 #include <Plasma/Package>
 
+#include <KActivities/Controller>
+#include <KActivities/Info>
+
 #include <kephal/screens.h>
 
 #include <scripting/layouttemplatepackagestructure.h>
 
 #include "activity.h"
-#include "kworkspace/kactivitycontroller.h"
-#include "kworkspace/kactivityinfo.h"
 #include "panelview.h"
 #include "plasmaapp.h"
 #include "plasma-shell-desktop.h"
@@ -62,7 +63,7 @@ DesktopCorona::DesktopCorona(QObject *parent)
     : Plasma::Corona(parent),
       m_addPanelAction(0),
       m_addPanelsMenu(0),
-      m_activityController(new KActivityController(this))
+      m_activityController(new KActivities::Controller(this))
 {
     init();
 }
@@ -569,9 +570,9 @@ void DesktopCorona::checkActivities()
 {
     kDebug() << "containments to start with" << containments().count();
 
-    KActivityConsumer::ServiceStatus status = m_activityController->serviceStatus();
+    KActivities::Consumer::ServiceStatus status = m_activityController->serviceStatus();
     //kDebug() << "$%$%$#%$%$%Status:" << status;
-    if (status == KActivityConsumer::NotRunning) {
+    if (status == KActivities::Consumer::NotRunning) {
         //panic and give up - better than causing a mess
         kDebug() << "No ActivityManager? Help, I've fallen and I can't get up!";
         return;
@@ -701,7 +702,7 @@ void DesktopCorona::activityRemoved(const QString &id)
 
 void DesktopCorona::activateNextActivity()
 {
-    QStringList list = m_activityController->listActivities(KActivityInfo::Running);
+    QStringList list = m_activityController->listActivities(KActivities::Info::Running);
     if (list.isEmpty()) {
         return;
     }
@@ -715,7 +716,7 @@ void DesktopCorona::activateNextActivity()
 
 void DesktopCorona::activatePreviousActivity()
 {
-    QStringList list = m_activityController->listActivities(KActivityInfo::Running);
+    QStringList list = m_activityController->listActivities(KActivities::Info::Running);
     if (list.isEmpty()) {
         return;
     }

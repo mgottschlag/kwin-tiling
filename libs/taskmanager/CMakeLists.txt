@@ -2,8 +2,6 @@ add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1204)
 
 ########### next target ###############
 
-include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kworkspace)
-
 set(taskmanager_LIB_SRCS
    abstractgroupableitem.cpp
    abstractgroupingstrategy.cpp
@@ -36,7 +34,7 @@ endif(WIN32)
 
 kde4_add_library(taskmanager SHARED ${taskmanager_LIB_SRCS})
 
-target_link_libraries(taskmanager processcore ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES})
+target_link_libraries(taskmanager processcore ${KACTIVITIES_LIBRARY} ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES})
 if (X11_Xfixes_FOUND)
   target_link_libraries(taskmanager ${X11_Xfixes_LIB})
 endif (X11_Xfixes_FOUND)
@@ -51,8 +49,6 @@ if (NOT KDE_PLATFORM_FEATURE_BINARY_COMPATIBLE_FEATURE_REDUCTION)
     include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
     target_link_libraries(taskmanager kephal)
  endif (NOT KDE_PLATFORM_FEATURE_BINARY_COMPATIBLE_FEATURE_REDUCTION)
-
-target_link_libraries(taskmanager kworkspace)
 
 set_target_properties(taskmanager PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS taskmanager EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
@@ -81,6 +77,6 @@ install(FILES
 #   )
 
 #kde4_add_executable(tasksmodeltest ${tasksmodel_SRCS})
-#target_link_libraries(tasksmodeltest ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES} taskmanager kephal kworkspace)
+#target_link_libraries(tasksmodeltest ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES} taskmanager kephal)
 
 

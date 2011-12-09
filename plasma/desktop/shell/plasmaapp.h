@@ -62,8 +62,8 @@ public:
     static PlasmaApp *self();
     static bool hasComposite();
 
-    static void suspendStartup(bool completed);
-    DesktopCorona *corona();
+    void suspendStartup(bool completed);
+    DesktopCorona *corona(bool createIfMissing = true);
 
     /**
      * Should be called when a panel hides or unhides itself
