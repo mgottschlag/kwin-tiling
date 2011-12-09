@@ -171,10 +171,11 @@ Item {
         id: chargeInfo
         width: percent.paintedWidth+4    // 4 = left/right margins
         height: percent.paintedHeight+4  // 4 = top/bottom margins
-        anchors {
+        /*anchors {
             horizontalCenter: parent.horizontalCenter
             verticalCenter: parent.verticalCenter
-        }
+        }*/
+        anchors.centerIn: parent
         color: "white"
         border.color: "grey"
         border.width: 2
@@ -185,10 +186,11 @@ Item {
         Text {
             id: percent
             text: pmSource.data["Battery0"]["Percent"]+"%"
-            anchors {
+            /*anchors {
                 horizontalCenter: parent.horizontalCenter
                 verticalCenter: parent.verticalCenter
-            }
+            }*/
+            anchors.centerIn: parent
             visible: parent.visible
         }
     }

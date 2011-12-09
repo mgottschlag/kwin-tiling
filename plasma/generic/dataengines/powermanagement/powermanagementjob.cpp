@@ -1,5 +1,4 @@
 /*
-<<<<<<< HEAD
  * Copyright 2011 Sebastian Kügler <sebas@kde.org>
  * Copyright 2011 Viranch Mehta <viranch.mehta@gmail.com>
  *
@@ -20,6 +19,7 @@
 
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QDBusConnectionInterface>
 #include <QDBusMessage>
 #include <QDBusPendingReply>
 
@@ -28,20 +28,25 @@
 // kde-workspace/libs
 #include <kworkspace/kworkspace.h>
 
+// plasma
+#include <Plasma/DataEngine>
+
 #include "powermanagementjob.h"
+#include "powermanagementengine.h"
 
 #include <kdebug.h>
 
-PowerManagementJob::PowerManagementJob(const QString &operation, QMap<QString, QVariant> &parameters, QObject *parent) :
+PowermanagementJob::PowermanagementJob(const QString &operation, QMap<QString, QVariant> &parameters, QObject *parent) :
     ServiceJob(parent->objectName(), operation, parameters, parent)
 {
+    setParent(parent);
 }
 
-PowerManagementJob::~PowerManagementJob()
+PowermanagementJob::~PowermanagementJob()
 {
 }
 
-void PowerManagementJob::start()
+void PowermanagementJob::start()
 {
     const QString operation = operationName();
     //kDebug() << "starting operation  ... " << operation;
@@ -71,145 +76,56 @@ void PowerManagementJob::start()
         setResult(true);
         return;
     } else if (operation == "setBrightness") {
-=======
- *   Copyright 2011 Viranch Mehta <viranch.mehta@gmail.com>
- *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU Library General Public License version 2 as
- *   published by the Free Software Foundation
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details
- *
- *   You should have received a copy of the GNU Library General Public
- *   License along with this program; if not, write to the
- *   Free Software Foundation, Inc.,
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
-
-#include "powermanagementjob.h"
-#include "powermanagementengine.h"
-
-#include <QtDBus/QDBusInterface>
-#include <QtDBus/QDBusReply>
-#include <QtDBus/QDBusConnectionInterface>
-
-#include <kworkspace/kworkspace.h>
-#include <KDebug>
-
-void PowermanagementJob::start()
-{
-    QString operation = operationName();
-
-    if (operation == "suspend") {
         if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
             QDBusMessage call = QDBusMessage::createMethodCall ("org.kde.Solid.PowerManagement",
                                                                 "/org/kde/Solid/PowerManagement",
                                                                 "org.kde.Solid.PowerManagement",
-                                                                "suspendToRam");
-            QDBusConnection::sessionBus().asyncCall (call);
-        } else {
-            kDebug() << "suspend: DBus org.kde.Solid.PowerMangement not available.";
-        }
-    }
-    else if (operation == "hibernate") {
->>>>>>> 677b86151e254a7b0af614312d24a601a2a2e6cd
-        if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
-            QDBusMessage call = QDBusMessage::createMethodCall ("org.kde.Solid.PowerManagement",
-                                                                "/org/kde/Solid/PowerManagement",
-                                                                "org.kde.Solid.PowerManagement",
-<<<<<<< HEAD
                                                                 "setBrightness");
             int brightness = parameters().value("brightness").toInt();
             call.setArguments(QList<QVariant>() << QVariant::fromValue(brightness));
             QDBusConnection::sessionBus().asyncCall(call);
             setResult(true);
+            return;
         } else {
             kDebug() << "set brightness: DBus org.kde.Solid.PowerMangement not available.";
         }
-    } else if (operation == "lock") {
-=======
-                                                                "suspendToDisk");
-            QDBusConnection::sessionBus().asyncCall (call);
-        } else {
-            kDebug() << "hibernate: DBus org.kde.Solid.PowerMangement not available.";
-        }
-    }
-    else if (operation == "lock") {
->>>>>>> 677b86151e254a7b0af614312d24a601a2a2e6cd
-        if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.freedesktop.ScreenSaver")) {
-            QDBusMessage call = QDBusMessage::createMethodCall ("org.freedesktop.ScreenSaver",
-                                                                "/ScreenSaver",
-                                                                "org.freedesktop.ScreenSaver",
-                                                                "Lock");
-            QDBusConnection::sessionBus().asyncCall (call);
-        } else {
-            kDebug() << "lock: DBus org.freedesktop.ScreenSaver not available.";
-        }
-<<<<<<< HEAD
     } else if (operation == "switchUser") {
-=======
-    }
-    else if (operation == "switchUser") {
->>>>>>> 677b86151e254a7b0af614312d24a601a2a2e6cd
         if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.krunner")) {
             QDBusMessage call = QDBusMessage::createMethodCall ("org.kde.krunner",
                                                                 "/App",
                                                                 "org.kde.krunner.App",
                                                                 "switchUser");
             QDBusConnection::sessionBus().asyncCall (call);
+            setResult(true);
+            return;
         } else {
             kDebug() << "switch user: DBus org.kde.krunner not available.";
         }
-<<<<<<< HEAD
     } else if (operation == "setProfile") {
-=======
-    }
-    else if (operation == "leave") {
-        KWorkSpace::requestShutDown ( KWorkSpace::ShutdownConfirmDefault,
-                                      KWorkSpace::ShutdownTypeDefault,
-                                      KWorkSpace::ShutdownModeDefault );
-    }
-    else if (operation == "setBrightness") {
-        if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
-            QDBusMessage call = QDBusMessage::createMethodCall ("org.kde.Solid.PowerManagement",
-                                                                "/org/kde/Solid/PowerManagement",
-                                                                "org.kde.Solid.PowerManagement",
-                                                                "setBrightness");
-            int brightness = parameters().value("brightness").toInt();
-            call.setArguments(QList<QVariant>() << QVariant::fromValue(brightness));
-            QDBusConnection::sessionBus().asyncCall (call);
-        } else {
-            kDebug() << "set brightness: DBus org.kde.Solid.PowerMangement not available.";
-        }
-    }
-    else if (operation == "setProfile") {
->>>>>>> 677b86151e254a7b0af614312d24a601a2a2e6cd
         if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
             QDBusMessage call = QDBusMessage::createMethodCall ("org.kde.Solid.PowerManagement",
                                                                 "/org/kde/Solid/PowerManagement",
                                                                 "org.kde.Solid.PowerManagement",
                                                                 "loadProfile");
 
-            Plasma::DataEngine::Data data = m_engine->query("PowerDevil");
+            Plasma::DataEngine::Data data = qobject_cast<PowermanagementEngine*>(parent())->query("PowerDevil");
             StringStringMap availableProfiles = data["Available profiles"].value< StringStringMap >();
             QString profile = availableProfiles.key(parameters().value("profile").toString());
 
             call.setArguments(QList<QVariant>() << QVariant::fromValue(profile));
             QDBusConnection::sessionBus().asyncCall (call);
+            setResult(true);
+            return;
         } else {
             kDebug() << "set profile: DBus org.kde.Solid.PowerMangement not available.";
         }
     }
 
-<<<<<<< HEAD
     kDebug() << "don't know what to do with " << operation;
     setResult(false);
 }
 
-bool PowerManagementJob::suspend(const SuspendType &type)
+bool PowermanagementJob::suspend(const SuspendType &type)
 {
     QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
                                                       "/org/kde/Solid/PowerManagement",
@@ -219,7 +135,7 @@ bool PowerManagementJob::suspend(const SuspendType &type)
     return true;
 }
 
-QString PowerManagementJob::callForType(const SuspendType &type)
+QString PowermanagementJob::callForType(const SuspendType &type)
 {
     switch (type) {
         case Disk:
@@ -236,12 +152,9 @@ QString PowerManagementJob::callForType(const SuspendType &type)
     }
 }
 
-void PowerManagementJob::requestShutDown()
+void PowermanagementJob::requestShutDown()
 {
     KWorkSpace::requestShutDown();
-=======
-    emitResult();
->>>>>>> 677b86151e254a7b0af614312d24a601a2a2e6cd
 }
 
 #include "powermanagementjob.moc"

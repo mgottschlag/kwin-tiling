@@ -56,11 +56,6 @@ PowermanagementEngine::PowermanagementEngine(QObject* parent, const QVariantList
 PowermanagementEngine::~PowermanagementEngine()
 {}
 
-Plasma::Service* PowermanagementEngine::serviceForSource(const QString& source)
-{
-    return new PowermanagementService (this, source);
-}
-
 void PowermanagementEngine::init()
 {
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)),
@@ -216,7 +211,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
 Plasma::Service* PowermanagementEngine::serviceForSource(const QString &source)
 {
     if (source == "PowerDevil") {
-        PowerManagementService *service = new PowerManagementService(source);
+        PowermanagementService *service = new PowermanagementService(source);
         service->setParent(this);
         return service;
     }

@@ -43,7 +43,6 @@ class PowermanagementEngine : public Plasma::DataEngine
 
 public:
     PowermanagementEngine( QObject* parent, const QVariantList& args );
-    Plasma::Service *serviceForSource (const QString& source);
     ~PowermanagementEngine();
     QStringList sources() const;
     Plasma::Service* serviceForSource(const QString &source);

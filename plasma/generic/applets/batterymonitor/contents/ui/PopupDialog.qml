@@ -20,6 +20,7 @@
 import Qt 4.7
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
+import org.kde.plasma.components 0.1 as Components
 import org.kde.qtextracomponents 0.1
 
 Item {
@@ -149,13 +150,11 @@ Item {
             onTextChanged: profileChanged(text)
         }
 
-        PlasmaWidgets.Slider {
+        Components.Slider {
             id: brightnessSlider
-            orientation: Qt.Horizontal
-            minimum: 0
-            maximum: 100
-            /* TODO: implement this property */
-            //tickInterval: 10
+            minimumValue: 0
+            maximumValue: 100
+            stepSize: 10
             anchors {
                 left: parent.left
                 top: adapterValue.bottom
