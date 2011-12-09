@@ -108,6 +108,7 @@ class KRunnerDialog : public QWidget
         Plasma::FrameSvg *m_background;
         QPixmap *m_cachedBackground;
         QPoint m_lastPressPos;
+        QPoint m_customPos;
         int m_topBorderHeight;
         int m_leftBorderWidth;
         int m_rightBorderWidth;

@@ -136,15 +136,27 @@ void KRunnerDialog::positionOnScreen()
     }
 
     QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
-    const int w = width();
-    const int dx = r.left() + (r.width() * m_offset) - (w / 2);
-    kDebug() << "here we go ... with" << m_offset << r.width() << w<< dx ;
-    int dy = r.top();
-    if (m_floating) {
-        dy += r.height() / 3;
+
+    if (m_floating && !m_customPos.isNull()) {
+        int x = qBound(r.left(), m_customPos.x(), r.right() - width());
+        int y = qBound(r.top(), m_customPos.y(), r.bottom() - height());
+        move(x, y);
+        show();
+        return;
     }
 
-    move(dx, dy);
+    const int w = width();
+    int x = r.left() + (r.width() * m_offset) - (w / 2);
+
+    int y = r.top();
+    if (m_floating) {
+        y += r.height() / 3;
+    }
+
+    x = qBound(r.left(), x, r.right() - width());
+    y = qBound(r.top(), y, r.bottom() - height());
+
+    move(x, y);
 
     if (!m_floating) {
         checkBorders(r);
@@ -167,8 +179,12 @@ void KRunnerDialog::positionOnScreen()
 
 void KRunnerDialog::moveEvent(QMoveEvent *)
 {
-    const int screenWidth = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen).width();
-    m_offset = geometry().center().x() / qreal(screenWidth);
+    if (m_floating) {
+        m_customPos = pos();
+    } else {
+        const int screenWidth = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen).width();
+        m_offset = geometry().center().x() / qreal(screenWidth);
+    }
 }
 
 void KRunnerDialog::setFreeFloating(bool floating)
