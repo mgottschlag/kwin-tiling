@@ -198,6 +198,7 @@ Comment[zh_CN]=字体设置
 Comment[zh_TW]=字型設定
 
 X-KDE-Keywords=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI
+X-KDE-Keywords[ca]=tipus de lletres,mida de tipus de lletra,estils,joc de caràcters,jocs de caràcters,plafó,plafó de control,escriptoris,Gestor de fitxers,Barres d'eines,Menú,Títol de finestra,Títol,DPI
 X-KDE-Keywords[ia]=fonts,grandor de font,stilos,insimules de characteres,insimules de characteres,pannello,pannello de controlo,scriptorios,Gerente de File,Barra de instrumentos,menu,Titulo de Fenestra,Titulo,DPI
 X-KDE-Keywords[kk]=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI
 X-KDE-Keywords[nl]=lettertype,tekengrootte,stijlen,tekensets,paneel,besturingspaneel,bureaubladen,bestandsbeheerder,werkbalken,menu,venstertitel,titel,DPI

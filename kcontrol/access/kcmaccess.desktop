@@ -196,6 +196,7 @@ Comment[zh_CN]=方便残疾人使用的辅助功能
 Comment[zh_TW]=方便傷殘人士使用
 
 X-KDE-Keywords=access,accessibility,deaf,impaired,bell,audible bell,visible bell,Keyboard,keys,sticky keys,bounce keys,slow keys,mouse navigation,num pad
+X-KDE-Keywords[ca]=accés,accessibilitat,sord,discapacitat,campana,campana audible,campana visible,Teclat,tecles apegaloses,repetició de tecles,tecles lentes,navegació de ratolí,teclat numèric
 X-KDE-Keywords[ia]=accesso,accessibilitate,surde,debilitate,campana,campana audibile,campana visibile,Claviero,claves,claves collose,claves saltante,claves lente,navigation de mus,pad numeric
 X-KDE-Keywords[kk]=access,accessibility,deaf,impaired,bell,audible bell,visible bell,Keyboard,keys,sticky keys,bounce keys,slow keys,mouse navigation,num pad
 X-KDE-Keywords[nl]=toegang,toegankelijheid,doof,gehandicapt,bel,hoorbare bel,zichtbare bel,toetsenbord,toetsen,dode toetsen,herhaaltoetsen,langzame toetsen,muisnavigatie,numeriek toetsenbord

@@ -118,12 +118,14 @@ Comment[zh_CN]=定制鼠标指针外观
 Comment[zh_TW]=自訂滑鼠游標外觀
 
 X-KDE-Keywords=Mouse,Cursor,Theme
+X-KDE-Keywords[ca]=Ratolí,Cursor,Tema
 X-KDE-Keywords[cs]=Myš,Kurzor,Motiv
 X-KDE-Keywords[ia]=Mus, Cursor, Thema
 X-KDE-Keywords[kk]=Mouse,Cursor,Theme,Тышқан,Меңзер,Нақыш
 X-KDE-Keywords[nl]=Muis,cursor,thema
 X-KDE-Keywords[pt]=Rato,Cursor,Tema
 X-KDE-Keywords[pt_BR]=mouse,cursor,tema
+X-KDE-Keywords[ro]=tematica,maus,cursor
 X-KDE-Keywords[sv]=Mus,Pekare,Tema
 X-KDE-Keywords[uk]=миша,вказівник,тема
 X-KDE-Keywords[x-test]=xxMouse,Cursor,Themexx
