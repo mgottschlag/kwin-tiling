@@ -209,7 +209,17 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     mapSpdMethods->insert("HibernateState", QVariant::fromValue(spdMethods.contains(Solid::PowerManagement::HibernateState)));
     context->setContextProperty("spdMethods", mapSpdMethods);
 
-    //context->setContextProperty("rebootOptions", &m_rebootOptions);
+    QStringList options;
+    int def, cur;
+    if ( KDisplayManager().bootOptions( rebootOptions, def, cur ) ) {
+        if ( cur > -1 ) {
+            def = cur;
+	}
+    }
+    QDeclarativePropertyMap *rebootOptionsMap = new QDeclarativePropertyMap(this);
+    rebootOptionsMap->insert("options", QVariant::fromValue(rebootOptions));
+    rebootOptionsMap->insert("default", QVariant::fromValue(def));
+    context->setContextProperty("rebootOptions", rebootOptionsMap);
 
     setModal( true );
 
@@ -282,17 +292,10 @@ void KSMShutdownDlg::slotReboot()
     accept();
 }
 
-void KSMShutdownDlg::slotReboot(QAction* action)
-{
-    slotReboot(action->data().toInt());
-}
-
-// TODO: send rebootOptions to the QML dialog so that it can
-// return the correct index (opt).
 void KSMShutdownDlg::slotReboot(int opt)
 {
-    if (int(m_rebootOptions.size()) > opt)
-        m_bootOption = m_rebootOptions[opt];
+    if (int(rebootOptions.size()) > opt)
+        m_bootOption = rebootOptions[opt];
     m_shutdownType = KWorkSpace::ShutdownTypeReboot;
     accept();
 }
@@ -316,11 +319,6 @@ void KSMShutdownDlg::slotHalt()
     accept();
 }
 
-
-void KSMShutdownDlg::slotSuspend(QAction* action)
-{
-    slotSuspend(action->data().value<Solid::PowerManagement::SleepState>());
-}
 
 void KSMShutdownDlg::slotSuspend(int spdMethod)
 {

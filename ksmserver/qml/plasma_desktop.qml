@@ -32,7 +32,6 @@ PlasmaCore.FrameSvgItem {
     height: realMarginTop + automaticallyDoLabel.height + buttonsLayout.height + realMarginBottom
 
     imagePath: "dialogs/shutdowndialog"
-    //enabledBorders: PlasmaCore.FrameSvg.NoBorder
 
     signal logoutRequested()
     signal haltRequested()

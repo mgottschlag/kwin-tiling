@@ -84,8 +84,6 @@ public Q_SLOTS:
     void slotLogout();
     void slotHalt();
     void slotReboot();
-    void slotReboot(QAction*);
-    void slotSuspend(QAction*);
     void slotReboot(int);
     void slotSuspend(int);
     void slotLockScreen();
@@ -97,7 +95,7 @@ private:
     KSMShutdownDlg( QWidget* parent, bool maysd, bool choose, KWorkSpace::ShutdownType sdtype );
     KWorkSpace::ShutdownType m_shutdownType;
     QString m_bootOption;
-    QStringList m_rebootOptions;
+    QStringList rebootOptions;
     QDeclarativeView* m_view;
 
 private Q_SLOTS:

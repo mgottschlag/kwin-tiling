@@ -56,7 +56,7 @@ PlasmaCore.FrameSvgItem {
 
         onPaintedWidthChanged: {
             button.width = Math.max(button.width, 5 + labelElement.width + 10 + iconElement.width + 5)
-        }        
+        }
     }
 
     QIconItem {
