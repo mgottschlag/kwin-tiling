@@ -30,6 +30,7 @@ PlasmaCore.FrameSvgItem {
 
     signal clicked()
     signal pressed()
+    signal pressAndHold()
 
     PlasmaCore.Theme {
         id: theme
@@ -93,6 +94,7 @@ PlasmaCore.FrameSvgItem {
         hoverEnabled: true
         onClicked: button.clicked()
         onPressed: button.pressed()
+        onPressAndHold: button.pressAndHold()
         onEntered: {
             background.elementId = button.smallButton ? "button-small-hover" : "button-hover"
         }

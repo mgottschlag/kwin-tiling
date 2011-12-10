@@ -76,24 +76,22 @@ PlasmaCore.FrameSvgItem {
         rebootButton.width = buttonsLayout.width
 
         if (margins.left == 0) {
-            realMarginsTop = 9
-            realMarginsBottom = 7
-            realMarginsLeft = 12
-            realMarginsRight = 12
-
-            shutdownUi.width += realMarginsLeft + realMarginsRight
-            shutdownUi.height += realMarginsTop + realMarginsBottom
-            automaticallyDoLabel.anchors.topMargin = realMarginsTop
-            automaticallyDoLabel.anchors.rightMargin = realMarginsRight
-            leftPicture.anchors.leftMargin = realMarginsLeft
-            buttonsLayout.anchors.rightMargin = realMarginsRight
+            realMarginTop = 9
+            realMarginBottom = 7
+            realMarginLeft = 12
+            realMarginRight = 12
         }
 
         if (leftPicture.naturalSize.width < 1) {
             background.elementId = "background"
+            shutdownUi.width += realMarginLeft + realMarginRight
+            shutdownUi.height += realMarginTop + realMarginBottom
+            automaticallyDoLabel.anchors.topMargin = 2*realMarginTop
+            automaticallyDoLabel.anchors.rightMargin = 2*realMarginRight
+            leftPicture.anchors.leftMargin = 2*realMarginLeft
+            buttonsLayout.anchors.rightMargin = 2*realMarginRight
         }
 
-        //console.log("maysd("+maysd+") choose("+choose+") sdtype("+sdtype+")");
         if (choose || sdtype == ShutdownType.ShutdownTypeNone) {
             if (sdtype == ShutdownType.ShutdownTypeNone) {
                 focusedButton = logoutButton
@@ -134,19 +132,15 @@ PlasmaCore.FrameSvgItem {
             }
             if (focusedButton != 0) {
                 if (automaticallyDoSeconds <= 0) { // timeout is at 0, do selected action
-                    //console.log("focusedButton == " + focusedButton.text);
                     focusedButton.clicked()
                 // following code is required to provide a clean way to translate strings
                 } else if (focusedButton.text == logoutButton.text) {
-                    //console.log("focusedButton == " + focusedButton.text);
                     automaticallyDoLabel.text = i18np("Logging out in 1 second.",
                                                       "Logging out in %1 seconds.", automaticallyDoSeconds)
                 } else if (focusedButton.text == shutdownButton.text) {
-                    //console.log("focusedButton == " + focusedButton.text);
                     automaticallyDoLabel.text = i18np("Turning off computer in 1 second.",
                                                       "Turning off computer in %1 seconds.", automaticallyDoSeconds)
                 } else if (focusedButton.text == rebootButton.text) {
-                    //console.log("ocusedButton == " + focusedButton.text);
                     automaticallyDoLabel.text = i18np("Restarting computer in 1 second.",
                                                       "Restarting computer in %1 seconds.", automaticallyDoSeconds)
                 } else {
@@ -166,9 +160,9 @@ PlasmaCore.FrameSvgItem {
         color: theme.textColor
         anchors {
             top: parent.top
-            topMargin: parent.margins.top
+            topMargin: realMarginTop
             right: parent.right
-            rightMargin: parent.margins.right
+            rightMargin: realMarginRight
         }
     }
 
@@ -180,7 +174,7 @@ PlasmaCore.FrameSvgItem {
         anchors {
             verticalCenter: parent.verticalCenter
             left: parent.left
-            leftMargin: parent.margins.left
+            leftMargin: realMarginLeft
         }
 
         svg: PlasmaCore.Svg {
@@ -196,7 +190,7 @@ PlasmaCore.FrameSvgItem {
             top: automaticallyDoLabel.bottom
             topMargin: 4
             right: parent.right
-            rightMargin: parent.margins.right
+            rightMargin: realMarginRight
         }
 
         Column {
@@ -234,6 +228,11 @@ PlasmaCore.FrameSvgItem {
                 visible: (choose || sdtype == ShutdownType.ShutdownTypeHalt)
 
                 onClicked: {
+                    console.log("haltRequested");
+                    haltRequested()
+                }
+
+                onPressAndHold: {
                     console.log("shutdownMenuRequested");
                     buttonColumn.visible = !buttonColumn.visible
                     adjustSizeTimer.running = true
@@ -257,7 +256,7 @@ PlasmaCore.FrameSvgItem {
                 interval: 100
 
                 onTriggered: {
-                    shutdownUi.height = margins.top + automaticallyDoLabel.height + buttonsLayout.height + margins.bottom
+                    shutdownUi.height = realMarginTop + automaticallyDoLabel.height + buttonsLayout.height + realMarginBottom
                     if (margins.left == 0) {
                         shutdownUi.height += 16
                     }
@@ -269,21 +268,11 @@ PlasmaCore.FrameSvgItem {
                 visible: false
 
                 Component.onCompleted: {
-                    haltButton.width = buttonColumn.width
                     standbyButton.width = buttonColumn.width
                     sleepButton.width = buttonColumn.width
                     hibernateButton.width = buttonColumn.width
                 }
 
-                PlasmaComponents.Button {
-                    id: haltButton
-                    text: i18n("Turn Off Computer")
-                    visible: shutdownButton.visible
-                    onClicked: {
-                        console.log("haltRequested")
-                        haltRequested()
-                    }
-                }
                 PlasmaComponents.Button {
                     id: standbyButton
                     text: i18n("Standby")
