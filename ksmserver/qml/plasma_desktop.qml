@@ -226,6 +226,7 @@ PlasmaCore.FrameSvgItem {
                 height: 32
                 anchors.right: parent.right
                 visible: (choose || sdtype == ShutdownType.ShutdownTypeHalt)
+                menu: true
 
                 onClicked: {
                     console.log("haltRequested");
@@ -309,6 +310,7 @@ PlasmaCore.FrameSvgItem {
                 iconSource: "system-reboot"
                 height: 32
                 anchors.right: parent.right
+                menu: true
 
                 onClicked: {
                     console.log("rebootRequested");

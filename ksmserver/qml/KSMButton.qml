@@ -27,6 +27,7 @@ PlasmaCore.FrameSvgItem {
     property alias text: labelElement.text
     property bool smallButton: false
     property bool focusedButton: false
+    property bool menu: false
 
     signal clicked()
     signal pressed()
@@ -57,6 +58,19 @@ PlasmaCore.FrameSvgItem {
 
         onPaintedWidthChanged: {
             button.width = Math.max(button.width, 5 + labelElement.width + 10 + iconElement.width + 5)
+        }
+    }
+
+    QIconItem {
+        id: menuIconElement
+        icon: QIcon("arrow-down")
+        width: 10
+        height: width
+        visible: button.menu
+
+        anchors {
+            right: iconElement.left
+            bottom: parent.bottom
         }
     }
 
