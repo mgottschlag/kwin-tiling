@@ -235,8 +235,21 @@ PlasmaCore.FrameSvgItem {
 
                 onPressAndHold: {
                     console.log("shutdownMenuRequested");
-                    shutdownButtonColumn.visible = !shutdownButtonColumn.visible
-                    adjustSizeTimer.running = true
+
+                    if (!contextMenu) {
+                        contextMenu = shutdownOptionsComponent.createObject(shutdownButton)
+                        if (spdMethods.StandbyState) {
+                            contextMenu.append({itemIndex: 1, itemText: i18n("Standby")})
+                        }
+                        if (spdMethods.SuspendState) {
+                            contextMenu.append({itemIndex: 2, itemText: i18n("Suspend to RAM")})
+                        }
+                        if (spdMethods.HibernateState) {
+                            contextMenu.append({itemIndex: 3, itemText: i18n("Suspend to Disk")})
+                        }
+                        contextMenu.clicked.connect(shutdownButton.menuClicked)
+                    }
+                    contextMenu.open()
                 }
 
                 onPressed: {
@@ -247,60 +260,29 @@ PlasmaCore.FrameSvgItem {
                         focus = true
                     }
                 }
-            }
 
-            // Some themes do not adjust dialog size automatically, so update it manually.
-            Timer {
-                id: adjustSizeTimer
-                repeat: false
-                running: false
-                interval: 100
-
-                onTriggered: {
-                    shutdownUi.height = realMarginTop + automaticallyDoLabel.height + buttonsLayout.height + realMarginBottom
-                    if (margins.left == 0) {
-                        shutdownUi.height += realMarginTop + realMarginBottom
-                    }
-                }
-            }
-
-            PlasmaComponents.ButtonColumn {
-                id: shutdownButtonColumn
-                visible: false
-                anchors.right: parent.right
-
-                Component.onCompleted: {
-                    standbyButton.width = shutdownButtonColumn.width
-                    sleepButton.width = shutdownButtonColumn.width
-                    hibernateButton.width = shutdownButtonColumn.width
-                }
-
-                PlasmaComponents.Button {
-                    id: standbyButton
-                    text: i18n("Standby")
-                    visible: shutdownButton.visible && spdMethods.StandbyState
-                    onClicked: {
+                function menuClicked(index) {
+                    switch(index) {
+                    case 1:
                         console.log("suspendRequested(Solid::PowerManagement::StandbyState)")
                         suspendRequested(1); // Solid::PowerManagement::StandbyState
-                    }
-                }
-                PlasmaComponents.Button {
-                    id: sleepButton
-                    text: i18n("Suspend to RAM")
-                    visible: shutdownButton.visible && spdMethods.SuspendState
-                    onClicked: {
+                        break
+                    case 2:
                         console.log("suspendRequested(Solid::PowerManagement::SuspendState)")
                         suspendRequested(2); // Solid::PowerManagement::SuspendState
-                    }
-                }
-                PlasmaComponents.Button {
-                    id: hibernateButton
-                    text: i18n("Suspend to Disk")
-                    visible: shutdownButton.visible && spdMethods.HibernateState
-                    onClicked: {
+                        break
+                    case 3:
                         console.log("suspendRequested(Solid::PowerManagement::HibernateState)")
                         suspendRequested(3); // Solid::PowerManagement::HibernateState
+                        break
                     }
+                }
+            }
+
+            Component {
+                id: shutdownOptionsComponent
+                ContextMenu {
+                    visualParent: shutdownButton
                 }
             }
 
@@ -319,8 +301,21 @@ PlasmaCore.FrameSvgItem {
 
                 onPressAndHold: {
                     console.log("rebootMenuRequested");
-                    rebootButtonColumn.visible = !rebootButtonColumn.visible
-                    adjustSizeTimer.running = true
+
+                    if (!contextMenu) {
+                        contextMenu = rebootOptionsComponent.createObject(rebootButton)
+                        var options = rebootOptions["options"]
+                        for (var index = 0; index < options.length; ++index) {
+                            var itemData = new Object
+                            itemData["itemIndex"] = index
+                            itemData["itemText"] = options[index]
+                            contextMenu.append(itemData)
+                        }
+
+                        contextMenu.clicked.connect(rebootButton.menuClicked)
+                    }
+                    contextMenu.open()
+
                 }
 
                 onPressed: {
@@ -331,74 +326,17 @@ PlasmaCore.FrameSvgItem {
                         focus = true
                     }
                 }
+
+                function menuClicked(index) {
+                    console.log("rebootOption: " + rebootOptions["options"][index])
+                    rebootRequested2(index)
+                }
             }
 
-            PlasmaComponents.ButtonColumn {
-                id: rebootButtonColumn
-                visible: false
-                anchors.right: parent.right
-
-                Component.onCompleted: {
-                    rebootOption0.width = rebootButtonColumn.width
-                    rebootOption1.width = rebootButtonColumn.width
-                    rebootOption2.width = rebootButtonColumn.width
-                    rebootOption3.width = rebootButtonColumn.width
-                    rebootOption4.width = rebootButtonColumn.width
-                }
-
-                PlasmaComponents.Button {
-                    id: rebootOption0
-                    text: rebootOptions["options"][0]
-                    visible: rebootOptions["options"][0] != undefined && rebootOptions["options"][0] != ""
-                    onClicked: {
-                        console.log("rebootRequested: " + text)
-                        rebootRequested2(0);
-                    }
-                }
-                PlasmaComponents.Button {
-                    id: rebootOption1
-                    text: rebootOptions["options"][1]
-                    visible: rebootOptions["options"][1] != undefined && rebootOptions["options"][1] != ""
-                    onClicked: {
-                        console.log("rebootRequested: " + text)
-                        rebootRequested2(1);
-                    }
-                }
-                PlasmaComponents.Button {
-                    id: rebootOption2
-                    text: rebootOptions["options"][2]
-                    visible: rebootOptions["options"][2] != undefined && rebootOptions["options"][2] != ""
-                    onClicked: {
-                        console.log("rebootRequested: " + text)
-                        rebootRequested2(2);
-                    }
-                }
-                PlasmaComponents.Button {
-                    id: rebootOption3
-                    text: rebootOptions["options"][3]
-                    visible: rebootOptions["options"][3] != undefined && rebootOptions["options"][3] != ""
-                    onClicked: {
-                        console.log("rebootRequested: " + text)
-                        rebootRequested2(3);
-                    }
-                }
-                PlasmaComponents.Button {
-                    id: rebootOption4
-                    text: rebootOptions["options"][4]
-                    visible: rebootOptions["options"][4] != undefined && rebootOptions["options"][4] != ""
-                    onClicked: {
-                        console.log("rebootRequested: '" + text + "'")
-                        rebootRequested2(4);
-                    }
-                }
-                PlasmaComponents.Button {
-                    id: rebootOption5
-                    text: rebootOptions["options"][5]
-                    visible: rebootOptions["options"][5] != undefined && rebootOptions["options"][5] != ""
-                    onClicked: {
-                        console.log("rebootRequested: '" + text + "'")
-                        rebootRequested2(5);
-                    }
+            Component {
+                id: rebootOptionsComponent
+                ContextMenu {
+                    visualParent: rebootButton
                 }
             }
         }

@@ -28,6 +28,7 @@ PlasmaCore.FrameSvgItem {
     property bool smallButton: false
     property bool focusedButton: false
     property bool menu: false
+    property ContextMenu contextMenu
 
     signal clicked()
     signal pressed()
