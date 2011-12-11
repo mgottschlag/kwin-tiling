@@ -197,6 +197,7 @@ Comment[zh_TW]=螢幕保護程式設定
 
 
 X-KDE-Keywords=screensavers,Priority
+X-KDE-Keywords[ca]=estalvis de pantalla,Prioritat
 X-KDE-Keywords[cs]=spořiče obrazovky,priorita
 X-KDE-Keywords[ia]=salvatores de schermo,Prioritate
 X-KDE-Keywords[kk]=screensavers,Priority
@@ -207,5 +208,6 @@ X-KDE-Keywords[ro]=protecție de ecran,prioritate
 X-KDE-Keywords[sv]=skärmsläckare,Prioritet
 X-KDE-Keywords[uk]=screensavers,Priority,зберігач,екран,пріоритет
 X-KDE-Keywords[x-test]=xxscreensavers,Priorityxx
+X-KDE-Keywords[zh_TW]=screensavers,Priority
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

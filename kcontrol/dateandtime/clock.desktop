@@ -207,5 +207,6 @@ X-KDE-Keywords[pt_BR]=relógio,data,hora,fuso horário
 X-KDE-Keywords[sv]=klocka,datum,tid,tidszon
 X-KDE-Keywords[uk]=clock,date,time,time zone,годинник,час,дата,часовий пояс
 X-KDE-Keywords[x-test]=xxclock,date,time,time zonexx
+X-KDE-Keywords[zh_TW]=clock,date,time,time zone
 
 Categories=Qt;KDE;X-KDE-settings-system;

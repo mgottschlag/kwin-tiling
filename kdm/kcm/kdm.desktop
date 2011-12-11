@@ -164,6 +164,7 @@ Comment[zh_CN]=配置登录管理器(KDM)
 Comment[zh_TW]=設定登入管理程式 (KDM)
 
 X-KDE-Keywords=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart
+X-KDE-Keywords[ca]=kdm,gestor de sessions,xdm,usuaris,connexió,benvinguda,Logo,estils,idioma,país,tipus de lletres,fons,fons d'escriptori,sessions,aturada,reinici
 X-KDE-Keywords[ia]=kdm,gerente de monstrator,xdm,usatores,accesso authenticate,salutationes,Logo,stilos,linguage,pais,fonts,fundo,tepetes de papiro,sessiones,clausura,reinitio
 X-KDE-Keywords[kk]=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart
 X-KDE-Keywords[nl]=kdm,schermbeheerder,xdm,gebruikers,aanmelden,begroeting,logo,stijlen,taal,land,lettertypen,achtergrond,achtergrondafbeelding,sessies,afsluiten,herstart
@@ -172,5 +173,6 @@ X-KDE-Keywords[pt_BR]=kdm,gerenciador de autenticação,xdm,usuários,autentica�
 X-KDE-Keywords[sv]=kdm,skärmhanterare,xdm,användare,inloggning,hälsning,Logotyp,stilar,språk,land,teckensnitt,bakgrund,skrivbordsunderlägg,sessioner,avstängning,omstart
 X-KDE-Keywords[uk]=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart,керування дисплеями,користувач,користувачі,вхід,вітання,логотип,стиль,стилі,країна,країни,шрифт,шрифти,гарнітура,гарнітури,шпалери,зображення,сеанс,сеанси,вимикання,перезапуск
 X-KDE-Keywords[x-test]=xxkdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restartxx
+X-KDE-Keywords[zh_TW]=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart
 
 Categories=Qt;KDE;X-KDE-settings-system;
