@@ -1,4 +1,3 @@
-// -*- coding: iso-8859-1 -*-
 /*
  *   Copyright 2011 Lamarque V. Souza <lamarque@kde.org>
  *
@@ -22,15 +21,18 @@ import QtQuick 1.0
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.graphicswidgets 0.1
 import org.kde.qtextracomponents 0.1
-//import org.kde.kwin.screenlocker 1.0 as ScreenLocker
 
-Rectangle {
+PlasmaCore.FrameSvgItem {
     id: shutdownUi
     property int iconSize: 128
-    height: iconSize + 3 * 4 + lockScreenLabel.font.pixelSize
-    width: 3 * iconSize + 4 * 4
-    //color: Qt.rgba(215, 215, 215, 0.8)
-    color: theme.backgroundColor
+    property int realMarginTop: margins.top
+    property int realMarginBottom: margins.bottom
+    property int realMarginLeft: margins.left
+    property int realMarginRight: margins.right
+    width: realMarginLeft + iconRow.width + realMarginRight
+    height: realMarginTop + iconRow.height + realMarginBottom
+
+    imagePath: "dialogs/shutdowndialog"
 
     signal logoutRequested()
     signal haltRequested()
@@ -46,7 +48,17 @@ Rectangle {
 
     PlasmaCore.SvgItem {
         id: background
-        anchors.fill: parent
+
+        anchors {
+            top: parent.top
+            topMargin: realMarginTop
+            bottom: parent.bottom
+            bottomMargin: realMarginBottom
+            left: parent.left
+            leftMargin: realMarginLeft
+            right: parent.right
+            rightMargin: realMarginRight
+        }
 
         svg: PlasmaCore.Svg {
             imagePath: "dialogs/shutdowndialog"
@@ -55,14 +67,26 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        //console.log("margins: " + margins.left + ", " + margins.top + ", " + margins.right + ", " + margins.bottom);
+        if (margins.left == 0) {
+            realMarginTop = 9
+            realMarginBottom = 7
+            realMarginLeft = 12
+            realMarginRight = 12
+        }
 
-        if (background.naturalSize.width < 1) {
+        if (leftPicture.naturalSize.width < 1) {
             background.elementId = "background"
+            shutdownUi.width += realMarginLeft + realMarginRight
+            shutdownUi.height += realMarginTop + realMarginBottom
+            automaticallyDoLabel.anchors.topMargin = 2*realMarginTop
+            automaticallyDoLabel.anchors.rightMargin = 2*realMarginRight
+            leftPicture.anchors.leftMargin = 2*realMarginLeft
+            buttonsLayout.anchors.rightMargin = 2*realMarginRight
         }
     }
 
     Row {
+        id: iconRow
         spacing: 5
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
@@ -89,11 +113,7 @@ Rectangle {
                 minimumIconSize: "128x128"
 
                 onClicked: {
-                    print("lockScreen button triggered");
                     lockScreenRequested();
-
-                    // Requires new kwin's screenLocker (KDE SC 4.8)
-                    //ScreenLocker.lock();
                 }
             }
         }
@@ -118,7 +138,6 @@ Rectangle {
                 minimumIconSize: "128x128"
 
                 onClicked: {
-                    print("suspend button triggered");
                     suspendRequested(2); // Solid::PowerManagement::SuspendState
                 }
             }
@@ -144,7 +163,6 @@ Rectangle {
                 minimumIconSize: "128x128"
 
                 onClicked: {
-                    print("shutdown button triggered");
                     haltRequested()
                 }
             }
