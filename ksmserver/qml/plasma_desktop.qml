@@ -109,8 +109,6 @@ PlasmaCore.FrameSvgItem {
                 if (sdtype == ShutdownType.ShutdownTypeReboot) {
                     focusedButton = rebootButton
                 }
-
-                // TODO: add reboot menu
             }
         }
 
@@ -205,7 +203,6 @@ PlasmaCore.FrameSvgItem {
                 visible: (choose || sdtype == ShutdownType.ShutdownTypeNone)
 
                 onClicked: {
-                    console.log("logoutRequested");
                     logoutRequested()
                 }
 
@@ -229,25 +226,25 @@ PlasmaCore.FrameSvgItem {
                 menu: true
 
                 onClicked: {
-                    console.log("haltRequested");
                     haltRequested()
                 }
 
                 onPressAndHold: {
-                    console.log("shutdownMenuRequested");
-
                     if (!contextMenu) {
                         contextMenu = shutdownOptionsComponent.createObject(shutdownButton)
                         if (spdMethods.StandbyState) {
+                            // 1 == Solid::PowerManagement::StandbyState
                             contextMenu.append({itemIndex: 1, itemText: i18n("Standby")})
                         }
                         if (spdMethods.SuspendState) {
+                            // 2 == Solid::PowerManagement::SuspendState
                             contextMenu.append({itemIndex: 2, itemText: i18n("Suspend to RAM")})
                         }
                         if (spdMethods.HibernateState) {
+                            // 3 == Solid::PowerManagement::HibernateState
                             contextMenu.append({itemIndex: 3, itemText: i18n("Suspend to Disk")})
                         }
-                        contextMenu.clicked.connect(shutdownButton.menuClicked)
+                        contextMenu.clicked.connect(shutdownUi.suspendRequested)
                     }
                     contextMenu.open()
                 }
@@ -258,23 +255,6 @@ PlasmaCore.FrameSvgItem {
                         shutdownUi.focusedButton = shutdownButton
                         focusedButton = true
                         focus = true
-                    }
-                }
-
-                function menuClicked(index) {
-                    switch(index) {
-                    case 1:
-                        console.log("suspendRequested(Solid::PowerManagement::StandbyState)")
-                        suspendRequested(1); // Solid::PowerManagement::StandbyState
-                        break
-                    case 2:
-                        console.log("suspendRequested(Solid::PowerManagement::SuspendState)")
-                        suspendRequested(2); // Solid::PowerManagement::SuspendState
-                        break
-                    case 3:
-                        console.log("suspendRequested(Solid::PowerManagement::HibernateState)")
-                        suspendRequested(3); // Solid::PowerManagement::HibernateState
-                        break
                     }
                 }
             }
@@ -295,13 +275,10 @@ PlasmaCore.FrameSvgItem {
                 menu: true
 
                 onClicked: {
-                    console.log("rebootRequested");
                     rebootRequested()
                 }
 
                 onPressAndHold: {
-                    console.log("rebootMenuRequested");
-
                     if (!contextMenu) {
                         contextMenu = rebootOptionsComponent.createObject(rebootButton)
                         var options = rebootOptions["options"]
@@ -309,13 +286,15 @@ PlasmaCore.FrameSvgItem {
                             var itemData = new Object
                             itemData["itemIndex"] = index
                             itemData["itemText"] = options[index]
+                            if (index == rebootOptions["default"]) {
+                                itemData["itemText"] += i18nc("default option in boot loader", " (default)")
+                            }
                             contextMenu.append(itemData)
                         }
 
-                        contextMenu.clicked.connect(rebootButton.menuClicked)
+                        contextMenu.clicked.connect(shutdownUi.rebootRequested2)
                     }
                     contextMenu.open()
-
                 }
 
                 onPressed: {
@@ -325,11 +304,6 @@ PlasmaCore.FrameSvgItem {
                         focusedButton = true
                         focus = true
                     }
-                }
-
-                function menuClicked(index) {
-                    console.log("rebootOption: " + rebootOptions["options"][index])
-                    rebootRequested2(index)
                 }
             }
 

@@ -64,14 +64,20 @@ PlasmaCore.FrameSvgItem {
 
     QIconItem {
         id: menuIconElement
-        icon: QIcon("arrow-down")
-        width: 10
+
+        // if textColor is closer to white than to black use "draw-triangle4", which is also close to white.
+        // Otherwise use "arrow-down", which is green. I have not found a black triangle icon.
+        icon: theme.textColor > "#7FFFFF" ? QIcon("draw-triangle4") : QIcon("arrow-down")
+
+        width: 6
         height: width
         visible: button.menu
 
         anchors {
             right: iconElement.left
+            rightMargin: 2
             bottom: parent.bottom
+            bottomMargin: 2
         }
     }
 
