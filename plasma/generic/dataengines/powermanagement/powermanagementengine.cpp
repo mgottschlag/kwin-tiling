@@ -106,8 +106,7 @@ QStringList PowermanagementEngine::sources() const
 bool PowermanagementEngine::sourceRequestEvent(const QString &name)
 {
     if (name == "Battery") {
-        const QList<Solid::Device> listBattery =
-                        Solid::Device::listFromType(Solid::DeviceInterface::Battery, QString());
+        const QList<Solid::Device> listBattery = Solid::Device::listFromType(Solid::DeviceInterface::Battery);
         m_batterySources.clear();
 
         if (listBattery.isEmpty()) {
@@ -161,7 +160,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
     } else if (name == "AC Adapter") {
         bool isPlugged = false;
 
-        const QList<Solid::Device> list_ac = Solid::Device::listFromType(Solid::DeviceInterface::AcAdapter, QString());
+        const QList<Solid::Device> list_ac = Solid::Device::listFromType(Solid::DeviceInterface::AcAdapter);
         foreach (Solid::Device device_ac, list_ac) {
             Solid::AcAdapter* acadapter = device_ac.as<Solid::AcAdapter>();
             isPlugged |= acadapter->isPlugged();
@@ -244,6 +243,11 @@ void PowermanagementEngine::updateAcPlugState(bool newState)
 void PowermanagementEngine::deviceRemoved(const QString& udi)
 {
     if (m_batterySources.contains(udi)) {
+        Solid::Device device(udi);
+        Solid::Battery* battery = device.as<Solid::Battery>();
+        if (battery)
+            battery->disconnect();
+
         const QString source = m_batterySources[udi];
         m_batterySources.remove(udi);
         removeSource(source);
