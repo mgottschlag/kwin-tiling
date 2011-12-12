@@ -156,12 +156,13 @@ void ActivityConfiguration::chooseIcon()
         dialog = new KIconDialog;
         dialog->setup(KIconLoader::Desktop);
         dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->setProperty("DoNotCloseController", true);
         connect(dialog, SIGNAL(newIconName(QString)), this, SLOT(setIcon(QString)));
         m_iconDialog = dialog;
     }
 
     KWindowSystem::setOnDesktop(dialog->winId(), KWindowSystem::currentDesktop());
-    dialog->show();
+    dialog->showDialog();
     KWindowSystem::forceActiveWindow(dialog->winId());
 }
 
