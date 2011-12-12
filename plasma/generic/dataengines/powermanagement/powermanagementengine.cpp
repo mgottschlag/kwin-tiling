@@ -149,7 +149,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
                                                               "/org/kde/Solid/PowerManagement",
                                                               "org.kde.Solid.PowerManagement",
                                                               "batteryRemainingTime");
-            QDBusPendingReply< int > reply = QDBusConnection::sessionBus().asyncCall(msg);
+            QDBusPendingReply< qulonglong > reply = QDBusConnection::sessionBus().asyncCall(msg);
             reply.waitForFinished();
             if (reply.isValid()) {
                 //kDebug() << "Remaining time 1:" << reply.value();
@@ -343,7 +343,7 @@ void PowermanagementEngine::reloadPowerDevilData()
                                                           "/org/kde/Solid/PowerManagement",
                                                           "org.kde.Solid.PowerManagement",
                                                           "batteryRemainingTime");
-        QDBusPendingReply< int > reply = QDBusConnection::sessionBus().asyncCall(msg);
+        QDBusPendingReply< qulonglong > reply = QDBusConnection::sessionBus().asyncCall(msg);
         reply.waitForFinished();
         if (reply.isValid()) {
             batteryRemainingTimeChanged(reply.value());
