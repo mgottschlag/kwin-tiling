@@ -73,15 +73,10 @@ PlasmaCore.FrameSvgItem {
             realMarginLeft = 12
             realMarginRight = 12
         }
-
-        if (leftPicture.naturalSize.width < 1) {
+        if (background.naturalSize.width < 1) {
             background.elementId = "background"
             shutdownUi.width += realMarginLeft + realMarginRight
             shutdownUi.height += realMarginTop + realMarginBottom
-            automaticallyDoLabel.anchors.topMargin = 2*realMarginTop
-            automaticallyDoLabel.anchors.rightMargin = 2*realMarginRight
-            leftPicture.anchors.leftMargin = 2*realMarginLeft
-            buttonsLayout.anchors.rightMargin = 2*realMarginRight
         }
     }
 
