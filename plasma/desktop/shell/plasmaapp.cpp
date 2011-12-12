@@ -553,9 +553,7 @@ ControllerWindow *PlasmaApp::showController(int screen, Plasma::Containment *con
 
     controller->show();
     Plasma::WindowEffects::slideWindow(controller, controller->location());
-    KWindowSystem::setOnAllDesktops(controller->winId(), true);
     QTimer::singleShot(0, controller, SLOT(activate()));
-    KWindowSystem::setState(controller->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky | NET::KeepAbove);
     return controller;
 }
 

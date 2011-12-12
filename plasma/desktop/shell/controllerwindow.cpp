@@ -60,11 +60,10 @@ ControllerWindow::ControllerWindow(QWidget* parent)
     m_background->setImagePath("dialogs/background");
     m_background->setContainsMultipleImages(true);
 
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-    KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky | NET::KeepAbove);
+    setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_TranslucentBackground);
-    setFocus(Qt::ActiveWindowFocusReason);
+//    setFocus(Qt::ActiveWindowFocusReason);
     setLocation(Plasma::BottomEdge);
 
     QPalette pal = palette();
@@ -72,7 +71,6 @@ ControllerWindow::ControllerWindow(QWidget* parent)
     setPalette(pal);
 
     Plasma::WindowEffects::overrideShadow(winId(), true);
-
 
     m_layout->setContentsMargins(0, 0, 0, 0);
 
@@ -85,6 +83,7 @@ ControllerWindow::ControllerWindow(QWidget* parent)
     m_adjustViewTimer->setSingleShot(true);
     connect(m_adjustViewTimer, SIGNAL(timeout()), this, SLOT(syncToGraphicsWidget()));
     adjustAndSetMaxSize();
+    KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
 }
 
 ControllerWindow::~ControllerWindow()
