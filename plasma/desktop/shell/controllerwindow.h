@@ -101,6 +101,7 @@ private:
     Plasma::WidgetExplorer *m_widgetExplorer;
     QGraphicsWidget *m_graphicsWidget;
     QTimer *m_adjustViewTimer;
+    bool m_ignoredWindowClosed;
 };
 
 #endif

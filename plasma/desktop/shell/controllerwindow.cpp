@@ -32,7 +32,6 @@
 #include <Plasma/Corona>
 #include <Plasma/Theme>
 #include <Plasma/FrameSvg>
-#include <Plasma/Dialog>
 #include <Plasma/WindowEffects>
 
 #include "activitymanager/activitymanager.h"
@@ -53,7 +52,8 @@ ControllerWindow::ControllerWindow(QWidget* parent)
      m_watchedWidget(0),
      m_activityManager(0),
      m_widgetExplorer(0),
-     m_graphicsWidget(0)
+     m_graphicsWidget(0),
+     m_ignoredWindowClosed(false)
 {
     Q_UNUSED(parent)
 
@@ -277,9 +277,12 @@ void ControllerWindow::syncToGraphicsWidget()
 
 bool ControllerWindow::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched == m_graphicsWidget &&
-        (event->type() == QEvent::GraphicsSceneResize || event->type() == QEvent::GraphicsSceneMove)) {
-        m_adjustViewTimer->start(150);
+    if (watched == m_graphicsWidget) {
+        if (event->type() == QEvent::GraphicsSceneResize || event->type() == QEvent::GraphicsSceneMove) {
+            m_adjustViewTimer->start(150);
+        }
+    } else if (event->type() == QEvent::Close || event->type() == QEvent::Destroy) {
+        m_ignoredWindowClosed = true;
     }
 
     return QWidget::eventFilter(watched, event);
@@ -481,11 +484,25 @@ void ControllerWindow::closeIfNotFocussed()
 {
     QWidget *widget = QApplication::activeWindow();
     if (!widget) {
-        close();
+        if (m_ignoredWindowClosed) {
+            m_ignoredWindowClosed = false;
+        } else {
+            // single shot to work around Qt 4.8+ bug in event loop count in x11event handler
+            QTimer::singleShot(0, this, SLOT(deleteLater()));
+        }
     } else if (widget != this) {
         KWindowInfo info(widget->winId(), NET::WMWindowType);
         if (info.windowType(NET::DesktopMask | NET::DockMask | NET::PopupMenuMask) == -1) {
-            close();
+            // an unfortunate little hack to allow windows to be tagged in a way that they don't
+            // close the controller
+            if (widget->property("DoNotCloseController").isNull()) {
+                // single shot to work around Qt 4.8+ bug in event loop count in x11event handler
+                QTimer::singleShot(0, this, SLOT(deleteLater()));
+            } else {
+                // we need to watch to see when it closes to prevent closing the controller when 
+                // this "don't close" window closes
+                widget->installEventFilter(this);
+            }
         }
     }
 }
