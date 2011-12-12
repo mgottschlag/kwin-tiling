@@ -244,25 +244,27 @@ void ActivityIcon::showInlineWidget(ActivityControls * w)
 
 void ActivityIcon::showRemovalConfirmation()
 {
-    ActivityControls * w = new ActivityRemovalConfirmation(this);
+    ActivityControls *w = new ActivityRemovalConfirmation(this);
 
-    if (m_activity)
+    if (m_activity) {
         connect(w, SIGNAL(removalConfirmed()), m_activity, SLOT(remove()));
-    else
+    } else {
         connect(w, SIGNAL(removalConfirmed()), this, SLOT(hideTemplate()));
+    }
 
     showInlineWidget(w);
 }
 
 void ActivityIcon::showConfiguration()
 {
-    if (m_activity)
+    if (m_activity) {
         showInlineWidget(new ActivityConfiguration(this, m_activity));
+    }
 }
 
 void ActivityIcon::startInlineAnim()
 {
-    QGraphicsWidget * w = m_inlineWidget.data();
+    QGraphicsWidget *w = m_inlineWidget.data();
     //kDebug() << "Booh yah!" << w;
     if (!w) {
         return;
