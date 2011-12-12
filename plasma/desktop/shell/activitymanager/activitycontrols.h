@@ -29,6 +29,8 @@
 #include "activityicon.h"
 #include "activity.h"
 
+class KIconDialog;
+
 class ActivityControls : public QGraphicsWidget {
     Q_OBJECT
 public:
@@ -57,7 +59,8 @@ private:
     Plasma::PushButton    * m_buttonCancel;
 };
 
-class ActivityConfiguration: public ActivityControls {
+class ActivityConfiguration: public ActivityControls
+{
     Q_OBJECT
 public:
     ActivityConfiguration(ActivityIcon * parent, Activity * activity);
@@ -68,6 +71,7 @@ public:
 private Q_SLOTS:
     void applyChanges();
     void chooseIcon();
+    void setIcon(const QString &iconName);
 
 protected:
     void hideEvent(QHideEvent * event);
@@ -88,6 +92,8 @@ private:
 
     Activity              * m_activity;
     QString                 m_iconName;
+
+    QWeakPointer<KIconDialog> m_iconDialog;
 };
 
 #endif // ACTIVITY_CONTROLS_H_
