@@ -159,13 +159,10 @@ MenuView::MenuView(QWidget *parent, const QString &title, const QIcon &icon)
 
 MenuView::~MenuView()
 {
-    // delete all the models before we are; we can't let ~QObject do this
-    // for us since by that point it is too late and we'll get all 
-    foreach (QObject *child, children()) {
-        if (QAbstractItemModel *model = qobject_cast<QAbstractItemModel *>(child)) {
-            model->disconnect(this);
-            delete model;
-        }
+    QHashIterator<QAbstractItemModel*, QAction *> it(d->modelsHeader);
+    while (it.hasNext()) {
+        it.next();
+        it.key()->disconnect(this);
     }
 
     delete d;
@@ -357,7 +354,6 @@ void MenuView::addModel(QAbstractItemModel *model, MenuView::ModelOptions option
         d->buildBranch(this, model, root);
     }
 
-//connect(model, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int)));
     connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int)));
     connect(model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int)));
     connect(model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
@@ -416,7 +412,9 @@ void MenuView::rowsInserted(const QModelIndex& parent, int start, int end)
     QMenu *menu = isValidIndex(parent) ? actionForIndex(parent)->menu() : this;
 
     QAbstractItemModel *model = const_cast<QAbstractItemModel*>(parent.model());
-    Q_ASSERT(model);
+    if (!model) {
+        return;
+    }
 
     QList<QAction*> newActions;
     for (int row = start; row <= end; row++) {
