@@ -78,6 +78,8 @@ PlasmaCore.FrameSvgItem {
             shutdownUi.width += realMarginLeft + realMarginRight
             shutdownUi.height += realMarginTop + realMarginBottom
         }
+
+        console.log("contour.qml: maysd("+maysd+") choose ("+choose+") ("+sdtype+")")
     }
 
     Row {
@@ -133,7 +135,13 @@ PlasmaCore.FrameSvgItem {
                 minimumIconSize: "128x128"
 
                 onClicked: {
-                    suspendRequested(2); // Solid::PowerManagement::SuspendState
+                    if (spdMethods.SuspendState) {
+                        suspendRequested(2); // Solid::PowerManagement::SuspendState
+                    } else if (spdMethods.StandbyState) {
+                        suspendRequested(1); // Solid::PowerManagement::StandbyState
+                    } else {
+                        console.log("contour.qml: system does not support suspend")
+                    }
                 }
             }
         }
