@@ -133,8 +133,6 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
         setData("Battery", "Has Battery", !batterySources.isEmpty());
         if (!batterySources.isEmpty()) {
             setData("Battery", "Sources", batterySources);
-            batteryRemainingTimeChanged(100);
-            /*
             QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
                                                               "/org/kde/Solid/PowerManagement",
                                                               "org.kde.Solid.PowerManagement",
@@ -143,7 +141,6 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
             QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
             QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
                              this, SLOT(batteryRemainingTimeReply(QDBusPendingCallWatcher*)));
-                             */
         }
 
         m_sources = basicSourceNames() + batterySources;
