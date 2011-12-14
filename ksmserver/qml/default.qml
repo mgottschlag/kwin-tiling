@@ -46,37 +46,12 @@ PlasmaCore.FrameSvgItem {
         id: theme
     }
 
-    PlasmaCore.SvgItem {
-        id: background
-
-        anchors {
-            top: parent.top
-            topMargin: realMarginTop
-            bottom: parent.bottom
-            bottomMargin: realMarginBottom
-            left: parent.left
-            leftMargin: realMarginLeft
-            right: parent.right
-            rightMargin: realMarginRight
-        }
-
-        svg: PlasmaCore.Svg {
-            imagePath: "dialogs/shutdowndialog"
-        }
-        elementId: "center"
-    }
-
     Component.onCompleted: {
         if (margins.left == 0) {
             realMarginTop = 9
             realMarginBottom = 7
             realMarginLeft = 12
             realMarginRight = 12
-        }
-        if (background.naturalSize.width < 1) {
-            background.elementId = "background"
-            shutdownUi.width += realMarginLeft + realMarginRight
-            shutdownUi.height += realMarginTop + realMarginBottom
         }
 
         console.log("contour.qml: maysd("+maysd+") choose ("+choose+") ("+sdtype+")")
