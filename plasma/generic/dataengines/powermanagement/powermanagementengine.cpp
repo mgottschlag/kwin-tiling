@@ -77,25 +77,13 @@ void PowermanagementEngine::init()
                                                    SLOT(batteryRemainingTimeChanged(qulonglong)))) {
             kDebug() << "error connecting to remaining time changes";
         }
-        // Listen to profile changes
-        if (!QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement",
-                                                   "/org/kde/Solid/PowerManagement",
-                                                   "org.kde.Solid.PowerManagement",
-                                                   "configurationReloaded", this,
-                                                   SLOT(availableProfilesChanged()))) {
-            kDebug() << "error connecting to configuration changes";
-        }
-
-        setData("PowerDevil", DataEngine::Data());
-
-        reloadPowerDevilData();
     }
 }
 
 QStringList PowermanagementEngine::basicSourceNames() const
 {
     QStringList sources;
-    sources << "Battery" << "AC Adapter" << "Sleep States" << "PowerDevil";
+    sources << "Battery" << "AC Adapter" << "Sleep States";
     return sources;
 }
 
@@ -145,6 +133,8 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
         setData("Battery", "Has Battery", !batterySources.isEmpty());
         if (!batterySources.isEmpty()) {
             setData("Battery", "Sources", batterySources);
+            batteryRemainingTimeChanged(100);
+            /*
             QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
                                                               "/org/kde/Solid/PowerManagement",
                                                               "org.kde.Solid.PowerManagement",
@@ -153,6 +143,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
             QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
             QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
                              this, SLOT(batteryRemainingTimeReply(QDBusPendingCallWatcher*)));
+                             */
         }
 
         m_sources = basicSourceNames() + batterySources;
@@ -186,9 +177,6 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
             }
             //kDebug() << "Sleepstate \"" << sleepstate << "\" supported.";
         }
-    } else if (name == "PowerDevil") {
-        setData("PowerDevil", DataEngine::Data());
-        reloadPowerDevilData();
     } else {
         kDebug() << "Data for '" << name << "' not found";
         return false;
@@ -311,58 +299,6 @@ void PowermanagementEngine::batteryRemainingTimeReply(QDBusPendingCallWatcher *w
     }
 
     watcher->deleteLater();
-}
-
-void PowermanagementEngine::availableProfilesChanged()
-{
-    // Request profiles to the daemon
-    QDBusMessage call = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement",
-            "org.kde.Solid.PowerManagement", "availableProfiles");
-    QDBusPendingReply< StringStringMap > reply = QDBusConnection::sessionBus().asyncCall(call);
-    reply.waitForFinished();
-
-    if (!reply.isValid()) {
-        kDebug() << "Error contacting the daemon!";
-        return;
-    }
-
-    StringStringMap profiles = reply.value();
-
-    if (profiles.isEmpty()) {
-        kDebug() << "No available profiles!";
-        return;
-    }
-
-    setData("PowerDevil", "Available profiles", QVariant::fromValue(profiles));
-}
-
-void PowermanagementEngine::reloadPowerDevilData()
-{
-    // Init data
-    {
-        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
-                "/org/kde/Solid/PowerManagement",
-                "org.kde.Solid.PowerManagement",
-                "currentProfile");
-        QDBusPendingReply< QString > reply = QDBusConnection::sessionBus().asyncCall(msg);
-        reply.waitForFinished();
-        if (reply.isValid()) {
-            profileChanged(reply.value());
-        }
-    }
-
-    {
-        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
-                                                          "/org/kde/Solid/PowerManagement",
-                                                          "org.kde.Solid.PowerManagement",
-                                                          "batteryRemainingTime");
-        QDBusPendingReply< qulonglong > reply = QDBusConnection::sessionBus().asyncCall(msg);
-        QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
-        QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-                         this, SLOT(batteryRemainingTimeReply(QDBusPendingCallWatcher*)));
-    }
-
-    availableProfilesChanged();
 }
 
 K_EXPORT_PLASMA_DATAENGINE(powermanagement, PowermanagementEngine)

@@ -59,8 +59,6 @@ private slots:
     void profileChanged(const QString &current);
     void batteryRemainingTimeChanged(qulonglong time);
     void batteryRemainingTimeReply(QDBusPendingCallWatcher*);
-    void availableProfilesChanged();
-    void reloadPowerDevilData();
 
 private:
     QStringList basicSourceNames() const;
