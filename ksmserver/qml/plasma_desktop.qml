@@ -49,7 +49,7 @@ PlasmaCore.FrameSvgItem {
         id: theme
     }
 
-    PlasmaCore.SvgItem {
+    /*PlasmaCore.SvgItem {
         id: background
 
         anchors {
@@ -67,7 +67,7 @@ PlasmaCore.FrameSvgItem {
             imagePath: "dialogs/shutdowndialog"
         }
         elementId: "center"
-    }
+    }*/
 
     Component.onCompleted: {
         // Hacky but works :-)
@@ -83,7 +83,7 @@ PlasmaCore.FrameSvgItem {
         }
 
         if (leftPicture.naturalSize.width < 1) {
-            background.elementId = "background"
+            //background.elementId = "background"
             shutdownUi.width += realMarginLeft + realMarginRight
             shutdownUi.height += realMarginTop + realMarginBottom
             automaticallyDoLabel.anchors.topMargin = 2*realMarginTop
