@@ -48,8 +48,9 @@ PlasmaCore.FrameSvgItem {
         elementId: "button-normal"
     }
 
-    PlasmaComponents.Label {
+    Text {
         id: labelElement
+        font.pixelSize: Math.max(12, theme.defaultFont.pointSize)
         color: theme.textColor
         anchors {
             verticalCenter: parent.verticalCenter
