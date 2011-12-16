@@ -52,8 +52,9 @@ void ActivityEngine::init()
         //some convenience sources for times when checking every activity source would suck
         //it starts with _ so that it can easily be filtered out of sources()
         //maybe I should just make it not included in sources() instead?
+        m_runningActivities = m_activityController->listActivities(KActivities::Info::Running);
         setData("Status", "Current", m_currentActivity);
-        setData("Status", "Running", m_activityController->listActivities(KActivities::Info::Running));
+        setData("Status", "Running", m_runningActivities);
     }
 }
 
@@ -88,13 +89,14 @@ void ActivityEngine::insertActivity(const QString &id)
 
     connect(activity, SIGNAL(infoChanged()), this, SLOT(activityDataChanged()));
     connect(activity, SIGNAL(stateChanged(KActivities::Info::State)), this, SLOT(activityStateChanged()));
+
+    m_runningActivities << id;
 }
 
 void ActivityEngine::activityAdded(const QString &id)
 {
     insertActivity(id);
-    setData("Status", "Running",
-            m_activityController->listActivities(KActivities::Info::Running)); //FIXME horribly inefficient
+    setData("Status", "Running", m_runningActivities);
 }
 
 void ActivityEngine::activityRemoved(const QString &id)
@@ -104,8 +106,8 @@ void ActivityEngine::activityRemoved(const QString &id)
     if (activity) {
         delete activity;
     }
-    setData("Status", "Running",
-            m_activityController->listActivities(KActivities::Info::Running)); //FIXME horribly inefficient
+    m_runningActivities.removeAll(id);
+    setData("Status", "Running", m_runningActivities);
 }
 
 void ActivityEngine::currentActivityChanged(const QString &id)
@@ -130,6 +132,7 @@ void ActivityEngine::activityDataChanged()
 void ActivityEngine::activityStateChanged()
 {
     KActivities::Info *activity = qobject_cast<KActivities::Info*>(sender());
+    const QString id = activity->id();
     if (!activity) {
         return;
     }
@@ -151,10 +154,17 @@ void ActivityEngine::activityStateChanged()
         default:
             state = "Invalid";
     }
-    setData(activity->id(), "State", state);
+    setData(id, "State", state);
 
-    setData("Status", "Running",
-            m_activityController->listActivities(KActivities::Info::Running)); //FIXME horribly inefficient
+    if (activity->state() == KActivities::Info::Running) {
+        if (!m_runningActivities.contains(id)) {
+            m_runningActivities << id;
+        }
+    } else {
+        m_runningActivities.removeAll(id);
+    }
+
+    setData("Status", "Running", m_runningActivities);
 }
 
 

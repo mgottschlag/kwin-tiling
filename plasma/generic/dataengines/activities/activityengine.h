@@ -55,6 +55,7 @@ private:
 
     KActivities::Controller *m_activityController;
     QHash<QString, KActivities::Info *> m_activities;
+    QStringList m_runningActivities;
     QString m_currentActivity;
 
     friend class ActivityService;
