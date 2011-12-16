@@ -532,6 +532,15 @@ void ControllerWindow::resizeEvent(QResizeEvent * event)
     qDebug() << "ControllerWindow::resizeEvent" << event->oldSize();
 
     QWidget::resizeEvent(event);
+    if (PlasmaApp::isPanelContainment(containment())) {
+        // try to align it with the appropriate panel view
+        foreach (PanelView * panel, PlasmaApp::self()->panelViews()) {
+            if (panel->containment() == containment()) {
+                move(positionForPanelGeometry(panel->geometry()));
+                break;
+            }
+        }
+    }
 }
 
 #include "controllerwindow.moc"
