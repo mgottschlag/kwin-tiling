@@ -28,16 +28,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "plasma/theme.h"
 
 #include <QApplication>
-#include <QBitmap>
 #include <QDesktopWidget>
-#include <QLabel>
-#include <QPainter>
-#include <QMenu>
 #include <QTimer>
-#include <QTimeLine>
-#include <QPaintEvent>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
+#include <QFile>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusPendingCall>
@@ -165,7 +158,8 @@ void KSMShutdownFeedback::logoutCanceled()
 Q_DECLARE_METATYPE(Solid::PowerManagement::SleepState)
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
-                                bool maysd, bool choose, KWorkSpace::ShutdownType sdtype )
+                                bool maysd, bool choose, KWorkSpace::ShutdownType sdtype,
+                                QString& theme)
   : QDialog( parent, Qt::Popup ) //krazy:exclude=qclasses
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
@@ -214,7 +208,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     if ( KDisplayManager().bootOptions( rebootOptions, def, cur ) ) {
         if ( cur > -1 ) {
             def = cur;
-	}
+        }
     }
     QDeclarativePropertyMap *rebootOptionsMap = new QDeclarativePropertyMap(this);
     rebootOptionsMap->insert("options", QVariant::fromValue(rebootOptions));
@@ -244,9 +238,11 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     kdeclarative.setupBindings();
     m_view->installEventFilter(this);
 
-    // TODO: add option in systemsettings -> Startup and Shutdown -> Session Management
-    // to select the qml theme.
-    m_view->setSource(QUrl(KStandardDirs::locate("data", "ksmserver/qml/default.qml")));
+    QString fileName = KStandardDirs::locate("data", QString("ksmserver/themes/%1/main.qml").arg(theme));
+    if (QFile::exists(fileName)) {
+        kDebug() << "Using QML theme" << fileName;
+        m_view->setSource(QUrl::fromLocalFile(fileName));
+    }
     setFocus();
     connect(m_view, SIGNAL(sceneResized(QSize)), SLOT(resizeFromView(QSize)));
     connect(m_view->rootObject(), SIGNAL(logoutRequested()), SLOT(slotLogout()));
@@ -344,11 +340,12 @@ void KSMShutdownDlg::slotSuspend(int spdMethod)
 }
 
 bool KSMShutdownDlg::confirmShutdown(
-        bool maysd, bool choose, KWorkSpace::ShutdownType& sdtype, QString& bootOption )
+        bool maysd, bool choose, KWorkSpace::ShutdownType& sdtype, QString& bootOption,
+        QString& theme)
 {
     KSMShutdownDlg* l = new KSMShutdownDlg( 0,
                                             //KSMShutdownFeedback::self(),
-                                            maysd, choose, sdtype );
+                                            maysd, choose, sdtype, theme );
     XClassHint classHint;
     classHint.res_name = const_cast<char*>("ksmserver");
     classHint.res_class = const_cast<char*>("ksmserver");
