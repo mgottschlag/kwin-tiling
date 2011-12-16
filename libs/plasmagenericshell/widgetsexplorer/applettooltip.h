@@ -52,7 +52,7 @@ class AppletInfoWidget : public QGraphicsWidget {
         void openLink(const QString &link);
 
     private:
-        AppletIconWidget *m_applet;
+        QWeakPointer<AppletIconWidget> m_applet;
         QGraphicsLinearLayout *m_mainVerticalLayout;
 
         Plasma::IconWidget *m_iconWidget;
