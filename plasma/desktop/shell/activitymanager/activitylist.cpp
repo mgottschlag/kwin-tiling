@@ -111,7 +111,11 @@ void ActivityList::updateVisibleIcons()
 void ActivityList::setSearch(const QString &searchString)
 {
     foreach (Plasma::AbstractIcon *icon, m_allAppletsHash) {
-        icon->setVisible(icon->name().contains(searchString, Qt::CaseInsensitive));
+        if (icon->name().contains(searchString, Qt::CaseInsensitive)) {
+            icon->expand();
+        } else {
+            icon->collapse();
+        }
     }
 }
 
