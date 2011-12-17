@@ -267,6 +267,9 @@ EditActionDialog::EditActionDialog(QWidget* parent)
     m_ui = new Ui::EditActionDialog;
     m_ui->setupUi(dlgWidget);
 
+    m_ui->leRegExp->setClearButtonShown(true);
+    m_ui->leDescription->setClearButtonShown(true);
+
     m_ui->pbAddCommand->setIcon(KIcon("list-add"));
     m_ui->pbRemoveCommand->setIcon(KIcon("list-remove"));
 
