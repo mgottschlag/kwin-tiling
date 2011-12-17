@@ -139,6 +139,7 @@ Categories=Qt;KDE;X-KDE-settings-accessibility;
 
 X-KDE-Keywords=global,keyboard shortcuts,hot keys,hotkeys,KHotKeys,input actions,mouse gestures,actions,triggers,launch
 X-KDE-Keywords[ca]=global,dreceres de teclat,dreceres de teclat,hotkeys,KHotKeys,accions d'entrada,gestos de ratolí,accions,activadors,llançament
+X-KDE-Keywords[fi]=globaali,järjestelmänlaajuinen,pikanäppäimet,näppäimistön pikavalinnat,näppäinyhdistelmät,oikotiet,KHotKeys,syötetoiminnot,hiirieleet,toiminnot,laukaisimet,käynnistys
 X-KDE-Keywords[ia]=global,vias breve de claviero, claves calide,claves calide,KHotKeys, actiones de ingresso,gestos de mus,actiones,discatenator,lancear
 X-KDE-Keywords[kk]=global,keyboard shortcuts,hot keys,hotkeys,KHotKeys,input actions,mouse gestures,actions,triggers,launch
 X-KDE-Keywords[nb]=global,tastesnarveier,hurtigtaster,KHotKeys,inndata-handlinger,musebevegelser,handlinger,utløsere,oppstart

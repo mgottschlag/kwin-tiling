@@ -17,6 +17,7 @@ Name[da]=Håndtering af skrifttyper
 Name[de]=Schriftarten-Verwaltung
 Name[et]=Fondihaldur
 Name[eu]=Letra-tipo kudeaketa
+Name[fi]=Kirjasintenhallinta
 Name[hr]=Upravljanje pismima
 Name[hu]=Betűtípus-kezelés
 Name[ia]=Gestion de font
@@ -129,6 +130,7 @@ Comment[zh_TW]=安裝、管理並預覽字型
 
 X-KDE-Keywords=font,fonts,installer,truetype,type1,bitmap
 X-KDE-Keywords[ca]=tipus de lletra,tipus de lletres,instal·lador,truetype,type1,mapa de bits
+X-KDE-Keywords[fi]=kirjasin,kirjasimet,fontti,fontit,asentaja,asennin,truetype,type1,bitmap,bittikartta
 X-KDE-Keywords[ia]=font,fonts,installator,truetype,type1,bitmap
 X-KDE-Keywords[kk]=font,fonts,installer,truetype,type1,bitmap
 X-KDE-Keywords[nb]=skrift,skrifter,installer,truetrype,type1,bitmap
