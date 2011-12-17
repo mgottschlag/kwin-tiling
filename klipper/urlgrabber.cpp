@@ -121,7 +121,7 @@ void URLGrabber::matchingMimeActions(const QString& clipData)
     }
     if(url.isLocalFile()) {
 	if(!QFile::exists(url.toLocalFile())) {
-	//    kDebug() << "skipping mime magic due to nonexistant localfile";
+	//    kDebug() << "skipping mime magic due to nonexistent localfile";
 	    return;
 	}
     }
