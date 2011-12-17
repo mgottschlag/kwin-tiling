@@ -128,14 +128,17 @@ Comment[zh_CN]=安装、管理和预览字体
 Comment[zh_TW]=安裝、管理並預覽字型
 
 X-KDE-Keywords=font,fonts,installer,truetype,type1,bitmap
+X-KDE-Keywords[ca]=tipus de lletra,tipus de lletres,instal·lador,truetype,type1,mapa de bits
 X-KDE-Keywords[ia]=font,fonts,installator,truetype,type1,bitmap
 X-KDE-Keywords[kk]=font,fonts,installer,truetype,type1,bitmap
+X-KDE-Keywords[nb]=skrift,skrifter,installer,truetrype,type1,bitmap
 X-KDE-Keywords[nl]=lettertype,lettertypen,installatieprogramma,truetype,type1,bitmap
 X-KDE-Keywords[pt]=tipo de letra,tipos de letra,instalador,truetype,type1,imagem
 X-KDE-Keywords[pt_BR]=fonte,fontes,instalador,truetype,type1,bitmap,imagem
 X-KDE-Keywords[sv]=teckensnitt,installation,truetype,type1,bitavbildning
 X-KDE-Keywords[uk]=шрифт,шрифти,встановлювач,truetype,type1,растрові
 X-KDE-Keywords[x-test]=xxfont,fonts,installer,truetype,type1,bitmapxx
+X-KDE-Keywords[zh_TW]=font,fonts,installer,truetype,type1,bitmap
 
 Categories=Qt;KDE;X-KDE-settings-system;
 X-KDE-System-Settings-Parent-Category=system-administration

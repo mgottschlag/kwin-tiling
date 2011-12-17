@@ -134,6 +134,7 @@ void ActivityConfiguration::showEvent(QShowEvent * event)
 
 ActivityConfiguration::~ActivityConfiguration()
 {
+    delete m_iconDialog.data();
     // delete m_layoutMain;
     m_main->deleteLater();
 }
@@ -149,8 +150,24 @@ void ActivityConfiguration::applyChanges()
 
 void ActivityConfiguration::chooseIcon()
 {
-    QString iconName = KIconDialog::getIcon();
+    KIconDialog *dialog = m_iconDialog.data();
 
+    if (!m_iconDialog) {
+        dialog = new KIconDialog;
+        dialog->setup(KIconLoader::Desktop);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->setProperty("DoNotCloseController", true);
+        connect(dialog, SIGNAL(newIconName(QString)), this, SLOT(setIcon(QString)));
+        m_iconDialog = dialog;
+    }
+
+    KWindowSystem::setOnDesktop(dialog->winId(), KWindowSystem::currentDesktop());
+    dialog->showDialog();
+    KWindowSystem::forceActiveWindow(dialog->winId());
+}
+
+void ActivityConfiguration::setIcon(const QString &iconName)
+{
     if (!iconName.isEmpty()) {
         m_activityIcon->setIcon(KIcon(iconName));
         m_iconName = iconName;

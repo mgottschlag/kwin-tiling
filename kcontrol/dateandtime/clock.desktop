@@ -198,13 +198,16 @@ Comment[zh_CN]=日期和时间设置
 Comment[zh_TW]=日期和時間設定值
 
 X-KDE-Keywords=clock,date,time,time zone
+X-KDE-Keywords[ca]=rellotge,data,hora,zona horària
 X-KDE-Keywords[ia]=horologio,data,tempore,zona de tempore
 X-KDE-Keywords[kk]=clock,date,time,time zone
+X-KDE-Keywords[nb]=klokke,dato,tid,tidssone
 X-KDE-Keywords[nl]=klok,datum,tijd,tijdzone
 X-KDE-Keywords[pt]=relógio,data,hora,fuso-horário
 X-KDE-Keywords[pt_BR]=relógio,data,hora,fuso horário
 X-KDE-Keywords[sv]=klocka,datum,tid,tidszon
 X-KDE-Keywords[uk]=clock,date,time,time zone,годинник,час,дата,часовий пояс
 X-KDE-Keywords[x-test]=xxclock,date,time,time zonexx
+X-KDE-Keywords[zh_TW]=clock,date,time,time zone
 
 Categories=Qt;KDE;X-KDE-settings-system;

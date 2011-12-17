@@ -135,7 +135,7 @@ void KRunnerDialog::positionOnScreen()
         m_shownOnScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
     }
 
-    QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
+    const QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
 
     if (m_floating && !m_customPos.isNull()) {
         int x = qBound(r.left(), m_customPos.x(), r.right() - width());
@@ -182,8 +182,8 @@ void KRunnerDialog::moveEvent(QMoveEvent *)
     if (m_floating) {
         m_customPos = pos();
     } else {
-        const int screenWidth = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen).width();
-        m_offset = qRound(geometry().center().x() / qreal(screenWidth) * 100) / 100.0;
+        const QRect screen = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
+        m_offset = qRound((geometry().center().x() - screen.x())  / qreal(screen.width()) * 100) / 100.0;
     }
 }
 
@@ -217,7 +217,7 @@ void KRunnerDialog::updatePresentation()
         // load the positions for each screen from our config
         KConfigGroup cg(KGlobal::config(), "EdgePositions");
         m_offset = cg.readEntry(QLatin1String("Offset"), m_offset);
-        QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
+        const QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
         checkBorders(r);
         KWindowSystem::setType(winId(), NET::Dock);
     }
@@ -377,7 +377,7 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
 
     bool maskDirty = true;
     if (m_resizing && !m_vertResize) {
-        QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
+        const QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
         //kDebug() << "if" << x() << ">" << r.left() << "&&" << r.right() << ">" << (x() + width());
         const Plasma::FrameSvg::EnabledBorders borders = m_background->enabledBorders();
         if (borders & Plasma::FrameSvg::LeftBorder) {
@@ -475,7 +475,7 @@ void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
             resize(width(), qMax(80, height() + deltaY));
             m_lastPressPos = e->globalPos();
         } else {
-            QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
+            const QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
             const int deltaX = (m_rightResize ? -1 : 1) * (m_lastPressPos.x() - e->globalX());
             int newWidth = width() + deltaX;
 
@@ -497,7 +497,7 @@ void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
         }
     } else {
         // moving
-        QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
+        const QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
         int newX = qBound(r.left(), x() - (m_lastPressPos.x() - e->globalX()), r.right() - width() + 1);
         if (abs(r.center().x() - (newX + (width() / 2))) < 20) {
             newX = r.center().x() - (width() / 2);

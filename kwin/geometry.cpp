@@ -1852,7 +1852,9 @@ bool Client::isMaximizable() const
         if (!isMovable() || !isResizable() || isToolbar())  // SELI isToolbar() ?
             return false;
     }
-    return true;
+    if (rules()->checkMaximize(MaximizeRestore) == MaximizeRestore && rules()->checkMaximize(MaximizeFull) != MaximizeRestore)
+        return true;
+    return false;
 }
 
 
@@ -2127,8 +2129,15 @@ void Client::setMaximize(bool vertically, bool horizontally)
 static bool changeMaximizeRecursion = false;
 void Client::changeMaximize(bool vertical, bool horizontal, bool adjust)
 {
-    if (!isMaximizable() || changeMaximizeRecursion)
+    if (changeMaximizeRecursion)
         return;
+    {
+        // isMovable() and isResizable() may be false for maximized windows
+        // with moving/resizing maximized windows disabled
+        TemporaryAssign< MaximizeMode > tmp(max_mode, MaximizeRestore);
+        if (!isMovable() || !isResizable() || isToolbar())  // SELI isToolbar() ?
+            return;
+    }
 
     MaximizeMode old_mode = max_mode;
     // 'adjust == true' means to update the size only, e.g. after changing workspace size
@@ -2580,6 +2589,7 @@ bool Client::startMoveResize()
     }
 
     moveResizeMode = true;
+    s_haveResizeEffect = effects && static_cast<EffectsHandlerImpl*>(effects)->provides(Effect::Resize);
     moveResizeStartScreen = screen();
     workspace()->setClientIsMoving(this);
     initialMoveResizeGeom = moveResizeGeom = geometry();
@@ -3034,7 +3044,7 @@ void Client::handleMoveResize(int x, int y, int x_root, int y_root)
         return;
 
 #ifdef HAVE_XSYNC
-    if (isResize() && syncRequest.counter != None) {
+    if (isResize() && syncRequest.counter != None && !s_haveResizeEffect) {
         if (!syncRequest.timeout) {
             syncRequest.timeout = new QTimer(this);
             connect(syncRequest.timeout, SIGNAL(timeout()), SLOT(performMoveResize()));
@@ -3062,7 +3072,11 @@ void Client::performMoveResize()
 #ifdef KWIN_BUILD_TILING
     if (!workspace()->tiling()->isEnabled())
 #endif
-        setGeometry(moveResizeGeom);
+    {
+        if (isMove() || (isResize() && !s_haveResizeEffect)) {
+            setGeometry(moveResizeGeom);
+        }
+    }
 #ifdef HAVE_XSYNC
     if (isResize() && syncRequest.counter != None)
         addRepaintFull();

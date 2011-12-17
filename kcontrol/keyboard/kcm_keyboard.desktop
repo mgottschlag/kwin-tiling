@@ -199,11 +199,14 @@ Comment[zh_CN]=键盘设置
 Comment[zh_TW]=鍵盤設定
 
 X-KDE-Keywords=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume
+X-KDE-Keywords[ca]=Teclat,Repetició de teclat,Volum del clic,Dispositius d'entrada,repetició,volum
 X-KDE-Keywords[ia]=Claviero,Repetition de claviero,Volumine de click,Dispositivo de ingresso,repetition,volumine
 X-KDE-Keywords[kk]=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume
+X-KDE-Keywords[nb]=Tastatur,Tasterepetisjon,Lydstyrke for tasteklikk,Inndataenheter,gjenta,lydstyrke
 X-KDE-Keywords[nl]=toetsenbord,toetsenbordherhaling,klikvolume,invoerapparaten,herhaling,volume
 X-KDE-Keywords[pt]=teclado,repetição do teclado,volume das teclas,dispositivos de entrada,repetição,volume
 X-KDE-Keywords[pt_BR]=Teclado,repetição do teclado,volume das teclas,dispositivos de entrada,repetição,volume
 X-KDE-Keywords[sv]=Tangentbord,Tangentbordsupprepning,Klickvolym,Indataenheter,upprepa,volym
 X-KDE-Keywords[uk]=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume,клавіатура,гучність клацання,введення,повторення,гучність
 X-KDE-Keywords[x-test]=xxKeyboard,Keyboard repeat,Click volume,Input Devices,repeat,volumexx
+X-KDE-Keywords[zh_TW]=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume

@@ -62,6 +62,7 @@ void ShowActivityManager::configChanged()
 
 void ShowActivityManager::showManager()
 {
+    Plasma::ToolTipManager::self()->hide(this);
     QDBusMessage message = QDBusMessage::createMethodCall("org.kde.plasma-desktop",
                                                           "/App",
                                                           QString(),

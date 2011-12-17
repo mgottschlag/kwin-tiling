@@ -154,7 +154,7 @@ Comment[mai]=विंडो व्यवहार बिन्यस्त क�
 Comment[mk]=Конфигурирајте го однесувањето на прозорците
 Comment[ml]=ജാലകത്തിന്റെ വിശേഷത ക്രമീകരിക്കുക
 Comment[mr]=चौकट व्यवहार संयोजीत करा
-Comment[nb]=Tilpass vinduets oppførsel
+Comment[nb]=Sett opp vinduenes oppførsel
 Comment[nds]=Dat Finsterbedregen instellen
 Comment[ne]=सञ्झ्याल व्यवहार कन्फिगर गर्नुहोस्
 Comment[nl]=Het venstergedrag instellen
@@ -190,14 +190,17 @@ Comment[zh_CN]=配置窗口行为
 Comment[zh_TW]=設定視窗行為
 
 X-KDE-Keywords=focus,placement,window behavior,animation,raise,auto raise,windows,frame,titlebar,doubleclick
+X-KDE-Keywords[ca]=focus,situació,comportament de finestra,animació,elevació,elevació automàtica,finestres,marc,barra de títol,clic doble
 X-KDE-Keywords[ia]=focus,placiamento,comportamento de fenestra,animation,altiar,auto altiar,fenestras,quadro,barra de titulo,duple click
 X-KDE-Keywords[kk]=focus,placement,window behavior,animation,raise,auto raise,windows,frame,titlebar,doubleclick
+X-KDE-Keywords[nb]=fokus,plassering,vindusppførsel,animering,hev,autohev,vinduer,ramme,tittellinje,dobbeltklikk
 X-KDE-Keywords[nl]=focus,plaatsing,venstegedrag,animatie,omhoog,automatisch omhoog,vensters,frame,titelbalk,dubbelklik
 X-KDE-Keywords[pt]=foco,colocação,comportamento da janela,animação,elevar,elevar automaticamente,janelas,contorno,barra de título,duplo-click
 X-KDE-Keywords[pt_BR]=foco,colocação,comportamento da janela,animação,elevar,elevar automaticamente,janelas,contorno,barra de título,clique duplo
 X-KDE-Keywords[sv]=fokus,placering,fönsterbeteende,animering,höj,höj automatiskt,fönster,ram,namnlist,dubbelklick
 X-KDE-Keywords[uk]=focus,placement,window behavior,animation,raise,auto raise,windows,frame,titlebar,doubleclick,фокус,розташування,місце,вікно,поведінка,поведінка вікон,анімація,підняти,підняття,автоматична,автоматично,рамка,заголовок,смужка заголовка,клацання,подвійне
 X-KDE-Keywords[x-test]=xxfocus,placement,window behavior,animation,raise,auto raise,windows,frame,titlebar,doubleclickxx
+X-KDE-Keywords[zh_TW]=focus,placement,window behavior,animation,raise,auto raise,windows,frame,titlebar,doubleclick
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;
 

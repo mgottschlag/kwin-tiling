@@ -198,12 +198,15 @@ Comment[zh_CN]=鼠标设置
 Comment[zh_TW]=滑鼠設定
 
 X-KDE-Keywords=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed
+X-KDE-Keywords[ca]=Ratolí,Acceleració del ratolí,Llindar del ratolí,Botons del ratolí,Selecció,Ombra del cursor,Dispositius d'entrada,Mapatge dels boton,Clic,icones,reacció,Apuntadors,Arrossegar,Clic doble,mapatge,dretà,esquerrà
 X-KDE-Keywords[ia]=Mus,Acceleration de mus,Limine de mus,Buttones de mus,Selection,Forma de cursor, Dispositivos de ingresso,Mappatura de button,Click,icones,retro-information,Punctatores,Trahe,DupleClick,mappar,con mano dextere, con mano sinistre
 X-KDE-Keywords[kk]=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed
+X-KDE-Keywords[nb]=Mus,Pekerakselerasjon,Pekerterskel,knapper,valg,pekerform,Inndataenheter,knappeavbildning,Klikk, ikoner,oppstartsmelding,Pekere,Dra,Dobbeltklikk,Knapperekkefølge,høyrehendt,venstrehendt
 X-KDE-Keywords[nl]=muis,muisversnelling,muisdrempel,muisknoppen,selectie,cursorvorm,invoerapparaten,knoppenmapping,klik,pictogrammen,terugkoppeling,aanwijzer,slepen,dubbelklik,mapping,rechtshandig,linkshandig
 X-KDE-Keywords[pt]=Rato,aceleração do rato,limiar do rato,botões do rato,selecção,forma do cursor,dispositivos de entrada,associação de botões,click,ícones,reacção,cursores,arrastar,duplo-click,associação,destro,esquerdino
 X-KDE-Keywords[pt_BR]=Mouse,aceleração do mouse,limiar do mouse,botões do mouse,seleção,forma do cursor,dispositivos de entrada,associação de botões,clique,ícones,feedback,ponteiros,arrastar,clique duplo,associação,destro,canhoto
 X-KDE-Keywords[sv]=Mus,Musacceleration,Muströskel,Musknappar,Val,Pekarform,Indataenheter,Knappavbildning,Klick,ikoner,återmatning,Pekare,Dra,Dubbelklick,avbildning,högerhänt,vänsterhänt
 X-KDE-Keywords[uk]=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed,миша,прискорення,поріг,порогове значення,кнопка,вибір,вказівник,форма,введення,кнопки,клацання,піктограми,значки,іконки,супровід,вказівники,перетягування,подвійне клацання,відповідність,праворукий,шульга,лівша
 X-KDE-Keywords[x-test]=xxMouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handedxx
+X-KDE-Keywords[zh_TW]=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed
 Categories=Qt;KDE;X-KDE-settings-hardware;

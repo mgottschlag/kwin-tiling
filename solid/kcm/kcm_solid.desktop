@@ -143,12 +143,15 @@ Comment[zh_CN]=Solid 硬件集成配置
 Comment[zh_TW]=使用 Solid 硬體整合設定
 
 X-KDE-Keywords=Solid,Hardware,Power,Network,Discovery,Management
+X-KDE-Keywords[ca]=Solid,Maquinari,Energia,Xarxa,Descobriment,Gestió
 X-KDE-Keywords[ia]=Solid,Hardware,Energia,Rete,Discoperta,Gestion
 X-KDE-Keywords[kk]=Solid,Hardware,Power,Network,Discovery,Management
+X-KDE-Keywords[nb]=Solid,Maskinvare,Strøm,Nettverk,Oppdagelse,Styring
 X-KDE-Keywords[nl]=Solid,hardware,energie,netwerk,ontdekken,beheer
 X-KDE-Keywords[pt]=Solid,Hardware,Energia,Rede,Descoberta,Gestão
 X-KDE-Keywords[pt_BR]=Solid,Hardware,Energia,Rede,Descoberta,Gerenciamento
 X-KDE-Keywords[sv]=Solid,Hårdvara,Kraft,Nätverk,Upptäckt,Hantering
 X-KDE-Keywords[uk]=Solid,Hardware,Power,Network,Discovery,Management,обладнання,живлення,мережа,визначення,керування
 X-KDE-Keywords[x-test]=xxSolid,Hardware,Power,Network,Discovery,Managementxx
+X-KDE-Keywords[zh_TW]=Solid,Hardware,Power,Network,Discovery,Management
 
