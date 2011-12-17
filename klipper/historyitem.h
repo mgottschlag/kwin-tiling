@@ -17,8 +17,8 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#ifndef _HISTORYITEM_H_
-#define _HISTORYITEM_H_
+#ifndef HISTORYITEM_H
+#define HISTORYITEM_H
 #include <QPixmap>
 
 class QString;

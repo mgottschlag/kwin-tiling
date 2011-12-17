@@ -22,6 +22,8 @@
    Boston, MA 02110-1301, USA.
 */
 
+#include "klipper.h"
+
 #include <QtDBus/QDBusConnection>
 
 #include <kaboutdata.h>
@@ -39,7 +41,6 @@
 #include <ktextedit.h>
 
 #include "configdialog.h"
-#include "klipper.h"
 #include "klippersettings.h"
 #include "urlgrabber.h"
 #include "version.h"
