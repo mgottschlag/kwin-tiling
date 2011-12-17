@@ -592,8 +592,8 @@ void Klipper::setURLGrabberEnabled( bool enable )
 {
     if (enable != m_bURLGrabber) {
       m_bURLGrabber = enable;
-      m_lastURLGrabberTextSelection = QString();
-      m_lastURLGrabberTextClipboard = QString();
+      m_lastURLGrabberTextSelection.clear();
+      m_lastURLGrabberTextClipboard.clear();
       KlipperSettings::setURLGrabberEnabled(enable);
     }
 
@@ -861,7 +861,7 @@ void Klipper::checkClipData( bool selectionMode )
             lastURLGrabberText = item->text();
         }
     } else {
-        lastURLGrabberText = QString();
+        lastURLGrabberText.clear();
     }
 }
 
