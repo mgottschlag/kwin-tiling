@@ -26,7 +26,6 @@ PlasmaCore.FrameSvgItem {
     property string iconSource
     property alias text: labelElement.text
     property bool smallButton: false
-    property bool focusedButton: false
     property bool menu: false
     property ContextMenu contextMenu
 
@@ -96,32 +95,45 @@ PlasmaCore.FrameSvgItem {
     }
 
     Component.onCompleted: {
-        if (focusedButton) {
+        if (button.focus) {
             background.elementId = button.smallButton ? "button-small-hover" : "button-hover"
         } else {
             background.elementId = button.smallButton ? "button-small-normal" : "button-normal"
         }
     }
 
-    onFocusedButtonChanged: {
-        if (focusedButton) {
+    onActiveFocusChanged: {
+        if (activeFocus) {
             background.elementId = button.smallButton ? "button-small-hover" : "button-hover"
+            //console.log("KSMButton.qml activeFocus "+activeFocus+" "+button.text)
         } else {
             background.elementId = button.smallButton ? "button-small-normal" : "button-normal"
+        }
+    }
+
+
+    Keys.onPressed: {
+        if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
+            mouseArea.clicked(null)
         }
     }
 
     MouseArea {
+        id: mouseArea
+
         anchors.fill: parent
         hoverEnabled: true
-        onClicked: button.clicked()
+        onClicked: {
+            button.focus = true
+            button.clicked()
+        }
         onPressed: button.pressed()
         onPressAndHold: button.pressAndHold()
         onEntered: {
             background.elementId = button.smallButton ? "button-small-hover" : "button-hover"
         }
         onExited: {
-            if (!focusedButton) {
+            if (!button.focus) {
                 background.elementId = button.smallButton ? "button-small-normal" : "button-normal"
             }
         }

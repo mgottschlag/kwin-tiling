@@ -112,9 +112,7 @@ PlasmaCore.FrameSvgItem {
             }
         }
 
-        focusedButton.focusedButton = true
-
-        timer.interval = 1000;
+        focusedButton.focus = true
         timer.running = true;
     }
 
@@ -122,6 +120,7 @@ PlasmaCore.FrameSvgItem {
         id: timer
         repeat: true
         running: false
+        interval: 1000
 
         onTriggered: {
             if (focusedButton != lastButton) {
@@ -181,9 +180,12 @@ PlasmaCore.FrameSvgItem {
         elementId: "picture"
     }
 
-    Column {
-        id: buttonsLayout
-        spacing: 9
+    FocusScope {
+        id: scope
+        width: buttonsLayout.width
+        height: buttonsLayout.height
+        focus: true
+
         anchors {
             top: automaticallyDoLabel.bottom
             topMargin: 4
@@ -192,139 +194,142 @@ PlasmaCore.FrameSvgItem {
         }
 
         Column {
-            spacing: 4
+            id: buttonsLayout
+            spacing: 9
 
-            KSMButton {
-                id: logoutButton
-                text: i18n("Logout")
-                iconSource: "system-log-out"
-                height: 32
-                anchors.right: parent.right
-                visible: (choose || sdtype == ShutdownType.ShutdownTypeNone)
+            Column {
+                spacing: 4
 
-                onClicked: {
-                    logoutRequested()
-                }
+                KSMButton {
+                    id: logoutButton
+                    text: i18n("Logout")
+                    iconSource: "system-log-out"
+                    height: 32
+                    anchors.right: parent.right
+                    visible: (choose || sdtype == ShutdownType.ShutdownTypeNone)
+                    KeyNavigation.tab: shutdownButton
 
-                onPressed: {
-                    if (shutdownUi.focusedButton != logoutButton) {
-                        shutdownUi.focusedButton.focusedButton = false
-                        shutdownUi.focusedButton = logoutButton
-                        focusedButton = true
-                        focus = true
+                    onClicked: {
+                        console.log("main.qml: logoutRequested")
+                        //logoutRequested()
+                    }
+
+                    onPressed: {
+                        if (shutdownUi.focusedButton != logoutButton) {
+                            shutdownUi.focusedButton = logoutButton
+                        }
                     }
                 }
-            }
 
-            KSMButton {
-                id: shutdownButton
-                text: i18n("Turn Off Computer")
-                iconSource: "system-shutdown"
-                height: 32
-                anchors.right: parent.right
-                visible: (choose || sdtype == ShutdownType.ShutdownTypeHalt)
-                menu: true
+                KSMButton {
+                    id: shutdownButton
+                    text: i18n("Turn Off Computer")
+                    iconSource: "system-shutdown"
+                    height: 32
+                    anchors.right: parent.right
+                    visible: (choose || sdtype == ShutdownType.ShutdownTypeHalt)
+                    menu: spdMethods.StandbyState | spdMethods.SuspendState | spdMethods.HibernateState
+                    KeyNavigation.tab: rebootButton
 
-                onClicked: {
-                    haltRequested()
-                }
-
-                onPressAndHold: {
-                    if (!contextMenu) {
-                        contextMenu = shutdownOptionsComponent.createObject(shutdownButton)
-                        if (spdMethods.StandbyState) {
-                            // 1 == Solid::PowerManagement::StandbyState
-                            contextMenu.append({itemIndex: 1, itemText: i18n("Standby")})
-                        }
-                        if (spdMethods.SuspendState) {
-                            // 2 == Solid::PowerManagement::SuspendState
-                            contextMenu.append({itemIndex: 2, itemText: i18n("Suspend to RAM")})
-                        }
-                        if (spdMethods.HibernateState) {
-                            // 3 == Solid::PowerManagement::HibernateState
-                            contextMenu.append({itemIndex: 3, itemText: i18n("Suspend to Disk")})
-                        }
-                        contextMenu.clicked.connect(shutdownUi.suspendRequested)
+                    onClicked: {
+                        console.log("main.qml: haltRequested")
+                        //haltRequested()
                     }
-                    contextMenu.open()
-                }
 
-                onPressed: {
-                    if (shutdownUi.focusedButton != shutdownButton) {
-                        shutdownUi.focusedButton.focusedButton = false
-                        shutdownUi.focusedButton = shutdownButton
-                        focusedButton = true
-                        focus = true
-                    }
-                }
-            }
-
-            Component {
-                id: shutdownOptionsComponent
-                ContextMenu {
-                    visualParent: shutdownButton
-                }
-            }
-
-            KSMButton {
-                id: rebootButton
-                text: i18n("Restart Computer")
-                iconSource: "system-reboot"
-                height: 32
-                anchors.right: parent.right
-                menu: true
-
-                onClicked: {
-                    rebootRequested()
-                }
-
-                onPressAndHold: {
-                    if (!contextMenu) {
-                        contextMenu = rebootOptionsComponent.createObject(rebootButton)
-                        var options = rebootOptions["options"]
-                        for (var index = 0; index < options.length; ++index) {
-                            var itemData = new Object
-                            itemData["itemIndex"] = index
-                            itemData["itemText"] = options[index]
-                            if (index == rebootOptions["default"]) {
-                                itemData["itemText"] += i18nc("default option in boot loader", " (default)")
+                    onPressAndHold: {
+                        if (!contextMenu) {
+                            contextMenu = shutdownOptionsComponent.createObject(shutdownButton)
+                            if (spdMethods.StandbyState) {
+                                // 1 == Solid::PowerManagement::StandbyState
+                                contextMenu.append({itemIndex: 1, itemText: i18n("Standby")})
                             }
-                            contextMenu.append(itemData)
+                            if (spdMethods.SuspendState) {
+                                // 2 == Solid::PowerManagement::SuspendState
+                                contextMenu.append({itemIndex: 2, itemText: i18n("Suspend to RAM")})
+                            }
+                            if (spdMethods.HibernateState) {
+                                // 3 == Solid::PowerManagement::HibernateState
+                                contextMenu.append({itemIndex: 3, itemText: i18n("Suspend to Disk")})
+                            }
+                            //contextMenu.clicked.connect(shutdownUi.suspendRequested)
                         }
-
-                        contextMenu.clicked.connect(shutdownUi.rebootRequested2)
+                        contextMenu.open()
                     }
-                    contextMenu.open()
+
+                    onPressed: {
+                        if (shutdownUi.focusedButton != shutdownButton) {
+                            shutdownUi.focusedButton = shutdownButton
+                        }
+                    }
                 }
 
-                onPressed: {
-                    if (shutdownUi.focusedButton != rebootButton) {
-                        shutdownUi.focusedButton.focusedButton = false
-                        shutdownUi.focusedButton = rebootButton
-                        focusedButton = true
-                        focus = true
+                Component {
+                    id: shutdownOptionsComponent
+                    ContextMenu {
+                        visualParent: shutdownButton
+                    }
+                }
+
+                KSMButton {
+                    id: rebootButton
+                    text: i18n("Restart Computer")
+                    iconSource: "system-reboot"
+                    height: 32
+                    anchors.right: parent.right
+                    menu: rebootOptions["options"].length > 0
+                    KeyNavigation.tab: cancelButton
+
+                    onClicked: {
+                        console.log("main.qml: rebootRequested")
+                        //rebootRequested()
+                    }
+
+                    onPressAndHold: {
+                        if (!contextMenu) {
+                            contextMenu = rebootOptionsComponent.createObject(rebootButton)
+                            var options = rebootOptions["options"]
+                            for (var index = 0; index < options.length; ++index) {
+                                var itemData = new Object
+                                itemData["itemIndex"] = index
+                                itemData["itemText"] = options[index]
+                                if (index == rebootOptions["default"]) {
+                                    itemData["itemText"] += i18nc("default option in boot loader", " (default)")
+                                }
+                                contextMenu.append(itemData)
+                            }
+
+                            contextMenu.clicked.connect(shutdownUi.rebootRequested2)
+                        }
+                        contextMenu.open()
+                    }
+
+                    onPressed: {
+                        if (shutdownUi.focusedButton != rebootButton) {
+                            shutdownUi.focusedButton = rebootButton
+                        }
+                    }
+                }
+
+                Component {
+                    id: rebootOptionsComponent
+                    ContextMenu {
+                        visualParent: rebootButton
                     }
                 }
             }
 
-            Component {
-                id: rebootOptionsComponent
-                ContextMenu {
-                    visualParent: rebootButton
+            KSMButton {
+                id: cancelButton
+                anchors.right: parent.right
+                text: i18n("Cancel")
+                iconSource: "dialog-cancel"
+                smallButton: true
+                height: 22
+                KeyNavigation.tab: logoutButton
+
+                onClicked: {
+                    cancelRequested()
                 }
-            }
-        }
-
-        KSMButton {
-            id: cancelButton
-            text: i18n("Cancel")
-            iconSource: "dialog-cancel"
-            smallButton: true
-            height: 22
-            anchors.right: parent.right
-
-            onClicked: {
-                cancelRequested()
             }
         }
     }
