@@ -79,6 +79,7 @@ void Clock::init()
     dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
     connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(resetSize()));
+    connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(resetTimeFormat(int)));
 }
 
 void Clock::constraintsEvent(Plasma::Constraints constraints)
@@ -88,6 +89,20 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::SizeConstraint || constraints & Plasma::FormFactorConstraint) {
         updateSize();
     }
+}
+
+void Clock::resetTimeFormat(int category)
+{
+    if (category != KGlobalSettings::SETTINGS_COMPLETION) {
+        return;
+    }
+
+    // Force reparsing of the new settings we care about.
+    QString language = KGlobal::locale()->language();
+    KGlobal::locale()->setLanguage(language, 0);
+
+    generatePixmap();
+    update();
 }
 
 void Clock::resetSize()
