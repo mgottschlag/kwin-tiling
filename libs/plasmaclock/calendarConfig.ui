@@ -73,7 +73,7 @@
    <item row="1" column="1">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Display events:</string>
+      <string>Display Kontact events:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
