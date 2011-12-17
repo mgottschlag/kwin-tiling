@@ -17,8 +17,8 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#ifndef _POPUPPROXY_H_
-#define _POPUPPROXY_H_
+#ifndef POPUPPROXY_H
+#define POPUPPROXY_H
 
 #include <QObject>
 

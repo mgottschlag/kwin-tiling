@@ -140,6 +140,7 @@ public:
     QPoint mousePressPos;
     QList<QStandardItem*> items;
     QHash<QAbstractItemModel*, QAction*> modelsHeader;
+    QList<QWeakPointer<QAbstractItemModel> > models;
 };
 
 MenuView::MenuView(QWidget *parent, const QString &title, const QIcon &icon)
@@ -159,10 +160,12 @@ MenuView::MenuView(QWidget *parent, const QString &title, const QIcon &icon)
 
 MenuView::~MenuView()
 {
-    QHashIterator<QAbstractItemModel*, QAction *> it(d->modelsHeader);
+    QListIterator<QWeakPointer<QAbstractItemModel> > it(d->models);
     while (it.hasNext()) {
-        it.next();
-        it.key()->disconnect(this);
+        QAbstractItemModel *model = it.next().data();
+        if (model) {
+            model->disconnect(this);
+        }
     }
 
     delete d;
@@ -342,6 +345,7 @@ void MenuView::addModel(QAbstractItemModel *model, MenuView::ModelOptions option
     header->setVisible(false);
 
     d->modelsHeader.insert(model, header);
+    d->models.append(model);
 
     if (options & MergeFirstLevel) {
         const int count = model->rowCount();

@@ -94,7 +94,7 @@ Comment[en_GB]=Global options for the Plasma Workspace
 Comment[es]=Opciones globales del espacio de trabajo Plasma
 Comment[et]=Plasma töötsooni globaalsed valikud
 Comment[eu]=Plasma langunearen aukera orokorrak
-Comment[fi]=Yleisvalinnat Plasma-työtilalle
+Comment[fi]=Plasma-työtilan yleisvalinnat
 Comment[fr]=Options globales pour l'espace de travail Plasma
 Comment[ga]=Roghanna comhchoiteanna don spás oibre Plasma
 Comment[he]=אפשרויות גלובאליות לסביבת העבודה של Plasma
@@ -140,6 +140,7 @@ Comment[zh_TW]=Plasma 工作空間的全域選項
 
 X-KDE-Keywords=plasma,workspace,shell,formfactor,dashboard
 X-KDE-Keywords[ca]=plasma,espai de treball,shell,factor de format,tauler
+X-KDE-Keywords[fi]=plasma,työtila,ympäristö,kuori,kokoluokka,kojelauta
 X-KDE-Keywords[ia]=plasma,spatio de labor,shell,factor de forma,tabuliero de instrumentos
 X-KDE-Keywords[kk]=plasma,workspace,shell,formfactor,dashboard
 X-KDE-Keywords[nb]=plasma,arbeidsområde,skall,formfaktor,kontrollpult

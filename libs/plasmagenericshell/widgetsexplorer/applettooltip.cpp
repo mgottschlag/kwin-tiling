@@ -102,8 +102,7 @@ void AppletToolTipWidget::dragEnterEvent(QDragEnterEvent *event)
 //AppletInfoWidget
 
 AppletInfoWidget::AppletInfoWidget(QGraphicsWidget *parent)
-        : QGraphicsWidget(parent),
-          m_applet(0)
+        : QGraphicsWidget(parent)
 {
     init();
 }
@@ -169,12 +168,12 @@ void AppletInfoWidget::setApplet(AppletIconWidget *applet)
 
 AppletIconWidget *AppletInfoWidget::applet() const
 {
-    return m_applet;
+    return m_applet.data();
 }
 
 void AppletInfoWidget::updateInfo()
 {
-    PlasmaAppletItem *appletItem = m_applet ? m_applet->appletItem() : 0;
+    PlasmaAppletItem *appletItem = m_applet ? m_applet.data()->appletItem() : 0;
     if (appletItem) {
         m_iconWidget->setIcon(appletItem->icon());
         m_nameLabel->setText(appletItem->name());
@@ -245,7 +244,7 @@ void AppletInfoWidget::uninstall()
         return;
     }
 
-    PlasmaAppletItem *appletItem = m_applet->appletItem();
+    PlasmaAppletItem *appletItem = m_applet.data()->appletItem();
     if (!appletItem) {
         return;
     }

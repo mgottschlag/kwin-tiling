@@ -17,8 +17,8 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#ifndef _HISTORYURLITEM_H_
-#define _HISTORYURLITEM_H_
+#ifndef HISTORYURLITEM_H
+#define HISTORYURLITEM_H
 
 #include "historyitem.h"
 

@@ -271,6 +271,7 @@ void PanelController::setContainment(Plasma::Containment *c)
     }
 
     action = new QAction(i18n("Add Spacer"), this);
+    action->setIcon(KIcon("distribute-horizontal-x"));
     ToolButton *addSpaceTool = addTool(action, this);
     addSpaceTool->setToolTip(i18n("Add a spacer to the panel useful to add some space between two widgets"));
     m_layout->insertWidget(insertIndex, addSpaceTool);
@@ -507,7 +508,6 @@ void PanelController::themeChanged()
 void PanelController::switchToWidgetExplorer()
 {
     m_configWidget->hide();
-    showWidgetExplorer();
 }
 
 void PanelController::closeIfNotFocussed()
@@ -907,7 +907,19 @@ void PanelController::resizeEvent(QResizeEvent *event)
             const int screen = containment()->screen();
             const QRect screenGeom = PlasmaApp::self()->corona()->screenGeometry(screen);
             QRegion availGeom(screenGeom);
-            if (m_extLayout->sizeHint().width() > screenGeom.width()) {
+
+            QFontMetrics fm(QApplication::font());
+            QString wholeText;
+
+            //FIXME: better (and faster) way to do that?
+            for (int i=0; i < m_layout->count(); ++i) {
+                ToolButton *button = qobject_cast<ToolButton *>(m_layout->itemAt(i)->widget());
+                if (button) {
+                    wholeText += button->text();
+                }
+            }
+
+            if ( fm.width(wholeText) > screenGeom.width()) {
                 showText = false;
             }
             break;

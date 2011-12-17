@@ -380,11 +380,10 @@ void WidgetExplorer::keyPressEvent(QKeyEvent *event)
         return;
     }
 
-    Plasma::LineEdit *lineEdit = d->filteringWidget->textSearch();
-    const QString newText = event->text();
+    const QString newText = event->text().trimmed();
     if (newText.isEmpty()) {
         QGraphicsWidget::keyPressEvent(event);
-    } else {
+    } else if (Plasma::LineEdit *lineEdit = d->filteringWidget->textSearch()) {
         lineEdit->setText(lineEdit->text() + event->text());
         lineEdit->nativeWidget()->setCursorPosition(lineEdit->text().length());
         lineEdit->setFocus();

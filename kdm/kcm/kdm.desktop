@@ -165,6 +165,7 @@ Comment[zh_TW]=設定登入管理程式 (KDM)
 
 X-KDE-Keywords=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart
 X-KDE-Keywords[ca]=kdm,gestor de sessions,xdm,usuaris,connexió,benvinguda,Logo,estils,idioma,país,tipus de lletres,fons,fons d'escriptori,sessions,aturada,reinici
+X-KDE-Keywords[fi]=kdm,kirjautumisruutu,xdm,käyttäjät,kirjautuminen,sisäänkirjautuminen,tervehdys,logo,tyylit,kieli,maa,kirjasimet,fontit,tausta,taustakuvat,istunnot,sammutus,uudelleenkäynnistys
 X-KDE-Keywords[ia]=kdm,gerente de monstrator,xdm,usatores,accesso authenticate,salutationes,Logo,stilos,linguage,pais,fonts,fundo,tepetes de papiro,sessiones,clausura,reinitio
 X-KDE-Keywords[kk]=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart
 X-KDE-Keywords[nb]=kcm,skjermstyrer,xdm,brukere,login,hilsen,Logo,stiler,språk,land,skrifter,bakgrunn,tapeter,økter,steng av,omstart

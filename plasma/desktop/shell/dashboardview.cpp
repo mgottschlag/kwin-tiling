@@ -213,6 +213,7 @@ void DashboardView::showWidgetExplorer()
         widgetExplorer->adjustSize();
         widgetExplorer->resize(width(), widgetExplorer->size().height());
         widgetExplorer->setZValue(1000000);
+        widgetExplorer->setFocus();
     }
 }
 
