@@ -139,7 +139,7 @@ void URLGrabber::matchingMimeActions(const QString& clipData)
     // That is even if we've url like "http://www.kde.org/somescript.pl", we'll
     // still treat that as html page, because determining a mimetype using kio
     // might take a long time, and i want this function to be quick!
-    if ( ( clipData.startsWith( "http://" ) || clipData.startsWith( "https://"))
+    if ( ( clipData.startsWith( QLatin1String("http://") ) || clipData.startsWith( QLatin1String("https://") ) )
          && mimetype->name() != "text/html" )
     {
         // use a fake path to create a mimetype that corresponds to "text/html"
