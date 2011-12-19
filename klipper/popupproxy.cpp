@@ -17,6 +17,8 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
+#include "popupproxy.h"
+
 #include <QRegExp>
 #include <QStyle>
 #include <QPixmap>
@@ -28,7 +30,6 @@
 #include <kdebug.h>
 
 #include "historyitem.h"
-#include "popupproxy.h"
 #include "history.h"
 #include "klipperpopup.h"
 

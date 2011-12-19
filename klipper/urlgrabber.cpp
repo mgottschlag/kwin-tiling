@@ -17,6 +17,7 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
+#include "urlgrabber.h"
 
 #include <netwm.h>
 
@@ -38,7 +39,6 @@
 #include <kmimetype.h>
 
 #include "klippersettings.h"
-#include "urlgrabber.h"
 #include "clipcommandprocess.h"
 
 // TODO:
@@ -121,7 +121,7 @@ void URLGrabber::matchingMimeActions(const QString& clipData)
     }
     if(url.isLocalFile()) {
 	if(!QFile::exists(url.toLocalFile())) {
-	//    kDebug() << "skipping mime magic due to nonexistant localfile";
+	//    kDebug() << "skipping mime magic due to nonexistent localfile";
 	    return;
 	}
     }
@@ -139,7 +139,7 @@ void URLGrabber::matchingMimeActions(const QString& clipData)
     // That is even if we've url like "http://www.kde.org/somescript.pl", we'll
     // still treat that as html page, because determining a mimetype using kio
     // might take a long time, and i want this function to be quick!
-    if ( ( clipData.startsWith( "http://" ) || clipData.startsWith( "https://"))
+    if ( ( clipData.startsWith( QLatin1String("http://") ) || clipData.startsWith( QLatin1String("https://") ) )
          && mimetype->name() != "text/html" )
     {
         // use a fake path to create a mimetype that corresponds to "text/html"

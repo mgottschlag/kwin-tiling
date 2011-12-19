@@ -194,6 +194,7 @@ Comment[zh_CN]=配置智能卡支持
 Comment[zh_TW]=設定智慧卡 (SmartCard) 支援
 X-KDE-Keywords=Smartcard,PKCS,SSL,reader,smart,card
 X-KDE-Keywords[ca]=Targeta intel·ligent,PKCS,SSL,lector,intel·ligent,targeta
+X-KDE-Keywords[fi]=Smartcard,Älykortti,PKCS,SSL,lukija,äly,kortti
 X-KDE-Keywords[ia]=Smartcards,PKCS,SSL,lector,smart,card
 X-KDE-Keywords[kk]=Smartcard,PKCS,SSL,reader,smart,card
 X-KDE-Keywords[nb]=Smartkort,PKCS,SSL,leser,smart,kort

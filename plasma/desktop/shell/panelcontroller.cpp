@@ -508,7 +508,6 @@ void PanelController::themeChanged()
 void PanelController::switchToWidgetExplorer()
 {
     m_configWidget->hide();
-    showWidgetExplorer();
 }
 
 void PanelController::closeIfNotFocussed()

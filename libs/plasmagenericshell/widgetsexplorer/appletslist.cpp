@@ -140,7 +140,8 @@ void AppletsListWidget::appletIconHoverEnter(Plasma::AbstractIcon *icon)
 {
     AppletIconWidget *applet = static_cast<AppletIconWidget*>(icon);
     if (m_toolTip->isVisible()) {
-        if (m_toolTip->appletIconWidget()->appletItem() &&
+        if (m_toolTip->appletIconWidget() && 
+            m_toolTip->appletIconWidget()->appletItem() &&
             !(m_toolTip->appletIconWidget()->appletItem()->pluginName() ==
             applet->appletItem()->pluginName())) {
             m_toolTip->setAppletIconWidget(applet);
@@ -188,6 +189,10 @@ void AppletsListWidget::onToolTipLeave()
 void AppletsListWidget::setToolTipPosition()
 {
     QGraphicsWidget *item = m_toolTip->appletIconWidget();
+    if (!item) {
+        return;
+    }
+
     QPointF appletPosition = m_toolTip->appletIconWidget()->mapToItem(this, 0, 0);
     QRectF appletRect = m_toolTip->appletIconWidget()->
                         mapRectToItem(this, item->boundingRect());
@@ -215,7 +220,6 @@ void AppletsListWidget::setToolTipPosition()
 
     QRect viewGeometry = v->geometry();
     viewGeometry.moveTopLeft(v->mapToGlobal(viewGeometry.topLeft()));
-
 
     switch (location()) {
     case Plasma::BottomEdge:

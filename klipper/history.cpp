@@ -19,9 +19,10 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
+#include "history.h"
+
 #include <kdebug.h>
 
-#include "history.h"
 #include "historystringitem.h"
 #include "klipperpopup.h"
 

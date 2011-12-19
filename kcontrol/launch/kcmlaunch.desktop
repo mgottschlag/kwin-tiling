@@ -190,6 +190,8 @@ Comment[zh_TW]=選擇程式啟動時的回饋風格
 
 X-KDE-Keywords=application,start,launch,busy,cursor,feedback,mouse,pointer,bouncing,rotating,spinning,disk,startup,program,report,taskbar
 X-KDE-Keywords[ca]=aplicació,inici,llançador,ocupat,cursor,reacció,ratolí,punter,botant,girant,disc,engegar,programa,informe,barra de tasques
+X-KDE-Keywords[fa]=application,start,launch,busy,cursor,feedback,mouse,pointer,bouncing,rotating,spinning,disk,startup,program,report,taskbar
+X-KDE-Keywords[fi]=sovellus,käynnistä,käynnistys,varattu,osoitin,ilmaiseminen,hiiri,pomppiva,ohjelma,ilmaisu,tehtäväpalkki
 X-KDE-Keywords[ia]=application,initio,lancea,occupate,cursor,retro information,mus,punctator,saltante,rotante,torneante,disco,initio,programma,reporto,barra de carga
 X-KDE-Keywords[kk]=application,start,launch,busy,cursor,feedback,mouse,pointer,bouncing,rotating,spinning,disk,startup,program,report,taskbar
 X-KDE-Keywords[nb]=program,start,oppstart,opptatt,markør,tilbakemelding,mus,peker,spretter,roterer,spinner,skive,starter,meld, oppgavelinje
