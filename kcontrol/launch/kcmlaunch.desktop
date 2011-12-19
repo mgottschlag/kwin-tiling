@@ -94,8 +94,8 @@ Name[uz]=Dastur ishga tushish xabarnomasi
 Name[uz@cyrillic]=Дастур ишга тушиш хабарномаси
 Name[vi]=Phản hồi quá trình khởi động
 Name[wa]=Ritoû d' enondaedje
-Name[xh]=Launch Feedback
 Name[x-test]=xxLaunch Feedbackxx
+Name[xh]=Launch Feedback
 Name[zh_CN]=启动反馈
 Name[zh_TW]=程式啟動回饋風格
 
@@ -183,8 +183,8 @@ Comment[uz]=Dastur ishga tushish xabarnomasining turini tanlash
 Comment[uz@cyrillic]=Дастур ишга тушиш хабарномасининг турини танлаш
 Comment[vi]=Chọn kiểu mà chương trình sẽ gửi phản hồi về khi khởi động
 Comment[wa]=Tchoezi l' stile di ritoû d' enondaedje di programe
-Comment[xh]=Khetha isicelo-yenza uhlobo lwesiphumo seLaunch
 Comment[x-test]=xxChoose application-launch feedback stylexx
+Comment[xh]=Khetha isicelo-yenza uhlobo lwesiphumo seLaunch
 Comment[zh_CN]=选择程序启动反馈风格
 Comment[zh_TW]=選擇程式啟動時的回饋風格
 
