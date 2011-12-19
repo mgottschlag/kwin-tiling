@@ -28,6 +28,8 @@ PlasmaCore.FrameSvgItem {
     property bool smallButton: false
     property bool menu: false
     property ContextMenu contextMenu
+    property Item tabStopNext
+    property Item tabStopBack
 
     signal clicked()
     signal pressed()
@@ -111,9 +113,21 @@ PlasmaCore.FrameSvgItem {
         }
     }
 
+    onTabStopNextChanged: {
+        KeyNavigation.tab = tabStopNext
+        KeyNavigation.down = tabStopNext
+        KeyNavigation.right = tabStopNext
+    }
+
+    onTabStopBackChanged: {
+        KeyNavigation.backtab = tabStopBack
+        KeyNavigation.up = tabStopBack
+        KeyNavigation.left = tabStopBack
+    }
 
     Keys.onPressed: {
-        if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
+        if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter ||
+            event.key == Qt.Key_Space) {
             mouseArea.clicked(null)
         }
     }

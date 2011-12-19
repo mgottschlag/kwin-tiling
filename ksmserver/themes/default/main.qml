@@ -207,17 +207,16 @@ PlasmaCore.FrameSvgItem {
                     height: 32
                     anchors.right: parent.right
                     visible: (choose || sdtype == ShutdownType.ShutdownTypeNone)
-                    KeyNavigation.tab: shutdownButton
+                    tabStopNext: shutdownButton
+                    tabStopBack: cancelButton
 
                     onClicked: {
                         console.log("main.qml: logoutRequested")
                         //logoutRequested()
                     }
 
-                    onPressed: {
-                        if (shutdownUi.focusedButton != logoutButton) {
-                            shutdownUi.focusedButton = logoutButton
-                        }
+                    onActiveFocusChanged: {
+                        shutdownUi.focusedButton = logoutButton
                     }
                 }
 
@@ -229,7 +228,8 @@ PlasmaCore.FrameSvgItem {
                     anchors.right: parent.right
                     visible: (choose || sdtype == ShutdownType.ShutdownTypeHalt)
                     menu: spdMethods.StandbyState | spdMethods.SuspendState | spdMethods.HibernateState
-                    KeyNavigation.tab: rebootButton
+                    tabStopNext: rebootButton
+                    tabStopBack: logoutButton
 
                     onClicked: {
                         console.log("main.qml: haltRequested")
@@ -256,10 +256,8 @@ PlasmaCore.FrameSvgItem {
                         contextMenu.open()
                     }
 
-                    onPressed: {
-                        if (shutdownUi.focusedButton != shutdownButton) {
-                            shutdownUi.focusedButton = shutdownButton
-                        }
+                    onActiveFocusChanged: {
+                        shutdownUi.focusedButton = shutdownButton
                     }
                 }
 
@@ -277,7 +275,8 @@ PlasmaCore.FrameSvgItem {
                     height: 32
                     anchors.right: parent.right
                     menu: rebootOptions["options"].length > 0
-                    KeyNavigation.tab: cancelButton
+                    tabStopNext: cancelButton
+                    tabStopBack: shutdownButton
 
                     onClicked: {
                         console.log("main.qml: rebootRequested")
@@ -303,10 +302,8 @@ PlasmaCore.FrameSvgItem {
                         contextMenu.open()
                     }
 
-                    onPressed: {
-                        if (shutdownUi.focusedButton != rebootButton) {
-                            shutdownUi.focusedButton = rebootButton
-                        }
+                    onActiveFocusChanged: {
+                        shutdownUi.focusedButton = rebootButton
                     }
                 }
 
@@ -325,10 +322,15 @@ PlasmaCore.FrameSvgItem {
                 iconSource: "dialog-cancel"
                 smallButton: true
                 height: 22
-                KeyNavigation.tab: logoutButton
+                tabStopNext: logoutButton
+                tabStopBack: rebootButton
 
                 onClicked: {
                     cancelRequested()
+                }
+
+                onActiveFocusChanged: {
+                    shutdownUi.focusedButton = cancelButton
                 }
             }
         }
