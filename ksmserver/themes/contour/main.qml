@@ -70,9 +70,9 @@ PlasmaCore.FrameSvgItem {
                 running = false
                 sleepButton.clicked(null)
             }
-            --automaticallyDoSeconds;
             automaticallyDoLabel.text = i18np("Sleeping in 1 second",
                                               "Sleeping in %1 seconds", automaticallyDoSeconds)
+            --automaticallyDoSeconds;
         }
     }
 
