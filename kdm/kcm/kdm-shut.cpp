@@ -76,7 +76,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent)
     shutdown_lined = new KUrlRequester(group1);
     QLabel *shutdown_label = new QLabel(i18nc("command for ...", "H&alt:"), group1);
     shutdown_label->setBuddy(shutdown_lined);
-    connect(shutdown_lined, SIGNAL(textChanged(const QString &)),
+    connect(shutdown_lined, SIGNAL(textChanged(QString)),
             SIGNAL(changed()));
     wtstr = i18n("Command to initiate the system halt. Typical value: /sbin/halt");
     shutdown_label->setWhatsThis(wtstr);
@@ -85,7 +85,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent)
     restart_lined = new KUrlRequester(group1);
     QLabel *restart_label = new QLabel(i18nc("command for ...", "Reb&oot:"), group1);
     restart_label->setBuddy(restart_lined);
-    connect(restart_lined, SIGNAL(textChanged(const QString &)),
+    connect(restart_lined, SIGNAL(textChanged(QString)),
             SIGNAL(changed()));
     wtstr = i18n("Command to initiate the system reboot. Typical value: /sbin/reboot");
     restart_label->setWhatsThis(wtstr);
@@ -98,6 +98,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent)
     bm_combo->insertItem("None", i18nc("boot manager", "None"));
     bm_combo->insertItem("Grub", i18n("Grub"));
     bm_combo->insertItem("Grub2", i18n("Grub2"));
+    bm_combo->insertItem("Burg", i18n("Burg"));
 #if defined(__linux__) && (defined(__i386__) || defined(__amd64__))
     bm_combo->insertItem("Lilo", i18n("Lilo"));
 #endif

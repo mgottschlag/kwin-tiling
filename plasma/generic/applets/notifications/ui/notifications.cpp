@@ -133,7 +133,7 @@ void Notifications::init()
     lay->addItem(m_busyWidget);
 
     configChanged();
-    setStatus(Plasma::ActiveStatus);
+    setStatus(Plasma::PassiveStatus);
 }
 
 void Notifications::configChanged()
@@ -179,16 +179,15 @@ void Notifications::syncNotificationBarNeeded()
         return;
     }
 
-    if (m_manager->notifications().count() > 0) {
-        if (!extender()->item("notifications")) {
-            m_notificationGroup = new NotificationGroup(extender());
+    if (m_manager->notifications().isEmpty()) {
+        if (extender()->item("notifications")) {
+            //don't let him in the config file
+            extender()->item("notifications")->destroy();
         }
-    } else if (extender()->item("notifications")) {
-        //don't let him in the config file
-        extender()->item("notifications")->destroy();
+    } else if (!extender()->item("notifications")) {
+        m_notificationGroup = new NotificationGroup(extender());
     }
 }
-
 
 Manager *Notifications::manager() const
 {
@@ -255,7 +254,7 @@ void Notifications::addNotification(Notification *notification)
         m_notificationStackDialog->setNotificationStack(m_notificationStack);
         m_notificationStackDialog->setApplet(this);
         connect(m_notificationStack, SIGNAL(stackEmpty()), m_notificationStackDialog, SLOT(hide()));
-        connect(m_notificationStack, SIGNAL(showRequested()), m_notificationStackDialog, SLOT(show()));
+        connect(m_notificationStack, SIGNAL(showRequested()), m_notificationStackDialog, SLOT(perhapsShow()));
         m_notificationStackDialog->setAutoHide(m_autoHidePopup);
 
         if (m_standaloneJobSummaryDialog) {
@@ -273,7 +272,7 @@ void Notifications::addNotification(Notification *notification)
         }
 
         KWindowSystem::setOnAllDesktops(m_notificationStackDialog->winId(), true);
-        m_notificationStackDialog->show();
+        m_notificationStackDialog->perhapsShow();
     }
 
     Plasma::Animation *pulse = Plasma::Animator::create(Plasma::Animator::PulseAnimation, m_busyWidget);
@@ -360,6 +359,10 @@ void Notifications::initExtenderItem(Plasma::ExtenderItem *extenderItem)
 
 void Notifications::popupEvent(bool show)
 {
+    if (m_busyWidget) {
+        m_busyWidget->suppressToolTips(show);
+    }
+
     //decide about showing the tiny progressbar or not
     if (m_standaloneJobSummaryDialog) {
         if (show || !m_manager->jobs().isEmpty()) {

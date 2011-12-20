@@ -45,27 +45,24 @@ class PLASMACLOCK_EXPORT Calendar : public QGraphicsWidget
 public:
     explicit Calendar(QGraphicsWidget *parent = 0);
     explicit Calendar(const QDate &, QGraphicsWidget *parent = 0);
-    explicit Calendar(CalendarTable *calendarTable, QGraphicsWidget *parent = 0);
     ~Calendar();
 
     CalendarTable *calendarTable() const;
 
     void setCalendar(const QString &newCalendarType = "locale");
     void setCalendar(const KCalendarSystem *calendar);
-    const KCalendarSystem *calendar () const;
+    const KCalendarSystem *calendar() const;
 
     void setDate(const QDate &date);
     const QDate& date() const;
-
-    void setDisplayHolidays(bool showHolidays);
-    bool displayHolidays();
 
     void clearHolidaysRegions();
     void addHolidaysRegion(const QString &regionCode, bool daysOff);
     QStringList holidaysRegions() const;
 
+    bool isDisplayingDateDetails() const;
     bool dateHasDetails(const QDate &date) const;
-    QString dateDetails(const QDate &date) const;
+    QStringList dateDetails(const QDate &date) const;
 
     void setAutomaticUpdateEnabled(bool automatic);
     bool isAutomaticUpdateEnabled() const;
@@ -76,7 +73,6 @@ public:
     void applyConfiguration(KConfigGroup cg);
     void writeConfiguration(KConfigGroup cg);
     void createConfigurationInterface(KConfigDialog *parent);
-    void applyConfigurationInterface();
     void configAccepted(KConfigGroup cg);
 
 Q_SIGNALS:
@@ -94,20 +90,19 @@ private Q_SLOTS:
     void nextMonth();
     void prevYear();
     void nextYear();
-    void dateUpdated(const QDate &newDate);
-    void showTip(const QDate &date);
+    void dateUpdated();
     void goToToday();
     void goToWeek(int week);
     void manualDateChange();
-    void monthsPopup();
     void monthTriggered();
     void showYearSpinBox();
     void hideYearSpinBox();
 
 private:
-    void init(CalendarTable *calendarTable);
-    void refreshWidgets();
     CalendarPrivate* const d;
+
+    Q_PRIVATE_SLOT(d, void popupMonthsMenu())
+    Q_PRIVATE_SLOT(d, void displayEvents(const QDate &date = QDate()))
 };
 
 }

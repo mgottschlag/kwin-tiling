@@ -49,10 +49,10 @@ MMModemManager::MMModemManager(QObject * parent, const QVariantList &)
     // TODO: determinate ModemManager initial state: Connected (MM running), Unknown (MM not running).
     d->mmState = Solid::Networking::Connected;
 
-    connect( &d->iface, SIGNAL(DeviceAdded(const QDBusObjectPath &)),
-                  this, SLOT(deviceAdded(const QDBusObjectPath &)));
-    connect( &d->iface, SIGNAL(DeviceRemoved(const QDBusObjectPath &)),
-                  this, SLOT(deviceRemoved(const QDBusObjectPath &)));
+    connect( &d->iface, SIGNAL(DeviceAdded(QDBusObjectPath)),
+                  this, SLOT(deviceAdded(QDBusObjectPath)));
+    connect( &d->iface, SIGNAL(DeviceRemoved(QDBusObjectPath)),
+                  this, SLOT(deviceRemoved(QDBusObjectPath)));
 
     d->iface.connection().connect(QLatin1String("org.freedesktop.DBus"),
             QLatin1String("/org/freedesktop/DBus"), QLatin1String("org.freedesktop.DBus"),

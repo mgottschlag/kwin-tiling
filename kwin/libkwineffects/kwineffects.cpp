@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "kwineffects.h"
 
-#include "kwinglutils.h"
 #include "kwinxrenderutils.h"
 
 #include <QtDBus/QtDBus>
@@ -172,6 +171,11 @@ bool Effect::provides(Feature)
     return false;
 }
 
+bool Effect::isActive() const
+{
+    return true;
+}
+
 void Effect::drawWindow(EffectWindow* w, int mask, QRegion region, WindowPaintData& data)
 {
     effects->drawWindow(w, mask, region, data);
@@ -230,11 +234,7 @@ double Effect::animationTime(int defaultTime)
 //****************************************
 
 EffectsHandler::EffectsHandler(CompositingType type)
-    : current_paint_screen(0)
-    , current_paint_window(0)
-    , current_draw_window(0)
-    , current_build_quads(0)
-    , compositing_type(type)
+    : compositing_type(type)
 {
     if (compositing_type == NoCompositing)
         return;
@@ -260,20 +260,6 @@ Window EffectsHandler::createFullScreenInputWindow(Effect* e, const QCursor& cur
 CompositingType EffectsHandler::compositingType() const
 {
     return compositing_type;
-}
-
-bool EffectsHandler::saturationSupported() const
-{
-    switch(compositing_type) {
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
-    case OpenGLCompositing:
-        return GLTexture::saturationSupported();
-#endif
-    case XRenderCompositing:
-        return false; // never
-    default:
-        abort();
-    }
 }
 
 void EffectsHandler::sendReloadMessage(const QString& effectname)
@@ -547,7 +533,7 @@ WindowQuadList WindowQuadList::makeRegularGrid(int xSubdivisions, int ySubdivisi
     return ret;
 }
 
-void WindowQuadList::makeArrays(float** vertices, float** texcoords) const
+void WindowQuadList::makeArrays(float** vertices, float** texcoords, const QSizeF& size, bool yInverted) const
 {
     *vertices = new float[ count() * 6 * 2 ];
     *texcoords = new float[ count() * 6 * 2 ];
@@ -569,18 +555,33 @@ void WindowQuadList::makeArrays(float** vertices, float** texcoords) const
         *vpos++ = at(i)[ 1 ].x();
         *vpos++ = at(i)[ 1 ].y();
 
-        *tpos++ = at(i)[ 1 ].tx;
-        *tpos++ = at(i)[ 1 ].ty;
-        *tpos++ = at(i)[ 0 ].tx;
-        *tpos++ = at(i)[ 0 ].ty;
-        *tpos++ = at(i)[ 3 ].tx;
-        *tpos++ = at(i)[ 3 ].ty;
-        *tpos++ = at(i)[ 3 ].tx;
-        *tpos++ = at(i)[ 3 ].ty;
-        *tpos++ = at(i)[ 2 ].tx;
-        *tpos++ = at(i)[ 2 ].ty;
-        *tpos++ = at(i)[ 1 ].tx;
-        *tpos++ = at(i)[ 1 ].ty;
+        if (yInverted) {
+            *tpos++ = at(i)[ 1 ].tx / size.width();
+            *tpos++ = at(i)[ 1 ].ty / size.height();
+            *tpos++ = at(i)[ 0 ].tx / size.width();
+            *tpos++ = at(i)[ 0 ].ty / size.height();
+            *tpos++ = at(i)[ 3 ].tx / size.width();
+            *tpos++ = at(i)[ 3 ].ty / size.height();
+            *tpos++ = at(i)[ 3 ].tx / size.width();
+            *tpos++ = at(i)[ 3 ].ty / size.height();
+            *tpos++ = at(i)[ 2 ].tx / size.width();
+            *tpos++ = at(i)[ 2 ].ty / size.height();
+            *tpos++ = at(i)[ 1 ].tx / size.width();
+            *tpos++ = at(i)[ 1 ].ty / size.height();
+        } else {
+            *tpos++ = at(i)[ 1 ].tx / size.width();
+            *tpos++ = 1.0f - at(i)[ 1 ].ty / size.height();
+            *tpos++ = at(i)[ 0 ].tx / size.width();
+            *tpos++ = 1.0f - at(i)[ 0 ].ty / size.height();
+            *tpos++ = at(i)[ 3 ].tx / size.width();
+            *tpos++ = 1.0f - at(i)[ 3 ].ty / size.height();
+            *tpos++ = at(i)[ 3 ].tx / size.width();
+            *tpos++ = 1.0f - at(i)[ 3 ].ty / size.height();
+            *tpos++ = at(i)[ 2 ].tx / size.width();
+            *tpos++ = 1.0f - at(i)[ 2 ].ty / size.height();
+            *tpos++ = at(i)[ 1 ].tx / size.width();
+            *tpos++ = 1.0f - at(i)[ 1 ].ty / size.height();
+        }
     }
 }
 
@@ -686,26 +687,17 @@ QRegion PaintClipper::paintArea()
 struct PaintClipper::Iterator::Data {
     Data() : index(0) {}
     int index;
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
     QVector< QRect > rects;
-#endif
 };
 
 PaintClipper::Iterator::Iterator()
     : data(new Data)
 {
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
     if (clip() && effects->compositingType() == OpenGLCompositing) {
-#ifndef KWIN_HAVE_OPENGLES
-        glPushAttrib(GL_SCISSOR_BIT);
-#endif
-        if (!GLRenderTarget::isRenderTargetBound())
-            glEnable(GL_SCISSOR_TEST);
         data->rects = paintArea().rects();
         data->index = -1;
         next(); // move to the first one
     }
-#endif
 #ifdef KWIN_HAVE_XRENDER_COMPOSITING
     if (clip() && effects->compositingType() == XRenderCompositing) {
         XserverRegion region = toXserverRegion(paintArea());
@@ -717,15 +709,6 @@ PaintClipper::Iterator::Iterator()
 
 PaintClipper::Iterator::~Iterator()
 {
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
-    if (clip() && effects->compositingType() == OpenGLCompositing) {
-        if (!GLRenderTarget::isRenderTargetBound())
-            glDisable(GL_SCISSOR_TEST);
-#ifndef KWIN_HAVE_OPENGLES
-        glPopAttrib();
-#endif
-    }
-#endif
 #ifdef KWIN_HAVE_XRENDER_COMPOSITING
     if (clip() && effects->compositingType() == XRenderCompositing)
         XFixesSetPictureClipRegion(display(), effects->xrenderBufferPicture(), 0, 0, None);
@@ -737,10 +720,8 @@ bool PaintClipper::Iterator::isDone()
 {
     if (!clip())
         return data->index == 1; // run once
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
     if (effects->compositingType() == OpenGLCompositing)
         return data->index >= data->rects.count(); // run once per each area
-#endif
 #ifdef KWIN_HAVE_XRENDER_COMPOSITING
     if (effects->compositingType() == XRenderCompositing)
         return data->index == 1; // run once
@@ -751,23 +732,14 @@ bool PaintClipper::Iterator::isDone()
 void PaintClipper::Iterator::next()
 {
     data->index++;
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
-    if (clip() && effects->compositingType() == OpenGLCompositing && !GLRenderTarget::isRenderTargetBound() && data->index < data->rects.count()) {
-        const QRect& r = data->rects[ data->index ];
-        // Scissor rect has to be given in OpenGL coords
-        glScissor(r.x(), displayHeight() - r.y() - r.height(), r.width(), r.height());
-    }
-#endif
 }
 
 QRect PaintClipper::Iterator::boundingRect() const
 {
     if (!clip())
         return infiniteRegion();
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
     if (effects->compositingType() == OpenGLCompositing)
         return data->rects[ data->index ];
-#endif
 #ifdef KWIN_HAVE_XRENDER_COMPOSITING
     if (effects->compositingType() == XRenderCompositing)
         return paintArea().boundingRect();
@@ -840,24 +812,18 @@ void WindowMotionManager::manage(EffectWindow *w)
         smoothness = effects->animationTimeFactor() * 4.0;
     }
 
-    m_managedWindows[ w ] = WindowMotion();
-    m_managedWindows[ w ].translation.setStrength(strength);
-    m_managedWindows[ w ].translation.setSmoothness(smoothness);
-    m_managedWindows[ w ].scale.setStrength(strength * 1.33);
-    m_managedWindows[ w ].scale.setSmoothness(smoothness / 2.0);
+    WindowMotion &motion = m_managedWindows[ w ];
+    motion.translation.setStrength(strength);
+    motion.translation.setSmoothness(smoothness);
+    motion.scale.setStrength(strength * 1.33);
+    motion.scale.setSmoothness(smoothness / 2.0);
 
-    m_managedWindows[ w ].translation.setValue(w->pos());
-    m_managedWindows[ w ].scale.setValue(QPointF(1.0, 1.0));
+    motion.translation.setValue(w->pos());
+    motion.scale.setValue(QPointF(1.0, 1.0));
 }
 
 void WindowMotionManager::unmanage(EffectWindow *w)
 {
-    if (!m_managedWindows.contains(w))
-        return;
-
-    QPointF diffT = m_managedWindows[ w ].translation.distance();
-    QPointF diffS = m_managedWindows[ w ].scale.distance();
-
     m_movingWindowsSet.remove(w);
     m_managedWindows.remove(w);
 }
@@ -874,7 +840,7 @@ void WindowMotionManager::calculate(int time)
         // Just skip it completely if the user wants no animation
         m_movingWindowsSet.clear();
         QHash<EffectWindow*, WindowMotion>::iterator it = m_managedWindows.begin();
-        for (; it != m_managedWindows.end(); it++) {
+        for (; it != m_managedWindows.end(); ++it) {
             WindowMotion *motion = &it.value();
             motion->translation.finish();
             motion->scale.finish();
@@ -882,132 +848,152 @@ void WindowMotionManager::calculate(int time)
     }
 
     QHash<EffectWindow*, WindowMotion>::iterator it = m_managedWindows.begin();
-    for (; it != m_managedWindows.end(); it++) {
+    for (; it != m_managedWindows.end(); ++it) {
         WindowMotion *motion = &it.value();
-        bool stopped = false;
+        int stopped = 0;
 
         // TODO: What happens when distance() == 0 but we are still moving fast?
         // TODO: Motion needs to be calculated from the window's center
 
-        QPointF diffT = motion->translation.distance();
-        if (diffT != QPoint(0.0, 0.0)) {
+        Motion2D *trans = &motion->translation;
+        if (trans->distance().isNull())
+            ++stopped;
+        else {
             // Still moving
-            motion->translation.calculate(time);
-            diffT = motion->translation.distance();
-            if (qAbs(diffT.x()) < 0.5 && qAbs(motion->translation.velocity().x()) < 0.2 &&
-                    qAbs(diffT.y()) < 0.5 && qAbs(motion->translation.velocity().y()) < 0.2) {
+            trans->calculate(time);
+            const short fx = trans->target().x() <= trans->startValue().x() ? -1 : 1;
+            const short fy = trans->target().y() <= trans->startValue().y() ? -1 : 1;
+            if (trans->distance().x()*fx/0.5 < 1.0 && trans->velocity().x()*fx/0.2 < 1.0 &&
+                trans->distance().y()*fy/0.5 < 1.0 && trans->velocity().y()*fy/0.2 < 1.0) {
                 // Hide tiny oscillations
                 motion->translation.finish();
-                diffT = QPoint(0.0, 0.0);
-                stopped = true;
+                ++stopped;
             }
         }
 
-        QPointF diffS = motion->scale.distance();
-        if (diffS != QPoint(0.0, 0.0)) {
+        Motion2D *scale = &motion->scale;
+        if (scale->distance().isNull())
+            ++stopped;
+        else {
             // Still scaling
-            motion->scale.calculate(time);
-            diffS = motion->scale.distance();
-            if (qAbs(diffS.x()) < 0.001 && qAbs(motion->scale.velocity().x()) < 0.05 &&
-                    qAbs(diffS.y()) < 0.001 && qAbs(motion->scale.velocity().y()) < 0.05) {
+            scale->calculate(time);
+            const short fx = scale->target().x() < 1.0 ? -1 : 1;
+            const short fy = scale->target().y() < 1.0 ? -1 : 1;
+            if (scale->distance().x()*fx/0.001 < 1.0 && scale->velocity().x()*fx/0.05 < 1.0 &&
+                scale->distance().y()*fy/0.001 < 1.0 && scale->velocity().y()*fy/0.05 < 1.0) {
                 // Hide tiny oscillations
                 motion->scale.finish();
-                diffS = QPoint(0.0, 0.0);
-                stopped = true;
+                ++stopped;
             }
         }
 
         // We just finished this window's motion
-        if (stopped && diffT == QPoint(0.0, 0.0) && diffS == QPoint(0.0, 0.0))
+        if (stopped == 2)
             m_movingWindowsSet.remove(it.key());
     }
 }
 
 void WindowMotionManager::reset()
 {
-    if (!m_managedWindows.count())
-        return;
-
-    EffectWindowList windows = m_managedWindows.keys();
-
-    for (int i = 0; i < windows.size(); i++) {
-        EffectWindow *w = windows.at(i);
-        m_managedWindows[ w ].translation.setTarget(w->pos());
-        m_managedWindows[ w ].translation.finish();
-        m_managedWindows[ w ].scale.setTarget(QPointF(1.0, 1.0));
-        m_managedWindows[ w ].scale.finish();
+    QHash<EffectWindow*, WindowMotion>::iterator it = m_managedWindows.begin();
+    for (; it != m_managedWindows.end(); ++it) {
+        WindowMotion *motion = &it.value();
+        EffectWindow *window = it.key();
+        motion->translation.setTarget(window->pos());
+        motion->translation.finish();
+        motion->scale.setTarget(QPointF(1.0, 1.0));
+        motion->scale.finish();
     }
 }
 
 void WindowMotionManager::reset(EffectWindow *w)
 {
-    if (!m_managedWindows.contains(w))
+    QHash<EffectWindow*, WindowMotion>::iterator it = m_managedWindows.find(w);
+    if (it == m_managedWindows.end())
         return;
 
-    m_managedWindows[ w ].translation.setTarget(w->pos());
-    m_managedWindows[ w ].translation.finish();
-    m_managedWindows[ w ].scale.setTarget(QPointF(1.0, 1.0));
-    m_managedWindows[ w ].scale.finish();
+    WindowMotion *motion = &it.value();
+    motion->translation.setTarget(w->pos());
+    motion->translation.finish();
+    motion->scale.setTarget(QPointF(1.0, 1.0));
+    motion->scale.finish();
 }
 
 void WindowMotionManager::apply(EffectWindow *w, WindowPaintData &data)
 {
-    if (!m_managedWindows.contains(w))
+    QHash<EffectWindow*, WindowMotion>::iterator it = m_managedWindows.find(w);
+    if (it == m_managedWindows.end())
         return;
 
     // TODO: Take into account existing scale so that we can work with multiple managers (E.g. Present windows + grid)
-    data.xTranslate += m_managedWindows[ w ].translation.value().x() - w->x();
-    data.yTranslate += m_managedWindows[ w ].translation.value().y() - w->y();
-    data.xScale *= m_managedWindows[ w ].scale.value().x();
-    data.yScale *= m_managedWindows[ w ].scale.value().y();
+    WindowMotion *motion = &it.value();
+    data.xTranslate += motion->translation.value().x() - w->x();
+    data.yTranslate += motion->translation.value().y() - w->y();
+    data.xScale *= motion->scale.value().x();
+    data.yScale *= motion->scale.value().y();
 }
 
 void WindowMotionManager::moveWindow(EffectWindow *w, QPoint target, double scale, double yScale)
 {
-    if (!m_managedWindows.contains(w))
+    QHash<EffectWindow*, WindowMotion>::iterator it = m_managedWindows.find(w);
+    if (it == m_managedWindows.end())
         abort(); // Notify the effect author that they did something wrong
+
+    WindowMotion *motion = &it.value();
 
     if (yScale == 0.0)
         yScale = scale;
     QPointF scalePoint(scale, yScale);
 
-    if (m_managedWindows[ w ].translation.value() == target &&
-            m_managedWindows[ w ].scale.value() == scalePoint)
+    if (motion->translation.value() == target && motion->scale.value() == scalePoint)
         return; // Window already at that position
 
-    m_managedWindows[ w ].translation.setTarget(target);
-    m_managedWindows[ w ].scale.setTarget(scalePoint);
+    motion->translation.setTarget(target);
+    motion->scale.setTarget(scalePoint);
 
     m_movingWindowsSet << w;
 }
 
 QRectF WindowMotionManager::transformedGeometry(EffectWindow *w) const
 {
+    QHash<EffectWindow*, WindowMotion>::const_iterator it = m_managedWindows.constFind(w);
+    if (it == m_managedWindows.end())
+        return w->geometry();
+
+    const WindowMotion *motion = &it.value();
     QRectF geometry(w->geometry());
 
     // TODO: Take into account existing scale so that we can work with multiple managers (E.g. Present windows + grid)
-    geometry.moveTo(m_managedWindows[ w ].translation.value());
-    geometry.setWidth(geometry.width() * m_managedWindows[ w ].scale.value().x());
-    geometry.setHeight(geometry.height() * m_managedWindows[ w ].scale.value().y());
+    geometry.moveTo(motion->translation.value());
+    geometry.setWidth(geometry.width() * motion->scale.value().x());
+    geometry.setHeight(geometry.height() * motion->scale.value().y());
 
     return geometry;
 }
 
 void WindowMotionManager::setTransformedGeometry(EffectWindow *w, const QRectF &geometry)
 {
-    m_managedWindows[ w ].translation.setValue(geometry.topLeft());
-    m_managedWindows[ w ].scale.setValue(QPointF(geometry.width() / qreal(w->width()),
-                                         geometry.height() / qreal(w->height())));
+    QHash<EffectWindow*, WindowMotion>::iterator it = m_managedWindows.find(w);
+    if (it == m_managedWindows.end())
+        return;
+    WindowMotion *motion = &it.value();
+    motion->translation.setValue(geometry.topLeft());
+    motion->scale.setValue(QPointF(geometry.width() / qreal(w->width()), geometry.height() / qreal(w->height())));
 }
 
 QRectF WindowMotionManager::targetGeometry(EffectWindow *w) const
 {
+    QHash<EffectWindow*, WindowMotion>::const_iterator it = m_managedWindows.constFind(w);
+    if (it == m_managedWindows.end())
+        return w->geometry();
+
+    const WindowMotion *motion = &it.value();
     QRectF geometry(w->geometry());
 
     // TODO: Take into account existing scale so that we can work with multiple managers (E.g. Present windows + grid)
-    geometry.moveTo(m_managedWindows[ w ].translation.target());
-    geometry.setWidth(geometry.width() * m_managedWindows[ w ].scale.target().x());
-    geometry.setHeight(geometry.height() * m_managedWindows[ w ].scale.target().y());
+    geometry.moveTo(motion->translation.target());
+    geometry.setWidth(geometry.width() * motion->scale.target().x());
+    geometry.setHeight(geometry.height() * motion->scale.target().y());
 
     return geometry;
 }

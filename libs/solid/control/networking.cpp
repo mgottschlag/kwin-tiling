@@ -43,7 +43,7 @@ Solid::Control::NetworkingPrivate::~NetworkingPrivate()
 
 uint Solid::Control::NetworkingPrivate::requestConnection( QObject * receiver, const char * member )
 {
-    connect( this, SIGNAL( connectionResult( bool ) ), receiver, member );
+    connect( this, SIGNAL(connectionResult(bool)), receiver, member );
     return iface->requestConnection();
 }
 
@@ -84,17 +84,17 @@ Solid::Control::ManagedSocketContainer::ManagedSocketContainer( QAbstractSocket 
         mAutoDisconnectTimer = new QTimer( this );
         mAutoDisconnectTimer->setSingleShot( true );
         mAutoDisconnectTimer->setInterval( autoDisconnectTimeout );
-        connect( mAutoDisconnectTimer, SIGNAL( timeout() ), SLOT( autoDisconnect() ) );
+        connect( mAutoDisconnectTimer, SIGNAL(timeout()), SLOT(autoDisconnect()) );
     }
     // react to network management events
-    connect( Solid::Networking::notifier(), SIGNAL( statusChanged( uint ) ), this, SLOT( networkStatusChanged( Networking::Status ) ) );
+    connect( Solid::Networking::notifier(), SIGNAL(statusChanged(uint)), this, SLOT(networkStatusChanged(Networking::Status)) );
 
     if ( socket )
     {
         // react to socket events
-        connect( socket, SIGNAL( destroyed() ), SLOT( socketDestroyed() ) );
-        connect( socket, SIGNAL( error( QAbstractSocket::SocketError ) ), SLOT( socketError( QAbstractSocket::SocketError ) ) );
-        connect( socket, SIGNAL( stateChanged( QAbstractSocket::SocketState ) ), SLOT( socketStateChanged( QAbstractSocket::SocketState ) ) );
+        connect( socket, SIGNAL(destroyed()), SLOT(socketDestroyed()) );
+        connect( socket, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(socketError(QAbstractSocket::SocketError)) );
+        connect( socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), SLOT(socketStateChanged(QAbstractSocket::SocketState)) );
         // initialise our state from that of the socket
         switch ( socket->state() )
         {

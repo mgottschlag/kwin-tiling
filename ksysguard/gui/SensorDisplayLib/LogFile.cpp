@@ -52,7 +52,7 @@ LogFile::LogFile(QWidget *parent, const QString& title, SharedSettings *workShee
 
 	setMinimumSize(50, 25);
 	monitor->setContextMenuPolicy( Qt::CustomContextMenu );
-	connect(monitor, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(showContextMenu(const QPoint &)));
+	connect(monitor, SIGNAL(customContextMenuRequested(QPoint)), SLOT(showContextMenu(QPoint)));
 	setPlotterWidget(monitor);
 }
 
@@ -110,13 +110,22 @@ void LogFile::configureSettings(void)
 	connect(lfs->changeButton, SIGNAL(clicked()), this, SLOT(settingsChangeRule()));
 	connect(lfs->ruleList, SIGNAL(currentRowChanged(int)), this, SLOT(settingsRuleListSelected(int)));
 	connect(lfs->ruleText, SIGNAL(returnPressed()), this, SLOT(settingsAddRule()));
+	connect(lfs->ruleText, SIGNAL(textChanged(QString)), this, SLOT(settingsRuleTextChanged()));
 
-	if (dlg.exec()) {
+	settingsRuleListSelected(lfs->ruleList->currentRow());
+	settingsRuleTextChanged();
+
+	if (dlg.exec())
 		applySettings();
-	}
 
 	delete lfs;
 	lfs = 0;
+}
+
+void LogFile::settingsRuleTextChanged()
+{
+	lfs->addButton->setEnabled(!lfs->ruleText->text().isEmpty());
+	lfs->changeButton->setEnabled(!lfs->ruleText->text().isEmpty() && lfs->ruleList->currentRow() > -1);
 }
 
 void LogFile::settingsAddRule()
@@ -135,14 +144,19 @@ void LogFile::settingsDeleteRule()
 
 void LogFile::settingsChangeRule()
 {
-	lfs->ruleList->currentItem()->setText(lfs->ruleText->text());
+	if (lfs->ruleList->currentItem() && !lfs->ruleText->text().isEmpty())
+		lfs->ruleList->currentItem()->setText(lfs->ruleText->text());
 	lfs->ruleText->setText("");
 }
 
 void LogFile::settingsRuleListSelected(int index)
 {
-    if (index > -1)
+    bool anySelected = (index > -1);
+    if (anySelected)
         lfs->ruleText->setText(lfs->ruleList->item(index)->text());
+
+    lfs->changeButton->setEnabled(anySelected && !lfs->ruleText->text().isEmpty());
+    lfs->deleteButton->setEnabled(anySelected);
 }
 
 void LogFile::applySettings(void)

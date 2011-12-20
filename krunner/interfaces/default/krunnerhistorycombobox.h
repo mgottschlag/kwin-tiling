@@ -49,12 +49,14 @@ protected:
     virtual void focusOutEvent(QFocusEvent *);
     virtual void wheelEvent(QWheelEvent *);
 
-private slots:
-    void slotCurrentIndexChanged(QString);
-
 private:
     void discardCompletion();
 
+private slots:
+    void currentIndexChanged(const QString &);
+    void connectLineEdit();
+
+private:
     bool m_addingToHistory;
 };
 

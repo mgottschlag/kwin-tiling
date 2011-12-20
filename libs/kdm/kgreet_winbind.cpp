@@ -108,11 +108,11 @@ KWinbindGreeter::KWinbindGreeter(KGreeterPluginHandler *_handler,
     if (func != ChAuthTok) {
         if (fixedUser.isEmpty()) {
             domainCombo = new KComboBox(parent);
-            connect(domainCombo, SIGNAL(activated(const QString &)),
-                    SLOT(slotChangedDomain(const QString &)));
-            connect(domainCombo, SIGNAL(activated(const QString &)),
+            connect(domainCombo, SIGNAL(activated(QString)),
+                    SLOT(slotChangedDomain(QString)));
+            connect(domainCombo, SIGNAL(activated(QString)),
                     SLOT(slotLoginLostFocus()));
-            connect(domainCombo, SIGNAL(activated(const QString &)),
+            connect(domainCombo, SIGNAL(activated(QString)),
                     SLOT(slotChanged()));
             // should handle loss of focus
             loginEdit = new KLineEdit(parent);
@@ -134,7 +134,7 @@ KWinbindGreeter::KWinbindGreeter(KGreeterPluginHandler *_handler,
             }
             connect(loginEdit, SIGNAL(editingFinished()), SLOT(slotLoginLostFocus()));
             connect(loginEdit, SIGNAL(editingFinished()), SLOT(slotChanged()));
-            connect(loginEdit, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
+            connect(loginEdit, SIGNAL(textChanged(QString)), SLOT(slotChanged()));
             connect(loginEdit, SIGNAL(selectionChanged()), SLOT(slotChanged()));
             domainCombo->addItems(staticDomains);
             QTimer::singleShot(0, this, SLOT(slotStartDomainList()));
@@ -147,7 +147,7 @@ KWinbindGreeter::KWinbindGreeter(KGreeterPluginHandler *_handler,
             grid->addWidget(new QLabel(fixedUser, parent), line++, 1);
         }
         passwdEdit = new KDMPasswordEdit(parent);
-        connect(passwdEdit, SIGNAL(textChanged(const QString &)),
+        connect(passwdEdit, SIGNAL(textChanged(QString)),
                 SLOT(slotChanged()));
         connect(passwdEdit, SIGNAL(editingFinished()), SLOT(slotChanged()));
 
@@ -544,7 +544,7 @@ KWinbindGreeter::slotStartDomainList()
     m_domainLister = new KProcess(this);
     (*m_domainLister) << "wbinfo" << "--own-domain" << "--trusted-domains";
     m_domainLister->setOutputChannelMode(KProcess::OnlyStdoutChannel);
-    connect(m_domainLister, SIGNAL(finished(int, QProcess::ExitStatus)),
+    connect(m_domainLister, SIGNAL(finished(int,QProcess::ExitStatus)),
             SLOT(slotEndDomainList()));
     m_domainLister->start();
 }

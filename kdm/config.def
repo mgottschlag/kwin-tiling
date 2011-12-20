@@ -37,6 +37,9 @@
 #ifdef _AIX
 # define HALT_CMD	"/usr/sbin/shutdown -h now"
 # define REBOOT_CMD	"/usr/sbin/shutdown -r now"
+#elif defined(__linux__)
+# define HALT_CMD	"/sbin/shutdown -h -P now"
+# define REBOOT_CMD	"/sbin/shutdown -r now"
 #elif defined(BSD)
 # define HALT_CMD	"/sbin/shutdown -p now"
 # define REBOOT_CMD	"/sbin/shutdown -r now"
@@ -1254,6 +1257,7 @@ Type: enum
  None/BO_NONE: no boot manager
  Grub/BO_GRUB: Grub boot manager
  Grub2/BO_GRUB2: Grub2 boot manager
+ Burg/BO_BURG: Burg boot manager
  Lilo/BO_LILO: Lilo boot manager (Linux on i386 &amp; x86-64 only)
 Default: None
 User: core
@@ -2154,33 +2158,33 @@ Description:
 
 Key: GreetFont
 Type: string
-Default: "Serif,20,5,0,50,0"
-CDefault: "Serif,20,bold"
+Default: "Serif,20,-1,5,50,0,0,0,0,0"
+CDefault: "Serif 20pt bold"
 User: greeter:font
-Instance: #*/"Serif,20,5,0,50,0"
+Instance: #*/"Serif,20,-1,5,50,0,0,0,0,0"
 Comment: &
 Description:
- The font for the greeter headline.
+ The font for the greeter headline. The value is encoded.
 
 Key: StdFont
 Type: string
-Default: "Sans Serif,10,5,0,50,0"
-CDefault: "Sans Serif,10"
+Default: "Sans Serif,10,-1,5,50,0,0,0,0,0"
+CDefault: "Sans Serif 10pt"
 User: greeter(normalFont):font
-Instance: #*/"Sans Serif,10,5,0,50,0"
+Instance: #*/"Sans Serif,10,-1,5,50,0,0,0,0,0"
 Comment: &
 Description:
- The normal font used in the greeter.
+ The normal font used in the greeter. The value is encoded.
 
 Key: FailFont
 Type: string
-Default: "Sans Serif,10,5,0,75,0"
-CDefault: "Sans Serif,10,bold"
+Default: "Sans Serif,10,-1,5,75,0,0,0,0,0"
+CDefault: "Sans Serif 10pt bold"
 User: greeter:font
-Instance: #*/"Sans Serif,10,5,0,75,0"
+Instance: #*/"Sans Serif,10,-1,5,75,0,0,0,0,0"
 Comment: &
 Description:
- The font used for the <quote>Login Failed</quote> message.
+ The font used for the <quote>Login Failed</quote> message. The value is encoded.
 
 Key: NumLock
 Type: enum
@@ -2673,9 +2677,13 @@ Type: bool
 Default: false
 User: greeter
 Instance: */true
-Comment: &
+Comment:
+ Whether the greeter should be themed.
 Description:
  Whether the greeter should be themed.
+ Note that the themed greeter is challenged accessibility-wise, and themes
+ may lack support for features like a user list or alternative
+ authentication methods.
 
 Key: Theme
 Type: string

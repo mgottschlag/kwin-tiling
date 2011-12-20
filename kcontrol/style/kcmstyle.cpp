@@ -88,7 +88,7 @@ extern "C"
 {
     KDE_EXPORT void kcminit_style()
     {
-        uint flags = KRdbExportQtSettings | KRdbExportQtColors | KRdbExportXftSettings;
+        uint flags = KRdbExportQtSettings | KRdbExportQtColors | KRdbExportXftSettings | KRdbExportGtkTheme;
         KConfig _config( "kcmdisplayrc", KConfig::NoGlobals  );
         KConfigGroup config(&_config, "X11");
 
@@ -407,7 +407,7 @@ void KCMStyle::save()
     // export fonts/colors settings.
     if (m_bStyleDirty | m_bEffectsDirty)    // Export only if necessary
     {
-        uint flags = KRdbExportQtSettings;
+        uint flags = KRdbExportQtSettings | KRdbExportGtkTheme;
         KConfig _kconfig( "kcmdisplayrc", KConfig::NoGlobals  );
         KConfigGroup kconfig(&_kconfig, "X11");
         bool exportKDEColors = kconfig.readEntry("exportKDEColors", true);

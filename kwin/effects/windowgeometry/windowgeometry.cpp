@@ -105,7 +105,7 @@ void WindowGeometry::slotWindowStartUserMovedResized(EffectWindow *w)
     myResizeWindow = w;
     myOriginalGeometry = w->geometry();
     myCurrentGeometry = w->geometry();
-    effects->addRepaint(myCurrentGeometry.adjusted(-20, -20, 20, 20));
+    slotWindowStepUserMovedResized(w, w->geometry());
 }
 
 void WindowGeometry::slotWindowFinishUserMovedResized(EffectWindow *w)
@@ -119,9 +119,17 @@ void WindowGeometry::slotWindowFinishUserMovedResized(EffectWindow *w)
 
 static inline QString number(int n)
 {
-    if (n >= 0)
-        return  '+' + QString::number(n);
-    return QString::number(n); // "-" is auto-applied
+    QString sign;
+    if (n >= 0) {
+        sign = KGlobal::locale()->positiveSign();
+        if (sign.isEmpty()) sign = '+';
+    }
+    else {
+        n = -n;
+        sign = KGlobal::locale()->negativeSign();
+        if (sign.isEmpty()) sign = '-';
+    }
+    return  sign + QString::number(n);
 }
 
 
@@ -149,7 +157,13 @@ void WindowGeometry::slotWindowStepUserMovedResized(EffectWindow *w, const QRect
             dx = r.width() - r2.width();
             dy = r.height() - r2.height();
 
-            myMeasure[1]->setText( i18nc(myResizeString, r.width(), r.height(), number(dx), number(dy) ) );
+            const QSize baseInc = w->basicUnit();
+            if (baseInc != QSize(1,1)) {
+                Q_ASSERT(baseInc.width() && baseInc.height());
+                const QSize csz = w->contentsRect().size();
+                myMeasure[1]->setText( i18nc(myResizeString, csz.width()/baseInc.width(), csz.height()/baseInc.height(), number(dx/baseInc.width()), number(dy/baseInc.height()) ) );
+            } else
+                myMeasure[1]->setText( i18nc(myResizeString, r.width(), r.height(), number(dx), number(dy) ) );
 
             // calc width for bottomright element, superfluous otherwise
             dx = r.right() - r2.right();
@@ -170,3 +184,7 @@ void WindowGeometry::slotWindowStepUserMovedResized(EffectWindow *w, const QRect
     }
 }
 
+bool WindowGeometry::isActive() const
+{
+    return iAmActive;
+}

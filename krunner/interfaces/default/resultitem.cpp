@@ -52,9 +52,7 @@
 
 void shadowBlur(QImage &image, int radius, const QColor &color);
 
-int ResultItem::s_fontHeight = 0;
-
-ResultItem::ResultItem(const SharedResultData *sharedData, const Plasma::QueryMatch &match, Plasma::RunnerManager *runnerManager, QGraphicsWidget *parent)
+ResultItem::ResultItem(const SharedResultData *sharedData, QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_match(0),
       m_configButton(0),
@@ -63,7 +61,6 @@ ResultItem::ResultItem(const SharedResultData *sharedData, const Plasma::QueryMa
       m_configWidget(0),
       m_actionsWidget(0),
       m_actionsLayout(0),
-      m_runnerManager(runnerManager),
       m_sharedData(sharedData),
       m_mouseHovered(false),
       m_mimeDataFailed(false)
@@ -78,26 +75,31 @@ ResultItem::ResultItem(const SharedResultData *sharedData, const Plasma::QueryMa
     setCacheMode(DeviceCoordinateCache);
     setZValue(0);
 
-    if (s_fontHeight < 1) {
-        //FIXME: reset when the application font changes
-        QFontMetrics fm(font());
-        s_fontHeight = fm.height();
-        //kDebug() << "font height is: " << s_fontHeight;
-    }
-
     m_highlightAnim = new QPropertyAnimation(this, "highlightState", this);
     m_highlightAnim->setStartValue(0);
     m_highlightAnim->setEndValue(1);
-    m_highlightAnim->setDuration(150);
+    m_highlightAnim->setDuration(50);
     m_highlightAnim->setEasingCurve(QEasingCurve::OutCubic);
-    setMatch(match);
 }
 
 ResultItem::~ResultItem()
 {
 }
 
-QGraphicsWidget* ResultItem::arrangeTabOrder(QGraphicsWidget* last)
+QGraphicsWidget *ResultItem::firstTabItem()
+{
+    if (m_configButton) {
+        return m_configButton;
+    }
+
+    if (m_actionsWidget) {
+        return m_actionsWidget;
+    }
+
+    return this;
+}
+
+QGraphicsWidget *ResultItem::arrangeTabOrder(QGraphicsWidget* last)
 {
     QGraphicsWidget *sceneWidget = static_cast<QGraphicsWidget*>(parent());
     sceneWidget->setTabOrder(last, this);
@@ -118,6 +120,7 @@ QGraphicsWidget* ResultItem::arrangeTabOrder(QGraphicsWidget* last)
             currentWidget = button;
         }
     }
+
     return currentWidget;
 }
 
@@ -184,11 +187,13 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
 void ResultItem::setupActions()
 {
     //kDebug();
-    QList<QAction*> actionList = m_runnerManager->actionsForMatch(m_match);
+    QList<QAction*> actionList = m_sharedData->runnerManager->actionsForMatch(m_match);
 
     if (!actionList.isEmpty()) {
         m_actionsWidget = new QGraphicsWidget(this);
         m_actionsLayout = new QGraphicsLinearLayout(Qt::Horizontal, m_actionsWidget);
+        m_actionsLayout->setContentsMargins(0, 0, 0, 0);
+        m_actionsLayout->setSpacing(0);
 
         foreach (QAction* action, actionList) {
             Plasma::ToolButton * actionButton = new Plasma::ToolButton(m_actionsWidget);
@@ -428,6 +433,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
 void ResultItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 {
+    //kDebug() << "in on" << m_match.text() << m_sharedData->processHoverEvents;
     if (!m_sharedData->processHoverEvents || !m_match.isValid()) {
         return;
     }
@@ -448,7 +454,7 @@ void ResultItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (!m_mimeDataFailed &&
         event->buttons() == Qt::LeftButton &&
         (event->pos() - event->buttonDownPos(Qt::LeftButton)).manhattanLength() >= KGlobalSettings::dndEventDelay()) {
-        QMimeData *mime = m_runnerManager->mimeDataForMatch(m_match);
+        QMimeData *mime = m_sharedData->runnerManager->mimeDataForMatch(m_match);
         //kDebug() << mime << m_match.text() << m_match.id() << m_match.data();
         if (mime) {
             QDrag *drag = new QDrag(event->widget());
@@ -518,10 +524,8 @@ QVariant ResultItem::itemChange(GraphicsItemChange change, const QVariant &value
 {
     if (change == QGraphicsItem::ItemSceneHasChanged) {
         calculateSize();
-    } else if (change == QGraphicsItem::ItemSelectedHasChanged) {
-        if (!isSelected()) {
-            m_highlightCheckTimer.start();
-        }
+    } else if (change == QGraphicsItem::ItemSelectedHasChanged && !isSelected()) {
+        m_highlightCheckTimer.start();
     }
 
     return QGraphicsWidget::itemChange(change, value);
@@ -589,7 +593,7 @@ void ResultItem::calculateSize(int sceneWidth)
         text.append(QLatin1Char( '\n' )).append(description());
     }
 
-    QFontMetrics fm(font());
+    const QFontMetrics fm(font());
     const int maxHeight = fm.height() * 4;
     const int minHeight = KIconLoader::SizeMedium;
 
@@ -609,35 +613,38 @@ void ResultItem::calculateSize(int sceneWidth)
     QSize newSize(sceneWidth, innerHeight + top + bottom);
     //kDebug() << innerHeight << geometry().size();
 
-    if (m_configButton) {
-        QSizeF s = m_configButton->size();
-
-        if (QApplication::layoutDirection() == Qt::RightToLeft) {
-            m_configButton->setPos(left, newSize.height() - s.height() - bottom);
-        } else {
-            m_configButton->setPos(newSize.width() - s.width() - right,
-                                   newSize.height() - s.height() - bottom);
-        }
-    }
-
     if (m_configWidget) {
         m_configWidget->setMaximumWidth(newSize.width());
         m_configWidget->adjustSize();
-        newSize.setHeight(newSize.height() + m_configWidget->size().height());
-        m_configWidget->setPos((newSize.width() - m_configWidget->size().width()) / 2,
-                               newSize.height() - m_configWidget->size().height() - bottom);
+        const QSizeF s = m_configWidget->size();
+        newSize.setHeight(newSize.height() + s.height());
+        m_configWidget->setPos((newSize.width() - s.width()) / 2,
+                               newSize.height() - s.height() - bottom);
+    }
+
+    if (m_configButton) {
+        const QSizeF s = m_configButton->size();
+
+        if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            m_configButton->setPos(left, newSize.height() - s.height() - bottom);
+            left += s.width();
+        } else {
+            m_configButton->setPos(newSize.width() - s.width() - right,
+                                   newSize.height() - s.height() - bottom);
+            right += s.width();
+        }
     }
 
     if (m_actionsWidget) {
         m_actionsWidget->setMaximumWidth(newSize.width()/2);
         m_actionsWidget->adjustSize();
-        QSizeF s = m_actionsWidget->size();
+        const QSizeF s = m_actionsWidget->size();
 
         if (QApplication::layoutDirection() == Qt::RightToLeft) {
             m_actionsWidget->setPos(left, newSize.height() - s.height() - bottom);
         } else {
             m_actionsWidget->setPos(newSize.width() - s.width() - right,
-                                   newSize.height() - s.height() - bottom);
+                                    newSize.height() - s.height() - bottom);
         }
     }
 

@@ -1,7 +1,10 @@
-include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/plasmagenericshell ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/shells/common ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/desktop/shell/scripting/ ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
+include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs 
+                    ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/plasmagenericshell
+                    ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/desktop/shell/scripting
+                    ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal
+)
 
 add_subdirectory(configupdates)
-add_subdirectory(toolbox)
 
 set(activitymanager_SRCS
     activitymanager/activitycontrols.cpp
@@ -29,6 +32,7 @@ set(plasma_SRCS
     panelappletoverlay.cpp
     plasmaapp.cpp
     positioningruler.cpp
+    klistconfirmationdialog.cpp
     ${wallpaper_SRCS}
     ${activitymanager_SRCS}
 )
@@ -49,7 +53,7 @@ kde4_add_app_icon(plasma_SRCS "${KDE4_INSTALL_DIR}/share/icons/oxygen/*/apps/pla
 
 kde4_add_kdeinit_executable(plasma-desktop ${plasma_SRCS})
 
-target_link_libraries(kdeinit_plasma-desktop ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_KTEXTEDITOR_LIBS} ${KDE4_KIDLETIME_LIBS} ${QT_QTSCRIPT_LIBRARY} kworkspace plasmagenericshell)
+target_link_libraries(kdeinit_plasma-desktop ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_KTEXTEDITOR_LIBS} ${KDE4_KIDLETIME_LIBS} ${QT_QTSCRIPT_LIBRARY} ${KACTIVITIES_LIBRARY} kworkspace kactivities plasmagenericshell)
 
 if(UNIX AND Q_WS_X11)
     target_link_libraries(kdeinit_plasma-desktop ${X11_LIBRARIES})
@@ -86,4 +90,6 @@ ENDMACRO(INSTALL_PLASMA_JAVASCRIPT_TEMPLATE)
 INSTALL_PLASMA_JAVASCRIPT_TEMPLATE(data/layouts/org.kde.plasma-desktop.defaultPanel org.kde.plasma-desktop.defaultPanel)
 INSTALL_PLASMA_JAVASCRIPT_TEMPLATE(data/layouts/org.kde.plasma-desktop.findWidgets org.kde.plasma-desktop.findWidgets)
 INSTALL_PLASMA_JAVASCRIPT_TEMPLATE(data/layouts/org.kde.plasma-desktop.photoActivity org.kde.plasma-desktop.photoActivity)
+INSTALL_PLASMA_JAVASCRIPT_TEMPLATE(data/layouts/org.kde.plasma-desktop.desktopIcons org.kde.plasma-desktop.desktopIcons)
+INSTALL_PLASMA_JAVASCRIPT_TEMPLATE(data/layouts/org.kde.plasma-desktop.SaL org.kde.plasma-desktop.SaL)
 

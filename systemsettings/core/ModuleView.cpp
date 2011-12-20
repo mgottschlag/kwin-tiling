@@ -96,8 +96,8 @@ ModuleView::ModuleView( QWidget * parent )
     connect( d->mReset, SIGNAL(clicked()), this, SLOT(moduleLoad()) );
     connect( d->mHelp, SIGNAL(clicked()), this, SLOT(moduleHelp()) );
     connect( d->mDefault, SIGNAL(clicked()), this, SLOT(moduleDefaults()) );
-    connect( d->mPageWidget, SIGNAL(currentPageChanged(KPageWidgetItem*, KPageWidgetItem*)),
-             this, SLOT(activeModuleChanged(KPageWidgetItem*, KPageWidgetItem*)) );
+    connect( d->mPageWidget, SIGNAL(currentPageChanged(KPageWidgetItem*,KPageWidgetItem*)),
+             this, SLOT(activeModuleChanged(KPageWidgetItem*,KPageWidgetItem*)) );
     connect( this, SIGNAL(moduleChanged(bool)), this, SLOT(updateButtons()) );
 }
 
@@ -173,7 +173,8 @@ void ModuleView::addModule( KCModuleInfo *module )
     KPageWidgetItem *page = new KPageWidgetItem( moduleScroll, module->moduleName() );
     // Provide information to the users
 
-    if( module->service()->hasServiceType("SystemSettingsExternalApp") ) { // Is it an external app?
+    if( module->service()->hasServiceType("SystemSettingsExternalApp") ||  // Is it an external app?
+            module->service()->substituteUid() ) { // ...or does it require UID substituion?
         QWidget * externalWidget = new ExternalAppModule( this, module );
         moduleScroll->setWidget( externalWidget );
     } else { // It must be a normal module then

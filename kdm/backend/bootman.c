@@ -160,26 +160,25 @@ commitGrub(void)
     }
 }
 
-#define GRUB2_MENU "/boot/grub/grub.cfg"
-
 static char *grubReboot;
+static const char *grubConfig;
 
 static int
-getGrub2(char ***opts, int *def, int *cur)
+getGrub2OrBurg(char ***opts, int *def, int *cur, const char *grubRebootExec)
 {
     FILE *f;
     char *ptr, *linp;
     int len, ret = BO_NOMAN, i;
     char line[1000];
 
-    if (!grubReboot && !(grubReboot = locate("grub-reboot")))
+    if (!grubReboot && !(grubReboot = locate(grubRebootExec)))
         return BO_NOMAN;
 
     *def = -1;
     *cur = -1;
     *opts = initStrArr(0);
 
-    if (!(f = fopen(GRUB2_MENU, "r")))
+    if (!(f = fopen(grubConfig, "r")))
         return errno == ENOENT ? BO_NOMAN : BO_IO;
     while ((len = fGets(line, sizeof(line), f)) != -1) {
         for (linp = line; isspace(*linp); linp++, len--);
@@ -223,6 +222,13 @@ getGrub2(char ***opts, int *def, int *cur)
 }
 
 static int
+getGrub2(char ***opts, int *def, int *cur)
+{
+    grubConfig = "/boot/grub/grub.cfg";
+    return getGrub2OrBurg(opts, def, cur, "grub-reboot");
+}
+
+static int
 setGrub2(const char *opt, SdRec *sdr)
 {
     char **opts;
@@ -233,7 +239,7 @@ setGrub2(const char *opt, SdRec *sdr)
     for (i = 0; opts[i]; i++) {
         if (!strcmp(opts[i], opt)) {
             sdr->osindex = i;
-            sdr->bmstamp = mTime(GRUB2_MENU);
+            sdr->bmstamp = mTime(grubConfig);
             freeStrArr(opts);
             return BO_OK;
         }
@@ -245,7 +251,7 @@ setGrub2(const char *opt, SdRec *sdr)
 static void
 commitGrub2(void)
 {
-    if (sdRec.bmstamp != mTime(GRUB2_MENU) &&
+    if (sdRec.bmstamp != mTime(grubConfig) &&
         setGrub2(sdRec.osname, &sdRec) != BO_OK)
         return;
 
@@ -255,6 +261,13 @@ commitGrub2(void)
         sprintf(index, "%d", sdRec.osindex);
         runAndWait((char **)args, environ);
     }
+}
+
+static int
+getBurg(char ***opts, int *def, int *cur)
+{
+    grubConfig = "/boot/burg/burg.cfg";
+    return getGrub2OrBurg(opts, def, cur, "burg-reboot");
 }
 
 static char *lilo;
@@ -352,6 +365,7 @@ static const struct {
     { getNull, setNull, 0 },
     { getGrub, setGrub, commitGrub },
     { getGrub2, setGrub2, commitGrub2 },
+    { getBurg, setGrub2, commitGrub2 },
     { getLilo, setLilo, commitLilo },
 };
 

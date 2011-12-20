@@ -195,39 +195,12 @@ void X11EmbedContainer::paintEvent(QPaintEvent *event)
     // Taking a detour via a QPixmap is unfortunately the only way we can get
     // the window contents into Qt's backing store.
     QPixmap pixmap(size());
-    if (pixmap.paintEngine()->type() != QPaintEngine::X11) {
-#if defined(HAVE_XCOMPOSITE)
-        // If we're using the raster or OpenGL graphics systems, a QPixmap isn't an X pixmap,
-        // so we have to get the window contents into a QImage and then draw that.
-        Display *dpy = x11Info().display();
-
-        // XXX We really should keep a cached copy of the image client side, and only
-        //     update it in response to a damage event.
-        Pixmap pixmap = XCompositeNameWindowPixmap(dpy, clientWinId());
-        XImage *ximage = XGetImage(dpy, pixmap, 0, 0, width(), height(), AllPlanes, ZPixmap);
-        XFreePixmap(dpy, pixmap);
-        // We actually check if we get the image from X11 since clientWinId can be any arbiter window (with crazy XWindowAttribute and the pixmap associated is bad)
-        if (!ximage)
-            return;
-        // This is safe to do since we only composite ARGB32 windows, and PictStandardARGB32
-        // matches QImage::Format_ARGB32_Premultiplied.
-        QImage image((const uchar*)ximage->data, ximage->width, ximage->height, ximage->bytes_per_line,
-                     QImage::Format_ARGB32_Premultiplied);
-
-        QPainter p(this);
-        p.drawImage(0, 0, image);
-
-        XDestroyImage(ximage);
-#endif
-    } else {
-        pixmap.fill(Qt::transparent);
-
-        XRenderComposite(x11Info().display(), PictOpSrc, d->picture, None, pixmap.x11PictureHandle(),
-                         0, 0, 0, 0, 0, 0, width(), height());
-
-        QPainter p(this);
-        p.drawPixmap(0, 0, pixmap);
-    }
+    pixmap = toX11Pixmap(pixmap);
+    pixmap.fill(Qt::transparent);
+    XRenderComposite(x11Info().display(), PictOpSrc, d->picture, None, pixmap.x11PictureHandle(),
+                     0, 0, 0, 0, 0, 0, width(), height());
+    QPainter p(this);
+    p.drawPixmap(0, 0, pixmap);
 }
 
 void X11EmbedContainer::setBackgroundPixmap(QPixmap background)
@@ -235,12 +208,6 @@ void X11EmbedContainer::setBackgroundPixmap(QPixmap background)
     if (!clientWinId()) {
         return;
     }
-
-    Display *display = QX11Info::display();
-    Pixmap bg = XCreatePixmap(display, clientWinId(), width(), height(), d->attr.depth);
-
-    XRenderPictFormat *format = XRenderFindVisualFormat(display, d->attr.visual);
-    Picture picture = XRenderCreatePicture(display, bg, format, 0, 0);
 
     //Prevent updating the background-image if possible. Updating can cause a very annoying flicker due to the XClearArea, and thus has to be kept to a minimum
     QImage image;
@@ -250,132 +217,33 @@ void X11EmbedContainer::setBackgroundPixmap(QPixmap background)
       image = background.copy().toImage(); //With the X11 graphics engine, we have to create a copy first, else we get a crash
 
     if(d->oldBackgroundImage == image) {
-      XFreePixmap(display, bg);
-      XRenderFreePicture(display, picture);
       return;
     }
     d->oldBackgroundImage = image;
 
-    if (background.paintEngine()->type() != QPaintEngine::X11) {
-
-        XRenderPictFormat *format = 0;
-        int depth = 0;
-        int bpp = 0;
-
-        if (image.format() == QImage::Format_ARGB32_Premultiplied) {
-            format = XRenderFindStandardFormat(display, PictStandardARGB32);
-            depth = 32;
-            bpp = 32;
-        } else if (image.format() == QImage::Format_RGB32) {
-            format = XRenderFindStandardFormat(display, PictStandardRGB24);
-            depth = 24;
-            bpp = 32;
-        } else if (image.format() == QImage::Format_RGB16) {
-            bpp = 16;
-            depth = 16;
-
-            // Try to find a picture format that matches the image format.
-            // The Render spec doesn't require the X server to support 16bpp formats,
-            // so this call can fail.
-            XRenderPictFormat templ;
-            templ.type             = PictTypeDirect;
-            templ.direct.alpha     = 0;
-            templ.direct.alphaMask = 0;
-            templ.depth            = 16;
-            templ.direct.red       = 11;
-            templ.direct.redMask   = 0x1f;
-            templ.direct.green     = 5;
-            templ.direct.greenMask = 0x3f;
-            templ.direct.blue      = 0;
-            templ.direct.blueMask  = 0x1f;
-            format = XRenderFindFormat(display, PictFormatType | PictFormatDepth | PictFormatAlpha |
-                                       PictFormatAlphaMask | PictFormatRed | PictFormatRedMask |
-                                       PictFormatGreen | PictFormatGreenMask | PictFormatBlue |
-                                       PictFormatBlueMask, &templ, 0);
-        }
-
-        if (format == 0)
-        {
-            // Convert the image to a standard format.
-            if (image.hasAlphaChannel()) {
-                image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
-                format = XRenderFindStandardFormat(display, PictStandardARGB32);
-                depth = 32;
-            } else { 
-                image = image.convertToFormat(QImage::Format_RGB32);
-                format = XRenderFindStandardFormat(display, PictStandardRGB24);
-                depth = 24;
-            }
-            bpp = 32;
-        }
-
-        if (image.format() == QImage::Format_RGB32) {
-            // Make sure the would be alpha bits are set to 1.
-            quint32 * const pixels = (quint32*)(const_cast<const QImage*>(&image)->bits());
-            for (int i = 0; i < image.width() * image.height(); i++) {
-                pixels[i] |= 0xff000000;
-            }
-        }
-
-        Q_ASSERT(format != 0);
-
-        // Get the image data into a pixmap
-        XImage ximage;
-        ximage.width            = image.width(); 
-        ximage.height           = image.height();
-        ximage.xoffset          = 0; 
-        ximage.format           = ZPixmap;
-        // This is a hack to prevent the image data from detaching
-        ximage.data             = (char*) const_cast<const QImage*>(&image)->bits();
-#if Q_BYTE_ORDER == Q_BIG_ENDIAN
-        ximage.byte_order       = MSBFirst;
-#else
-        ximage.byte_order       = LSBFirst;
-#endif
-        ximage.bitmap_unit      = bpp;
-        ximage.bitmap_bit_order = ximage.byte_order;
-        ximage.bitmap_pad       = bpp;
-        ximage.depth            = depth;
-        ximage.bytes_per_line   = image.bytesPerLine();
-        ximage.bits_per_pixel   = bpp;
-        if (depth > 16) {
-            ximage.red_mask     = 0x00ff0000;
-            ximage.green_mask   = 0x0000ff00;
-            ximage.blue_mask    = 0x000000ff;
-        } else {
-            // r5g6b5
-            ximage.red_mask     = 0xf800;
-            ximage.green_mask   = 0x07e0;
-            ximage.blue_mask    = 0x001f;
-        }
-        ximage.obdata           = 0;
-        if (XInitImage(&ximage) == 0) {
-            XRenderFreePicture(display, picture);
-            XFreePixmap(display, bg);
-            return;
-        }
-
-        Pixmap pm = XCreatePixmap(display, clientWinId(), width(), height(), ximage.depth);
-        GC gc = XCreateGC(display, pm, 0, 0);
-        XPutImage(display, pm, gc, &ximage, 0, 0, 0, 0, width(), height());
-        XFreeGC(display, gc);
-
-        Picture pict = XRenderCreatePicture(display, pm, format, 0, 0);
-        XRenderComposite(display, PictOpSrc, pict, None, picture,
-                         0, 0, 0, 0, 0, 0, width(), height());
-        XRenderFreePicture(display, pict);
-        XFreePixmap(display, pm);
-    } else {
-        XRenderComposite(display, PictOpSrc, background.x11PictureHandle(),
-                         None, picture, 0, 0, 0, 0, 0, 0, width(), height());
-    }
-
-    XSetWindowBackgroundPixmap(display, clientWinId(), bg);
-
-    XRenderFreePicture(display, picture);
-    XFreePixmap(display, bg);
-
+    Display* display = QX11Info::display();
+    XSetWindowBackgroundPixmap(display, clientWinId(), toX11Pixmap(background).handle());
     XClearArea(display, clientWinId(), 0, 0, 0, 0, True);
+}
+
+// Qt has qt_toX11Pixmap(), but that's sadly not public API. So the only
+// option seems to be to create X11-based QPixmap using QPixmap::fromX11Pixmap()
+// and draw the non-native pixmap to it.
+// NOTE: The alpha-channel is not preserved if it exists, but for X pixmaps it generally should not be needed anyway.
+QPixmap X11EmbedContainer::toX11Pixmap(const QPixmap& pix)
+{
+    if(pix.handle() != 0)   // X11 pixmap
+        return pix;
+    Pixmap xpix = XCreatePixmap(pix.x11Info().display(), RootWindow(pix.x11Info().display(), pix.x11Info().screen()),
+                                pix.width(), pix.height(), QX11Info::appDepth());
+    QPixmap wrk = QPixmap::fromX11Pixmap(xpix);
+    QPainter paint(&wrk);
+    paint.drawPixmap(0, 0, pix);
+    paint.end();
+    QPixmap ret = wrk.copy();
+    wrk = QPixmap(); // reset, so that xpix can be freed (QPixmap does not own it)
+    XFreePixmap(pix.x11Info().display(), xpix);
+    return ret;
 }
 
 }

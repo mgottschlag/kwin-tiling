@@ -334,6 +334,7 @@ strCat(char **bp, const char *str)
 static void
 sdCat(char **bp, SdRec *sdr)
 {
+    int delta = nowMonotonic ? time(0) - now : 0;
     if (sdr->how == SHUT_HALT)
         strCat(bp, "halt,");
     else
@@ -341,11 +342,11 @@ sdCat(char **bp, SdRec *sdr)
     if (sdr->start == TO_INF)
         strCat(bp, "0,");
     else
-        *bp += sprintf(*bp, "%d,", sdr->start);
+        *bp += sprintf(*bp, "%d,", sdr->start ? sdr->start + delta : 0);
     if (sdr->timeout == TO_INF)
         strCat(bp, "-1,");
     else
-        *bp += sprintf(*bp, "%d,", sdr->timeout);
+        *bp += sprintf(*bp, "%d,", sdr->timeout ? sdr->timeout + delta : 0);
     if (sdr->force == SHUT_ASK)
         strCat(bp, "ask");
     else if (sdr->force == SHUT_FORCE)
@@ -647,8 +648,12 @@ processCtrl(const char *string, int len, int fd, struct display *d)
                 }
                 sdr.start = strtol(*ap, &bp, 10);
                 if (bp != *ap && !*bp) {
-                    if (**ap == '+')
+                    if (**ap == '+') {
                         sdr.start += now;
+                    } else if (nowMonotonic && sdr.start) {
+                        sdr.start -= time(0);
+                        sdr.start += now;
+                    }
                     if (!*++ap)
                         goto miss;
                     sdr.timeout = strtol(*ap, &bp, 10);
@@ -656,11 +661,15 @@ processCtrl(const char *string, int len, int fd, struct display *d)
                         fLog(d, fd, "bad", "invalid timeout %\"s", ar[3]);
                         goto bust;
                     }
-                    if (**ap == '+')
-                        sdr.timeout += sdr.start ? sdr.start : now;
                     if (sdr.timeout < 0) {
                         sdr.timeout = TO_INF;
                     } else {
+                        if (**ap == '+') {
+                            sdr.timeout += sdr.start ? sdr.start : now;
+                        } else if (nowMonotonic && sdr.timeout) {
+                            sdr.timeout -= time(0);
+                            sdr.timeout += now;
+                        }
                         if (!*++ap)
                             goto miss;
                         if (!strcmp(*ap, "force")) {

@@ -75,8 +75,8 @@ KBlankSetup::KBlankSetup( QWidget *parent, const char *name )
 
 	KColorButton *colorPush = new KColorButton( color, main );
 	colorPush->setMinimumWidth(80);
-	connect( colorPush, SIGNAL( changed(const QColor &) ),
-		SLOT( slotColor(const QColor &) ) );
+	connect( colorPush, SIGNAL(changed(QColor)),
+		SLOT(slotColor(QColor)) );
 	grid->addWidget(colorPush, 1, 0);
 
 	preview = new QWidget( main );

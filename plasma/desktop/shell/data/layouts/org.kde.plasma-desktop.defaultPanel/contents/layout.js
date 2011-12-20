@@ -4,10 +4,14 @@ if (panelIds.length == 1) {
     panel.location = 'bottom'
 }
 
-panel.height = 27
+panel.height = screenGeometry(panel.screen).height > 1024 ? 35 : 27
 panel.addWidget("launcher")
+panel.addWidget("org.kde.showActivityManager")
 panel.addWidget("pager")
-panel.addWidget("tasks")
+tasks = panel.addWidget("tasks")
 panel.addWidget("systemtray")
 panel.addWidget("digital-clock")
 
+tasks.currentConfigGroup = new Array("Launchers")
+tasks.writeConfig("browser", "preferred://browser, , , ")
+tasks.writeConfig("filemanager", "preferred://filemanager, , , ")

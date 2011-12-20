@@ -1,0 +1,72 @@
+[Desktop Entry]
+Exec=kcmshell4 powerdevilactivitiesconfig
+Icon=preferences-activities
+Type=Service
+X-KDE-ServiceTypes=KCModule
+X-DocPath=kcontrol/powerdevil/index.html
+
+X-KDE-Library=kcm_powerdevilactivitiesconfig
+X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=power-management
+X-KDE-Weight=50
+
+Name=Activity settings
+Name[ca]=Arranjament d'activitat
+Name[cs]=Nastavení činnosti
+Name[da]=Aktivitetsindstillinger
+Name[de]=Aktivitäten-Einstellungen
+Name[eu]=Jarduera ezarpenak
+Name[fi]=Aktiviteettiasetukset
+Name[hu]=Aktivitásjellemzők
+Name[ia]=Preferentias de activitate
+Name[kk]=Істің параметрлері
+Name[lt]=Veiklų nustatymai
+Name[nb]=Aktivitetsinnstillinger
+Name[nds]=Aktiviteet instellen
+Name[nl]=Instellingen voor activiteiten
+Name[pa]=ਐਕਟਵਿਟੀ ਸੈਟਿੰਗ
+Name[pt]=Configuração da actividade
+Name[pt_BR]=Configurações da atividade
+Name[ro]=Configurări activitate
+Name[ru]=Настройка для комнат
+Name[sv]=Inställningar av aktiviteter
+Name[uk]=Параметри простору дій
+Name[x-test]=xxActivity settingsxx
+Name[zh_CN]=活动设置
+Name[zh_TW]=活動設定
+
+Comment=Configure per-activity Power Management settings
+Comment[ca]=Configura l'arranjament per activitat de gestió d'energia
+Comment[cs]=Konfigurace nastavení správy napájení na činnost
+Comment[da]=Indstil strømstyring pr. aktivitet
+Comment[de]=Energieprofile pro Aktivität einzeln einrichten
+Comment[eu]=Konfiguratu energia kudeatzeko ezarpenak jarduera bakoitzeko
+Comment[fi]=Virranhallinnan aktiviteettikohtaiset asetukset
+Comment[ia]=Configura preferentias  de gestion de energia per activitate
+Comment[kk]=Әрбір істің қуаттандыру параметрлерін баптау
+Comment[nb]=Sett opp strømstyringsinnstillinger per aktivitet
+Comment[nl]=Instellingen van per activiteit energiebeheer instellen
+Comment[pt]=Configurar as opções globais de Gestão de Energia por actividade
+Comment[pt_BR]=Configura as opções de gerenciamento de energia por atividade
+Comment[ro]=Configurează opțiunile de gestiune a alimentării pe activitate
+Comment[ru]=Настройка параметров энергосбережения отдельно для каждой комнаты
+Comment[sv]=Anpassa inställningar av strömsparhantering per aktivitet
+Comment[uk]=Налаштування окремих параметрів керування живленням простору дій
+Comment[x-test]=xxConfigure per-activity Power Management settingsxx
+Comment[zh_CN]=配置基于活动的电源管理
+Comment[zh_TW]=設定個別活動電源管理
+
+X-KDE-Keywords=system,power,power management,energy,laptop,battery,suspension,AC,suspend,hibernate,brightness,performance,lid,activity,activities
+X-KDE-Keywords[ca]=sistema,energia,gestió d'energia,corrent,portàtil,bateria,suspensió,AC,suspendre,hibernació,lluminositat,rendiment,tapa,activitat,activitats
+X-KDE-Keywords[fi]=järjestelmä,virta,virranhallinta,energia,kannettava,tietokone,läppäri,akku,lepotila,valmiustila,keskeytä,AC,virtalähde,kirkkaus,suorituskyky,kansi,aktiviteetti,aktiviteetit
+X-KDE-Keywords[ia]=systema,potentia,gestion de potentia,energia,laptop,batteria,suspension,CA,suspende,hiberna,brillantia,prestation,coperculo,activitate,activitates
+X-KDE-Keywords[kk]=system,power,power management,energy,laptop,battery,suspension,AC,suspend,hibernate,brightness,performance,lid,activity,activities
+X-KDE-Keywords[nb]=system,strøm,strømstyring,energi,bærbar,batteri,hvilemodus,AC,hvile,dvale,lysstyrke,ytelse,lokk,aktivitet,aktiviteter
+X-KDE-Keywords[nl]=systeem,energie,energiebeheer,laptop,batterij,suspension,AC,onderbreken,slapen,helderheid,prestaties,deksel,activiteit,activiteiten
+X-KDE-Keywords[pt]=sistema,energia,gestão de energia,portátil,bateria,suspensão,AC,suspender,hibernar,brilho,performance,tampo,actividade,actividades
+X-KDE-Keywords[pt_BR]=sistema,energia,gerenciamento de energia,energia,portátil,laptop,notebook,bateria,suspensão,AC,suspender,hibernar,brilho,desempenho,tampa,atividade,atividades
+X-KDE-Keywords[sv]=system,kraft,krafthantering,energi,bärbar dator,batteri,viloläge,AC,gå till viloläge,dvala,ljusstyrka,prestanda,lock,aktivitet,aktiviteter
+X-KDE-Keywords[uk]=system,power,power management,energy,laptop,battery,suspension,AC,suspend,hibernate,brightness,performance,lid,activity,activities,система,живлення,мережа,струм,керування,енергія,ноутбук,акумулятор,батарея,батареї,присипляння,призупинення,призупинка,яскравість,швидкодія,кришка,кришки,простір,дій,простори,активність
+X-KDE-Keywords[x-test]=xxsystem,power,power management,energy,laptop,battery,suspension,AC,suspend,hibernate,brightness,performance,lid,activity,activitiesxx
+X-KDE-Keywords[zh_TW]=system,power,power management,energy,laptop,battery,suspension,AC,suspend,hibernate,brightness,performance,lid,activity,activities

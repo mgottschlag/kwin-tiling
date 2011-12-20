@@ -63,7 +63,7 @@ GestureTrigger::GestureTrigger( ActionData* data_P, const StrokePoints &pointdat
 
 GestureTrigger::~GestureTrigger()
     {
-    gesture_handler->unregister_handler( this, SLOT( handle_gesture( const StrokePoints& )));
+    gesture_handler->unregister_handler( this, SLOT(handle_gesture(StrokePoints)));
     }
 
 
@@ -83,9 +83,9 @@ void GestureTrigger::accept(TriggerVisitor& visitor)
 void GestureTrigger::activate( bool activate_P )
     {
     if( activate_P )
-        gesture_handler->register_handler( this, SLOT( handle_gesture( const StrokePoints& )));
+        gesture_handler->register_handler( this, SLOT(handle_gesture(StrokePoints)));
     else
-        gesture_handler->unregister_handler( this, SLOT( handle_gesture( const StrokePoints& )));
+        gesture_handler->unregister_handler( this, SLOT(handle_gesture(StrokePoints)));
     }
 
 

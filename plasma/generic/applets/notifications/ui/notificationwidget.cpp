@@ -150,7 +150,7 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     d->messageLabel->nativeWidget()->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     d->messageLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     connect(d->messageLabel->nativeWidget(), SIGNAL(urlClick(QString)),
-            notification, SLOT(linkActivated(const QString &)));
+            notification, SLOT(linkActivated(QString)));
 
     d->iconPlaceBig = new QGraphicsWidget(this);
     d->iconPlaceBig->setMaximumHeight(KIconLoader::SizeLarge);
@@ -168,8 +168,8 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
 
     d->notification = notification;
 
-    connect(d->signalMapper, SIGNAL(mapped(const QString &)),
-            notification, SLOT(triggerAction(const QString &)));
+    connect(d->signalMapper, SIGNAL(mapped(QString)),
+            notification, SLOT(triggerAction(QString)));
     connect(notification, SIGNAL(changed()),
             this, SLOT(updateNotification()));
     connect(notification, SIGNAL(destroyed()),
@@ -347,7 +347,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
         if (c == '<') {
             inTag = true;
             sentence.append(word);
-            parsed.append(fm.elidedText(sentence, Qt::ElideRight, maxLine*2.6));
+            parsed.append(fm.elidedText(sentence, Qt::ElideRight, maxLine*4.6));
             sentence = QString();
             word = QString();
             word.append(c);
@@ -373,7 +373,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
     }
 
     sentence.append(word);
-    parsed.append(fm.elidedText(sentence, Qt::ElideRight, maxLine*2.6));
+    parsed.append(fm.elidedText(sentence, Qt::ElideRight, maxLine*4.6));
 
     messageLabel->setText(parsed);
 
@@ -433,7 +433,7 @@ void NotificationWidgetPrivate::buttonClicked()
 {
     //a decsion has already been taken
     if (actionsWidget) {
-        actionsWidget->hide();
+        notification.data()->deleteLater();
     }
     emit q->actionTriggered(notification.data());
 }

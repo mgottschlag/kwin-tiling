@@ -25,8 +25,12 @@
 
 // libtaskmanager
 #include <taskmanager/taskmanager.h>
-using TaskManager::StartupPtr;
-using TaskManager::TaskPtr;
+
+namespace TaskManager
+{
+    class Startup;
+    class Task;
+} // namespace TaskManager
 
 /**
  * Tasks Data Engine
@@ -53,21 +57,19 @@ class TasksEngine : public Plasma::DataEngine
         Plasma::Service *serviceForSource(const QString &name);
 
     protected:
-        static const QString getStartupName(StartupPtr startup);
-        static const QString getTaskName(TaskPtr task);
+        static const QString getStartupName(::TaskManager::Startup *startup);
+        static const QString getTaskName(::TaskManager::Task *task);
         virtual void init();
         bool sourceRequestEvent(const QString &source);
 
     private slots:
-        void startupAdded(StartupPtr startup);
-        void startupRemoved(StartupPtr startup);
-        void taskAdded(TaskPtr task);
-        void taskRemoved(TaskPtr task);
+        void startupAdded(::TaskManager::Startup *startup);
+        void startupRemoved(::TaskManager::Startup *startup);
+        void taskAdded(::TaskManager::Task *task);
+        void taskRemoved(::TaskManager::Task *task);
 
     private:
         friend class TaskSource;
-        void addStartup(StartupPtr startup);
-        void addTask(TaskPtr task);
 };
 
 #endif // TASKSENGINE_H

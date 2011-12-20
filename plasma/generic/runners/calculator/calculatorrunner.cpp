@@ -249,7 +249,7 @@ void CalculatorRunner::match(Plasma::RunnerContext &context)
         match.setType(Plasma::QueryMatch::InformationalMatch);
         match.setIcon(KIcon("accessories-calculator"));
         match.setText(result);
-        match.setData("= " + result);
+        match.setData(QString::fromLatin1("= %1").arg(result));
         match.setId(QString());
         context.addMatch(term, match);
     }

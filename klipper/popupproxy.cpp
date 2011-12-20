@@ -17,6 +17,8 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
+#include "popupproxy.h"
+
 #include <QRegExp>
 #include <QStyle>
 #include <QPixmap>
@@ -28,7 +30,6 @@
 #include <kdebug.h>
 
 #include "historyitem.h"
-#include "popupproxy.h"
 #include "history.h"
 #include "klipperpopup.h"
 
@@ -43,7 +44,7 @@ PopupProxy::PopupProxy( KlipperPopup* parent, int menu_height, int menu_width )
     if (!parent->history()->empty()) {
         m_spill_uuid = parent->history()->first()->uuid();
     }
-    connect( parent->history(), SIGNAL( changed() ), SLOT( slotHistoryChanged() ) );
+    connect( parent->history(), SIGNAL(changed()), SLOT(slotHistoryChanged()) );
     connect(m_proxy_for_menu, SIGNAL(triggered(QAction*)), parent->history(), SLOT(slotMoveToTop(QAction*)));
 }
 

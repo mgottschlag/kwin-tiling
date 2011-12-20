@@ -115,8 +115,8 @@ KGVerify::getPlugMenu()
         if (np > 1) {
             plugMenu = new QMenu(parent);
             QActionGroup *plugGroup = new QActionGroup(parent);
-            connect(plugMenu, SIGNAL(triggered(QAction *)),
-                    SLOT(slotPluginSelected(QAction *)));
+            connect(plugMenu, SIGNAL(triggered(QAction*)),
+                    SLOT(slotPluginSelected(QAction*)));
             for (uint i = 0; i < np; i++) {
                 int pid = pluginList[i];
                 greetPlugins[pid].action = plugGroup->addAction(

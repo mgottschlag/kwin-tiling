@@ -181,13 +181,12 @@ KdmThemer::widgetEvent(QEvent *e)
 }
 
 void
-KdmThemer::paintBackground(QPaintDevice *dev, const QRect &rect, bool primaryScreen)
+KdmThemer::paintBackground(QPainter *p, const QRect &rect, bool primaryScreen)
 {
     debug() << "==== setting background geometry ====";
     QStack<QSize> ps;
     rootItem->setGeometry(ps, rect, true);
-    QPainter p(dev);
-    rootItem->paint(&p, rect, true, primaryScreen);
+    rootItem->paint(p, rect, true, primaryScreen);
 }
 
 void
@@ -228,14 +227,14 @@ KdmThemer::generateItems(KdmItem *parent, const QDomNode &node)
                 delete newItem;
                 continue;
             }
-            connect(newItem, SIGNAL(needUpdate(int, int, int, int)),
-                    SLOT(update(int, int, int, int)));
+            connect(newItem, SIGNAL(needUpdate(int,int,int,int)),
+                    SLOT(update(int,int,int,int)));
             connect(newItem, SIGNAL(needPlacement()),
                     SLOT(slotNeedPlacement()));
             connect(newItem, SIGNAL(needPlugging()),
                     SLOT(slotNeedPlugging()));
-            connect(newItem, SIGNAL(activated(const QString &)),
-                    SIGNAL(activated(const QString &)));
+            connect(newItem, SIGNAL(activated(QString)),
+                    SIGNAL(activated(QString)));
             generateLayouts(newItem, subnode);
         }
     }

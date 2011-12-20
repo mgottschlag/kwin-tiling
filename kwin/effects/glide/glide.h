@@ -36,11 +36,13 @@ class GlideEffect
     Q_OBJECT
 public:
     GlideEffect();
+    ~GlideEffect();
     virtual void reconfigure(ReconfigureFlags);
     virtual void prePaintScreen(ScreenPrePaintData& data, int time);
     virtual void prePaintWindow(EffectWindow* w, WindowPrePaintData& data, int time);
     virtual void paintWindow(EffectWindow* w, int mask, QRegion region, WindowPaintData& data);
     virtual void postPaintWindow(EffectWindow* w);
+    virtual bool isActive() const;
 
     static bool supported();
 public Q_SLOTS:

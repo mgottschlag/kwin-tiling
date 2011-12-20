@@ -261,25 +261,25 @@ void InteractiveConsole::openScriptFile()
     mimetypes << "application/javascript";
     m_fileDialog->setMimeFilter(mimetypes);
 
-    connect(m_fileDialog, SIGNAL(finished()), this, SLOT(openScriptUrlSelected()));
+    connect(m_fileDialog, SIGNAL(finished(int)), this, SLOT(openScriptUrlSelected(int)));
     m_fileDialog->show();
 }
 
-void InteractiveConsole::openScriptUrlSelected()
+void InteractiveConsole::openScriptUrlSelected(int result)
 {
     if (!m_fileDialog) {
         return;
     }
 
-    KUrl url = m_fileDialog->selectedUrl();
-    m_fileDialog->deleteLater();
-    m_fileDialog = 0;
-
-    if (url.isEmpty()) {
-        return;
+    if (result == QDialog::Accepted) {
+        const KUrl url = m_fileDialog->selectedUrl();
+        if (!url.isEmpty()) {
+            loadScriptFromUrl(url);
+        }
     }
 
-    loadScriptFromUrl(url);
+    m_fileDialog->deleteLater();
+    m_fileDialog = 0;
 }
 
 void InteractiveConsole::loadScriptFromUrl(const KUrl &url)
@@ -389,22 +389,25 @@ void InteractiveConsole::saveScript()
     mimetypes << "application/javascript";
     m_fileDialog->setMimeFilter(mimetypes);
 
-    connect(m_fileDialog, SIGNAL(finished()), this, SLOT(saveScriptUrlSelected()));
+    connect(m_fileDialog, SIGNAL(finished(int)), this, SLOT(saveScriptUrlSelected(int)));
     m_fileDialog->show();
 }
 
-void InteractiveConsole::saveScriptUrlSelected()
+void InteractiveConsole::saveScriptUrlSelected(int result)
 {
     if (!m_fileDialog) {
         return;
     }
 
-    KUrl url = m_fileDialog->selectedUrl();
-    if (url.isEmpty()) {
-        return;
+    if (result == QDialog::Accepted) {
+        const KUrl url = m_fileDialog->selectedUrl();
+        if (!url.isEmpty()) {
+            saveScript(url);
+        }
     }
 
-    saveScript(url);
+    m_fileDialog->deleteLater();
+    m_fileDialog = 0;
 }
 
 void InteractiveConsole::saveScript(const KUrl &url)
@@ -477,7 +480,7 @@ void InteractiveConsole::evaluateScript()
     t.start();
 
     {
-        WorkspaceScripting::DesktopScriptEngine scriptEngine(m_corona, this);
+        WorkspaceScripting::DesktopScriptEngine scriptEngine(m_corona, false, this);
         connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(print(QString)));
         connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(print(QString)));
         connect(&scriptEngine, SIGNAL(createPendingPanelViews()), PlasmaApp::self(), SLOT(createWaitingPanels()));

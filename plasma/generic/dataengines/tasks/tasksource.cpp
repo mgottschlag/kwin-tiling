@@ -22,29 +22,25 @@
 #include "tasksengine.h"
 #include "taskservice.h"
 
-TaskSource::TaskSource(StartupPtr startup, QObject *parent) :
-    Plasma::DataContainer(parent),
-    m_startup(startup),
-    m_task(),
-    m_isTask(false)
+TaskSource::TaskSource(::TaskManager::Startup *startup, QObject *parent)
+    : Plasma::DataContainer(parent),
+      m_startup(startup)
 {
-    setObjectName(TasksEngine::getStartupName(m_startup));
+    setObjectName(TasksEngine::getStartupName(startup));
     setData("startup", true);
     setData("task", false);
     updateStartup(TaskManager::TaskUnchanged);
 }
 
-TaskSource::TaskSource(TaskPtr task, QObject *parent) :
-    Plasma::DataContainer(parent),
-    m_startup(),
-    m_task(task),
-    m_isTask(true)
+TaskSource::TaskSource(::TaskManager::Task *task, QObject *parent)
+    : Plasma::DataContainer(parent),
+      m_task(task)
 {
-    setObjectName(TasksEngine::getTaskName(m_task));
+    setObjectName(TasksEngine::getTaskName(task));
     setData("startup", false);
     setData("task", true);
-    setData("className", m_task->className());
-    setData("classClass", m_task->classClass());
+    setData("className", task->className());
+    setData("classClass", task->classClass());
     updateTask(TaskManager::EverythingChanged);
 }
 
@@ -57,97 +53,101 @@ Plasma::Service *TaskSource::createService()
     return new TaskService(this);
 }
 
-TaskPtr TaskSource::getTask()
+::TaskManager::Task *TaskSource::task()
 {
-    return m_task;
-}
-
-bool TaskSource::isTask() const 
-{
-    return m_isTask;
+    return m_task.data();
 }
 
 void TaskSource::updateStartup(::TaskManager::TaskChanges startupChanges)
 {
+    ::TaskManager::Startup *startup = m_startup.data();
+    if (!startup) {
+        return;
+    }
+
     switch (startupChanges) {
         case TaskManager::TaskUnchanged:
-            setData("text", m_startup->text());
-            setData("bin", m_startup->bin());
-            setData("icon", m_startup->icon());
+            setData("text", startup->text());
+            setData("bin", startup->bin());
+            setData("icon", startup->icon());
     }
     checkForUpdate();
 }
 
 void TaskSource::updateTask(::TaskManager::TaskChanges taskChanges)
 {
+    ::TaskManager::Task *taskPtr = m_task.data();
+    if (!taskPtr) {
+        return;
+    }
+
     // only a subset of task information is exported
     switch (taskChanges) {
         case TaskManager::EverythingChanged:
-            setData("name", m_task->name());
-            setData("visibleName", m_task->visibleName());
-            setData("visibleNameWithState", m_task->visibleNameWithState());
-            setData("maximized", m_task->isMaximized());
-            setData("minimized", m_task->isMinimized());
-            setData("shaded", m_task->isShaded());
-            setData("fullScreen", m_task->isFullScreen());
-            setData("alwaysOnTop", m_task->isAlwaysOnTop());
-            setData("keptBelowOthers", m_task->isKeptBelowOthers());
-            setData("active", m_task->isActive());
-            setData("onTop", m_task->isOnTop());
-            setData("onCurrentDesktop", m_task->isOnCurrentDesktop());
-            setData("onAllDesktops", m_task->isOnAllDesktops());
-            setData("desktop", m_task->desktop());
-            setData("onCurrentActivity", m_task->isOnCurrentActivity());
-            setData("onAllActivities", m_task->isOnAllActivities());
-            setData("activities", m_task->activities());
-            setData("icon", m_task->icon());
-            setData("actionMinimize", m_task->info().actionSupported(NET::ActionMinimize));
-            setData("actionMaximize", m_task->info().actionSupported(NET::ActionMax));
-            setData("actionShade", m_task->info().actionSupported(NET::ActionShade));
-            setData("actionResize", m_task->info().actionSupported(NET::ActionResize));
-            setData("actionMove", m_task->info().actionSupported(NET::ActionMove));
-            setData("actionClose", m_task->info().actionSupported(NET::ActionClose));
-            setData("actionChangeDesktop", m_task->info().actionSupported(NET::ActionChangeDesktop));
-            setData("actionFullScreen", m_task->info().actionSupported(NET::ActionFullScreen));
+            setData("name", taskPtr->name());
+            setData("visibleName", taskPtr->visibleName());
+            setData("visibleNameWithState", taskPtr->visibleNameWithState());
+            setData("maximized", taskPtr->isMaximized());
+            setData("minimized", taskPtr->isMinimized());
+            setData("shaded", taskPtr->isShaded());
+            setData("fullScreen", taskPtr->isFullScreen());
+            setData("alwaysOnTop", taskPtr->isAlwaysOnTop());
+            setData("keptBelowOthers", taskPtr->isKeptBelowOthers());
+            setData("active", taskPtr->isActive());
+            setData("onTop", taskPtr->isOnTop());
+            setData("onCurrentDesktop", taskPtr->isOnCurrentDesktop());
+            setData("onAllDesktops", taskPtr->isOnAllDesktops());
+            setData("desktop", taskPtr->desktop());
+            setData("onCurrentActivity", taskPtr->isOnCurrentActivity());
+            setData("onAllActivities", taskPtr->isOnAllActivities());
+            setData("activities", taskPtr->activities());
+            setData("icon", taskPtr->icon());
+            setData("actionMinimize", taskPtr->info().actionSupported(NET::ActionMinimize));
+            setData("actionMaximize", taskPtr->info().actionSupported(NET::ActionMax));
+            setData("actionShade", taskPtr->info().actionSupported(NET::ActionShade));
+            setData("actionResize", taskPtr->info().actionSupported(NET::ActionResize));
+            setData("actionMove", taskPtr->info().actionSupported(NET::ActionMove));
+            setData("actionClose", taskPtr->info().actionSupported(NET::ActionClose));
+            setData("actionChangeDesktop", taskPtr->info().actionSupported(NET::ActionChangeDesktop));
+            setData("actionFullScreen", taskPtr->info().actionSupported(NET::ActionFullScreen));
             break;
         case TaskManager::IconChanged:
-            setData("icon", m_task->icon());
+            setData("icon", taskPtr->icon());
             break;
         case TaskManager::NameChanged:
-            setData("name", m_task->name());
-            setData("visibleName", m_task->visibleName());
-            setData("visibleNameWithState", m_task->visibleNameWithState());
+            setData("name", taskPtr->name());
+            setData("visibleName", taskPtr->visibleName());
+            setData("visibleNameWithState", taskPtr->visibleNameWithState());
             break;
         case TaskManager::StateChanged:
-            setData("maximized", m_task->isMaximized());
-            setData("minimized", m_task->isMinimized());
-            setData("shaded", m_task->isShaded());
-            setData("fullScreen", m_task->isFullScreen());
-            setData("alwaysOnTop", m_task->isAlwaysOnTop());
-            setData("keptBelowOthers", m_task->isKeptBelowOthers());
-            setData("active", m_task->isActive());
-            setData("onTop", m_task->isOnTop());
-            setData("visibleNameWithState", m_task->visibleNameWithState());
+            setData("maximized", taskPtr->isMaximized());
+            setData("minimized", taskPtr->isMinimized());
+            setData("shaded", taskPtr->isShaded());
+            setData("fullScreen", taskPtr->isFullScreen());
+            setData("alwaysOnTop", taskPtr->isAlwaysOnTop());
+            setData("keptBelowOthers", taskPtr->isKeptBelowOthers());
+            setData("active", taskPtr->isActive());
+            setData("onTop", taskPtr->isOnTop());
+            setData("visibleNameWithState", taskPtr->visibleNameWithState());
             break;
         case TaskManager::DesktopChanged:
-            setData("onCurrentDesktop", m_task->isOnCurrentDesktop());
-            setData("onAllDesktops", m_task->isOnAllDesktops());
-            setData("desktop", m_task->desktop());
-            break;
+            setData("onCurrentDesktop", taskPtr->isOnCurrentDesktop());
+            setData("onAllDesktops", taskPtr->isOnAllDesktops());
+            setData("desktop", taskPtr->desktop());
             break;
         case TaskManager::ActivitiesChanged:
-            setData("onCurrentActivity", m_task->isOnCurrentActivity());
-            setData("onAllActivities", m_task->isOnAllActivities());
-            setData("activities", m_task->activities());
+            setData("onCurrentActivity", taskPtr->isOnCurrentActivity());
+            setData("onAllActivities", taskPtr->isOnAllActivities());
+            setData("activities", taskPtr->activities());
         case TaskManager::ActionsChanged:
-            setData("actionMinimize", m_task->info().actionSupported(NET::ActionMinimize));
-            setData("actionMaximize", m_task->info().actionSupported(NET::ActionMax));
-            setData("actionShade", m_task->info().actionSupported(NET::ActionShade));
-            setData("actionResize", m_task->info().actionSupported(NET::ActionResize));
-            setData("actionMove", m_task->info().actionSupported(NET::ActionMove));
-            setData("actionClose", m_task->info().actionSupported(NET::ActionClose));
-            setData("actionChangeDesktop", m_task->info().actionSupported(NET::ActionChangeDesktop));
-            setData("actionFullScreen", m_task->info().actionSupported(NET::ActionFullScreen));
+            setData("actionMinimize", taskPtr->info().actionSupported(NET::ActionMinimize));
+            setData("actionMaximize", taskPtr->info().actionSupported(NET::ActionMax));
+            setData("actionShade", taskPtr->info().actionSupported(NET::ActionShade));
+            setData("actionResize", taskPtr->info().actionSupported(NET::ActionResize));
+            setData("actionMove", taskPtr->info().actionSupported(NET::ActionMove));
+            setData("actionClose", taskPtr->info().actionSupported(NET::ActionClose));
+            setData("actionChangeDesktop", taskPtr->info().actionSupported(NET::ActionChangeDesktop));
+            setData("actionFullScreen", taskPtr->info().actionSupported(NET::ActionFullScreen));
             break;
         default:
             break;
@@ -155,10 +155,13 @@ void TaskSource::updateTask(::TaskManager::TaskChanges taskChanges)
     checkForUpdate();
 }
 
-void TaskSource::updateDesktop(int desktop)
+void TaskSource::updateDesktop()
 {
-    Q_UNUSED(desktop);
-    const bool onCurrentDesktop = m_task->isOnCurrentDesktop();
+    if (!m_task) {
+        return;
+    }
+
+    const bool onCurrentDesktop = m_task.data()->isOnCurrentDesktop();
     if (data()["onCurrentDesktop"].toBool() != onCurrentDesktop) {
         setData("onCurrentDesktop", onCurrentDesktop);
         checkForUpdate();
@@ -167,7 +170,11 @@ void TaskSource::updateDesktop(int desktop)
 
 void TaskSource::updateActivity()
 {
-    const bool onCurrentActivity = m_task->isOnCurrentActivity();
+    if (!m_task) {
+        return;
+    }
+
+    const bool onCurrentActivity = m_task.data()->isOnCurrentActivity();
     if (data()["onCurrentActivity"].toBool() != onCurrentActivity) {
         setData("onCurrentActivity", onCurrentActivity);
         checkForUpdate();

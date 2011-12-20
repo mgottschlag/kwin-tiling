@@ -39,11 +39,10 @@ namespace TaskManager
 class TaskGroup;
 class AbstractGroupableItem;
 
-enum ItemType
-{
-  GroupItemType,
-  LauncherItemType,
-  TaskItemType
+enum ItemType {
+    GroupItemType,
+    LauncherItemType,
+    TaskItemType
 };
 
 typedef TaskGroup* GroupPtr;

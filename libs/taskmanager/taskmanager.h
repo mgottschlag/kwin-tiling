@@ -39,13 +39,8 @@ namespace TaskManager
 typedef QSet<WId> WindowList;
 
 class Task;
-typedef KSharedPtr<Task> TaskPtr;
-typedef QVector<TaskPtr> TaskList;
-typedef QHash<WId, TaskPtr> TaskDict;
 
 class Startup;
-typedef KSharedPtr<Startup> StartupPtr;
-typedef QVector<StartupPtr> StartupList;
 
 enum TaskChange { TaskUnchanged = 0,
                   NameChanged = 1,
@@ -56,9 +51,9 @@ enum TaskChange { TaskUnchanged = 0,
                   ActionsChanged = 256,
                   TransientsChanged = 512,
                   IconChanged = 1024,
-                  ColorChanged = 2048,
                   ActivitiesChanged = 4096,
                   AttentionChanged = 8192,
+                  ClassChanged = 0x4000,
                   EverythingChanged = 0xffff
                 };
 Q_DECLARE_FLAGS(TaskChanges, TaskChange)
@@ -83,9 +78,9 @@ namespace TaskManager
 class TASKMANAGER_EXPORT TaskManager : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY( int currentDesktop READ currentDesktop )
-    Q_PROPERTY( int numberOfDesktops READ numberOfDesktops )
-    Q_PROPERTY( QString currentActivity READ currentActivity )
+    Q_PROPERTY(int currentDesktop READ currentDesktop)
+    Q_PROPERTY(int numberOfDesktops READ numberOfDesktops)
+    Q_PROPERTY(QString currentActivity READ currentActivity NOTIFY activityChanged)
 
 public:
     static TaskManager* self();
@@ -96,22 +91,22 @@ public:
     /**
      * Returns the task for a given WId, or 0 if there is no such task.
      */
-    TaskPtr findTask(WId w);
+    Task *findTask(WId w);
 
     /**
      * Returns the task for a given location, or 0 if there is no such task.
      */
-    TaskPtr findTask(int desktop, const QPoint& p);
+    Task *findTask(int desktop, const QPoint& p);
 
     /**
      * Returns a list of all current tasks.
      */
-    TaskDict tasks() const;
+    QHash<WId, Task *> tasks() const;
 
     /**
      * Returns a list of all current startups.
      */
-    StartupList startups() const;
+    QList<Startup *> startups() const;
 
     /**
      * Returns the name of the nth desktop.
@@ -159,24 +154,24 @@ Q_SIGNALS:
     /**
      * Emitted when a new task has started.
      */
-    void taskAdded(TaskPtr);
+    void taskAdded(::TaskManager::Task *task);
 
     /**
      * Emitted when a task has terminated.
      */
-    void taskRemoved(TaskPtr);
+    void taskRemoved(::TaskManager::Task *task);
 
     /**
      * Emitted when a new task is expected.
      */
-    void startupAdded(StartupPtr);
+    void startupAdded(::TaskManager::Startup *startup);
 
     /**
      * Emitted when a startup item should be removed. This could be because
      * the task has started, because it is known to have died, or simply
      * as a result of a timeout.
      */
-    void startupRemoved(StartupPtr);
+    void startupRemoved(::TaskManager::Startup *startup);
 
     /**
      * Emitted when the current desktop changes.
@@ -191,7 +186,7 @@ Q_SIGNALS:
     /**
      * Emitted when a window changes desktop.
      */
-    void windowChanged(TaskPtr task, ::TaskManager::TaskChanges change);
+    void windowChanged(::TaskManager::Task *task, ::TaskManager::TaskChanges change);
 
 protected Q_SLOTS:
     //* @internal
@@ -206,16 +201,12 @@ protected Q_SLOTS:
     //* @internal
     void currentDesktopChanged(int);
     //* @internal
-    void currentActivityChanged(const QString&);
-    //* @internal
-    void killStartup( const KStartupInfoId& );
-    //* @internal
-    void killStartup(StartupPtr);
+    void killStartup(const KStartupInfoId&);
 
     //* @internal
-    void gotNewStartup( const KStartupInfoId&, const KStartupInfoData& );
+    void gotNewStartup(const KStartupInfoId&, const KStartupInfoData&);
     //* @internal
-    void gotStartupChange( const KStartupInfoId&, const KStartupInfoData& );
+    void gotStartupChange(const KStartupInfoId&, const KStartupInfoData&);
 
     //* @internal
     void taskChanged(::TaskManager::TaskChanges changes);

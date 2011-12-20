@@ -30,6 +30,8 @@ const char states[][ 12 ] =
 // State "ready" isn't used, make splash go away as soon as desktop is ready.
 const int LAST_STATE = 6;
 
+extern int screen_number;
+
 #include <config-workspace.h>
 
 #include "splash.h"
@@ -595,7 +597,7 @@ static bool waitState( int expected_state )
 #ifdef DEBUG
     fprintf( stderr,"AWATING STATE: %d (%s)\n", expected_state, states[ expected_state ] );
 #endif
-    if( parent_pipe >= 0 )
+    if( parent_pipe >= 0 && screen_number == 0)
         { // wait for paint being finished, and tell parent to exit
         XSync( qt_xdisplay(), False );
         char buf = '\0';

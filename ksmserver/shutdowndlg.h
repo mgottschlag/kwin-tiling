@@ -27,7 +27,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QDialog>
 #include <QPushButton>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 
 class QMenu;
 class QTimer;

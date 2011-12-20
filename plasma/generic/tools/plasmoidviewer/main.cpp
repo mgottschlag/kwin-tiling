@@ -104,7 +104,7 @@ void listPlugins(const KPluginInfo::List & plugins)
     }
 
     QMap<QString, QString>::const_iterator it;
-    for (it = applets.constBegin(); it != applets.constEnd(); it++) {
+    for (it = applets.constBegin(); it != applets.constEnd(); ++it) {
         QString applet("%1 - %2");
 
         applet = applet.arg(it.key().leftJustified(maxLen, ' ')).arg(it.value());
@@ -129,15 +129,19 @@ int main(int argc, char **argv)
     options.add("containment <name>", ki18n("Name of the containment plugin"), "null");
     options.add("f");
     options.add("formfactor <name>", ki18nc("Do not translate horizontal, vertical, mediacenter nor planar", "The formfactor to use (horizontal, vertical, mediacenter or planar)"), "planar");
+    options.add("la");
     options.add("list", ki18n("Displays a list of known applets"));
+    options.add("lw");
     options.add("list-wallpapers", ki18n("Displays a list of known wallpapers"));
+    options.add("lc");
     options.add("list-containments", ki18n("Displays a list of known containments"));
     options.add("l");
     options.add("location <name>", ki18nc("Do not translate floating, desktop, fullscreen, top, bottom, left nor right", "The location constraint to start the Containment with (floating, desktop, fullscreen, top, bottom, left, right)"), "floating");
     options.add("p");
-    options.add("pixmapcache <size>", ki18n("The size in KB to set the pixmap cache to"));
+    options.add("pixmapcache <size>", ki18n("The size in kB to set the pixmap cache to"));
     options.add("s");
     options.add("screenshot", ki18n("Takes a screenshot of the widget and saves it the working directory as <pluginname>.png"));
+    options.add("sa");
     options.add("screenshot-all", ki18n("Takes a screenshot of each widget and saves it the working directory as <pluginname>.png"));
     options.add("t");
     options.add("theme <name>", ki18n("Desktop SVG theme to use"));

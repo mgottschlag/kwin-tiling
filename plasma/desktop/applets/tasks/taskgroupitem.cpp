@@ -79,7 +79,11 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet)
 
 TaskGroupItem::~TaskGroupItem()
 {
-    delete m_tasksLayout;
+    if (!m_offscreenLayout && !m_mainLayout && m_tasksLayout) {
+        // only delete this if we have neither an offscreen layout or a mainlayout
+        // if we do, then they will delete the layout for us.
+        m_tasksLayout->deleteLater();
+    }
 }
 
 bool TaskGroupItem::isSplit()
@@ -223,6 +227,10 @@ void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
 
 void TaskGroupItem::checkUpdates()
 {
+    if (!m_group) {
+        return;
+    }
+
     bool needsUpdate = false;
     TaskFlags flags = m_flags;
 
@@ -293,7 +301,8 @@ void TaskGroupItem::updateToolTip()
         return;
     }
 
-    Plasma::ToolTipContent data(m_group.data()->name(), QString());
+    QString groupName = i18nc("@title:group Name of a group of windows", "%1", m_group.data()->name());
+    Plasma::ToolTipContent data(groupName, QString());
     int desktop = m_group.data()->desktop();
     if (desktop != 0 &&
         (!m_applet->groupManager().showOnlyCurrentDesktop() || !m_group.data()->isOnCurrentDesktop())) {
@@ -368,19 +377,18 @@ void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
     }
 
     m_group = group;
-    m_abstractItem = group;
+    setAbstractItem(group);
 
-    if (m_group) {
-        connect(m_abstractItem, SIGNAL(destroyed(QObject*)), this, SLOT(clearAbstractItem()));
+    if (group) {
         connect(group, SIGNAL(destroyed(QObject*)), this, SLOT(clearGroup()));
-        connect(group, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(itemRemoved(AbstractGroupableItem *)));
-        connect(group, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(itemAdded(AbstractGroupableItem *)));
+        connect(group, SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(itemRemoved(AbstractGroupableItem*)));
+        connect(group, SIGNAL(itemAdded(AbstractGroupableItem*)), this, SLOT(itemAdded(AbstractGroupableItem*)));
 
         //connect(group, SIGNAL(destroyed()), this, SLOT(close()));
 
         connect(group, SIGNAL(changed(::TaskManager::TaskChanges)), this, SLOT(updateTask(::TaskManager::TaskChanges)));
 
-        connect(group, SIGNAL(itemPositionChanged(AbstractGroupableItem *)), this, SLOT(itemPositionChanged(AbstractGroupableItem *)));
+        connect(group, SIGNAL(itemPositionChanged(AbstractGroupableItem*)), this, SLOT(itemPositionChanged(AbstractGroupableItem*)));
         connect(group, SIGNAL(groupEditRequest()), this, SLOT(editGroup()));
     }
 
@@ -468,9 +476,14 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupab
         AppLauncherItem *launcherItem = new AppLauncherItem(this, m_applet, static_cast<TaskManager::LauncherItem*>(groupableItem));
         item = launcherItem;
     } else {
-        //it's a window task
+        TaskManager::TaskItem * taskItem = static_cast<TaskManager::TaskItem*>(groupableItem);
+        //if the taskItem is not either a startup o a task, return 0;
+        if (!taskItem->startup() && !taskItem->task()) {
+            return item;
+        }
+
         WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet);
-        windowItem->setTask(static_cast<TaskManager::TaskItem*>(groupableItem));
+        windowItem->setTask(taskItem);
         item = windowItem;
     }
 
@@ -563,6 +576,7 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractGroupableItem * groupableIt
 
         if (m_popupDialog && m_popupDialog->isVisible() && 
             m_applet->containment() && m_applet->containment()->corona()) {
+            m_popupDialog->syncToGraphicsWidget();
             m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size(), Qt::AlignCenter));
         }
     }
@@ -679,9 +693,8 @@ void TaskGroupItem::popupMenu()
 
     if (!m_popupDialog) {
         // Initialize popup dialog
-        m_popupDialog = new Plasma::Dialog();
+        m_popupDialog = new Plasma::Dialog(0, Qt::Popup);
         KWindowSystem::setType(m_popupDialog->winId(), NET::PopupMenu);
-        m_popupDialog->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
         connect(m_popupDialog, SIGNAL(dialogVisible(bool)), this, SLOT(popupVisibilityChanged(bool)));
         connect(m_popupDialog, SIGNAL(dialogVisible(bool)), m_applet, SLOT(setPopupDialog(bool)));
         connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(handleActiveWindowChanged(WId)));
@@ -709,10 +722,7 @@ void TaskGroupItem::popupMenu()
         m_offscreenWidget->layout()->activate();
         m_offscreenWidget->resize(m_offscreenWidget->effectiveSizeHint(Qt::PreferredSize));
         m_popupDialog->syncToGraphicsWidget();
-
-        if (m_applet->containment() && m_applet->containment()->corona()) {
-            m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size(), Qt::AlignCenter));
-        }
+        m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size(), Qt::AlignCenter));
         KWindowSystem::setState(m_popupDialog->winId(), NET::SkipTaskbar| NET::SkipPager);
         if (m_applet->location() != Plasma::Floating) {
             m_popupDialog->animatedShow(Plasma::locationToDirection(m_applet->location()));
@@ -964,16 +974,8 @@ void TaskGroupItem::paint(QPainter *painter,
 {
     if (collapsed()) {
         AbstractTaskItem::paint(painter,option,widget);
-    }/* else {
-        if (m_group) {
-            //painter->fillRect(geometry(), m_group.data()->color());
-        }
-    }*/
-
-    //kDebug() << "painter()";
-    //painter->setBrush(QBrush(background));
+    }
 }
-
 
 // TODO provide a way to edit all group properties
 void TaskGroupItem::editGroup()
@@ -1027,6 +1029,15 @@ void  TaskGroupItem::itemPositionChanged(AbstractGroupableItem * item)
     }
 }
 
+void TaskGroupItem::dragMoveEvent(QGraphicsSceneDragDropEvent* event)
+{
+    if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
+        event->mimeData()->hasFormat(TaskManager::Task::groupMimetype())) {
+        manuallyMoveTaskGroupItem(event);
+    } else {
+        event->ignore();
+    }
+}
 
 void TaskGroupItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
@@ -1078,30 +1089,30 @@ AbstractTaskItem *TaskGroupItem::taskItemForWId(WId id)
     return 0;
 }
 
+void TaskGroupItem::manuallyMoveTaskGroupItem(QGraphicsSceneDragDropEvent* event)
+{
+    bool ok;
+    QList<WId> ids = TaskManager::Task::idsFromMimeData(event->mimeData(), &ok);
+
+    if (!ok) {
+        event->ignore();
+        return;
+    }
+
+    AbstractTaskItem *targetTask = dynamic_cast<AbstractTaskItem *>(scene()->itemAt(mapToScene(event->pos())));
+
+    foreach (WId id, ids) {
+        handleDroppedId(id, targetTask, event);
+    }
+
+    event->acceptProposedAction();
+}
+
 void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-    //kDebug() << "TaskItemLayout dropEvent";
     if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
         event->mimeData()->hasFormat(TaskManager::Task::groupMimetype())) {
-        bool ok;
-        QList<WId> ids = TaskManager::Task::idsFromMimeData(event->mimeData(), &ok);
-
-        if (!ok) {
-            //kDebug() << "FAIL!";
-            event->ignore();
-            return;
-        }
-
-        AbstractTaskItem *targetTask = dynamic_cast<AbstractTaskItem *>(scene()->itemAt(mapToScene(event->pos())));
-        //  kDebug() << "Pos: " << event->pos() << mapToScene(event->pos()) << "item" << scene()->itemAt(mapToScene(event->pos())) << "target Task " << dynamic_cast<QGraphicsItem *>(targetTask);
-
-        //kDebug() << "got" << ids.count() << "windows";
-        foreach (WId id, ids) {
-            handleDroppedId(id, targetTask, event);
-        }
-
-        //kDebug() << "TaskItemLayout dropEvent done";
-        event->acceptProposedAction();
+            manuallyMoveTaskGroupItem(event);
     } else if (event->mimeData()->hasFormat("text/uri-list")) {
         KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
         foreach (const KUrl &url, urls) {

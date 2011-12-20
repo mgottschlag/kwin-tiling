@@ -82,18 +82,13 @@ KWinCompositingConfig::KWinCompositingConfig(QWidget *parent, const QVariantList
     layout()->setMargin(0);
     ui.tabWidget->setCurrentIndex(0);
     ui.statusTitleWidget->hide();
+    ui.rearmGlSupport->hide();
 
     // For future use
     (void) I18N_NOOP("Use GLSL shaders");
 
 #define OPENGL_INDEX 0
 #define XRENDER_INDEX 1
-#ifndef KWIN_HAVE_OPENGL_COMPOSITING
-    ui.compositingType->removeItem(OPENGL_INDEX);
-    ui.glGroup->setEnabled(false);
-#define OPENGL_INDEX -1
-#define XRENDER_INDEX 0
-#endif
 #ifndef KWIN_HAVE_XRENDER_COMPOSITING
     ui.compositingType->removeItem(XRENDER_INDEX);
     ui.xrenderGroup->setEnabled(false);
@@ -102,28 +97,27 @@ KWinCompositingConfig::KWinCompositingConfig(QWidget *parent, const QVariantList
 
     connect(ui.tabWidget, SIGNAL(currentChanged(int)), this, SLOT(currentTabChanged(int)));
 
+    connect(ui.rearmGlSupportButton, SIGNAL(clicked()), this, SLOT(rearmGlSupport()));
     connect(ui.useCompositing, SIGNAL(toggled(bool)), this, SLOT(changed()));
     connect(ui.effectWinManagement, SIGNAL(toggled(bool)), this, SLOT(changed()));
     connect(ui.effectAnimations, SIGNAL(toggled(bool)), this, SLOT(changed()));
 
     connect(ui.effectSelector, SIGNAL(changed(bool)), this, SLOT(changed()));
-    connect(ui.effectSelector, SIGNAL(configCommitted(const QByteArray&)),
-            this, SLOT(reparseConfiguration(const QByteArray&)));
+    connect(ui.effectSelector, SIGNAL(configCommitted(QByteArray)),
+            this, SLOT(reparseConfiguration(QByteArray)));
 
-    connect(ui.windowSwitchingCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
     connect(ui.desktopSwitchingCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
     connect(ui.animationSpeedCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
 
     connect(ui.compositingType, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
     connect(ui.compositingType, SIGNAL(currentIndexChanged(int)), this, SLOT(toogleSmoothScaleUi(int)));
     connect(ui.windowThumbnails, SIGNAL(activated(int)), this, SLOT(changed()));
-    connect(ui.disableChecks, SIGNAL(toggled(bool)), this, SLOT(changed()));
     connect(ui.unredirectFullscreen , SIGNAL(toggled(bool)), this, SLOT(changed()));
     connect(ui.glScaleFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
     connect(ui.xrScaleFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
 
-    connect(ui.glDirect, SIGNAL(toggled(bool)), this, SLOT(changed()));
     connect(ui.glVSync, SIGNAL(toggled(bool)), this, SLOT(changed()));
+    connect(ui.glShaders, SIGNAL(toggled(bool)), this, SLOT(changed()));
 
     // Open the temporary config file
     // Temporary conf file is used to synchronize effect checkboxes with effect
@@ -140,36 +134,10 @@ KWinCompositingConfig::KWinCompositingConfig(QWidget *parent, const QVariantList
     KAction* a = static_cast<KAction*>(m_actionCollection->addAction( "Suspend Compositing" ));
     a->setProperty("isConfigurationAction", true);
     a->setGlobalShortcut( KShortcut( Qt::ALT + Qt::SHIFT + Qt::Key_F12 ));
-    connect(ui.toggleEffectsShortcut, SIGNAL(keySequenceChanged(const QKeySequence&)), this, SLOT(toggleEffectShortcutChanged(const QKeySequence&)));
+    connect(ui.toggleEffectsShortcut, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(toggleEffectShortcutChanged(QKeySequence)));
 
-    // NOTICE: this is intended to workaround broken GL implementations that successfully segfault on glXQuery :-(
-    KConfigGroup unsafeConfig(mKWinConfig, "Compositing");
-    const bool glUnsafe = unsafeConfig.readEntry("OpenGLIsUnsafe", false);
-    if (!glUnsafe && CompositingPrefs::compositingPossible()) {
-        unsafeConfig.writeEntry("OpenGLIsUnsafe", true);
-        unsafeConfig.sync();
-
-        // Driver-specific config detection
-        mDefaultPrefs.detect();
-        initEffectSelector();
-        // Initialize the user interface with the config loaded from kwinrc.
-        load();
-
-        unsafeConfig.writeEntry("OpenGLIsUnsafe", false);
-        unsafeConfig.sync();
-    } else {
-        // TODO: Add a "force recheck" button that removes the "OpenGLInUnsafe" flag
-
-        ui.useCompositing->setEnabled(false);
-        ui.useCompositing->setChecked(false);
-
-        QString text = i18n("Desktop effects are not available on this system due to the following technical issues:");
-        text += "<br>";
-        text += CompositingPrefs::compositingNotPossibleReason();
-        ui.statusTitleWidget->setText(text);
-        ui.statusTitleWidget->setPixmap(KTitleWidget::InfoMessage, KTitleWidget::ImageLeft);
-        ui.statusTitleWidget->show();
-    }
+    // Initialize the user interface with the config loaded from kwinrc.
+    load();
 
     KAboutData *about = new KAboutData(I18N_NOOP("kcmkwincompositing"), 0,
                                        ki18n("KWin Desktop Effects Configuration Module"),
@@ -180,20 +148,7 @@ KWinCompositingConfig::KWinCompositingConfig(QWidget *parent, const QVariantList
     // search the effect names
     KServiceTypeTrader* trader = KServiceTypeTrader::self();
     KService::List services;
-    QString boxswitch, presentwindows, coverswitch, flipswitch, slide, cube, fadedesktop;
-    // window switcher
-    services = trader->query("KWin/Effect", "[X-KDE-PluginInfo-Name] == 'kwin4_effect_boxswitch'");
-    if (!services.isEmpty())
-        boxswitch = services.first()->name();
-    services = trader->query("KWin/Effect", "[X-KDE-PluginInfo-Name] == 'kwin4_effect_presentwindows'");
-    if (!services.isEmpty())
-        presentwindows = services.first()->name();
-    services = trader->query("KWin/Effect", "[X-KDE-PluginInfo-Name] == 'kwin4_effect_coverswitch'");
-    if (!services.isEmpty())
-        coverswitch = services.first()->name();
-    services = trader->query("KWin/Effect", "[X-KDE-PluginInfo-Name] == 'kwin4_effect_flipswitch'");
-    if (!services.isEmpty())
-        flipswitch = services.first()->name();
+    QString slide, cube, fadedesktop;
     // desktop switcher
     services = trader->query("KWin/Effect", "[X-KDE-PluginInfo-Name] == 'kwin4_effect_slide'");
     if (!services.isEmpty())
@@ -204,12 +159,6 @@ KWinCompositingConfig::KWinCompositingConfig(QWidget *parent, const QVariantList
     services = trader->query("KWin/Effect", "[X-KDE-PluginInfo-Name] == 'kwin4_effect_fadedesktop'");
     if (!services.isEmpty())
         fadedesktop = services.first()->name();
-    // init the combo boxes
-    ui.windowSwitchingCombo->addItem(i18n("No Effect"));
-    ui.windowSwitchingCombo->addItem(boxswitch);
-    ui.windowSwitchingCombo->addItem(presentwindows);
-    ui.windowSwitchingCombo->addItem(coverswitch);
-    ui.windowSwitchingCombo->addItem(flipswitch);
 
     ui.desktopSwitchingCombo->addItem(i18n("No Effect"));
     ui.desktopSwitchingCombo->addItem(slide);
@@ -329,22 +278,6 @@ void KWinCompositingConfig::loadGeneralTab()
     ui.effectAnimations->setChecked(LOAD_EFFECT_CONFIG("minimizeanimation"));
 #undef LOAD_EFFECT_CONFIG
 
-    // window switching
-    // Set current option to "none" if no plugin is activated.
-    ui.windowSwitchingCombo->setCurrentIndex(0);
-    KConfigGroup boxswitchconfig(mKWinConfig, "Effect-BoxSwitch");
-    if (effectEnabled("boxswitch", effectconfig) && boxswitchconfig.readEntry("TabBox", true))
-        ui.windowSwitchingCombo->setCurrentIndex(1);
-    KConfigGroup coverswitchconfig(mKWinConfig, "Effect-CoverSwitch");
-    if (effectEnabled("coverswitch", effectconfig) && coverswitchconfig.readEntry("TabBox", false))
-        ui.windowSwitchingCombo->setCurrentIndex(3);
-    KConfigGroup flipswitchconfig(mKWinConfig, "Effect-FlipSwitch");
-    if (effectEnabled("flipswitch", effectconfig) && flipswitchconfig.readEntry("TabBox", false))
-        ui.windowSwitchingCombo->setCurrentIndex(4);
-    KConfigGroup presentwindowsconfig(mKWinConfig, "Effect-PresentWindows");
-    if (effectEnabled("presentwindows", effectconfig) && presentwindowsconfig.readEntry("TabBox", false))
-        ui.windowSwitchingCombo->setCurrentIndex(2);
-
     // desktop switching
     // Set current option to "none" if no plugin is activated.
     ui.desktopSwitchingCombo->setCurrentIndex(0);
@@ -356,12 +289,27 @@ void KWinCompositingConfig::loadGeneralTab()
         ui.desktopSwitchingCombo->setCurrentIndex(3);
 }
 
+void KWinCompositingConfig::rearmGlSupport()
+{
+    // rearm config
+    KConfigGroup gl_workaround_config = KConfigGroup(mKWinConfig, "Compositing");
+    gl_workaround_config.writeEntry("OpenGLIsUnsafe", false);
+    gl_workaround_config.sync();
+
+    // save last changes
+    save();
+
+    // Initialize the user interface with the config loaded from kwinrc.
+    load();
+}
+
 
 void KWinCompositingConfig::toogleSmoothScaleUi(int compositingType)
 {
     ui.glScaleFilter->setVisible(compositingType == OPENGL_INDEX);
     ui.xrScaleFilter->setVisible(compositingType == XRENDER_INDEX);
     ui.scaleMethodLabel->setBuddy(compositingType == XRENDER_INDEX ? ui.xrScaleFilter : ui.glScaleFilter);
+    ui.glGroup->setEnabled(compositingType == OPENGL_INDEX);
 }
 
 void KWinCompositingConfig::toggleEffectShortcutChanged(const QKeySequence &seq)
@@ -399,21 +347,44 @@ void KWinCompositingConfig::loadAdvancedTab()
         ui.windowThumbnails->setCurrentIndex(2);
     else // shown, or default
         ui.windowThumbnails->setCurrentIndex(1);
-    ui.disableChecks->setChecked(config.readEntry("DisableChecks", false));
-    ui.unredirectFullscreen->setChecked(config.readEntry("UnredirectFullscreen", true));
+    ui.unredirectFullscreen->setChecked(config.readEntry("UnredirectFullscreen", false));
 
     ui.xrScaleFilter->setCurrentIndex((int)config.readEntry("XRenderSmoothScale", false));
     ui.glScaleFilter->setCurrentIndex(config.readEntry("GLTextureFilter", 2));
 
-    ui.glDirect->setChecked(config.readEntry("GLDirect", mDefaultPrefs.enableDirectRendering()));
     ui.glVSync->setChecked(config.readEntry("GLVSync", mDefaultPrefs.enableVSync()));
+    ui.glShaders->setChecked(!config.readEntry<bool>("GLLegacy", false));
 
     toogleSmoothScaleUi(ui.compositingType->currentIndex());
 }
 
+void KWinCompositingConfig::updateStatusUI(bool compositingIsPossible)
+{
+    if (compositingIsPossible) {
+        ui.compositingOptionsContainer->show();
+        ui.statusTitleWidget->hide();
+        ui.rearmGlSupport->hide();
+
+        // Driver-specific config detection
+        mDefaultPrefs.detect();
+    }
+    else {
+        ui.compositingOptionsContainer->hide();
+        QString text = i18n("Desktop effects are not available on this system due to the following technical issues:");
+        text += "<hr>";
+        text += CompositingPrefs::compositingNotPossibleReason();
+        ui.statusTitleWidget->setText(text);
+        ui.statusTitleWidget->setPixmap(KTitleWidget::InfoMessage, KTitleWidget::ImageLeft);
+        ui.statusTitleWidget->show();
+        ui.rearmGlSupport->setVisible(CompositingPrefs::openGlIsBroken());
+    }
+}
+
 void KWinCompositingConfig::load()
 {
+    initEffectSelector();
     mKWinConfig->reparseConfiguration();
+    updateStatusUI(CompositingPrefs::compositingPossible());
 
     // Copy Plugins group to temp config file
     QMap<QString, QString> entries = mKWinConfig->entryMap("Plugins");
@@ -449,49 +420,6 @@ void KWinCompositingConfig::saveGeneralTab()
     //  enable/disable desktopgrid's animation according to this setting
     WRITE_EFFECT_CONFIG("minimizeanimation", ui.effectAnimations);
 #undef WRITE_EFFECT_CONFIG
-
-    int windowSwitcher = ui.windowSwitchingCombo->currentIndex();
-    bool boxSwitch              = false;
-    bool presentWindowSwitching = false;
-    bool coverSwitch            = false;
-    bool flipSwitch             = false;
-    switch(windowSwitcher) {
-    case 1:
-        boxSwitch = true;
-        break;
-    case 2:
-        presentWindowSwitching = true;
-        break;
-    case 3:
-        coverSwitch = true;
-        break;
-    case 4:
-        flipSwitch = true;
-        break;
-    default:
-        break; // nothing
-    }
-    // activate effects if not active
-    if (boxSwitch)
-        effectconfig.writeEntry("kwin4_effect_boxswitchEnabled", true);
-    if (presentWindowSwitching)
-        effectconfig.writeEntry("kwin4_effect_presentwindowsEnabled", true);
-    if (coverSwitch)
-        effectconfig.writeEntry("kwin4_effect_coverswitchEnabled", true);
-    if (flipSwitch)
-        effectconfig.writeEntry("kwin4_effect_flipswitchEnabled", true);
-    KConfigGroup boxswitchconfig(mKWinConfig, "Effect-BoxSwitch");
-    boxswitchconfig.writeEntry("TabBox", boxSwitch);
-    boxswitchconfig.sync();
-    KConfigGroup presentwindowsconfig(mKWinConfig, "Effect-PresentWindows");
-    presentwindowsconfig.writeEntry("TabBox", presentWindowSwitching);
-    presentwindowsconfig.sync();
-    KConfigGroup coverswitchconfig(mKWinConfig, "Effect-CoverSwitch");
-    coverswitchconfig.writeEntry("TabBox", coverSwitch);
-    coverswitchconfig.sync();
-    KConfigGroup flipswitchconfig(mKWinConfig, "Effect-FlipSwitch");
-    flipswitchconfig.writeEntry("TabBox", flipSwitch);
-    flipswitchconfig.sync();
 
     int desktopSwitcher = ui.desktopSwitchingCombo->currentIndex();
     switch(desktopSwitcher) {
@@ -535,11 +463,9 @@ bool KWinCompositingConfig::saveAdvancedTab()
     KConfigGroup config(mKWinConfig, "Compositing");
 
     if (config.readEntry("Backend", "OpenGL")
-            != ((ui.compositingType->currentIndex() == 0) ? "OpenGL" : "XRender")
-            || config.readEntry("GLDirect", mDefaultPrefs.enableDirectRendering())
-            != ui.glDirect->isChecked()
+            != ((ui.compositingType->currentIndex() == OPENGL_INDEX) ? "OpenGL" : "XRender")
             || config.readEntry("GLVSync", mDefaultPrefs.enableVSync()) != ui.glVSync->isChecked()
-            || config.readEntry("DisableChecks", false) != ui.disableChecks->isChecked()) {
+            || config.readEntry<bool>("GLLegacy", false) == ui.glShaders->isChecked()) {
         m_showConfirmDialog = true;
         advancedChanged = true;
     } else if (config.readEntry("HiddenPreviews", 5) != hps[ ui.windowThumbnails->currentIndex()]
@@ -549,14 +475,13 @@ bool KWinCompositingConfig::saveAdvancedTab()
 
     config.writeEntry("Backend", (ui.compositingType->currentIndex() == OPENGL_INDEX) ? "OpenGL" : "XRender");
     config.writeEntry("HiddenPreviews", hps[ ui.windowThumbnails->currentIndex()]);
-    config.writeEntry("DisableChecks", ui.disableChecks->isChecked());
     config.writeEntry("UnredirectFullscreen", ui.unredirectFullscreen->isChecked());
 
     config.writeEntry("XRenderSmoothScale", ui.xrScaleFilter->currentIndex() == 1);
     config.writeEntry("GLTextureFilter", ui.glScaleFilter->currentIndex());
 
-    config.writeEntry("GLDirect", ui.glDirect->isChecked());
     config.writeEntry("GLVSync", ui.glVSync->isChecked());
+    config.writeEntry("GLLegacy", !ui.glShaders->isChecked());
 
 
     return advancedChanged;
@@ -564,6 +489,20 @@ bool KWinCompositingConfig::saveAdvancedTab()
 
 void KWinCompositingConfig::save()
 {
+    if (ui.compositingType->currentIndex() == OPENGL_INDEX &&
+        CompositingPrefs::openGlIsBroken() && !ui.rearmGlSupport->isVisible())
+    {
+        KConfigGroup config(mKWinConfig, "Compositing");
+        QString oldBackend = config.readEntry("Backend", "OpenGL");
+        config.writeEntry("Backend", "OpenGL");
+        config.sync();
+        updateStatusUI(false);
+        config.writeEntry("Backend", oldBackend);
+        config.sync();
+        ui.tabWidget->setCurrentIndex(0);
+        return;
+    }
+
     // Save current config. We'll use this for restoring in case something goes wrong.
     KConfigGroup config(mKWinConfig, "Compositing");
     mPreviousConfig = config.entryMap();
@@ -655,10 +594,15 @@ void KWinCompositingConfig::configChanged(bool reinitCompositing)
 {
     // Send signal to kwin
     mKWinConfig->sync();
+
     // Send signal to all kwin instances
     QDBusMessage message = QDBusMessage::createSignal("/KWin", "org.kde.KWin",
                            reinitCompositing ? "reinitCompositing" : "reloadConfig");
     QDBusConnection::sessionBus().send(message);
+
+    // maybe it's ok now?
+    if (reinitCompositing && !ui.compositingOptionsContainer->isVisible())
+        load();
 
     // HACK: We can't just do this here, due to the asynchronous nature of signals.
     // We also can't change reinitCompositing into a message (which would allow
@@ -676,7 +620,6 @@ void KWinCompositingConfig::defaults()
     ui.effectWinManagement->setChecked(true);
     ui.effectAnimations->setChecked(true);
 
-    ui.windowSwitchingCombo->setCurrentIndex(1);
     ui.desktopSwitchingCombo->setCurrentIndex(1);
     ui.animationSpeedCombo->setCurrentIndex(3);
 
@@ -684,12 +627,11 @@ void KWinCompositingConfig::defaults()
 
     ui.compositingType->setCurrentIndex(0);
     ui.windowThumbnails->setCurrentIndex(1);
-    ui.disableChecks->setChecked(false);
-    ui.unredirectFullscreen->setChecked(true);
+    ui.unredirectFullscreen->setChecked(false);
     ui.xrScaleFilter->setCurrentIndex(0);
     ui.glScaleFilter->setCurrentIndex(2);
-    ui.glDirect->setChecked(mDefaultPrefs.enableDirectRendering());
     ui.glVSync->setChecked(mDefaultPrefs.enableVSync());
+    ui.glShaders->setChecked(true);
 }
 
 QString KWinCompositingConfig::quickHelp() const

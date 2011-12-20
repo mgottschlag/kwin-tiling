@@ -101,7 +101,6 @@ class Sun : public SolarSystemObject
 {
     public:
         Sun();
-
         virtual void calcForDateTime(const QDateTime& local, int offset);
 
     protected:
@@ -112,6 +111,7 @@ class Moon : public SolarSystemObject
 {
     public:
         Moon(Sun *sun);
+        virtual ~Moon() {}; // to not delete the Sun
 
         virtual void calcForDateTime(const QDateTime& local, int offset);
         double phase();

@@ -36,6 +36,8 @@ namespace Plasma
 namespace SystemTray
 {
 
+    class Applet;
+
 /**
  * @short System tray task base class
  *
@@ -87,7 +89,7 @@ public:
      * @return whether this task is embeddable; true if there is already a widget
      * for this host.
      */
-    bool isEmbeddable(Plasma::Applet *host);
+    bool isEmbeddable(SystemTray::Applet *host);
 
     /**
      * Returns whether this task can be embeddable
@@ -209,6 +211,7 @@ protected:
 
 private slots:
     void widgetDeleted();
+    void emitChanged();
 
 private:
     class Private;

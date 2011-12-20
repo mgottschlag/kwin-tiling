@@ -50,7 +50,7 @@ static const QString LV3_SWITCH_GROUP_NAME("lv3");
 //static const QString RESET_XKB_OPTIONS("-option");
 
 static const int TAB_HARDWARE = 0;
-//static const int TAB_LAYOUTS = 1;
+static const int TAB_LAYOUTS = 1;
 static const int TAB_ADVANCED = 2;
 
 static const int MIN_LOOPING_COUNT = 2;
@@ -95,14 +95,15 @@ KCMKeyboardWidget::~KCMKeyboardWidget()
 void KCMKeyboardWidget::handleParameters(const QVariantList &args)
 {
     // TODO: improve parameter handling
+	setCurrentIndex(TAB_HARDWARE);
     foreach(const QVariant& arg, args) {
   	  if( arg.type() == QVariant::String ) {
   		  QString str = arg.toString();
   		  if( str == "--tab=layouts" ) {
-  			  setCurrentIndex(1);
+  			  setCurrentIndex(TAB_LAYOUTS);
   		  }
   		  else if( str == "--tab=advanced" ) {
-  	  		  setCurrentIndex(2);
+  	  		  setCurrentIndex(TAB_ADVANCED);
   	  	  }
   	  }
     }
@@ -161,7 +162,18 @@ void KCMKeyboardWidget::uiChanged()
 
 	keyboardConfig->configureLayouts = uiWidget->layoutsGroupBox->isChecked();
 	keyboardConfig->keyboardModel = uiWidget->keyboardModelComboBox->itemData(uiWidget->keyboardModelComboBox->currentIndex()).toString();
-	keyboardConfig->showFlag = uiWidget->showFlagRadioBtn->isChecked();
+
+	if( uiWidget->showFlagRadioBtn->isChecked() ) {
+		keyboardConfig->indicatorType =  KeyboardConfig::SHOW_FLAG;
+	}
+	else
+	if( uiWidget->showLabelRadioBtn->isChecked() ) {
+		keyboardConfig->indicatorType =  KeyboardConfig::SHOW_LABEL;
+	}
+	else {
+//	if( uiWidget->showFlagRadioBtn->isChecked() ) {
+		keyboardConfig->indicatorType =  KeyboardConfig::SHOW_LABEL_ON_FLAG;
+	}
 
 	keyboardConfig->resetOldXkbOptions = uiWidget->configureKeyboardOptionsChk->isChecked();
 
@@ -216,7 +228,7 @@ void KCMKeyboardWidget::addLayout()
 		return;
 	}
 
-    AddLayoutDialog dialog(rules, keyboardConfig->showFlag ? flags : NULL, this);
+    AddLayoutDialog dialog(rules, keyboardConfig->isFlagShown() ? flags : NULL, keyboardConfig->isLabelShown(), this);
     dialog.setModal(true);
     if( dialog.exec() == QDialog::Accepted ) {
     	keyboardConfig->layouts.append( dialog.getSelectedLayoutUnit() );
@@ -289,7 +301,7 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::DISPLAY_NAME_COLUMN, 50);
 	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::SHORTCUT_COLUMN, 130);
 
-	connect(layoutsTableModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(uiChanged()));
+	connect(layoutsTableModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(uiChanged()));
 
 	uiWidget->layoutLoopCountSpinBox->setMinimum(MIN_LOOPING_COUNT);
 
@@ -315,8 +327,8 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 
 	connect(uiWidget->addLayoutBtn, SIGNAL(clicked(bool)), this, SLOT(addLayout()));
 	connect(uiWidget->removeLayoutBtn, SIGNAL(clicked(bool)), this, SLOT(removeLayout()));
-//	connect(uiWidget->layoutsTable, SIGNAL(itemSelectionChanged ()), this, SLOT(layoutSelectionChanged()));
-	connect(uiWidget->layoutsTableView->selectionModel(), SIGNAL(selectionChanged ( const QItemSelection &, const QItemSelection &)), this, SLOT(layoutSelectionChanged()));
+//	connect(uiWidget->layoutsTable, SIGNAL(itemSelectionChanged()), this, SLOT(layoutSelectionChanged()));
+	connect(uiWidget->layoutsTableView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(layoutSelectionChanged()));
 
 //	connect(uiWidget->moveUpBtn, SIGNAL(triggered(QAction*)), this, SLOT(moveUp()));
 //	connect(uiWidget->moveDownBtn, SIGNAL(triggered(QAction*)), this, SLOT(moveDown()));
@@ -328,7 +340,7 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 
 //	connect(uiWidget->xkbGrpClearBtn, SIGNAL(triggered(QAction*)), this, SLOT(uiChanged()));
 //	connect(uiWidget->xkb3rdLevelClearBtn, SIGNAL(triggered(QAction*)), this, SLOT(uiChanged()));
-	connect(uiWidget->kdeKeySequence, SIGNAL(keySequenceChanged (const QKeySequence &)), this, SLOT(uiChanged()));
+	connect(uiWidget->kdeKeySequence, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(uiChanged()));
 	connect(uiWidget->switchingPolicyButtonGroup, SIGNAL(clicked(int)), this, SLOT(uiChanged()));
 
 	connect(uiWidget->xkbGrpShortcutBtn, SIGNAL(clicked(bool)), this, SLOT(scrollToGroupShortcut()));
@@ -341,6 +353,7 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 	connect(uiWidget->showIndicatorChk, SIGNAL(toggled(bool)), uiWidget->showSingleChk, SLOT(setEnabled(bool)));
 	connect(uiWidget->showFlagRadioBtn, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
 	connect(uiWidget->showLabelRadioBtn, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
+	connect(uiWidget->showLabelOnFlagRadioBtn, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
 	connect(uiWidget->showSingleChk, SIGNAL(toggled(bool)), this, SLOT(uiChanged()));
 
 	connect(uiWidget->layoutLoopingCheckBox, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
@@ -515,7 +528,7 @@ void KCMKeyboardWidget::initializeXkbOptionsUI()
 
 	XkbOptionsTreeModel* model = new XkbOptionsTreeModel(rules, keyboardConfig, uiWidget->xkbOptionsTreeView);
 	uiWidget->xkbOptionsTreeView->setModel(model);
-	connect(model, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(uiChanged()));
+	connect(model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(uiChanged()));
 
 	connect(uiWidget->configureKeyboardOptionsChk, SIGNAL(toggled(bool)), this, SLOT(configureXkbOptionsChanged()));
 	//	connect(uiWidget->configureKeyboardOptionsChk, SIGNAL(toggled(bool)), this, SLOT(uiChanged()));
@@ -605,8 +618,9 @@ void KCMKeyboardWidget::updateLayoutsUI() {
 	uiWidget->layoutsGroupBox->setChecked(keyboardConfig->configureLayouts);
 	uiWidget->showIndicatorChk->setChecked(keyboardConfig->showIndicator);
 	uiWidget->showSingleChk->setChecked(keyboardConfig->showSingle);
-	uiWidget->showFlagRadioBtn->setChecked(keyboardConfig->showFlag);
-	uiWidget->showLabelRadioBtn->setChecked(!keyboardConfig->showFlag);
+	uiWidget->showFlagRadioBtn->setChecked(keyboardConfig->indicatorType == KeyboardConfig::SHOW_FLAG);
+	uiWidget->showLabelRadioBtn->setChecked(keyboardConfig->indicatorType == KeyboardConfig::SHOW_LABEL);
+	uiWidget->showLabelOnFlagRadioBtn->setChecked(keyboardConfig->indicatorType == KeyboardConfig::SHOW_LABEL_ON_FLAG);
 
 	bool loopingOn = keyboardConfig->configureLayouts && keyboardConfig->layoutLoopCount
 			!= KeyboardConfig::NO_LOOPING;

@@ -1,7 +1,6 @@
 
 set( kcm_powerdevil_profiles_SRCS
      EditPage.cpp
-     actionconfigwidget.cpp
      ../../daemon/powerdevilprofilegenerator.cpp
 )
 
@@ -18,6 +17,7 @@ target_link_libraries(kcm_powerdevilprofilesconfig
      ${KDE4_KIO_LIBS}
      ${KDE4_SOLID_LIBS}
      powerdevilui
+     powerdevilconfigcommonprivate
 )
 
 install(TARGETS kcm_powerdevilprofilesconfig  DESTINATION ${PLUGIN_INSTALL_DIR} )

@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // tabbox
 #include "clientitemdelegate.h"
 #include "clientmodel.h"
+#include "declarative.h"
 #include "desktopitemdelegate.h"
 #include "desktopmodel.h"
 #include "itemlayoutconfig.h"
@@ -30,6 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "tabboxview.h"
 // Qt
 #include <qdom.h>
+#include <QtCore/QtConcurrentRun>
+#include <QtCore/QFutureWatcher>
 #include <QFile>
 #include <QKeyEvent>
 #include <QModelIndex>
@@ -58,10 +61,6 @@ public:
     */
     void updateOutline();
     /**
-    * Hides the currently shown outline.
-    */
-    void hideOutline();
-    /**
     * Updates the current highlight window state
     */
     void updateHighlightWindows();
@@ -72,17 +71,17 @@ public:
 
     ClientModel* clientModel() const;
     DesktopModel* desktopModel() const;
+    void createView();
     void parseConfig(const QString& fileName);
 
     TabBoxHandler *q; // public pointer
     // members
     TabBoxConfig config;
     TabBoxView* view;
+    DeclarativeView *m_declarativeView;
+    ClientModel* m_clientModel;
+    DesktopModel* m_desktopModel;
     QModelIndex index;
-    Window outlineLeft;
-    Window outlineRight;
-    Window outlineTop;
-    Window outlineBottom;
     /**
     * Indicates if the tabbox is shown.
     * Used to determine if the outline has to be updated, etc.
@@ -93,49 +92,58 @@ public:
 };
 
 TabBoxHandlerPrivate::TabBoxHandlerPrivate(TabBoxHandler *q)
+    : view(NULL)
+    , m_declarativeView(NULL)
 {
     this->q = q;
     isShown = false;
     lastRaisedClient = 0;
     lastRaisedClientSucc = 0;
     config = TabBoxConfig();
-    view = new TabBoxView();
-    XSetWindowAttributes attr;
-    attr.override_redirect = 1;
-    outlineLeft = XCreateWindow(QX11Info::display(), QX11Info::appRootWindow(), 0, 0, 1, 1, 0,
-                                CopyFromParent, CopyFromParent, CopyFromParent, CWOverrideRedirect, &attr);
-    outlineRight = XCreateWindow(QX11Info::display(), QX11Info::appRootWindow(), 0, 0, 1, 1, 0,
-                                 CopyFromParent, CopyFromParent, CopyFromParent, CWOverrideRedirect, &attr);
-    outlineTop = XCreateWindow(QX11Info::display(), QX11Info::appRootWindow(), 0, 0, 1, 1, 0,
-                               CopyFromParent, CopyFromParent, CopyFromParent, CWOverrideRedirect, &attr);
-    outlineBottom = XCreateWindow(QX11Info::display(), QX11Info::appRootWindow(), 0, 0, 1, 1, 0,
-                                  CopyFromParent, CopyFromParent, CopyFromParent, CWOverrideRedirect, &attr);
+    m_clientModel = new ClientModel(q);
+    m_desktopModel = new DesktopModel(q);
 
     // load the layouts
-    parseConfig(KStandardDirs::locate("data", "kwin/DefaultTabBoxLayouts.xml"));
-    view->clientDelegate()->setConfig(tabBoxLayouts.value("Default"));
-    view->additionalClientDelegate()->setConfig(tabBoxLayouts.value("Text"));
-    view->desktopDelegate()->setConfig(tabBoxLayouts.value("Desktop"));
-    view->desktopDelegate()->setLayouts(tabBoxLayouts);
+    QFuture< void> future = QtConcurrent::run(this, &TabBoxHandlerPrivate::parseConfig, KStandardDirs::locate("data", "kwin/DefaultTabBoxLayouts.xml"));
+    QFutureWatcher< void > *watcher = new QFutureWatcher< void >(q);
+    watcher->setFuture(future);
+    q->connect(watcher, SIGNAL(finished()), q, SIGNAL(ready()));
 }
 
 TabBoxHandlerPrivate::~TabBoxHandlerPrivate()
 {
     delete view;
-    XDestroyWindow(QX11Info::display(), outlineLeft);
-    XDestroyWindow(QX11Info::display(), outlineRight);
-    XDestroyWindow(QX11Info::display(), outlineTop);
-    XDestroyWindow(QX11Info::display(), outlineBottom);
+    delete m_declarativeView;
+}
+
+void TabBoxHandlerPrivate::createView()
+{
+    view = new TabBoxView(m_clientModel, m_desktopModel);
+    if (tabBoxLayouts.contains(config.layoutName())) {
+        view->clientDelegate()->setConfig(tabBoxLayouts.value(config.layoutName()));
+        view->desktopDelegate()->setConfig(tabBoxLayouts.value(config.layoutName()));
+    } else {
+        view->clientDelegate()->setConfig(tabBoxLayouts.value("Default"));
+        view->desktopDelegate()->setConfig(tabBoxLayouts.value("Desktop"));
+    }
+    if (tabBoxLayouts.contains(config.selectedItemLayoutName())) {
+        view->additionalClientDelegate()->setConfig(tabBoxLayouts.value(config.selectedItemLayoutName()));
+    } else {
+        view->additionalClientDelegate()->setConfig(tabBoxLayouts.value("Text"));
+    }
+    view->desktopDelegate()->setLayouts(tabBoxLayouts);
+    emit q->configChanged();
+    view->setCurrentIndex(index);
 }
 
 ClientModel* TabBoxHandlerPrivate::clientModel() const
 {
-    return view->clientModel();
+    return m_clientModel;
 }
 
 DesktopModel* TabBoxHandlerPrivate::desktopModel() const
 {
-    return view->desktopModel();
+    return m_desktopModel;
 }
 
 void TabBoxHandlerPrivate::updateOutline()
@@ -143,92 +151,12 @@ void TabBoxHandlerPrivate::updateOutline()
     if (config.tabBoxMode() != TabBoxConfig::ClientTabBox)
         return;
 //     if ( c == NULL || !m_isShown || !c->isShown( true ) || !c->isOnCurrentDesktop())
-    if (!isShown || view->clientModel()->data(index, ClientModel::EmptyRole).toBool()) {
-        hideOutline();
+    if (!isShown || clientModel()->data(index, ClientModel::EmptyRole).toBool()) {
+        q->hideOutline();
         return;
     }
-    TabBoxClient* c = static_cast< TabBoxClient* >(
-                          view->clientModel()->data(index, ClientModel::ClientRole).value<void *>());
-    // left/right parts are between top/bottom, they don't reach as far as the corners
-    XMoveResizeWindow(QX11Info::display(), outlineLeft, c->x(), c->y() + 5, 5, c->height() - 10);
-    XMoveResizeWindow(QX11Info::display(), outlineRight, c->x() + c->width() - 5, c->y() + 5, 5, c->height() - 10);
-    XMoveResizeWindow(QX11Info::display(), outlineTop, c->x(), c->y(), c->width(), 5);
-    XMoveResizeWindow(QX11Info::display(), outlineBottom, c->x(), c->y() + c->height() - 5, c->width(), 5);
-    {
-        QPixmap pix(5, c->height() - 10);
-        QPainter p(&pix);
-        p.setPen(Qt::white);
-        p.drawLine(0, 0, 0, pix.height() - 1);
-        p.drawLine(4, 0, 4, pix.height() - 1);
-        p.setPen(Qt::gray);
-        p.drawLine(1, 0, 1, pix.height() - 1);
-        p.drawLine(3, 0, 3, pix.height() - 1);
-        p.setPen(Qt::black);
-        p.drawLine(2, 0, 2, pix.height() - 1);
-        p.end();
-        XSetWindowBackgroundPixmap(QX11Info::display(), outlineLeft, pix.handle());
-        XSetWindowBackgroundPixmap(QX11Info::display(), outlineRight, pix.handle());
-    }
-    {
-        QPixmap pix(c->width(), 5);
-        QPainter p(&pix);
-        p.setPen(Qt::white);
-        p.drawLine(0, 0, pix.width() - 1 - 0, 0);
-        p.drawLine(4, 4, pix.width() - 1 - 4, 4);
-        p.drawLine(0, 0, 0, 4);
-        p.drawLine(pix.width() - 1 - 0, 0, pix.width() - 1 - 0, 4);
-        p.setPen(Qt::gray);
-        p.drawLine(1, 1, pix.width() - 1 - 1, 1);
-        p.drawLine(3, 3, pix.width() - 1 - 3, 3);
-        p.drawLine(1, 1, 1, 4);
-        p.drawLine(3, 3, 3, 4);
-        p.drawLine(pix.width() - 1 - 1, 1, pix.width() - 1 - 1, 4);
-        p.drawLine(pix.width() - 1 - 3, 3, pix.width() - 1 - 3, 4);
-        p.setPen(Qt::black);
-        p.drawLine(2, 2, pix.width() - 1 - 2, 2);
-        p.drawLine(2, 2, 2, 4);
-        p.drawLine(pix.width() - 1 - 2, 2, pix.width() - 1 - 2, 4);
-        p.end();
-        XSetWindowBackgroundPixmap(QX11Info::display(), outlineTop, pix.handle());
-    }
-    {
-        QPixmap pix(c->width(), 5);
-        QPainter p(&pix);
-        p.setPen(Qt::white);
-        p.drawLine(4, 0, pix.width() - 1 - 4, 0);
-        p.drawLine(0, 4, pix.width() - 1 - 0, 4);
-        p.drawLine(0, 4, 0, 0);
-        p.drawLine(pix.width() - 1 - 0, 4, pix.width() - 1 - 0, 0);
-        p.setPen(Qt::gray);
-        p.drawLine(3, 1, pix.width() - 1 - 3, 1);
-        p.drawLine(1, 3, pix.width() - 1 - 1, 3);
-        p.drawLine(3, 1, 3, 0);
-        p.drawLine(1, 3, 1, 0);
-        p.drawLine(pix.width() - 1 - 3, 1, pix.width() - 1 - 3, 0);
-        p.drawLine(pix.width() - 1 - 1, 3, pix.width() - 1 - 1, 0);
-        p.setPen(Qt::black);
-        p.drawLine(2, 2, pix.width() - 1 - 2, 2);
-        p.drawLine(2, 0, 2, 2);
-        p.drawLine(pix.width() - 1 - 2, 0, pix.width() - 1 - 2, 2);
-        p.end();
-        XSetWindowBackgroundPixmap(QX11Info::display(), outlineBottom, pix.handle());
-    }
-    XClearWindow(QX11Info::display(), outlineLeft);
-    XClearWindow(QX11Info::display(), outlineRight);
-    XClearWindow(QX11Info::display(), outlineTop);
-    XClearWindow(QX11Info::display(), outlineBottom);
-    XMapWindow(QX11Info::display(), outlineLeft);
-    XMapWindow(QX11Info::display(), outlineRight);
-    XMapWindow(QX11Info::display(), outlineTop);
-    XMapWindow(QX11Info::display(), outlineBottom);
-}
-
-void TabBoxHandlerPrivate::hideOutline()
-{
-    XUnmapWindow(QX11Info::display(), outlineLeft);
-    XUnmapWindow(QX11Info::display(), outlineRight);
-    XUnmapWindow(QX11Info::display(), outlineTop);
-    XUnmapWindow(QX11Info::display(), outlineBottom);
+    TabBoxClient* c = static_cast< TabBoxClient* >(m_clientModel->data(index, ClientModel::ClientRole).value<void *>());
+    q->showOutline(QRect(c->x(), c->y(), c->width(), c->height()));
 }
 
 void TabBoxHandlerPrivate::updateHighlightWindows()
@@ -259,8 +187,14 @@ void TabBoxHandlerPrivate::updateHighlightWindows()
 
     WId wId;
     QVector< WId > data;
-    if (config.isShowTabBox()) {
-        wId = view->winId();
+    QWidget *w = NULL;
+    if (view && view->isVisible()) {
+        w = view;
+    } else if (m_declarativeView && m_declarativeView->isVisible()) {
+        w = m_declarativeView;
+    }
+    if (config.isShowTabBox() && w) {
+        wId = w->winId();
         data.resize(2);
         data[ 1 ] = wId;
     } else {
@@ -269,11 +203,11 @@ void TabBoxHandlerPrivate::updateHighlightWindows()
     }
     data[ 0 ] = currentClient ? currentClient->window() : 0L;
     if (config.isShowOutline()) {
-        data.resize(6);
-        data[ 2 ] = outlineLeft;
-        data[ 3 ] = outlineTop;
-        data[ 4 ] = outlineRight;
-        data[ 5 ] = outlineBottom;
+        QVector<Window> outlineWindows = q->outlineWindowIds();
+        data.resize(2+outlineWindows.size());
+        for (int i=0; i<outlineWindows.size(); ++i) {
+            data[2+i] = outlineWindows[i];
+        }
     }
     Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
     XChangeProperty(dpy, wId, atom, atom, 32, PropModeReplace,
@@ -289,7 +223,7 @@ void TabBoxHandlerPrivate::endHighlightWindows(bool abort)
     // highlight windows
     Display *dpy = QX11Info::display();
     Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
-    XDeleteProperty(dpy, config.isShowTabBox() ? view->winId() : QX11Info::appRootWindow(), atom);
+    XDeleteProperty(dpy, config.isShowTabBox() && view ? view->winId() : QX11Info::appRootWindow(), atom);
 }
 
 /***********************************************************
@@ -453,14 +387,14 @@ void TabBoxHandler::setConfig(const TabBoxConfig& config)
 {
     if (config.layoutName() != d->config.layoutName()) {
         // new item layout config
-        if (d->tabBoxLayouts.contains(config.layoutName())) {
+        if (d->tabBoxLayouts.contains(config.layoutName()) && d->view) {
             d->view->clientDelegate()->setConfig(d->tabBoxLayouts.value(config.layoutName()));
             d->view->desktopDelegate()->setConfig(d->tabBoxLayouts.value(config.layoutName()));
         }
     }
     if (config.selectedItemLayoutName() != d->config.selectedItemLayoutName()) {
         // TODO: desktop layouts
-        if (d->tabBoxLayouts.contains(config.selectedItemLayoutName()))
+        if (d->tabBoxLayouts.contains(config.selectedItemLayoutName()) && d->view)
             d->view->additionalClientDelegate()->setConfig(d->tabBoxLayouts.value(config.selectedItemLayoutName()));
     }
     d->config = config;
@@ -477,8 +411,20 @@ void TabBoxHandler::show()
         d->updateOutline();
     }
     if (d->config.isShowTabBox()) {
-        d->view->show();
-        d->view->updateGeometry();
+        if (d->config.tabBoxMode() == TabBoxConfig::ClientTabBox) {
+            // use declarative view
+            if (!d->m_declarativeView) {
+                d->m_declarativeView = new DeclarativeView(d->clientModel());
+            }
+            d->m_declarativeView->show();
+            d->m_declarativeView->setCurrentIndex(d->index);
+        } else {
+            if (!d->view) {
+                d->createView();
+            }
+            d->view->show();
+            d->view->updateGeometry();
+        }
     }
     if (d->config.isHighlightWindows()) {
         d->updateHighlightWindows();
@@ -492,9 +438,14 @@ void TabBoxHandler::hide(bool abort)
         d->endHighlightWindows(abort);
     }
     if (d->config.isShowOutline()) {
-        d->hideOutline();
+        hideOutline();
     }
-    d->view->hide();
+    if (d->view) {
+        d->view->hide();
+    }
+    if (d->m_declarativeView) {
+        d->m_declarativeView->hide();
+    }
 }
 
 QModelIndex TabBoxHandler::nextPrev(bool forward) const
@@ -580,7 +531,18 @@ int TabBoxHandler::currentSelectedDesktop() const
 
 void TabBoxHandler::setCurrentIndex(const QModelIndex& index)
 {
-    d->view->setCurrentIndex(index);
+    if (d->index == index) {
+        return;
+    }
+    if (!index.isValid()) {
+        return;
+    }
+    if (d->view) {
+        d->view->setCurrentIndex(index);
+    }
+    if (d->m_declarativeView) {
+        d->m_declarativeView->setCurrentIndex(index);
+    }
     d->index = index;
     if (d->config.tabBoxMode() == TabBoxConfig::ClientTabBox) {
         if (d->config.isShowOutline()) {
@@ -590,6 +552,11 @@ void TabBoxHandler::setCurrentIndex(const QModelIndex& index)
             d->updateHighlightWindows();
         }
     }
+}
+
+const QModelIndex& TabBoxHandler::currentIndex() const
+{
+    return d->index;
 }
 
 QModelIndex TabBoxHandler::grabbedKeyEvent(QKeyEvent* event) const
@@ -643,14 +610,27 @@ QModelIndex TabBoxHandler::grabbedKeyEvent(QKeyEvent* event) const
 
 bool TabBoxHandler::containsPos(const QPoint& pos) const
 {
-    return d->view->geometry().contains(pos);
+    QWidget *w = NULL;
+    if (d->view && d->view->isVisible()) {
+        w = d->view;
+    } else if (d->m_declarativeView && d->m_declarativeView->isVisible()) {
+        w = d->m_declarativeView;
+    } else {
+        return false;
+    }
+    return w->geometry().contains(pos);
 }
 
 QModelIndex TabBoxHandler::indexAt(const QPoint& pos) const
 {
-    QPoint widgetPos = d->view->mapFromGlobal(pos);
-    QModelIndex ret = d->view->indexAt(widgetPos);
-    return ret;
+    if (d->view && d->view->isVisible()) {
+        QPoint widgetPos = d->view->mapFromGlobal(pos);
+        return d->view->indexAt(widgetPos);
+    } else if (d->m_declarativeView && d->m_declarativeView->isVisible()) {
+        QPoint widgetPos = d->m_declarativeView->mapFromGlobal(pos);
+        return d->m_declarativeView->indexAt(widgetPos);
+    }
+    return QModelIndex();
 }
 
 QModelIndex TabBoxHandler::index(KWin::TabBox::TabBoxClient* client) const
@@ -690,7 +670,9 @@ void TabBoxHandler::createModel(bool partialReset)
         d->desktopModel()->createDesktopList();
         break;
     }
-    d->view->updateGeometry();
+    if (d->view) {
+        d->view->updateGeometry();
+    }
 }
 
 QModelIndex TabBoxHandler::first() const

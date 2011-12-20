@@ -48,6 +48,7 @@
 #include "configdialog.h"
 #include "krunnerapp.h"
 #include "krunnersettings.h"
+#include "panelshadows.h"
 
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
@@ -57,7 +58,10 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     : QWidget(parent, f),
       m_runnerManager(runnerManager),
       m_configWidget(0),
-      m_oldScreen(-1),
+      m_shadows(new PanelShadows(this)),
+      m_background(new Plasma::FrameSvg(this)),
+      m_shownOnScreen(-1),
+      m_offset(.5),
       m_floating(!KRunnerSettings::freeFloating()),
       m_resizing(false),
       m_rightResize(false),
@@ -77,16 +81,16 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     m_iconSvg = new Plasma::Svg(this);
     m_iconSvg->setImagePath(QLatin1String("widgets/configuration-icons"));
 
-    m_background = new Plasma::FrameSvg(this);
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(themeUpdated()));
 
     connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)),
             this, SLOT(screenRemoved(int)));
     connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)),
-            this, SLOT(screenChanged(Kephal::Screen*)));
+            this, SLOT(screenGeometryChanged(Kephal::Screen*)));
     connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)),
-            this, SLOT(screenChanged(Kephal::Screen*)));
+            this, SLOT(screenGeometryChanged(Kephal::Screen*)));
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(resetScreenPos()));
+    connect(KWindowSystem::self(), SIGNAL(compositingChanged(bool)), this, SLOT(compositingChanged(bool)));
 
     setFreeFloating(KRunnerSettings::freeFloating());
 }
@@ -96,99 +100,63 @@ KRunnerDialog::~KRunnerDialog()
     //kDebug( )<< "!!!!!!!!!! deleting" << m_floating << m_screenPos.count();
     if (!m_floating) {
         KConfigGroup cg(KGlobal::config(), "EdgePositions");
-        QHashIterator<int, QPoint> it(m_screenPos);
-        while (it.hasNext()) {
-            it.next();
-            //kDebug() << "saving" << "Screen" + QString::number(it.key()) << it.value();
-            cg.writeEntry(QLatin1String( "Screen" ) % QString::number(it.key()), it.value());
-        }
+        cg.writeEntry(QLatin1String("Offset"), m_offset);
     }
 }
 
 void KRunnerDialog::screenRemoved(int screen)
 {
-    m_screenPos.remove(screen);
+    if (isVisible() && m_shownOnScreen == screen) {
+        positionOnScreen();
+    }
 }
 
-void KRunnerDialog::screenChanged(Kephal::Screen* screen)
+void KRunnerDialog::screenGeometryChanged(Kephal::Screen* screen)
 {
-    m_screenPos.remove(screen->id());
-    if (m_oldScreen == screen->id()) {
-        m_oldScreen = -1;
+    if (isVisible() && screen->id() == m_shownOnScreen) {
+        positionOnScreen();
     }
 }
 
 void KRunnerDialog::resetScreenPos()
 {
-    if (!m_floating) {
-        QMutableHashIterator<int, QPoint> it(m_screenPos);
-        QRect r = KWindowSystem::workArea();
-        while (it.hasNext()) {
-            QPoint &p = it.next().value();
-
-            if (r.left() > p.x()) {
-                p.setX(r.left());
-            } else if (r.right() < p.x() + width() - 1) {
-                p.setX(r.right() - width());
-            }
-
-            p.setY(r.top());
-        }
-
-        m_oldScreen = -1;
-        if (isVisible()) {
-            positionOnScreen();
-        }
+    if (isVisible() && !m_floating) {
+        positionOnScreen();
     }
 }
 
 void KRunnerDialog::positionOnScreen()
 {
-    int screen = Kephal::ScreenUtils::primaryScreenId();
-    if (Kephal::ScreenUtils::numScreens() > 1) {
-        if (isVisible()) {
-            screen = Kephal::ScreenUtils::screenId(geometry().center());
-        } else {
-            screen = Kephal::ScreenUtils::screenId(QCursor::pos());
-        }
+    if (Kephal::ScreenUtils::numScreens() < 2) {
+        m_shownOnScreen = Kephal::ScreenUtils::primaryScreenId();
+    } else if (isVisible()) {
+        m_shownOnScreen = Kephal::ScreenUtils::screenId(geometry().center());
+    } else {
+        m_shownOnScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
     }
 
-    QRect r = Kephal::ScreenUtils::screenGeometry(screen);
-    if (m_oldScreen != screen) {
-        //kDebug() << "old screen be the new screen" << m_oldScreen << screen;
-        if (m_oldScreen != -1) {
-            QRect oldRect = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
-            // Store the position relative to the screen topLeft corner.
-            // Since the geometry of screens might change between sessions
-            // storing the absolute position might lead to issues such as bug #243898
-            m_screenPos.insert(m_oldScreen, pos() - oldRect.topLeft());
-        }
+    const QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
 
-        m_oldScreen = screen;
-        if (m_screenPos.contains(screen)) {
-            //kDebug() << "moving to" << m_screenPos[screen];
-
-            // Checks that the stored position is still a valid position on screen
-            // if not, remove the stored position so that it is reset later
-            if (r.contains(m_screenPos[screen] + r.topLeft()) &&
-                r.contains(m_screenPos[screen] + r.topLeft() + QPoint(width()-1, 0))) {
-                move(m_screenPos[screen] + r.topLeft());
-            } else {
-                m_screenPos.remove(screen);
-            }
-        }
-
-        if (!m_screenPos.contains(screen)) {
-            const int w = width();
-            const int dx = r.left() + (r.width() / 2) - (w / 2);
-            int dy = r.top();
-            if (m_floating) {
-                dy += r.height() / 3;
-            }
-
-            move(dx, dy);
-        }
+    if (m_floating && !m_customPos.isNull()) {
+        int x = qBound(r.left(), m_customPos.x(), r.right() - width());
+        int y = qBound(r.top(), m_customPos.y(), r.bottom() - height());
+        move(x, y);
+        show();
+        return;
     }
+
+    const int w = width();
+    int x = r.left() + (r.width() * m_offset) - (w / 2);
+
+    int y = r.top();
+    if (m_floating) {
+        y += r.height() / 3;
+    }
+
+    x = qBound(r.left(), x, r.right() - width());
+    y = qBound(r.top(), y, r.bottom() - height());
+
+    move(x, y);
 
     if (!m_floating) {
         checkBorders(r);
@@ -211,7 +179,12 @@ void KRunnerDialog::positionOnScreen()
 
 void KRunnerDialog::moveEvent(QMoveEvent *)
 {
-    m_screenPos.insert(m_oldScreen, pos() - Kephal::ScreenUtils::screenGeometry(m_oldScreen).topLeft());
+    if (m_floating) {
+        m_customPos = pos();
+    } else {
+        const QRect screen = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
+        m_offset = qRound((geometry().center().x() - screen.x())  / qreal(screen.width()) * 100) / 100.0;
+    }
 }
 
 void KRunnerDialog::setFreeFloating(bool floating)
@@ -221,32 +194,30 @@ void KRunnerDialog::setFreeFloating(bool floating)
     }
 
     m_floating = floating;
-    m_screenPos.clear();
-    m_oldScreen = -1;
+    m_shownOnScreen = -1;
     unsetCursor();
+    updatePresentation();
+}
 
+void KRunnerDialog::updatePresentation()
+{
     if (m_floating) {
+        KWindowSystem::setType(winId(), NET::Normal);
+
+        //m_shadows->setImagePath(QLatin1String("dialogs/krunner"));
         m_background->setImagePath(QLatin1String("dialogs/krunner"));
         m_background->setElementPrefix(QString());
-        m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
-        KWindowSystem::setType(winId(), NET::Normal);
-        // recalc the contents margins
+
         themeUpdated();
     } else {
+        //m_shadows->setImagePath(QLatin1String("widgets/panel-background"));
         m_background->setImagePath(QLatin1String("widgets/panel-background"));
         m_background->resizeFrame(size());
         m_background->setElementPrefix("north-mini");
         // load the positions for each screen from our config
-        const int numScreens = Kephal::ScreenUtils::numScreens();
         KConfigGroup cg(KGlobal::config(), "EdgePositions");
-        for (int i = 0; i < numScreens; ++i) {
-            QPoint p = cg.readEntry(QLatin1String( "Screen" ) % QString::number(i), QPoint());
-            if (!p.isNull()) {
-                QRect r = Kephal::ScreenUtils::screenGeometry(i);
-                m_screenPos.insert(i, QPoint(p.x(), r.top()));
-            }
-        }
-        QRect r = Kephal::ScreenUtils::screenGeometry(qMax(m_oldScreen, 0));
+        m_offset = cg.readEntry(QLatin1String("Offset"), m_offset);
+        const QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
         checkBorders(r);
         KWindowSystem::setType(winId(), NET::Dock);
     }
@@ -256,14 +227,27 @@ void KRunnerDialog::setFreeFloating(bool floating)
     }
 }
 
+void KRunnerDialog::compositingChanged(bool)
+{
+    updatePresentation();
+    updateMask();
+    adjustSize();
+}
+
 bool KRunnerDialog::freeFloating() const
 {
     return m_floating;
 }
 
-bool KRunnerDialog::isManualResizing() const
+KRunnerDialog::ResizeMode KRunnerDialog::manualResizing() const
 {
-    return m_resizing;
+    if (!m_resizing) {
+        return NotResizing;
+    } else if (m_vertResize) {
+        return VerticalResizing;
+    } else {
+        return HorizontalResizing;
+    }
 }
 
 void KRunnerDialog::setStaticQueryMode(bool staticQuery)
@@ -302,20 +286,40 @@ void KRunnerDialog::configCompleted()
 
 void KRunnerDialog::themeUpdated()
 {
-    m_leftBorderWidth = qMax(0, int(m_background->marginSize(Plasma::LeftMargin)));
-    m_rightBorderWidth = qMax(0, int(m_background->marginSize(Plasma::RightMargin)));
-    m_bottomBorderHeight = qMax(0, int(m_background->marginSize(Plasma::BottomMargin)));
-    // the -2 in the non-floating case is not optimal, but it gives it a bit of a "more snug to the
-    // top" feel; best would be if we could tell exactly where the edge/shadow of the frame svg was
-    // but this works nicely
-    const int topHeight = m_floating ? qMax(0, int(m_background->marginSize(Plasma::TopMargin)))
-                                     : Plasma::Theme::defaultTheme()->windowTranslucencyEnabled() ?
-                                         qMax(1, m_bottomBorderHeight / 2)
-                                       : qMax(1, m_bottomBorderHeight - 2);
+    m_shadows->addWindow(this);
 
-    //kDebug() << m_leftBorderWidth<< topHeight<< m_rightBorderWidth<< m_bottomBorderHeight;
+    bool useShadowsForMargins = false;
+    if (m_floating) {
+        // recalc the contents margins
+        m_background->blockSignals(true);
+        if (KWindowSystem::compositingActive()) {
+            m_background->setEnabledBorders(Plasma::FrameSvg::NoBorder);
+            useShadowsForMargins = true;
+        } else {
+            m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+        }
+        m_background->blockSignals(false);
+    }
+
+    if (useShadowsForMargins) {
+        m_shadows->getMargins(m_topBorderHeight, m_rightBorderWidth, m_bottomBorderHeight, m_leftBorderWidth);
+    } else {
+        m_leftBorderWidth = qMax(0, int(m_background->marginSize(Plasma::LeftMargin)));
+        m_rightBorderWidth = qMax(0, int(m_background->marginSize(Plasma::RightMargin)));
+        m_bottomBorderHeight = qMax(0, int(m_background->marginSize(Plasma::BottomMargin)));
+        // the -2 in the non-floating case is not optimal, but it gives it a bit of a "more snug to the
+        // top" feel; best would be if we could tell exactly where the edge/shadow of the frame svg was
+        // but this works nicely
+        m_topBorderHeight = m_floating ? qMax(0, int(m_background->marginSize(Plasma::TopMargin)))
+                                       : Plasma::Theme::defaultTheme()->windowTranslucencyEnabled()
+                                            ? qMax(1, m_bottomBorderHeight / 2)
+                                            : qMax(1, m_bottomBorderHeight - 2);
+    }
+
+    kDebug() << m_leftBorderWidth << m_topBorderHeight << m_rightBorderWidth << m_bottomBorderHeight;
     // the +1 gives us the extra mouseMoveEvent needed to always reset the resize cursor
-    setContentsMargins(m_leftBorderWidth + 1, topHeight, m_rightBorderWidth + 1, m_bottomBorderHeight + 1);
+    setContentsMargins(m_leftBorderWidth + 1, m_topBorderHeight, m_rightBorderWidth + 1, m_bottomBorderHeight + 1);
+
     update();
 }
 
@@ -327,17 +331,6 @@ void KRunnerDialog::paintEvent(QPaintEvent *e)
     //kDebug() << "clip rect set to: " << e->rect();
 
     m_background->paintFrame(&p);
-}
-
-bool KRunnerDialog::event(QEvent *event)
-{
-    if (event->type() == QEvent::Paint) {
-        QPainter p(this);
-        p.setCompositionMode(QPainter::CompositionMode_Source);
-        p.fillRect(rect(), Qt::transparent);
-    }
-
-    return QWidget::event(event);
 }
 
 void KRunnerDialog::showEvent(QShowEvent *)
@@ -369,6 +362,7 @@ void KRunnerDialog::updateMask()
     // way to workaround it for no-compositing users.
 
     if (KWindowSystem::compositingActive()) {
+        clearMask();
         const QRegion mask = m_background->mask();
         Plasma::WindowEffects::enableBlurBehind(winId(), true, mask);
         Plasma::WindowEffects::overrideShadow(winId(), true);
@@ -381,24 +375,20 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
 {
     m_background->resizeFrame(e->size());
 
+    bool maskDirty = true;
     if (m_resizing && !m_vertResize) {
-        QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
+        const QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
         //kDebug() << "if" << x() << ">" << r.left() << "&&" << r.right() << ">" << (x() + width());
         const Plasma::FrameSvg::EnabledBorders borders = m_background->enabledBorders();
         if (borders & Plasma::FrameSvg::LeftBorder) {
             const int dx = x() + (e->oldSize().width() - width()) / 2 ;
             const int dy = (m_floating ? pos().y() : r.top());
             move(qBound(r.left(), dx, r.right() - width() + 1), dy);
-            if (!m_floating) {
-                m_screenPos.insert(m_oldScreen, pos() - Kephal::ScreenUtils::screenGeometry(m_oldScreen).topLeft());
-            }
-            if (m_floating || !checkBorders(r)) {
-                updateMask();
-            }
-        } else {
-            updateMask();
+            maskDirty = m_floating || !checkBorders(r);
         }
-    } else {
+    }
+
+    if (maskDirty) {
         updateMask();
     }
 }
@@ -476,45 +466,47 @@ void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
 {
     //kDebug() << e->x() << m_leftBorderWidth << width() << m_rightBorderWidth;
     if (m_lastPressPos.isNull()) {
+        // not press positiong, so we aren't going to resize or move.
         checkCursor(e->pos());
-    } else {
-        if (m_resizing) {
-            if (m_vertResize) {
-                const int deltaY = e->globalY() - m_lastPressPos.y();
-                resize(width(), height() + deltaY);
-                m_lastPressPos = e->globalPos();
-            } else {
-                QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
-                const int deltaX = (m_rightResize ? -1 : 1) * (m_lastPressPos.x() - e->globalX());
-                int newWidth = width() + deltaX;
-                // don't let it grow beyond the opposite screen edge
-                if (m_rightResize) {
-                    if (m_leftBorderWidth > 0) {
-                        newWidth += qMin(deltaX, x() - r.left());
-                    }
-                } else if (m_rightBorderWidth > 0) {
-                    newWidth += qMin(deltaX, r.right() - (x() + width() - 1));
-                } else if (newWidth > minimumWidth() && newWidth < width()) {
-                    move(r.right() - newWidth + 1, y());
-                }
-
-                if (newWidth > minimumWidth()) {;
-                    resize(newWidth, height());
-                    m_lastPressPos = e->globalPos();
-                }
-            }
+    } else if (m_resizing) {
+        // resizing
+        if (m_vertResize) {
+            const int deltaY = e->globalY() - m_lastPressPos.y();
+            resize(width(), qMax(80, height() + deltaY));
+            m_lastPressPos = e->globalPos();
         } else {
-            QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
-            int newX = qBound(r.left(), x() - (m_lastPressPos.x() - e->globalX()), r.right() - width() + 1);
-            if (abs(r.center().x() - (newX + (width() / 2))) < 20) {
-                newX = r.center().x() - (width() / 2);
-            } else {
-                m_lastPressPos = e->globalPos();
+            const QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
+            const int deltaX = (m_rightResize ? -1 : 1) * (m_lastPressPos.x() - e->globalX());
+            int newWidth = width() + deltaX;
+
+            // don't let it grow beyond the opposite screen edge
+            if (m_rightResize) {
+                if (m_leftBorderWidth > 0) {
+                    newWidth += qMin(deltaX, x() - r.left());
+                }
+            } else if (m_rightBorderWidth > 0) {
+                newWidth += qMin(deltaX, r.right() - (x() + width() - 1));
+            } else if (newWidth > minimumWidth() && newWidth < width()) {
+                move(r.right() - newWidth + 1, y());
             }
 
-            move(newX, y());
-            checkBorders(r);
+            if (newWidth > minimumWidth()) {
+                resize(newWidth, height());
+                m_lastPressPos = e->globalPos();
+            }
         }
+    } else {
+        // moving
+        const QRect r = Kephal::ScreenUtils::screenGeometry(m_shownOnScreen);
+        int newX = qBound(r.left(), x() - (m_lastPressPos.x() - e->globalX()), r.right() - width() + 1);
+        if (abs(r.center().x() - (newX + (width() / 2))) < 20) {
+            newX = r.center().x() - (width() / 2);
+        } else {
+            m_lastPressPos = e->globalPos();
+        }
+
+        move(newX, y());
+        checkBorders(r);
     }
 }
 

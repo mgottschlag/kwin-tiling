@@ -50,7 +50,6 @@ namespace {
     };
 
     const int numCursors      = 9;     // The number of cursors from the above list to be previewed
-    const int previewSize     = 24;    // The nominal cursor size to be used in the preview widget
     const int cursorSpacing   = 20;    // Spacing between preview cursors
     const int widgetMinWidth  = 10;    // The minimum width of the preview widget
     const int widgetMinHeight = 48;    // The minimum height of the preview widget
@@ -60,7 +59,7 @@ namespace {
 class PreviewCursor
 {
     public:
-        PreviewCursor( const CursorTheme *theme, const QString &name );
+        PreviewCursor( const CursorTheme *theme, const QString &name, int size );
         ~PreviewCursor() {}
 
         const QPixmap &pixmap() const { return m_pixmap; }
@@ -81,23 +80,18 @@ class PreviewCursor
 };
 
 
-PreviewCursor::PreviewCursor(const CursorTheme *theme, const QString &name)
+PreviewCursor::PreviewCursor(const CursorTheme *theme, const QString &name, int size)
 {
     // Create the preview pixmap
-    QImage image = theme->loadImage(name, previewSize);
+    QImage image = theme->loadImage(name, size);
 
     if (image.isNull())
         return;
 
-    int maxSize = previewSize * 2;
-    if (image.height() > maxSize || image.width() > maxSize)
-        image = image.scaled(maxSize, maxSize, Qt::KeepAspectRatio,
-                             Qt::SmoothTransformation);
-
     m_pixmap = QPixmap::fromImage(image);
 
     // Load the cursor
-    m_cursor = theme->loadCursor(name, previewSize);
+    m_cursor = theme->loadCursor(name, size);
     // ### perhaps we should tag the cursor so it doesn't get
     //     replaced when a new theme is applied
 }
@@ -168,7 +162,7 @@ void PreviewWidget::layoutItems()
 }
 
 
-void PreviewWidget::setTheme(const CursorTheme *theme)
+void PreviewWidget::setTheme(const CursorTheme *theme, const int size)
 {
     qDeleteAll(list);
     list.clear();
@@ -176,7 +170,7 @@ void PreviewWidget::setTheme(const CursorTheme *theme)
     if (theme)
     {
         for (int i = 0; i < numCursors; i++)
-            list << new PreviewCursor(theme, cursor_names[i]);
+            list << new PreviewCursor(theme, cursor_names[i], size);
 
         needLayout = true;
         updateGeometry();

@@ -36,7 +36,7 @@
 #include <kmessagebox.h>
 #include <kmenu.h>
 
-#include <SensorManager.h>
+#include <ksgrd/SensorManager.h>
 
 #include "DancingBars.h"
 #include "DummyDisplay.h"
@@ -68,7 +68,8 @@ WorkSheet::WorkSheet( QWidget *parent )
     createGrid( rows, columns );
 
     // Initialize worksheet with dummy displays.
-    for ( int i = 0; i < mRows*mColumns; i++ )
+    const int numberOfElement = mRows*mColumns;
+    for ( int i = 0; i < numberOfElement; i++ )
         replaceDisplay( i );
 
     mGridLayout->activate();
@@ -78,7 +79,6 @@ WorkSheet::WorkSheet( QWidget *parent )
 
 WorkSheet::~WorkSheet()
 {
-    qDeleteAll(mDisplayList);
 }
 
 bool WorkSheet::load( const QString &fileName )
@@ -350,7 +350,7 @@ KSGRD::SensorDisplay* WorkSheet::insertDisplay( DisplayType displayType, QString
             return NULL;
     }
     newDisplay->applyStyle();
-    connect(&mTimer, SIGNAL( timeout()), newDisplay, SLOT( timerTick()));
+    connect(&mTimer, SIGNAL(timeout()), newDisplay, SLOT(timerTick()));
     replaceDisplay( index, newDisplay );
     return newDisplay;
 }
@@ -408,9 +408,14 @@ KSGRD::SensorDisplay *WorkSheet::addDisplay( const QString &hostName,
             return 0;
         }
         display = insertDisplay(displayType, sensorDescr, index);
-    }
+	if (!display->addSensor( hostName, sensorName, sensorType, sensorDescr )) {
+            // Failed to add sensor, so we need to remove the display that we just added
+            removeDisplay(display);
+            return 0;
+	}
 
-    display->addSensor( hostName, sensorName, sensorType, sensorDescr );
+
+    }
 
     return display;
 }
@@ -596,14 +601,14 @@ void WorkSheet::replaceDisplay( int index, KSGRD::SensorDisplay* newDisplay )
     }
 
     if( mDisplayList[ index ]->metaObject()->className() != QByteArray( "DummyDisplay" ) ) {
-        connect( newDisplay, SIGNAL( showPopupMenu( KSGRD::SensorDisplay* ) ),
-                SLOT( showPopupMenu( KSGRD::SensorDisplay* ) ) );
+        connect( newDisplay, SIGNAL(showPopupMenu(KSGRD::SensorDisplay*)),
+                SLOT(showPopupMenu(KSGRD::SensorDisplay*)) );
         newDisplay->setDeleteNotifier( this );
     }
 
     mGridLayout->addWidget( mDisplayList[ index ], index / mColumns, index % mColumns );
     if(mRows == 1 && mColumns == 1) {  //if there's only item, the tab's title should be the widget's title
-        connect( newDisplay, SIGNAL(titleChanged(const QString&)), SLOT(setTitle(const QString&)));
+        connect( newDisplay, SIGNAL(titleChanged(QString)), SLOT(setTitle(QString)));
         setTitle(newDisplay->title());
     }
     if ( isVisible() )

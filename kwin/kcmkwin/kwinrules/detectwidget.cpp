@@ -30,6 +30,7 @@
 #include <QMouseEvent>
 #include <QEvent>
 #include <QByteArray>
+#include <QTimer>
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -58,10 +59,10 @@ DetectDialog::DetectDialog(QWidget* parent, const char* name)
     setMainWidget(widget);
 }
 
-void DetectDialog::detect(WId window)
+void DetectDialog::detect(WId window, int secs)
 {
     if (window == 0)
-        selectWindow();
+        QTimer::singleShot(secs*1000, this, SLOT(selectWindow()));
     else
         readWindow(window);
 }
@@ -84,7 +85,6 @@ void DetectDialog::readWindow(WId w)
                            | NET::ToolbarMask | NET::MenuMask | NET::DialogMask | NET::OverrideMask | NET::TopMenuMask
                            | NET::UtilityMask | NET::SplashMask);
     title = info.name();
-    extrarole = ""; // TODO
     machine = info.clientMachine();
     executeDialog();
 }
@@ -105,36 +105,35 @@ void DetectDialog::executeDialog()
     };
     widget->class_label->setText(wmclass_class + " (" + wmclass_name + ' ' + wmclass_class + ')');
     widget->role_label->setText(role);
-    widget->use_role->setEnabled(!role.isEmpty());
-    if (widget->use_role->isEnabled())
-        widget->use_role->setChecked(true);
-    else
-        widget->use_whole_class->setChecked(true);
+    widget->match_role->setEnabled(!role.isEmpty());
     if (type == NET::Unknown)
         widget->type_label->setText(i18n("Unknown - will be treated as Normal Window"));
     else
         widget->type_label->setText(i18n(types[ type ]));
     widget->title_label->setText(title);
-    widget->extrarole_label->setText(extrarole);
     widget->machine_label->setText(machine);
+    widget->adjustSize();
+    adjustSize();
+    if (width() < 4*height()/3)
+        resize(4*height()/3, height());
     emit detectionDone(exec() == KDialog::Accepted);
 }
 
 QByteArray DetectDialog::selectedClass() const
 {
-    if (widget->use_class->isChecked() || widget->use_role->isChecked())
-        return wmclass_class;
-    return wmclass_name + ' ' + wmclass_class;
+    if (widget->match_whole_class->isChecked())
+        return wmclass_name + ' ' + wmclass_class;
+    return wmclass_class;
 }
 
 bool DetectDialog::selectedWholeClass() const
 {
-    return widget->use_whole_class->isChecked();
+    return widget->match_whole_class->isChecked();
 }
 
 QByteArray DetectDialog::selectedRole() const
 {
-    if (widget->use_role->isChecked())
+    if (widget->match_role->isChecked())
         return role;
     return "";
 }
@@ -151,7 +150,7 @@ Rules::StringMatch DetectDialog::titleMatch() const
 
 bool DetectDialog::selectedWholeApp() const
 {
-    return widget->use_class->isChecked();
+    return !widget->match_type->isChecked();
 }
 
 NET::WindowType DetectDialog::selectedType() const

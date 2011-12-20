@@ -50,7 +50,6 @@ public:
         setText(label);
         if (!itemBackground->scene()) {
             scene()->addItem(itemBackground);
-            takeItemBackgroundOwnership();
         }
     }
 
@@ -71,6 +70,7 @@ protected:
             m_itemBackground->getContentsMargins(&left, &top, &right, &bottom);
             totalRect.adjust(-left/2, -top/2, right/2, bottom/2);
             m_itemBackground->setTarget(totalRect);
+            m_itemBackground->show();
         }
     }
 

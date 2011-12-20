@@ -375,7 +375,7 @@ void checkArgumentCount(int min, int max)
 
 int main(int argc, char **argv)
 {
-  KCmdLineArgs::init(argc, argv, appName, 0, ki18n(programName), version, ki18n(description), false);
+  KCmdLineArgs::init(argc, argv, appName, 0, ki18n(programName), version, ki18n(description), KCmdLineArgs::CmdLineArgNone);
 
 
   KCmdLineOptions options;
@@ -791,12 +791,12 @@ bool SolidNetwork::netmgrActivateNetwork(const QString  & deviceUni, const QStri
 
 void SolidNetwork::connectJob(KJob *job)
 {
-    connect(job, SIGNAL(result(KJob *)),
-             this, SLOT(slotResult(KJob *)));
-    connect(job, SIGNAL(percent(KJob *, unsigned long)),
-             this, SLOT(slotPercent(KJob *, unsigned long)));
-    connect(job, SIGNAL(infoMessage(KJob *, const QString &, const QString &)),
-             this, SLOT(slotInfoMessage(KJob *, const QString &)));
+    connect(job, SIGNAL(result(KJob*)),
+             this, SLOT(slotResult(KJob*)));
+    connect(job, SIGNAL(percent(KJob*,ulong)),
+             this, SLOT(slotPercent(KJob*,ulong)));
+    connect(job, SIGNAL(infoMessage(KJob*,QString,QString)),
+             this, SLOT(slotInfoMessage(KJob*,QString)));
 }
 
 void SolidNetwork::slotPercent(KJob */*job */, unsigned long percent)

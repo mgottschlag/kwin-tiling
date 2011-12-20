@@ -41,10 +41,11 @@ class TASKMANAGER_EXPORT TaskGroup : public AbstractGroupableItem
 {
     Q_OBJECT
 public:
-    TaskGroup(GroupManager *parent, const QString& name, const QColor& color);
+    TaskGroup(GroupManager *parent, const QString& name);
     TaskGroup(GroupManager *parent);
     ~TaskGroup();
 
+    GroupManager *manager() const;
     ItemList members() const;
     WindowList winIds() const;
     WindowList directMemberwinIds() const;
@@ -56,9 +57,6 @@ public:
     QIcon icon() const;
     void setIcon(const QIcon &icon);
 
-    QColor color() const;
-    void setColor(const QColor &color);
-
     QString name() const;
     void setName(const QString &newName);
 
@@ -68,9 +66,6 @@ public:
     **/
     KDE_DEPRECATED bool isGroupItem() const;
     bool isRootGroup() const;
-
-    bool isPersistentWithLauncher() const;
-    void setPersistentWithLauncher(bool persistent);
 
     /** only true if item is in this group */
     bool hasDirectMember(AbstractGroupableItem * item) const;
@@ -129,10 +124,13 @@ public Q_SLOTS:
     void close();
 
     /** add item to group */
-    void add(AbstractGroupableItem *);
+    void add(AbstractGroupableItem *item, int insertIndex = -1);
 
     /** remove item from group */
     void remove(AbstractGroupableItem *);
+
+    /** remove all items from group */
+    void clear();
 
 Q_SIGNALS:
     /** inform visualization about wat is added and removed */

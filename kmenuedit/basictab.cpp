@@ -111,20 +111,20 @@ BasicTab::BasicTab( QWidget *parent )
     grid->addWidget(_execLabel, 3, 0);
 
     // connect line inputs
-    connect(_nameEdit, SIGNAL(textChanged(const QString&)),
+    connect(_nameEdit, SIGNAL(textChanged(QString)),
             SLOT(slotChanged()));
-    connect(_descriptionEdit, SIGNAL(textChanged(const QString&)),
+    connect(_descriptionEdit, SIGNAL(textChanged(QString)),
 	    SLOT(slotChanged()));
-    connect(_commentEdit, SIGNAL(textChanged(const QString&)),
+    connect(_commentEdit, SIGNAL(textChanged(QString)),
             SLOT(slotChanged()));
-    connect(_execEdit, SIGNAL(textChanged(const QString&)),
+    connect(_execEdit, SIGNAL(textChanged(QString)),
             SLOT(slotChanged()));
-    connect(_execEdit, SIGNAL(urlSelected(const KUrl&)),
+    connect(_execEdit, SIGNAL(urlSelected(KUrl)),
             SLOT(slotExecSelected()));
     connect(_launchCB, SIGNAL(clicked()), SLOT(launchcb_clicked()));
     connect(_systrayCB, SIGNAL(clicked()), SLOT(systraycb_clicked()));
-    connect(_onlyShowInKdeCB, SIGNAL( clicked() ), SLOT( onlyshowcb_clicked() ) );
-    connect( _hiddenEntryCB, SIGNAL( clicked() ), SLOT( hiddenentrycb_clicked() ) );
+    connect(_onlyShowInKdeCB, SIGNAL(clicked()), SLOT(onlyshowcb_clicked()) );
+    connect( _hiddenEntryCB, SIGNAL(clicked()), SLOT(hiddenentrycb_clicked()) );
     // add line inputs to the grid
     grid->addWidget(_nameEdit, 0, 1, 1, 1);
     grid->addWidget(_descriptionEdit, 1, 1, 1, 1);
@@ -138,7 +138,7 @@ BasicTab::BasicTab( QWidget *parent )
     // setup icon button
     _iconButton = new KIconButton(general_group);
     _iconButton->setFixedSize(56,56);
-    _iconButton->setIconSize(48);
+    _iconButton->setIconSize(32);
     connect(_iconButton, SIGNAL(iconChanged(QString)), SLOT(slotChanged()));
     grid->addWidget(_iconButton, 0, 2, 2, 1);
     grid->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::MinimumExpanding), 8, 0, 1, 3);
@@ -164,7 +164,7 @@ BasicTab::BasicTab( QWidget *parent )
 
     _pathLabel->setBuddy(_pathEdit);
 
-    connect(_pathEdit, SIGNAL(textChanged(const QString&)),
+    connect(_pathEdit, SIGNAL(textChanged(QString)),
             SLOT(slotChanged()));
     advancedLayout->addWidget(_path_group);
 
@@ -189,7 +189,7 @@ BasicTab::BasicTab( QWidget *parent )
     _termOptEdit->setAcceptDrops(false);
     _termOptLabel->setBuddy(_termOptEdit);
 
-    connect(_termOptEdit, SIGNAL(textChanged(const QString&)),
+    connect(_termOptEdit, SIGNAL(textChanged(QString)),
             SLOT(slotChanged()));
     vbox->addWidget(hbox);
     advancedLayout->addWidget(_term_group);
@@ -217,7 +217,7 @@ BasicTab::BasicTab( QWidget *parent )
     _uidEdit->setAcceptDrops(false);
     _uidLabel->setBuddy(_uidEdit);
 
-    connect(_uidEdit, SIGNAL(textChanged(const QString&)),
+    connect(_uidEdit, SIGNAL(textChanged(QString)),
 	    SLOT(slotChanged()));
     vbox->addWidget(hbox);
     advancedLayout->addWidget(_uid_group);
@@ -235,8 +235,8 @@ BasicTab::BasicTab( QWidget *parent )
     QLabel *l = new QLabel( i18n("Current shortcut &key:"), general_group_keybind);
     l->setBuddy( _keyEdit );
     keybindLayout->addWidget(l);
-    connect( _keyEdit, SIGNAL(keySequenceChanged(const QKeySequence&)),
-             this, SLOT(slotCapturedKeySequence(const QKeySequence&)));
+    connect( _keyEdit, SIGNAL(keySequenceChanged(QKeySequence)),
+             this, SLOT(slotCapturedKeySequence(QKeySequence)));
     keybindLayout->addWidget(_keyEdit);
     advancedLayout->addWidget( general_group_keybind );
     
@@ -406,13 +406,8 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     else // backwards comp.
         _launchCB->setChecked(df->desktopGroup().readEntry("X-KDE-StartupNotify", true));
 
-    _onlyShowInKdeCB->setChecked( false );
-    if ( df->desktopGroup().hasKey( "OnlyShowIn") )
-    {
-        if ( df->desktopGroup().readXdgListEntry("OnlyShowIn").contains( "KDE" ) )
-            _onlyShowInKdeCB->setChecked( true );
-
-    }
+    _onlyShowInKdeCB->setChecked( df->desktopGroup().readXdgListEntry("OnlyShowIn").contains( "KDE" ) ); // or maybe enable only if it contains nothing but KDE?
+    
     if ( df->desktopGroup().hasKey( "NoDisplay" ) )
         _hiddenEntryCB->setChecked( df->desktopGroup().readEntry( "NoDisplay", true ) );
     else
@@ -458,8 +453,20 @@ void BasicTab::apply()
         dg.writeEntry("X-KDE-Username", _uidEdit->text());
         dg.writeEntry("StartupNotify", _launchCB->isChecked());
         dg.writeEntry( "NoDisplay", _hiddenEntryCB->isChecked() );
-        if ( _onlyShowInKdeCB->isChecked() )
-            dg.writeXdgListEntry( "OnlyShowIn", QStringList()<<"KDE" );
+
+        QStringList onlyShowIn = df->desktopGroup().readXdgListEntry("OnlyShowIn");
+        /* the exact semantics of this checkbox are unclear if there is more than just KDE in the list...
+         * For example: - The list is "Gnome;", the user enables "Only show in KDE" - should we remove Gnome?
+         *              - The list is "Gnome;KDE;", the user unchecks the box - should we keep Gnome?
+         */
+        if ( _onlyShowInKdeCB->isChecked() && !onlyShowIn.contains("KDE"))
+            onlyShowIn << "KDE";
+        else if ( !_onlyShowInKdeCB->isChecked() && onlyShowIn.contains("KDE"))
+            onlyShowIn.removeAll("KDE");
+        if (onlyShowIn.isEmpty())
+            dg.deleteEntry("OnlyShowIn");
+        else
+            dg.writeXdgListEntry("OnlyShowIn", onlyShowIn);
     }
     else
     {

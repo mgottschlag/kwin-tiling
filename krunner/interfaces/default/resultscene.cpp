@@ -50,8 +50,8 @@ ResultScene::ResultScene(SharedResultData *resultData, Plasma::RunnerManager *ma
 {
     setItemIndexMethod(NoIndex);
 
-    connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
-            this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
+    connect(m_runnerManager, SIGNAL(matchesChanged(QList<Plasma::QueryMatch>)),
+            this, SLOT(setQueryMatches(QList<Plasma::QueryMatch>)));
 
     m_clearTimer.setSingleShot(true);
     m_clearTimer.setInterval(200);
@@ -85,6 +85,7 @@ QSize ResultScene::minimumSizeHint() const
 void ResultScene::setWidth(int width)
 {
     const bool resizeItems = width != sceneRect().width();
+    m_selectionBar->resize(width, m_selectionBar->size().height());
 
     if (resizeItems) {
         foreach (ResultItem *item, m_items) {
@@ -148,11 +149,10 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     const int maxItemsAllowed = 50;
 
     if (m_items.isEmpty()) {
-        QTime t;
-        t.start();
-        Plasma::QueryMatch dummy(0);
+        //QTime t;
+        //t.start();
         for (int i = 0; i < maxItemsAllowed; ++i) {
-            ResultItem *item = new ResultItem(m_resultData, dummy, m_runnerManager, 0);
+            ResultItem *item = new ResultItem(m_resultData, 0);
             item->setContentsMargins(m_itemMarginLeft, m_itemMarginTop,
                                      m_itemMarginRight, m_itemMarginBottom);
             item->hide();
@@ -166,7 +166,16 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         }
 
         arrangeItems();
-        kDebug() << "creating all items took" << t.elapsed();
+        //kDebug() << "creating all items took" << t.elapsed();
+    }
+
+    // we keep track of what was previously focused so if the user changes focus
+    // and more items come in ... we don't reset that on them unecessarily
+    // see the keepFocus bool down below
+    ResultItem *currentFocus = currentlyFocusedItem();
+    QString lastFocusId;
+    if (currentFocus && currentFocus->isValid()) {
+        lastFocusId = currentFocus->id();
     }
 
     QList<Plasma::QueryMatch> matches = m;
@@ -194,8 +203,12 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         }
     }
 
-    clearSelection();
-    if (matches.count() > 0) {
+    const bool keepFocus = currentFocus && currentFocus->isValid() && currentFocus->id() == lastFocusId;
+    if (keepFocus) {
+        m_selectionBar->show();
+        emit ensureVisibility(currentFocus);
+    } else {
+        clearSelection();
         ResultItem *first = m_items.at(0);
         setFocusItem(first);
         first->setSelected(true);
@@ -265,6 +278,23 @@ void ResultScene::focusInEvent(QFocusEvent *focusEvent)
     switch (focusEvent->reason()) {
     case Qt::TabFocusReason:
     case Qt::BacktabFocusReason:
+    case Qt::OtherFocusReason:
+        // on tab focus in, we want to actually select the second item
+        // since the first item is always "passively" selected by default
+        if (!currentFocus || currentFocus == m_items.first()) {
+            ResultItem *newFocus = m_items[0];
+            if (newFocus->firstTabItem() != newFocus) {
+                setFocusItem(newFocus->firstTabItem());
+            } else {
+                newFocus = m_items[1];
+                if (newFocus->isVisible()) {
+                    setFocusItem(newFocus);
+                    emit ensureVisibility(newFocus);
+                }
+            }
+        } else if (currentFocus) {
+            setFocusItem(currentFocus);
+        }
         break;
     default:
         if (currentFocus) {
@@ -350,26 +380,11 @@ void ResultScene::selectNextItem()
     }
 }
 
-bool ResultScene::launchQuery(const QString &term)
-{
-    bool temp = !(term.trimmed().isEmpty() || m_runnerManager->query() == term.trimmed());
-    m_runnerManager->launchQuery(term);
-    return temp;
-}
-
-bool ResultScene::launchQuery(const QString &term, const QString &runner)
-{
-    bool temp = !(term.trimmed().isEmpty() || m_runnerManager->query() == term.trimmed() ) || (!runner.isEmpty());
-    m_runnerManager->launchQuery(term, runner);
-    return temp;
-}
-
-void ResultScene::clearQuery()
+void ResultScene::queryCleared()
 {
     //m_selectionBar->setTargetItem(0);
     setFocusItem(0);
     clearSelection();
-    m_runnerManager->reset();
 }
 
 ResultItem* ResultScene::defaultResultItem() const
@@ -381,15 +396,6 @@ ResultItem* ResultScene::defaultResultItem() const
 
     kDebug() << (QObject*) m_items[0] << m_items.count();
     return m_items[0];
-}
-
-void ResultScene::run(ResultItem *item) const
-{
-    if (!item) {
-        return;
-    }
-
-    item->run(m_runnerManager);
 }
 
 void ResultScene::updateItemMargins()

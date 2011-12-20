@@ -35,6 +35,7 @@
 
 #include "x11_helper.h"
 
+#include <fixx11h.h>
 
 static int DEVICE_NONE = 0;
 static int DEVICE_KEYBOARD = 1;

@@ -62,7 +62,9 @@ ThemePage::ThemePage(QWidget *parent)
     : QWidget(parent)
 {
     setupUi(this);
-    installKnsButton->setIcon( KIcon("get-hot-new-stuff") );
+    installKnsButton->setIcon(KIcon("get-hot-new-stuff"));
+    installButton->setIcon(KIcon("document-import"));
+    removeButton->setIcon(KIcon("edit-delete"));
 
     model = new CursorThemeModel(this);
 
@@ -71,17 +73,28 @@ ThemePage::ThemePage(QWidget *parent)
     proxy->setFilterCaseSensitivity(Qt::CaseSensitive);
     proxy->sort(NameColumn, Qt::AscendingOrder);
 
+    // Get the icon size for QListView
     int size = style()->pixelMetric(QStyle::PM_LargeIconSize);
 
     view->setModel(proxy);
     view->setItemDelegate(new ItemDelegate(this));
     view->setIconSize(QSize(size, size));
-    view->setSelectionMode( QAbstractItemView::SingleSelection );
+    view->setSelectionMode(QAbstractItemView::SingleSelection);
 
     // Make sure we find out about selection changes
     connect(view->selectionModel(),
-            SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
-            SLOT(currentChanged(const QModelIndex &, const QModelIndex &)));
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SLOT(selectionChanged()));
+
+    // Make sure we find out about size changes
+    connect(sizeComboBox,
+            SIGNAL(currentIndexChanged(int)),
+            SLOT(sizeChanged()));
+
+    // Make sure we find out about user activity
+    connect(sizeComboBox,
+            SIGNAL(activated(int)),
+            SLOT(preferredSizeChanged()));
 
     // Disable the install button if we can't install new themes to ~/.icons,
     // or Xcursor isn't set up to look for cursor themes there.
@@ -111,6 +124,114 @@ bool ThemePage::iconsIsWritable() const
 }
 
 
+void ThemePage::updateSizeComboBox()
+{
+    // clear the combo box
+    sizeComboBox->clear();
+
+    // refill the combo box and adopt its icon size
+    QModelIndex selected = selectedIndex();
+    int maxIconWidth = 0;
+    int maxIconHeight = 0;
+    if (selected.isValid())
+    {
+        const CursorTheme *theme = proxy->theme(selected);
+        const QList<int> sizes = theme->availableSizes();
+        QIcon m_icon;
+        if (sizes.size() > 1)  // only refill the combobox if there is more that 1 size
+        {
+            int i;
+            QList<int> comboBoxList;
+            QPixmap m_pixmap;
+
+            // insert the items
+            m_pixmap = theme->createIcon(0);
+            if (m_pixmap.width() > maxIconWidth)
+                maxIconWidth = m_pixmap.width();
+            if (m_pixmap.height() > maxIconHeight)
+                maxIconHeight = m_pixmap.height();
+            sizeComboBox->addItem(
+                QIcon(m_pixmap),
+                i18nc("@item:inlistbox size", "resolution dependent"),
+                0);
+            comboBoxList << 0;
+            foreach (i, sizes)
+            {
+                m_pixmap = theme->createIcon(i);
+                if (m_pixmap.width() > maxIconWidth)
+                    maxIconWidth = m_pixmap.width();
+                if (m_pixmap.height() > maxIconHeight)
+                    maxIconHeight = m_pixmap.height();
+                sizeComboBox->addItem(QIcon(m_pixmap), QString::number(i), i);
+                comboBoxList << i;
+            };
+
+            // select an item
+            int selectItem = comboBoxList.indexOf(preferredSize);
+            if (selectItem < 0)  // preferredSize not available for this theme
+            {
+                /* Search the value next to preferredSize. The first entry (0)
+                   is ignored. (If preferredSize would have been 0, then we
+                   would had found it yet. As preferredSize is not 0, we won't
+                   default to "automatic size".)*/
+                int j;
+                int distance;
+                int smallestDistance;
+                selectItem = 1;
+                j = comboBoxList.value(selectItem);
+                smallestDistance = j < preferredSize ? preferredSize - j : j - preferredSize;
+                for (int i = 2; i < comboBoxList.size(); ++i)
+                {
+                    j = comboBoxList.value(i);
+                    distance = j < preferredSize ? preferredSize - j : j - preferredSize;
+                    if (distance < smallestDistance || (distance == smallestDistance && j > preferredSize))
+                    {
+                        smallestDistance = distance;
+                        selectItem = i;
+                    };
+                }
+            };
+            sizeComboBox->setCurrentIndex(selectItem);
+        };
+    };
+    sizeComboBox->setIconSize(QSize(maxIconWidth, maxIconHeight));
+
+    // enable or disable the combobox
+    KConfig c("kcminputrc");
+    KConfigGroup cg(&c, "Mouse");
+    if (cg.isEntryImmutable("cursorSize")) {
+        sizeComboBox->setEnabled(false);
+        sizeLabel->setEnabled(false);
+    } else {
+        sizeComboBox->setEnabled(sizeComboBox->count() > 0);
+        sizeLabel->setEnabled(sizeComboBox->count() > 0);
+    };
+}
+
+
+int ThemePage::selectedSize() const
+{
+  if (sizeComboBox->isEnabled() && sizeComboBox->currentIndex() >= 0)
+      return sizeComboBox->itemData(sizeComboBox->currentIndex(), Qt::UserRole).toInt();
+  return 0;
+}
+
+
+void ThemePage::updatePreview()
+{
+    QModelIndex selected = selectedIndex();
+
+    if (selected.isValid()) {
+        const CursorTheme *theme = proxy->theme(selected);
+        preview->setTheme(theme, selectedSize());
+        removeButton->setEnabled(theme->isWritable());
+    } else {
+        preview->setTheme(NULL, 0);
+        removeButton->setEnabled(false);
+    };
+}
+
+
 bool ThemePage::haveXfixes()
 {
     bool result = false;
@@ -129,12 +250,15 @@ bool ThemePage::haveXfixes()
 }
 
 
-bool ThemePage::applyTheme(const CursorTheme *theme)
+bool ThemePage::applyTheme(const CursorTheme *theme, const int size)
 {
     // Require the Xcursor version that shipped with X11R6.9 or greater, since
     // in previous versions the Xfixes code wasn't enabled due to a bug in the
     // build system (freedesktop bug #975).
 #if HAVE_XFIXES && XFIXES_MAJOR >= 2 && XCURSOR_LIB_VERSION >= 10105
+    if (!theme)
+        return false;
+
     if (!haveXfixes())
         return false;
 
@@ -171,7 +295,7 @@ bool ThemePage::applyTheme(const CursorTheme *theme)
 
     foreach (const QString &name, names)
     {
-        QCursor cursor = theme->loadCursor(name);
+        QCursor cursor = theme->loadCursor(name, size);
         XFixesChangeCursorByName(x11Info().display(), cursor.handle(), QFile::encodeName(name));
     }
 
@@ -185,24 +309,28 @@ bool ThemePage::applyTheme(const CursorTheme *theme)
 
 void ThemePage::save()
 {
-    if (appliedIndex == view->currentIndex() || !view->currentIndex().isValid())
-        return;
-
-    const CursorTheme *theme = proxy->theme(view->currentIndex());
+    const CursorTheme *theme = selectedIndex().isValid() ? proxy->theme(selectedIndex()) : NULL;
+    const int size = selectedSize();
 
     KConfig config("kcminputrc");
     KConfigGroup c(&config, "Mouse");
-    c.writeEntry("cursorTheme", theme->name());
+    if (theme)
+    {
+        c.writeEntry("cursorTheme", theme->name());
+    };
+    c.writeEntry("cursorSize", size);
+    preferredSize = size;
     c.sync();
 
-    if (!applyTheme(theme))
+    if (!applyTheme(theme, size))
     {
         KMessageBox::information(this,
                                  i18n("You have to restart KDE for these changes to take effect."),
                                  i18n("Cursor Settings Changed"), "CursorSettingsChanged");
     }
 
-    appliedIndex = view->currentIndex();
+    appliedIndex = selectedIndex();
+    appliedSize = size;
 }
 
 
@@ -231,16 +359,26 @@ void ThemePage::load()
         removeButton->setEnabled(false);
     }
 
+    // Load cursor size
+    int size = cg.readEntry("cursorSize", 0);
+    if (size <= 0)
+        preferredSize = 0;
+    else
+        preferredSize = size;
+    updateSizeComboBox(); // This handles also the kiosk mode
+
+    appliedSize = size;
+
     const CursorTheme *theme = proxy->theme(appliedIndex);
 
     if (appliedIndex.isValid())
     {
         // Select the current theme
-        selectRow(appliedIndex);
+        view->setCurrentIndex(appliedIndex);
         view->scrollTo(appliedIndex, QListView::PositionAtCenter);
 
         // Update the preview widget as well
-        preview->setTheme(theme);
+        preview->setTheme(theme, size);
     }
 
     if (!theme || !theme->isWritable())
@@ -253,33 +391,41 @@ void ThemePage::defaults()
     view->selectionModel()->clear();
     QModelIndex defaultIndex = proxy->findIndex("Oxygen_Black");
     view->setCurrentIndex(defaultIndex);
+    preferredSize = 0;
+    updateSizeComboBox();
 }
 
 
-void ThemePage::selectRow(int row) const
+void ThemePage::selectionChanged()
 {
-    // Create a selection that stretches across all columns
-    QModelIndex from = proxy->index(row, 0);
-    QModelIndex to   = proxy->index(row, model->columnCount() - 1);
-    QItemSelection selection(from, to);
+    updateSizeComboBox();
+    updatePreview();
 
-    view->selectionModel()->select(selection, QItemSelectionModel::Select);
+    emit changed(appliedIndex != selectedIndex());
 }
 
-
-void ThemePage::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+QModelIndex ThemePage::selectedIndex() const
 {
-    Q_UNUSED(previous)
+    QModelIndexList selection = view->selectionModel()->selectedIndexes();
+    if (!selection.isEmpty()) {
+        return (selection.at(0));
+    }
+    return QModelIndex();
+}
 
-    if (current.isValid())
-    {
-        const CursorTheme *theme = proxy->theme(current);
-        preview->setTheme(theme);
-        removeButton->setEnabled(theme->isWritable());
-    } else
-        preview->setTheme(NULL);
+void ThemePage::sizeChanged()
+{
+    updatePreview();
+    emit changed(selectedSize() != appliedSize);
+}
 
-    emit changed(appliedIndex != current);
+void ThemePage::preferredSizeChanged()
+{
+    int index = sizeComboBox->currentIndex();
+    if (index >= 0)
+        preferredSize = sizeComboBox->itemData(index, Qt::UserRole).toInt();
+    else
+        preferredSize = 0;
 }
 
 void ThemePage::getNewClicked()
@@ -329,10 +475,10 @@ void ThemePage::removeClicked()
 {
     // We don't have to check if the current index is valid, since
     // the remove button will be disabled when there's no selection.
-    const CursorTheme *theme = proxy->theme(view->currentIndex());
+    const CursorTheme *theme = proxy->theme(selectedIndex());
 
     // Don't let the user delete the currently configured theme
-    if (view->currentIndex() == appliedIndex) {
+    if (selectedIndex() == appliedIndex) {
         KMessageBox::sorry(this, i18n("<qt>You cannot delete the theme you are currently "
                 "using.<br />You have to switch to another theme first.</qt>"));
         return;
@@ -354,7 +500,7 @@ void ThemePage::removeClicked()
     KIO::del(KUrl(theme->path())); // async
 
     // Remove the theme from the model
-    proxy->removeTheme(view->currentIndex());
+    proxy->removeTheme(selectedIndex());
 
     // TODO:
     //  Since it's possible to substitute cursors in a system theme by adding a local

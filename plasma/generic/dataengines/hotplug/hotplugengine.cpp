@@ -18,6 +18,7 @@
 */
 
 #include "hotplugengine.h"
+#include "hotplugservice.h"
 
 #include <QTimer>
 
@@ -27,6 +28,7 @@
 #include <KLocale>
 #include <KStandardDirs>
 #include <KDesktopFile>
+#include <kdesktopfileactions.h>
 #include <Plasma/DataContainer>
 
 //solid specific includes
@@ -46,7 +48,7 @@ HotplugEngine::HotplugEngine(QObject* parent, const QVariantList& args)
     foreach (const QString &folder, folders) {
         m_dirWatch->addDir(folder, KDirWatch::WatchFiles);
     }
-    connect(m_dirWatch, SIGNAL(dirty(const QString &)), this, SLOT(updatePredicates(const QString &)));
+    connect(m_dirWatch, SIGNAL(dirty(QString)), this, SLOT(updatePredicates(QString)));
 }
 
 HotplugEngine::~HotplugEngine()
@@ -70,14 +72,19 @@ void HotplugEngine::init()
         m_startList.insert(dev.udi(), dev);
     }
 
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)),
-            this, SLOT(onDeviceAdded(const QString &)));
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
-            this, SLOT(onDeviceRemoved(const QString &)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)),
+            this, SLOT(onDeviceAdded(QString)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)),
+            this, SLOT(onDeviceRemoved(QString)));
 
     m_encryptedPredicate = Solid::Predicate("StorageVolume", "usage", "Encrypted");
 
     processNextStartupDevice();
+}
+
+Plasma::Service* HotplugEngine::serviceForSource(const QString& source)
+{
+    return new HotplugService (this, source);
 }
 
 void HotplugEngine::processNextStartupDevice()
@@ -213,11 +220,24 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device, bool added)
         if (!device.description().isEmpty()) {
             data.insert("text", device.description());
         } else {
-            data.insert("text", device.vendor() + ' ' + device.product());
+            data.insert("text", QString(device.vendor() + QLatin1Char(' ') + device.product()));
         }
         data.insert("icon", device.icon());
         data.insert("emblems", device.emblems());
         data.insert("predicateFiles", interestingDesktopFiles);
+
+        QVariantList actions;
+        foreach(const QString& desktop, interestingDesktopFiles) {
+            Plasma::DataEngine::Data action;
+            QString actionUrl = KStandardDirs::locate("data", "solid/actions/" + desktop);
+            QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(actionUrl, true);
+            action.insert("predicate", desktop);
+            action.insert("text", services[0].text());
+            action.insert("icon", services[0].icon());
+            actions << action;
+        }
+        data.insert("actions", actions);
+
         data.insert("isEncryptedContainer", isEncryptedContainer);
 
         setData(device.udi(), data);
@@ -242,5 +262,7 @@ void HotplugEngine::onDeviceRemoved(const QString &udi)
     removeSource(udi);
     scheduleSourcesUpdated();
 }
+
+K_EXPORT_PLASMA_DATAENGINE(hotplug, HotplugEngine)
 
 #include "hotplugengine.moc"

@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace TaskManager
 {
 
-    /** Sorts the tasks by desktop*/
+/** Sorts the tasks by desktop*/
 class DesktopSortingStrategy : public AbstractSortingStrategy
 {
     Q_OBJECT
@@ -44,6 +44,7 @@ private:
     /** Sorts list of items according to strategy*/
     void sortItems(ItemList&);
     static bool lessThan(const AbstractGroupableItem *left, const AbstractGroupableItem *right);
+    static bool lessThanSeperateLaunchers(const AbstractGroupableItem *left, const AbstractGroupableItem *right);
 };
 
 

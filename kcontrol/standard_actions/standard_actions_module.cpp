@@ -71,7 +71,7 @@ StandardActionsModule::StandardActionsModule(
     KCModule::setButtons(KCModule::Buttons(KCModule::Default | KCModule::Apply | KCModule::Help));
 
     // Create and configure the editor
-    m_editor = new KShortcutsEditor(this, KShortcutsEditor::AllActions);
+    m_editor = new KShortcutsEditor(this, KShortcutsEditor::WidgetAction | KShortcutsEditor::WindowAction | KShortcutsEditor::ApplicationAction); // there will be no global actions, so make sure that column is hidden
     connect(m_editor, SIGNAL(keyChange()), this, SLOT(keyChanged()));
 
     // Make a layout
@@ -137,7 +137,7 @@ void StandardActionsModule::load()
         }
 
     // Hand the collection to the editor
-    m_editor->addCollection(m_actionCollection);
+    m_editor->addCollection(m_actionCollection, i18n("Standard Shortcuts"));
     }
 
 

@@ -24,23 +24,16 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <config-workspace.h>
-
+#include <QtCore/QLatin1String>
 #include <KDE/KLocale>
 #include <kio/udsentry.h>
 
 #define KFI_NAME                     "kfontinst"
 #define KFI_CATALOGUE                KFI_NAME
 
-#ifdef KDE_BINDIR
-#define KFI_INSTALLER KDE_BINDIR"/kfontinst"
-#define KFI_VIEWER    KDE_BINDIR"/kfontview"
-#else
-#define KFI_INSTALLER "kfontinst"
-#define KFI_VIEWER    "kfontview"
-#endif
-
-#define KFI_PRINTER   "kfontprint"
+#define KFI_INSTALLER                QLatin1String("kfontinst")
+#define KFI_VIEWER                   QLatin1String("kfontview")
+#define KFI_PRINTER                  QLatin1String("kfontprint"), "libexec"
 
 #define KFI_PRINT_GROUP              "Print"
 #define KFI_KIO_FONTS_PROTOCOL       "fonts"

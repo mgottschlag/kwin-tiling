@@ -242,9 +242,9 @@ void UKMETIon::getXMLData(const QString& source)
     m_obsJobList.insert(m_job, source);
 
     if (m_job) {
-        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(observation_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(observation_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(observation_slotDataArrived(KIO::Job*,QByteArray)));
+        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(observation_slotJobFinished(KJob*)));
     }
 }
 
@@ -260,14 +260,14 @@ void UKMETIon::findPlace(const QString& place, const QString& source)
     m_jobList.insert(m_job, source);
 
     if (m_job) {
-        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(setup_slotDataArrived(KIO::Job*,QByteArray)));
+        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(setup_slotJobFinished(KJob*)));
 
 /*
         // Handle redirects for direct hit places.
-        connect(m_job, SIGNAL(redirection(KIO::Job *, const KUrl &)), this,
-                SLOT(setup_slotRedirected(KIO::Job *, const KUrl &)));
+        connect(m_job, SIGNAL(redirection(KIO::Job*,KUrl)), this,
+                SLOT(setup_slotRedirected(KIO::Job*,KUrl)));
 */
     }
 }
@@ -275,10 +275,13 @@ void UKMETIon::findPlace(const QString& place, const QString& source)
 void UKMETIon::getFiveDayForecast(const QString& source)
 {
 
-    QString xmlMap = m_place[source].forecastHTMLUrl;
-    int splitIDPos = xmlMap.lastIndexOf('/');
-    QString stationID = xmlMap.midRef(splitIDPos + 1).toString();
-    m_place[source].XMLforecastURL = "http://newsrss.bbc.co.uk/weather/forecast/" + stationID + "/Next3DaysRSS.xml";
+    KUrl xmlMap(m_place[source].forecastHTMLUrl);    
+    
+    QString xmlPath = xmlMap.path();
+    
+    int splitIDPos = xmlPath.lastIndexOf('/');
+    QString stationID = xmlPath.midRef(splitIDPos + 1).toString();
+    m_place[source].XMLforecastURL = "http://newsrss.bbc.co.uk/weather/forecast/" + stationID + "/Next3DaysRSS.xml" + xmlMap.query();
     KUrl url(m_place[source].XMLforecastURL);
 
     m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
@@ -287,9 +290,9 @@ void UKMETIon::getFiveDayForecast(const QString& source)
     m_forecastJobList.insert(m_job, source);
 
     if (m_job) {
-        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(forecast_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(forecast_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this,
+                SLOT(forecast_slotDataArrived(KIO::Job*,QByteArray)));
+        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(forecast_slotJobFinished(KJob*)));
     }
 }
 
@@ -304,7 +307,7 @@ void UKMETIon::readSearchHTMLData(const QString& source, const QByteArray& html)
     int counter = 2;
 
     // "<p><a id="result_40" href ="/weather/forecast/4160?count=200">Vitoria, Brazil</a></p>"
-    QRegExp grabURL("/[a-z]+/[a-z]+/[0-9]{1,4}");
+    QRegExp grabURL("/[a-z]+/[a-z]+/([0-9]+)(\\?[^\"]+)?");
     QRegExp grabPlace(">([^<]*[a-z()])"); // FIXME: It would be better to strip away the extra '>'
 
     while (!stream.atEnd()) {
@@ -319,25 +322,24 @@ void UKMETIon::readSearchHTMLData(const QString& source, const QByteArray& html)
 
        if (flag) {
 
-           // Strip out area searching
-           if (!line.contains("area=") > 0) {
-                   if (grabURL.indexIn(line.trimmed()) > 0) {
-                       tokens = grabURL.cap(0).split('/', QString::SkipEmptyParts);
-                       grabPlace.indexIn(line.trimmed());
-                       url = "http://newsrss.bbc.co.uk/weather/forecast/" + tokens[2] + "/ObservationsRSS.xml";
-                       tmp = QString("bbcukmet|").append(grabPlace.cap(1));
+            if (grabURL.indexIn(line.trimmed()) > 0) {
+                url = "http://newsrss.bbc.co.uk/weather/forecast/" + grabURL.cap(1) + "/ObservationsRSS.xml";
+                if (grabURL.captureCount() > 1) {
+                    url += grabURL.cap(2);
+                }
+                grabPlace.indexIn(line.trimmed());
+                tmp = QString("bbcukmet|").append(grabPlace.cap(1));
 
-                       // Duplicate places can exist
-                       if (m_locations.contains(tmp)) {
-                           tmp = QString("bbcukmet|").append(QString("%1 (#%2)").arg(grabPlace.cap(1)).arg(counter));
-                           counter++;
-                       }
+                // Duplicate places can exist
+                if (m_locations.contains(tmp)) {
+                    tmp = QString("bbcukmet|").append(QString("%1 (#%2)").arg(grabPlace.cap(1)).arg(counter));
+                    counter++;
+                }
 
-                       m_place[tmp].XMLurl = url;
-                       m_place[tmp].place = grabPlace.cap(1);
-                       m_locations.append(tmp);
-                   }
-           }
+                m_place[tmp].XMLurl = url;
+                m_place[tmp].place = grabPlace.cap(1);
+                m_locations.append(tmp);
+            }
        }
 
        if (line.contains("<div class=\"line\">") > 0) {
@@ -920,30 +922,30 @@ QVector<QString> UKMETIon::forecasts(const QString& source)
     for (int i = 0; i < m_weatherData[source].forecasts.size(); ++i) {
 
         if (m_weatherData[source].forecasts[i]->period.contains("Saturday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Saturday", i18n("Sat"));
+            m_weatherData[source].forecasts[i]->period.replace("Saturday", i18nc("Short for Saturday", "Sat"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Sunday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Sunday", i18n("Sun"));
+            m_weatherData[source].forecasts[i]->period.replace("Sunday", i18nc("Short for Sunday", "Sun"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Monday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Monday", i18n("Mon"));
+            m_weatherData[source].forecasts[i]->period.replace("Monday", i18nc("Short for Monday", "Mon"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Tuesday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Tuesday", i18n("Tue"));
+            m_weatherData[source].forecasts[i]->period.replace("Tuesday", i18nc("Short for Tuesday", "Tue"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Wednesday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Wednesday", i18n("Wed"));
+            m_weatherData[source].forecasts[i]->period.replace("Wednesday", i18nc("Short for Wednesday", "Wed"));
         }
 
         if (m_weatherData[source].forecasts[i]->period.contains("Thursday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Thursday", i18n("Thu"));
+            m_weatherData[source].forecasts[i]->period.replace("Thursday", i18nc("Short for Thursday", "Thu"));
         }
         if (m_weatherData[source].forecasts[i]->period.contains("Friday")) {
-            m_weatherData[source].forecasts[i]->period.replace("Friday", i18n("Fri"));
+            m_weatherData[source].forecasts[i]->period.replace("Friday", i18nc("Short for Friday", "Fri"));
         }
 
         forecastData.append(QString("%1|%2|%3|%4|%5|%6") \

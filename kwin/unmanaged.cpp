@@ -32,7 +32,7 @@ namespace KWin
 Unmanaged::Unmanaged(Workspace* ws)
     : Toplevel(ws)
 {
-    connect(this, SIGNAL(unmanagedGeometryShapeChanged(KWin::Unmanaged*,QRect)), SIGNAL(geometryChanged()));
+    connect(this, SIGNAL(geometryShapeChanged(KWin::Toplevel*,QRect)), SIGNAL(geometryChanged()));
 }
 
 Unmanaged::~Unmanaged()
@@ -72,6 +72,7 @@ bool Unmanaged::track(Window w)
     if (Extensions::shapeAvailable())
         XShapeSelectInput(display(), w, ShapeNotifyMask);
     detectShape(w);
+    getWmOpaqueRegion();
     setupCompositing();
     ungrabXServer();
     if (effects)
@@ -82,10 +83,7 @@ bool Unmanaged::track(Window w)
 void Unmanaged::release()
 {
     Deleted* del = Deleted::create(this);
-    emit unmanagedClosed(this);
-    if (scene) {
-        scene->windowClosed(this, del);
-    }
+    emit windowClosed(this, del);
     finishCompositing();
     workspace()->removeUnmanaged(this, Allowed);
     if (!QWidget::find(window())) { // don't affect our own windows

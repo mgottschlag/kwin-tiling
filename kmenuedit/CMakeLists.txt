@@ -1,7 +1,5 @@
 add_subdirectory( pixmaps ) 
 
-add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
-
 set(kmenueditcommon_STAT_SRCS preferencesdlg.cpp klinespellchecking.cpp basictab.cpp treeview.cpp kmenuedit.cpp menufile.cpp menuinfo.cpp )
 if(NOT WIN32)
 set(kmenueditcommon_STAT_SRCS ${kmenueditcommon_STAT_SRCS} khotkeys.cpp)
@@ -21,8 +19,7 @@ set(kmenuedit_KDEINIT_SRCS main.cpp ${kmenueditcommon_STAT_SRCS})
 
 kde4_add_kdeinit_executable( kmenuedit ${kmenuedit_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kmenuedit  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY}
-)
+target_link_libraries(kdeinit_kmenuedit ${KDE4_KIO_LIBS} ${QT_QTXML_LIBRARY} ${QT_QTDBUS_LIBRARY})
 
 install(TARGETS kdeinit_kmenuedit  DESTINATION ${LIB_INSTALL_DIR} )
 

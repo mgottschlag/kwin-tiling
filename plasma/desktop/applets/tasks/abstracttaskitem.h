@@ -103,7 +103,7 @@ public:
     /** Returns the current icon for this task. */
     QIcon icon() const;
 
-    virtual void close() = 0;
+    virtual void close();
 
     /** Tells the window manager the minimized task's geometry. */
     virtual void publishIconGeometry() const;
@@ -195,18 +195,6 @@ protected:
     void stopWindowHoverEffect();
     bool shouldIgnoreDragEvent(QGraphicsSceneDragDropEvent *event);
 
-protected Q_SLOTS:
-    /** Event compression **/
-    void queueUpdate();
-
-    qreal backgroundFadeAlpha() const;
-    void setBackgroundFadeAlpha(qreal progress);
-
-    void syncActiveRect();
-    void checkSettings();
-    void clearAbstractItem();
-
-protected:
     // area of item occupied by task's icon
     QRectF iconRect(const QRectF &bounds);
     // area for the expander arrow for group items
@@ -220,19 +208,23 @@ protected:
     void resizeBackground(const QSize &size);
 
     void resizeEvent(QGraphicsSceneResizeEvent *event);
+    void setAbstractItem(TaskManager::AbstractGroupableItem *item);
 
-    TaskManager::AbstractGroupableItem * m_abstractItem;
-    LayoutWidget *m_layoutWidget;
+protected Q_SLOTS:
+    /** Event compression **/
+    void queueUpdate();
 
+    qreal backgroundFadeAlpha() const;
+    void setBackgroundFadeAlpha(qreal progress);
+
+    void syncActiveRect();
+    void checkSettings();
+
+protected:
     Tasks *m_applet;
     TaskFlags m_flags;
 
-    // distance (in pixels) between a task's icon and its text
-    static const int IconTextSpacing = 4;
-    static const int TaskItemHorizontalMargin = 4;
-    static const int TaskItemVerticalMargin = 4;
-
-    //TODO: remove when we have animated layouts
+private:
     QPropertyAnimation *m_layoutAnimation;
     QPropertyAnimation *m_backgroundFadeAnim;
 
@@ -240,7 +232,7 @@ protected:
     QString m_oldBackgroundPrefix;
     QString m_backgroundPrefix;
 
-private:
+    QWeakPointer<TaskManager::AbstractGroupableItem> m_abstractItem;
     QPixmap m_cachedShadow;
 
     QRectF m_activeRect;
@@ -260,6 +252,7 @@ private:
     bool m_showText : 1;
     bool m_layoutAnimationLock : 1;
     bool m_firstGeometryUpdate : 1;
+    QPointF m_oldDragPos;
 };
 
 #endif

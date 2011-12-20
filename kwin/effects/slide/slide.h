@@ -41,6 +41,7 @@ public:
     virtual void postPaintScreen();
     virtual void prePaintWindow(EffectWindow* w, WindowPrePaintData& data, int time);
     virtual void paintWindow(EffectWindow* w, int mask, QRegion region, WindowPaintData& data);
+    virtual bool isActive() const;
 
 private Q_SLOTS:
     void slotDesktopChanged(int old, int current);
@@ -52,6 +53,7 @@ private:
     bool slide;
     QPoint slide_start_pos;
     bool slide_painting_sticky;
+    bool slide_painting_keep_above;
     QPoint slide_painting_diff;
 
 };

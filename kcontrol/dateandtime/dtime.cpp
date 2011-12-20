@@ -69,7 +69,7 @@ Dtime::Dtime(QWidget * parent)
 
   timeServerList->setEditable(false);
   connect(timeServerList, SIGNAL(activated(int)), SLOT(configChanged()));
-  connect(timeServerList, SIGNAL(editTextChanged(const QString &)), SLOT(configChanged()));
+  connect(timeServerList, SIGNAL(editTextChanged(QString)), SLOT(configChanged()));
   connect(setDateTimeAuto, SIGNAL(toggled(bool)), timeServerList, SLOT(setEnabled(bool)));
   timeServerList->setEnabled(false);
   timeServerList->setEditable(true);

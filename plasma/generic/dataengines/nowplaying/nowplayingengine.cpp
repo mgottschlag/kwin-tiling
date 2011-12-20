@@ -30,6 +30,7 @@
 #include "playerinterface/dbuswatcher.h"
 #include "playerinterface/pollingwatcher.h"
 #include "playerinterface/mpris/mpris.h"
+#include "playerinterface/mpris2/mpris2.h"
 #include "playerinterface/juk.h"
 #ifdef XMMS_FOUND
 #include "playerinterface/xmms.h"
@@ -42,7 +43,7 @@ NowPlayingEngine::NowPlayingEngine(QObject* parent,
                                    const QVariantList& args)
     : Plasma::DataEngine(parent),
       dbusWatcher(new DBusWatcher(this)),
-      pollingWatcher(new PollingWatcher(this))
+      pollingWatcher(0)
 {
     Q_UNUSED(args)
 
@@ -52,14 +53,17 @@ NowPlayingEngine::NowPlayingEngine(QObject* parent,
             this,        SLOT(addPlayer(Player::Ptr)));
     connect(dbusWatcher, SIGNAL(playerDisappeared(Player::Ptr)),
             this,        SLOT(removePlayer(Player::Ptr)));
+
+    dbusWatcher->addFactory(new Mpris2Factory(dbusWatcher));
+    dbusWatcher->addFactory(new MprisFactory(dbusWatcher));
+    dbusWatcher->addFactory(new JukFactory(dbusWatcher));
+
+#ifdef XMMS_FOUND
+    pollingWatcher = new PollingWatcher(this);
     connect(pollingWatcher, SIGNAL(newPlayer(Player::Ptr)),
             this,        SLOT(addPlayer(Player::Ptr)));
     connect(pollingWatcher, SIGNAL(playerDisappeared(Player::Ptr)),
             this,        SLOT(removePlayer(Player::Ptr)));
-
-    dbusWatcher->addFactory(new MprisFactory(dbusWatcher));
-    dbusWatcher->addFactory(new JukFactory(dbusWatcher));
-#ifdef XMMS_FOUND
     pollingWatcher->addFactory(new XmmsFactory(pollingWatcher));
 #endif
 }

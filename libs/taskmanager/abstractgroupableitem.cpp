@@ -21,7 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-// Ownm_preferredInsertIndex
+// Own
 #include "abstractgroupableitem.h"
 
 #include <QWeakPointer>
@@ -40,8 +40,7 @@ class AbstractGroupableItem::Private
 {
 public:
     Private()
-        : m_id(m_nextId++)
-    {
+        : m_id(m_nextId++) {
     }
 
     QWeakPointer<TaskGroup> m_parentGroup;
@@ -56,8 +55,8 @@ int AbstractGroupableItem::Private::m_nextId = 1;
 
 
 AbstractGroupableItem::AbstractGroupableItem(QObject *parent)
-:   QObject(parent),
-    d(new Private)
+    :   QObject(parent),
+        d(new Private)
 {
 }
 

@@ -37,6 +37,8 @@ class KService;
 namespace KWin
 {
 
+class ThumbnailItem;
+
 class Client;
 class Deleted;
 class Unmanaged;
@@ -151,13 +153,15 @@ public:
 
     virtual EffectFrame* effectFrame(EffectFrameStyle style, bool staticSize, const QPoint& position, Qt::Alignment alignment) const;
 
+    virtual QVariant kwinOption(KWinOption kwopt);
+
     // internal (used by kwin core or compositing code)
     void startPaint();
     bool borderActivated(ElectricBorder border);
     void grabbedKeyboardEvent(QKeyEvent* e);
     bool hasKeyboardGrab() const;
 
-    bool loadEffect(const QString& name);
+    bool loadEffect(const QString& name, bool checkDefault = false);
     void toggleEffect(const QString& name);
     void unloadEffect(const QString& name);
     void reconfigureEffect(const QString& name);
@@ -171,13 +175,14 @@ public Q_SLOTS:
     void slotClientGroupItemSwitched(EffectWindow* from, EffectWindow* to);
     void slotClientGroupItemAdded(EffectWindow* from, EffectWindow* to);
     void slotClientGroupItemRemoved(EffectWindow* c, EffectWindow* group);
+    void slotShowOutline(const QRect &geometry);
+    void slotHideOutline();
 
 protected Q_SLOTS:
     void slotDesktopChanged(int old);
     void slotClientAdded(KWin::Client *c);
     void slotUnmanagedAdded(KWin::Unmanaged *u);
-    void slotClientClosed(KWin::Client *c);
-    void slotUnmanagedClosed(KWin::Unmanaged *u);
+    void slotWindowClosed(KWin::Toplevel *c);
     void slotClientActivated(KWin::Client *c);
     void slotDeletedRemoved(KWin::Deleted *d);
     void slotClientMaximized(KWin::Client *c, KDecorationDefines::MaximizeMode maxMode);
@@ -187,8 +192,7 @@ protected Q_SLOTS:
     void slotOpacityChanged(KWin::Toplevel *t, qreal oldOpacity);
     void slotClientMinimized(KWin::Client *c, bool animate);
     void slotClientUnminimized(KWin::Client *c, bool animate);
-    void slotClientGeometryShapeChanged(KWin::Client *c, const QRect &old);
-    void slotUnmanagedGeometryShapeChanged(KWin::Unmanaged *u, const QRect &old);
+    void slotGeometryShapeChanged(KWin::Toplevel *t, const QRect &old);
     void slotWindowDamaged(KWin::Toplevel *t, const QRect& r);
     void slotPropertyNotify(KWin::Toplevel *t, long atom);
     void slotPropertyNotify(long atom);
@@ -206,11 +210,19 @@ protected:
     QHash< long, int > registered_atoms;
     int next_window_quad_type;
     int mouse_poll_ref_count;
-    int current_paint_effectframe;
+
+private:
+    QList< Effect* > m_activeEffects;
+    QList< Effect* >::iterator m_currentDrawWindowIterator;
+    QList< Effect* >::iterator m_currentPaintWindowIterator;
+    QList< Effect* >::iterator m_currentPaintEffectFrameIterator;
+    QList< Effect* >::iterator m_currentPaintScreenIterator;
+    QList< Effect* >::iterator m_currentBuildQuadsIterator;
 };
 
-class EffectWindowImpl : public EffectWindow
+class EffectWindowImpl : public QObject, public EffectWindow
 {
+    Q_OBJECT
 public:
     EffectWindowImpl();
     virtual ~EffectWindowImpl();
@@ -244,6 +256,7 @@ public:
     virtual int y() const;
     virtual int width() const;
     virtual int height() const;
+    virtual QSize basicUnit() const;
     virtual QRect geometry() const;
     virtual QRegion shape() const;
     virtual int screen() const;
@@ -264,7 +277,6 @@ public:
     virtual bool isDesktop() const;
     virtual bool isDock() const;
     virtual bool isToolbar() const;
-    virtual bool isTopMenu() const;
     virtual bool isMenu() const;
     virtual bool isNormalWindow() const; // normal as in 'NET::Normal or NET::Unknown non-transient'
     virtual bool isSpecialWindow() const;
@@ -277,6 +289,7 @@ public:
     virtual bool isNotification() const;
     virtual bool isComboBox() const;
     virtual bool isDNDIcon() const;
+    virtual NET::WindowType windowType() const;
     virtual bool isManaged() const; // managed or override-redirect
     virtual bool acceptsFocus() const;
     virtual bool keepAbove() const;
@@ -305,10 +318,20 @@ public:
 
     void setData(int role, const QVariant &data);
     QVariant data(int role) const;
+
+    void registerThumbnail(ThumbnailItem *item);
+    QHash<ThumbnailItem*, QWeakPointer<EffectWindowImpl> > const &thumbnails() const {
+        return m_thumbnails;
+    }
+private Q_SLOTS:
+    void thumbnailDestroyed(QObject *object);
+    void thumbnailTargetChanged();
 private:
+    void insertThumbnail(ThumbnailItem *item);
     Toplevel* toplevel;
     Scene::Window* sw; // This one is used only during paint pass.
     QHash<int, QVariant> dataMap;
+    QHash<ThumbnailItem*, QWeakPointer<EffectWindowImpl> > m_thumbnails;
 };
 
 class EffectWindowGroupImpl
@@ -345,7 +368,7 @@ public:
     virtual void setPosition(const QPoint& point);
     virtual const QString& text() const;
     virtual void setText(const QString& text);
-    EffectFrameStyle style() const {
+    virtual EffectFrameStyle style() const {
         return m_style;
     };
     Plasma::FrameSvg& frame() {

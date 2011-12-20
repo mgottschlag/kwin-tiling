@@ -35,6 +35,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KDE/KUrl>
 #include "launcheritem.h"
 
+class KConfigDialog;
+
 namespace TaskManager
 {
 
@@ -48,7 +50,7 @@ class GroupManagerPrivate;
 class TASKMANAGER_EXPORT GroupManager: public QObject
 {
 
-Q_OBJECT
+    Q_OBJECT
 public:
     GroupManager(QObject *parent);
     ~GroupManager();
@@ -62,12 +64,10 @@ public:
     /**
     * Strategy used to Group new items
     */
-    enum TaskGroupingStrategy
-    {
+    enum TaskGroupingStrategy {
         NoGrouping = 0,
         ManualGrouping = 1, //Allow manual grouping
-        ProgramGrouping = 2, //Group automatically  same programs
-        KustodianGrouping = 3 //Group always same programs and and even groups of 0 active
+        ProgramGrouping = 2
     };
 
     TaskGroupingStrategy groupingStrategy() const;
@@ -78,8 +78,7 @@ public:
     /**
     * How the task are ordered
     */
-    enum TaskSortingStrategy
-    {
+    enum TaskSortingStrategy {
         NoSorting = 0,
         ManualSorting = 1,
         AlphaSorting = 2,
@@ -125,13 +124,20 @@ public:
      * The Visualization is responsible to update the screen number the visualization is currently on.
      */
     void setScreen(int screen);
+
+    /**
+     * @return the currently set screen; -1 if none
+     */
+    int screen() const;
+
     /**
      * Reconnect all neccessary signals to the taskmanger, and clear the per desktop stored rootGroups
      */
     void reconnect();
 
     /** Adds a Launcher for the executable/.desktop-file at url and returns a reference to the launcher*/
-    bool addLauncher(const KUrl &url, QIcon icon = QIcon(), QString name = QString(), QString genericName = QString());
+    bool addLauncher(const KUrl &url, const QIcon &icon = QIcon(), const QString &name = QString(),
+                     const QString &genericName = QString(), const QString &wmClass = QString(), int insertPos = -1);
 
     /** Removes the given launcher*/
     void removeLauncher(const KUrl &url);
@@ -147,6 +153,45 @@ public:
         if config() is reimplemented to provide a valid config group */
     void exportLauncherConfig(const KConfigGroup &config);
 
+    /** @return position of launcher */
+    int launcherIndex(const KUrl &url) const;
+
+    /** @return number of launchers */
+    int launcherCount() const;
+
+    /** @return true if launchers should not be movable */
+    bool launchersLocked() const;
+
+    /** lock launchers, so that they cannot be moved */
+    void setLaunchersLocked(bool l);
+
+    /** move a launcher */
+    void moveLauncher(const KUrl &url, int newIndex);
+
+    /** should launchers be show separate from tasks? */
+    bool separateLaunchers() const;
+
+    /** set if launchers should been show separate from tasks */
+    void setSeparateLaunchers(bool s);
+
+    /** Should grouping *always* happen? */
+    bool forceGrouping() const;
+
+    /** set if grouping should *always* happen */
+    void setForceGrouping(bool s);
+
+    /** create launcher mapping rules config page */
+    void createConfigurationInterface(KConfigDialog *parent);
+
+    /** @return the launcher associated with a window class */
+    KUrl launcherForWmClass(const QString &wmClass) const;
+
+    /** @return the window class associated with launcher */
+    QString launcherWmClass(const KUrl &url) const;
+
+    /** @return true if item is associated with a launcher */
+    bool isItemAssociatedWithLauncher(AbstractGroupableItem *item) const;
+
 protected:
     // reimplement to provide a config group to read/write settings to
     virtual KConfigGroup config() const;
@@ -158,20 +203,24 @@ Q_SIGNALS:
     /** Signal that the configuration writen to the config file has changed */
     void configChanged();
 
+    /** Signal that the order of launchers has changed */
+    void launchersChanged();
+
 private:
     Q_PRIVATE_SLOT(d, void currentDesktopChanged(int))
     Q_PRIVATE_SLOT(d, void currentActivityChanged(QString))
-    Q_PRIVATE_SLOT(d, void taskChanged(TaskPtr, ::TaskManager::TaskChanges))
+    Q_PRIVATE_SLOT(d, void taskChanged(::TaskManager::Task *, ::TaskManager::TaskChanges))
     Q_PRIVATE_SLOT(d, void checkScreenChange())
     Q_PRIVATE_SLOT(d, void startupItemDestroyed(AbstractGroupableItem *))
     Q_PRIVATE_SLOT(d, void checkIfFull())
     Q_PRIVATE_SLOT(d, void actuallyCheckIfFull())
-    Q_PRIVATE_SLOT(d, bool addTask(TaskPtr))
-    Q_PRIVATE_SLOT(d, void removeTask(TaskPtr))
-    Q_PRIVATE_SLOT(d, void addStartup(StartupPtr))
-    Q_PRIVATE_SLOT(d, void removeStartup(StartupPtr))
+    Q_PRIVATE_SLOT(d, bool addTask(::TaskManager::Task *))
+    Q_PRIVATE_SLOT(d, void removeTask(::TaskManager::Task *))
+    Q_PRIVATE_SLOT(d, void addStartup(::TaskManager::Startup *))
+    Q_PRIVATE_SLOT(d, void removeStartup(::TaskManager::Startup *))
     Q_PRIVATE_SLOT(d, void actuallyReloadTasks())
     Q_PRIVATE_SLOT(d, void taskDestroyed(QObject *))
+    Q_PRIVATE_SLOT(d, void sycocaChanged(const QStringList &))
     Q_PRIVATE_SLOT(d, void launcherVisibilityChange())
 
     friend class GroupManagerPrivate;

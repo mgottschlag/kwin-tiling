@@ -53,7 +53,7 @@ TaskItemLayout::TaskItemLayout(TaskGroupItem *parent, Tasks *applet)
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setMaximumSize(INT_MAX,INT_MAX);
     //kDebug();
-    foreach (AbstractTaskItem *item, m_groupItem->members()) {
+    foreach (AbstractTaskItem *item, parent->members()) {
         addTaskItem(item);
     }
 }
@@ -83,8 +83,7 @@ void TaskItemLayout::setOrientation(Plasma::FormFactor orientation)
 void TaskItemLayout::addTaskItem(AbstractTaskItem * item)
 {
     //kDebug();
-    if (!item) {
-        kDebug() << "invalid item";
+    if (!item || !m_groupItem) {
         return;
     }
 
@@ -93,13 +92,13 @@ void TaskItemLayout::addTaskItem(AbstractTaskItem * item)
         return;
     }
 
-    if (m_groupItem->scene() && !item->scene()) {
+    if (m_groupItem.data()->scene() && !item->scene()) {
         //kDebug() << "layout widget got scene"<<m_groupItem->scene()<< "add item to scene" <<item->scene();
-        m_groupItem->scene()->addItem(item);
+        m_groupItem.data()->scene()->addItem(item);
         //kDebug() << "itemScene" << item->scene();
     }
 
-    if (!insert(m_groupItem->indexOf(item, false), item)) {
+    if (!insert(m_groupItem.data()->indexOf(item, false), item)) {
         kDebug() << "error on  insert";
         return;
     }
@@ -114,28 +113,22 @@ void TaskItemLayout::removeTaskItem(AbstractTaskItem *item)
         return;
     }
 
-    //kDebug();
-
-    if (m_groupItem->scene()) {
-        //kDebug() << "got scene";
-        m_groupItem->scene()->removeItem(item);
-    } else {
-        kDebug() << "No Scene available";
+    if (m_groupItem && m_groupItem.data()->scene()) {
+        m_groupItem.data()->scene()->removeItem(item);
     }
-    //kDebug() << "done";
 }
 
 bool TaskItemLayout::insert(int index, AbstractTaskItem *item)
 {
     //kDebug() << item->text() << index;
-    if (!item) {
+    if (!item || !m_groupItem) {
         kDebug() << "error";
         return false;
     }
 
     int listIndex;
     for (listIndex = 0; listIndex < m_itemPositions.size(); listIndex++) {
-        if (index <= m_groupItem->indexOf(m_itemPositions.at(listIndex), false)) {
+        if (index <= m_groupItem.data()->indexOf(m_itemPositions.at(listIndex), false)) {
             break;
         }
     }
@@ -152,16 +145,13 @@ bool TaskItemLayout::insert(int index, AbstractTaskItem *item)
 
 bool TaskItemLayout::remove(AbstractTaskItem* item)
 {
-    if (!item) {
-        kDebug() << "null Item";
-        layoutItems();
-        return false;
+    if (item) {
+        disconnect(item, 0, this, 0);
+        m_itemPositions.removeAll(item);
     }
 
-    disconnect(item, 0, this, 0);
-    m_itemPositions.removeAll(item);
     layoutItems();
-    return true;
+    return item != 0;
 }
 
 
@@ -169,8 +159,11 @@ bool TaskItemLayout::remove(AbstractTaskItem* item)
 int TaskItemLayout::size()
 {
     int groupSize = 0;
+    if (!m_groupItem) {
+        return 0;
+    }
 
-    foreach (AbstractTaskItem *item, m_groupItem->members()) {
+    foreach (AbstractTaskItem *item, m_groupItem.data()->members()) {
         if (!item->abstractItem()) {
             // this item is a startup task or the task no longer exists
             kDebug() << "Error, invalid item in groupMembers";
@@ -203,7 +196,7 @@ int TaskItemLayout::size()
 int TaskItemLayout::maximumRows()
 {
     int maxRows;
-    if (m_itemPositions.isEmpty()) {
+    if (m_itemPositions.isEmpty() || !m_groupItem) {
         return 1;
     }
 
@@ -215,9 +208,9 @@ int TaskItemLayout::maximumRows()
     //TODO basicPreferredSize isn't the optimal source here because  it changes because of margins probably
     QSizeF itemSize = m_itemPositions.first()->basicPreferredSize();
     if (m_layoutOrientation == Qt::Vertical) {
-        maxRows = qMin(qMax(1, int(m_groupItem->geometry().width() / itemSize.width())), m_maxRows);
+        maxRows = qMin(qMax(1, int(m_groupItem.data()->geometry().width() / itemSize.width())), m_maxRows);
     } else {
-        maxRows = qMin(qMax(1, int(m_groupItem->geometry().height() / itemSize.height())), m_maxRows);
+        maxRows = qMin(qMax(1, int(m_groupItem.data()->geometry().height() / itemSize.height())), m_maxRows);
     }
 
     //kDebug() << "maximum rows: " << maxRows << m_maxRows << m_groupItem->geometry().height() << itemSize.height();
@@ -227,7 +220,7 @@ int TaskItemLayout::maximumRows()
 //returns a reasonable amount of columns
 int TaskItemLayout::preferredColumns()
 {
-    if (m_forceRows) {
+    if (m_forceRows || !m_groupItem) {
         m_rowSize = 1;
     } else {
         if (m_itemPositions.isEmpty()) {
@@ -236,12 +229,12 @@ int TaskItemLayout::preferredColumns()
 
         //TODO basicPreferredSize isn't the optimal source here because  it changes because of margins probably
         QSizeF itemSize = m_itemPositions.first()->basicPreferredSize();
-        //kDebug() << itemSize.width() << m_groupItem->geometry().width();
+        //kDebug() << itemSize.width() << m_groupItem.data()->geometry().width();
         if (m_layoutOrientation == Qt::Vertical) {
-            m_rowSize = qMax(1, int(m_groupItem->geometry().height() / itemSize.height()));
+            m_rowSize = qMax(1, int(m_groupItem.data()->geometry().height() / itemSize.height()));
         } else {
             //Launchers doesn't need the same space as task- and groupitems on horizontal Layouts so the size needs to be adjusted
-            qreal horizontalSpace = m_groupItem->geometry().width();
+            qreal horizontalSpace = m_groupItem.data()->geometry().width();
             int numberOflaunchers = 0;
             foreach (AbstractTaskItem *item, m_itemPositions) {
                 if (item->abstractItem() && item->abstractItem()->itemType() == TaskManager::LauncherItemType) {
@@ -290,10 +283,10 @@ void TaskItemLayout::layoutItems()
     //int rows = qMax(grid.second, 1);
 
     //kDebug() << "Laying out with" << columns << rows;
-    //kDebug() << "geometry" << m_groupItem->geometry();
-    //int rowHeight = qMax(1, int(m_groupItem->geometry().height() / rows));
+    //kDebug() << "geometry" << m_groupItem.data()->geometry();
+    //int rowHeight = qMax(1, int(m_groupItem.data()->geometry().height() / rows));
     //kDebug() << "rowHeight" << rowHeight;
-    //int columnWidth = qMax(1, int(m_groupItem->geometry().size().width() / columns));
+    //int columnWidth = qMax(1, int(m_groupItem.data()->geometry().size().width() / columns));
     //kDebug() << "column width set to " << columnWidth;
 
     //FIXME: resetting column preferred sizesthey shouldn't be taken into account for inexistent ones but they are, probably upstream issue
@@ -415,7 +408,7 @@ void TaskItemLayout::layoutItems()
     }
 
     updatePreferredSize();
-    //m_groupItem->setLayout(m_layout);
+    //m_groupItem.data()->setLayout(m_layout);
 }
 
 
@@ -437,7 +430,9 @@ void TaskItemLayout::updatePreferredSize()
         }
     }
     //kDebug() << "preferred size: " << m_layout->preferredSize();
-    m_groupItem->updatePreferredSize();
+    if (m_groupItem) {
+        m_groupItem.data()->updatePreferredSize();
+    }
 }
 
 void TaskItemLayout::setMaximumRows(int rows)

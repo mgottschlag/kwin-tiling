@@ -23,14 +23,18 @@
 #include <QObject>
 #include <QHash>
 
-#include "kactivityinfo.h"
+#include <KActivities/Info>
 
 class QSize;
 class QString;
 class QPixmap;
 class KConfig;
 
-class KActivityConsumer;
+namespace KActivities
+{
+    class Consumer;
+} // namespace KActivities
+
 
 namespace Plasma
 {
@@ -58,14 +62,24 @@ public:
     QString name();
     QPixmap pixmap(const QSize &size); //FIXME do we want diff. sizes? updates?
 
+    enum State {
+        Invalid  = KActivities::Info::Invalid,
+        Running  = KActivities::Info::Running,
+        Starting = KActivities::Info::Starting,
+        Stopped  = KActivities::Info::Stopped,
+        Stopping = KActivities::Info::Stopping,
+        PreCreation = 32
+    };
+
     /**
      * whether this is the currently active activity
      */
     bool isCurrent();
+
     /**
      * state of the activity
      */
-    KActivityInfo::State state();
+    KActivities::Info::State state();
 
     /**
      * save (copy) the activity out to an @p external config
@@ -91,7 +105,7 @@ public:
     /**
      * @returns the info object for this activity
      */
-    const KActivityInfo * info() const;
+    const KActivities::Info * info() const;
 
 signals:
     void infoChanged();
@@ -131,7 +145,7 @@ private slots:
     void updateActivityName(Plasma::Context *context);
     void containmentDestroyed(QObject *object);
     void activityChanged();
-    void activityStateChanged(KActivityInfo::State);
+    void activityStateChanged(KActivities::Info::State);
     void checkIfCurrent();
 
     void removed();
@@ -148,8 +162,8 @@ private:
     QString m_icon;
     QString m_plugin;
     QHash<QPair<int,int>, Plasma::Containment*> m_containments;
-    KActivityInfo *m_info;
-    KActivityConsumer *m_activityConsumer;
+    KActivities::Info *m_info;
+    KActivities::Consumer *m_activityConsumer;
     bool m_current;
 };
 

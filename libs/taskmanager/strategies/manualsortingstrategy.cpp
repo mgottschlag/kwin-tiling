@@ -23,11 +23,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "manualsortingstrategy.h"
 
+#include <QMap>
+
+#include <KDebug>
+
 namespace TaskManager
 {
 
 ManualSortingStrategy::ManualSortingStrategy(GroupManager *parent)
-        :AbstractSortingStrategy(parent)
+    : AbstractSortingStrategy(parent)
 {
     setType(GroupManager::ManualSorting);
 }
@@ -38,8 +42,69 @@ ManualSortingStrategy::~ManualSortingStrategy()
 
 bool ManualSortingStrategy::manualSortingRequest(AbstractGroupableItem *item, int newIndex)
 {
-    moveItem(item, newIndex);
-    return true;
+    GroupManager *gm = qobject_cast<GroupManager *>(parent());
+
+    if (!gm) {
+        return false;
+    }
+
+    if (gm->separateLaunchers()) {
+        return moveItem(item, newIndex);
+    }
+
+    int oldIndex = gm->launcherIndex(item->launcherUrl());
+
+    if (LauncherItemType == item->itemType() || -1 != oldIndex) {
+        bool moveRight = oldIndex > -1 && newIndex > oldIndex;
+
+        if (newIndex >= 0 && newIndex - (moveRight ? 1 : 0) < gm->launcherCount()) {
+            if (moveItem(item, newIndex)) {
+                gm->moveLauncher(item->launcherUrl(), (newIndex > oldIndex ? --newIndex : newIndex));
+                return true;
+            }
+        }
+    } else if (newIndex >= gm->launcherCount()) {
+        return moveItem(item, newIndex);
+    }
+
+    return false;
+}
+
+void ManualSortingStrategy::sortItems(ItemList &items)
+{
+    GroupManager *gm = qobject_cast<GroupManager *>(parent());
+
+    if (!gm || gm->separateLaunchers()) {
+        return;
+    }
+
+    //kDebug();
+    QMap<int, AbstractGroupableItem*> launcherMap;
+    QList<QString> order;
+    QMap<QString, AbstractGroupableItem*> map;
+
+    foreach (AbstractGroupableItem * groupable, items) {
+        if (!groupable) {
+            continue;
+        }
+        int index = gm ? gm->launcherIndex(groupable->launcherUrl()) : -1;
+        if (index < 0) {
+            QString name(groupable->name().toLower());
+            map.insertMulti(name, groupable);
+            if (!order.contains(name)) {
+                order.append(name);
+            }
+        } else {
+            launcherMap.insertMulti(index, groupable);
+        }
+    }
+
+    items.clear();
+    items << launcherMap.values();
+
+    foreach (QString n, order) {
+        items << map.values(n);
+    }
 }
 
 } //namespace

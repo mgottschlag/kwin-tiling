@@ -53,7 +53,7 @@ static gid_t original_egid;
 
 static void sigterm_handler(int signal)
 {
-    kDebug() << "Caught signal" << signal << ", exiting...";
+    Q_UNUSED(signal)
     QCoreApplication::quit();
 }
 

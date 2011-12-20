@@ -49,7 +49,7 @@ KDE_EXPORT int kdemain(int argc, char **argv)
 
     if (!customGraphicsSystem) {
         KConfigGroup cg(KSharedConfig::openConfig("plasma-netbookrc"), "General");
-        QApplication::setGraphicsSystem(cg.readEntry("GraphicsSystem", "system"));
+        QApplication::setGraphicsSystem(cg.readEntry("GraphicsSystem", "native"));
     }
 
     KCmdLineArgs::init(argc, argv, &aboutData);

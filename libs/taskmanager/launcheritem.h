@@ -35,8 +35,9 @@ namespace TaskManager
 {
 
 class LauncherItemPrivate;
+class GroupManager;
 
-/** 
+/**
  * An item shown in the taskmanager, in order to use it to launch the application (or file) the launcher is linked to.
  * If the Application is running the launcher gets hidden, in order to not waste space.
  */
@@ -44,7 +45,7 @@ class TASKMANAGER_EXPORT LauncherItem : public AbstractGroupableItem
 {
     Q_OBJECT
 public:
-    /** 
+    /**
      * Creates a LauncherItem for a executable
      * @param url the URL to the application or file the launcher gets linked to
      */
@@ -57,18 +58,23 @@ public:
     KDE_DEPRECATED bool isGroupItem() const;
     ItemType itemType() const;
 
+    bool isValid() const;
     QIcon icon() const;
     QString name() const;
     QString genericName() const;
+    QString wmClass() const;
 
     void setIcon(const QIcon &icon);
     void setName(const QString &name);
     void setGenericName(const QString &genericName);
+    void setWmClass(const QString &wmClass);
 
     // bookkeeping methods for showing/not showing
-    void associateItemIfMatches(AbstractGroupableItem *item);
+    /** Return true if this is a *new* association */
+    bool associateItemIfMatches(AbstractGroupableItem *item);
+    bool isAssociated(AbstractGroupableItem *item) const;
     void removeItemIfAssociated(AbstractGroupableItem *item);
-    bool shouldShow() const;
+    bool shouldShow(const GroupManager *manager) const;
 
     //reimplemented pure virtual methods from abstractgroupableitem
     bool isOnCurrentDesktop() const;
@@ -113,15 +119,15 @@ public Q_SLOTS:
     void launch();
 
 Q_SIGNALS:
-    void show(bool shouldShow);
+    void associationChanged();
 
 private:
     friend class LauncherItemPrivate;
     LauncherItemPrivate * const d;
-    
+
     //preferred applications hack
     QString defaultApplication(QString application, bool storageId = false);
-    
+
     Q_PRIVATE_SLOT(d, void associateDestroyed(QObject *obj))
 };
 

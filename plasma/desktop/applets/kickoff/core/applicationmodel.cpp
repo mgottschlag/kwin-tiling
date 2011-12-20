@@ -106,7 +106,7 @@ public:
             : q(qq),
               root(new AppNode()),
               duplicatePolicy(ApplicationModel::ShowDuplicatesPolicy),
-              systemApplicationPolicy(ApplicationModel::ShowSystemOnlyPolicy),
+              systemApplicationPolicy(ApplicationModel::ShowApplicationAndSystemPolicy),
               primaryNamePolicy(ApplicationModel::GenericNamePrimary),
               displayOrder(NameAfterDescription),
               allowSeparators(_allowSeparators)
@@ -208,7 +208,7 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
             }
 
             if (systemApplicationPolicy == ApplicationModel::ShowSystemOnlyPolicy &&
-                    systemApplications.contains(service->desktopEntryName())) {
+                systemApplications.contains(service->desktopEntryName())) {
                 // don't duplicate applications that are configured to appear in the System tab
                 // in the Applications tab
                 continue;
@@ -365,7 +365,7 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
         break;
     case Kickoff::UrlRole:
         if (node->isDir) {
-            return "applications://" + node->desktopEntry;
+            return QString::fromLatin1("applications://%1").arg(node->desktopEntry);
         } else {
             return node->desktopEntry;
         }

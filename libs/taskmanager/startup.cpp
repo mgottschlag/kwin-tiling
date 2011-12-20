@@ -42,8 +42,7 @@ class Startup::Private
 {
 public:
     Private(const KStartupInfoId& id, const KStartupInfoData& data)
-        : id(id), data(data)
-    {
+        : id(id), data(data) {
     }
 
     QIcon icon;
@@ -57,7 +56,7 @@ Startup::Startup(const KStartupInfoId& id, const KStartupInfoData& data,
     : QObject(parent),
       d(new Private(id, data))
 {
-    setObjectName( name );
+    setObjectName(name);
 }
 
 Startup::~Startup()
@@ -68,6 +67,16 @@ Startup::~Startup()
 QString Startup::text() const
 {
     return d->data.findName();
+}
+
+QString Startup::desktopId() const
+{
+    return d->data.applicationId();
+}
+
+QString Startup::wmClass() const
+{
+    return d->data.WMClass();
 }
 
 QString Startup::bin() const

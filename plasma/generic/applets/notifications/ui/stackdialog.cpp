@@ -44,19 +44,25 @@ StackDialog::StackDialog(QWidget *parent, Qt::WindowFlags f)
         m_applet(0),
         m_windowToTile(0),
         m_notificationStack(0),
+        m_view(0),
         m_drawLeft(true),
         m_drawRight(true),
         m_autoHide(true),
-        m_hasCustomPosition(true)
+        m_hasCustomPosition(false)
 {
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/extender-background");
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     KWindowSystem::setType(winId(), NET::Dock);
 
+    m_showTimer = new QTimer(this);
+    m_showTimer->setSingleShot(true);
+    m_showTimer->setInterval(0);
+    connect(m_showTimer, SIGNAL(timeout()), this, SLOT(show()));
+
     m_hideTimer = new QTimer(this);
     m_hideTimer->setSingleShot(true);
-    connect(m_hideTimer, SIGNAL(timeout()), this, SLOT(hide()));
+    connect(m_hideTimer, SIGNAL(timeout()), this, SLOT(hideRequested()));
 }
 
 StackDialog::~StackDialog()
@@ -81,7 +87,7 @@ void StackDialog::setNotificationStack(NotificationStack *stack)
     m_notificationStack = stack;
 
     connect(m_notificationStack, SIGNAL(updateRequested()), this, SLOT(update()));
-    connect(m_notificationStack, SIGNAL(hideRequested()), this, SLOT(hide()));
+    connect(m_notificationStack, SIGNAL(hideRequested()), this, SLOT(hideRequested()));
 }
 
 NotificationStack *StackDialog::notificartionStack() const
@@ -135,8 +141,8 @@ void StackDialog::adjustWindowToTilePos()
         m_windowToTileAnimation->setStartValue(m_windowToTile->pos());
 
         if (isVisible()) {
-            //FIXME assumption that y starts from 0
-            if (m_applet->location() == Plasma::TopEdge || pos().y() < m_windowToTile->size().height()) {
+            const QRect realScreenRect = qApp->desktop()->screenGeometry(m_applet->containment()->screen());
+            if (m_applet->location() == Plasma::TopEdge || (pos().y() - realScreenRect.top()) < m_windowToTile->size().height()) {
                 m_windowToTileAnimation->setEndValue(QPoint(m_windowToTile->pos().x(), geometry().bottom()));
             } else {
                 m_windowToTileAnimation->setEndValue(QPoint(m_windowToTile->pos().x(), pos().y() - m_windowToTile->size().height()));
@@ -188,19 +194,35 @@ void StackDialog::paintEvent(QPaintEvent *e)
 
             qreal left, top, right, bottom;
             m_background->getMargins(left, top, right, bottom);
-            m_background->resizeFrame(QSizeF(size().width(), nw->size().height() + top+bottom));
+            m_background->resizeFrame(QSizeF(size().width(), nw->size().height() + top + bottom));
 
-            int topMargin = contentsRect().top();
+            Plasma::FrameSvg::EnabledBorders borders = m_background->enabledBorders();
 
             if (!m_drawLeft) {
-                m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)m_background->enabledBorders()&~Plasma::FrameSvg::LeftBorder);
-            }
-            if (!m_drawRight) {
-                m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)m_background->enabledBorders()&~Plasma::FrameSvg::RightBorder);
+                borders &= ~Plasma::FrameSvg::LeftBorder;
             }
 
+            if (!m_drawRight) {
+                borders &= ~Plasma::FrameSvg::RightBorder;
+            }
+
+            m_background->setEnabledBorders(borders);
+
+            const int topMargin = contentsRect().top();
             m_background->paintFrame(&painter, QPointF(0, nw->pos().y() - top + topMargin));
         }
+    }
+}
+
+void StackDialog::perhapsShow()
+{
+    if (m_applet && m_applet->view()) {
+        // we use a timer here because when the stack is going to be shown, the applet is likely
+        // to also be in movement (e.g. from hidden away to now shown to the user) and that will
+        // likely result in an odd geometry for the applet when popupPosition is called on this
+        // dialog. so instead we wait a bit after the show request to allow the applet to find
+        // it's proper place
+        m_showTimer->start();
     }
 }
 
@@ -209,21 +231,30 @@ void StackDialog::showEvent(QShowEvent *event)
     Q_UNUSED(event)
 
     adjustPosition(adjustedSavedPos());
-
     adjustWindowToTilePos();
 
     if (m_autoHide) {
         m_hideTimer->start(hideTimeout);
     }
 
-    adjustWindowToTilePos();
     Plasma::Dialog::showEvent(event);
+}
+
+void StackDialog::hideRequested()
+{
+    // we have this method because hide() may not always cause a hideEvent, e.g. when
+    // the StackDialog has not been shown yet .. however, we always want to ensure the
+    // show timer is stopped. we also stop it in the hideEvent for completeness and to
+    // catch any direct calls to hide() that may happen
+    m_showTimer->stop();
+    hide();
 }
 
 void StackDialog::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
 
+    m_showTimer->stop();
     m_hideTimer->stop();
 
     adjustWindowToTilePos();
@@ -237,7 +268,9 @@ void StackDialog::resizeEvent(QResizeEvent *event)
     Q_UNUSED(event)
     adjustWindowToTilePos();
     Plasma::Dialog::resizeEvent(event);
-    if (!m_hasCustomPosition) {
+    if (m_hasCustomPosition) {
+        adjustPosition(pos());
+    } else if (m_applet && m_applet->containment() && m_applet->containment()->corona()) {
         move(m_applet->containment()->corona()->popupPosition(m_applet, size()));
     }
 }
@@ -273,15 +306,14 @@ void StackDialog::adjustPosition(const QPoint &pos)
         return;
     }
 
-    QPoint customPosition = pos;
-
-    const QPoint popupPosition = m_applet->containment()->corona()->popupPosition(m_applet, size());
-
-    if ((customPosition == QPoint(-1, -1))) {
+    if (pos == QPoint(-1, -1)) {
+        const QPoint popupPosition = m_applet->containment()->corona()->popupPosition(m_applet, size());
         move(popupPosition);
         Plasma::WindowEffects::slideWindow(this, m_applet->location());
         m_hasCustomPosition = false;
     } else {
+        QPoint customPosition = pos;
+
         if (m_applet->containment() &&
             m_applet->containment()->corona() &&
             m_notificationStack) {
@@ -291,7 +323,15 @@ void StackDialog::adjustPosition(const QPoint &pos)
             customPosition.ry() = qMax(customPosition.y(), screenRect.top());
             customPosition.rx() = qMin(customPosition.x() + size().width(), screenRect.right()) - size().width();
             customPosition.ry() = qMin(customPosition.y() + size().height(), screenRect.bottom()) - size().height();
+
+            bool closerToBottom = (customPosition.ry() > (screenRect.height() / 2));
+            if (!m_lastSize.isNull() && closerToBottom
+                && (m_lastSize.height() > size().height())) {
+                customPosition.ry() += m_lastSize.height() - size().height();
+            }
+            m_lastSize = size();
         }
+
         move(customPosition);
         Plasma::WindowEffects::slideWindow(this, Plasma::Desktop);
         m_hasCustomPosition = true;
@@ -300,10 +340,13 @@ void StackDialog::adjustPosition(const QPoint &pos)
 
 void StackDialog::savePosition(const QPoint& pos)
 {
+    if (!m_applet || !m_applet->containment()) {
+        return;
+    }
+
     QByteArray horizSide, vertSide;
     QPoint pixelsToSave;
-    QDesktopWidget widget;
-    const QRect realScreenRect = widget.screenGeometry(m_applet->containment()->screen());
+    const QRect realScreenRect = qApp->desktop()->screenGeometry(m_applet->containment()->screen());
 
     int screenRelativeX = pos.x() - realScreenRect.x();
     int diffWithRight = realScreenRect.width() - (screenRelativeX + size().width());
@@ -330,8 +373,6 @@ void StackDialog::savePosition(const QPoint& pos)
     kDebug() << "Y: " << pixelsToSave.ry();
     kDebug() << "X: " << pixelsToSave.rx();
 
-    const QPoint popupPosition = m_applet->containment()->corona()->popupPosition(m_applet, size());
-
     m_applet->config().writeEntry("customPosition", pixelsToSave);
     m_applet->config().writeEntry("customPositionAffinityHoriz", horizSide);
     m_applet->config().writeEntry("customPositionAffinityVert", vertSide);
@@ -339,11 +380,14 @@ void StackDialog::savePosition(const QPoint& pos)
 
 QPoint StackDialog::adjustedSavedPos() const
 {
+    if (!m_applet) {
+        return QPoint(-1, -1);
+    }
+
     QPoint pos = m_applet->config().readEntry("customPosition", QPoint(-1, -1));
 
     if (pos != QPoint(-1, -1)) {
-        QDesktopWidget widget;
-        const QRect realScreenRect = widget.screenGeometry(m_applet->containment()->screen());
+        const QRect realScreenRect = qApp->desktop()->screenGeometry(m_applet->containment()->screen());
         QByteArray horizSide = m_applet->config().readEntry("customPositionAffinityHoriz").toLatin1();
         QByteArray vertSide = m_applet->config().readEntry("customPositionAffinityVert").toLatin1();
 
@@ -359,6 +403,7 @@ QPoint StackDialog::adjustedSavedPos() const
             pos.ry() = realScreenRect.y() + (realScreenRect.height() - pos.ry() - size().height());
         }
     }
+
     return pos;
 }
 

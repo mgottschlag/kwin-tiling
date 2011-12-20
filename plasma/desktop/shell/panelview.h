@@ -51,10 +51,8 @@ namespace Plasma
 }
 
 class PanelController;
-
 class PanelAppletOverlay;
-
-class ShadowWindow;
+class PanelShadows;
 
 class PanelView : public Plasma::View
 {
@@ -206,9 +204,6 @@ protected:
     void moveEvent(QMoveEvent *event);
     void resizeEvent(QResizeEvent *event);
     void leaveEvent(QEvent *event);
-    void drawBackground(QPainter * painter, const QRectF & rect);
-    void paintEvent(QPaintEvent *event);
-    bool event(QEvent *event);
     void dragLeaveEvent(QDragLeaveEvent *event);
     void dropEvent(QDropEvent *event);
 
@@ -255,16 +250,10 @@ private Q_SLOTS:
      */
     void updatePanelGeometry();
 
-    /**
-     * a shadow is needed only if the containment supports it and composite is on
-     */
-    void checkShadow();
-
     void themeChanged();
     void setPanelDragPosition(const QPoint &point);
 
 private:
-    Plasma::Svg *m_background;
     PanelController *m_panelController;
     QSet<PanelAppletOverlay*> m_appletOverlays;
     GlowBar *m_glowBar;
@@ -274,7 +263,6 @@ private:
     QTimeLine *m_timeLine;
     QGraphicsWidget *m_spacer;
     int m_spacerIndex;
-    ShadowWindow *m_shadowWindow;
 
     int m_offset;
     Qt::Alignment m_alignment;

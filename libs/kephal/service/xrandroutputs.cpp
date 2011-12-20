@@ -54,31 +54,31 @@ namespace Kephal {
         foreach (RandROutput * output, screen->outputs()) {
             XRandROutput * o = new XRandROutput(this, output->id());
 
-            connect(o, SIGNAL(outputConnected(Kephal::Output *)),
-                    this, SIGNAL(outputConnected(Kephal::Output *)));
+            connect(o, SIGNAL(outputConnected(Kephal::Output*)),
+                    this, SIGNAL(outputConnected(Kephal::Output*)));
 
-            connect(o, SIGNAL(outputDisconnected(Kephal::Output *)),
-                    this, SIGNAL(outputDisconnected(Kephal::Output *)));
+            connect(o, SIGNAL(outputDisconnected(Kephal::Output*)),
+                    this, SIGNAL(outputDisconnected(Kephal::Output*)));
 
-            connect(o, SIGNAL(outputActivated(Kephal::Output *)),
-                    this, SIGNAL(outputActivated(Kephal::Output *)));
+            connect(o, SIGNAL(outputActivated(Kephal::Output*)),
+                    this, SIGNAL(outputActivated(Kephal::Output*)));
 
-            connect(o, SIGNAL(outputDeactivated(Kephal::Output *)),
-                    this, SIGNAL(outputDeactivated(Kephal::Output *)));
+            connect(o, SIGNAL(outputDeactivated(Kephal::Output*)),
+                    this, SIGNAL(outputDeactivated(Kephal::Output*)));
 
-            connect(o, SIGNAL(outputResized(Kephal::Output *, QSize, QSize)),
-                    this, SIGNAL(outputResized(Kephal::Output *, QSize, QSize)));
+            connect(o, SIGNAL(outputResized(Kephal::Output*,QSize,QSize)),
+                    this, SIGNAL(outputResized(Kephal::Output*,QSize,QSize)));
 
-            connect(o, SIGNAL(outputMoved(Kephal::Output *, QPoint, QPoint)),
-                    this, SIGNAL(outputMoved(Kephal::Output *, QPoint, QPoint)));
+            connect(o, SIGNAL(outputMoved(Kephal::Output*,QPoint,QPoint)),
+                    this, SIGNAL(outputMoved(Kephal::Output*,QPoint,QPoint)));
 
-            connect(o, SIGNAL(outputRateChanged(Kephal::Output *, float, float)),
-                    this, SIGNAL(outputRateChanged(Kephal::Output *, float, float)));
+            connect(o, SIGNAL(outputRateChanged(Kephal::Output*,float,float)),
+                    this, SIGNAL(outputRateChanged(Kephal::Output*,float,float)));
 
-            connect(o, SIGNAL(outputRotated(Kephal::Output *, Kephal::Rotation, Kephal::Rotation)),
-                    this, SIGNAL(outputRotated(Kephal::Output *, Kephal::Rotation, Kephal::Rotation)));
-            connect(o, SIGNAL(outputReflected(Kephal::Output *, bool, bool, bool, bool)),
-                    this, SIGNAL(outputReflected(Kephal::Output *, bool, bool, bool, bool)));
+            connect(o, SIGNAL(outputRotated(Kephal::Output*,Kephal::Rotation,Kephal::Rotation)),
+                    this, SIGNAL(outputRotated(Kephal::Output*,Kephal::Rotation,Kephal::Rotation)));
+            connect(o, SIGNAL(outputReflected(Kephal::Output*,bool,bool,bool,bool)),
+                    this, SIGNAL(outputReflected(Kephal::Output*,bool,bool,bool,bool)));
 
             kDebug() << "  added output " << output->id();
             m_outputs.insert(o->id(), o);
@@ -103,8 +103,8 @@ namespace Kephal {
 
         saveAsPrevious();
 
-        connect(output(), SIGNAL(outputChanged(RROutput, int)),
-                this, SLOT(outputChanged(RROutput, int)));
+        connect(output(), SIGNAL(outputChanged(RROutput,int)),
+                this, SLOT(outputChanged(RROutput,int)));
         //connect(this, SLOT(_activate()), output(), SLOT(slotEnable()));
         //connect(this, SLOT(_deactivate()), output(), SLOT(slotDisable()));
     }

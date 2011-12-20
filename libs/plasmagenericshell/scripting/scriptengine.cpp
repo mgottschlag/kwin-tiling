@@ -19,6 +19,8 @@
 
 #include "scriptengine.h"
 
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -43,8 +45,9 @@
 
 #include "appinterface.h"
 #include "containment.h"
-#include "widget.h"
+#include "i18n.h"
 #include "layouttemplatepackagestructure.h"
+#include "widget.h"
 
 QScriptValue constructQRectFClass(QScriptEngine *engine);
 
@@ -63,6 +66,7 @@ ScriptEngine::ScriptEngine(Plasma::Corona *corona, QObject *parent)
                               QScriptEngine::ExcludeSuperClassMethods);
     setupEngine();
     connect(this, SIGNAL(signalHandlerException(QScriptValue)), this, SLOT(exception(QScriptValue)));
+    bindI18N(this);
 }
 
 ScriptEngine::~ScriptEngine()
@@ -133,7 +137,7 @@ QScriptValue ScriptEngine::createContainment(const QString &type, const QString 
     if (c) {
         if (type == "panel") {
             // some defaults
-            c->setScreen(0);
+            c->setScreen(env->defaultPanelScreen());
             c->setLocation(Plasma::TopEdge);
         }
         c->updateConstraints(Plasma::AllConstraints | Plasma::StartupCompletedConstraint);
@@ -169,6 +173,11 @@ QScriptValue ScriptEngine::wrap(Containment *c)
     v.setProperty("widgets", newFunction(Containment::widgets));
 
     return v;
+}
+
+int ScriptEngine::defaultPanelScreen() const
+{
+    return qApp ? qApp->desktop()->primaryScreen() : 0;
 }
 
 ScriptEngine *ScriptEngine::envFor(QScriptEngine *engine)
@@ -239,7 +248,6 @@ QScriptValue ScriptEngine::fileExists(QScriptContext *context, QScriptEngine *en
 
 QScriptValue ScriptEngine::loadTemplate(QScriptContext *context, QScriptEngine *engine)
 {
-    kDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
     Q_UNUSED(engine)
     if (context->argumentCount() == 0) {
         kDebug() << "no arguments";

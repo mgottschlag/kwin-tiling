@@ -85,8 +85,7 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
 {
     ClockApplet::constraintsEvent(constraints);
 
-    if (constraints & Plasma::SizeConstraint ||
-        constraints & Plasma::FormFactorConstraint) {
+    if (constraints & Plasma::SizeConstraint || constraints & Plasma::FormFactorConstraint) {
         updateSize();
     }
 }
@@ -164,6 +163,7 @@ void Clock::updateSize()
     }
 
     generatePixmap();
+    update();
 }
 
 void Clock::clockConfigChanged()
@@ -217,7 +217,10 @@ void Clock::clockConfigChanged()
     const QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
     const QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
     setMinimumSize(metrics.size(Qt::TextSingleLine, timeString));
-    updateSize();
+
+    if (isUserConfiguring()) {
+        updateSize();
+    }
 }
 
 bool Clock::showTimezone() const

@@ -64,10 +64,12 @@
 #include "taskgroupitem.h"
 
 static const int HOVER_EFFECT_TIMEOUT = 900;
+// distance (in pixels) between a task's icon and its text
+static const int IconTextSpacing = 4;
+
 
 AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
     : QGraphicsWidget(parent),
-      m_abstractItem(0),
       m_applet(applet),
       m_flags(0),
       m_backgroundFadeAnim(0),
@@ -173,9 +175,9 @@ void AbstractTaskItem::clearToolTip()
     Plasma::ToolTipManager::self()->setContent(this, data);
 }
 
-void AbstractTaskItem::clearAbstractItem()
+void AbstractTaskItem::setAbstractItem(TaskManager::AbstractGroupableItem *item)
 {
-    m_abstractItem = 0;
+    m_abstractItem = item;
 }
 
 void AbstractTaskItem::textChanged()
@@ -186,21 +188,24 @@ void AbstractTaskItem::textChanged()
 QString AbstractTaskItem::text() const
 {
     if (m_abstractItem) {
-        return m_abstractItem->name();
-    } else {
-        kDebug() << "no abstract item?";
+        return m_abstractItem.data()->name();
     }
 
+    //kDebug() << "no abstract item?";
     return QString();
 }
 
 QIcon AbstractTaskItem::icon() const
 {
     if (m_abstractItem) {
-        return m_abstractItem->icon();
+        return m_abstractItem.data()->icon();
     }
 
     return QIcon();
+}
+
+void AbstractTaskItem::close()
+{
 }
 
 void AbstractTaskItem::setTaskFlags(const TaskFlags flags)
@@ -464,8 +469,9 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
 #ifdef Q_WS_X11
         QList<WId> windows;
 
-        if (m_abstractItem && m_abstractItem->itemType() == TaskManager::GroupItemType) {
-            TaskManager::TaskGroup *group = qobject_cast<TaskManager::TaskGroup *>(m_abstractItem);
+        TaskManager::AbstractGroupableItem *abstractItem = m_abstractItem.data();
+        if (abstractItem && abstractItem->itemType() == TaskManager::GroupItemType) {
+            TaskManager::TaskGroup *group = qobject_cast<TaskManager::TaskGroup *>(abstractItem);
 
             if (group) {
                 TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(this);
@@ -492,7 +498,7 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
                 }
             }
 
-            TaskManager::TaskItem *taskItem = qobject_cast<TaskManager::TaskItem *>(m_abstractItem);
+            TaskManager::TaskItem *taskItem = qobject_cast<TaskManager::TaskItem *>(abstractItem);
             if (taskItem && taskItem->task()) {
                 windows.append(taskItem->task()->window());
             }
@@ -514,10 +520,13 @@ void AbstractTaskItem::paint(QPainter *painter,
                              const QStyleOptionGraphicsItem *option,
                              QWidget *widget)
 {
+    if (!m_abstractItem) {
+        return;
+    }
     //kDebug() << "painting" << (QObject*)this << text();
     painter->setRenderHint(QPainter::Antialiasing);
 
-    if (m_abstractItem->itemType() != TaskManager::LauncherItemType) { //Launchers have no frame
+    if (m_abstractItem.data()->itemType() != TaskManager::LauncherItemType) { //Launchers have no frame
         // draw background
         drawBackground(painter, option, widget);
     }
@@ -642,12 +651,16 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
 {
     Q_UNUSED(option)
 
-    QRectF bounds = boundingRect();
+    TaskManager::AbstractGroupableItem *abstractItem = m_abstractItem.data();
+    if (!abstractItem) {
+        return;
+    }
 
-    if (m_abstractItem->itemType() != TaskManager::LauncherItemType) {
+    QRectF bounds = boundingRect();
+    if (abstractItem->itemType() != TaskManager::LauncherItemType) {
         bounds = bounds.adjusted(m_applet->itemLeftMargin(), m_applet->itemTopMargin(), -m_applet->itemRightMargin(), -m_applet->itemBottomMargin());
     } else {
-        bounds = bounds.adjusted(5,5,-5,-5);
+        bounds = bounds.adjusted(4,4,-5,-5);
     }
 
     WindowTaskItem *window = qobject_cast<WindowTaskItem *>(this);
@@ -689,7 +702,7 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
 
     painter->setPen(QPen(textColor(), 1.0));
 
-    if (m_abstractItem->itemType() != TaskManager::LauncherItemType) {
+    if (abstractItem->itemType() != TaskManager::LauncherItemType) {
         if (m_showText) {
             QRect rect = textRect(bounds).toRect();
             if (rect.height() > 20) {
@@ -874,8 +887,8 @@ void AbstractTaskItem::setBackgroundFadeAlpha(qreal progress)
 
 bool AbstractTaskItem::shouldIgnoreDragEvent(QGraphicsSceneDragDropEvent *event)
 {
-   if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
-       event->mimeData()->hasFormat(TaskManager::Task::groupMimetype())) {
+    if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
+        event->mimeData()->hasFormat(TaskManager::Task::groupMimetype())) {
         return true;
     }
 
@@ -886,13 +899,14 @@ bool AbstractTaskItem::shouldIgnoreDragEvent(QGraphicsSceneDragDropEvent *event)
         if (!uris.isEmpty()) {
             foreach (const QUrl &uri, uris) {
                 KUrl url(uri);
-                if (url.isLocalFile()) {
-                    const QString path = url.toLocalFile();
-                    QFileInfo info(path);
-                    if (info.isDir() || !info.isExecutable()) {
-                        return false;
-                        break;
-                    }
+                if (!url.isLocalFile()) {
+                    return false;
+                }
+
+                const QString path = url.toLocalFile();
+                QFileInfo info(path);
+                if (info.isDir() || !info.isExecutable()) {
+                    return false;
                 }
             }
 
@@ -913,19 +927,19 @@ void AbstractTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     event->accept();
 
     if (!m_activateTimerId) {
-        m_activateTimerId = startTimer(500);
+        m_activateTimerId = startTimer(250);
+        m_oldDragPos = event->pos();
     }
 }
 
 void AbstractTaskItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
-    Q_UNUSED(event);
-
     // restart the timer so that activate() is only called after the mouse
     // stops moving
-    if (m_activateTimerId) {
+    if (m_activateTimerId && event->pos() != m_oldDragPos) {
+        m_oldDragPos = event->pos();
         killTimer(m_activateTimerId);
-        m_activateTimerId = startTimer(500);
+        m_activateTimerId = startTimer(250);
     }
 }
 
@@ -1132,7 +1146,7 @@ QColor AbstractTaskItem::textColor() const
     }
 
     if (m_flags & TaskIsMinimized) {
-        color.setAlphaF(0.85);
+        color.setAlphaF(0.5);
     }
 
     return color;
@@ -1157,22 +1171,22 @@ QString AbstractTaskItem::expanderElement() const
 bool AbstractTaskItem::isGroupMember(const TaskGroupItem *group) const
 {
     if (!m_abstractItem || !group) {
-        kDebug() <<"no task";
+        //kDebug() << "no task";
         return false;
     }
 
-    return m_abstractItem->isGroupMember(group->group());
+    return m_abstractItem.data()->isGroupMember(group->group());
 
 }
 
 bool AbstractTaskItem::isGrouped() const
 {
-    if (!m_abstractItem) {
-        kDebug() <<"no item";
-        return false;
+    if (m_abstractItem) {
+        return m_abstractItem.data()->isGrouped();
     }
 
-    return m_abstractItem->isGrouped();
+    //kDebug() << "no item";
+    return false;
 }
 
 TaskGroupItem * AbstractTaskItem::parentGroup() const
@@ -1200,7 +1214,7 @@ TaskGroupItem * AbstractTaskItem::parentGroup() const
 
 TaskManager::AbstractGroupableItem * AbstractTaskItem::abstractItem()
 {
-    return m_abstractItem;
+    return m_abstractItem.data();
 }
 
 #include "abstracttaskitem.moc"

@@ -82,10 +82,10 @@ Calendar::Private::Private( QAbstractItemModel *treeModel, QAbstractItemModel *m
            SLOT(onRowsMovedInTreeModel(QModelIndex,int,int,QModelIndex,int)) );
 
   /*
-  connect( m_monitor, SIGNAL(itemLinked(const Akonadi::Item,Akonadi::Collection)),
-           this, SLOT(itemAdded(const Akonadi::Item,Akonadi::Collection)) );
-  connect( m_monitor, SIGNAL(itemUnlinked(Akonadi::Item,Akonadi::Collection )),
-           this, SLOT(itemRemoved(Akonadi::Item,Akonadi::Collection )) );
+  connect( m_monitor, SIGNAL(itemLinked(Akonadi::Item,Akonadi::Collection)),
+           this, SLOT(itemAdded(Akonadi::Item,Akonadi::Collection)) );
+  connect( m_monitor, SIGNAL(itemUnlinked(Akonadi::Item,Akonadi::Collection)),
+           this, SLOT(itemRemoved(Akonadi::Item,Akonadi::Collection)) );
   */
 }
 
@@ -537,8 +537,11 @@ void Calendar::Private::removeItemFromMaps( const Akonadi::Item &item )
 
   unseen_item.collection = unseen_parent.collection = item.storageCollectionId();
 
-  unseen_item.uid   = CalendarSupport::incidence( item )->uid();
-  unseen_parent.uid = CalendarSupport::incidence( item )->relatedTo();
+  KCalCore::Incidence::Ptr incidence = CalendarSupport::incidence( item );
+  if ( incidence ) {
+    unseen_item.uid  = incidence->uid();
+    unseen_parent.uid = incidence->relatedTo();
+  }
 
   if ( m_childToParent.contains( item.id() ) ) {
     Akonadi::Item::Id parentId = m_childToParent.take( item.id() );
@@ -578,6 +581,18 @@ void Calendar::Private::itemsRemoved( const Akonadi::Item::List &items )
       m_virtualItems[item.id()].removeLast();
       q->notifyIncidenceDeleted( item );
       emit q->calendarChanged();
+      return;
+    }
+
+    if ( !m_itemMap.contains( item.id() ) ) {
+      /** There's an off by one error in the ETM which steveire doesn't have time right now to look at.
+       *  When removing an item in korganizer, the plasma's calendar ETM emits rowsAboutToBeRemoved()
+       *  for the wrong item, which makes plasma crash.
+       *
+       * I won't remove this hack in the future because this code is to be deleted and replaced by
+       * kdepimlibs/akonadi/calendar/etmcalendar.cpp ( branch calendaring ), which i'm currently writting
+       * unit tests. So until then no need to crash with an empty payload exception.
+       */
       return;
     }
 

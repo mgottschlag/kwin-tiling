@@ -49,10 +49,10 @@ public:
 
     void destroy();
 
-     /** Handles a new item */
+    /** Handles a new item */
     virtual void handleItem(AbstractGroupableItem *) = 0;
 
-     /** Returns the strategy type */
+    /** Returns the strategy type */
     GroupManager::TaskGroupingStrategy type() const;
 
     /** DesktopChanges time to backup any needed data */
@@ -67,11 +67,9 @@ public:
     /** Returns the root group to use in grouping */
     GroupPtr rootGroup() const;
 
-    enum EditableGroupProperties
-    {
+    enum EditableGroupProperties {
         None = 0,
         Name = 1,
-        Color = 2,
         Icon =  4,
         Members = 8,
         All = 15
@@ -88,17 +86,13 @@ public:
     /** Returns a List of unused Names*/
     virtual QList<QString> nameSuggestions(TaskGroup *);
 
-    virtual bool setColor(const QColor &, TaskGroup*);
-    /** Returns a list of unused colors*/
-    virtual QList<QColor> colorSuggestions(TaskGroup *);
-
     virtual bool setIcon(const QIcon &, TaskGroup*);
     /** Returns a list of icons*/
     virtual QList<QIcon> iconSuggestions(TaskGroup *);
 
     /** Adds an item to group if EditableGroupProperties::Members is set */
     bool manualGroupingRequest(AbstractGroupableItem* taskItem, TaskGroup* groupItem);
-    /** 
+    /**
     * Creates a new group if EditableGroupProperties::Members is set
     * Should be called if the user wants to group items manually
     */
@@ -118,7 +112,7 @@ protected Q_SLOTS:
     /** Checks if the group is still necessary, removes group if empty*/
     virtual void checkGroup();
 
-     /** Returns the strategy type */
+    /** Returns the strategy type */
     void setType(GroupManager::TaskGroupingStrategy type);
 
 private:

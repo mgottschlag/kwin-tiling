@@ -43,20 +43,18 @@ public:
     Plasma::LineEdit* textSearch();
     void setOrientation(Qt::Orientation orientation);
 
+public Q_SLOTS:
+    void immutabilityChanged(Plasma::ImmutabilityType immutability);
+    void setFocus();
+
 Q_SIGNALS:
-    //void filterChanged(int index);
     void searchTermChanged(const QString &text);
     void addWidgetsRequested();
-
-public Q_SLOTS:
-    void coronaImmutabilityChanged(Plasma::ImmutabilityType immutability);
-    void setFocus();
 
 protected Q_SLOTS:
     void setMenuPos();
     void populateActivityMenu();
     void createActivity(QAction *action);
-    void registerToCoronaChanges();
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);

@@ -81,16 +81,16 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const QVariantList &)
 				   SLOT(slotLaunchChooser()));
      // The config backend
 
-     connect(base->launchManager, SIGNAL(clicked()), SLOT( changed() ));
-     connect(base->beepOnInsert, SIGNAL(clicked()), SLOT( changed() ));
-     connect(base->enableSupport, SIGNAL(clicked()), SLOT( changed() ));
+     connect(base->launchManager, SIGNAL(clicked()), SLOT(changed()));
+     connect(base->beepOnInsert, SIGNAL(clicked()), SLOT(changed()));
+     connect(base->enableSupport, SIGNAL(clicked()), SLOT(changed()));
 
 
-     connect(base->enablePolling, SIGNAL(clicked()), SLOT( changed() ));
+     connect(base->enablePolling, SIGNAL(clicked()), SLOT(changed()));
      connect(base->_readerHostsListView,
-	     SIGNAL(rightButtonPressed(QListViewItem *,const QPoint &,int)),
+	     SIGNAL(rightButtonPressed(QListViewItem*,QPoint,int)),
 	     this,
-	     SLOT(slotShowPopup(QListViewItem *,const QPoint &,int)));
+	     SLOT(slotShowPopup(QListViewItem*,QPoint,int)));
 
 
 

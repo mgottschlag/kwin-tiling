@@ -1013,7 +1013,7 @@ QString KBackgroundSettings::fingerprint()
 
     s += QString("wm:%1;").arg(m_WallpaperMode);
     if (m_WallpaperMode != NoWallpaper) {
-        quint32 rh = KGlobal::dirs()->calcResourceHash("wallpaper", currentWallpaper(), false);
+        quint32 rh = KGlobal::dirs()->calcResourceHash("wallpaper", currentWallpaper(), KStandardDirs::NoSearchOptions);
         s += QString("wp:%2:%1;").arg(rh).arg(currentWallpaper());
 
     }

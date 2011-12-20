@@ -24,6 +24,7 @@
 
 #include "ui_generalPage.h"
 
+class ErrorOverlay;
 class GeneralPage : public KCModule, private Ui_generalPage
 {
     Q_OBJECT
@@ -39,7 +40,11 @@ public:
 
 private slots:
     void configureNotifications();
-    void reloadAvailableProfiles();
+    void onServiceRegistered(const QString &service);
+    void onServiceUnregistered(const QString &service);
+
+private:
+    QWeakPointer< ErrorOverlay > m_errorOverlay;
 };
 
 #endif /* GENERALPAGE_H */

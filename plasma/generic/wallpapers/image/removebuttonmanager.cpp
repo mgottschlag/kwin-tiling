@@ -46,8 +46,8 @@ RemoveButtonManager::RemoveButtonManager(QAbstractItemView* parent, QStringList 
   
     parent->setMouseTracking(true);
   
-    connect(parent, SIGNAL(entered(const QModelIndex&)),
-            this, SLOT(slotEntered(const QModelIndex&)));
+    connect(parent, SIGNAL(entered(QModelIndex)),
+            this, SLOT(slotEntered(QModelIndex)));
     connect(parent, SIGNAL(viewportEntered()),
             this, SLOT(slotViewportEntered()));
     m_removeButton = new RemoveButton(m_view->viewport());
@@ -72,11 +72,11 @@ void RemoveButtonManager::slotEntered(const QModelIndex& index)
     }
 
     if (!m_connected) {
-        connect(m_view->model(), SIGNAL(rowsRemoved(const QModelIndex&, int, int)),
-                this, SLOT(slotRowsRemoved(const QModelIndex&, int, int)));
+        connect(m_view->model(), SIGNAL(rowsRemoved(QModelIndex,int,int)),
+                this, SLOT(slotRowsRemoved(QModelIndex,int,int)));
         connect(m_view->selectionModel(),
-                SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-                this, SLOT(slotSelectionChanged(const QItemSelection&, const QItemSelection&)));
+                SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+                this, SLOT(slotSelectionChanged(QItemSelection,QItemSelection)));
         m_connected = true;
     }
 

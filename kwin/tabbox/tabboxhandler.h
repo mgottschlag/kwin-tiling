@@ -211,6 +211,10 @@ public:
     * @param index The current Model index
     */
     void setCurrentIndex(const QModelIndex& index);
+    /**
+     * @returns the current index
+     **/
+    const QModelIndex &currentIndex() const;
 
     /**
     * Retrieves the next or previous item of the current item.
@@ -312,14 +316,37 @@ public:
     */
     QWidget* tabBoxView() const;
 
+protected:
+    /**
+     * Show the outline of the current selected window
+     * @param outline The geometry of the window the outline will be shown
+     * @since 4.7
+     **/
+    virtual void showOutline(const QRect &outline) = 0;
+
+    /**
+     * Hide previously shown outline
+     * @since 4.7
+     **/
+    virtual void hideOutline() = 0;
+
+    /**
+     * Return outline window ids
+     * @return The outline window ids given in the order left, top, right, bottom
+     * @since 4.7
+     **/
+    virtual QVector<Window> outlineWindowIds() const = 0;
+
 signals:
     /**
     * This signal is fired when the TabBoxConfig changes
     * @see setConfig
     */
     void configChanged();
+    void ready();
 
 private:
+    friend class TabBoxHandlerPrivate;
     TabBoxHandlerPrivate* d;
 };
 

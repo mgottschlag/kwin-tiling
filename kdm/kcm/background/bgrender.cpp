@@ -25,6 +25,7 @@
 #include <QPaintEngine>
 #include <QHash>
 #include <QPixmap>
+#include <QSvgRenderer>
 
 #include <kapplication.h>
 #include <kconfig.h>
@@ -35,7 +36,6 @@
 #include <kcursor.h>
 #include <kfilemetainfo.h>
 #include <kconfiggroup.h>
-#include <ksvgrenderer.h>
 #include <kmacroexpander.h>
 
 #include "bgdefaults.h"
@@ -208,8 +208,8 @@ int KBackgroundRenderer::doBackground(bool quit)
         m_pProc = new KProcess;
         m_pProc->setShellCommand(file);
         connect(m_pProc,
-                SIGNAL(finished(int, QProcess::ExitStatus)),
-                SLOT(slotBackgroundDone(int, QProcess::ExitStatus)));
+                SIGNAL(finished(int,QProcess::ExitStatus)),
+                SLOT(slotBackgroundDone(int,QProcess::ExitStatus)));
         m_pProc->start();
         retval = Wait;
         break;
@@ -327,7 +327,7 @@ wp_load:
                 svgWidth *= 6;
             }
 
-            KSvgRenderer renderer(file);
+            QSvgRenderer renderer(file);
             if (renderer.isValid()) {
                 m_Wallpaper = QImage(svgWidth, svgHeight, QImage::Format_ARGB32_Premultiplied);
                 m_Wallpaper.fill(0);

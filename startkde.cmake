@@ -25,14 +25,6 @@ elif test $kcheckrunning_result -eq 2 ; then
         exit 1
 fi
 
-# Set the background to plain grey.
-# The standard X background is nasty, causing moire effects and exploding
-# people's heads. We use colours from the standard KDE palette for those with
-# palettised displays.
-if test -z "$XDM_MANAGED" || echo "$XDM_MANAGED" | grep ",auto" > /dev/null; then
-  xsetroot -solid "#000000"
-fi
-
 # we have to unset this for Darwin since it will screw up KDE's dynamic-loading
 unset DYLD_FORCE_FLAT_NAMESPACE
 
@@ -89,7 +81,7 @@ mkdir -m 700 -p $kdehome
 mkdir -m 700 -p $kdehome/share
 mkdir -m 700 -p $kdehome/share/config
 cat >$kdehome/share/config/startupconfigkeys <<EOF
-kcminputrc Mouse cursorTheme 'Oxygen_Black'
+kcminputrc Mouse cursorTheme 'Oxygen_White'
 kcminputrc Mouse cursorSize ''
 ksplashrc KSplash Theme Default
 ksplashrc KSplash Engine KSplashX
@@ -128,15 +120,11 @@ if test -n "$kcminputrc_mouse_cursortheme" -o -n "$kcminputrc_mouse_cursorsize" 
     fi
 fi
 
-. krandrstartup 2>/dev/null
+. krandrstartup
 
-if test "$kcmfonts_general_forcefontdpi" -eq 120; then
+if test "$kcmfonts_general_forcefontdpi" -ne 0; then
     xrdb -quiet -merge -nocpp <<EOF
-Xft.dpi: 120
-EOF
-elif test "$kcmfonts_general_forcefontdpi" -eq 96; then
-    xrdb -quiet -merge -nocpp <<EOF
-Xft.dpi: 96
+Xft.dpi: $kcmfonts_general_forcefontdpi
 EOF
 fi
 
@@ -154,6 +142,9 @@ if test -z "$dl"; then
   case "$ksplashrc_ksplash_engine" in
     KSplashX)
       ksplash_pid=`ksplashx "${ksplashrc_ksplash_theme}" --pid`
+      ;;
+    KSplashQML)
+      ksplash_pid=`ksplashqml "${ksplashrc_ksplash_theme}" --pid`
       ;;
     None)
       ;;
@@ -188,11 +179,7 @@ for prefix in `echo "$libpath" | sed -n -e 's,/lib[^/]*/,/env/,p'`; do
 done
 
 # Set the path for Qt plugins provided by KDE
-if test -n "$QT_PLUGIN_PATH"; then
-  QT_PLUGIN_PATH="$QT_PLUGIN_PATH:`kde4-config --path qtplugins`"
-else
-  QT_PLUGIN_PATH="`kde4-config --path qtplugins`"
-fi
+QT_PLUGIN_PATH=${QT_PLUGIN_PATH+$QT_PLUGIN_PATH:}`kde4-config --path qtplugins`
 export QT_PLUGIN_PATH
 
 # Activate the kde font directories.
@@ -364,11 +351,11 @@ fi
 # if KDEWM is not set, ksmserver will ensure kwin is started.
 # kwrapper4 is used to reduce startup time and memory usage
 # kwrapper4 does not return useful error codes such as the exit code of ksmserver.
-# We only check for 255 which means that the ksmserver process could not be 
-# started, any problems thereafter, e.g. ksmserver failing to initialize, 
+# We only check for 255 which means that the ksmserver process could not be
+# started, any problems thereafter, e.g. ksmserver failing to initialize,
 # will remain undetected.
 test -n "$KDEWM" && KDEWM="--windowmanager $KDEWM"
-kwrapper4 ksmserver $KDEWM 
+kwrapper4 ksmserver $KDEWM
 if test $? -eq 255; then
   # Startup error
   echo 'startkde: Could not start ksmserver. Check your installation.'  1>&2

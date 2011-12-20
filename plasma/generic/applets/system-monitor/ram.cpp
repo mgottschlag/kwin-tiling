@@ -48,7 +48,7 @@ void SM::Ram::init()
     setTitle(i18n("RAM"));
 
     /* At the time this method is running, not all source may be connected. */
-    connect(engine(), SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceAdded(const QString&)));
+    connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(sourceAdded(QString)));
     foreach (const QString& source, engine()->sources()) {
         sourceAdded(source);
     }

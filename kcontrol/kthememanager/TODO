@@ -1,9 +1,0 @@
-- use KHotNewStuff for directly downloading themes from kde-look.org
-- custom pixmap kwin themes (requires kwmtheme to be ported first)
-- write user and theme developer documentation
-
-Handle:
-- splash screen (+ copying?)
-- K Menu sidebar pixmap
-- bundling the cursor theme
-- slideshow and "active" background program

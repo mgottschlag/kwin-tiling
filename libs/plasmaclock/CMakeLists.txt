@@ -1,5 +1,3 @@
-macro_optional_find_package(KdepimLibs 4.5.60)
-macro_log_feature(KDEPIMLIBS_FOUND "kdepimlibs" "KDE PIM libraries" "http://www.kde.org" FALSE "" "Needed for building plasma calendar holidays")
 macro_bool_to_01(KDEPIMLIBS_FOUND HAVE_KDEPIMLIBS)
 configure_file(config-calendartable.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-calendartable.h)
 

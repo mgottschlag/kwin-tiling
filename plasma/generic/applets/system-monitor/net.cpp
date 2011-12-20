@@ -45,9 +45,9 @@ void SM::Net::init()
     setEngine(dataEngine("systemmonitor"));
     setTitle(i18n("Network"));
 
-    connect(engine(), SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceAdded(const QString&)));
-    connect(engine(), SIGNAL(sourceRemoved(const QString&)),
-            this, SLOT(sourceRemoved(const QString&)));
+    connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(sourceAdded(QString)));
+    connect(engine(), SIGNAL(sourceRemoved(QString)),
+            this, SLOT(sourceRemoved(QString)));
     foreach (const QString& source, engine()->sources()) {
         sourceAdded(source);
     }

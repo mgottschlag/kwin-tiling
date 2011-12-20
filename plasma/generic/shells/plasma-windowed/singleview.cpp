@@ -104,9 +104,8 @@ void SingleView::resizeEvent(QResizeEvent *event)
     emit geometryChanged();
 }
 
-void SingleView::hideEvent(QHideEvent *event)
+void SingleView::closeEvent(QCloseEvent *event)
 {
-    Q_UNUSED(event)
     if (m_applet) {
         KConfigGroup dummy;
         m_containment->save(dummy);
@@ -114,6 +113,7 @@ void SingleView::hideEvent(QHideEvent *event)
         m_applet = 0;
     }
 
+    QGraphicsView::closeEvent(event);
     deleteLater();
 }
 
@@ -140,13 +140,12 @@ void SingleView::updateGeometry()
 
     //kDebug() << "New applet geometry is" << m_applet->geometry();
 
-    if (m_applet && m_applet->size().toSize() != size()) {
-        if (m_applet) {
+    if (m_applet) {
+        if (m_applet->size().toSize() != size()) {
             m_applet->resize(size());
         }
 
         setSceneRect(m_applet->sceneBoundingRect());
-
     }
 
     if ((windowFlags() & Qt::FramelessWindowHint) &&

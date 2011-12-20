@@ -22,7 +22,6 @@
 #include <KPushButton>
 #include <KIconDialog>
 #include <KWindowSystem>
-#include "kactivityinfo.h"
 #include <QApplication>
 
 ActivityControls::ActivityControls(ActivityIcon * parent)
@@ -111,7 +110,7 @@ ActivityConfiguration::ActivityConfiguration(ActivityIcon * parent, Activity * a
     m_activityIcon->setIcon(
             QIcon(parent->pixmap(QSize(32, 32))));
 
-    if (m_activity && m_activity->info() && m_activity->info()->availability() == KActivityInfo::Everything) {
+    if (m_activity && m_activity->info() && m_activity->info()->availability() == KActivities::Info::Everything) {
         m_activityIcon->setEnabled(true);
     } else {
         m_activityIcon->setEnabled(false);
@@ -135,6 +134,7 @@ void ActivityConfiguration::showEvent(QShowEvent * event)
 
 ActivityConfiguration::~ActivityConfiguration()
 {
+    delete m_iconDialog.data();
     // delete m_layoutMain;
     m_main->deleteLater();
 }
@@ -150,8 +150,24 @@ void ActivityConfiguration::applyChanges()
 
 void ActivityConfiguration::chooseIcon()
 {
-    QString iconName = KIconDialog::getIcon();
+    KIconDialog *dialog = m_iconDialog.data();
 
+    if (!m_iconDialog) {
+        dialog = new KIconDialog;
+        dialog->setup(KIconLoader::Desktop);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->setProperty("DoNotCloseController", true);
+        connect(dialog, SIGNAL(newIconName(QString)), this, SLOT(setIcon(QString)));
+        m_iconDialog = dialog;
+    }
+
+    KWindowSystem::setOnDesktop(dialog->winId(), KWindowSystem::currentDesktop());
+    dialog->showDialog();
+    KWindowSystem::forceActiveWindow(dialog->winId());
+}
+
+void ActivityConfiguration::setIcon(const QString &iconName)
+{
     if (!iconName.isEmpty()) {
         m_activityIcon->setIcon(KIcon(iconName));
         m_iconName = iconName;

@@ -161,7 +161,7 @@ class LogSensorModel : public QAbstractTableModel
     {
       mSensors.append( sensor );
 
-      connect( sensor, SIGNAL( changed() ), this, SIGNAL( layoutChanged() ) );
+      connect( sensor, SIGNAL(changed()), this, SIGNAL(layoutChanged()) );
 
       emit layoutChanged();
     }
@@ -342,9 +342,10 @@ void LogSensor::stopLogging()
   timerOff();
 }
 
-void LogSensor::timerTick( )
+void LogSensor::timerEvent ( QTimerEvent * event )
 {
-  KSGRD::SensorMgr->sendRequest( mHostName, mSensorName, (KSGRD::SensorClient*) this, 42 );
+  Q_UNUSED(event);
+  KSGRD::SensorMgr->sendRequest( mHostName, mSensorName, static_cast<KSGRD::SensorClient*>(this), 42 );
 }
 
 void LogSensor::answerReceived( int id, const QList<QByteArray>& answer ) //virtual
@@ -412,17 +413,14 @@ SensorLogger::SensorLogger( QWidget *parent, const QString& title, SharedSetting
   layout->addWidget(mView);
   setLayout(layout);
 
-  mView->setContextMenuPolicy( Qt::CustomContextMenu );
-  connect(mView, SIGNAL(customContextMenuRequested(const QPoint&)), SLOT(showContextMenu(const QPoint &)));
-
   mView->header()->setStretchLastSection( true );
   mView->setRootIsDecorated( false );
   mView->setItemsExpandable( false );
   mView->setModel( mModel );
   setPlotterWidget( mView );
 
-  connect( mView, SIGNAL( contextMenuRequest( const QModelIndex&, const QPoint& ) ),
-           this, SLOT( contextMenuRequest( const QModelIndex&, const QPoint& ) ) );
+  connect( mView, SIGNAL(contextMenuRequest(QModelIndex,QPoint)),
+           this, SLOT(contextMenuRequest(QModelIndex,QPoint)) );
 
   QPalette palette = mView->palette();
   palette.setColor( QPalette::Base, KSGRD::Style->backgroundColor() );
@@ -458,6 +456,8 @@ bool SensorLogger::addSensor( const QString& hostName, const QString& sensorName
 
       mModel->addSensor( sensor );
     }
+  } else {
+    return false;  //User cancelled dialog, so don't add sensor logger
   }
 
   return true;

@@ -121,7 +121,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   mThemesList = new ThemeListBox(this);
   mThemesList->setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Expanding );
   connect(mThemesList, SIGNAL(currentRowChanged(int)), SLOT(slotSetTheme(int)));
-  connect(mThemesList, SIGNAL(filesDropped(const KUrl::List&)), SLOT(slotFilesDropped(const KUrl::List&)));
+  connect(mThemesList, SIGNAL(filesDropped(KUrl::List)), SLOT(slotFilesDropped(KUrl::List)));
   leftbox->addWidget(mThemesList);
 
   mBtnNew = new KPushButton( KIcon("get-hot-new-stuff"), i18n("Get New Themes..."), this );
@@ -184,7 +184,7 @@ SplashInstaller::~SplashInstaller()
 
 int SplashInstaller::addTheme(const QString &path, const QString &name)
 {
-  //kDebug() << "SplashInstaller::addTheme: " << path << " " << name;
+  qDebug() << "SplashInstaller::addTheme: " << path << " " << name;
   QString tmp(i18n( name.toUtf8() ));
   int i = mThemesList->count();
   while((i > 0) && (mThemesList->item(i-1)->text() > tmp))
@@ -434,7 +434,11 @@ void SplashInstaller::slotSetTheme(int id)
         infoTxt += "</qt>";
 
         QString pluginName( cnf.readEntry( "Engine", "KSplashX" ).trimmed() );
-        if( pluginName == "Simple" || pluginName == "None" || pluginName == "KSplashX" )
+        if( pluginName == "Simple"
+                || pluginName == "None"
+                || pluginName == "KSplashX"
+                || pluginName == "KSplashQML"
+                )
             enabled = true; // these are not plugins
         else if ((KServiceTypeTrader::self()->query("KSplash/Plugin", QString("[X-KSplash-PluginName] == '%1'").arg(pluginName))).isEmpty())
         {
@@ -536,6 +540,7 @@ void SplashInstaller::slotTest()
     themeName = themeName.mid(r+1);
 
   // special handling for none and simple splashscreens
+  qDebug() << "the engine is " << mEngineOfSelected << "for" << themeName;
   if( mEngineOfSelected == "None" )
     return;
   else if( mEngineOfSelected == "Simple" )
@@ -550,6 +555,14 @@ void SplashInstaller::slotTest()
   {
     KProcess proc;
     proc << "ksplashx" << themeName << "--test";
+    if (proc.execute())
+      KMessageBox::error(this,i18n("Failed to successfully test the splash screen."));
+    return;
+  }
+  else if( mEngineOfSelected == "KSplashQML" )
+  {
+    KProcess proc;
+    proc << "ksplashqml" << themeName << "--test";
     if (proc.execute())
       KMessageBox::error(this,i18n("Failed to successfully test the splash screen."));
     return;

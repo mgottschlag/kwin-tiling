@@ -41,8 +41,7 @@ class AbstractSortingStrategy::Private
 {
 public:
     Private()
-        : type(GroupManager::NoSorting)
-    {
+        : type(GroupManager::NoSorting) {
     }
 
     QList<TaskGroup*> managedGroups;
@@ -51,8 +50,8 @@ public:
 
 
 AbstractSortingStrategy::AbstractSortingStrategy(QObject *parent)
-    :QObject(parent),
-    d(new Private)
+    : QObject(parent),
+      d(new Private)
 {
 
 }
@@ -81,13 +80,13 @@ void AbstractSortingStrategy::handleGroup(TaskGroup *group)
 
     d->managedGroups.append(group);
     disconnect(group, 0, this, 0); //To avoid duplicate connections
-    connect(group, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(handleItem(AbstractGroupableItem *)));
-    connect(group, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(check())); //groups don't have the full windowlist from the beginning, recheck them (for manual sorting)
+    connect(group, SIGNAL(itemAdded(AbstractGroupableItem*)), this, SLOT(handleItem(AbstractGroupableItem*)));
+    connect(group, SIGNAL(itemAdded(AbstractGroupableItem*)), this, SLOT(check())); //groups don't have the full windowlist from the beginning, recheck them (for manual sorting)
     connect(group, SIGNAL(destroyed()), this, SLOT(removeGroup())); //FIXME necessary?
     ItemList sortedList = group->members();
     sortItems(sortedList); //the sorting doesn't work with totally unsorted lists, therefore we sort it in the correct order the first time
 
-    foreach (AbstractGroupableItem *item, sortedList) {
+    foreach (AbstractGroupableItem * item, sortedList) {
         handleItem(item);
     }
 }
@@ -186,7 +185,7 @@ bool AbstractSortingStrategy::moveItem(AbstractGroupableItem *item, int newIndex
         return item->parentGroup()->moveItem(oldIndex, newIndex);
     }
 
-    return -1;
+    return false;
 }
 
 } //namespace

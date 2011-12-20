@@ -48,8 +48,8 @@ ShortcutTriggerWidget::ShortcutTriggerWidget( KHotKeys::ShortcutTrigger *trigger
     // new key sequencence. It doesn't matter if the user changed the sequence
     // here.
     connect(
-        trigger, SIGNAL(globalShortcutChanged(const QKeySequence&)),
-        this, SLOT(_k_globalShortcutChanged(const QKeySequence&)) );
+        trigger, SIGNAL(globalShortcutChanged(QKeySequence)),
+        this, SLOT(_k_globalShortcutChanged(QKeySequence)) );
     }
 
 

@@ -48,12 +48,12 @@ NMWirelessNetworkInterface::NMWirelessNetworkInterface(const QString & path, NMN
     d->activeAccessPoint = d->wirelessIface.activeAccessPoint().path();
     d->wirelessCapabilities = convertCapabilities(d->wirelessIface.wirelessCapabilities());
 
-    connect( &d->wirelessIface, SIGNAL(PropertiesChanged(const QVariantMap &)),
-                this, SLOT(wirelessPropertiesChanged(const QVariantMap &)));
-    connect( &d->wirelessIface, SIGNAL(AccessPointAdded(const QDBusObjectPath &)),
-                this, SLOT(accessPointAdded(const QDBusObjectPath &)));
-    connect( &d->wirelessIface, SIGNAL(AccessPointRemoved(const QDBusObjectPath &)),
-                this, SLOT(accessPointRemoved(const QDBusObjectPath &)));
+    connect( &d->wirelessIface, SIGNAL(PropertiesChanged(QVariantMap)),
+                this, SLOT(wirelessPropertiesChanged(QVariantMap)));
+    connect( &d->wirelessIface, SIGNAL(AccessPointAdded(QDBusObjectPath)),
+                this, SLOT(accessPointAdded(QDBusObjectPath)));
+    connect( &d->wirelessIface, SIGNAL(AccessPointRemoved(QDBusObjectPath)),
+                this, SLOT(accessPointRemoved(QDBusObjectPath)));
 
 
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
@@ -190,7 +190,7 @@ void NMWirelessNetworkInterface::accessPointRemoved(const QDBusObjectPath &apPat
 
 Solid::Control::WirelessNetworkInterface::OperationMode NMWirelessNetworkInterface::convertOperationMode(uint theirMode)
 {
-    Solid::Control::WirelessNetworkInterface::OperationMode ourMode;
+    Solid::Control::WirelessNetworkInterface::OperationMode ourMode = Solid::Control::WirelessNetworkInterface::Unassociated;
     switch ( theirMode ) {
         case NM_802_11_MODE_UNKNOWN:
             ourMode = Solid::Control::WirelessNetworkInterface::Unassociated;

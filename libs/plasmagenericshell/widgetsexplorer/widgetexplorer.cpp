@@ -365,6 +365,17 @@ void WidgetExplorer::keyPressEvent(QKeyEvent *event)
         return;
     }
 
+<<<<<<< HEAD
+=======
+    const QString newText = event->text().trimmed();
+    if (newText.isEmpty()) {
+        QGraphicsWidget::keyPressEvent(event);
+    } else if (Plasma::LineEdit *lineEdit = d->filteringWidget->textSearch()) {
+        lineEdit->setText(lineEdit->text() + event->text());
+        lineEdit->nativeWidget()->setCursorPosition(lineEdit->text().length());
+        lineEdit->setFocus();
+    }
+>>>>>>> master
 }
 
 bool WidgetExplorer::event(QEvent *event)

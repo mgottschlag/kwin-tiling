@@ -1,5 +1,6 @@
 set(desktop_SRCS
-    desktop.cpp)
+    desktop.cpp
+    ../../../desktop/toolboxes/internaltoolbox.cpp)
 
 kde4_add_plugin(plasma_containment_saverdesktop ${desktop_SRCS})
 target_link_libraries(plasma_containment_saverdesktop ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS})

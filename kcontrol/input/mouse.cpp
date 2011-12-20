@@ -160,8 +160,8 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
     connect(generalTab->singleClick, SIGNAL(clicked()), this, SLOT(slotClick()));
     connect(generalTab->singleClick, SIGNAL(clicked()), this, SLOT(slotSmartSliderEnabling()));
 
-    connect( generalTab->doubleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
-    connect( generalTab->cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
+    connect( generalTab->doubleClick, SIGNAL(clicked()), this, SLOT(slotClick()) );
+    connect( generalTab->cbAutoSelect, SIGNAL(clicked()), this, SLOT(slotClick()) );
     connect(generalTab->cbAutoSelect, SIGNAL(clicked()), this, SLOT(slotSmartSliderEnabling()));
 
 

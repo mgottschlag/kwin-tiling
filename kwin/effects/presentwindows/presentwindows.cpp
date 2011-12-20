@@ -27,8 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kcolorscheme.h>
 #include <kconfiggroup.h>
 #include <kdebug.h>
+#include <kglobalsettings.h>
 
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
+#ifdef KWIN_HAVE_OPENGL
 #include <kwinglutils.h>
 #endif
 
@@ -63,6 +64,10 @@ PresentWindowsEffect::PresentWindowsEffect()
     , m_highlightedWindow(NULL)
     , m_filterFrame(effects->effectFrame(EffectFrameStyled, false))
     , m_closeView(NULL)
+    , m_dragInProgress(false)
+    , m_dragWindow(NULL)
+    , m_highlightedDropTarget(NULL)
+    , m_dragToClose(false)
 {
     m_atomDesktop = XInternAtom(display(), "_KDE_PRESENT_WINDOWS_DESKTOP", False);
     m_atomWindows = XInternAtom(display(), "_KDE_PRESENT_WINDOWS_GROUP", False);
@@ -168,6 +173,7 @@ void PresentWindowsEffect::reconfigure(ReconfigureFlags)
     m_leftButtonDesktop = (DesktopMouseAction)conf.readEntry("LeftButtonDesktop", (int)DesktopExitAction);
     m_middleButtonDesktop = (DesktopMouseAction)conf.readEntry("MiddleButtonDesktop", (int)DesktopNoAction);
     m_rightButtonDesktop = (DesktopMouseAction)conf.readEntry("RightButtonDesktop", (int)DesktopNoAction);
+    m_dragToClose = conf.readEntry("DragToClose", false);
 }
 
 void* PresentWindowsEffect::proxy()
@@ -212,6 +218,10 @@ void PresentWindowsEffect::paintScreen(int mask, QRegion region, ScreenPaintData
     // Display the filter box
     if (!m_windowFilter.isEmpty())
         m_filterFrame->render(region);
+    // Display drop targets
+    for (int i=0; i<m_dropTargets.size(); ++i) {
+        m_dropTargets.at(i)->render();
+    }
 }
 
 void PresentWindowsEffect::postPaintScreen()
@@ -226,7 +236,7 @@ void PresentWindowsEffect::postPaintScreen()
         while (i != m_windowData.end()) {
             delete i.value().textFrame;
             delete i.value().iconFrame;
-            i++;
+            ++i;
         }
         m_windowData.clear();
 
@@ -236,6 +246,7 @@ void PresentWindowsEffect::postPaintScreen()
             }
         }
         effects->setActiveFullScreenEffect(NULL);
+        effects->addRepaintFull();
     }
 
     // Update windows that are changing brightness or opacity
@@ -285,9 +296,12 @@ void PresentWindowsEffect::prePaintWindow(EffectWindow *w, WindowPrePaintData &d
         } else if (winData->opacity != 1.0)
             data.setTranslucent();
 
+        const bool isInMotion = m_motionManager.isManaging(w);
         // Calculate window's brightness
         if (w == m_highlightedWindow || w == m_closeWindow || !m_activated)
             winData->highlight = qMin(1.0, winData->highlight + time / m_fadeDuration);
+        else if (!isInMotion && w->isDesktop())
+            winData->highlight = 0.3;
         else
             winData->highlight = qMax(0.0, winData->highlight - time / m_fadeDuration);
 
@@ -307,7 +321,7 @@ void PresentWindowsEffect::prePaintWindow(EffectWindow *w, WindowPrePaintData &d
         if (w->isDesktop() && !w->isOnCurrentDesktop())
             w->disablePainting(EffectWindow::PAINT_DISABLED_BY_DESKTOP);
 
-        if (m_motionManager.isManaging(w))
+        if (isInMotion)
             data.setTransformed(); // We will be moving this window
     }
     effects->prePaintWindow(w, data, time);
@@ -323,28 +337,66 @@ void PresentWindowsEffect::paintWindow(EffectWindow *w, int mask, QRegion region
             return;
         }
 
+        mask |= PAINT_WINDOW_LANCZOS;
         // Apply opacity and brightness
         data.opacity *= winData->opacity;
-        data.brightness *= interpolate(0.7, 1.0, winData->highlight);
+        data.brightness *= interpolate(0.40, 1.0, winData->highlight);
 
         if (m_motionManager.isManaging(w)) {
+            if (w->isDesktop())
+                effects->paintWindow(w, mask, region, data);
             m_motionManager.apply(w, data);
+            QRect rect = m_motionManager.transformedGeometry(w).toRect();
 
-            if (!m_motionManager.areWindowsMoving()) {
-                mask |= PAINT_WINDOW_LANCZOS;
+            if (m_activated && winData->highlight > 0.0) {
+                // scale the window (interpolated by the highlight level) to at least 105% or to cover 1/16 of the screen size - yet keep it in screen bounds
+                QRect area = effects->clientArea(FullScreenArea, w);
+                QSizeF effSize(w->width()*data.xScale, w->height()*data.yScale);
+                float tScale = sqrt((area.width()*area.height()) / (16.0*effSize.width()*effSize.height()));
+                if (tScale < 1.05)
+                    tScale = 1.05;
+                if (effSize.width()*tScale > area.width())
+                    tScale = area.width() / effSize.width();
+                if (effSize.height()*tScale > area.height())
+                    tScale = area.height() / effSize.height();
+                const float scale = interpolate(1.0, tScale, winData->highlight);
+                if (scale > 1.0) {
+                    if (scale < tScale) // don't use lanczos during transition
+                        mask &= ~PAINT_WINDOW_LANCZOS;
+
+                    const QPoint ac = area.center();
+                    const QPoint wc = rect.center();
+
+                    data.xScale *= scale;
+                    data.yScale *= scale;
+                    const int tx = -w->width()*data.xScale*(scale-1.0)*(0.5+(wc.x() - ac.x())/area.width());
+                    const int ty = -w->height()*data.yScale*(scale-1.0)*(0.5+(wc.y() - ac.y())/area.height());
+                    rect.translate(tx,ty);
+                    rect.setWidth(rect.width()*scale);
+                    rect.setHeight(rect.height()*scale);
+                    data.xTranslate += tx;
+                    data.yTranslate += ty;
+                }
+            }
+
+            if (m_motionManager.areWindowsMoving()) {
+                mask &= ~PAINT_WINDOW_LANCZOS;
+            }
+            if (m_dragInProgress && m_dragWindow == w) {
+                QPoint diff = cursorPos() - m_dragStart;
+                data.xTranslate += diff.x();
+                data.yTranslate += diff.y();
             }
             effects->paintWindow(w, mask, region, data);
 
-            QRect rect = m_motionManager.transformedGeometry(w).toRect();
+
             if (m_showIcons) {
                 QPoint point(rect.x() + rect.width() * 0.95,
                              rect.y() + rect.height() * 0.95);
                 winData->iconFrame->setPosition(point);
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
+#ifdef KWIN_HAVE_OPENGL
                 if (effects->compositingType() == KWin::OpenGLCompositing && data.shader) {
                     const float a = 0.9 * data.opacity * m_decalOpacity * 0.75;
-                    data.shader->setUniform(GLShader::TextureWidth, 1.0f);
-                    data.shader->setUniform(GLShader::TextureHeight, 1.0f);
                     data.shader->setUniform(GLShader::ModulationConstant, QVector4D(a, a, a, a));
                 }
 #endif
@@ -354,11 +406,9 @@ void PresentWindowsEffect::paintWindow(EffectWindow *w, int mask, QRegion region
                 QPoint point(rect.x() + rect.width() / 2,
                              rect.y() + rect.height() / 2);
                 winData->textFrame->setPosition(point);
-#ifdef KWIN_HAVE_OPENGL_COMPOSITING
+#ifdef KWIN_HAVE_OPENGL
                 if (effects->compositingType() == KWin::OpenGLCompositing && data.shader) {
                     const float a = 0.9 * data.opacity * m_decalOpacity * 0.75;
-                    data.shader->setUniform(GLShader::TextureWidth, 1.0f);
-                    data.shader->setUniform(GLShader::TextureHeight, 1.0f);
                     data.shader->setUniform(GLShader::ModulationConstant, QVector4D(a, a, a, a));
                 }
 #endif
@@ -473,7 +523,7 @@ void PresentWindowsEffect::windowInputMouseEvent(Window w, QEvent *e)
         }
         if (m_closeView->isVisible()) {
             const QPoint widgetPos = m_closeView->mapFromGlobal(me->pos());
-            const QPointF scenePos = m_closeView->mapToScene(widgetPos);
+//             const QPointF scenePos = m_closeView->mapToScene(widgetPos);
             QMouseEvent event(me->type(), widgetPos, me->pos(), me->button(), me->buttons(), me->modifiers());
             m_closeView->windowInputMouseEvent(&event);
             return;
@@ -490,7 +540,7 @@ void PresentWindowsEffect::windowInputMouseEvent(Window w, QEvent *e)
         if (m_motionManager.transformedGeometry(windows.at(i)).contains(cursorPos()) &&
                 winData->visible && !winData->deleted) {
             hovering = true;
-            if (windows.at(i) && m_highlightedWindow != windows.at(i))
+            if (windows.at(i) && m_highlightedWindow != windows.at(i) && !m_dragInProgress)
                 setHighlightedWindow(windows.at(i));
             break;
         }
@@ -500,34 +550,101 @@ void PresentWindowsEffect::windowInputMouseEvent(Window w, QEvent *e)
     else
         m_closeView->hide();
 
-    if (e->type() != QEvent::MouseButtonPress)
-        return;
-
-    if (me->button() == Qt::LeftButton) {
-        if (hovering) {
-            // mouse is hovering above a window - use MouseActionsWindow
-            mouseActionWindow(m_leftButtonWindow);
-        } else {
-            // mouse is hovering above desktop - use MouseActionsDesktop
-            mouseActionDesktop(m_leftButtonDesktop);
+    if (e->type() == QEvent::MouseButtonRelease) {
+        if (me->button() == Qt::LeftButton) {
+            if (m_dragInProgress && m_dragWindow) {
+                // handle drop
+                for (int i=0; i<m_dropTargets.size(); ++i) {
+                    if (m_dropTargets.at(i)->geometry().contains(me->pos())) {
+                        m_dragWindow->closeWindow();
+                        break;
+                    }
+                }
+                effects->setElevatedWindow(m_dragWindow, false);
+                m_dragInProgress = false;
+                m_dragWindow = NULL;
+                if (m_highlightedDropTarget) {
+                    KIcon icon("user-trash");
+                    m_highlightedDropTarget->setIcon(icon.pixmap(QSize(128, 128), QIcon::Normal));
+                    m_highlightedDropTarget = NULL;
+                }
+                effects->addRepaintFull();
+                XDefineCursor(display(), m_input, QCursor(Qt::PointingHandCursor).handle());
+                return;
+            }
+            if (hovering) {
+                // mouse is hovering above a window - use MouseActionsWindow
+                mouseActionWindow(m_leftButtonWindow);
+            } else {
+                // mouse is hovering above desktop - use MouseActionsDesktop
+                mouseActionDesktop(m_leftButtonDesktop);
+            }
         }
-    }
-    if (me->button() == Qt::MidButton) {
-        if (hovering) {
-            // mouse is hovering above a window - use MouseActionsWindow
-            mouseActionWindow(m_middleButtonWindow);
-        } else {
-            // mouse is hovering above desktop - use MouseActionsDesktop
-            mouseActionDesktop(m_middleButtonDesktop);
+        if (me->button() == Qt::MidButton) {
+            if (hovering) {
+                // mouse is hovering above a window - use MouseActionsWindow
+                mouseActionWindow(m_middleButtonWindow);
+            } else {
+                // mouse is hovering above desktop - use MouseActionsDesktop
+                mouseActionDesktop(m_middleButtonDesktop);
+            }
         }
+        if (me->button() == Qt::RightButton) {
+            if (hovering) {
+                // mouse is hovering above a window - use MouseActionsWindow
+                mouseActionWindow(m_rightButtonWindow);
+            } else {
+                // mouse is hovering above desktop - use MouseActionsDesktop
+                mouseActionDesktop(m_rightButtonDesktop);
+            }
+        }
+        // reset dragging state
+        effects->setElevatedWindow(m_dragWindow, false);
+        m_dragInProgress = false;
+        m_dragWindow = NULL;
+        if (m_highlightedDropTarget) {
+            effects->addRepaint(m_highlightedDropTarget->geometry());
+            KIcon icon("user-trash");
+            m_highlightedDropTarget->setIcon(icon.pixmap(QSize(128, 128), QIcon::Normal));
+            m_highlightedDropTarget = NULL;
+        }
+        XDefineCursor(display(), m_input, QCursor(Qt::PointingHandCursor).handle());
+    } else if (e->type() == QEvent::MouseButtonPress && me->button() == Qt::LeftButton && hovering && m_dragToClose) {
+        m_dragStart = me->pos();
+        m_dragWindow = m_highlightedWindow;
+        m_dragInProgress = false;
+        m_highlightedDropTarget = NULL;
+        effects->setElevatedWindow(m_dragWindow, true);
+        effects->addRepaintFull();
     }
-    if (me->button() == Qt::RightButton) {
-        if (hovering) {
-            // mouse is hovering above a window - use MouseActionsWindow
-            mouseActionWindow(m_rightButtonWindow);
-        } else {
-            // mouse is hovering above desktop - use MouseActionsDesktop
-            mouseActionDesktop(m_rightButtonDesktop);
+    if (e->type() == QEvent::MouseMove && m_dragWindow) {
+        if ((me->pos() - m_dragStart).manhattanLength() > KGlobalSettings::dndEventDelay() && !m_dragInProgress) {
+            m_dragInProgress = true;
+            XDefineCursor(display(), m_input, QCursor(Qt::ForbiddenCursor).handle());
+        }
+        if (!m_dragInProgress) {
+            return;
+        }
+        effects->addRepaintFull();
+        EffectFrame *target = NULL;
+        foreach(EffectFrame *frame, m_dropTargets) {
+            if (frame->geometry().contains(me->pos())) {
+                target = frame;
+                break;
+            }
+        }
+        if (target && !m_highlightedDropTarget) {
+            m_highlightedDropTarget = target;
+            KIcon icon("user-trash");
+            effects->addRepaint(m_highlightedDropTarget->geometry());
+            m_highlightedDropTarget->setIcon(icon.pixmap(QSize(128, 128), QIcon::Active));
+            XDefineCursor(display(), m_input, QCursor(Qt::DragMoveCursor).handle());
+        } else if (!target && m_highlightedDropTarget) {
+            KIcon icon("user-trash");
+            effects->addRepaint(m_highlightedDropTarget->geometry());
+            m_highlightedDropTarget->setIcon(icon.pixmap(QSize(128, 128), QIcon::Normal));
+            m_highlightedDropTarget = NULL;
+            XDefineCursor(display(), m_input, QCursor(Qt::ForbiddenCursor).handle());
         }
     }
 }
@@ -1468,6 +1585,7 @@ void PresentWindowsEffect::setActive(bool active, bool closingTab)
     }
     m_activated = active;
     if (m_activated) {
+        m_closeButtonCorner = (Qt::Corner)effects->kwinOption(KWin::CloseButtonCorner).toInt();
         m_decalOpacity = 0.0;
         m_highlightedWindow = NULL;
         m_windowFilter.clear();
@@ -1545,8 +1663,18 @@ void PresentWindowsEffect::setActive(bool active, bool closingTab)
         effects->setActiveFullScreenEffect(this);
 
         m_gridSizes.clear();
-        for (int i = 0; i < effects->numScreens(); ++i)
+        for (int i = 0; i < effects->numScreens(); ++i) {
             m_gridSizes.append(GridSize());
+            if (m_dragToClose) {
+                const QRect screenRect = effects->clientArea(FullScreenArea, i, 1);
+                EffectFrame *frame = effects->effectFrame(EffectFrameNone, false);
+                KIcon icon("user-trash");
+                frame->setIcon(icon.pixmap(QSize(128, 128)));
+                frame->setPosition(QPoint(screenRect.x() + screenRect.width(), screenRect.y()));
+                frame->setAlignment(Qt::AlignRight | Qt::AlignTop);
+                m_dropTargets.append(frame);
+            }
+        }
 
         rearrangeWindows();
         if (m_tabBoxEnabled)
@@ -1560,6 +1688,8 @@ void PresentWindowsEffect::setActive(bool active, bool closingTab)
             }
         }
     } else {
+        if (m_highlightedWindow)
+            effects->setElevatedWindow(m_highlightedWindow, false);
         // Fade in/out all windows
         EffectWindow *activeWindow = effects->activeWindow();
         if (m_tabBoxEnabled)
@@ -1575,6 +1705,9 @@ void PresentWindowsEffect::setActive(bool active, bool closingTab)
         }
         delete m_closeView;
         m_closeView = 0;
+        while (!m_dropTargets.empty()) {
+            delete m_dropTargets.takeFirst();
+        }
 
         // Move all windows back to their original position
         foreach (EffectWindow * w, m_motionManager.managedWindows())
@@ -1661,32 +1794,67 @@ void PresentWindowsEffect::setHighlightedWindow(EffectWindow *w)
         return;
 
     m_closeView->hide();
-    if (m_highlightedWindow)
+    if (m_highlightedWindow) {
+        effects->setElevatedWindow(m_highlightedWindow, false);
         m_highlightedWindow->addRepaintFull(); // Trigger the first repaint
+    }
     m_highlightedWindow = w;
-    if (m_highlightedWindow)
+    if (m_highlightedWindow) {
+        effects->setElevatedWindow(m_highlightedWindow, true);
         m_highlightedWindow->addRepaintFull(); // Trigger the first repaint
+    }
 
     if (m_tabBoxEnabled && m_highlightedWindow)
         effects->setTabBoxWindow(w);
     updateCloseWindow();
 }
 
+void PresentWindowsEffect::elevateCloseWindow()
+{
+    if (!m_closeView)
+        return;
+    if (EffectWindow *cw = effects->findWindow(m_closeView->winId()))
+        effects->setElevatedWindow(cw, true);
+}
+
 void PresentWindowsEffect::updateCloseWindow()
 {
     if (m_doNotCloseWindows)
         return;
-    if (m_closeView->isVisible())
-        return;
-    if (!m_highlightedWindow) {
+    if (!m_highlightedWindow || m_highlightedWindow->isDesktop()) {
         m_closeView->hide();
         return;
     }
-    const QRectF rect = m_motionManager.targetGeometry(m_highlightedWindow);
-    m_closeView->setGeometry(rect.x() + rect.width() - m_closeView->sceneRect().width(), rect.y(),
-                             m_closeView->sceneRect().width(), m_closeView->sceneRect().height());
-    if (rect.contains(effects->cursorPos()))
-        m_closeView->delayedShow();
+    if (m_closeView->isVisible())
+        return;
+
+    const QRectF rect(m_motionManager.targetGeometry(m_highlightedWindow));
+    if (2*m_closeView->sceneRect().width() > rect.width() && 2*m_closeView->sceneRect().height() > rect.height()) {
+        // not for tiny windows (eg. with many windows) - they might become unselectable
+        m_closeView->hide();
+        return;
+    }
+    QRect cvr(QPoint(0,0), m_closeView->sceneRect().size().toSize());
+    switch (m_closeButtonCorner)
+    {
+    case Qt::TopLeftCorner:
+    default:
+        cvr.moveTopLeft(rect.topLeft().toPoint()); break;
+    case Qt::TopRightCorner:
+        cvr.moveTopRight(rect.topRight().toPoint()); break;
+    case Qt::BottomLeftCorner:
+        cvr.moveBottomLeft(rect.bottomLeft().toPoint()); break;
+    case Qt::BottomRightCorner:
+        cvr.moveBottomRight(rect.bottomRight().toPoint()); break;
+    }
+    m_closeView->setGeometry(cvr);
+    if (rect.contains(effects->cursorPos())) {
+        m_closeView->show();
+        m_closeView->disarm();
+        // to wait for the next event cycle (or more if the show takes more time)
+        // TODO: make the closeWindow a graphicsviewitem? why should there be an extra scene to be used in an exiting scene??
+        QTimer::singleShot(50, this, SLOT(elevateCloseWindow()));
+    }
     else
         m_closeView->hide();
 }
@@ -1876,12 +2044,17 @@ void PresentWindowsEffect::globalShortcutChangedClass(const QKeySequence& seq)
     shortcutClass = KShortcut(seq);
 }
 
+bool PresentWindowsEffect::isActive() const
+{
+    return m_activated || m_motionManager.managingWindows();
+}
+
 /************************************************
 * CloseWindowView
 ************************************************/
 CloseWindowView::CloseWindowView(QWidget* parent)
     : QGraphicsView(parent)
-    , m_delayedShowTimer(new QTimer(this))
+    , m_armTimer(new QTimer(this))
 {
     setWindowFlags(Qt::X11BypassWindowManagerHint);
     setAttribute(Qt::WA_TranslucentBackground);
@@ -1922,15 +2095,15 @@ CloseWindowView::CloseWindowView(QWidget* parent)
     scene->setSceneRect(QRectF(QPointF(0, 0), QSizeF(width, height)));
     setScene(scene);
 
-    // setup the timer
-    m_delayedShowTimer->setSingleShot(true);
-    m_delayedShowTimer->setInterval(500);
-    connect(m_delayedShowTimer, SIGNAL(timeout()), SLOT(show()));
+    // setup the timer - attempt to prevent accidental clicks
+    m_armTimer->setSingleShot(true);
+    m_armTimer->setInterval(350); // 50ms until the window is elevated (seen!) and 300ms more to be "realized" by the user.
+    connect(m_armTimer, SIGNAL(timeout()), SLOT(arm()));
 }
 
 void CloseWindowView::windowInputMouseEvent(QMouseEvent* e)
 {
-    if (m_delayedShowTimer->isActive())
+    if (!isEnabled())
         return;
     if (e->type() == QEvent::MouseMove) {
         mouseMoveEvent(e);
@@ -1950,17 +2123,15 @@ void CloseWindowView::drawBackground(QPainter* painter, const QRectF& rect)
     m_frame->paintFrame(painter);
 }
 
-void CloseWindowView::hide()
+void CloseWindowView::arm()
 {
-    m_delayedShowTimer->stop();
-    QWidget::hide();
+    setEnabled(true);
 }
 
-void CloseWindowView::delayedShow()
+void CloseWindowView::disarm()
 {
-    if (isVisible() || m_delayedShowTimer->isActive())
-        return;
-    m_delayedShowTimer->start();
+    setEnabled(false);
+    m_armTimer->start();
 }
 
 

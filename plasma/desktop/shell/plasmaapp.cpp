@@ -57,7 +57,10 @@
 #include <KGlobalAccel>
 #include <KGlobalSettings>
 #include <KNotification>
+#include <KRun>
 #include <KWindowSystem>
+#include <KService>
+#include <KIconLoader>
 
 #include <ksmserver_interface.h>
 
@@ -72,10 +75,11 @@
 #include <Plasma/Wallpaper>
 #include <Plasma/WindowEffects>
 
+#include <KActivities/Controller>
+
 #include <kephal/screens.h>
 
 #include <plasmagenericshell/backgrounddialog.h>
-#include "kactivitycontroller.h"
 
 #include "activity.h"
 #include "appadaptor.h"
@@ -84,10 +88,11 @@
 #include "desktopcorona.h"
 #include "desktopview.h"
 #include "interactiveconsole.h"
-#include "kactivityinfo.h"
+#include "panelshadows.h"
 #include "panelview.h"
 #include "plasma-shell-desktop.h"
 #include "toolbutton.h"
+#include "klistconfirmationdialog.h"
 
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
@@ -112,10 +117,11 @@ PlasmaApp::PlasmaApp()
       m_mapper(new QSignalMapper(this)),
       m_startupSuspendWaitCount(0),
       m_ignoreDashboardClosures(false),
-      m_pendingFixedDashboard(false)
+      m_pendingFixedDashboard(false),
+      m_unlockCorona(false)
 {
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor start" << "(line:" << __LINE__ << ")";
-    PlasmaApp::suspendStartup(true);
+    suspendStartup(true);
 
     if (KGlobalSettings::isMultiHead()) {
         KGlobal::locale()->setLanguage(plasmaLocale, KGlobal::config().data());
@@ -128,12 +134,12 @@ PlasmaApp::PlasmaApp()
     // why is the next line of code here here?
     //
     // plasma-desktop was once plasma. not a big deal, right?
-    // 
+    //
     // well, kglobalaccel has a policy of forever
     // reserving shortcuts. even if the application is not running, it will still
     // defend that application's right to using that global shortcut. this has,
     // at least to me, some very obvious negative impacts on usability, such as
-    // making it difficult for the user to switch between applications of the 
+    // making it difficult for the user to switch between applications of the
     // same type and use the same global shortcuts, or when the component changes
     // name as in plasma-desktop.
     //
@@ -145,7 +151,7 @@ PlasmaApp::PlasmaApp()
     // into re-reading it and it starts too early in the start up sequence for
     // kconf_update to beat it to the config file.
     //
-    // so we instead deal with a dbus roundtrip with kded 
+    // so we instead deal with a dbus roundtrip with kded
     // (8 context switches at minimum iirc?)
     // at every app start for something that really only needs to be done once
     // but which we can't know for sure when it has been done.
@@ -263,8 +269,8 @@ PlasmaApp::PlasmaApp()
     KGlobal::setAllowQuit(true);
     KGlobal::ref();
 
-    connect(m_mapper, SIGNAL(mapped(const QString &)),
-            this, SLOT(addRemotePlasmoid(const QString &)));
+    connect(m_mapper, SIGNAL(mapped(QString)),
+            this, SLOT(addRemotePlasmoid(QString)));
     connect(Plasma::AccessManager::self(),
             SIGNAL(finished(Plasma::AccessAppletJob*)),
             this, SLOT(plasmoidAccessFinished(Plasma::AccessAppletJob*)));
@@ -300,6 +306,7 @@ void PlasmaApp::setupDesktop()
     // intialize the default theme and set the font
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
     theme->setFont(AppSettings::desktopFont());
+    m_panelShadows = new PanelShadows();
 
     // this line initializes the corona.
     corona();
@@ -373,6 +380,9 @@ void PlasmaApp::cleanup()
     delete m_console.data();
     delete m_corona;
     m_corona = 0;
+
+    delete m_panelShadows;
+    m_panelShadows = 0;
 
     //TODO: This manual sync() should not be necessary. Remove it when
     // KConfig was fixed
@@ -480,6 +490,11 @@ QList<PanelView*> PlasmaApp::panelViews() const
     return m_panels;
 }
 
+PanelShadows *PlasmaApp::panelShadows() const
+{
+    return m_panelShadows;
+}
+
 ControllerWindow *PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *containment)
 {
     return showController(screen, containment, true);
@@ -537,10 +552,8 @@ ControllerWindow *PlasmaApp::showController(int screen, Plasma::Containment *con
     }
 
     controller->show();
-    Plasma::WindowEffects::slideWindow(controller, Plasma::BottomEdge);
-    KWindowSystem::setOnAllDesktops(controller->winId(), true);
+    Plasma::WindowEffects::slideWindow(controller, controller->location());
     QTimer::singleShot(0, controller, SLOT(activate()));
-    KWindowSystem::setState(controller->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky | NET::KeepAbove);
     return controller;
 }
 
@@ -659,6 +672,14 @@ void PlasmaApp::screenRemoved(int id)
         }
     }
 
+#if 1
+    /**
+    UPDATE: this was linked to kephal events, which are not optimal, but it seems it may well
+    have been the panel->migrateTo call due to a bug in libplasma fixed in e2108ed. so let's try
+    and re-enable this.
+    NOTE: CURRENTLY UNSAFE DUE TO HOW KEPHAL (or rather, it seems, Qt?) PROCESSES EVENTS
+          DURING XRANDR EVENTS. REVISIT IN 4.8!
+          */
     Kephal::Screen *primary = Kephal::Screens::self()->primaryScreen();
     QList<Kephal::Screen *> screens = Kephal::Screens::self()->screens();
     screens.removeAll(primary);
@@ -693,6 +714,16 @@ void PlasmaApp::screenRemoved(int id)
 
         panel->updateStruts();
     }
+#else
+    QMutableListIterator<PanelView*> pIt(m_panels);
+    while (pIt.hasNext()) {
+        PanelView *panel = pIt.next();
+        if (panel->screen() == id) {
+            pIt.remove();
+            delete panel;
+        }
+    }
+#endif
 }
 
 void PlasmaApp::screenAdded(Kephal::Screen *screen)
@@ -747,7 +778,6 @@ bool PlasmaApp::canRelocatePanel(PanelView * view, Kephal::Screen *screen)
             pv->location() == view->location() &&
             pv->geometry().intersects(newGeom)) {
             return false;
-            break;
         }
     }
 
@@ -769,9 +799,9 @@ DesktopView* PlasmaApp::viewForScreen(int screen, int desktop) const
     return 0;
 }
 
-DesktopCorona* PlasmaApp::corona()
+DesktopCorona* PlasmaApp::corona(bool createIfMissing)
 {
-    if (!m_corona) {
+    if (!m_corona && createIfMissing) {
         QTime t;
         t.start();
         DesktopCorona *c = new DesktopCorona(this);
@@ -1157,10 +1187,32 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
         configDialog = new BackgroundDialog(resolution, containment, view, 0, id, nullManager);
         configDialog->setAttribute(Qt::WA_DeleteOnClose);
 
-        Activity *activity = m_corona->activity(containment->context()->currentActivityId());
-        Q_ASSERT(activity);
-        connect(configDialog, SIGNAL(containmentPluginChanged(Plasma::Containment*)),
-                activity, SLOT(replaceContainment(Plasma::Containment*)));
+
+        // if our containment is a dashboard containment only, then we don't
+        // want to mess with activities OR allow the user to change the containment type
+        // doing so causes the dashboard view to lose its containment and renders it useless
+        bool isDashboardContainment = fixedDashboard();
+        if (isDashboardContainment) {
+            bool found = false;
+            foreach (DesktopView *view, m_desktops) {
+                if (view->dashboardContainment() == containment) {
+                    found = true;
+                    break;
+                }
+            }
+
+            isDashboardContainment = found;
+        }
+
+        if (isDashboardContainment) {
+            configDialog->setLayoutChangeable(false);
+        } else {
+            Activity *activity = m_corona->activity(containment->context()->currentActivityId());
+            Q_ASSERT(activity);
+            connect(configDialog, SIGNAL(containmentPluginChanged(Plasma::Containment*)),
+                    activity, SLOT(replaceContainment(Plasma::Containment*)));
+        }
+
         connect(configDialog, SIGNAL(destroyed(QObject*)), nullManager, SLOT(deleteLater()));
     }
 
@@ -1171,7 +1223,7 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
 
 void PlasmaApp::cloneCurrentActivity()
 {
-    KActivityController controller;
+    KActivities::Controller controller;
     //getting the current activity is *so* much easier than the current containment(s) :) :)
     QString oldId = controller.currentActivity();
     Activity *oldActivity = m_corona->activity(oldId);
@@ -1312,20 +1364,44 @@ void PlasmaApp::remotePlasmoidAdded(Plasma::PackageMetadata metadata)
         return;
     }
 
+    if (m_corona->immutability() == Plasma::SystemImmutable) {
+        kDebug() << "Corona is system locked";
+        return;
+    }
+
     // the notification ptr is automatically delete when the notification is closed
     KNotification *notification = new KNotification("newplasmoid", m_desktops.at(0));
     notification->setText(i18n("A new widget has become available on the network:<br><b>%1</b> - <i>%2</i>",
                                metadata.name(), metadata.description()));
-    notification->setActions(QStringList(i18n("Add to current activity")));
+
+    // setup widget icon
+    if (!metadata.icon().isEmpty()) {
+        notification->setPixmap(KIcon(metadata.icon()).pixmap(IconSize(KIconLoader::Desktop)));
+    }
+
+    // locked, but the user is able to unlock
+    if (m_corona->immutability() == Plasma::UserImmutable) {
+        m_unlockCorona = true;
+        notification->setActions(QStringList(i18n("Unlock and add to current activity")));
+    } else {
+        // immutability == Plasma::Mutable
+        notification->setActions(QStringList(i18n("Add to current activity")));
+    }
 
     m_mapper->setMapping(notification, metadata.remoteLocation().prettyUrl());
     connect(notification, SIGNAL(action1Activated()), m_mapper, SLOT(map()));
+
     kDebug() << "firing notification";
     notification->sendEvent();
 }
 
 void PlasmaApp::addRemotePlasmoid(const QString &location)
 {
+    if (m_unlockCorona) {
+        m_unlockCorona = false;
+        m_corona->setImmutability(Plasma::Mutable);
+    }
+
     Plasma::AccessManager::self()->accessRemoteApplet(KUrl(location));
 }
 
@@ -1344,8 +1420,8 @@ void PlasmaApp::plasmoidAccessFinished(Plasma::AccessAppletJob *job)
 
 void PlasmaApp::createActivity(const QString &plugin)
 {
-    KActivityController controller;
-    QString id = controller.addActivity(i18nc("Action used to create a new activity", "New Activity"));
+    KActivities::Controller controller;
+    QString id = controller.addActivity(i18nc("Default name for a new activity", "New Activity"));
 
     Activity *a = m_corona->activity(id);
     Q_ASSERT(a);
@@ -1354,20 +1430,67 @@ void PlasmaApp::createActivity(const QString &plugin)
     controller.setCurrentActivity(id);
 }
 
-void PlasmaApp::createActivityFromScript(const QString &script, const QString &name, const QString &icon)
+void PlasmaApp::createActivityFromScript(const QString &script, const QString &name, const QString &icon, const QStringList &startupApps)
 {
-    KActivityController controller;
+    KActivities::Controller controller;
     m_loadingActivity = controller.addActivity(name);
     Activity *a = m_corona->activity(m_loadingActivity);
     Q_ASSERT(a);
     a->setIcon(icon);
 
     //kDebug() << "$$$$$$$$$$$$$$$$ begin script for" << m_loadingActivity;
-    m_corona->evaluateScripts(QStringList() << script);
+    m_corona->evaluateScripts(QStringList() << script, false);
     //kDebug() << "$$$$$$$$$$$$$$$$ end script for" << m_loadingActivity;
 
     controller.setCurrentActivity(m_loadingActivity);
     m_loadingActivity.clear();
+
+    KListConfirmationDialog * confirmDialog = new KListConfirmationDialog(
+            i18n("Run applications"),
+            i18n("This activity template requests to run the following applications"),
+            i18n("Run selected"),
+            i18n("Run none")
+            );
+    connect(confirmDialog, SIGNAL(selected(QList<QVariant>)),
+            this, SLOT(executeCommands(QList<QVariant>)));
+
+    foreach (const QString & exec, startupApps) {
+        QString realExec = exec;
+
+        #define LazyReplace(VAR, VAL) \
+            if (realExec.contains(VAR)) realExec = realExec.replace(VAR, VAL);
+
+        LazyReplace("$desktop",   KGlobalSettings::desktopPath());
+        LazyReplace("$autostart", KGlobalSettings::autostartPath());
+        LazyReplace("$documents", KGlobalSettings::documentPath());
+        LazyReplace("$music",     KGlobalSettings::musicPath());
+        LazyReplace("$video",     KGlobalSettings::videosPath());
+        LazyReplace("$downloads", KGlobalSettings::downloadPath());
+        LazyReplace("$pictures",  KGlobalSettings::picturesPath());
+
+        QString name = realExec.split(" ")[0];
+
+        KService::Ptr service = KService::serviceByDesktopName(name);
+
+        if (service) {
+            confirmDialog->addItem(KIcon(service->icon()), service->name(),
+                    ((realExec == name) ? QString() : realExec), realExec, exec.split(" ").size() <= 2);
+        } else {
+            confirmDialog->addItem(KIcon("dialog-warning"), name,
+                    ((realExec == name) ? QString() : realExec), realExec, false);
+        }
+
+        #undef LazyReplace
+    }
+
+    confirmDialog->exec();
+}
+
+void PlasmaApp::executeCommands(const QList < QVariant > & commands)
+{
+    foreach (const QVariant & command, commands) {
+        KRun::runCommand(command.toString(), 0);
+    }
 }
 
 #include "plasmaapp.moc"

@@ -45,7 +45,7 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
 
     // Listen for KUriFilter plugin config changes and update state...
     QDBusConnection sessionDbus = QDBusConnection::sessionBus();
-    sessionDbus.connect(QString(), QString(), "org.kde.KUriFilterPlugin",
+    sessionDbus.connect(QString(), "/", "org.kde.KUriFilterPlugin",
                         "configure", this, SLOT(readFiltersConfig()));
 
     connect(this, SIGNAL(teardown()), this, SLOT(resetState()));
@@ -121,7 +121,7 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
     // filtering
     if (m_lastKey == key) {
         m_filterBeforeRun = true;
-        m_match.setText(i18n("Search %1 for %2", m_lastProvider, term.mid(delimIndex)));
+        m_match.setText(i18n("Search %1 for %2", m_lastProvider, term.mid(delimIndex + 1)));
         context.addMatch(term, m_match);
         return;
     }

@@ -70,6 +70,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
 	Q_SCRIPTABLE void currentLayoutChanged(QString layout);
+	Q_SCRIPTABLE void layoutListChanged();
 
 public:
     KeyboardDaemon(QObject *parent, const QList<QVariant>&);

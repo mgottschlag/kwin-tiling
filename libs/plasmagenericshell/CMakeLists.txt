@@ -13,6 +13,7 @@ set(scripting_SRC
     scripting/appinterface.cpp
     scripting/applet.cpp
     scripting/containment.cpp
+    scripting/i18n.cpp
     scripting/layouttemplatepackagestructure.cpp
     scripting/rect.cpp
     scripting/scriptengine.cpp
@@ -26,6 +27,7 @@ set(plasmagenericshell_LIB_SRCS
     mouseinputbutton.cpp
     mouseplugins.cpp
     mousepluginwidget.cpp
+    panelshadows.cpp
     toolbutton.cpp
     wallpaperpreview.cpp
     ${scripting_SRC}

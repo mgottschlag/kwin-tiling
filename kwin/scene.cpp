@@ -77,9 +77,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "deleted.h"
 #include "effects.h"
 #include "lanczosfilter.h"
+#include "overlaywindow.h"
 #include "shadow.h"
 
 #include <kephal/screens.h>
+#include "thumbnailitem.h"
 
 namespace KWin
 {
@@ -91,16 +93,20 @@ namespace KWin
 Scene* scene = 0;
 
 Scene::Scene(Workspace* ws)
-    : wspace(ws)
+    : QObject(ws)
+    , lastRenderTime(0)
+    , wspace(ws)
     , has_waitSync(false)
-    , selfCheckDone(false)
     , lanczos_filter(new LanczosFilter())
+    , m_overlayWindow(new OverlayWindow())
 {
+    last_time.invalidate(); // Initialize the timer
 }
 
 Scene::~Scene()
 {
     delete lanczos_filter;
+    delete m_overlayWindow;
 }
 
 // returns mask and possibly modified region
@@ -111,12 +117,26 @@ void Scene::paintScreen(int* mask, QRegion* region)
     updateTimeDiff();
     // preparation step
     static_cast<EffectsHandlerImpl*>(effects)->startPaint();
+
     ScreenPrePaintData pdata;
     pdata.mask = *mask;
     pdata.paint = *region;
+
+    // region only includes all workspace-specific repaints but some effect (e.g. blur)
+    // rely on the full damaged area
+    QRegion dirtyArea;
+    foreach (Window * w, stacking_order) { // bottom to top
+        Toplevel* topw = w->window();
+        dirtyArea |= topw->repaints().translated(topw->pos());
+        dirtyArea |= topw->decorationPendingRegion();
+    }
+    pdata.paint |= dirtyArea;
+
     effects->prePaintScreen(pdata, time_diff);
     *mask = pdata.mask;
-    *region = pdata.paint;
+    // Subtract the dirty region and let finalPaintScreen decide which areas have to be drawn
+    *region |= pdata.paint - dirtyArea;
+
     if (*mask & (PAINT_SCREEN_TRANSFORMED | PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS)) {
         // Region painting is not possible with transformations,
         // because screen damage doesn't match transformed positions.
@@ -147,24 +167,25 @@ void Scene::paintScreen(int* mask, QRegion* region)
 // Compute time since the last painting pass.
 void Scene::updateTimeDiff()
 {
-    if (last_time.isNull()) {
+    if (!last_time.isValid()) {
         // Painting has been idle (optimized out) for some time,
         // which means time_diff would be huge and would break animations.
         // Simply set it to one (zero would mean no change at all and could
         // cause problems).
         time_diff = 1;
+        last_time.start();
     } else
-        time_diff = last_time.elapsed();
+        time_diff = last_time.restart();
+
     if (time_diff < 0)   // check time rollback
         time_diff = 1;
-    last_time.start();;
 }
 
 // Painting pass is optimized away.
 void Scene::idle()
 {
     // Don't break time since last paint for the next pass.
-    last_time = QTime();
+    last_time.invalidate();
 }
 
 // the function that'll be eventually called by paintScreen() above
@@ -185,6 +206,18 @@ void Scene::paintGenericScreen(int orig_mask, ScreenPaintData)
         paintBackground(infiniteRegion());
     QList< Phase2Data > phase2;
     foreach (Window * w, stacking_order) { // bottom to top
+        Toplevel* topw = w->window();
+        painted_region |= topw->repaints().translated(topw->pos());
+        painted_region |= topw->decorationPendingRegion();
+
+        // Reset the repaint_region.
+        // This has to be done here because many effects schedule a repaint for
+        // the next frame within Effects::prePaintWindow.
+        topw->resetRepaints(topw->decorationRect());
+        if (topw->hasShadow()) {
+            topw->resetRepaints(topw->shadow()->shadowRegion().boundingRect());
+        }
+
         WindowPrePaintData data;
         data.mask = orig_mask | (w->isOpaque() ? PAINT_WINDOW_OPAQUE : PAINT_WINDOW_TRANSLUCENT);
         w->resetPaintingEnabled();
@@ -222,18 +255,37 @@ void Scene::paintSimpleScreen(int orig_mask, QRegion region)
                          | PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS_WITHOUT_FULL_REPAINTS
                          | PAINT_WINDOW_TRANSLUCENT | PAINT_WINDOW_OPAQUE)) == 0);
     QHash< Window*, Phase2Data > phase2data;
-    // Draw each opaque window top to bottom, subtracting the bounding rect of
-    // each window from the clip region after it's been drawn.
-    for (int i = stacking_order.count() - 1;  // top to bottom
-            i >= 0;
-            --i) {
+
+    QRegion dirtyArea = region;
+    for (int i = 0;  // do prePaintWindow bottom to top
+            i < stacking_order.count();
+            ++i) {
         Window* w = stacking_order[ i ];
+        Toplevel* topw = w->window();
         WindowPrePaintData data;
         data.mask = orig_mask | (w->isOpaque() ? PAINT_WINDOW_OPAQUE : PAINT_WINDOW_TRANSLUCENT);
         w->resetPaintingEnabled();
         data.paint = region;
+        data.paint |= topw->repaints().translated(topw->pos());
+        data.paint |= topw->decorationPendingRegion();
+
+        // Reset the repaint_region.
+        // This has to be done here because many effects schedule a repaint for
+        // the next frame within Effects::prePaintWindow.
+        topw->resetRepaints(topw->decorationRect());
+        if (topw->hasShadow()) {
+            topw->resetRepaints(topw->shadow()->shadowRegion().boundingRect());
+        }
         // Clip out the decoration for opaque windows; the decoration is drawn in the second pass
-        data.clip = w->isOpaque() ? w->clientShape().translated(w->x(), w->y()) : QRegion();
+        if (w->isOpaque()) {
+            // the window is fully opaque
+            data.clip = w->clientShape().translated(w->x(), w->y());
+        } else if (topw->hasAlpha() && topw->opacity() == 1.0) {
+            // the window is partially opaque
+            data.clip = (w->clientShape() & topw->opaqueRegion()).translated(w->x(), w->y());
+        } else {
+            data.clip = QRegion();
+        }
         data.quads = w->buildQuads();
         // preparation step
         effects->prePaintWindow(effectWindow(w), data, time_diff);
@@ -248,8 +300,7 @@ void Scene::paintSimpleScreen(int orig_mask, QRegion region)
             w->suspendUnredirect(true);
             continue;
         }
-        if (data.paint != region)   // prepaint added area to draw
-            painted_region |= data.paint; // make sure it makes it to the screen
+        dirtyArea |= data.paint;
         // Schedule the window for painting
         phase2data[w] = Phase2Data(w, data.paint, data.clip, data.mask, data.quads);
         // no transformations, but translucency requires window pixmap
@@ -259,39 +310,73 @@ void Scene::paintSimpleScreen(int orig_mask, QRegion region)
     // First opaque windows, top to bottom
     // This also calculates correct paint regions for windows, also taking
     //  care of clipping
-    QRegion allclips;
+    QRegion allclips, upperTranslucentDamage;
     for (int i = stacking_order.count() - 1; i >= 0; --i) {
-        Window* w = stacking_order[ i ];
-        if (!phase2data.contains(w))
+        QHash< Window*, Phase2Data >::iterator data = phase2data.find(stacking_order[ i ]);
+        if (data == phase2data.end())
             continue;
-        Phase2Data d = phase2data[w];
-        // Calculate correct paint region and take the clip region into account
-        d.region = painted_region - allclips;
-        allclips |= d.clip;
-        if (d.mask & PAINT_WINDOW_TRANSLUCENT) {
-            // For translucent windows, the paint region must contain the
-            //  entire painted area, except areas clipped by opaque windows
-            //  above the translucent window
-            phase2data[w].region = d.region;
-        } else {
+
+        Toplevel *tlw = data.key()->window();
+        // In case there is a window with a higher stackposition which has translucent regions
+        // (e.g. decorations) that still have to be drawn, we also have to repaint the current window
+        // in these particular regions
+        data->region |= (upperTranslucentDamage & tlw->decorationRect().translated(tlw->pos()));
+
+        // subtract the parts which have possibly been drawn already as part of
+        // a higher opaque window
+        data->region -= allclips;
+
+        // Here we rely on WindowPrePaintData::setTranslucent() to remove
+        // the clip if needed.
+        if (!data->clip.isEmpty()) {
+            // clip away this region for all windows below this one
+            allclips |= data->clip;
             // Paint the opaque window
-            paintWindow(d.window, d.mask, d.region, d.quads);
-            // Clip out the client area, so we only draw the decoration in the next pass
-            phase2data[w].region = d.region - d.clip;
-            phase2data[w].mask |= PAINT_DECORATION_ONLY;
+            data->painted_1stpass = data->clip & data->region;
+            paintWindow(data->window, data->mask, data->painted_1stpass, data->quads);
+            painted_region |= data->painted_1stpass;
+
+            // Clip out the client area, so we only draw the rest in the next pass
+            data->region -= data->clip;
+            // if prePaintWindow didn't change the clipping area we only have to paint
+            // the decoration
+            if ((data-> clip ^
+                 data.key()->clientShape().translated(data.key()->x(), data.key()->y())).isEmpty()) {
+                data->mask |= PAINT_DECORATION_ONLY;
+            }
         }
+        // extend the translucent damage for windows below this by remaining (translucent) regions
+        upperTranslucentDamage |= data->region;
     }
-    // Fill any areas of the root window not covered by windows
-    if (!(orig_mask & PAINT_SCREEN_BACKGROUND_FIRST))
-        paintBackground(painted_region - allclips);
+
+    QRegion painted_2ndpass;
+    // Fill any areas of the root window not covered by opaque windows
+    if (!(orig_mask & PAINT_SCREEN_BACKGROUND_FIRST)) {
+        painted_2ndpass = dirtyArea - allclips;
+        paintBackground(painted_2ndpass);
+    }
+
     // Now walk the list bottom to top, drawing translucent windows.
+    QRegion lowerOpaqueDamage;
     for (int i = 0; i < stacking_order.count(); i++) {
-        Window* w = stacking_order[ i ];
-        if (!phase2data.contains(w))
+        QHash< Window*, Phase2Data >::iterator data = phase2data.find(stacking_order[ i ]);
+        if (data == phase2data.end())
             continue;
-        Phase2Data d = phase2data[w];
-        paintWindow(d.window, d.mask, d.region, d.quads);
+
+        Toplevel *tlw = data.key()->window();
+
+        // add all regions of the lower windows which have already be drawn in the 1st pass
+        data->region |= (lowerOpaqueDamage & tlw->decorationRect().translated(tlw->pos()));
+        // and extend that region by opaque parts of ourself
+        lowerOpaqueDamage |= data->painted_1stpass;
+
+        // add all regions which have been drawn so far in the 2nd pass
+        painted_2ndpass |= data->region;
+        data->region = painted_2ndpass;
+
+        paintWindow(data->window, data->mask, data->region, data->quads);
     }
+    painted_region |= painted_2ndpass;
 }
 
 void Scene::paintWindow(Window* w, int mask, QRegion region, WindowQuadList quads)
@@ -304,6 +389,44 @@ void Scene::paintWindow(Window* w, int mask, QRegion region, WindowQuadList quad
     WindowPaintData data(w->window()->effectWindow());
     data.quads = quads;
     effects->paintWindow(effectWindow(w), mask, region, data);
+    // paint thumbnails on top of window
+    EffectWindowImpl *wImpl = static_cast<EffectWindowImpl*>(effectWindow(w));
+    for (QHash<ThumbnailItem*, QWeakPointer<EffectWindowImpl> >::const_iterator it = wImpl->thumbnails().constBegin();
+            it != wImpl->thumbnails().constEnd();
+            ++it) {
+        if (it.value().isNull()) {
+            continue;
+        }
+        ThumbnailItem *item = it.key();
+        if (!item->isVisible()) {
+            continue;
+        }
+        EffectWindowImpl *thumb = it.value().data();
+        WindowPaintData thumbData(thumb);
+        thumbData.opacity = data.opacity;
+
+        QSizeF size = QSizeF(thumb->size());
+        size.scale(QSizeF(item->sceneBoundingRect().width(), item->sceneBoundingRect().height()), Qt::KeepAspectRatio);
+        thumbData.xScale = size.width() / static_cast<qreal>(thumb->width());
+        thumbData.yScale = size.height() / static_cast<qreal>(thumb->height());
+        const int x = item->scenePos().x() + w->x() + (item->width() - size.width()) / 2;
+        const int y = item->scenePos().y() + w->y() + (item->height() - size.height()) / 2;
+        thumbData.xTranslate = x - thumb->x();
+        thumbData.yTranslate = y - thumb->y();
+        int thumbMask = PAINT_WINDOW_TRANSFORMED | PAINT_WINDOW_LANCZOS;
+        if (thumbData.opacity == 1.0) {
+            thumbMask |= PAINT_WINDOW_OPAQUE;
+        } else {
+            thumbMask |= PAINT_WINDOW_TRANSLUCENT;
+        }
+        if (x < wImpl->x() || x + size.width() > wImpl->x() + wImpl->width() ||
+            y < wImpl->y() || y + size.height() > wImpl->y() + wImpl->height()) {
+            // don't render windows outside the containing window.
+            // TODO: improve by spliting out the window quads which do not fit
+            continue;
+        }
+        effects->drawWindow(thumb, thumbMask, QRegion(x, y, size.width(), size.height()), thumbData);
+    }
 }
 
 // the function that'll be eventually called by paintWindow() above
@@ -321,29 +444,9 @@ void Scene::finalDrawWindow(EffectWindowImpl* w, int mask, QRegion region, Windo
         w->sceneWindow()->performPaint(mask, region, data);
 }
 
-QList< QPoint > Scene::selfCheckPoints() const
+OverlayWindow* Scene::overlayWindow()
 {
-    QList< QPoint > ret;
-    // Use Kephal directly, we're interested in "real" screens, not depending on our config.
-    // TODO: Does Kephal allow fake screens as well? We cannot use QDesktopWidget as it will cause a crash if
-    //       the number of screens is different to what Kephal returns.
-    for (int screen = 0;
-            screen < Kephal::ScreenUtils::numScreens();
-            ++screen) {
-        // test top-left and bottom-right of every screen
-        ret.append(Kephal::ScreenUtils::screenGeometry(screen).topLeft());
-        ret.append(Kephal::ScreenUtils::screenGeometry(screen).bottomRight() + QPoint(-3 + 1, -2 + 1)
-                   + QPoint(-1, 0));   // intentionally moved one up, since the source windows will be one down
-    }
-    return ret;
-}
-
-QRegion Scene::selfCheckRegion() const
-{
-    QRegion reg;
-    foreach (const QPoint & p, selfCheckPoints())
-    reg |= QRect(p, QSize(selfCheckWidth(), selfCheckHeight()));
-    return reg;
+    return m_overlayWindow;
 }
 
 //****************************************

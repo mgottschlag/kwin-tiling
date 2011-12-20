@@ -36,8 +36,8 @@ void WallpaperPreview::setWallpaper(Plasma::Wallpaper* wallpaper)
 {
     m_wallpaper = wallpaper;
     if (m_wallpaper) {
-        connect(m_wallpaper, SIGNAL(update(const QRectF &)),
-                this, SLOT(updateRect(const QRectF &)));
+        connect(m_wallpaper, SIGNAL(update(QRectF)),
+                this, SLOT(updateRect(QRectF)));
         resizeEvent(0);
     }
 }

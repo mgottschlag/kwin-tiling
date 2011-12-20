@@ -110,7 +110,6 @@ public Q_SLOTS:
      */
     void addApplet(const QString &pluginName);
 
-
 protected Q_SLOTS:
     void immutabilityChanged(Plasma::ImmutabilityType);
 
@@ -125,7 +124,6 @@ private:
     Q_PRIVATE_SLOT(d, void containmentDestroyed())
 
     WidgetExplorerPrivate * const d;
-
 };
 
 } // namespace Plasma

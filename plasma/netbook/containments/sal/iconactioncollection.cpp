@@ -40,7 +40,7 @@ void IconActionCollection::addAction(QAction *action)
 {
     if (action) {
         m_actions.insert(action);
-        connect (action, SIGNAL(destroyed(QObject *)), this, SLOT(actionDestroyed(QObject *)));
+        connect (action, SIGNAL(destroyed(QObject*)), this, SLOT(actionDestroyed(QObject*)));
         action->setVisible(m_immutability == Plasma::Mutable);
         action->setEnabled(m_immutability == Plasma::Mutable);
     }

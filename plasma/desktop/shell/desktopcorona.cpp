@@ -44,13 +44,14 @@
 #include <Plasma/DataEngineManager>
 #include <Plasma/Package>
 
+#include <KActivities/Controller>
+#include <KActivities/Info>
+
 #include <kephal/screens.h>
 
 #include <scripting/layouttemplatepackagestructure.h>
 
 #include "activity.h"
-#include "kactivitycontroller.h"
-#include "kactivityinfo.h"
 #include "panelview.h"
 #include "plasmaapp.h"
 #include "plasma-shell-desktop.h"
@@ -62,7 +63,7 @@ DesktopCorona::DesktopCorona(QObject *parent)
     : Plasma::Corona(parent),
       m_addPanelAction(0),
       m_addPanelsMenu(0),
-      m_activityController(new KActivityController(this))
+      m_activityController(new KActivities::Controller(this))
 {
     init();
 }
@@ -81,7 +82,7 @@ void DesktopCorona::init()
 
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "DesktopCorona init start" << "(line:" << __LINE__ << ")";
     Kephal::Screens *screens = Kephal::Screens::self();
-    connect(screens, SIGNAL(screenAdded(Kephal::Screen *)), SLOT(screenAdded(Kephal::Screen *)));
+    connect(screens, SIGNAL(screenAdded(Kephal::Screen*)), SLOT(screenAdded(Kephal::Screen*)));
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SIGNAL(availableScreenRegionChanged()));
 
     Plasma::ContainmentActionsPluginsConfig desktopPlugins;
@@ -117,8 +118,8 @@ void DesktopCorona::init()
     connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)), this, SLOT(checkAddPanelAction(QStringList)));
 
     connect(m_activityController, SIGNAL(currentActivityChanged(QString)), this, SLOT(currentActivityChanged(QString)));
-    connect(m_activityController, SIGNAL(activityAdded(const QString &)), this, SLOT(activityAdded(const QString &)));
-    connect(m_activityController, SIGNAL(activityRemoved(const QString &)), this, SLOT(activityRemoved(const QString &)));
+    connect(m_activityController, SIGNAL(activityAdded(QString)), this, SLOT(activityAdded(QString)));
+    connect(m_activityController, SIGNAL(activityRemoved(QString)), this, SLOT(activityRemoved(QString)));
 
     mapAnimation(Plasma::Animator::AppearAnimation, Plasma::Animator::ZoomAnimation);
     mapAnimation(Plasma::Animator::DisappearAnimation, Plasma::Animator::ZoomAnimation);
@@ -356,10 +357,10 @@ void DesktopCorona::processUpdateScripts()
     evaluateScripts(WorkspaceScripting::ScriptEngine::pendingUpdateScripts());
 }
 
-void DesktopCorona::evaluateScripts(const QStringList &scripts)
+void DesktopCorona::evaluateScripts(const QStringList &scripts, bool isStartup)
 {
     foreach (const QString &script, scripts) {
-        WorkspaceScripting::DesktopScriptEngine scriptEngine(this);
+        WorkspaceScripting::DesktopScriptEngine scriptEngine(this, isStartup);
         connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(printScriptError(QString)));
         connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(printScriptMessage(QString)));
         connect(&scriptEngine, SIGNAL(createPendingPanelViews()), PlasmaApp::self(), SLOT(createWaitingPanels()));
@@ -474,7 +475,7 @@ void DesktopCorona::populateAddPanelsMenu()
                 const QString scriptFile = package.filePath("mainscript");
                 if (!scriptFile.isEmpty()) {
                     QAction *action = m_addPanelsMenu->addAction(info.name());
-                    action->setData("plasma-desktop-template:" + scriptFile);
+                    action->setData(QString::fromLatin1("plasma-desktop-template:%1").arg(scriptFile));
                 }
             }
         }
@@ -494,7 +495,7 @@ void DesktopCorona::addPanel(QAction *action)
 {
     const QString plugin = action->data().toString();
     if (plugin.startsWith("plasma-desktop-template:")) {
-        evaluateScripts(QStringList() << plugin.right(plugin.length() - qstrlen("plasma-desktop-template:")));
+        evaluateScripts(QStringList() << plugin.right(plugin.length() - qstrlen("plasma-desktop-template:")), false);
     } else if (!plugin.isEmpty()) {
         addPanel(plugin);
     }
@@ -569,9 +570,9 @@ void DesktopCorona::checkActivities()
 {
     kDebug() << "containments to start with" << containments().count();
 
-    KActivityConsumer::ServiceStatus status = m_activityController->serviceStatus();
+    KActivities::Consumer::ServiceStatus status = m_activityController->serviceStatus();
     //kDebug() << "$%$%$#%$%$%Status:" << status;
-    if (status == KActivityConsumer::NotRunning) {
+    if (status == KActivities::Consumer::NotRunning) {
         //panic and give up - better than causing a mess
         kDebug() << "No ActivityManager? Help, I've fallen and I can't get up!";
         return;
@@ -701,7 +702,7 @@ void DesktopCorona::activityRemoved(const QString &id)
 
 void DesktopCorona::activateNextActivity()
 {
-    QStringList list = m_activityController->listActivities(KActivityInfo::Running);
+    QStringList list = m_activityController->listActivities(KActivities::Info::Running);
     if (list.isEmpty()) {
         return;
     }
@@ -715,7 +716,7 @@ void DesktopCorona::activateNextActivity()
 
 void DesktopCorona::activatePreviousActivity()
 {
-    QStringList list = m_activityController->listActivities(KActivityInfo::Running);
+    QStringList list = m_activityController->listActivities(KActivities::Info::Running);
     if (list.isEmpty()) {
         return;
     }

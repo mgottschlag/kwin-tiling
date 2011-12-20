@@ -16,6 +16,7 @@ target_link_libraries(kcm_powerdevilglobalconfig
      ${KDE4_KIO_LIBS}
      ${KDE4_SOLID_LIBS}
      ${KDE4_KNOTIFYCONFIG_LIBRARY}
+     powerdevilconfigcommonprivate
 )
 
 install(TARGETS kcm_powerdevilglobalconfig  DESTINATION ${PLUGIN_INSTALL_DIR} )

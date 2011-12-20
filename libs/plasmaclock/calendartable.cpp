@@ -424,6 +424,10 @@ class CalendarTablePrivate
         int weekBarSpace;
         int glowRadius;
 
+        QFont weekDayFont;
+        QFont dateFontBold;
+        QFont dateFont;
+
         int pendingPopulations;
         QTimer *delayedPopulationTimer;
 };
@@ -642,91 +646,66 @@ bool CalendarTable::dateHasDetails(const QDate &date) const
            d->journals.contains(julian);
 }
 
-QString CalendarTable::dateDetails(const QDate &date) const
+QStringList CalendarTable::dateDetails(const QDate &date) const
 {
-    QString details;
+    QStringList details;
     const int julian = date.toJulianDay();
 
     if (d->holidays.contains(julian)) {
-        details += "<br>";
-
         foreach (int holidayUid, d->holidays.values(julian)) {
             Plasma::DataEngine::Data holidayData = d->holidayEvents.value(holidayUid);
+            QString region = holidayData.value("RegionCode").toString();
+
             if (d->holidayIsDayOff(holidayData)) {
-                QString region = holidayData.value("RegionCode").toString();
-                details += i18nc("Day off: Holiday name (holiday region)",
+                details << i18nc("Day off: Holiday name (holiday region)",
                                  "<i>Holiday</i>: %1 (%2)",
                                  holidayData.value("Name").toString(),
                                  d->holidaysRegions.value(region).value("Name").toString());
-                details += "<br>";
-            }
-        }
-
-        foreach (int holidayUid, d->holidays.values(julian)) {
-            Plasma::DataEngine::Data holidayData = d->holidayEvents.value(holidayUid);
-            if (!d->holidayIsDayOff(holidayData)) {
+            } else {
                 QString region = holidayData.value("RegionCode").toString();
-                details += i18nc("Not day off: Holiday name (holiday region)",
-                                 "<i>Other</i>: %1 (%2)",
-                                 holidayData.value("Name").toString(),
-                                 d->holidaysRegions.value(region).value("Name").toString());
-                details += "<br>";
+                details << i18nc("Not day off: Holiday name (holiday region)",
+                                    "%1 (%2)",
+                                    holidayData.value("Name").toString(),
+                                    d->holidaysRegions.value(region).value("Name").toString());
             }
         }
     }
 
     if (d->events.contains(julian)) {
-        details += "<br>";
-
         foreach (const Plasma::DataEngine::Data &occurrence, d->events.values(julian)) {
-            QString eventUid = occurrence.value("OccurrenceUid").toString();
-            KDateTime occStartDate = occurrence.value("OccurrenceStartDate").value<KDateTime>();
-            KDateTime occEndDate = occurrence.value("OccurrenceEndDate").value<KDateTime>();
-            Plasma::DataEngine::Data eventData = d->pimEvents.value(eventUid);
-
-            //TODO translate this layout once strings not frozen
-            QString description;
-            if (eventData.value("AllDay").toBool()) {
-                description = QString("<br>%1").arg(eventData.value("Summary").toString());
-            } else if (!occEndDate.isValid() || occStartDate == occEndDate) {
-                description = QString("%1<br>%2").arg(KGlobal::locale()->formatTime(occStartDate.time()))
-                                                 .arg(eventData.value("Summary").toString());
-            } else {
-                description = QString("%1 - %2<br>%3").arg(KGlobal::locale()->formatTime(occStartDate.time()))
-                                                      .arg(KGlobal::locale()->formatTime(occEndDate.time()))
-                                                      .arg(eventData.value("Summary").toString());
-            }
-            details += i18n("<i>Event</i>: %1<br>", description);
+            details << i18n("<i>Event</i>: %1", buildOccurrenceDescription(occurrence));
         }
     }
 
     if (d->todos.contains(julian)) {
-        details += "<br>";
-
         foreach (const Plasma::DataEngine::Data &occurrence, d->todos.values(julian)) {
-            QString todoUid = occurrence.value("OccurrenceUid").toString();
-            KDateTime occStartDate = occurrence.value("OccurrenceStartDate").value<KDateTime>();
-            KDateTime occEndDate = occurrence.value("OccurrenceEndDate").value<KDateTime>();
-            Plasma::DataEngine::Data todoData = d->pimEvents.value(todoUid);
-
-            //TODO translate this layout once strings not frozen
-            QString description;
-            if (todoData.value("AllDay").toBool()) {
-                description = QString("<br>%1").arg(todoData.value("Summary").toString());
-            } else if (!occEndDate.isValid() || occStartDate == occEndDate) {
-                description = QString("%1<br>%2").arg(KGlobal::locale()->formatTime(occStartDate.time()))
-                                                 .arg(todoData.value("Summary").toString());
-            } else {
-                description = QString("%1 - %2<br>%3").arg(KGlobal::locale()->formatTime(occStartDate.time()))
-                                                      .arg(KGlobal::locale()->formatTime(occEndDate.time()))
-                                                      .arg(todoData.value("Summary").toString());
-            }
             //TODO add Status and Percentage Complete when strings not frozen
-            details += i18n("<i>Todo</i>: %1<br>", description);
+            details << i18n("<i>Todo</i>: %1", buildOccurrenceDescription(occurrence));
         }
     }
 
     return details;
+}
+
+QString CalendarTable::buildOccurrenceDescription(const Plasma::DataEngine::Data &occurrence) const
+{
+    const QString uid = occurrence.value("OccurrenceUid").toString();
+    const KDateTime occStartDate = occurrence.value("OccurrenceStartDate").value<KDateTime>();
+    const KDateTime occEndDate = occurrence.value("OccurrenceEndDate").value<KDateTime>();
+    const Plasma::DataEngine::Data details = d->pimEvents.value(uid);
+
+    if (details.value("AllDay").toBool()) {
+        return i18nc("All-day calendar event summary", "<br>%1", details.value("Summary").toString());
+    } else if (!occEndDate.isValid() || occStartDate == occEndDate) {
+        return i18nc("Time and summary for a calendarevent", "%1<br>%2",
+                     KGlobal::locale()->formatTime(occStartDate.time()),
+                     details.value("Summary").toString());
+    }
+
+    return i18nc("Start and end time and summary for a calendar event", "%1 - %2<br>%3",
+                 KGlobal::locale()->formatTime(occStartDate.time()),
+                 KGlobal::locale()->formatTime(occEndDate.time()),
+                 details.value("Summary").toString());
 }
 
 void CalendarTable::setAutomaticUpdateEnabled(bool enabled)
@@ -749,6 +728,16 @@ const QDate& CalendarTable::currentDate() const
     return d->currentDate;
 }
 
+QDate CalendarTable::startDate() const
+{
+    return d->viewStartDate;
+}
+
+QDate CalendarTable::endDate() const
+{
+    return d->viewEndDate;
+}
+
 Plasma::DataEngine *CalendarTablePrivate::calendarEngine()
 {
     if (!calendarDataEngine) {
@@ -761,7 +750,8 @@ Plasma::DataEngine *CalendarTablePrivate::calendarEngine()
 void CalendarTablePrivate::checkIfCalendarEngineNeeded()
 {
     if (calendarDataEngine && !displayHolidays && !displayEvents) {
-        calendarDataEngine = Plasma::DataEngineManager::self()->loadEngine("calendar");
+        Plasma::DataEngineManager::self()->unloadEngine("calendar");
+        calendarDataEngine = 0;
     }
 }
 
@@ -810,6 +800,7 @@ void CalendarTablePrivate::populateCalendar()
             // Just fetch the days displayed in the grid
             eventsQuery = "events" + QString(':') + viewStartDate.toString(Qt::ISODate) +
                           QString(':') + viewEndDate.toString(Qt::ISODate);
+            kDebug() << "connecting to .. " << eventsQuery;
             calendarEngine()->connectSource(eventsQuery, q);
         } else {
             eventsQuery.clear();
@@ -819,6 +810,7 @@ void CalendarTablePrivate::populateCalendar()
     }
 
     pendingPopulations = NoPendingPopulation;
+    emit q->eventsChanged();
 }
 
 void CalendarTablePrivate::populateEvents()
@@ -844,7 +836,7 @@ void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine:
         d->pimEvents.insert(uid, pimData);
 
         QList<QVariant> occurrenceList = pimData.value("Occurrences").toList();
-        foreach (QVariant occurrence, occurrenceList) {
+        foreach (const QVariant &occurrence, occurrenceList) {
             QDate occStartDate = occurrence.toHash().value("OccurrenceStartDate").value<KDateTime>().date();
             if (pimData.value("EventMultiDay").toBool() == true) {
                 QDate occEndDate = occurrence.toHash().value("OccurrenceEndDate").value<KDateTime>().date();
@@ -858,6 +850,8 @@ void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine:
             }
         }
     }
+
+    emit eventsChanged();
     update();
 }
 
@@ -924,7 +918,7 @@ void CalendarTable::createConfigurationInterface(KConfigDialog *parent)
     connect(d->calendarConfigUi.displayEvents, SIGNAL(stateChanged(int)), parent, SLOT(settingsModified()));
 }
 
-void CalendarTable::applyConfigurationInterface()
+void CalendarTable::configAccepted(KConfigGroup cg)
 {
     setCalendar(d->calendarConfigUi.calendarComboBox->itemData(d->calendarConfigUi.calendarComboBox->currentIndex()).toString());
     setDisplayEvents(d->calendarConfigUi.displayEvents->isChecked());
@@ -946,11 +940,7 @@ void CalendarTable::applyConfigurationInterface()
     }
     setDisplayHolidays(displayHolidays);
 #endif
-}
 
-void CalendarTable::configAccepted(KConfigGroup cg)
-{
-    applyConfigurationInterface();
     writeConfiguration(cg);
 }
 
@@ -1028,6 +1018,49 @@ void CalendarTable::resizeEvent(QGraphicsSceneResizeEvent * event)
     d->glowRadius = d->cellW * .1;
     d->headerHeight = (int) (d->cellH / 1.5);
     d->centeringSpace = qMax(0, int((r.width() - (rectSizeW * numCols) - (d->cellSpace * (numCols -1))) / 2));
+
+    // Relative to the cell size
+    const qreal weekSize = .75;
+    const qreal dateSize = .8;
+
+    d->weekDayFont = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+    d->weekDayFont.setPixelSize(d->cellH * weekSize);
+
+    d->dateFontBold = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+    d->dateFontBold.setPixelSize(d->cellH * dateSize);
+    d->dateFontBold.setBold(true);
+
+    d->dateFont = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+
+#if QT_VERSION >= 0x040800
+    d->weekDayFont.setHintingPreference(QFont::PreferNoHinting);
+    d->dateFontBold.setHintingPreference(QFont::PreferNoHinting);
+    d->dateFont.setHintingPreference(QFont::PreferNoHinting);
+#endif
+
+    QFontMetrics fm(d->weekDayFont);
+
+    int width = 0;
+    for (int i = 0; i < d->daysInWeek; i++) {
+        const QString name = calendar()->weekDayName(i, KCalendarSystem::ShortDayName);
+        width = qMax(width, fm.width(name));
+    }
+
+    if (width > d->cellW * weekSize) {
+        d->weekDayFont.setPixelSize(d->weekDayFont.pixelSize() * ((d->cellW * weekSize) / width));
+    }
+
+    fm = QFontMetrics(d->dateFontBold);
+    width = 0;
+    for (int i = 10; i <= 52; i++) {
+        width = qMax(width, fm.width(QString::number(i)));
+    }
+
+    if (width > d->cellW * dateSize) {
+        d->dateFontBold.setPixelSize(d->dateFontBold.pixelSize() * ((d->cellW * dateSize) / width));
+    }
+
+    d->dateFont.setPixelSize(d->dateFontBold.pixelSize());
 }
 
 void CalendarTable::paintCell(QPainter *p, int cell, int weekRow, int weekdayColumn, CellTypes type, const QDate &cellDate)
@@ -1045,12 +1078,7 @@ void CalendarTable::paintCell(QPainter *p, int cell, int weekRow, int weekdayCol
     }
 
     p->setPen(numberColor);
-    QFont font = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
-    if (type & Event) {
-        font.setBold(true);
-    }
-    font.setPixelSize(cellArea.height() * 0.7);
-    p->setFont(font);
+    p->setFont(type & Event ? d->dateFontBold : d->dateFont);
     if (!(type & InvalidDate)) {
         p->drawText(cellArea, Qt::AlignCenter, calendar()->dayString(cellDate, KCalendarSystem::ShortFormat), &cellArea); //draw number
     }
@@ -1167,9 +1195,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
             if (weekdayColumn == 0) {
                 QRectF cellRect(r.x() + d->centeringSpace, y, d->cellW, d->cellH);
                 p->setPen(Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-                QFont font = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
-                font.setPixelSize(cellRect.height() * 0.7);
-                p->setFont(font);
+                p->setFont(d->dateFont);
                 p->setOpacity(d->opacity);
                 QString weekString;
                 QString accurateWeekString;
@@ -1195,7 +1221,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
                         }
                     }
                 }
-                QFontMetrics fontMetrics(font);
+                QFontMetrics fontMetrics(d->dateFont);
                 if (fontMetrics.width(accurateWeekString) > d->cellW) {
                     p->drawText(cellRect, Qt::AlignCenter, weekString); //draw number
                 } else {
@@ -1213,9 +1239,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
         for (int i = 0; i < d->daysInWeek; i++){
             int weekDay = ((i + weekStartDay - 1) % d->daysInWeek) + 1;
             QString dayName = calendar()->weekDayName(weekDay, KCalendarSystem::ShortDayName);
-            QFont font = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
-            font.setPixelSize(d->headerHeight * 0.9);
-            p->setFont(font);
+            p->setFont(d->weekDayFont);
             p->drawText(QRectF(cellX(i), r.y(), d->cellW, d->headerHeight),
                         Qt::AlignCenter | Qt::AlignVCenter, dayName);
         }

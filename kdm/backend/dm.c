@@ -74,6 +74,9 @@ static int stopping;
 SdRec sdRec = { 0, 0, 0, TO_INF, TO_INF, 0, 0, 0 };
 
 time_t now;
+#ifndef nowMonotonic
+int nowMonotonic;
+#endif
 
 #if KDM_LIBEXEC_STRIP != -1
 char *progpath;
@@ -102,6 +105,10 @@ main(int argc, char **argv)
         dup2(0, 1);
     if (fcntl(2, F_GETFD) < 0)
         dup2(0, 2);
+
+#ifndef nowMonotonic
+    nowMonotonic = sysconf(_SC_MONOTONIC_CLOCK) >= 200112L;
+#endif
 
 #if KDM_LIBEXEC_STRIP == -1
     prog = strrchr(argv[0], '/');
@@ -321,6 +328,20 @@ main(int argc, char **argv)
     }
     debug("nothing left to do, exiting\n");
     return 0;
+}
+
+void
+updateNow(void)
+{
+#if (_POSIX_MONOTONIC_CLOCK >= 0)
+    if (nowMonotonic) {
+        struct timespec ts;
+        clock_gettime(CLOCK_MONOTONIC, &ts);
+        /* Linux' monotonic clock starts at zero, but this is assumed to mean "long ago". */
+        now = ts.tv_sec + 10000;
+    } else
+#endif
+        time(&now);
 }
 
 
@@ -1163,7 +1184,7 @@ mainLoop(void)
     fd_set reads;
 
     debug("mainLoop\n");
-    time(&now);
+    updateNow();
     while (
 #ifdef XDMCP
            anyListenSockets() ||
@@ -1213,7 +1234,7 @@ mainLoop(void)
         reads = wellKnownSocketsMask;
         nready = select(wellKnownSocketsMax + 1, &reads, 0, 0, tvp);
         debug("select returns %d\n", nready);
-        time(&now);
+        updateNow();
 #ifdef NEED_ENTROPY
         addTimerEntropy();
 #endif

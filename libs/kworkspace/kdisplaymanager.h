@@ -22,12 +22,12 @@
 #define KDISPLAYMANAGER_H
 
 #include "kworkspace.h"
-#include <kdemacros.h>
+#include "kworkspace_export.h"
 #include <QtCore/QString>
 #include <QtCore/QList>
 #include <QtCore/QByteArray>
 
-struct KDE_EXPORT SessEnt {
+struct KWORKSPACE_EXPORT SessEnt {
     QString display, from, user, session;
     int vt;
     bool self:1, tty:1;
@@ -35,7 +35,7 @@ struct KDE_EXPORT SessEnt {
 
 typedef QList<SessEnt> SessList;
 
-class KDE_EXPORT KDisplayManager {
+class KWORKSPACE_EXPORT KDisplayManager {
 
 #ifdef Q_WS_X11
 

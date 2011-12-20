@@ -36,8 +36,10 @@
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusMetaType>
 #include <QtDBus/QDBusReply>
+#include <QtDBus/QDBusPendingCallWatcher>
 
 #include <Plasma/DataContainer>
+#include "powermanagementservice.h"
 
 typedef QMap< QString, QString > StringStringMap;
 Q_DECLARE_METATYPE(StringStringMap)
@@ -65,7 +67,7 @@ void PowermanagementEngine::init()
                                                    "/org/kde/Solid/PowerManagement",
                                                    "org.kde.Solid.PowerManagement",
                                                    "profileChanged", this,
-                                                   SLOT(profileChanged(const QString&)))) {
+                                                   SLOT(profileChanged(QString)))) {
             kDebug() << "error connecting to Profile changes via dbus";
         }
         if (!QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement",
@@ -75,25 +77,13 @@ void PowermanagementEngine::init()
                                                    SLOT(batteryRemainingTimeChanged(qulonglong)))) {
             kDebug() << "error connecting to remaining time changes";
         }
-        // Listen to profile changes
-        if (!QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement",
-                                                   "/org/kde/Solid/PowerManagement",
-                                                   "org.kde.Solid.PowerManagement",
-                                                   "configurationReloaded", this,
-                                                   SLOT(availableProfilesChanged()))) {
-            kDebug() << "error connecting to configuration changes";
-        }
-
-        setData("PowerDevil", DataEngine::Data());
-
-        reloadPowerDevilData();
     }
 }
 
 QStringList PowermanagementEngine::basicSourceNames() const
 {
     QStringList sources;
-    sources << "Battery" << "AC Adapter" << "Sleep States" << "PowerDevil";
+    sources << "Battery" << "AC Adapter" << "Sleep States";
     return sources;
 }
 
@@ -105,8 +95,7 @@ QStringList PowermanagementEngine::sources() const
 bool PowermanagementEngine::sourceRequestEvent(const QString &name)
 {
     if (name == "Battery") {
-        const QList<Solid::Device> listBattery =
-                        Solid::Device::listFromType(Solid::DeviceInterface::Battery, QString());
+        const QList<Solid::Device> listBattery = Solid::Device::listFromType(Solid::DeviceInterface::Battery);
         m_batterySources.clear();
 
         if (listBattery.isEmpty()) {
@@ -127,12 +116,12 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
                 batterySources << source;
                 m_batterySources[deviceBattery.udi()] = source;
 
-                connect(battery, SIGNAL(chargeStateChanged(int, const QString &)), this,
-                        SLOT(updateBatteryChargeState(int, const QString &)));
-                connect(battery, SIGNAL(chargePercentChanged(int, const QString &)), this,
-                        SLOT(updateBatteryChargePercent(int, const QString &)));
-                connect(battery, SIGNAL(plugStateChanged(bool, const QString &)), this,
-                        SLOT(updateBatteryPlugState(bool, const QString &)));
+                connect(battery, SIGNAL(chargeStateChanged(int,QString)), this,
+                        SLOT(updateBatteryChargeState(int,QString)));
+                connect(battery, SIGNAL(chargePercentChanged(int,QString)), this,
+                        SLOT(updateBatteryChargePercent(int,QString)));
+                connect(battery, SIGNAL(plugStateChanged(bool,QString)), this,
+                        SLOT(updateBatteryPlugState(bool,QString)));
 
                 // Set initial values
                 updateBatteryChargeState(battery->chargeState(), deviceBattery.udi());
@@ -141,30 +130,28 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
             }
         }
 
-        setData("Battery", "Has battery", !batterySources.isEmpty());
+        setData("Battery", "Has Battery", !batterySources.isEmpty());
         if (!batterySources.isEmpty()) {
             setData("Battery", "Sources", batterySources);
             QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
                                                               "/org/kde/Solid/PowerManagement",
                                                               "org.kde.Solid.PowerManagement",
                                                               "batteryRemainingTime");
-            QDBusPendingReply< int > reply = QDBusConnection::sessionBus().asyncCall(msg);
-            reply.waitForFinished();
-            if (reply.isValid()) {
-                //kDebug() << "Remaining time 1:" << reply.value();
-                setData("Battery", "Remaining msec", reply.value());
-            }
+            QDBusPendingReply<qulonglong> reply = QDBusConnection::sessionBus().asyncCall(msg);
+            QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+            QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                             this, SLOT(batteryRemainingTimeReply(QDBusPendingCallWatcher*)));
         }
 
         m_sources = basicSourceNames() + batterySources;
     } else if (name == "AC Adapter") {
         bool isPlugged = false;
 
-        const QList<Solid::Device> list_ac = Solid::Device::listFromType(Solid::DeviceInterface::AcAdapter, QString());
+        const QList<Solid::Device> list_ac = Solid::Device::listFromType(Solid::DeviceInterface::AcAdapter);
         foreach (Solid::Device device_ac, list_ac) {
             Solid::AcAdapter* acadapter = device_ac.as<Solid::AcAdapter>();
             isPlugged |= acadapter->isPlugged();
-            connect(acadapter, SIGNAL(plugStateChanged(bool, const QString &)), this,
+            connect(acadapter, SIGNAL(plugStateChanged(bool,QString)), this,
                     SLOT(updateAcPlugState(bool)), Qt::UniqueConnection);
         }
 
@@ -187,14 +174,22 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
             }
             //kDebug() << "Sleepstate \"" << sleepstate << "\" supported.";
         }
-    } else if (name == "PowerDevil") {
-        setData("PowerDevil", DataEngine::Data());
-        reloadPowerDevilData();
     } else {
         kDebug() << "Data for '" << name << "' not found";
         return false;
     }
     return true;
+}
+
+Plasma::Service* PowermanagementEngine::serviceForSource(const QString &source)
+{
+    if (source == "PowerDevil") {
+        PowerManagementService *service = new PowerManagementService(source);
+        service->setParent(this);
+        return service;
+    }
+
+    return 0;
 }
 
 void PowermanagementEngine::updateBatteryChargeState(int newState, const QString& udi)
@@ -232,13 +227,18 @@ void PowermanagementEngine::updateAcPlugState(bool newState)
 void PowermanagementEngine::deviceRemoved(const QString& udi)
 {
     if (m_batterySources.contains(udi)) {
+        Solid::Device device(udi);
+        Solid::Battery* battery = device.as<Solid::Battery>();
+        if (battery)
+            battery->disconnect();
+
         const QString source = m_batterySources[udi];
         m_batterySources.remove(udi);
         removeSource(source);
 
         QStringList sourceNames(m_batterySources.values());
         sourceNames.removeAll(source);
-        setData("Battery", "sources", sourceNames);
+        setData("Battery", "Sources", sourceNames);
     }
 }
 
@@ -260,19 +260,19 @@ void PowermanagementEngine::deviceAdded(const QString& udi)
             sourceNames << source;
             m_batterySources[device.udi()] = source;
 
-            connect(battery, SIGNAL(chargeStateChanged(int, const QString &)), this,
-                    SLOT(updateBatteryChargeState(int, const QString &)));
-            connect(battery, SIGNAL(chargePercentChanged(int, const QString &)), this,
-                    SLOT(updateBatteryChargePercent(int, const QString &)));
-            connect(battery, SIGNAL(plugStateChanged(bool, const QString &)), this,
-                    SLOT(updateBatteryPlugState(bool, const QString &)));
+            connect(battery, SIGNAL(chargeStateChanged(int,QString)), this,
+                    SLOT(updateBatteryChargeState(int,QString)));
+            connect(battery, SIGNAL(chargePercentChanged(int,QString)), this,
+                    SLOT(updateBatteryChargePercent(int,QString)));
+            connect(battery, SIGNAL(plugStateChanged(bool,QString)), this,
+                    SLOT(updateBatteryPlugState(bool,QString)));
 
             // Set initial values
             updateBatteryChargeState(battery->chargeState(), device.udi());
             updateBatteryChargePercent(battery->chargePercent(), device.udi());
             updateBatteryPlugState(battery->isPlugged(), device.udi());
 
-            setData("Battery", "sources", sourceNames);
+            setData("Battery", "Sources", sourceNames);
         }
     }
 }
@@ -288,57 +288,16 @@ void PowermanagementEngine::batteryRemainingTimeChanged(qulonglong time)
     setData("Battery", "Remaining msec", time);
 }
 
-void PowermanagementEngine::availableProfilesChanged()
+void PowermanagementEngine::batteryRemainingTimeReply(QDBusPendingCallWatcher *watcher)
 {
-    // Request profiles to the daemon
-    QDBusMessage call = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement",
-                                                       "org.kde.Solid.PowerManagement", "availableProfiles");
-    QDBusPendingReply< StringStringMap > reply = QDBusConnection::sessionBus().asyncCall(call);
-    reply.waitForFinished();
-
-    if (!reply.isValid()) {
-        kDebug() << "Error contacting the daemon!";
-        return;
+    QDBusPendingReply<qulonglong> reply = *watcher;
+    if (!reply.isError()) {
+        batteryRemainingTimeChanged(reply.value());
     }
 
-    StringStringMap profiles = reply.value();
-
-    if (profiles.isEmpty()) {
-        kDebug() << "No available profiles!";
-        return;
-    }
-
-    setData("PowerDevil", "Available profiles", QVariant::fromValue(profiles));
+    watcher->deleteLater();
 }
 
-void PowermanagementEngine::reloadPowerDevilData()
-{
-    // Init data
-    {
-        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
-                                                          "/org/kde/Solid/PowerManagement",
-                                                          "org.kde.Solid.PowerManagement",
-                                                          "currentProfile");
-        QDBusPendingReply< QString > reply = QDBusConnection::sessionBus().asyncCall(msg);
-        reply.waitForFinished();
-        if (reply.isValid()) {
-            profileChanged(reply.value());
-        }
-    }
-
-    {
-        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
-                                                          "/org/kde/Solid/PowerManagement",
-                                                          "org.kde.Solid.PowerManagement",
-                                                          "batteryRemainingTime");
-        QDBusPendingReply< int > reply = QDBusConnection::sessionBus().asyncCall(msg);
-        reply.waitForFinished();
-        if (reply.isValid()) {
-            batteryRemainingTimeChanged(reply.value());
-        }
-    }
-
-    availableProfilesChanged();
-}
+K_EXPORT_PLASMA_DATAENGINE(powermanagement, PowermanagementEngine)
 
 #include "powermanagementengine.moc"

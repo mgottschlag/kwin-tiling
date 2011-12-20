@@ -39,7 +39,6 @@
 #include <KCModuleInfo>
 #include <KWindowSystem>
 #include <NETRootInfo>
-#include <kmanagerselection.h>
 
 #include <Plasma/Svg>
 #include <Plasma/FrameSvg>
@@ -48,8 +47,9 @@
 #include <Plasma/ToolTipManager>
 #include <Plasma/Animator>
 
+#include <KActivities/Consumer>
+
 #include <kephal/screens.h>
-#include <kactivityconsumer.h>
 
 #include <taskmanager/task.h>
 
@@ -151,18 +151,17 @@ void Pager::init()
     connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)), this, SLOT(numberOfDesktopsChanged(int)));
     connect(KWindowSystem::self(), SIGNAL(desktopNamesChanged()), this, SLOT(desktopNamesChanged()));
     connect(KWindowSystem::self(), SIGNAL(stackingOrderChanged()), this, SLOT(stackingOrderChanged()));
-    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned long*)), this, SLOT(windowChanged(WId,unsigned long*)));
+    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,const ulong*)), this, SLOT(windowChanged(WId,const ulong*)));
     connect(KWindowSystem::self(), SIGNAL(showingDesktopChanged(bool)), this, SLOT(showingDesktopChanged(bool)));
-    connect(Kephal::Screens::self(), SIGNAL(screenAdded(Kephal::Screen *)), SLOT(desktopsSizeChanged()));
+    connect(Kephal::Screens::self(), SIGNAL(screenAdded(Kephal::Screen*)), SLOT(desktopsSizeChanged()));
     connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)), SLOT(desktopsSizeChanged()));
-    connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), SLOT(desktopsSizeChanged()));
-    connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), SLOT(desktopsSizeChanged()));
+    connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)), SLOT(desktopsSizeChanged()));
+    connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)), SLOT(desktopsSizeChanged()));
 
-    m_desktopLayoutOwner = new KSelectionOwner( QString( "_NET_DESKTOP_LAYOUT_S%1" )
-        .arg( QX11Info::appScreen()).toLatin1().constData(), QX11Info::appScreen(), this );
-    connect( m_desktopLayoutOwner, SIGNAL( lostOwnership()), SLOT( lostDesktopLayoutOwner()));
-    if ( !m_desktopLayoutOwner->claim( false ))
-        lostDesktopLayoutOwner();
+    // connect to KWin's reloadConfig signal to get updates on the desktop layout
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    dbus.connect(QString(), "/KWin", "org.kde.KWin", "reloadConfig",
+                 this, SLOT(configChanged()));
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeRefresh()));
 
@@ -170,7 +169,7 @@ void Pager::init()
 
     m_currentDesktop = KWindowSystem::currentDesktop();
 
-    KActivityConsumer *act = new KActivityConsumer(this);
+    KActivities::Consumer *act = new KActivities::Consumer(this);
     connect(act, SIGNAL(currentActivityChanged(QString)), this, SLOT(currentActivityChanged(QString)));
     m_currentActivity = act->currentActivity();
 
@@ -204,7 +203,12 @@ void Pager::configChanged()
         changed = true;
     }
 
-    int rows = globalConfig().readEntry("rows", m_rows);
+    int rows = m_rows;
+#ifdef Q_WS_X11
+    unsigned long properties[] = {0, NET::WM2DesktopLayout };
+    NETRootInfo info(QX11Info::display(), properties, 2);
+    rows = info.desktopLayoutColumnsRows().height();
+#endif
 
     if (changed || rows != m_rows) {
         recalculateGridSizes(rows);
@@ -337,13 +341,6 @@ void Pager::createConfigurationInterface(KConfigDialog *parent)
     }
 
     ui.showWindowIconsCheckBox->setChecked(m_showWindowIcons);
-    if (formFactor() == Plasma::Vertical) {
-        ui.labelRows->setText(i18n("Number of columns:"));
-        ui.spinRows->setValue(m_columns);
-    } else {
-        ui.spinRows->setValue(m_rows);
-    }
-    ui.spinRows->setMaximum(m_desktopCount);
 
     switch (m_currentDesktopSelected){
         case DoNothing:
@@ -363,7 +360,6 @@ void Pager::createConfigurationInterface(KConfigDialog *parent)
     connect(ui.desktopNameRadioButton, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
     connect(ui.displayNoneRadioButton, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
     connect(ui.showWindowIconsCheckBox, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
-    connect(ui.spinRows, SIGNAL(valueChanged(int)), parent, SLOT(settingsModified()));
     connect(ui.doNothingRadioButton, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
     connect(ui.showDesktopRadioButton, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
     connect(ui.showDashboardRadioButton, SIGNAL(toggled(bool)), parent, SLOT(settingsModified()));
@@ -389,17 +385,6 @@ void Pager::recalculateGridSizes(int rows)
     if (m_rows != rows || m_columns != columns) {
         m_rows = rows;
         m_columns = columns;
-
-        // write the new number of rows to the config
-        globalConfig().writeEntry("rows", m_rows);
-        emit configNeedsSaving();
-
-        if (m_desktopLayoutOwner) {
-            // must own manager selection before setting global desktop layout
-            NET::Orientation orient = NET::OrientationHorizontal;
-            NETRootInfo info(QX11Info::display(), 0);
-            info.setDesktopLayout(orient, columns, rows, NET::DesktopLayoutCornerTopLeft);
-        }
     }
 
     updateSizes(true);
@@ -599,7 +584,7 @@ void Pager::recalculateWindowRects()
         unsigned long properties[] = { 0, NET::WM2Activities };
         NETWinInfo netInfo(QX11Info::display(), window, QX11Info::appRootWindow(), properties, 2);
         QString result(netInfo.activities());
-        if (!result.isEmpty()) {
+        if (!result.isEmpty() && result != "ALL") {
             QStringList activities = result.split(',');
             if (!activities.contains(m_currentActivity)) {
                 continue;
@@ -662,21 +647,6 @@ void Pager::configAccepted()
     cg.writeEntry("currentDesktopSelected", (int) currentDesktopSelected);
 
     m_configureDesktopsWidget->save();
-
-    // we need to keep all pager applets consistent since this affects
-    // the layout of the desktops as used by the window manager,
-    // so we store the row count in the applet global configuration
-    int rows = 0;
-    if (formFactor() == Plasma::Vertical) {
-        rows = m_desktopCount / ui.spinRows->value();
-        if (m_desktopCount % ui.spinRows->value() > 0) {
-            rows++;
-        }
-    } else {
-        rows = ui.spinRows->value();
-    }
-    rows = qBound(1, rows, m_desktopCount);
-    globalConfig().writeEntry("rows", rows);
 
     emit configNeedsSaving();
 }
@@ -774,7 +744,7 @@ void Pager::stackingOrderChanged()
     }
 }
 
-void Pager::windowChanged(WId id, unsigned long* dirty)
+void Pager::windowChanged(WId id, const unsigned long* dirty)
 {
     Q_UNUSED(id)
 
@@ -966,10 +936,10 @@ void Pager::handleHoverMove(const QPointF& pos)
             m_animations[m_hoverIndex]->setAnimation(animation);
         }
 
-        animation->setProperty("duration", s_FadeOutDuration);
-        animation->setProperty("easingCurve", QEasingCurve::OutQuad);
-        animation->setProperty("startValue", 1.0);
-        animation->setProperty("endValue", 0.0);
+        animation->setDuration(s_FadeOutDuration);
+        animation->setEasingCurve(QEasingCurve::OutQuad);
+        animation->setStartValue(1);
+        animation->setEndValue(0);
         animation->start(QAbstractAnimation::DeleteWhenStopped);
     }
 
@@ -988,10 +958,10 @@ void Pager::handleHoverMove(const QPointF& pos)
                     m_animations[m_hoverIndex]->setAnimation(animation);
                 }
 
-                animation->setProperty("duration", s_FadeInDuration);
-                animation->setProperty("easingCurve", QEasingCurve::InQuad);
-                animation->setProperty("startValue", 0.0);
-                animation->setProperty("endValue", 1.0);
+                animation->setDuration(s_FadeInDuration);
+                animation->setEasingCurve(QEasingCurve::InQuad);
+                animation->setStartValue(0);
+                animation->setEndValue(1);
                 animation->start(QAbstractAnimation::DeleteWhenStopped);
 
                 update();
@@ -1001,6 +971,8 @@ void Pager::handleHoverMove(const QPointF& pos)
         }
         ++i;
     }
+
+    m_hoverIndex = -1;
     m_hoverRect = QRectF();
     update();
 }
@@ -1023,11 +995,12 @@ void Pager::handleHoverLeave()
             m_animations[m_hoverIndex]->setAnimation(animation);
         }
 
-        animation->setProperty("duration", s_FadeOutDuration);
-        animation->setProperty("easingCurve", QEasingCurve::OutQuad);
-        animation->setProperty("startValue", 1.0);
-        animation->setProperty("endValue", 0.0);
         animation->start(QAbstractAnimation::DeleteWhenStopped);
+        animation->setDuration(s_FadeOutDuration);
+        animation->setEasingCurve(QEasingCurve::OutQuad);
+        animation->setStartValue(1);
+        animation->setEndValue(0);
+        m_hoverIndex = -1;
     }
 
     // The applet doesn't always get mouseReleaseEvents, for example when starting a drag
@@ -1318,12 +1291,6 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
             }
         }
     }
-}
-
-void Pager::lostDesktopLayoutOwner()
-{
-    delete m_desktopLayoutOwner;
-    m_desktopLayoutOwner = NULL;
 }
 
 // KWindowSystem does not translate position when mapping viewports

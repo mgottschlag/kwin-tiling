@@ -30,129 +30,106 @@ TaskJob::~TaskJob()
 
 void TaskJob::start()
 {
+    if (!m_source->task()) {
+        return;
+    }
+
     // only a subset of task operations are exported
     const QString operation = operationName();
-    if (operation.startsWith(QLatin1String("set"))) {
-        if (operation == "setMaximized") {
-            m_source->getTask()->setMaximized(parameters().value("maximized").toBool());
-            setResult(true);
-            return;
-        }
-        else if (operation == "setMinimized") {
-            m_source->getTask()->setIconified(parameters().value("minimized").toBool());
-            setResult(true);
-            return;
-        }
-        else if (operation == "setShaded") {
-            m_source->getTask()->setShaded(parameters().value("shaded").toBool());
-            setResult(true);
-            return;
-        }
-        else if (operation == "setFullScreen") {
-            m_source->getTask()->setFullScreen(parameters().value("fullScreen").toBool());
-            setResult(true);
-            return;
-        }
-        else if (operation == "setAlwaysOnTop") {
-            m_source->getTask()->setAlwaysOnTop(parameters().value("alwaysOnTop").toBool());
-            setResult(true);
-            return;
-        }
-        else if (operation == "setKeptBelowOthers") {
-            m_source->getTask()->setKeptBelowOthers(parameters().value("keptBelowOthers").toBool());
-            setResult(true);
-            return;
-        }
+    if (operation == "setMaximized") {
+        m_source->task()->setMaximized(parameters().value("maximized").toBool());
+        setResult(true);
+        return;
+    } else if (operation == "setMinimized") {
+        m_source->task()->setIconified(parameters().value("minimized").toBool());
+        setResult(true);
+        return;
+    } else if (operation == "setShaded") {
+        m_source->task()->setShaded(parameters().value("shaded").toBool());
+        setResult(true);
+        return;
+    } else if (operation == "setFullScreen") {
+        m_source->task()->setFullScreen(parameters().value("fullScreen").toBool());
+        setResult(true);
+        return;
+    } else if (operation == "setAlwaysOnTop") {
+        m_source->task()->setAlwaysOnTop(parameters().value("alwaysOnTop").toBool());
+        setResult(true);
+        return;
+    } else if (operation == "setKeptBelowOthers") {
+        m_source->task()->setKeptBelowOthers(parameters().value("keptBelowOthers").toBool());
+        setResult(true);
+        return;
+    } else if (operation == "toggleMaximized") {
+        m_source->task()->toggleMaximized();
+        setResult(true);
+        return;
+    } else if (operation == "toggleMinimized") {
+        m_source->task()->toggleIconified();
+        setResult(true);
+        return;
+    } else if (operation == "toggleShaded") {
+        m_source->task()->toggleShaded();
+        setResult(true);
+        return;
+    } else if (operation == "toggleFullScreen") {
+        m_source->task()->toggleFullScreen();
+        setResult(true);
+        return;
+    } else if (operation == "toggleAlwaysOnTop") {
+        m_source->task()->toggleAlwaysOnTop();
+        setResult(true);
+        return;
+    } else if (operation == "toggleKeptBelowOthers") {
+        m_source->task()->toggleKeptBelowOthers();
+        setResult(true);
+        return;
+    } else if (operation == "restore") {
+        m_source->task()->restore();
+        setResult(true);
+        return;
+    } else if (operation == "resize") {
+        m_source->task()->resize();
+        setResult(true);
+        return;
+    } else if (operation == "move") {
+        m_source->task()->move();
+        setResult(true);
+        return;
+    } else if (operation == "raise") {
+        m_source->task()->raise();
+        setResult(true);
+        return;
+    } else if (operation == "lower") {
+        m_source->task()->lower();
+        setResult(true);
+        return;
+    } else if (operation == "activate") {
+        m_source->task()->activate();
+        setResult(true);
+        return;
+    } else if (operation == "activateRaiseOrIconify") {
+        m_source->task()->activateRaiseOrIconify();
+        setResult(true);
+        return;
+    } else if (operation == "close") {
+        m_source->task()->close();
+        setResult(true);
+        return;
+    } else if (operation == "toDesktop") {
+        m_source->task()->toDesktop(parameters().value("desktop").toInt());
+        setResult(true);
+        return;
+    } else if (operation == "toCurrentDesktop") {
+        m_source->task()->toCurrentDesktop();
+        setResult(true);
+        return;
+    } else if (operation == "publishIconGeometry") {
+        m_source->task()->publishIconGeometry(parameters().value("geometry").toRect());
+        setResult(true);
+        return;
     }
-    else if (operation.startsWith(QLatin1String("toggle"))) {
-        if (operation == "toggleMaximized") {
-            m_source->getTask()->toggleMaximized();
-            setResult(true);
-            return;
-        }
-        else if (operation == "toggleMinimized") {
-            m_source->getTask()->toggleIconified();
-            setResult(true);
-            return;
-        }
-        else if (operation == "toggleShaded") {
-            m_source->getTask()->toggleShaded();
-            setResult(true);
-            return;
-        }
-        else if (operation == "toggleFullScreen") {
-            m_source->getTask()->toggleFullScreen();
-            setResult(true);
-            return;
-        }
-        else if (operation == "toggleAlwaysOnTop") {
-            m_source->getTask()->toggleAlwaysOnTop();
-            setResult(true);
-            return;
-        }
-        else if (operation == "toggleKeptBelowOthers") {
-            m_source->getTask()->toggleKeptBelowOthers();
-            setResult(true);
-            return;
-        }
-    }
-    else {
-        if (operation == "restore") {
-            m_source->getTask()->restore();
-            setResult(true);
-            return;
-        }
-        else if (operation == "resize") {
-            m_source->getTask()->resize();
-            setResult(true);
-            return;
-        }
-        else if (operation == "move") {
-            m_source->getTask()->move();
-            setResult(true);
-            return;
-        }
-        else if (operation == "raise") {
-            m_source->getTask()->raise();
-            setResult(true);
-            return;
-        }
-        else if (operation == "lower") {
-            m_source->getTask()->lower();
-            setResult(true);
-            return;
-        }
-        else if (operation == "activate") {
-            m_source->getTask()->activate();
-            setResult(true);
-            return;
-        }
-        else if (operation == "activateRaiseOrIconify") {
-            m_source->getTask()->activateRaiseOrIconify();
-            setResult(true);
-            return;
-        }
-        else if (operation == "close") {
-            m_source->getTask()->close();
-            setResult(true);
-            return;
-        }
-        else if (operation == "toDesktop") {
-            m_source->getTask()->toDesktop(parameters().value("desktop").toInt());
-            setResult(true);
-            return;
-        }
-        else if (operation == "toCurrentDesktop") {
-            m_source->getTask()->toCurrentDesktop();
-            setResult(true);
-            return;
-        }
-        else if (operation == "publishIconGeometry") {
-            m_source->getTask()->publishIconGeometry(parameters().value("geometry").toRect());
-            setResult(true);
-            return;
-        }
-    }
+
     setResult(false);
 }
 

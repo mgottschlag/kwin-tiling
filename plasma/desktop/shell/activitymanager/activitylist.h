@@ -23,7 +23,10 @@
 #include "activityicon.h"
 #include "abstracticonlist.h"
 
-class KActivityController;
+namespace KActivities
+{
+    class Controller;
+} // namespace KActivities
 
 namespace Plasma
 {
@@ -47,12 +50,16 @@ private Q_SLOTS:
     void activityAdded(const QString &id);
     void activityRemoved(const QString &id);
 
+    void templateHidden(bool immediate);
+
     void updateClosable();
 
 private:
     void createActivityIcon(const QString &id);
+    void createActivityIcon(const QString &name, const QString &icon, const QString &plugin);
 
-    KActivityController *m_activityController;
+    KActivities::Controller *m_activityController;
+    ActivityIcon * m_scheduleHideOnAdd;
 
 };
 

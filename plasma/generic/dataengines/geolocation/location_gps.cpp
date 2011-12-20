@@ -51,7 +51,11 @@ void Gpsd::run()
     while (!m_abort) {
         Plasma::DataEngine::Data d;
 
+#if GPSD_API_MAJOR_VERSION >= 5
+	if (gps_read(m_gpsdata) != -1) {
+#else
         if (gps_poll(m_gpsdata) != -1) {
+#endif
             //kDebug() << "poll ok";
             if (m_gpsdata->online) {
                 //kDebug() << "online";
@@ -73,13 +77,21 @@ void Gpsd::run()
 Gps::Gps(QObject* parent, const QVariantList& args)
     : GeolocationProvider(parent, args),
       m_gpsd(0)
+#if GPSD_API_MAJOR_VERSION >= 5
+    , m_gpsdata(0)
+#endif
 {
-    gps_data_t* gpsdata = gps_open("localhost", DEFAULT_GPSD_PORT);
-    if (gpsdata) {
+#if GPSD_API_MAJOR_VERSION >= 5
+    m_gpsdata = new gps_data_t;
+    if (gps_open("localhost", DEFAULT_GPSD_PORT, m_gpsdata) != -1) {
+#else
+    gps_data_t* m_gpsdata = gps_open("localhost", DEFAULT_GPSD_PORT);
+    if (m_gpsdata) {
+#endif
         kDebug() << "gpsd found.";
-        m_gpsd = new Gpsd(gpsdata);
-        connect(m_gpsd, SIGNAL(dataReady(const Plasma::DataEngine::Data&)),
-                this, SIGNAL(setData(const Plasma::DataEngine::Data&)));
+        m_gpsd = new Gpsd(m_gpsdata);
+        connect(m_gpsd, SIGNAL(dataReady(Plasma::DataEngine::Data)),
+                this, SIGNAL(setData(Plasma::DataEngine::Data)));
     } else {
         kDebug() << "gpsd not found";
     }
@@ -90,6 +102,9 @@ Gps::Gps(QObject* parent, const QVariantList& args)
 Gps::~Gps()
 {
     delete m_gpsd;
+#if GPSD_API_MAJOR_VERSION >= 5
+    delete m_gpsdata;
+#endif
 }
 
 void Gps::update()

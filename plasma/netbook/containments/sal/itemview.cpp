@@ -38,14 +38,14 @@ ItemView::ItemView(QGraphicsWidget *parent)
     m_noActivateTimer->setSingleShot(true);
     m_itemContainer->installEventFilter(this);
 
-    connect(m_itemContainer, SIGNAL(itemSelected(ResultWidget *)), this, SIGNAL(itemSelected(ResultWidget *)));
-    connect(m_itemContainer, SIGNAL(itemActivated(const QModelIndex &)), this, SIGNAL(itemActivated(const QModelIndex &)));
+    connect(m_itemContainer, SIGNAL(itemSelected(ResultWidget*)), this, SIGNAL(itemSelected(ResultWidget*)));
+    connect(m_itemContainer, SIGNAL(itemActivated(QModelIndex)), this, SIGNAL(itemActivated(QModelIndex)));
     connect(m_itemContainer, SIGNAL(resetRequested()), this, SIGNAL(resetRequested()));
-    connect(m_itemContainer, SIGNAL(itemSelected(ResultWidget *)), this, SLOT(selectItem(ResultWidget *)));
-    connect(m_itemContainer, SIGNAL(itemAskedReorder(const QModelIndex &, const QPointF &)), this, SIGNAL(itemAskedReorder(const QModelIndex &, const QPointF &)));
-    connect(m_itemContainer, SIGNAL(dragStartRequested(const QModelIndex &)), this, SIGNAL(dragStartRequested(const QModelIndex&)));
+    connect(m_itemContainer, SIGNAL(itemSelected(ResultWidget*)), this, SLOT(selectItem(ResultWidget*)));
+    connect(m_itemContainer, SIGNAL(itemAskedReorder(QModelIndex,QPointF)), this, SIGNAL(itemAskedReorder(QModelIndex,QPointF)));
+    connect(m_itemContainer, SIGNAL(dragStartRequested(QModelIndex)), this, SIGNAL(dragStartRequested(QModelIndex)));
 
-    connect(m_itemContainer, SIGNAL(addActionTriggered(const QModelIndex &)), this, SIGNAL(addActionTriggered(const QModelIndex &)));
+    connect(m_itemContainer, SIGNAL(addActionTriggered(QModelIndex)), this, SIGNAL(addActionTriggered(QModelIndex)));
 }
 
 ItemView::~ItemView()

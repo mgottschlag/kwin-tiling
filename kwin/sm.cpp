@@ -31,9 +31,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "workspace.h"
 #include "client.h"
 #include <QDBusInterface>
+#include <QDBusPendingCall>
 #include <QSocketNotifier>
 #include <QSessionManager>
 #include <kdebug.h>
+#ifdef KWIN_BUILD_TILING
+#include "tiling/tiling.h"
+#endif
 
 namespace KWin
 {
@@ -84,11 +88,13 @@ void Workspace::storeSession(KConfig* config, SMSavePhase phase)
     int active_client = -1;
 
     if (phase == SMSavePhase2 || phase == SMSavePhase2Full) {
-        cg.writeEntry("tiling", tilingEnabled());
-        if (tilingEnabled()) {
+#ifdef KWIN_BUILD_TILING
+        cg.writeEntry("tiling", m_tiling->isEnabled());
+        if (m_tiling->isEnabled()) {
             kDebug(1212) << "Tiling was ON";
-            setTilingEnabled(false);
+            m_tiling->setEnabled(false);
         }
+#endif
     }
 
     for (ClientList::Iterator it = clients.begin(); it != clients.end(); ++it) {
@@ -201,6 +207,7 @@ bool Workspace::stopActivity(const QString &id)
         return false; //ksmserver doesn't queue requests (yet)
         //FIXME what about session *loading*?
     }
+
     //ugly hack to avoid dbus deadlocks
     QMetaObject::invokeMethod(this, "reallyStopActivity", Qt::QueuedConnection, Q_ARG(QString, id));
     //then lie and assume it worked.
@@ -209,18 +216,19 @@ bool Workspace::stopActivity(const QString &id)
 
 void Workspace::reallyStopActivity(const QString &id)
 {
-    QStringList openActivities = openActivityList();
+    kDebug() << id;
+    const QStringList openActivities = openActivityList();
 
     QSet<QByteArray> saveSessionIds;
     QSet<QByteArray> dontCloseSessionIds;
-    kDebug() << id;
     for (ClientList::Iterator it = clients.begin(); it != clients.end(); ++it) {
         Client* c = (*it);
-        QByteArray sessionId = c->sessionId();
-        if (sessionId.isEmpty())
+        const QByteArray sessionId = c->sessionId();
+        if (sessionId.isEmpty()) {
             continue; //TODO support old wm_command apps too?
+        }
 
-        kDebug() << sessionId;
+        //kDebug() << sessionId;
 
         //if it's on the activity that's closing, it needs saving
         //but if a process is on some other open activity, I don't wanna close it yet
@@ -229,12 +237,14 @@ void Workspace::reallyStopActivity(const QString &id)
             dontCloseSessionIds << sessionId;
             continue;
         }
-        QStringList activities = c->activities();
+
+        const QStringList activities = c->activities();
         foreach (const QString & activityId, activities) {
-            if (activityId == id)
+            if (activityId == id) {
                 saveSessionIds << sessionId;
-            else if (openActivities.contains(activityId))
+            } else if (openActivities.contains(activityId)) {
                 dontCloseSessionIds << sessionId;
+            }
         }
     }
 
@@ -243,10 +253,11 @@ void Workspace::reallyStopActivity(const QString &id)
     QStringList saveAndClose;
     QStringList saveOnly;
     foreach (const QByteArray & sessionId, saveSessionIds) {
-        if (dontCloseSessionIds.contains(sessionId))
+        if (dontCloseSessionIds.contains(sessionId)) {
             saveOnly << sessionId;
-        else
+        } else {
             saveAndClose << sessionId;
+        }
     }
 
     kDebug() << "saveActivity" << id << saveAndClose << saveOnly;
@@ -254,13 +265,10 @@ void Workspace::reallyStopActivity(const QString &id)
     //pass off to ksmserver
     QDBusInterface ksmserver("org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface");
     if (ksmserver.isValid()) {
-        QDBusMessage reply = ksmserver.call("saveSubSession", id, saveAndClose, saveOnly);
-        if (reply.type() == QDBusMessage::ErrorMessage)
-            kDebug() << "dbus error:" << reply.errorMessage();
-        else
-            kDebug() << "dbus succeeded";
-    } else
+        ksmserver.asyncCall("saveSubSession", id, saveAndClose, saveOnly);
+    } else {
         kDebug() << "couldn't get ksmserver interface";
+    }
 }
 
 /*!
@@ -273,7 +281,9 @@ void Workspace::loadSessionInfo()
     session.clear();
     KConfigGroup cg(kapp->sessionConfig(), "Session");
 
-    setTilingEnabled(cg.readEntry("tiling", false));
+#ifdef KWIN_BUILD_TILING
+    m_tiling->setEnabled(cg.readEntry("tiling", false));
+#endif
 
     addSessionInfo(cg);
 }
@@ -329,6 +339,7 @@ bool Workspace::startActivity(const QString &id)
     if (sessionSaving()) {
         return false; //ksmserver doesn't queue requests (yet)
     }
+
     if (!allActivities_.contains(id)) {
         return false; //bogus id
     }
@@ -337,11 +348,7 @@ bool Workspace::startActivity(const QString &id)
 
     QDBusInterface ksmserver("org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface");
     if (ksmserver.isValid()) {
-        QDBusMessage reply = ksmserver.call("restoreSubSession", id);
-        if (reply.type() == QDBusMessage::ErrorMessage) {
-            kDebug() << "dbus error:" << reply.errorMessage();
-            return false;
-        }
+        ksmserver.asyncCall("restoreSubSession", id);
     } else {
         kDebug() << "couldn't get ksmserver interface";
         return false;

@@ -29,6 +29,8 @@
 #include <QtDBus/QDBusConnection>
 #include <QHash>
 
+class QDBusPendingCallWatcher;
+
 /**
  * This class provides runtime information about the battery and AC status
  * for use in power management Plasma applets.
@@ -41,6 +43,7 @@ public:
     PowermanagementEngine( QObject* parent, const QVariantList& args );
     ~PowermanagementEngine();
     QStringList sources() const;
+    Plasma::Service* serviceForSource(const QString &source);
 
 protected:
     bool sourceRequestEvent(const QString &name);
@@ -55,18 +58,16 @@ private slots:
     void deviceAdded(const QString& udi);
     void profileChanged(const QString &current);
     void batteryRemainingTimeChanged(qulonglong time);
-    void availableProfilesChanged();
-    void reloadPowerDevilData();
+    void batteryRemainingTimeReply(QDBusPendingCallWatcher*);
 
 private:
     QStringList basicSourceNames() const;
 
     QStringList m_sources;
 
-    QHash<QString, QString> m_batterySources;
+    QHash<QString, QString> m_batterySources;  // <udi, Battery0>
 
 };
 
-K_EXPORT_PLASMA_DATAENGINE(powermanagement, PowermanagementEngine)
 
 #endif

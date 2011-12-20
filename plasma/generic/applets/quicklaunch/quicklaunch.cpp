@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 - 2009 by Lukas Appelhans <l.appelhans@gmx.de>     *
- *   Copyright (C) 2010 by Ingomar Wesp <ingomar@wesp.name>                *
+ *   Copyright (C) 2010 - 2011 by Ingomar Wesp <ingomar@wesp.name>         *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -27,6 +27,7 @@
 #include <QtCore/QEvent>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
+#include <QtCore/QObject>
 #include <QtCore/QPoint>
 #include <QtCore/QPointer>
 #include <QtCore/QSize>
@@ -60,15 +61,14 @@
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 #include <Plasma/IconWidget>
-#include <Plasma/Svg>
 #include <Plasma/ToolTipContent>
 #include <Plasma/ToolTipManager>
 
 // Own
-#include "icongridlayout.h"
 #include "launcherdata.h"
-#include "launcherlist.h"
+#include "launchergrid.h"
 #include "popup.h"
+#include "popuplauncherlist.h"
 
 using Plasma::Applet;
 using Plasma::Constraints;
@@ -85,14 +85,14 @@ K_EXPORT_PLASMA_APPLET(quicklaunch, Quicklaunch)
 
 Quicklaunch::Quicklaunch(QObject *parent, const QVariantList &args)
   : Applet(parent, args),
-    m_launcherList(0),
+    m_launcherGrid(0),
     m_layout(0),
     m_popupTrigger(0),
     m_popup(0),
     m_addLauncherAction(0),
     m_removeLauncherAction(0),
-    m_currentLauncherList(0),
-    m_currentLauncherIndex(-1)
+    m_contextMenuTriggeredOnPopup(false),
+    m_contextMenuLauncherIndex(-1)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
@@ -114,18 +114,18 @@ void Quicklaunch::init()
     m_layout->setSpacing(4);
 
     // Initialize icon area
-    m_launcherList = new LauncherList(LauncherList::IconGrid);
-    m_launcherList->gridLayout()->setMaxSectionCountForced(true);
-    m_launcherList->installEventFilter(this);
+    m_launcherGrid = new LauncherGrid();
+    m_launcherGrid->setMaxSectionCountForced(true);
+    m_launcherGrid->installEventFilter(this);
 
-    m_layout->addItem(m_launcherList);
-    m_layout->setStretchFactor(m_launcherList, 1);
+    m_layout->addItem(m_launcherGrid);
+    m_layout->setStretchFactor(m_launcherGrid, 1);
 
     configChanged();
     iconSizeChanged();
 
     connect(
-        m_launcherList, SIGNAL(launchersChanged()), SLOT(onLaunchersChanged()));
+        m_launcherGrid, SIGNAL(launchersChanged()), SLOT(onLaunchersChanged()));
 
     connect(
         KGlobalSettings::self(),
@@ -163,15 +163,15 @@ void Quicklaunch::createConfigurationInterface(KConfigDialog *parent)
     }
 
     uiConfig.autoSectionCountEnabledCheckBox->setChecked(
-        m_launcherList->gridLayout()->maxSectionCount() == 0);
+        m_launcherGrid->maxSectionCount() == 0);
 
     uiConfig.sectionCountSpinBox->setValue(
-        m_launcherList->gridLayout()->maxSectionCount() > 0
-            ? m_launcherList->gridLayout()->maxSectionCount()
+        m_launcherGrid->maxSectionCount() > 0
+            ? m_launcherGrid->maxSectionCount()
             : 1);
 
     uiConfig.launcherNamesVisibleCheckBox->setChecked(
-        m_launcherList->launcherNamesVisible());
+        m_launcherGrid->launcherNamesVisible());
 
     uiConfig.popupEnabledCheckBox->setChecked(m_popup != 0);
 
@@ -189,17 +189,26 @@ bool Quicklaunch::eventFilter(QObject *watched, QEvent *event)
 
     if (eventType == QEvent::GraphicsSceneContextMenu) {
 
-        LauncherList *source = qobject_cast<LauncherList*>(watched);
+        QGraphicsSceneContextMenuEvent *contextMenuEvent =
+            static_cast<QGraphicsSceneContextMenuEvent*>(event);
 
-        if (source) {
-            QGraphicsSceneContextMenuEvent *contextMenuEvent =
-                static_cast<QGraphicsSceneContextMenuEvent*>(event);
-
+        if (watched == m_launcherGrid) {
             int launcherIndex =
-                source->launcherIndexAtPosition(
-                    source->mapFromScene(contextMenuEvent->scenePos()));
+                m_launcherGrid->launcherIndexAtPosition(
+                    m_launcherGrid->mapFromScene(contextMenuEvent->scenePos()));
 
-            showContextMenu(contextMenuEvent->screenPos(), source, launcherIndex);
+            showContextMenu(contextMenuEvent->screenPos(), false, launcherIndex);
+            return true;
+        }
+
+        if (m_popup != 0 && watched == m_popup->launcherList()) {
+
+            PopupLauncherList *launcherList = m_popup->launcherList();
+            int launcherIndex =
+                launcherList->launcherIndexAtPosition(
+                    launcherList->mapFromScene(contextMenuEvent->scenePos()));
+
+            showContextMenu(contextMenuEvent->screenPos(), true, launcherIndex);
             return true;
         }
     }
@@ -227,14 +236,14 @@ void Quicklaunch::constraintsEvent(Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         FormFactor ff = formFactor();
 
-        m_launcherList->gridLayout()->setMode(
+        m_launcherGrid->setLayoutMode(
             ff == Plasma::Horizontal
-                ? IconGridLayout::PreferRows
-                : IconGridLayout::PreferColumns);
+                ? LauncherGrid::PreferRows
+                : LauncherGrid::PreferColumns);
 
         if (ff == Plasma::Planar || ff == Plasma::MediaCenter) {
             // Ignore maxSectionCount in these form factors.
-            m_launcherList->gridLayout()->setMaxSectionCount(0);
+            m_launcherGrid->setMaxSectionCount(0);
         }
 
         // Apply icon size
@@ -255,7 +264,7 @@ void Quicklaunch::constraintsEvent(Constraints constraints)
 
         bool lock = immutability() != Plasma::Mutable;
 
-        m_launcherList->setLocked(lock);
+        m_launcherGrid->setLocked(lock);
         if (m_popup) {
             m_popup->launcherList()->setLocked(lock);
         }
@@ -396,8 +405,8 @@ void Quicklaunch::configChanged()
     }
 
     // Apply new configuration
-    m_launcherList->gridLayout()->setMaxSectionCount(sectionCount);
-    m_launcherList->setLauncherNamesVisible(launcherNamesVisible);
+    m_launcherGrid->setMaxSectionCount(sectionCount);
+    m_launcherGrid->setLauncherNamesVisible(launcherNamesVisible);
 
     // Make sure the popup is in a proper state for the new configuration
     if (m_popup == 0 && (popupEnabled || !newLaunchersOnPopup.empty())) {
@@ -409,11 +418,11 @@ void Quicklaunch::configChanged()
     { // Check if any of the launchers in the main area have changed
         bool launchersChanged = false;
 
-        if (newLaunchers.length() != m_launcherList->launcherCount()) {
+        if (newLaunchers.length() != m_launcherGrid->launcherCount()) {
             launchersChanged = true;
         } else {
             for (int i = 0; i < newLaunchers.length(); i++) {
-                if (newLaunchers.at(i) != m_launcherList->launcherAt(i)) {
+                if (newLaunchers.at(i) != m_launcherGrid->launcherAt(i)) {
                     launchersChanged = true;
                 }
             }
@@ -421,8 +430,8 @@ void Quicklaunch::configChanged()
 
         if (launchersChanged) {
             // Re-populate primary launchers
-            m_launcherList->clear();
-            m_launcherList->insert(-1, newLaunchers);
+            m_launcherGrid->clear();
+            m_launcherGrid->insert(-1, newLaunchers);
         }
     }
 
@@ -456,9 +465,9 @@ void Quicklaunch::iconSizeChanged()
     FormFactor ff = formFactor();
 
     if (ff == Plasma::Planar || ff == Plasma::MediaCenter) {
-        m_launcherList->setPreferredIconSize(IconSize(KIconLoader::Desktop));
+        m_launcherGrid->setPreferredIconSize(IconSize(KIconLoader::Desktop));
     } else {
-        m_launcherList->setPreferredIconSize(IconSize(KIconLoader::Panel));
+        m_launcherGrid->setPreferredIconSize(IconSize(KIconLoader::Panel));
     }
 }
 
@@ -474,12 +483,12 @@ void Quicklaunch::onConfigAccepted()
     KConfigGroup config = this->config();
     bool changed = false;
 
-    if (sectionCount != m_launcherList->gridLayout()->maxSectionCount()) {
+    if (sectionCount != m_launcherGrid->maxSectionCount()) {
         config.writeEntry("sectionCount", sectionCount);
         changed = true;
     }
 
-    if (launcherNamesVisible != m_launcherList->launcherNamesVisible()) {
+    if (launcherNamesVisible != m_launcherGrid->launcherNamesVisible()) {
         config.writeEntry("launcherNamesVisible", launcherNamesVisible);
         changed = true;
     }
@@ -489,11 +498,11 @@ void Quicklaunch::onConfigAccepted()
         // Move all the launchers that are currently in the popup to
         // the main launcher list.
         if (m_popup) {
-            LauncherList *popupLauncherList = m_popup->launcherList();
+            PopupLauncherList *popupLauncherList = m_popup->launcherList();
 
             while (popupLauncherList->launcherCount() > 0) {
-                m_launcherList->insert(
-                    m_launcherList->launcherCount(),
+                m_launcherGrid->insert(
+                    m_launcherGrid->launcherCount(),
                     popupLauncherList->launcherAt(0));
 
                 popupLauncherList->removeAt(0);
@@ -515,8 +524,8 @@ void Quicklaunch::onLaunchersChanged()
     QStringList launchers;
     QStringList launchersOnPopup;
 
-    for (int i = 0; i < m_launcherList->launcherCount(); i++) {
-        launchers.append(m_launcherList->launcherAt(i).url().prettyUrl());
+    for (int i = 0; i < m_launcherGrid->launcherCount(); i++) {
+        launchers.append(m_launcherGrid->launcherAt(i).url().prettyUrl());
     }
 
     if (m_popup) {
@@ -586,22 +595,29 @@ void Quicklaunch::onAddLauncherAction()
         delete propertiesDialog;
     }
 
-    if (m_currentLauncherList) {
-        m_currentLauncherList->insert(
-            m_currentLauncherIndex, KUrl::fromPath(programPath));
+    if (m_contextMenuTriggeredOnPopup) {
+        m_popup->launcherList()->insert(
+            m_contextMenuLauncherIndex, KUrl::fromPath(programPath));
     }
     else {
-        m_launcherList->insert(
-            -1, KUrl::fromPath(programPath));
+        m_launcherGrid->insert(
+            m_contextMenuLauncherIndex, KUrl::fromPath(programPath));
     }
 }
 
 void Quicklaunch::onEditLauncherAction()
 {
-    Q_ASSERT(m_currentLauncherList && m_currentLauncherIndex != -1);
+    Q_ASSERT(m_contextMenuLauncherIndex != -1);
 
-    LauncherData launcherData(
-        m_currentLauncherList->launcherAt(m_currentLauncherIndex));
+    LauncherData launcherData;
+
+    if (m_contextMenuTriggeredOnPopup) {
+        launcherData =
+            m_popup->launcherList()->launcherAt(m_contextMenuLauncherIndex);
+    } else {
+        launcherData =
+            m_launcherGrid->launcherAt(m_contextMenuLauncherIndex);
+    }
 
     KUrl url(launcherData.url());
 
@@ -645,8 +661,15 @@ void Quicklaunch::onEditLauncherAction()
         LauncherData newLauncherData(url);
 
         // TODO: This calls for a setLauncherDataAt method...
-        m_currentLauncherList->insert(m_currentLauncherIndex, newLauncherData);
-        m_currentLauncherList->removeAt(m_currentLauncherIndex+1);
+        if (m_contextMenuTriggeredOnPopup) {
+            PopupLauncherList *popupLauncherList = m_popup->launcherList();
+            popupLauncherList->insert(m_contextMenuLauncherIndex, newLauncherData);
+            popupLauncherList->removeAt(m_contextMenuLauncherIndex+1);
+        } else {
+            m_launcherGrid->insert(m_contextMenuLauncherIndex, newLauncherData);
+            m_launcherGrid->removeAt(m_contextMenuLauncherIndex+1);
+        }
+
     } else {
         if (desktopFileCreated) {
             // User didn't save the data, delete the temporary desktop file.
@@ -659,25 +682,31 @@ void Quicklaunch::onEditLauncherAction()
 
 void Quicklaunch::onRemoveLauncherAction()
 {
-    Q_ASSERT(m_currentLauncherList && m_currentLauncherIndex != -1);
-    m_currentLauncherList->removeAt(m_currentLauncherIndex);
+    Q_ASSERT(m_contextMenuLauncherIndex != -1);
+
+    if (m_contextMenuTriggeredOnPopup) {
+        m_popup->launcherList()->removeAt(m_contextMenuLauncherIndex);
+    } else {
+        m_launcherGrid->removeAt(m_contextMenuLauncherIndex);
+    }
+
 }
 
 void Quicklaunch::showContextMenu(
     const QPoint& screenPos,
-    LauncherList *component,
+    bool onPopup,
     int iconIndex)
 {
     if (m_addLauncherAction == 0) {
         initActions();
     }
 
-    m_currentLauncherList = component;
-    m_currentLauncherIndex = iconIndex;
+    m_contextMenuTriggeredOnPopup = onPopup;
+    m_contextMenuLauncherIndex = iconIndex;
 
     KMenu m;
     m.addAction(m_addLauncherAction);
-    if (component != 0 && iconIndex != -1) {
+    if (iconIndex != -1) {
         m.addAction(m_editLauncherAction);
         m.addAction(m_removeLauncherAction);
     }
@@ -692,8 +721,8 @@ void Quicklaunch::showContextMenu(
 
     m.exec(screenPos);
 
-    m_currentLauncherList = 0;
-    m_currentLauncherIndex = -1;
+    m_contextMenuTriggeredOnPopup = false;
+    m_contextMenuLauncherIndex = -1;
 }
 
 void Quicklaunch::initActions()

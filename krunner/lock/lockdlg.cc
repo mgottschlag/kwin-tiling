@@ -12,7 +12,7 @@
 #include "lockdlg.h"
 
 #include <kcheckpass-enums.h>
-#include <kdisplaymanager.h>
+#include <kworkspace/kdisplaymanager.h>
 
 #include <KApplication>
 #include <KLocale>

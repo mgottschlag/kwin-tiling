@@ -84,7 +84,18 @@ public:
                 QDBusConnection::systemBus()) {}
 };
 
-static enum { Dunno, NoDM, NewKDM, OldKDM, NewGDM, OldGDM } DMType = Dunno;
+class LightDMDBus : public QDBusInterface
+{
+public:
+    LightDMDBus() :
+        QDBusInterface(
+                QLatin1String("org.freedesktop.DisplayManager"),
+                qgetenv("XDG_SEAT_PATH"),
+                QLatin1String("org.freedesktop.DisplayManager.Seat"),
+                QDBusConnection::systemBus()) {}
+};
+
+static enum { Dunno, NoDM, NewKDM, OldKDM, NewGDM, OldGDM, LightDM } DMType = Dunno;
 static const char *ctl, *dpy;
 
 class KDisplayManager::Private
@@ -111,6 +122,8 @@ KDisplayManager::KDisplayManager() : d(new Private)
             DMType = NewKDM;
         else if ((ctl = ::getenv("XDM_MANAGED")) && ctl[0] == '/')
             DMType = OldKDM;
+        else if (::getenv("XDG_SEAT_PATH") && LightDMDBus().isValid())
+            DMType = LightDM;
         else if (::getenv("GDMSESSION"))
             DMType = GDMFactory().isValid() ? NewGDM : OldGDM;
         else
@@ -283,7 +296,7 @@ static void getSessionLocation(CKSession &lsess, SessEnt &se)
 bool
 KDisplayManager::canShutdown()
 {
-    if (DMType == NewGDM || DMType == NoDM) {
+    if (DMType == NewGDM || DMType == NoDM || DMType == LightDM) {
         QDBusReply<bool> canStop = CKManager().call(QLatin1String("CanStop"));
         return (canStop.isValid() && canStop.value());
     }
@@ -315,7 +328,7 @@ KDisplayManager::shutdown(KWorkSpace::ShutdownType shutdownType,
         if (!bootOption.isEmpty())
             return;
 
-        if (DMType == NewGDM || DMType == NoDM) {
+        if (DMType == NewGDM || DMType == NoDM || DMType == LightDM) {
             // FIXME: entirely ignoring shutdownMode
             CKManager().call(QLatin1String(
                     shutdownType == KWorkSpace::ShutdownTypeReboot ? "Restart" : "Stop"));
@@ -390,7 +403,7 @@ KDisplayManager::setLock(bool on)
 bool
 KDisplayManager::isSwitchable()
 {
-    if (DMType == NewGDM) {
+    if (DMType == NewGDM || DMType == LightDM) {
         QDBusObjectPath currentSeat;
         if (getCurrentSeat(0, &currentSeat)) {
             CKSeat seat(currentSeat);
@@ -417,7 +430,7 @@ KDisplayManager::isSwitchable()
 int
 KDisplayManager::numReserve()
 {
-    if (DMType == NewGDM || DMType == OldGDM)
+    if (DMType == NewGDM || DMType == OldGDM || DMType == LightDM)
         return 1; /* Bleh */
 
     if (DMType == OldKDM)
@@ -438,6 +451,10 @@ KDisplayManager::startReserve()
         GDMFactory().call(QLatin1String("CreateTransientDisplay"));
     else if (DMType == OldGDM)
         exec("FLEXI_XSERVER\n");
+    else if (DMType == LightDM) {
+        LightDMDBus lightDM;
+        lightDM.call("SwitchToGreeter");
+    }
     else
         exec("reserve\n");
 }
@@ -448,7 +465,7 @@ KDisplayManager::localSessions(SessList &list)
     if (DMType == OldKDM)
         return false;
 
-    if (DMType == NewGDM) {
+    if (DMType == NewGDM || DMType == LightDM) {
         QDBusObjectPath currentSession, currentSeat;
         if (getCurrentSeat(&currentSession, &currentSeat)) {
             foreach (const QDBusObjectPath &sp, getSessionsForSeat(currentSeat)) {
@@ -546,7 +563,7 @@ KDisplayManager::sess2Str(const SessEnt &se)
 bool
 KDisplayManager::switchVT(int vt)
 {
-    if (DMType == NewGDM) {
+    if (DMType == NewGDM || DMType == LightDM) {
         QDBusObjectPath currentSeat;
         if (getCurrentSeat(0, &currentSeat)) {
             foreach (const QDBusObjectPath &sp, getSessionsForSeat(currentSeat)) {
@@ -575,10 +592,11 @@ KDisplayManager::switchVT(int vt)
 void
 KDisplayManager::lockSwitchVT(int vt)
 {
-    if (switchVT(vt)) {
-        QDBusInterface screensaver("org.freedesktop.ScreenSaver", "/ScreenSaver", "org.freedesktop.ScreenSaver");
-        screensaver.call("Lock");
-    }
+    // Lock first, otherwise the lock won't be able to kick in until the session is re-activated.
+    QDBusInterface screensaver("org.freedesktop.ScreenSaver", "/ScreenSaver", "org.freedesktop.ScreenSaver");
+    screensaver.call("Lock");
+
+    switchVT(vt);
 }
 
 void

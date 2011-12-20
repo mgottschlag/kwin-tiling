@@ -38,8 +38,8 @@ NMBtNetworkInterface::NMBtNetworkInterface(const QString & path, NMNetworkManage
     : NMGsmNetworkInterface(*new NMBtNetworkInterfacePrivate(path, this), manager, parent)
 {
     Q_D(NMBtNetworkInterface);
-    connect( &d->btIface, SIGNAL(PropertiesChanged(const QVariantMap &)),
-                this, SLOT(btPropertiesChanged(const QVariantMap &)));
+    connect( &d->btIface, SIGNAL(PropertiesChanged(QVariantMap)),
+                this, SLOT(btPropertiesChanged(QVariantMap)));
 }
 
 NMBtNetworkInterface::~NMBtNetworkInterface()

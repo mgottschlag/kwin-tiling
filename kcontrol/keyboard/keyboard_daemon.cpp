@@ -39,6 +39,7 @@
 #include "keyboard_hardware.h"
 #include "layout_tray_icon.h"
 #include "layout_memory_persister.h"
+#include "layouts_menu.h"
 
 
 K_PLUGIN_FACTORY(KeyboardFactory, registerPlugin<KeyboardDaemon>();)
@@ -58,7 +59,7 @@ KeyboardDaemon::KeyboardDaemon(QObject *parent, const QList<QVariant>&)
     QDBusConnection dbus = QDBusConnection::sessionBus();
 	dbus.registerService(KEYBOARD_DBUS_SERVICE_NAME);
 	dbus.registerObject(KEYBOARD_DBUS_OBJECT_PATH, this, QDBusConnection::ExportScriptableSlots | QDBusConnection::ExportScriptableSignals);
-    dbus.connect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT( configureKeyboard() ));
+    dbus.connect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT(configureKeyboard()));
 
 	configureKeyboard();
 	registerListeners();
@@ -78,7 +79,7 @@ KeyboardDaemon::~KeyboardDaemon()
 	layoutMemoryPersister.save(KGlobal::mainComponent().componentName());
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.disconnect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT( configureKeyboard() ));
+    dbus.disconnect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT(configureKeyboard()));
 	dbus.unregisterObject(KEYBOARD_DBUS_OBJECT_PATH);
 	dbus.unregisterService(KEYBOARD_DBUS_SERVICE_NAME);
 
@@ -206,6 +207,7 @@ void KeyboardDaemon::layoutMapChanged()
 {
 	keyboardConfig.load();
 	layoutMemory.layoutMapChanged();
+	emit layoutListChanged();
 	if( layoutTrayIcon != NULL ) {
 		layoutTrayIcon->layoutMapChanged();
 	}
@@ -213,12 +215,18 @@ void KeyboardDaemon::layoutMapChanged()
 
 void KeyboardDaemon::switchToNextLayout()
 {
+	kDebug() << "Toggling layout";
 	X11Helper::switchToNextLayout();
 }
 
 bool KeyboardDaemon::setLayout(QAction* action)
 {
-	return X11Helper::setLayout(LayoutUnit(action->data().toString()));
+	if( action == actionCollection->getToggeAction() )
+		return false;
+
+	LayoutUnit layoutUnit(action->data().toString());
+	return LayoutsMenu::switchToLayout(layoutUnit, keyboardConfig);	// need this to be able to switch to spare layouts
+//	return X11Helper::setLayout(LayoutUnit(action->data().toString()));
 }
 
 bool KeyboardDaemon::setLayout(const QString& layout)

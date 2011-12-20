@@ -267,6 +267,9 @@ EditActionDialog::EditActionDialog(QWidget* parent)
     m_ui = new Ui::EditActionDialog;
     m_ui->setupUi(dlgWidget);
 
+    m_ui->leRegExp->setClearButtonShown(true);
+    m_ui->leDescription->setClearButtonShown(true);
+
     m_ui->pbAddCommand->setIcon(KIcon("list-add"));
     m_ui->pbRemoveCommand->setIcon(KIcon("list-remove"));
 
@@ -275,8 +278,8 @@ EditActionDialog::EditActionDialog(QWidget* parent)
     m_ui->twCommandList->verticalHeader()->setDefaultSectionSize(m_ui->twCommandList->verticalHeader()->minimumSectionSize());
     setMainWidget(dlgWidget);
 
-    connect(m_ui->pbAddCommand, SIGNAL( clicked() ), SLOT( onAddCommand() ) );
-    connect(m_ui->pbRemoveCommand, SIGNAL( clicked() ), SLOT( onRemoveCommand() ) );
+    connect(m_ui->pbAddCommand, SIGNAL(clicked()), SLOT(onAddCommand()) );
+    connect(m_ui->pbRemoveCommand, SIGNAL(clicked()), SLOT(onRemoveCommand()) );
 
 }
 

@@ -45,13 +45,13 @@ namespace Control
 
         QString getImsi() const;
 
-        void sendPuk(const QString & puk, const QString & pin) const;
+        QDBusPendingReply<> sendPuk(const QString & puk, const QString & pin) const;
 
-        void sendPin(const QString & pin) const;
+        QDBusPendingReply<> sendPin(const QString & pin) const;
 
-        void enablePin(const QString & pin, const bool enabled) const;
+        QDBusPendingReply<> enablePin(const QString & pin, const bool enabled) const;
 
-        void changePin(const QString & oldPin, const QString & newPin) const;
+        QDBusPendingReply<> changePin(const QString & oldPin, const QString & newPin) const;
 
         Solid::Control::ModemInterface::Band getSupportedBands() const;
 

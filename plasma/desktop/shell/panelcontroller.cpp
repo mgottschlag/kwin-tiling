@@ -226,7 +226,7 @@ PanelController::PanelController(QWidget* parent)
     connect(m_closeControllerTool, SIGNAL(clicked()), this, SLOT(close()));
 
     m_ruler = new PositioningRuler(m_configWidget);
-    connect(m_ruler, SIGNAL(rulersMoved(int, int, int)), this, SLOT(rulersMoved(int, int, int)));
+    connect(m_ruler, SIGNAL(rulersMoved(int,int,int)), this, SLOT(rulersMoved(int,int,int)));
     m_extLayout->addWidget(m_ruler);
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(themeChanged()));
@@ -271,6 +271,7 @@ void PanelController::setContainment(Plasma::Containment *c)
     }
 
     action = new QAction(i18n("Add Spacer"), this);
+    action->setIcon(KIcon("distribute-horizontal-x"));
     ToolButton *addSpaceTool = addTool(action, this);
     addSpaceTool->setToolTip(i18n("Add a spacer to the panel useful to add some space between two widgets"));
     m_layout->insertWidget(insertIndex, addSpaceTool);
@@ -280,6 +281,7 @@ void PanelController::setContainment(Plasma::Containment *c)
     action = containment()->action("lock widgets");
     if (action && action->isEnabled()) {
         ToolButton *lockWidgetsTool = addTool(action, this);
+        lockWidgetsTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         m_optDialogLayout->addWidget(lockWidgetsTool, m_optDialogLayout->count() - 2);
         connect(lockWidgetsTool, SIGNAL(clicked()), m_optionsDialog, SLOT(hide()));
         connect(lockWidgetsTool, SIGNAL(clicked()), this, SLOT(hide()));
@@ -307,6 +309,15 @@ void PanelController::moveEvent(QMoveEvent *event)
         emit offsetChanged(m_ruler->offset());
     }
     ControllerWindow::moveEvent(event);
+}
+
+void PanelController::showEvent(QShowEvent *event)
+{
+    if (containment()) {
+        setMaximumSize(PlasmaApp::self()->corona()->screenGeometry(containment()->screen()).size());
+        syncToLocation();
+    }
+    ControllerWindow::showEvent(event);
 }
 
 void PanelController::setLocation(const Plasma::Location &loc)
@@ -408,7 +419,7 @@ void PanelController::syncToLocation()
     updateGeometry();
 
     setMinimumSize(QSize(0, 0));
-    setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+    setMaximumSize(sizeHint());
     resize(sizeHint());
 }
 
@@ -497,7 +508,14 @@ void PanelController::themeChanged()
 void PanelController::switchToWidgetExplorer()
 {
     m_configWidget->hide();
-    showWidgetExplorer();
+}
+
+void PanelController::closeIfNotFocussed()
+{
+    QWidget *widget = QApplication::activeWindow();
+    if (!widget || widget != m_optionsDialog) {
+        ControllerWindow::closeIfNotFocussed();
+    }
 }
 
 void PanelController::switchToController()
@@ -889,7 +907,19 @@ void PanelController::resizeEvent(QResizeEvent *event)
             const int screen = containment()->screen();
             const QRect screenGeom = PlasmaApp::self()->corona()->screenGeometry(screen);
             QRegion availGeom(screenGeom);
-            if (m_extLayout->sizeHint().width() > screenGeom.width()) {
+
+            QFontMetrics fm(QApplication::font());
+            QString wholeText;
+
+            //FIXME: better (and faster) way to do that?
+            for (int i=0; i < m_layout->count(); ++i) {
+                ToolButton *button = qobject_cast<ToolButton *>(m_layout->itemAt(i)->widget());
+                if (button) {
+                    wholeText += button->text();
+                }
+            }
+
+            if ( fm.width(wholeText) > screenGeom.width()) {
                 showText = false;
             }
             break;

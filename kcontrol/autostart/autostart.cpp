@@ -63,7 +63,7 @@ K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
     connect( widget->btnRemove, SIGNAL(clicked()), SLOT(slotRemoveCMD()) );
     connect( widget->btnAdvanced, SIGNAL(clicked()), SLOT(slotAdvanced()) );
     connect( widget->listCMD, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(slotEditCMD(QTreeWidgetItem*)) );
-    connect( widget->listCMD, SIGNAL(itemClicked(QTreeWidgetItem *, int) ),this,SLOT( slotItemClicked( QTreeWidgetItem *, int) ) );
+    connect( widget->listCMD, SIGNAL(itemClicked(QTreeWidgetItem*,int)),this,SLOT(slotItemClicked(QTreeWidgetItem*,int)) );
     connect( widget->btnProperties, SIGNAL(clicked()), SLOT(slotEditCMD()) );
     connect( widget->listCMD, SIGNAL(itemSelectionChanged()), SLOT(slotSelectionChanged()) );
 

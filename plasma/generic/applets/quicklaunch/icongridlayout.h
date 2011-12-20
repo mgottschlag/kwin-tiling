@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2010 by Ingomar Wesp <ingomar@wesp.name>                *
+ *   Copyright (C) 2010 - 2011 by Ingomar Wesp <ingomar@wesp.name>         *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,6 +20,8 @@
 #define QUICKLAUNCH_ICONGRIDLAYOUT_H
 
 // Qt
+#include <Qt>
+#include <QtGlobal>
 #include <QtCore/QList>
 #include <QtCore/QSizeF>
 #include <QtGui/QGraphicsLayout>

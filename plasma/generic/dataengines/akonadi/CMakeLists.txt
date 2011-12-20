@@ -1,9 +1,4 @@
-find_package(Boost REQUIRED)
-find_package(Akonadi REQUIRED)
-find_package(KdepimLibs REQUIRED)
-
 include_directories(
-        ${CMAKE_SOURCE_DIR}/akonadi
         ${Boost_INCLUDE_DIR}
         ${KDEPIMLIBS_INCLUDE_DIRS}
 )

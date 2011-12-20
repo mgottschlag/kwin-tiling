@@ -78,7 +78,7 @@ public:
     void clearHolidays();
     void addHoliday(Plasma::DataEngine::Data holidayData);
     bool dateHasDetails(const QDate &date) const;
-    QString dateDetails(const QDate &date) const;
+    QStringList dateDetails(const QDate &date) const;
 
     void setAutomaticUpdateEnabled(bool enabled);
     bool isAutomaticUpdateEnabled() const;
@@ -86,10 +86,12 @@ public:
     void setCurrentDate(const QDate &date);
     const QDate& currentDate() const;
 
+    QDate startDate() const;
+    QDate endDate() const;
+
     void applyConfiguration(KConfigGroup cg);
     void writeConfiguration(KConfigGroup cg);
     void createConfigurationInterface(KConfigDialog *parent);
-    void applyConfigurationInterface();
     void configAccepted(KConfigGroup cg);
 
 Q_SIGNALS:
@@ -98,6 +100,7 @@ Q_SIGNALS:
     void dateSelected(const QDate &date);
     void dateHovered(const QDate &date);
     void tableClicked();
+    void eventsChanged();
 
 public Q_SLOTS:
     void dataUpdated(const QString &source, const Plasma::DataEngine::Data &data);
@@ -118,6 +121,8 @@ protected:
     virtual void paintBorder(QPainter *p, int cell, int week, int weekDay, CellTypes type, const QDate &cellDate);
 
 private:
+    QString buildOccurrenceDescription(const Plasma::DataEngine::Data &occurrence) const;
+
     friend class CalendarTablePrivate;
     CalendarTablePrivate* const d;
 

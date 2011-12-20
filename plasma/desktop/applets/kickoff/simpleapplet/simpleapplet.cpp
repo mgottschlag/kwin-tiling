@@ -331,11 +331,6 @@ void MenuLauncherApplet::init()
         receivedArgs = true;
     }
 
-    Q_ASSERT(! d->switcher);
-    d->switcher = new QAction(i18n("Switch to Application Launcher Style"), this);
-    d->actions.append(d->switcher);
-    connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
-
     configChanged();
 
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ExtensionHandler, "desktop", new Kickoff::ServiceItemHandler);
@@ -346,6 +341,11 @@ void MenuLauncherApplet::init()
         d->actions.append(menueditor);
         connect(menueditor, SIGNAL(triggered(bool)), this, SLOT(startMenuEditor()));
     }
+
+    Q_ASSERT(! d->switcher);
+    d->switcher = new QAction(i18n("Switch to Application Launcher Style"), this);
+    d->actions.append(d->switcher);
+    connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
 
     if (receivedArgs) {
         KConfigGroup cg = config();
@@ -462,7 +462,7 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     formatLabel->setBuddy(d->formatComboBox);
     d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name Only"), MenuLauncherApplet::Name);
     d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Description Only"), MenuLauncherApplet::Description);
-    d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name Description"), MenuLauncherApplet::NameDescription);
+    d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name (Description)"), MenuLauncherApplet::NameDescription);
     d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Description (Name)"), MenuLauncherApplet::DescriptionName);
     d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name - Description"), MenuLauncherApplet::NameDashDescription);
     d->setCurrentItem(d->formatComboBox, d->formattype);
@@ -602,8 +602,8 @@ void MenuLauncherApplet::showMenu(bool pressed)
         menuview->setContextMenuPolicy(Qt::CustomContextMenu);
         connect(menuview, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
         connect(menuview, SIGNAL(aboutToHide()), this, SLOT(menuHiding()));
-        connect(menuview, SIGNAL(customContextMenuRequested(QMenu*, const QPoint&)),
-                this, SLOT(customContextMenuRequested(QMenu*, const QPoint&)));
+        connect(menuview, SIGNAL(customContextMenuRequested(QMenu*,QPoint)),
+                this, SLOT(customContextMenuRequested(QMenu*,QPoint)));
         //connect(menuview, SIGNAL(afterBeingHidden()), menuview, SLOT(deleteLater()));
 
         //Kickoff::MenuView::ModelOptions options = d->viewtypes.count() < 2 ? Kickoff::MenuView::MergeFirstLevel : Kickoff::MenuView::None;
@@ -611,11 +611,11 @@ void MenuLauncherApplet::showMenu(bool pressed)
             if(vtname == "Applications") {
                 Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel(menuview, true /*allow separators*/);
 
-                appModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
-
                 appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
-                if (d->formattype == Name || d->formattype == NameDescription || d->formattype == NameDashDescription)
+                if (d->formattype == Name || d->formattype == NameDescription || d->formattype == NameDashDescription) {
+                    appModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
                     appModel->setPrimaryNamePolicy(Kickoff::ApplicationModel::AppNamePrimary);
+                }
                 appModel->setSystemApplicationPolicy(Kickoff::ApplicationModel::ShowApplicationAndSystemPolicy);
 
                 menuview->addModel(appModel, Kickoff::MenuView::None, d->relativePath);
@@ -629,14 +629,25 @@ void MenuLauncherApplet::showMenu(bool pressed)
                     }
                 }
             } else if(vtname == "Favorites") {
-                d->addModel(new Kickoff::FavoritesModel(menuview), Favorites);
+                Kickoff::FavoritesModel *favoritesModel = new Kickoff::FavoritesModel(menuview);
+                if (d->formattype == Name || d->formattype == NameDescription || d->formattype == NameDashDescription) {
+                    favoritesModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
+                }
+                d->addModel(favoritesModel, Favorites);
             } else if(vtname == "Computer") {
                 d->addModel(new Kickoff::SystemModel(menuview), Computer);
             } else if(vtname == "RecentlyUsed") {
-                d->addModel(new Kickoff::RecentlyUsedModel(menuview), RecentlyUsed);
+                Kickoff::RecentlyUsedModel *recentModel = new Kickoff::RecentlyUsedModel(menuview);
+                if (d->formattype == Name || d->formattype == NameDescription || d->formattype == NameDashDescription) {
+                    recentModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
+                }
+                d->addModel(recentModel, RecentlyUsed);
             } else if(vtname == "RecentlyUsedApplications") {
                 if (d->maxRecentApps > 0) {
                     Kickoff::RecentlyUsedModel *recentModel = new Kickoff::RecentlyUsedModel(menuview, Kickoff::RecentlyUsedModel::ApplicationsOnly, d->maxRecentApps);
+                    if (d->formattype == Name || d->formattype == NameDescription || d->formattype == NameDashDescription) {
+                        recentModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
+                    }
                     menuview->addModel(recentModel, Kickoff::MenuView::MergeFirstLevel);
 
                     if (d->showMenuTitles) {

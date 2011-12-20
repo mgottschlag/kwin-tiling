@@ -36,25 +36,25 @@ namespace TaskManager
 
 
 /**
- * Wrapper class so we do not have to use the Task class directly and the TaskPtr remains guarded
+ * Wrapper class so we do not have to use the Task class directly and the Task* remains guarded
  */
 class TASKMANAGER_EXPORT TaskItem : public AbstractGroupableItem
 {
     Q_OBJECT
 public:
     /** Creates a taskitem for a task*/
-    TaskItem(QObject *parent, TaskPtr item);
+    TaskItem(QObject *parent, Task *item);
     /** Creates a taskitem for a startuptask*/
-    TaskItem(QObject *parent, StartupPtr item);
+    TaskItem(QObject *parent, Startup *item);
     ~TaskItem();
     /** Sets the taskpointer after the startup pointer */
-    void setTaskPointer(TaskPtr);
-    /** Returns the shared pointer to the  Task */
-    TaskPtr task() const;
+    void setTaskPointer(Task *task);
+    /** Returns a pointer to the  Task; may be NULL */
+    Task *task() const;
 
     WindowList winIds() const;
 
-    StartupPtr startup() const;
+    Startup *startup() const;
     ItemType itemType() const;
     /**
     * @deprecated: use itemType() instead
@@ -63,6 +63,7 @@ public:
 
     QIcon icon() const;
     QString name() const;
+    QString taskName() const;
 
     bool isStartupItem() const;
     bool isOnCurrentDesktop() const;
@@ -78,7 +79,10 @@ public:
     bool demandsAttention() const;
     bool isActionSupported(NET::Action) const;
     void addMimeData(QMimeData *mimeData) const;
+    void setLauncherUrl(const KUrl &url);
+    void setLauncherUrl(const AbstractGroupableItem *item);
     KUrl launcherUrl() const;
+    void resetLauncherCheck();
 
 public Q_SLOTS:
     void toDesktop(int);

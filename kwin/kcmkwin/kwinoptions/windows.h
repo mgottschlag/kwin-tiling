@@ -39,17 +39,11 @@ class KButtonGroup;
 class KColorButton;
 class KIntNumInput;
 
-#define TRANSPARENT 0
-#define OPAQUE      1
-
 #define CLICK_TO_FOCUS     0
 #define FOCUS_FOLLOW_MOUSE 1
 
 #define TITLEBAR_PLAIN  0
 #define TITLEBAR_SHADED 1
-
-#define RESIZE_TRANSPARENT  0
-#define RESIZE_OPAQUE       1
 
 #define SMART_PLACEMENT        0
 #define MAXIMIZING_PLACEMENT   1
@@ -101,7 +95,6 @@ private:
     void setAutoRaiseInterval(int);
     void setAutoRaise(bool);
     void setDelayFocusInterval(int);
-    void setDelayFocus(bool);
     void setClickRaise(bool);
     void setSeparateScreenFocus(bool);
     void setActiveMouseScreen(bool);
@@ -115,12 +108,13 @@ private:
     QLabel *autoRaiseOnLabel;
     QCheckBox *autoRaiseOn;
     QLabel *delayFocusOnLabel;
-    QCheckBox *delayFocusOn;
     QCheckBox *clickRaiseOn;
     KIntNumInput *autoRaise;
     KIntNumInput *delayFocus;
     QCheckBox *separateScreenFocus;
     QCheckBox *activeMouseScreen;
+    QWidget *focusNextToMouseContainer;
+    QCheckBox *focusNextToMouse;
 
     KConfig *config;
     bool     standAlone;
@@ -149,18 +143,12 @@ private slots:
     void slotCntrSnapChanged(int);
 
 private:
-    int getMove(void);
-    int getResizeOpaque(void);
     bool getGeometryTip(void);   //KS
 
-    void setMove(int);
-    void setResizeOpaque(int);
     void setGeometryTip(bool); //KS
     void setMoveResizeMaximized(bool);
 
     KButtonGroup *windowsBox;
-    QCheckBox *opaque;
-    QCheckBox *resizeOpaqueOn;
     QCheckBox *geometryTipOn;
     QCheckBox *moveResizeMaximized;
 

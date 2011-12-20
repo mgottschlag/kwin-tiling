@@ -68,7 +68,8 @@ Mpris::Mpris(const QString& name, PlayerFactory* factory)
     : QObject(),
       Player(factory),
       m_player(0),
-      m_playerName(name)
+      m_playerName(name),
+      m_artworkLoaded(false)
 {
     if (!name.startsWith(QLatin1String("org.mpris"))) {
         m_playerName = "org.mpris." + name;
@@ -103,14 +104,19 @@ void Mpris::setup()
                 this,   SLOT(stateChanged(MprisDBusStatus)));
 
         QDBusReply<int> caps = m_player->GetCaps();
-        if (caps.isValid())
+        if (caps.isValid()) {
             capsChanged(caps);
+        }
+
         QDBusReply<QVariantMap> metadata = m_player->GetMetadata();
-        if (metadata.isValid())
+        if (metadata.isValid()) {
             trackChanged(metadata);
+        }
+
         QDBusReply<MprisDBusStatus> status = m_player->GetStatus();
-        if (status.isValid())
+        if (status.isValid()) {
             stateChanged(status);
+        }
     }
 }
 
@@ -119,6 +125,7 @@ bool Mpris::isRunning()
     if (!m_player->isValid()) {
         setup();
     }
+
     return m_player->isValid();
 }
 
@@ -213,8 +220,9 @@ int Mpris::position()
 {
     if (m_player->isValid()) {
         QDBusReply<int> positionMs = m_player->PositionGet();
-        if (positionMs.isValid())
+        if (positionMs.isValid()) {
             return positionMs / 1000;
+        }
     }
     return 0;
 }
@@ -231,22 +239,32 @@ float Mpris::volume()
 
 QPixmap Mpris::artwork()
 {
-    if (m_metadata.contains("arturl")) {
-        QString arturl = m_metadata["arturl"].toString();
-        if (!arturl.isEmpty()) {
-            if (!m_artfiles.contains(arturl) ||
-                !QFile::exists(m_artfiles[arturl])) {
-                QString artfile;
-                if (!KIO::NetAccess::download(arturl, artfile, 0)) {
-                    kWarning() << KIO::NetAccess::lastErrorString();
-                    return QPixmap();
-                }
-                m_artfiles[arturl] = artfile;
+    if (m_artworkLoaded) {
+        return m_artwork;
+    }
+
+    m_artwork = QPixmap();
+    const QString arturl = m_metadata["arturl"].toString();
+    if (!arturl.isEmpty()) {
+        if (!m_artfiles.contains(arturl) ||
+            (!m_artfiles[arturl].isEmpty() && !QFile::exists(m_artfiles[arturl]))) {
+            QString artfile;
+            if (!KIO::NetAccess::download(arturl, artfile, 0)) {
+                kWarning() << KIO::NetAccess::lastErrorString();
+                artfile.clear();
             }
-            return QPixmap(m_artfiles[arturl]);
+
+            m_artfiles[arturl] = artfile;
+        }
+
+        const QString url = m_artfiles[arturl];
+        if (!url.isEmpty()) {
+            m_artwork = QPixmap(url);
         }
     }
-    return QPixmap();
+
+    m_artworkLoaded = true;
+    return m_artwork;
 }
 
 bool Mpris::canPlay()
@@ -338,8 +356,12 @@ void Mpris::seek(int time)
 
 void Mpris::trackChanged(const QVariantMap& metadata)
 {
-    kDebug() << m_playerName << "metadata:" << metadata;
+    //kDebug() << m_playerName << "metadata:" << metadata;
+    const QString oldArt = m_metadata.value("arturl").toString();
     m_metadata = metadata;
+    if (m_artworkLoaded) {
+        m_artworkLoaded = oldArt == m_metadata.value("arturl");
+    }
 }
 
 void Mpris::stateChanged(MprisDBusStatus state)

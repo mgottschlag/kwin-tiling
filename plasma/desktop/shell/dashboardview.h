@@ -50,10 +50,8 @@ protected:
     void keyPressEvent(QKeyEvent *event);
     void showEvent(QShowEvent *event);
     void paintEvent(QPaintEvent *event);
-//    bool eventFilter(QObject *watched, QEvent *event);
-    bool event(QEvent *event);
 
-public slots:
+public Q_SLOTS:
     void toggleVisibility();
     void showDashboard(bool showDashboard);
 
@@ -65,13 +63,14 @@ public slots:
      */
     void setContainment(Plasma::Containment *newContainment);
 
-protected slots:
+Q_SIGNALS:
+    void dashboardClosed();
+
+private Q_SLOTS:
     void showWidgetExplorer();
     void hideView();
     void suppressShowTimeout();
-
-Q_SIGNALS:
-    void dashboardClosed();
+    void compositingChanged(bool);
 
 private:
     Plasma::View *m_view;

@@ -21,6 +21,7 @@
 #include <kmenu.h>
 #include <ktoolinvocation.h>
 #include <klocalizedstring.h>
+#include <kdebug.h>
 
 #include <QtGui/QAction>
 #include <QtGui/QMenu>
@@ -46,7 +47,7 @@ LayoutsMenu::~LayoutsMenu()
 
 const QIcon LayoutsMenu::getFlag(const QString& layout) const
 {
-	return keyboardConfig.showFlag ? flags.getIcon(layout) : QIcon();
+	return keyboardConfig.isFlagShown() ? flags.getIcon(layout) : QIcon();
 }
 
 void LayoutsMenu::actionTriggered(QAction* action)
@@ -60,17 +61,30 @@ void LayoutsMenu::actionTriggered(QAction* action)
 	}
 	else {
 		LayoutUnit layoutUnit(LayoutUnit(action->data().toString()));
-		if( X11Helper::getCurrentLayouts().layouts.contains(layoutUnit) ) {
-			X11Helper::setLayout(layoutUnit);
-		}
-		else {
-			QList<LayoutUnit> layouts(keyboardConfig.getDefaultLayouts());
-			layouts.removeLast();
-			layouts.append(layoutUnit);
-			XkbHelper::initializeKeyboardLayouts(layouts);
-			X11Helper::setLayout(layoutUnit);
-		}
+		switchToLayout(layoutUnit, keyboardConfig);
 	}
+}
+
+int LayoutsMenu::switchToLayout(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig)
+{
+	QList<LayoutUnit> layouts = X11Helper::getCurrentLayouts().layouts;
+
+	bool res;
+	if( layouts.contains(layoutUnit) ) {
+		res = X11Helper::setLayout(layoutUnit);
+	}
+	else if ( keyboardConfig.isSpareLayoutsEnabled() && keyboardConfig.layouts.contains(layoutUnit) ) {
+		QList<LayoutUnit> layouts(keyboardConfig.getDefaultLayouts());
+		layouts.removeLast();
+		layouts.append(layoutUnit);
+		XkbHelper::initializeKeyboardLayouts(layouts);
+		res = X11Helper::setLayout(layoutUnit);
+	}
+	else {
+		kWarning() << "switchToLayout with unknown layout" << layoutUnit.toString();
+		res = -1;
+	}
+	return res;
 }
 
 QAction* LayoutsMenu::createAction(const LayoutUnit& layoutUnit) const

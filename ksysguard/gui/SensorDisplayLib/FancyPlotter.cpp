@@ -289,9 +289,9 @@ void FancyPlotter::configureSettings()
     mSettingsDialog->setSensors( list );
     mSettingsDialog->setHasIntegerRange( hasIntegerRange );
 
-    connect( mSettingsDialog, SIGNAL( applyClicked() ), this, SLOT( applySettings() ) );
-    connect( mSettingsDialog, SIGNAL( okClicked() ), this, SLOT( applySettings() ) );
-    connect( mSettingsDialog, SIGNAL( finished() ), this, SLOT( settingsFinished() ) );
+    connect( mSettingsDialog, SIGNAL(applyClicked()), this, SLOT(applySettings()) );
+    connect( mSettingsDialog, SIGNAL(okClicked()), this, SLOT(applySettings()) );
+    connect( mSettingsDialog, SIGNAL(finished()), this, SLOT(settingsFinished()) );
 
     mSettingsDialog->show();
 }
@@ -514,7 +514,7 @@ void FancyPlotter::setTooltip()
             if (sensor->unit() == "%")
                 lastValue = i18nc("units", "%1%", lastValue);
             else if( !sensor->unit().isEmpty() )
-                lastValue = i18nc("units", ("%1 " + sensor->unit()).toUtf8(), lastValue);
+                lastValue = i18nc("units", QString("%1 ").arg(sensor->unit()).toUtf8(), lastValue);
         } else {
             lastValue = i18n("Error");
         }
@@ -585,7 +585,7 @@ void FancyPlotter::sendDataToPlotter( )
                         if (sensor->unit() == "%")
                             lastValue = i18nc("units", "%1%", lastValue);
                         else if( !sensor->unit().isEmpty() )  {
-                            lastValue = i18nc("units", ("%1 " + sensor->unit()).toUtf8(), lastValue);
+                            lastValue = i18nc("units", QString("%1 " + sensor->unit()).toUtf8(), lastValue);
                         }
                     }
 
@@ -657,7 +657,7 @@ void FancyPlotter::plotterAxisScaleChanged()
 #endif
         mPlotter->setScaleDownBy(1);
         //translate any others
-        unit = ki18nc("units", ("%1 " + mUnit).toUtf8());
+        unit = ki18nc("units", QString("%1 " + mUnit).toUtf8());
     }
     mPlotter->setUnit(unit);
     //reconnect

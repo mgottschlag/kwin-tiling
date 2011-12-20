@@ -310,6 +310,11 @@ It is shown whenever a custom worksheet is selected.</para>
 <para>The sensor browser displays the registered hosts and their sensors in a
 tree form. Click on the tree handles to open or close a branch. Each sensor
 monitors a certain system value.</para>
+<tip><para>After you have configured your custom worksheet use the splitter and move 
+it to the right edge of the window to hide the sensor browser.</para> 
+<para>If the sensor browser does not appear on a custom worksheet, it is
+probably hidden.  To unhide it, select the right edge of the window and
+drag it to the left.</para></tip>
 </sect2>
 
 <sect2 id="line-graph">

@@ -1,9 +1,15 @@
-var containment = new Activity
+var activity = new Activity
+activity.name = i18n("Photos Activity")
 
-containment.addWidget("digital-clock") //obligatory :)
+var pictures = userDataPath("pictures")
 
-var gwenview = containment.addWidget("icon")
-gwenview.writeConfig("Url", "gwenview.desktop")
+var folderview = activity.addWidget("folderview")
+folderview.writeConfig("url", pictures)
 
-var digikam = containment.addWidget("icon")
-digikam.writeConfig("Url", "digikam.desktop")
+var frame = activity.addWidget("frame")
+frame.writeConfig("slideshow", true)
+frame.writeConfig("recursive slideshow", true)
+frame.writeConfig("slideshow paths", pictures)
+frame.writeConfig("slideshow time", 300)
+frame.writeConfig("random", true)
+

@@ -1,8 +1,7 @@
 if (KDE4_BUILD_TESTS)
 
-include_directories(..
-   ../../../plasma/shells/desktop 
-   ${CMAKE_CURRENT_BINARY_DIR}/../../../plasma/shells/desktop)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_CURRENT_SOURCE_DIR}/../widgetsexplorer)
+
 add_definitions(-DPLASMAGENERICSHELL_EXPORT="")
 
 set(appletexplorer_SRCS

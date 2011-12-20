@@ -19,6 +19,7 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
+#include "klipperpopup.h"
 
 #include <khelpmenu.h>
 #include <klineedit.h>
@@ -26,7 +27,6 @@
 #include <kwindowsystem.h>
 #include <kdebug.h>
 
-#include "klipperpopup.h"
 #include "history.h"
 #include "klipper.h"
 #include "popupproxy.h"
@@ -102,7 +102,7 @@ KlipperPopup::KlipperPopup( History* history )
 
     m_popupProxy = new PopupProxy( this, menu_height, menu_width );
 
-    connect( this, SIGNAL( aboutToShow() ), SLOT( slotAboutToShow() ) );
+    connect( this, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()) );
 }
 
 KlipperPopup::~KlipperPopup() {

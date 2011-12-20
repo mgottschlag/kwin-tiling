@@ -42,31 +42,35 @@ class FlipScrollView::Private
 public:
     Private(FlipScrollView *view)
             : q(view)
-            , backArrowHover(false)
             , flipAnimTimeLine(new QTimeLine())
             , animLeftToRight(true)
             , itemHeight(-1) {
     }
 
-    ~Private() {
+    ~Private()
+    {
         delete flipAnimTimeLine;
     }
 
-    QModelIndex currentRoot() const {
+    QModelIndex currentRoot() const
+    {
         if (currentRootIndex.isValid()) {
             return currentRootIndex;
         } else {
             return q->rootIndex();
         }
     }
-    QModelIndex previousRoot() const {
+
+    QModelIndex previousRoot() const
+    {
         if (previousRootIndices.isEmpty()) {
             return QModelIndex();
         }
         return previousRootIndices.top();
     }
 
-    void setCurrentRoot(const QModelIndex& index) {
+    void setCurrentRoot(const QModelIndex& index)
+    {
         if (previousRootIndices.isEmpty() || previousRootIndices.top() != index) {
             // we're entering into a submenu
             //kDebug() << "pushing" << currentRootIndex.data(Qt::DisplayRole).value<QString>();
@@ -91,6 +95,8 @@ public:
             q->verticalScrollBar()->setValue(previousVerticalOffsets.pop());
         }
 
+        emit q->currentRootChanged(index);
+
         if (q->viewOptions().direction == Qt::RightToLeft) {
             animLeftToRight = !animLeftToRight;
         }
@@ -99,10 +105,13 @@ public:
         q->update();
     }
 
-    int previousVerticalOffset() {
+    int previousVerticalOffset()
+    {
         return previousVerticalOffsets.isEmpty() ? 0 : previousVerticalOffsets.top();
     }
-    int treeDepth(const QModelIndex& headerIndex) const {
+
+    int treeDepth(const QModelIndex& headerIndex) const
+    {
         int depth = 0;
         QModelIndex index = headerIndex;
         while (index.isValid()) {
@@ -110,101 +119,6 @@ public:
             depth++;
         }
         return depth;
-    }
-
-    QRect headerRect(const QModelIndex& headerIndex = QModelIndex()) const {
-        Q_UNUSED(headerIndex)
-        QFontMetrics fm(KGlobalSettings::smallestReadableFont());
-        const int top = ItemDelegate::TOP_OFFSET - q->verticalScrollBar()->value();
-        const int minHeight = ItemDelegate::FIRST_HEADER_HEIGHT;
-
-        QRect rect(backArrowRect().right() + ItemDelegate::BACK_ARROW_SPACING, top,
-                   q->width() - backArrowRect().width() - ItemDelegate::BACK_ARROW_SPACING + 1,
-                   qMax(fm.height(), minHeight) + 4 + ItemDelegate::HEADER_BOTTOM_MARGIN);
-
-        //kDebug() << "flip header is" << rect;
-        return rect;
-    }
-
-    void drawHeader(QPainter *painter, const QRectF& rect,
-                    const QModelIndex& headerIndex, QStyleOptionViewItem options) {
-        QFontMetrics fm(KGlobalSettings::smallestReadableFont());
-        QModelIndex branchIndex = headerIndex;
-
-        painter->save();
-        painter->setFont(KGlobalSettings::smallestReadableFont());
-        painter->setPen(QPen(q->palette().text(), 0));
-
-        QString currentText = i18n("All Applications");
-        QString previousText;
-        bool ltr = options.direction == Qt::LeftToRight;
-        QString sep = ltr ? " > " : " < "; //TODO: this is very lame; use a graphical arrow instead
-
-        if (branchIndex.isValid()) {
-            currentText = branchIndex.data(Qt::DisplayRole).value<QString>();
-            branchIndex = branchIndex.parent();
-
-            while (branchIndex.isValid()) {
-                previousText.prepend(branchIndex.data(Qt::DisplayRole).value<QString>() + sep);
-                branchIndex = branchIndex.parent();
-            }
-        }
-
-        const qreal rightMargin = q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 6;
-        const qreal top = rect.bottom() - fm.height() - 1 - ItemDelegate::HEADER_BOTTOM_MARGIN;
-        QRectF textRect(rect.left(), top, rect.width() - rightMargin, fm.height());
-        painter->setPen(QPen(KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText), 1));
-        painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, currentText);
-
-        if (!previousText.isEmpty()) {
-            int textWidth = fm.width(currentText) + fm.width(' ');
-            if (ltr) {
-                textRect.adjust(0, 0, -textWidth, 0);
-            } else {
-                textRect.adjust(textWidth, 0, 0, 0);
-            }
-
-            painter->drawText(textRect, Qt::AlignRight, previousText);
-        }
-
-        painter->restore();
-    }
-
-    void drawBackArrow(QPainter *painter, QStyle::State state) {
-        painter->save();
-        if (state & QStyle::State_MouseOver) {
-            painter->setBrush(q->palette().highlight());
-        } else {
-            painter->setBrush(q->palette().mid());
-        }
-
-        QRect rect = backArrowRect();
-
-        // background
-        painter->setPen(Qt::NoPen);
-        painter->drawRect(rect);
-
-        painter->setPen(QPen(q->palette().dark(), 0));
-        painter->drawLine(backArrowRect().topRight() + QPointF(0.5, 0),
-                          backArrowRect().bottomRight() + QPointF(0.5, 0));
-
-        // centre triangle
-        if (state & QStyle::State_Enabled) {
-            painter->setPen(Qt::NoPen);
-
-            if (state & QStyle::State_MouseOver) {
-                painter->setBrush(q->palette().highlightedText());
-            } else {
-                painter->setBrush(q->palette().dark());
-            }
-            painter->translate(rect.center());
-            if (painter->layoutDirection() == Qt::RightToLeft) {
-                painter->rotate(180);
-            }
-            painter->drawPath(trianglePath());
-            painter->resetTransform();
-        }
-        painter->restore();
     }
 
     QPainterPath trianglePath(qreal width = 5, qreal height = 10) {
@@ -216,23 +130,17 @@ public:
         return path;
     }
 
-    QRect backArrowRect() const {
-        return QRect(0, 0, ItemDelegate::BACK_ARROW_WIDTH, q->height());
-    }
-
-    void updateScrollBarRange() {
+    void updateScrollBarRange()
+    {
         int childCount = q->model()->rowCount(currentRootIndex);
         int pageSize = q->height();
-        int headerHeight = headerRect(currentRoot()).height();
         int itemH = q->sizeHintForIndex(q->model()->index(0, 0)).height();
-        q->verticalScrollBar()->setRange(0, (childCount * itemH) +
-                                         headerHeight - pageSize);
+        q->verticalScrollBar()->setRange(0, (childCount * itemH) - pageSize);
         q->verticalScrollBar()->setPageStep(pageSize);
         q->verticalScrollBar()->setSingleStep(itemH);
     }
 
     FlipScrollView * const q;
-    bool backArrowHover;
     QPersistentModelIndex hoveredIndex;
     QPersistentModelIndex watchedIndexForDrag;
 
@@ -268,6 +176,12 @@ FlipScrollView::~FlipScrollView()
 {
     delete d;
 }
+
+void FlipScrollView::setCurrentRoot(const QModelIndex &index)
+{
+    d->setCurrentRoot(index);
+}
+
 void FlipScrollView::viewRoot()
 {
     QModelIndex index;
@@ -282,16 +196,10 @@ void FlipScrollView::viewRoot()
 
 QModelIndex FlipScrollView::indexAt(const QPoint& point) const
 {
-    int topOffset = d->headerRect(d->currentRoot()).height() - verticalOffset();
-    int items = model()->rowCount(d->currentRoot());
+    const int items = model()->rowCount(d->currentRoot());
+    const int rowIndex = (point.y() + verticalOffset()) / itemHeight();
 
-    int rowIndex = (point.y() - topOffset) / itemHeight();
-
-    QRect itemRect = rect();
-    itemRect.setTop(itemRect.top() + topOffset);
-    itemRect.setLeft(d->backArrowRect().right() + ItemDelegate::BACK_ARROW_SPACING);
-
-    if (rowIndex < items && itemRect.contains(point)) {
+    if (rowIndex < items) {
         return model()->index(rowIndex, 0, d->currentRoot());
     } else {
         return QModelIndex();
@@ -309,13 +217,13 @@ int FlipScrollView::itemHeight() const
     return d->itemHeight;
 }
 
-void FlipScrollView::scrollTo(const QModelIndex& index , ScrollHint hint)
+void FlipScrollView::scrollTo(const QModelIndex& index, ScrollHint hint)
 {
     if (!index.isValid()) {
         return;
     }
 
-    QRect itemRect = visualRect(index);
+    const QRect itemRect = visualRect(index);
     if (itemRect.isValid() && hint == EnsureVisible) {
         if (itemRect.top() < 0) {
             verticalScrollBar()->setValue(verticalScrollBar()->value() +
@@ -324,6 +232,7 @@ void FlipScrollView::scrollTo(const QModelIndex& index , ScrollHint hint)
             verticalScrollBar()->setValue(verticalScrollBar()->value() +
                                           (itemRect.bottom() - height()));
         }
+        update(itemRect);
     }
 }
 
@@ -334,8 +243,7 @@ bool FlipScrollView::isIndexHidden(const QModelIndex&) const
 
 QRect FlipScrollView::visualRect(const QModelIndex& index) const
 {
-    int topOffset = d->headerRect(index.parent()).height();
-    int leftOffset = d->backArrowRect().width() + ItemDelegate::BACK_ARROW_SPACING;
+    const int leftOffset = ItemDelegate::ITEM_LEFT_MARGIN;
 
     if (index.parent() != d->currentRoot() &&
             index.parent() != d->previousRoot() &&
@@ -343,28 +251,14 @@ QRect FlipScrollView::visualRect(const QModelIndex& index) const
         return QRect();
     }
 
-    bool parentIsPreviousRoot = d->previousRoot().isValid() && index.parent() == d->previousRoot();
+    const bool parentIsPreviousRoot = d->previousRoot().isValid() && index.parent() == d->previousRoot();
     if (parentIsPreviousRoot && d->flipAnimTimeLine->state() == QTimeLine::NotRunning) {
         return QRect();
     }
 
-    if (parentIsPreviousRoot) {
-        topOffset -= d->previousVerticalOffset();
-    } else {
-        topOffset -= verticalOffset();
-    }
-
-    /*
-    int scrollBarWidth = verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0;
-    int height = sizeHintForIndex(index).height();
-    QRect itemRect(leftOffset, topOffset + index.row() * height,
-                   width() - leftOffset - scrollBarWidth, height);
-    */
-    int scrollBarWidth = verticalScrollBar()->isVisible() ?
-                         verticalScrollBar()->width() : 0;
-    QRectF itemRect(leftOffset, topOffset + index.row() * itemHeight(),
-                    width() - leftOffset - scrollBarWidth - ItemDelegate::BACK_ARROW_SPACING,
-                    itemHeight());
+    const int scrollBarWidth = verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0;
+    QRect itemRect(leftOffset, index.row() * itemHeight() - verticalOffset() ,
+                   width() - leftOffset - scrollBarWidth, itemHeight());
 
     const qreal timeValue = d->flipAnimTimeLine->currentValue();
     if (index.parent() == d->currentRoot()) {
@@ -380,7 +274,8 @@ QRect FlipScrollView::visualRect(const QModelIndex& index) const
             itemRect.translate((timeValue*itemRect.width()), 0);
         }
     }
-    return itemRect.toRect();
+
+    return itemRect;
 }
 
 int FlipScrollView::horizontalOffset() const
@@ -488,35 +383,21 @@ void FlipScrollView::mousePressEvent(QMouseEvent *event)
 void FlipScrollView::mouseReleaseEvent(QMouseEvent *event)
 {
     d->watchedIndexForDrag = QModelIndex();
-
-    if (d->backArrowRect().contains(event->pos()) && d->currentRoot().isValid()) {
-        // go up one level
-        d->setCurrentRoot(d->currentRoot().parent());
-        setDirtyRegion(rect());
-    } else {
-        QAbstractItemView::mouseReleaseEvent(event);
-    }
+    QAbstractItemView::mouseReleaseEvent(event);
 }
 
 void FlipScrollView::mouseMoveEvent(QMouseEvent *event)
 {
-    bool mouseOverBackArrow = d->backArrowRect().contains(event->pos());
+    const QModelIndex itemUnderMouse = indexAt(event->pos());
+    if (itemUnderMouse != d->hoveredIndex) {
+        update(itemUnderMouse);
+        update(d->hoveredIndex);
 
-    if (mouseOverBackArrow != d->backArrowHover) {
-        d->backArrowHover = mouseOverBackArrow;
-        setDirtyRegion(d->backArrowRect());
-    } else {
-        const QModelIndex itemUnderMouse = indexAt(event->pos());
-        if (itemUnderMouse != d->hoveredIndex) {
-            update(itemUnderMouse);
-            update(d->hoveredIndex);
-
-            d->hoveredIndex = itemUnderMouse;
-            setCurrentIndex(d->hoveredIndex);
-        }
-
-        QAbstractItemView::mouseMoveEvent(event);
+        d->hoveredIndex = itemUnderMouse;
+        setCurrentIndex(d->hoveredIndex);
     }
+
+    QAbstractItemView::mouseMoveEvent(event);
 }
 
 void FlipScrollView::keyPressEvent(QKeyEvent *event)
@@ -543,7 +424,6 @@ void FlipScrollView::leaveEvent(QEvent *event)
     Q_UNUSED(event);
     d->hoveredIndex = QModelIndex();
     setCurrentIndex(QModelIndex());
-    d->backArrowHover = false;
 }
 
 void FlipScrollView::paintItems(QPainter &painter, QPaintEvent *event, QModelIndex &root)
@@ -593,12 +473,11 @@ void FlipScrollView::paintItems(QPainter &painter, QPaintEvent *event, QModelInd
             QPainterPath tPath = d->trianglePath();
             if (option.direction == Qt::LeftToRight) {
                 triRect.setLeft(triRect.right() - ItemDelegate::ITEM_RIGHT_MARGIN);
-		painter.translate(triRect.center().x() - 6, triRect.y() + (option.rect.height() / 2));
+                painter.translate(triRect.center().x() - 6, triRect.y() + (option.rect.height() / 2));
 
             } else {
-                triRect.setRight(triRect.left() + ItemDelegate::ITEM_RIGHT_MARGIN);            		
-		painter.translate(triRect.center().x() + 6, triRect.y() + (option.rect.height() / 2));
-
+                triRect.setRight(triRect.left() + ItemDelegate::ITEM_RIGHT_MARGIN);
+                painter.translate(triRect.center().x() + 6, triRect.y() + (option.rect.height() / 2));
             }
 
 
@@ -643,38 +522,10 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
 
     QRectF eventRect = event->rect();
 
-    // draw header for current view
-    QRectF headerRect = d->headerRect(currentRoot);
-    if (d->animLeftToRight) {
-        headerRect.translate(headerRect.width() * (1 - timerValue), 0);
-    } else {
-        headerRect.translate(-headerRect.width() * (1 - timerValue), 0);
-    }
-
-    if (eventRect.intersects(headerRect)) {
-        d->drawHeader(&painter, headerRect, currentRoot, viewOptions());
-    }
-
-    // draw header for previous view
-    QRectF prevHeaderRect = d->headerRect(previousRoot);
-    if (d->animLeftToRight) {
-        prevHeaderRect.translate(-prevHeaderRect.width() * timerValue, 0);
-    } else {
-        prevHeaderRect.translate(prevHeaderRect.width() * timerValue, 0);
-    }
-
-    if (eventRect.intersects(prevHeaderRect) && timerValue < 1.0) {
-        d->drawHeader(&painter, prevHeaderRect, previousRoot, viewOptions());
-    }
-
     // draw navigation
     QStyle::State state = 0;
     if (currentRoot.isValid()) {
         state |= QStyle::State_Enabled;
-    }
-
-    if (d->backArrowHover) {
-        state |= QStyle::State_MouseOver;
     }
 
     if (currentRoot.isValid() || previousRoot.isValid()) {
@@ -684,11 +535,6 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
         } else if (!currentRoot.isValid()) {
             opacity = 1 - timerValue;
         }
-
-        painter.save();
-        painter.setOpacity(opacity);
-        d->drawBackArrow(&painter, state);
-        painter.restore();
     }
 }
 

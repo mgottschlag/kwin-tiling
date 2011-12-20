@@ -93,12 +93,12 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
 
     ++s_appletHandleCount;
 
-    connect(s_appletHandle, SIGNAL(mousePressed(Plasma::Applet *, QMouseEvent *)), 
-            this, SLOT(handleMousePressed(Plasma::Applet *, QMouseEvent *)));
-    connect(s_appletHandle, SIGNAL(mouseMoved(Plasma::Applet *, QMouseEvent *)), 
-            this, SLOT(handleMouseMoved(Plasma::Applet *, QMouseEvent *)));
-    connect(s_appletHandle, SIGNAL(mouseReleased(Plasma::Applet *, QMouseEvent *)), 
-            this, SLOT(handleMouseReleased(Plasma::Applet *, QMouseEvent *)));
+    connect(s_appletHandle, SIGNAL(mousePressed(Plasma::Applet*,QMouseEvent*)), 
+            this, SLOT(handleMousePressed(Plasma::Applet*,QMouseEvent*)));
+    connect(s_appletHandle, SIGNAL(mouseMoved(Plasma::Applet*,QMouseEvent*)), 
+            this, SLOT(handleMouseMoved(Plasma::Applet*,QMouseEvent*)));
+    connect(s_appletHandle, SIGNAL(mouseReleased(Plasma::Applet*,QMouseEvent*)), 
+            this, SLOT(handleMouseReleased(Plasma::Applet*,QMouseEvent*)));
 
     syncIndex();
     syncOrientation();

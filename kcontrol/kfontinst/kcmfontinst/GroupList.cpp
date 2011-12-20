@@ -44,13 +44,13 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QDir>
 #include <QtCore/QEvent>
+#include <QtCore/QTimer>
 #include <stdlib.h>
 #include <unistd.h>
 #include <utime.h>
 #include "FcEngine.h"
 #include "Misc.h"
 #include "KfiConstants.h"
-#include <config-workspace.h>
 
 namespace KFI
 {
@@ -211,7 +211,6 @@ CGroupList::CGroupList(QWidget *parent)
     }
     itsSpecialGroups[CGroupListItem::UNCLASSIFIED]=
                 new CGroupListItem(CGroupListItem::UNCLASSIFIED, this);
-    itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
     // Locate groups.xml file - normall will be ~/.config/fontgroups.xml
     QString path(KGlobal::dirs()->localxdgconfdir());
 
@@ -463,6 +462,8 @@ bool CGroupList::load(const QString &file)
                     if(!item)
                     {
                         item=new CGroupListItem(name);
+                        if(!itsGroups.contains(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]))
+                            itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
                         itsGroups.append(item);
                         rv=true;
                     }
@@ -533,7 +534,8 @@ void CGroupList::clear()
         itsGroups.removeFirst(); // Remove personal
         itsGroups.removeFirst(); // Remove system
     }
-    itsGroups.removeFirst(); // Remove unclassif...
+    if(itsGroups.contains(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]))
+        itsGroups.removeFirst(); // Remove unclassif...
     qDeleteAll(itsGroups);
     itsGroups.clear();
     itsGroups.append(itsSpecialGroups[CGroupListItem::ALL]);
@@ -542,7 +544,7 @@ void CGroupList::clear()
         itsGroups.append(itsSpecialGroups[CGroupListItem::PERSONAL]);
         itsGroups.append(itsSpecialGroups[CGroupListItem::SYSTEM]);
     }
-    itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
+    // Dont add 'Unclassif' until we have some user groups
 }
 
 QModelIndex CGroupList::index(CGroupListItem::EType t)
@@ -554,6 +556,8 @@ void CGroupList::createGroup(const QString &name)
 {
     if(!exists(name))
     {
+        if(!itsGroups.contains(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]))
+            itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
         itsGroups.append(new CGroupListItem(name));
         itsModified=true;
         save();
@@ -577,6 +581,13 @@ bool CGroupList::removeGroup(const QModelIndex &idx)
         {
             itsModified=true;
             itsGroups.removeAll(grp);
+    
+            int stdGroups=1 +// All
+                          (itsSpecialGroups[CGroupListItem::SYSTEM] ? 2 : 0)+ // Personal, System
+                          1; // Unclassified
+
+            if(stdGroups==itsGroups.count() && itsGroups.contains(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]))
+                itsGroups.removeAll(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
             delete grp;
             save();
             sort(0, itsSortOrder);
@@ -818,30 +829,33 @@ CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
 
     itsDeleteAct=itsMenu->addAction(KIcon("list-remove"), i18n("Remove"),
                                     this, SIGNAL(del()));
+    itsMenu->addSeparator();
     itsEnableAct=itsMenu->addAction(KIcon("enablefont"), i18n("Enable"),
                                     this, SIGNAL(enable()));
     itsDisableAct=itsMenu->addAction(KIcon("disablefont"), i18n("Disable"),
                                      this, SIGNAL(disable()));
     itsMenu->addSeparator();
-    itsRenameAct=itsMenu->addAction(i18n("Rename..."), this, SLOT(rename()));
-    itsMenu->addSeparator();
-    itsPrintAct=itsMenu->addAction(KIcon("document-print"), i18n("Print..."),
-                                   this, SIGNAL(print()));
+    itsRenameAct=itsMenu->addAction(KIcon("edit-rename"), i18n("Rename..."),
+                                    this, SLOT(rename()));
+    
+    if(!Misc::app(KFI_PRINTER).isEmpty())
+    {
+        itsMenu->addSeparator();
+        itsPrintAct=itsMenu->addAction(KIcon("document-print"), i18n("Print..."),
+                                       this, SIGNAL(print()));
+    }
+    else
+        itsPrintAct=0L;
     itsMenu->addSeparator();
     itsExportAct=itsMenu->addAction(KIcon("document-export"), i18n("Export..."),
                                     this, SIGNAL(zip()));
 
-    itsActionMenu=new QMenu(this);
-    itsActionMenu->addAction(KIcon("go-jump"), i18n("Move Here"), this, SIGNAL(moveFonts()));
-    itsActionMenu->addSeparator();
-    itsActionMenu->addAction(KIcon("process-stop"), i18n("Cancel"));
-
     setWhatsThis(model->whatsThis());
     header()->setWhatsThis(whatsThis());
-    connect(this, SIGNAL(addFamilies(const QModelIndex &,  const QSet<QString> &)),
-            model, SLOT(addToGroup(const QModelIndex &,  const QSet<QString> &)));
-    connect(this, SIGNAL(removeFamilies(const QModelIndex &,  const QSet<QString> &)),
-            model, SLOT(removeFromGroup(const QModelIndex &,  const QSet<QString> &)));
+    connect(this, SIGNAL(addFamilies(QModelIndex,QSet<QString>)),
+            model, SLOT(addToGroup(QModelIndex,QSet<QString>)));
+    connect(this, SIGNAL(removeFamilies(QModelIndex,QSet<QString>)),
+            model, SLOT(removeFromGroup(QModelIndex,QSet<QString>)));
 }
 
 CGroupListItem::EType CGroupListView::getType()
@@ -864,7 +878,8 @@ void CGroupListView::controlMenu(bool del, bool en, bool dis, bool p, bool exp)
     itsRenameAct->setEnabled(del);
     itsEnableAct->setEnabled(en);
     itsDisableAct->setEnabled(dis);
-    itsPrintAct->setEnabled(p);
+    if(itsPrintAct)
+        itsPrintAct->setEnabled(p);
     itsExportAct->setEnabled(exp);
 }
 
@@ -891,6 +906,11 @@ void CGroupListView::rename()
 
     if(index.isValid())
         edit(index);
+}
+
+void CGroupListView::emitMoveFonts()
+{
+    emit moveFonts();
 }
 
 void CGroupListView::contextMenuEvent(QContextMenuEvent *ev)
@@ -977,7 +997,7 @@ void CGroupListView::dropEvent(QDropEvent *event)
                  (static_cast<CGroupListItem *>(to.internalPointer()))->isPersonal()) ||
                 ((static_cast<CGroupListItem *>(from.internalPointer()))->isPersonal() &&
                  (static_cast<CGroupListItem *>(to.internalPointer()))->isSystem()))
-                itsActionMenu->popup(QCursor::pos());
+                QTimer::singleShot(0, this, SLOT(emitMoveFonts()));
             else if((static_cast<CGroupListItem *>(from.internalPointer()))->isCustom() &&
                     !(static_cast<CGroupListItem *>(to.internalPointer()))->isCustom())
                 emit removeFamilies(from, families);

@@ -19,6 +19,10 @@
 
 #include "desktopscriptengine.h"
 
+#include <QCursor>
+
+#include <kephal/screens.h>
+
 #include <plasmagenericshell/scripting/containment.h>
 #include <plasmagenericshell/scripting/appinterface.h>
 
@@ -27,8 +31,9 @@
 namespace WorkspaceScripting
 {
 
-DesktopScriptEngine::DesktopScriptEngine(Plasma::Corona *corona, QObject *parent)
-    : ScriptEngine(corona, parent)
+DesktopScriptEngine::DesktopScriptEngine(Plasma::Corona *corona, bool startup, QObject *parent)
+    : ScriptEngine(corona, parent),
+      m_startup(startup)
 {
 }
 
@@ -41,6 +46,15 @@ QScriptValue DesktopScriptEngine::wrap(Plasma::Containment *c)
 QScriptValue DesktopScriptEngine::wrap(Containment *c)
 {
     return ScriptEngine::wrap(c);
+}
+
+int DesktopScriptEngine::defaultPanelScreen() const
+{
+    if (m_startup) {
+        return ScriptEngine::defaultPanelScreen();
+    } else {
+        return Kephal::ScreenUtils::screenId(QCursor::pos());
+    }
 }
 
 }

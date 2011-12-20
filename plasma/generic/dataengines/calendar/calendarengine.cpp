@@ -31,6 +31,7 @@
 #include <KCalCore/Event>
 #include <KCalCore/Todo>
 #include <KCalCore/Journal>
+#include <kdescendantsproxymodel.h>
 
 #ifdef AKONADI_FOUND
 #include <Akonadi/ChangeRecorder>
@@ -38,6 +39,7 @@
 #include <Akonadi/Collection>
 #include <Akonadi/ItemFetchScope>
 #include <Akonadi/EntityDisplayAttribute>
+#include <Akonadi/EntityMimeTypeFilterModel>
 
 #include "akonadi/calendar.h"
 #include "akonadi/calendarmodel.h"
@@ -118,7 +120,7 @@ bool CalendarEngine::holidayCalendarSourceRequest(const QString& key, const QStr
                                                         m_defaultHolidayRegionCountry.toLower(),
                                                         m_defaultHolidayRegionLanguage.toLower() );
             if (m_defaultHolidayRegion.isEmpty()) {
-                m_defaultHolidayRegion == "NoDefault";
+                m_defaultHolidayRegion = "NoDefault";
             }
         }
 
@@ -341,8 +343,12 @@ void CalendarEngine::initAkonadiCalendar()
 
     // create the models that contain the data. they will be updated automatically from akonadi.
     CalendarSupport::CalendarModel *calendarModel = new CalendarSupport::CalendarModel(monitor, this);
-    calendarModel->setCollectionFetchStrategy(Akonadi::EntityTreeModel::InvisibleCollectionFetch);
-    m_calendar = new CalendarSupport::Calendar(calendarModel, calendarModel, KSystemTimeZones::local());
+    KDescendantsProxyModel *flatModel = new KDescendantsProxyModel(this);
+    flatModel->setSourceModel(calendarModel);
+    Akonadi::EntityMimeTypeFilterModel *mimeFilteredModel = new Akonadi::EntityMimeTypeFilterModel(this);
+    mimeFilteredModel->addMimeTypeExclusionFilter(Akonadi::Collection::mimeType());
+    mimeFilteredModel->setSourceModel(flatModel);
+    m_calendar = new CalendarSupport::Calendar(mimeFilteredModel, mimeFilteredModel, KSystemTimeZones::local());
 }
 #endif
 

@@ -45,6 +45,5 @@ set(COLORS
 foreach(color ${COLORS})
     add_subdirectory(theme-${color})
     list(APPEND PACKAGES package-${color})
-    list(APPEND PACKAGES package-${color}-big)
     message(STATUS "Added themes for ${color}")
 endforeach(color)

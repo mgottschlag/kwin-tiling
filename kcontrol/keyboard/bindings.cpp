@@ -103,8 +103,11 @@ void KeyboardLayoutActionCollection::setLayoutShortcuts(QList<LayoutUnit>& layou
 {
 	for (QList<LayoutUnit>::iterator i = layoutUnits.begin(); i != layoutUnits.end(); ++i) {
 		LayoutUnit& layoutUnit = *i;
-		createLayoutShortcutActon(layoutUnit, rules, false);
+		if( ! layoutUnit.getShortcut().isEmpty() ) {
+			createLayoutShortcutActon(layoutUnit, rules, false);
+		}
 	}
+	kDebug() << "Cleaning component shortcuts on save" << KGlobalAccel::cleanComponent(COMPONENT_NAME);
 }
 
 void KeyboardLayoutActionCollection::loadLayoutShortcuts(QList<LayoutUnit>& layoutUnits, const Rules* rules)
@@ -112,19 +115,27 @@ void KeyboardLayoutActionCollection::loadLayoutShortcuts(QList<LayoutUnit>& layo
 	for (QList<LayoutUnit>::iterator i = layoutUnits.begin(); i != layoutUnits.end(); ++i) {
 		LayoutUnit& layoutUnit = *i;
 		KAction* action = createLayoutShortcutActon(layoutUnit, rules, true);
-		layoutUnit.setShortcut(action->globalShortcut(KAction::ActiveShortcut).primary());	// shortcut was restored
+		QKeySequence shortcut = action->globalShortcut(KAction::ActiveShortcut).primary();	// shortcut was restored
+		if( ! shortcut.isEmpty() ) {
+			kDebug() << "Restored shortcut for" << layoutUnit.toString() << shortcut;
+			layoutUnit.setShortcut(shortcut);
+		}
+		else {
+			kDebug() << "Skipping empty shortcut for" << layoutUnit.toString();
+			removeAction(action);
+		}
 	}
 	kDebug() << "Cleaning component shortcuts on load" << KGlobalAccel::cleanComponent(COMPONENT_NAME);
 }
 
-KAction* KeyboardLayoutActionCollection::getAction(const LayoutUnit& layoutUnit)
-{
-	for(int i=1; i<actions().size(); i++) {
-		if( action(i)->data() == layoutUnit.toString() )
-			return static_cast<KAction*>(action(i));
-	}
-	return NULL;
-}
+//KAction* KeyboardLayoutActionCollection::getAction(const LayoutUnit& layoutUnit)
+//{
+//	for(int i=1; i<actions().size(); i++) {
+//		if( action(i)->data() == layoutUnit.toString() )
+//			return static_cast<KAction*>(action(i));
+//	}
+//	return NULL;
+//}
 
 void KeyboardLayoutActionCollection::resetLayoutShortcuts()
 {

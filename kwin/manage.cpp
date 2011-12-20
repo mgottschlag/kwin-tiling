@@ -32,7 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "rules.h"
 #include "group.h"
 
+#ifdef KWIN_BUILD_SCRIPTING
 #include "scripting/workspaceproxy.h"
+#endif
 
 namespace KWin
 {
@@ -46,6 +48,7 @@ bool Client::manage(Window w, bool isMapped)
 {
     StackingUpdatesBlocker stacking_blocker(workspace());
 
+#ifdef KWIN_BUILD_SCRIPTING
     //Scripting call. Does not use a signal/slot mechanism
     //as ensuring connections was a bit difficult between
     //so many clients and the workspace
@@ -53,6 +56,7 @@ bool Client::manage(Window w, bool isMapped)
     if (ws_wrap != 0) {
         ws_wrap->sl_clientManaging(this);
     }
+#endif
 
     grabXServer();
 
@@ -132,6 +136,7 @@ bool Client::manage(Window w, bool isMapped)
     getWindowProtocols();
     getWmNormalHints(); // Get xSizeHint
     getMotifHints();
+    getWmOpaqueRegion();
 
     // TODO: Try to obey all state information from info->state()
 
@@ -143,6 +148,9 @@ bool Client::manage(Window w, bool isMapped)
     KStartupInfoId asn_id;
     KStartupInfoData asn_data;
     bool asn_valid = workspace()->checkStartupNotification(window(), asn_id, asn_data);
+
+    // Make sure that the input window is created before we update the stacking order
+    updateInputWindow();
 
     workspace()->updateClientLayer(this);
 
@@ -314,9 +322,9 @@ bool Client::manage(Window w, bool isMapped)
     // Create client group if the window will have a decoration
     bool dontKeepInArea = false;
     if (!noBorder()) {
-        client_group = NULL;
+        setClientGroup(NULL);
         // Automatically add to previous groups on session restore
-        if (session && session->clientGroupClient && session->clientGroupClient != this)
+        if (session && session->clientGroupClient && session->clientGroupClient != this && session->clientGroupClient->clientGroup())
             session->clientGroupClient->clientGroup()->add(this, -1, true);
         else if (isMapped)
             // If the window is already mapped (Restarted KWin) add any windows that already have the
@@ -344,7 +352,7 @@ bool Client::manage(Window w, bool isMapped)
             }
         }
         if (!client_group)
-            client_group = new ClientGroup(this);
+            setClientGroup(new ClientGroup(this));
     }
 
     updateDecoration(false);   // Also gravitates
@@ -363,6 +371,38 @@ bool Client::manage(Window w, bool isMapped)
         // Placement needs to be after setting size
         workspace()->place(this, area);
         placementDone = true;
+    }
+
+    // bugs #285967, #286146, #183694
+    // geometry() now includes the requested size and the decoration and is at the correct screen/position (hopefully)
+    // Maximization for oversized windows must happen NOW.
+    // If we effectively pass keepInArea(), the window will resizeWithChecks() - i.e. constrained
+    // to the combo of all screen MINUS all struts on the edges
+    // If only one screen struts, this will affect screens as a side-effect, the window is artificailly shrinked
+    // below the screen size and as result no more maximized what breaks KMainWindow's stupid width+1, height+1 hack
+    // TODO: get KMainWindow a correct state storage what will allow to store the restore size as well.
+
+    if (!session) { // has a better handling of this
+        geom_restore = geometry(); // Remember restore geometry
+        if (isMaximizable() && (width() >= area.width() || height() >= area.height())) {
+            // Window is too large for the screen, maximize in the
+            // directions necessary
+            if (width() >= area.width() && height() >= area.height()) {
+                dontKeepInArea = true;
+                maximize(Client::MaximizeFull);
+                geom_restore = QRect(); // Use placement when unmaximizing
+            } else if (width() >= area.width()) {
+                maximize(Client::MaximizeHorizontal);
+                geom_restore = QRect(); // Use placement when unmaximizing
+                geom_restore.setY(y());   // But only for horizontal direction
+                geom_restore.setHeight(height());
+            } else if (height() >= area.height()) {
+                maximize(Client::MaximizeVertical);
+                geom_restore = QRect(); // Use placement when unmaximizing
+                geom_restore.setX(x());   // But only for vertical direction
+                geom_restore.setWidth(width());
+            }
+        }
     }
 
     if ((!isSpecialWindow() || isToolbar()) && isMovable() && !dontKeepInArea)
@@ -430,26 +470,6 @@ bool Client::manage(Window w, bool isMapped)
             geom_fs_restore = session->fsrestore;
         }
     } else {
-        geom_restore = geometry(); // Remember restore geometry
-        if (isMaximizable() && (width() >= area.width() || height() >= area.height())) {
-            // Window is too large for the screen, maximize in the
-            // directions necessary
-            if (width() >= area.width() && height() >= area.height()) {
-                maximize(Client::MaximizeFull);
-                geom_restore = QRect(); // Use placement when unmaximizing
-            } else if (width() >= area.width()) {
-                maximize(Client::MaximizeHorizontal);
-                geom_restore = QRect(); // Use placement when unmaximizing
-                geom_restore.setY(y());   // But only for horizontal direction
-                geom_restore.setHeight(height());
-            } else if (height() >= area.height()) {
-                maximize(Client::MaximizeVertical);
-                geom_restore = QRect(); // Use placement when unmaximizing
-                geom_restore.setX(x());   // But only for vertical direction
-                geom_restore.setWidth(width());
-            }
-        }
-
         // Window may want to be maximized
         // done after checking that the window isn't larger than the workarea, so that
         // the restore geometry from the checks above takes precedence, and window
@@ -485,9 +505,6 @@ bool Client::manage(Window w, bool isMapped)
     user_time = readUserTimeMapTimestamp(asn_valid ? &asn_id : NULL, asn_valid ? &asn_data : NULL, session);
     group()->updateUserTime(user_time);   // And do what Client::updateUserTime() does
 
-    if (isTopMenu())  // They're shown in Workspace::addClient() if their mainwindow
-        hideClient(true);   // Is the active one
-
     // This should avoid flicker, because real restacking is done
     // only after manage() finishes because of blocking, but the window is shown sooner
     XLowerWindow(display(), frameId());
@@ -500,6 +517,8 @@ bool Client::manage(Window w, bool isMapped)
         // Sending ConfigureNotify is done when setting mapping state below,
         // Getting the first sync response means window is ready for compositing
         sendSyncRequest();
+    else
+        ready_for_painting = true; // set to true in case compositing is turned on later. bug #160393
 
     if (isShown(true) && !doNotShow) {
         if (isDialog())

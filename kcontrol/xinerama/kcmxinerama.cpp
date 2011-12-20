@@ -113,9 +113,19 @@ KCMXinerama::KCMXinerama(QWidget *parent, const QVariantList &)
 
 		connect(xw, SIGNAL(configChanged()), this, SLOT(changed()));
 	} else { // no Xinerama
-		QLabel *ql = new QLabel(i18n("<qt><p>This module is only for configuring systems with a single desktop spread across multiple monitors. You do not appear to have this configuration.</p></qt>"), this);
-		ql->setWordWrap(true);
-		grid->addWidget(ql, 0, 0);
+    QGridLayout *layout = new QGridLayout(this);
+    m_noXineramaMessage = new QWidget();
+    QLabel *labelicon = new QLabel(m_noXineramaMessage);
+    labelicon->setPixmap(KIcon("preferences-desktop-display-multiple", KIconLoader::global(), QStringList() << "" << "dialog-error").pixmap(128, 128));
+    layout->addWidget(labelicon, 0, 1, Qt::AlignHCenter);
+    QLabel *labeltext = new QLabel(i18n("You do not appear to have a single desktop spread across multiple monitors."), m_noXineramaMessage);
+    layout->addWidget(labeltext,1, 1, Qt::AlignHCenter);
+    layout->setRowStretch(2, 1);
+    layout->setColumnStretch(0, 1);
+    layout->setColumnStretch(2, 1);
+    m_noXineramaMessage->setLayout(layout);
+ 
+    grid->addWidget(m_noXineramaMessage);
 	}
 
 	grid->activate();

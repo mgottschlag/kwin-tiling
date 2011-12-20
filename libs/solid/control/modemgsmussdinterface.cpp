@@ -100,12 +100,12 @@ void Solid::Control::ModemGsmUssdInterface::slotNetworkRequestChanged(const QStr
 void Solid::Control::ModemGsmUssdInterface::makeConnections(QObject * source)
 {
     if (source) {
-        QObject::connect(source, SIGNAL(stateChanged(const QString &)),
-                this, SLOT(slotStateChanged(const QString &)));
-        QObject::connect(source, SIGNAL(networkNotificationChanged(const QString &)),
-                this, SLOT(slotNetworkNotificationChanged(const QString &)));
-        QObject::connect(source, SIGNAL(networkRequestChanged(const QString &)),
-                this, SLOT(slotNetworkRequestChanged(const QString &)));
+        QObject::connect(source, SIGNAL(stateChanged(QString)),
+                this, SLOT(slotStateChanged(QString)));
+        QObject::connect(source, SIGNAL(networkNotificationChanged(QString)),
+                this, SLOT(slotNetworkNotificationChanged(QString)));
+        QObject::connect(source, SIGNAL(networkRequestChanged(QString)),
+                this, SLOT(slotNetworkRequestChanged(QString)));
     }
 }
 

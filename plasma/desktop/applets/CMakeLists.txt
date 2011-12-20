@@ -1,4 +1,5 @@
 add_subdirectory(kickoff)
+add_subdirectory(showActivityManager)
 add_subdirectory(trash)
 add_subdirectory(tasks)
 add_subdirectory(windowlist)

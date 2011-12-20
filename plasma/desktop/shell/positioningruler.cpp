@@ -743,9 +743,19 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
     case Private::OffsetSlider:
     {
         if (d->location == Plasma::LeftEdge || d->location == Plasma::RightEdge) {
+            if (d->alignment == Qt::AlignRight && (newPos.y() < widthBound)) {
+                return;
+            } else if (qAbs(d->availableLength - newPos.y()) < widthBound) {
+                return;
+            }
             d->offsetSliderRect.moveCenter(QPoint(d->offsetSliderRect.center().x(), newPos.y()));
             d->offset = d->offsetSliderRect.center().y();
         } else {
+            if ((d->alignment == Qt::AlignRight || d->alignment == Qt::AlignCenter) && (newPos.x() < widthBound)) {
+                return;
+            } else if (qAbs(d->availableLength - newPos.x()) < widthBound) {
+                return;
+            }
             d->offsetSliderRect.moveCenter(QPoint(newPos.x(), d->offsetSliderRect.center().y()));
             d->offset = d->offsetSliderRect.center().x();
         }

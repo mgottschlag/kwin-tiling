@@ -41,11 +41,11 @@ class LegacyTheme : public CursorTheme
         LegacyTheme();
         virtual ~LegacyTheme();
 
-        QImage loadImage(const QString &name, int size = -1) const;
-        QCursor loadCursor(const QString &name, int size = - 1) const;
+        QImage loadImage(const QString &name, int size = 0) const;
+        QCursor loadCursor(const QString &name, int size = 0) const;
 
     protected:
-        LegacyTheme(const QString &title, const QString &description)
+        LegacyTheme(const QString &title, const QString &description = QString())
             : CursorTheme(title, description) {}
 
     private:

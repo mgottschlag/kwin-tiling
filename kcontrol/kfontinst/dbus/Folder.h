@@ -88,7 +88,7 @@ class Folder
     void                      addModifiedDirs(const QSet<QString> &dirs) { itsModifiedDirs+=dirs; }
     bool                      isModified() const                         { return !itsModifiedDirs.isEmpty(); }
     void                      clearModified()                            { itsModifiedDirs.clear(); }
-    void                      configure();
+    void                      configure(bool force=false);
     Flat                      flatten() const;
     const FamilyCont &        fonts() const                              { return itsFonts; }
     FamilyCont::ConstIterator addFont(const Family &fam)                 { return itsFonts.insert(fam); }

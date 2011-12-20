@@ -82,6 +82,8 @@ private:
     State m_state;
     DBusCaps m_caps;
     QMap<QString,QString> m_artfiles;
+    bool m_artworkLoaded;
+    QPixmap m_artwork;
 };
 
 #endif // MPRIS_P_H

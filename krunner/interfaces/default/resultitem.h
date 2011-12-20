@@ -42,6 +42,7 @@ struct SharedResultData
 {
     bool processHoverEvents;
     bool mouseHovering;
+    Plasma::RunnerManager *runnerManager;
 };
 
 class ResultItemSignaller : public QObject
@@ -70,7 +71,7 @@ class ResultItem : public QGraphicsWidget
     Q_PROPERTY(qreal highlightState READ highlightState WRITE setHighlightState)
 
 public:
-    ResultItem(const SharedResultData *sharedData, const Plasma::QueryMatch &match, Plasma::RunnerManager *runnerManager, QGraphicsWidget *parent);
+    ResultItem(const SharedResultData *sharedData, QGraphicsWidget *parent);
     ~ResultItem();
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
@@ -94,6 +95,7 @@ public:
     bool mouseHovered() const;
     void calculateSize();
     void calculateSize(int sceneWidth);
+    QGraphicsWidget *firstTabItem();
     QGraphicsWidget* arrangeTabOrder(QGraphicsWidget* last);
 
     void highlight(bool yes);
@@ -137,7 +139,6 @@ private:
     Plasma::ToolButton *m_configButton;
 
     QIcon m_icon;
-    QBrush m_bgBrush;
     QPixmap m_fadeout;
     QTimer m_highlightCheckTimer;
     qreal m_highlight;
@@ -145,13 +146,10 @@ private:
     QGraphicsProxyWidget *m_configWidget;
     QGraphicsWidget *m_actionsWidget;
     QGraphicsLinearLayout *m_actionsLayout;
-    Plasma::RunnerManager *m_runnerManager;
     QPropertyAnimation *m_highlightAnim;
     const SharedResultData *m_sharedData;
     bool m_mouseHovered : 1;
     bool m_mimeDataFailed : 1;
-
-    static int s_fontHeight;
 };
 
 #endif

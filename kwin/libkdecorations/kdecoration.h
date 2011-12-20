@@ -205,10 +205,29 @@ public:
     enum Requirement { REQUIREMENT_DUMMY = 1000000 };
 
     /**
-    *
-    * Returns mimeType used to drag and drop clientGroupItems
-    */
+     * Regions that can be returned by KDecorationUnstable::region().
+     */
+    enum Region {
+        /**
+         * This is an invisible input region that can be used to expand the
+         * borders by an invisible amount, both inside and outside the
+         * decoration. The intended use case is to provide an active border
+         * area that's larger than the visible border.
+         *
+         * The mousePosition() implementation must return correct values
+         * for the pixels inside this region.
+         *
+         * Note that mouse events that occur within this region are not
+         * forwarded to the decoration. This may change in the future.
+         *
+         * @since 4.8
+         */
+        ExtendedBorderRegion
+    };
 
+    /**
+     * Returns the mimeType used to drag and drop clientGroupItems
+     */
     static QString clientGroupItemDragMimeType();
 
 };
@@ -731,32 +750,15 @@ Q_SIGNALS:
 
 public:
     /**
-     * This function may be reimplemented to provide custom bound drawing
-     * for transparent moving or resizing of the window.
-     * @a False should be returned if the default implementation should be used.
-     * Note that if you e.g. paint the outline using a 5 pixels wide line,
-     * you should compensate for the 2 pixels that would make the window
-     * look larger.
-     * It is the decoration's responsibility to do the painting, using
-     * e.g. code like:
-     * @code
-     *     Display* dpy = QX11Info::display();
-     *     XGCValues xgc;
-     *     xgc.function = GXxor;
-     *     xgc.foreground = WhitePixel( dpy, DefaultScreen( dpy ));
-     *     xgc.line_width = width;
-     *     xgc.subwindow_mode = IncludeInferiors;
-     *     GC gc = XCreateGC( dpy, DefaultRootWindow( dpy ),
-     *         GCFunction | GCForeground | GCLineWidth | GCSubwindowMode, &xgc );
-     *     XDrawRectangle( dpy, DefaultRootWindow( dpy ), gc, r.x(), r.y(), r.width(), r.height());
-     *     XFreeGC( dpy, gc );
-     * @endcode
+     * This method is not any more invoked from KWin core since version 4.8.
+     * There is no need to implement it.
      *
      * @param geom  The geometry at this the bound should be drawn
      * @param clear @a true if the bound should be cleared (when doing the usual XOR
      *              painting this argument can be simply ignored)
      *
      * @see geometry()
+     * @deprecated
      */
     virtual bool drawbound(const QRect& geom, bool clear);
     /**
@@ -995,6 +997,17 @@ public:
      * a button press was for window tab dragging or for displaying the client menu.
      */
     WindowOperation buttonToWindowOperation(Qt::MouseButtons button);
+
+public Q_SLOTS:
+    /**
+     * This slot can be reimplemented to return the regions defined
+     * by KDecorationDefines::Region.
+     *
+     * The default implementation always returns an empty region.
+     *
+     * @since 4.8
+     */
+    QRegion region(KDecorationDefines::Region r);
 };
 
 inline

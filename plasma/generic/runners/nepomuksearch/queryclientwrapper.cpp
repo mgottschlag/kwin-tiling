@@ -50,8 +50,8 @@ Nepomuk::QueryClientWrapper::QueryClientWrapper(SearchRunner* runner, Plasma::Ru
 {
     // initialize the query client
     m_queryServiceClient = new Nepomuk::Query::QueryServiceClient(this);
-    connect(m_queryServiceClient, SIGNAL(newEntries(const QList<Nepomuk::Query::Result>&)),
-             this, SLOT(slotNewEntries(const QList<Nepomuk::Query::Result>&)));
+    connect(m_queryServiceClient, SIGNAL(newEntries(QList<Nepomuk::Query::Result>)),
+             this, SLOT(slotNewEntries(QList<Nepomuk::Query::Result>)));
 }
 
 

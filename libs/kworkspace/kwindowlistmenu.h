@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef KWINDOWLISTMENU_H
 #define KWINDOWLISTMENU_H
 
-#include <kdemacros.h>
+#include "kworkspace_export.h"
 #include <kmenu.h>
 
 /**
@@ -34,7 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * for example an accessable there via the menu button of
  * the window decoration.
  */
-class KDE_EXPORT KWindowListMenu : public KMenu
+class KWORKSPACE_EXPORT KWindowListMenu : public KMenu
 {
     Q_OBJECT
 

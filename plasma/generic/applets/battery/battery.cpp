@@ -21,8 +21,6 @@
 
 #include "battery.h"
 
-#include "brightnessosdwidget.h"
-
 #include <QApplication>
 #include <QDBusConnection>
 #include <QDBusInterface>
@@ -56,8 +54,6 @@
 #include <Plasma/CheckBox>
 #include <Plasma/ComboBox>
 #include <Plasma/IconWidget>
-#include <Plasma/Extender>
-#include <Plasma/ExtenderItem>
 #include <Plasma/Label>
 #include <Plasma/PopupApplet>
 #include <Plasma/PushButton>
@@ -80,8 +76,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_batteryInfoLabel(0),
       m_acLabelLabel(0),
       m_acInfoLabel(0),
-      m_profileLabel(0),
-      m_profileCombo(0),
       m_brightnessSlider(0),
       m_minutes(0),
       m_hours(0),
@@ -95,7 +89,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_acAlpha(0),
       m_acAnimation(0),
       m_ignoreBrightnessChange(false),
-      m_brightnessOSD(0)
+      m_inhibitCookies(qMakePair< int, int >(-1, -1))
 {
     //kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
@@ -127,7 +121,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
 
 Battery::~Battery()
 {
-    delete m_brightnessOSD;
 }
 
 void Battery::init()
@@ -149,29 +142,19 @@ void Battery::init()
     connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()), SLOT(readColors()));
     connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(setupFonts()));
 
-    const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["Sources"].toStringList();
-
-    connectSources();
-
-    foreach (const QString &battery_source, battery_sources) {
-        dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
-    }
-    m_numOfBattery = battery_sources.size();
-    if (m_numOfBattery == 0) {
-        m_acAlpha = 1;
-    }
-
-    dataUpdated("AC Adapter", dataEngine("powermanagement")->query("AC Adapter"));
+    // connecting up the DataEngine
+    Plasma::DataEngine *engine = dataEngine("powermanagement");
+    engine->connectSource("Battery", this);
+    engine->connectSource("AC Adapter", this);
+    engine->connectSource("PowerDevil", this);
+    connect(engine, SIGNAL(sourceAdded(QString)), this, SLOT(sourceAdded(QString)));
+    connect(engine, SIGNAL(sourceRemoved(QString)), this, SLOT(sourceRemoved(QString)));
 
     if (!m_isEmbedded) {
         initPopupWidget();
         // let's show a brightness OSD
         QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement",
-                                              "brightnessChanged", this, SLOT(showBrightnessOSD(int)));
-    }
-
-    if (m_acAdapterPlugged) {
-        showAcAdapter(true);
+                                              "brightnessChanged", this, SLOT(updateSlider(int)));
     }
 }
 
@@ -315,9 +298,19 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
 {
     if (source == "Battery") {
         m_remainingMSecs = data["Remaining msec"].toULongLong();
-        kDebug() << "Remaining msecs on battery:" << m_remainingMSecs;
-    }
-    else if (source.startsWith(QLatin1String("Battery"))) {
+        const QStringList batterySources = data["Sources"].toStringList();
+
+        m_numOfBattery = batterySources.size();
+        if (m_numOfBattery == 0) {
+            m_acAlpha = 1;
+        }
+
+        //kDebug() << "Remaining msecs on battery:" << m_remainingMSecs << m_numOfBattery;
+
+        foreach (const QString &batterySource, data["Sources"].toStringList()) {
+            dataEngine("powermanagement")->connectSource(batterySource, this);
+        }
+    } else if (source.startsWith(QLatin1String("Battery"))) {
         m_batteriesData[source] = data;
         //kDebug() << "new battery source" << source;
     } else if (source == "AC Adapter") {
@@ -326,7 +319,36 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     } else if (source == "PowerDevil") {
         m_availableProfiles = data["Available profiles"].value< StringStringMap >();
         m_currentProfile = data["Current profile"].toString();
-        kDebug() << "PowerDevil profiles:" << m_availableProfiles << "[" << m_currentProfile << "]";
+        //kDebug() << "PowerDevil profiles:" << m_availableProfiles << "[" << m_currentProfile << "]";
+    } else if (source == "Sleep States") {
+        //kDebug() << source << data["Suspend"].toBool() << data["Hibernate"].toBool();
+        bool isVisible = m_suspendButton->isVisible();
+        bool shouldBeVisible = data["Suspend"].toBool();
+
+        if (isVisible != shouldBeVisible) {
+            m_suspendButton->setVisible(shouldBeVisible);
+            if (shouldBeVisible) {
+                m_buttonLayout->insertItem(1, m_suspendButton);
+                m_buttonLayout->setItemSpacing(1, 0.0);
+                m_buttonLayout->invalidate();
+            } else {
+                m_buttonLayout->removeItem(m_suspendButton);
+            }
+        }
+
+        isVisible = m_hibernateButton->isVisible();
+        shouldBeVisible = data["Hibernate"].toBool();
+
+        if (isVisible != shouldBeVisible) {
+            m_hibernateButton->setVisible(shouldBeVisible);
+            if (shouldBeVisible) {
+                const int index = m_buttonLayout->count() > 1 ? 2 : 1;
+                m_buttonLayout->insertItem(index, m_hibernateButton);
+                m_buttonLayout->setItemSpacing(index, 0.0);
+            } else {
+                m_buttonLayout->removeItem(m_hibernateButton);
+            }
+        }
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
     }
@@ -384,6 +406,7 @@ void Battery::readColors()
 {
     m_textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     m_boxColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+    update();
 }
 
 void Battery::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
@@ -407,21 +430,15 @@ void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void Battery::suspend()
 {
     hidePopup();
-    QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
-                                                      "/org/kde/Solid/PowerManagement",
-                                                      "org.kde.Solid.PowerManagement",
-                                                      "suspendToRam");
-    QDBusPendingReply< QString > reply = QDBusConnection::sessionBus().asyncCall(msg);
+    Plasma::Service *service = dataEngine("powermanagement")->serviceForSource("PowerDevil");
+    service->startOperationCall(service->operationDescription("suspendToRam"));
 }
 
 void Battery::hibernate()
 {
     hidePopup();
-    QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
-                                                      "/org/kde/Solid/PowerManagement",
-                                                      "org.kde.Solid.PowerManagement",
-                                                      "suspendToDisk");
-    QDBusPendingReply< QString > reply = QDBusConnection::sessionBus().asyncCall(msg);
+    Plasma::Service *service = dataEngine("powermanagement")->serviceForSource("PowerDevil");
+    service->startOperationCall(service->operationDescription("suspendToDisk"));
 }
 
 void Battery::brightnessChanged(const int brightness)
@@ -447,11 +464,11 @@ void Battery::updateSlider()
     updateSlider(reply.value());
 }
 
-void Battery::updateSlider(const float brightness)
+void Battery::updateSlider(int brightness)
 {
-    if (m_brightnessSlider->value() != (int)brightness) {
+    if (m_brightnessSlider->value() != brightness) {
         m_ignoreBrightnessChange = true;
-        m_brightnessSlider->setValue((int) brightness);
+        m_brightnessSlider->setValue(brightness);
         m_ignoreBrightnessChange = false;
     }
 }
@@ -539,6 +556,15 @@ void Battery::initPopupWidget()
     controlsLayout->addItem(m_remainingInfoLabel, row, 1);
     row++;
 
+    m_inhibitLabel = createBuddyLabel(controls);
+    m_inhibitLabel->setText(i18nc("Label for power management inhibition", "Power management enabled:"));
+    m_inhibitButton = new Plasma::CheckBox(controls);
+    m_inhibitButton->setChecked(true);
+    controlsLayout->addItem(m_inhibitLabel, row, 0);
+    controlsLayout->addItem(m_inhibitButton, row, 1);
+    connect(m_inhibitButton, SIGNAL(toggled(bool)), this, SLOT(toggleInhibit(bool)));
+    row++;
+
     Battery *extenderApplet = new Battery(0, QVariantList());
     extenderApplet->setParent(controls);
     extenderApplet->setAcceptsHoverEvents(false);
@@ -551,21 +577,6 @@ void Battery::initPopupWidget()
     extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
     extenderApplet->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     controlsLayout->addItem(extenderApplet, 1, 2, 2, 1);
-
-    m_profileLabel = createBuddyLabel(controls);
-    m_profileLabel->setText(i18n("Power Profile:"));
-    controlsLayout->addItem(m_profileLabel, row, 0);
-
-
-    m_profileCombo = new Plasma::ComboBox(controls);
-    // Workaround for bug 219873
-    m_profileCombo->nativeWidget()->setMaxVisibleItems(4);
-    // This is necessary until QTBUG-2368 is fixed
-    m_profileCombo->setZValue(110);
-    connect(m_profileCombo, SIGNAL(activated(QString)),
-            this, SLOT(setProfile(QString)));
-    controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
-    row++;
 
     m_brightnessLabel = createBuddyLabel(controls);
     m_brightnessLabel->setText(i18n("Screen Brightness:"));
@@ -582,31 +593,23 @@ void Battery::initPopupWidget()
     controlsLayout->addItem(m_brightnessSlider, row, 1, 1, 2);
     row++;
 
-    QGraphicsLinearLayout *buttonLayout = new QGraphicsLinearLayout;
-    buttonLayout->setSpacing(0.0);
-    buttonLayout->addStretch();
+    m_buttonLayout = new QGraphicsLinearLayout;
+    m_buttonLayout->setSpacing(0.0);
+    m_buttonLayout->addStretch();
 
     // Sleep and Hibernate buttons
-    QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
-    foreach (const Solid::PowerManagement::SleepState &sleepstate, sleepstates) {
-        if (sleepstate == Solid::PowerManagement::StandbyState) {
-            // Not interesting at this point ...
+    m_suspendButton = createButton(controls);
+    m_suspendButton->setIcon("system-suspend");
+    m_suspendButton->setText(i18nc("Suspend the computer to RAM; translation should be short", "Sleep"));
+    m_suspendButton->setVisible(false);
+    //row++;
+    connect(m_suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
 
-        } else if (sleepstate == Solid::PowerManagement::SuspendState) {
-            Plasma::IconWidget *suspendButton = createButton(controls);
-            suspendButton->setIcon("system-suspend");
-            suspendButton->setText(i18nc("Suspend the computer to RAM; translation should be short", "Sleep"));
-            buttonLayout->addItem(suspendButton);
-            //row++;
-            connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
-        } else if (sleepstate == Solid::PowerManagement::HibernateState) {
-            Plasma::IconWidget *hibernateButton = createButton(controls);
-            hibernateButton->setIcon("system-suspend-hibernate");
-            hibernateButton->setText(i18nc("Suspend the computer to disk; translation should be short", "Hibernate"));
-            buttonLayout->addItem(hibernateButton);
-            connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
-        }
-    }
+    m_hibernateButton = createButton(controls);
+    m_hibernateButton->setIcon("system-suspend-hibernate");
+    m_hibernateButton->setText(i18nc("Suspend the computer to disk; translation should be short", "Hibernate"));
+    m_hibernateButton->setVisible(false);
+    connect(m_hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
 
     // Configure button
     Plasma::IconWidget *configButton = createButton(controls);
@@ -622,15 +625,16 @@ void Battery::initPopupWidget()
     configButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
     configButton->setEnabled(hasAuthorization("LaunchApp"));
 
-    buttonLayout->addItem(configButton);
-    buttonLayout->setItemSpacing(0, 0.0);
-    buttonLayout->setItemSpacing(1, 0.0);
-    buttonLayout->setAlignment(configButton, Qt::AlignRight|Qt::AlignVCenter);
+    m_buttonLayout->addItem(configButton);
+    m_buttonLayout->setAlignment(configButton, Qt::AlignRight|Qt::AlignVCenter);
 
-    controlsLayout->addItem(buttonLayout, row, 0, 1, 3);
+    controlsLayout->addItem(m_buttonLayout, row, 0, 1, 3);
     controls->setLayout(controlsLayout);
 
     setupFonts();
+
+    // now connect to the engine to know the state the sleep/hibernate buttons should have
+    dataEngine("powermanagement")->connectSource("Sleep States", this);
 }
 
 void Battery::popupEvent(bool show)
@@ -645,7 +649,6 @@ void Battery::setupFonts()
     if (m_batteryLabelLabel) {
         QFont infoFont = KGlobalSettings::generalFont();
         m_brightnessLabel->setFont(infoFont);
-        m_profileLabel->setFont(infoFont);
 
         QFont boldFont = infoFont;
         boldFont.setBold(true);
@@ -737,24 +740,6 @@ void Battery::updateStatus()
         kDebug() << batteriesLabel;
     }
 
-    if (!m_availableProfiles.empty() && m_profileCombo) {
-        m_profileCombo->clear();
-        for (StringStringMap::const_iterator i = m_availableProfiles.constBegin(); i != m_availableProfiles.constEnd(); ++i) {
-            m_profileCombo->addItem(i.value());
-        }
-        m_profileCombo->setCurrentIndex(m_profileCombo->nativeWidget()->findText(m_availableProfiles[m_currentProfile]));
-    }
-
-    if (m_profileLabel && m_profileCombo) {
-        if (m_availableProfiles.empty()) {
-            m_profileCombo->hide();
-            m_profileLabel->hide();
-        } else {
-            m_profileCombo->show();
-            m_profileLabel->show();
-        }
-    }
-
     if (m_brightnessSlider) {
         updateSlider();
     }
@@ -769,15 +754,6 @@ void Battery::openConfig()
         << QLatin1String("powerdevilglobalconfig")
         << QLatin1String("powerdevilprofilesconfig");
     KToolInvocation::kdeinitExec("kcmshell4", args);
-}
-
-void Battery::setProfile(const QString &profile)
-{
-    if (m_currentProfile != profile) {
-        kDebug() << "Changing power profile to " << profile;
-        QDBusInterface iface( "org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement" );
-        iface.call( "loadProfile", m_availableProfiles.key(profile) );
-    }
 }
 
 void Battery::showLabel(bool show)
@@ -1035,24 +1011,6 @@ void Battery::setShowBatteryLabel(bool show)
     }
 }
 
-void Battery::connectSources()
-{
-    const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["Sources"].toStringList();
-
-    foreach (const QString &battery_source, battery_sources) {
-        dataEngine("powermanagement")->connectSource(battery_source, this);
-    }
-
-    dataEngine("powermanagement")->connectSource("AC Adapter", this);
-    dataEngine("powermanagement")->connectSource("PowerDevil", this);
-    dataEngine("powermanagement")->connectSource("Battery", this);
-
-    connect(dataEngine("powermanagement"), SIGNAL(sourceAdded(QString)),
-            this,                          SLOT(sourceAdded(QString)));
-    connect(dataEngine("powermanagement"), SIGNAL(sourceRemoved(QString)),
-            this,                          SLOT(sourceRemoved(QString)));
-}
-
 void Battery::sourceAdded(const QString& source)
 {
     if (source.startsWith(QLatin1String("Battery")) && source != "Battery") {
@@ -1071,8 +1029,6 @@ void Battery::sourceRemoved(const QString& source)
         m_numOfBattery--;
         constraintsEvent(Plasma::SizeConstraint);
         update();
-    } else if (source == "PowerDevil") {
-        dataEngine("powermanagement")->disconnectSource(source, this);
     }
 }
 
@@ -1106,26 +1062,23 @@ qreal Battery::acAlpha() const
     return m_acAlpha;
 }
 
-void Battery::showBrightnessOSD(int brightness)
+void Battery::toggleInhibit(bool toggle)
 {
-    // code adapted from KMix
-    if (!m_brightnessOSD) {
-        m_brightnessOSD = new BrightnessOSDWidget();
-    }
+    using namespace Solid::PowerManagement;
 
-    m_brightnessOSD->setCurrentBrightness(brightness);
-    m_brightnessOSD->show();
-    m_brightnessOSD->activateOSD(); //Enable the hide timer
+    if (m_inhibitCookies.first > 0 && m_inhibitCookies.second > 0 && !toggle) {
+        // Release inhibition
+        stopSuppressingSleep(m_inhibitCookies.first);
+        stopSuppressingScreenPowerManagement(m_inhibitCookies.second);
 
-    //Center the OSD
-    QRect rect = KApplication::kApplication()->desktop()->screenGeometry(QCursor::pos());
-    QSize size = m_brightnessOSD->sizeHint();
-    int posX = rect.x() + (rect.width() - size.width()) / 2;
-    int posY = rect.y() + 4 * rect.height() / 5;
-    m_brightnessOSD->setGeometry(posX, posY, size.width(), size.height());
-
-    if (m_extenderVisible && m_brightnessSlider) {
-        updateSlider(brightness);
+        m_inhibitCookies = qMakePair< int, int >(-1, -1);
+    } else if (m_inhibitCookies.first < 0 && m_inhibitCookies.second < 0 && toggle) {
+        // Trigger inhibition
+        QString reason = i18n("The battery applet has enabled system-wide inhibition");
+        m_inhibitCookies = qMakePair< int, int >(beginSuppressingSleep(reason),
+                                                 beginSuppressingScreenPowerManagement(reason));
+    } else {
+        kWarning() << "The requested action conflicts with the current inhibition state";
     }
 }
 

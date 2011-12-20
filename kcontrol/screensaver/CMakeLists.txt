@@ -22,7 +22,7 @@ kde4_add_ui_files(kcm_screensaver_PART_SRCS screensaver.ui )
 kde4_add_plugin(kcm_screensaver ${kcm_screensaver_PART_SRCS})
 
 
-target_link_libraries(kcm_screensaver  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_PLASMA_LIBS} ${X11_LIBRARIES} kworkspace)
+target_link_libraries(kcm_screensaver ${KDE4_PLASMA_LIBS} ${X11_LIBRARIES} kworkspace)
 
 find_library(DL_LIBRARY dl)
 if (DL_LIBRARY)

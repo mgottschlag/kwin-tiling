@@ -45,7 +45,7 @@ Workspace::Workspace( QWidget* parent)
   KAcceleratorManager::setNoAccel(this);
   setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
   setDocumentMode(true);
-  connect(&mDirWatch, SIGNAL(deleted(const QString&)), this, SLOT(removeWorkSheet(const QString &)));
+  connect(&mDirWatch, SIGNAL(deleted(QString)), this, SLOT(removeWorkSheet(QString)));
 }
 
 Workspace::~Workspace()
@@ -116,7 +116,7 @@ QString Workspace::makeNameForNewSheet() const
 
     //Check if we have any sheets with the same tab name or file name
     for(int i = 0; !found && i < mSheetList.size(); i++)
-      if ( tabText(indexOf(mSheetList.at(i))) == sheetName  || sheetName+".sgrd" == mSheetList.at(i)->fileName())
+      if ( tabText(indexOf(mSheetList.at(i))) == sheetName  || QString(sheetName+".sgrd") == mSheetList.at(i)->fileName())
         found = true;
 
   } while ( found );
@@ -144,8 +144,8 @@ void Workspace::newWorkSheet()
     insertTab(-1, sheet, dlg.sheetTitle() );
     mSheetList.append( sheet );
     setCurrentIndex(indexOf( sheet ));
-    connect( sheet, SIGNAL( titleChanged( QWidget* ) ),
-	     SLOT( updateSheetTitle( QWidget* )));
+    connect( sheet, SIGNAL(titleChanged(QWidget*)),
+	     SLOT(updateSheetTitle(QWidget*)));
   }
 }
 void Workspace::contextMenu (int index, const QPoint &point) {
@@ -239,8 +239,8 @@ void Workspace::exportWorkSheet( WorkSheet *sheet )
 
   QString fileName;
   do {
-    fileName = KFileDialog::getSaveFileName( tabText(indexOf( currentWidget() ))+ ".sgrd",
-		                    "*.sgrd", this, i18n("Export Tab") );
+    fileName = KFileDialog::getSaveFileName( QString(tabText(indexOf( currentWidget() ))+ ".sgrd"),
+		                    QLatin1String("*.sgrd"), this, i18n("Export Tab") );
     if ( fileName.isEmpty() )
       return;
 
@@ -333,8 +333,8 @@ bool Workspace::restoreWorkSheet( const QString &fileName, bool switchToTab)
   }
   mSheetList.append( sheet );
 
-  connect( sheet, SIGNAL( titleChanged( QWidget* ) ),
-    SLOT( updateSheetTitle( QWidget* )));
+  connect( sheet, SIGNAL(titleChanged(QWidget*)),
+    SLOT(updateSheetTitle(QWidget*)));
 
   insertTab(-1, sheet, sheet->translatedTitle() );
   if(switchToTab)

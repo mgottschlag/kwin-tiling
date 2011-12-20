@@ -12,8 +12,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2010-11-29</date>
-<releaseinfo>&kde; 4.6</releaseinfo>
+<date>2011-11-21</date>
+<releaseinfo>&kde; 4.8</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -37,111 +37,11 @@
 
 <note><para>Note that PowerDevil does not poll your system. This means that it will not waste energy while trying to save it, as some other power managers do.</para></note>
 
-<sect2 id="general">
-<title>Global Settings</title>
-<para>Here you can configure some general options for the module.</para>
-
-<sect3 id="settingsandprofiles">
-<title>Settings and Profile</title>
-<variablelist>
-<varlistentry><term><guilabel>Lock screen on resume</guilabel></term>
-<listitem>
+<sect2 id="energy-saving-setting">
+<title>Energy Saving Settings</title>
 <para>
-When this box is checked, every time the PC gets suspended, the screen will be locked when resuming.
-</para>
-</listitem>
-</varlistentry>
-
-<varlistentry><term><guibutton>Configure Notifications</guibutton></term>
-<listitem>
-<para>
-If you want a deeper control over your notifications, you can refine them by clicking this button
-</para>
-</listitem>
-</varlistentry>
-
-<!--varlistentry><term><guilabel>Let PowerDevil manage screen powersaving</guilabel></term>
-<listitem>
-<para>
-If checked, PowerDevil will handle Screen powersaving through DPMS. If you want to have different timeouts for your screen powersaving features when your profile changes, you probably want to have this enabled. Otherwise, you can have constants timeouts in the <guilabel>Screen</guilabel> tab on the <guilabel>Edit Profiles</guilabel> page.</para>
-</listitem>
-</varlistentry-->
-<!--
-<varlistentry><term><guilabel>Enable notifications</guilabel></term>
-<listitem>
-<para>
-If checked, you will be notified through a passive popup whenever PowerDevil has to notify something, such as screen locking or profile change.
-</para>
-</listitem>
-</varlistentry>
-
-<varlistentry><term><guilabel>Enable warning notifications</guilabel></term>
-<listitem>
-<para>
-If checked, you will be notified through a passive popup whenever PowerDevil triggers a warning, such as low battery level or AC adaptor plugging/unplugging. It is strongly advised to leave this checked.
-</para>
-</listitem>
-</varlistentry>
-
-<varlistentry><term><guilabel>Before doing a suspend action, wait</guilabel></term>
-<listitem>
-<para>
-If this box is checked, when a suspend action gets automatically triggered (for example, when the system is idle for a long time or the lid gets closed) it will not be performed immediately, but it will be delayed of the amount of seconds you will specify in the spin box. A notification will be displayed, and if clicked, the action will be canceled. This option is useful if you want to have the possibility to avoid automatic suspension.
-</para>
-</listitem>
-</varlistentry>
--->
-<varlistentry><term><guilabel>Profiles Assignment</guilabel></term>
-<listitem>
-<para>
-In this section you have to assign your profiles to the specified situations. You can edit and create new profiles on the <guilabel>Power Profiles</guilabel> page. Every time one of that events will be triggered, the chosen profile will be activated.
-</para>
-</listitem>
-</varlistentry>
-
-</variablelist>
-</sect3>
-
-<sect3 id="advancedbattery">
-<title>Advanced Battery Settings</title>
-
-<variablelist>
-<varlistentry><term><guilabel>When battery remaining is critical</guilabel></term>
-<listitem>
-<para>
-Defines the action that will be done when battery reaches the critical level.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guilabel>Battery is at low level at</guilabel></term>
-<listitem>
-<para>
-Here you can set the percentage after which the battery will be considered low.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guilabel>Battery is at warning level at</guilabel></term>
-<listitem>
-<para>
-Here you can set the percentage after which the battery will be considered at warning level.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guilabel>Battery is at critical level at</guilabel></term>
-<listitem>
-<para>
-Here you can set the percentage after which the battery will be considered at critical level.
-</para>
-</listitem>
-</varlistentry>
-</variablelist>
-</sect3>
-</sect2>
-
-<sect2 id="editprofile">
-<title>Power Profiles</title>
-<para>
-In this section you can edit, create and delete PowerDevil profiles. The list on the left shows you all currently available profiles. Select the one you want to edit, and tweak it with the options you see on the right, described hereafter. You can create or delete an existing profile thanks to the buttons you see at the bottom of the list, or you can even import profiles from a file, or export your existing ones to a file.
+This page has three tabs with predefined settings for <guilabel>On AC Power</guilabel>, <guilabel>On Battery</guilabel> and 
+<guilabel>On Low Battery</guilabel> profiles.
 </para>
 <para>
 There are a lot of options you can configure for each profile:
@@ -184,7 +84,7 @@ If you choose to activate it, set the timeouts in the spin boxes below.
 <para>Select actions to perform whenever the laptop lid is closed or a button is pressed.</para>
 </listitem>
 </varlistentry>
-
+<!-- not in 4.8
 <varlistentry><term><guilabel>Disable desktop effects</guilabel></term>
 <listitem>
 <para>
@@ -192,7 +92,7 @@ If you choose to activate it, set the timeouts in the spin boxes below.
 </para>
 </listitem>
 </varlistentry>
-
+-->
 <varlistentry><term><guilabel>Run Script</guilabel></term>
 <listitem>
 <para>Activate this option to run a custom script when a profile is loaded, unloaded
@@ -202,110 +102,67 @@ or after a given amount of time.
 </varlistentry>
 
 </variablelist>
-<!-- not in 4.6
-<sect3 id="screenandaction">
-<title>Actions</title>
-<variablelist>
-<varlistentry><term><guibutton>Disable desktop effects, if active</guibutton></term>
-<listitem>
-<para>
-&kwin; compositing will be disabled, if active. It will be re-enabled when a profile that does not have this option gets loaded.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guibutton>When the system is idle for more than</guibutton></term>
-<listitem>
-<para>
-After the time you will specify in the spinbox, the action you select in the combobox will be performed. Simply choose "Do nothing" if you want to disable it.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guibutton>When Laptop Lid Closed</guibutton></term>
-<listitem>
-<para>
-Defines the action that will be done when the laptop lid gets closed.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guibutton>When Power Button pressed</guibutton></term>
-<listitem>
-<para>
-Defines the action that will be done when the power button gets pressed.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guibutton>When Sleep Button pressed</guibutton></term>
-<listitem>
-<para>
-Defines the action that will be done when the sleep button gets pressed.
-</para>
-</listitem>
-</varlistentry>
-</variablelist>
-</sect3>
-<sect3 id="screenenergy">
-<title>Screen</title>
-<variablelist>
-<varlistentry><term><guilabel>Brightness</guilabel></term>
-<listitem>
-<para>
-Sets the screen's brightness using a slider.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guilabel>Dim display when idle for more than</guilabel></term>
-<listitem>
-<para>
-If checked, the display will be progressively dimmed, until reaching brightness 0, in the amount of time you specify in the spin box.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guilabel>Enable display power management</guilabel></term>
-<listitem>
-<para>
-Here you can define power saving for your monitor. This section needs DPMS support available, you can check if your system supports them in the Capabilities page.
-</para>
-<para>
-The check box defines if DPMS support should be enabled or disabled. If you choose to activate it, set the timeouts in the spin boxes below. You can also prevent the monitor entering a certain status by unchecking the corresponding box.
-</para>
-</listitem>
-</varlistentry>
-</variablelist>
-</sect3>
-<sect3 id="systemandcpu">
-<title>CPU and System</title>
-<para>
-Here you can define preferences for CPU management and system settings
-</para>
-<variablelist>
-<varlistentry><term><guilabel>Enable system power saving</guilabel></term>
-<listitem>
-<para>
-Check this option set system power management on or off.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guilabel>When loading profile, execute</guilabel></term>
-<listitem>
-<para>
-You can specify a script to be run upon profile loading here.
-</para>
-</listitem>
-</varlistentry>
-</variablelist>
-</sect3>
 </sect2>
-<sect2 id="capabilities">
-<title>Capabilities</title>
-<para>
-In this section you can have a look at your system's capabilities. If the <guilabel>Status</guilabel> is ok, your configuration works correctly and PowerDevil is running with every best option available. If some issues are found, you will be displayed a warning, with a possible solution.
-</para>
-<para>
-PowerDevil is usually able to solve the issue by itself. In most cases what you need to do is clicking the suggested button, though sometimes issues are the result of compiling the application without support for a specific component. In that case, PowerDevil will not provide a solution but will just notify you about the problem.
-</para>
+
+<sect2 id="activity-setting">
+<title>Activity Settings</title>
+<para>Here you can configure the Power Management settings per activity.</para>
+<!--
+Only enabled with defined activities?
+Don't use special settings
+Act like
+Define a special behavior
+Never shutdown the screen
+Never suspend or shutdown the computer
+Always  after x min
+Use separate settings (advanced users only)
 -->
 </sect2>
+
+<sect2 id="advanced-settings">
+<title>Advanced Settings</title>
+
+<variablelist>
+<varlistentry><term><guilabel>Battery is at low level at</guilabel></term>
+<listitem>
+<para>
+Here you can set the percentage after which the battery will be considered low.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Battery is at critical level at</guilabel></term>
+<listitem>
+<para>
+Here you can set the percentage after which the battery will be considered at critical level.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>When battery is at critical level</guilabel></term>
+<listitem>
+<para>
+Defines the action that will be done when battery reaches the critical level.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Lock screen on resume</guilabel></term>
+<listitem>
+<para>
+When this box is checked, every time the PC gets suspended, the screen will be locked when resuming.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guibutton>Configure Notifications</guibutton></term>
+<listitem>
+<para>
+If you want a deeper control over your notifications, you can refine them by clicking this button
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
 </sect1>
+
 <sect1 id="powerdevilrunner">
 <title>PowerDevil Runner</title>
 

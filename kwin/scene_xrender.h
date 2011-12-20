@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <config-workspace.h>
 
 #include "scene.h"
+#include "shadow.h"
 
 #ifdef KWIN_HAVE_XRENDER_COMPOSITING
 #include <X11/extensions/Xrender.h>
@@ -36,6 +37,7 @@ namespace KWin
 class SceneXrender
     : public Scene
 {
+    Q_OBJECT
 public:
     class EffectFrame;
     SceneXrender(Workspace* ws);
@@ -45,22 +47,20 @@ public:
         return XRenderCompositing;
     }
     virtual void paint(QRegion damage, ToplevelList windows);
-    virtual void windowGeometryShapeChanged(Toplevel*);
-    virtual void windowOpacityChanged(Toplevel*);
     virtual void windowAdded(Toplevel*);
-    virtual void windowClosed(Toplevel*, Deleted*);
     virtual void windowDeleted(Deleted*);
     Picture bufferPicture();
 protected:
     virtual void paintBackground(QRegion region);
     virtual void paintGenericScreen(int mask, ScreenPaintData data);
+public Q_SLOTS:
+    virtual void windowOpacityChanged(KWin::Toplevel* c);
+    virtual void windowGeometryShapeChanged(KWin::Toplevel* c);
+    virtual void windowClosed(KWin::Toplevel* c, KWin::Deleted* deleted);
 private:
     void paintTransformedScreen(int mask);
     void createBuffer();
     void flushBuffer(int mask, QRegion damage);
-    bool selfCheck();
-    void selfCheckSetup();
-    bool selfCheckFinish();
     XRenderPictFormat* format;
     Picture front;
     static Picture buffer;
@@ -86,7 +86,7 @@ private:
     Picture alphaMask(double opacity);
     QRect mapToScreen(int mask, const WindowPaintData &data, const QRect &rect) const;
     QPoint mapToScreen(int mask, const WindowPaintData &data, const QPoint &point) const;
-    void prepareTempPixmap(const QPixmap *left, const QPixmap *top, const QPixmap *right, const QPixmap *bottom);
+    void prepareTempPixmap();
     Picture _picture;
     XRenderPictFormat* format;
     Picture alpha;
@@ -137,6 +137,43 @@ void SceneXrender::Window::setTransformedShape(const QRegion& shape)
 {
     transformed_shape = shape;
 }
+
+/**
+ * @short XRender implementation of Shadow.
+ *
+ * This class extends Shadow by the elements required for XRender rendering.
+ * @author Jacopo De Simoi <wilderkde@gmail.org>
+ **/
+
+class SceneXRenderShadow
+    : public Shadow
+{
+public:
+    SceneXRenderShadow(Toplevel *toplevel);
+    using Shadow::ShadowElements;
+    using Shadow::ShadowElementTop;
+    using Shadow::ShadowElementTopRight;
+    using Shadow::ShadowElementRight;
+    using Shadow::ShadowElementBottomRight;
+    using Shadow::ShadowElementBottom;
+    using Shadow::ShadowElementBottomLeft;
+    using Shadow::ShadowElementLeft;
+    using Shadow::ShadowElementTopLeft;
+    using Shadow::ShadowElementsCount;
+    using Shadow::shadowPixmap;
+    virtual ~SceneXRenderShadow();
+
+    void layoutShadowRects(QRect& top, QRect& topRight,
+                           QRect& right, QRect& bottomRight,
+                           QRect& bottom, QRect& bottomLeft,
+                           QRect& Left, QRect& topLeft);
+
+protected:
+    virtual void buildQuads();
+    virtual bool prepareBackend() {
+        return true;
+    };
+};
 
 } // namespace
 

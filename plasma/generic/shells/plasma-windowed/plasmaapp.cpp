@@ -187,7 +187,7 @@ void PlasmaApp::cleanup()
         m_corona->saveLayout();
     }
 
-    qDeleteAll(m_viewForPlugin.values());
+    qDeleteAll(m_viewForPlugin);
 
     delete m_corona;
     m_corona = 0;

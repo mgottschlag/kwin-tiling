@@ -19,22 +19,39 @@
 
 #include "activitylist.h"
 
-#include "activity.h"
-#include "plasmaapp.h"
-#include "kactivitycontroller.h"
-
 #include <QHash>
+
+#include <KService>
+#include <KServiceTypeTrader>
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 
+#include <KActivities/Controller>
+
+#include "activity.h"
+#include "plasmaapp.h"
+
 ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
     : AbstractIconList(location, parent),
-      m_activityController(new KActivityController(this))
+      m_activityController(new KActivities::Controller(this)),
+      m_scheduleHideOnAdd(0)
 {
     QStringList activities = m_activityController->listActivities();
     foreach (const QString &activity, activities) {
         createActivityIcon(activity);
+    }
+
+    KService::List templates = KServiceTypeTrader::self()->query("Plasma/LayoutTemplate");
+    foreach (const KService::Ptr &service, templates) {
+        if (!service->property("X-Plasma-ContainmentLayout-ShowAsExisting", QVariant::Bool).toBool()) continue;
+
+        KConfig config("plasma-desktoprc");
+        KConfigGroup group(&config, "ActivityManager HiddenTemplates");
+
+        if (group.readEntry(service->storageId(), false)) continue;
+
+        createActivityIcon(service->name(), service->icon(), service->storageId());
     }
 
     updateClosable();
@@ -49,8 +66,8 @@ ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
     //TODO:
     //-do something about sorting and filtering (most recent first?)
 
-    connect(m_activityController, SIGNAL(activityAdded(const QString &)), this, SLOT(activityAdded(const QString &)));
-    connect(m_activityController, SIGNAL(activityRemoved(const QString &)), this, SLOT(activityRemoved(const QString &)));
+    connect(m_activityController, SIGNAL(activityAdded(QString)), this, SLOT(activityAdded(QString)));
+    connect(m_activityController, SIGNAL(activityRemoved(QString)), this, SLOT(activityRemoved(QString)));
 
     updateList();
 }
@@ -66,6 +83,20 @@ void ActivityList::createActivityIcon(const QString &id)
     m_allAppletsHash.insert(id, icon);
     connect(icon->activity(), SIGNAL(stateChanged()), this, SLOT(updateClosable()));
 }
+
+void ActivityList::createActivityIcon(const QString &name, const QString &iconName, const QString &plugin)
+{
+    ActivityIcon *icon = new ActivityIcon(name, iconName, plugin);
+
+    connect(icon, SIGNAL(requestsRemoval(bool)),
+            this, SLOT(templateHidden(bool)));
+
+    addIcon(icon);
+    m_allAppletsHash.insert("null:" + name, icon);
+    // m_allAppletsHash.insert(id, icon);
+    // connect(icon->activity(), SIGNAL(stateChanged()), this, SLOT(updateClosable()));
+}
+
 /*
 void AppletsListWidget::appletIconDoubleClicked(AbstractIcon *icon)
 {
@@ -80,7 +111,11 @@ void ActivityList::updateVisibleIcons()
 void ActivityList::setSearch(const QString &searchString)
 {
     foreach (Plasma::AbstractIcon *icon, m_allAppletsHash) {
-        icon->setVisible(icon->name().contains(searchString, Qt::CaseInsensitive));
+        if (icon->name().contains(searchString, Qt::CaseInsensitive)) {
+            icon->expand();
+        } else {
+            icon->collapse();
+        }
     }
 }
 
@@ -95,6 +130,15 @@ void ActivityList::activityAdded(const QString &id)
         }
     }
     */
+
+    // Syncing removal of template activity andd addition of a
+    // new activity based on it
+    if (m_scheduleHideOnAdd) {
+        hideIcon(m_scheduleHideOnAdd);
+        m_allAppletsHash.remove(m_allAppletsHash.key(m_scheduleHideOnAdd));
+        m_scheduleHideOnAdd = 0;
+    }
+
     createActivityIcon(id);
     updateList();
 }
@@ -125,7 +169,7 @@ void ActivityList::updateClosable()
     foreach (Plasma::AbstractIcon *i, m_allAppletsHash) {
         ActivityIcon *icon = qobject_cast<ActivityIcon*>(i);
 
-        if (icon && icon->activity()->state() == KActivityInfo::Running) {
+        if (icon && icon->activity() && icon->activity()->state() == KActivities::Info::Running) {
             if (running) {
                 //found two, no worries
                 twoRunning = true;
@@ -145,3 +189,19 @@ void ActivityList::updateClosable()
         running->setClosable(false);
     }
 }
+
+void ActivityList::templateHidden(bool immediate)
+{
+    ActivityIcon * icon = qobject_cast < ActivityIcon * > (sender());
+
+    if (!icon) return;
+
+    if (immediate) {
+        hideIcon(icon);
+        m_allAppletsHash.remove(m_allAppletsHash.key(icon));
+
+    } else {
+        m_scheduleHideOnAdd = icon;
+    }
+}
+
