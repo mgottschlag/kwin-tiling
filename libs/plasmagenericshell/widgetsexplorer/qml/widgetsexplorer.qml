@@ -19,12 +19,13 @@
 
 import Qt 4.7
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
+import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.plasma.core 0.1 as PlasmaCore
 
 Item {
     id: main
-    width: 200
-    height: 200
+    property int minimumWidth: 200
+    property int minimumHeight: 150
     signal addAppletRequested(string pluginName)
     signal closeRequested()
 
@@ -86,7 +87,7 @@ Item {
                 height: categoryButton.height
                 onTextChanged: appletsModel.searchTerm = text
             }
-            PlasmaWidgets.PushButton {
+            PlasmaComponents.Button {
                 id: categoryButton
                 text: "Categories"
                 onClicked: {
@@ -104,18 +105,16 @@ Item {
         Row {
             anchors.right: parent.right
             spacing: 4
-            PlasmaWidgets.PushButton {
-                icon: QIcon("get-hot-new-stuff")
-                text: "Get new widgets"
+            PlasmaComponents.Button {
+                iconSource: "get-hot-new-stuff"
+                text: i18n("Get new widgets")
             }
-            
-            PlasmaWidgets.PushButton {
-                icon: QIcon("preferences-activities")
-                text: "Activities"
+            PlasmaComponents.Button {
+                iconSource: "preferences-activities"
+                text: i18n("Activities")
             }
-            PlasmaWidgets.IconWidget {
-                size: "22x"+parent.height
-                icon: QIcon("window-close")
+            PlasmaComponents.ToolButton {
+                iconSource: "window-close"
                 onClicked: main.closeRequested()
             }
         }
@@ -147,17 +146,12 @@ Item {
 
         delegate: AppletDelegate {}
     }
-    PlasmaWidgets.ScrollBar {
+    PlasmaComponents.ScrollBar {
         id: scrollBar
-        orientation: "Horizontal"
+        orientation: Qt.Horizontal
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        property bool moving: false
-        onSliderMoved: {
-            moving = true
-            list.contentX = value*10
-            moving = false
-        }
+        flickableItem: list
     }
 }
