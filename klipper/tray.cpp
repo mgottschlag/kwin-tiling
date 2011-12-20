@@ -45,7 +45,7 @@ KlipperTray::KlipperTray()
     setAssociatedWidget( m_klipper->history()->popup() );
     connect( m_klipper->history(), SIGNAL(changed()), SLOT(slotSetToolTipFromHistory()));
     slotSetToolTipFromHistory();
-    connect( m_klipper, SIGNAL(passivePopup(QString,QString)), SLOT(passive_popup(QString,QString)));
+    connect( m_klipper, SIGNAL(passivePopup(QString,QString)), SLOT(slotPassivePopup(QString,QString)));
 }
 
 void KlipperTray::slotSetToolTipFromHistory()
@@ -58,7 +58,7 @@ void KlipperTray::slotSetToolTipFromHistory()
     }
 }
 
-void KlipperTray::passive_popup(const QString& caption, const QString& text)
+void KlipperTray::slotPassivePopup(const QString& caption, const QString& text)
 {
     if (m_notification) {
         m_notification->setTitle(caption);

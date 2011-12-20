@@ -36,7 +36,7 @@ public:
     KlipperTray();
 public slots:
     void slotSetToolTipFromHistory();
-    void passive_popup(const QString& caption, const QString& text);
+    void slotPassivePopup(const QString& caption, const QString& text);
 private:
     Klipper* m_klipper;
     QPointer<KNotification> m_notification;
