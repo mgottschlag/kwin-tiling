@@ -101,8 +101,8 @@ Name[uz]=Tugmatag
 Name[uz@cyrillic]=Тугматаг
 Name[vi]=Bàn phím
 Name[wa]=Taprece
-Name[x-test]=xxKeyboardxx
 Name[xh]=Ibhodi enezitshixo
+Name[x-test]=xxKeyboardxx
 Name[zh_CN]=键盘
 Name[zh_TW]=鍵盤
 
@@ -193,13 +193,14 @@ Comment[uz]=Tugmatagning moslamalari
 Comment[uz@cyrillic]=Тугматагнинг мосламалари
 Comment[vi]=Thiết lập bàn phím
 Comment[wa]=Apontiaedje del taprece
-Comment[x-test]=xxKeyboard settingsxx
 Comment[xh]=Izicwangciso zebhodi enezitshixo
+Comment[x-test]=xxKeyboard settingsxx
 Comment[zh_CN]=键盘设置
 Comment[zh_TW]=鍵盤設定
 
 X-KDE-Keywords=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume
 X-KDE-Keywords[ca]=Teclat,Repetició de teclat,Volum del clic,Dispositius d'entrada,repetició,volum
+X-KDE-Keywords[de]=Tastatur,Tastenwiederholung,Klicklautstärke,Eingabegeräte,Wiederholung,Lautstärke
 X-KDE-Keywords[fi]=Näppäimistö,Näppäintoisto,Näppäilyäänen voimakkuus,Syöttölaitteet,toisto,voimakkuus
 X-KDE-Keywords[ia]=Claviero,Repetition de claviero,Volumine de click,Dispositivo de ingresso,repetition,volumine
 X-KDE-Keywords[kk]=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume
