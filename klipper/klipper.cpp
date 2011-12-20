@@ -63,7 +63,6 @@
 #endif
 
 //#define NOISY_KLIPPER
-#include <KPassivePopup>
 
 namespace {
     /**

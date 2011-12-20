@@ -28,7 +28,6 @@
 #include <KConfigDialogManager>
 
 #include "tray.h"
-#include "version.h"
 #include "klipper.h"
 
 extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
