@@ -22,7 +22,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QRegExp>
 
-#include <kmenu.h>
+#include <KMenu>
 
 #include "history.h"
 

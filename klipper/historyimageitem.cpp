@@ -21,7 +21,7 @@
 #include <QtCore/QMimeData>
 #include <QtCore/QCryptographicHash>
 
-#include <kdebug.h>
+#include <KDebug>
 
 namespace {
     QByteArray compute_uuid(const QPixmap& data) {

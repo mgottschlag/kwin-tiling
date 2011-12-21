@@ -23,7 +23,7 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QStringList>
 
-#include <ksharedconfig.h>
+#include <KSharedConfig>
 
 class History;
 class HistoryItem;

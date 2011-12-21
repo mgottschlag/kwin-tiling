@@ -25,17 +25,17 @@
 #include <QtCore/QFile>
 #include <QtGui/QX11Info>
 
-#include <kconfig.h>
-#include <kdialog.h>
-#include <klocale.h>
-#include <kmenu.h>
-#include <kservice.h>
-#include <kdebug.h>
-#include <kstringhandler.h>
-#include <kmacroexpander.h>
-#include <kglobal.h>
-#include <kmimetypetrader.h>
-#include <kmimetype.h>
+#include <KConfig>
+#include <KDialog>
+#include <KLocale>
+#include <KMenu>
+#include <KService>
+#include <KDebug>
+#include <KStringHandler>
+#include <KMacroExpanderBase>
+#include <KGlobal>
+#include <KMimeTypeTrader>
+#include <KMimeType>
 
 #include "klippersettings.h"
 #include "clipcommandprocess.h"

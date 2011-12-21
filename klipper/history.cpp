@@ -20,7 +20,7 @@
 */
 #include "history.h"
 
-#include <kdebug.h>
+#include <KDebug>
 
 #include "historystringitem.h"
 #include "klipperpopup.h"

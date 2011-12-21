@@ -22,7 +22,7 @@
 #include <QtCore/QList>
 #include <QtGui/QWidgetAction>
 
-#include <kmenu.h>
+#include <KMenu>
 
 class History;
 class KHelpMenu;

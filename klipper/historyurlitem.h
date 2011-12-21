@@ -21,7 +21,7 @@
 
 #include <QtCore/QMap>
 
-#include <kurl.h>
+#include <KUrl>
 
 #include "historyitem.h"
 

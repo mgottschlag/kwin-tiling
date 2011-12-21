@@ -27,19 +27,19 @@
 
 #include <QtDBus/QDBusConnection>
 
-#include <kaboutdata.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <ksavefile.h>
-#include <ksessionmanager.h>
-#include <kstandarddirs.h>
-#include <ksystemtrayicon.h>
-#include <kdebug.h>
-#include <kglobalsettings.h>
-#include <kactioncollection.h>
-#include <ktoggleaction.h>
+#include <KAboutData>
+#include <KLocale>
+#include <KMessageBox>
+#include <KSaveFile>
+#include <KSessionManager>
+#include <KStandardDirs>
+#include <KSystemTrayIcon>
+#include <KDebug>
+#include <KGlobalSettings>
+#include <KActionCollection>
+#include <KToggleAction>
 #include <KConfigSkeleton>
-#include <ktextedit.h>
+#include <KTextEdit>
 
 #include "configdialog.h"
 #include "klippersettings.h"

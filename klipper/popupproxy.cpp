@@ -24,9 +24,9 @@
 #include <QtGui/QImage>
 #include <QtGui/QStyleOption>
 
-#include <kstringhandler.h>
-#include <klocale.h>
-#include <kdebug.h>
+#include <KStringHandler>
+#include <KLocale>
+#include <KDebug>
 
 #include "historyitem.h"
 #include "history.h"

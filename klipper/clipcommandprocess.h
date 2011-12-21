@@ -20,7 +20,7 @@
 #ifndef CLIPCOMMANDPROCESS_H
 #define CLIPCOMMANDPROCESS_H
 
-#include <kprocess.h>
+#include <KProcess>
 
 class ClipAction;
 class History;
