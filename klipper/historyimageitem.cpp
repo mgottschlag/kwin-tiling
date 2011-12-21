@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
 
@@ -20,10 +19,9 @@
 #include "historyimageitem.h"
 
 #include <QMimeData>
+#include <QCryptographicHash>
 
 #include <kdebug.h>
-
-#include <QCryptographicHash>
 
 namespace {
     QByteArray compute_uuid(const QPixmap& data) {

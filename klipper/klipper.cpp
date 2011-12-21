@@ -1,7 +1,6 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
 
-   Copyright (C) by Andrew Stanley-Jones
+   Copyright (C) by Andrew Stanley-Jones <asj@cban.com>
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
    Copyright (C) 2008 by Dmitry Suzdalev <dimsuz@gmail.com>
@@ -23,6 +22,8 @@
 */
 
 #include "klipper.h"
+
+#include <zlib.h>
 
 #include <QtDBus/QDBusConnection>
 
@@ -55,15 +56,12 @@
 #include <prison/QRCodeBarcode>
 #endif
 
-#include <zlib.h>
-
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #endif
 
 //#define NOISY_KLIPPER
-#include <KPassivePopup>
 
 namespace {
     /**

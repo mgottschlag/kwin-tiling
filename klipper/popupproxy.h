@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
 
@@ -21,11 +20,11 @@
 #define POPUPPROXY_H
 
 #include <QObject>
-
 #include <QRegExp>
 
 #include <kmenu.h>
-#include <history.h>
+
+#include "history.h"
 
 class HistoryItem;
 class KlipperPopup;

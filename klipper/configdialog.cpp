@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
    Copyright (C) 2008-2009 by Dmitry Suzdalev <dimsuz@gmail.com>
@@ -21,13 +20,14 @@
 
 #include "configdialog.h"
 
+#include <QHeaderView>
+
 #include <KLocale>
 #include <KMenu>
 #include <KShortcutsDialog>
 #include <KDebug>
 #include <KEditListWidget>
 
-#include <QHeaderView>
 
 #include "klipper.h"
 #include "editactiondialog.h"

@@ -100,8 +100,8 @@ Name[uz]=Sichqoncha
 Name[uz@cyrillic]=Сичқонча
 Name[vi]=Chuột
 Name[wa]=Sori
-Name[x-test]=xxMousexx
 Name[xh]=Mouse
+Name[x-test]=xxMousexx
 Name[zh_CN]=鼠标
 Name[zh_TW]=滑鼠
 
@@ -192,13 +192,14 @@ Comment[uz]=Sichqonchaning moslamalari
 Comment[uz@cyrillic]=Сичқончанинг мосламалари
 Comment[vi]=Thiết lập con chuột
 Comment[wa]=Apontiaedjes del sori
-Comment[x-test]=xxMouse settingsxx
 Comment[xh]=Izicwangciso ze mouse
+Comment[x-test]=xxMouse settingsxx
 Comment[zh_CN]=鼠标设置
 Comment[zh_TW]=滑鼠設定
 
 X-KDE-Keywords=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed
 X-KDE-Keywords[ca]=Ratolí,Acceleració del ratolí,Llindar del ratolí,Botons del ratolí,Selecció,Ombra del cursor,Dispositius d'entrada,Mapatge dels boton,Clic,icones,reacció,Apuntadors,Arrossegar,Clic doble,mapatge,dretà,esquerrà
+X-KDE-Keywords[de]=Maus,Mausbeschleunigung,Mausschwellenwert,Maustasten,Auswahl,Cursor,Cursorform,Eingabegeräte,Knöpfe,Buttons,Zuordnungen,Klicks,Zeigegeräte,Doppelklick,Rechtshänder,Linkshänder
 X-KDE-Keywords[fi]=Hiiri,Osoittimen kiihdytys,Osoittimen raja-arvo,Hiiripainikkeet,Valinta,Osoittimen muoto,Syötelaitteet,Painikkeiden kuvaus,Napsauta,Napsautus,kuvakkeet,tuntuma,Osoittimet,Raahaus,Kaksoisnapsautus,kuvaus,oikeakätinen,oikeakätisyys,vasenkätinen,vasenkätisyys
 X-KDE-Keywords[ia]=Mus,Acceleration de mus,Limine de mus,Buttones de mus,Selection,Forma de cursor, Dispositivos de ingresso,Mappatura de button,Click,icones,retro-information,Punctatores,Trahe,DupleClick,mappar,con mano dextere, con mano sinistre
 X-KDE-Keywords[kk]=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed

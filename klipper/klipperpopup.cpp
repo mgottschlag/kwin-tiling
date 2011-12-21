@@ -1,7 +1,6 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
-   Copyright (C) by Andrew Stanley-Jones
+   Copyright (C) by Andrew Stanley-Jones <asj@cban.com>
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
 
    This program is free software; you can redistribute it and/or
@@ -141,7 +140,6 @@ void KlipperPopup::buildFromScratch() {
     m_filterWidget->setFocusPolicy( Qt::NoFocus );
     m_filterWidgetAction->setVisible(false);
 
-    QListIterator<QAction *> i(m_actions);
     for (int i = 0; i < m_actions.count(); i++) {
         if (i == 0)
             addSeparator();

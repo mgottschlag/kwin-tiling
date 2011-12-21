@@ -1,0 +1,10 @@
+# This is not really a .desktop file like the rest, but it is useful to treat
+# it as such
+
+[KdmGreeterTheme]
+Greeter=ariya.xml
+Name=Ariya
+
+Author=Roman Shtylman
+Copyright=GPL 2010 Roman Shtylman | shtylman@gmail.com
+Screenshot=screenshot.png

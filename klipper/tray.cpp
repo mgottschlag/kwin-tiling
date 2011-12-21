@@ -1,7 +1,6 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
 
-   Copyright (C) by Andrew Stanley-Jones
+   Copyright (C) by Andrew Stanley-Jones <asj@cban.com>
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
 
@@ -25,12 +24,11 @@
 
 #include <kglobal.h>
 #include <klocale.h>
+#include <KNotification>
 
 #include "klipper.h"
 #include "history.h"
 #include "klipperpopup.h"
-
-#include <KNotification>
 
 KlipperTray::KlipperTray()
     : KStatusNotifierItem()
@@ -46,7 +44,7 @@ KlipperTray::KlipperTray()
     setAssociatedWidget( m_klipper->history()->popup() );
     connect( m_klipper->history(), SIGNAL(changed()), SLOT(slotSetToolTipFromHistory()));
     slotSetToolTipFromHistory();
-    connect( m_klipper, SIGNAL(passivePopup(QString,QString)), SLOT(passive_popup(QString,QString)));
+    connect( m_klipper, SIGNAL(passivePopup(QString,QString)), SLOT(slotPassivePopup(QString,QString)));
 }
 
 void KlipperTray::slotSetToolTipFromHistory()
@@ -59,7 +57,7 @@ void KlipperTray::slotSetToolTipFromHistory()
     }
 }
 
-void KlipperTray::passive_popup(const QString& caption, const QString& text)
+void KlipperTray::slotPassivePopup(const QString& caption, const QString& text)
 {
     if (m_notification) {
         m_notification->setTitle(caption);

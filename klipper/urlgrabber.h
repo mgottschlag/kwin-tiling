@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
 
@@ -23,6 +22,7 @@
 #include <QHash>
 #include <QRegExp>
 #include <QStringList>
+
 #include <ksharedconfig.h>
 
 class History;
