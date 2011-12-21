@@ -20,8 +20,8 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
-#include <QAction>
-#include <QList>
+#include <QtCore/QList>
+#include <QtGui/QAction>
 
 #include "historyitem.h"
 

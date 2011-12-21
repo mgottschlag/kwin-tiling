@@ -19,8 +19,8 @@
 #ifndef POPUPPROXY_H
 #define POPUPPROXY_H
 
-#include <QObject>
-#include <QRegExp>
+#include <QtCore/QObject>
+#include <QtCore/QRegExp>
 
 #include <kmenu.h>
 

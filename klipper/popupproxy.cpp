@@ -18,11 +18,11 @@
 */
 #include "popupproxy.h"
 
-#include <QRegExp>
-#include <QStyle>
-#include <QPixmap>
-#include <QImage>
-#include <QStyleOption>
+#include <QtCore/QRegExp>
+#include <QtGui/QStyle>
+#include <QtGui/QPixmap>
+#include <QtGui/QImage>
+#include <QtGui/QStyleOption>
 
 #include <kstringhandler.h>
 #include <klocale.h>

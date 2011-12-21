@@ -20,7 +20,7 @@
 
 #include "configdialog.h"
 
-#include <QHeaderView>
+#include <QtGui/QHeaderView>
 
 #include <KLocale>
 #include <KMenu>

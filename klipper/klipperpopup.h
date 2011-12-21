@@ -19,8 +19,8 @@
 #ifndef KLIPPERPOPUP_H
 #define KLIPPERPOPUP_H
 
-#include <QList>
-#include <QWidgetAction>
+#include <QtCore/QList>
+#include <QtGui/QWidgetAction>
 
 #include <kmenu.h>
 

@@ -21,10 +21,10 @@
 #ifndef KLIPPER_H
 #define KLIPPER_H
 
-#include <QKeyEvent>
-#include <QMenu>
-#include <QTimer>
-#include <QClipboard>
+#include <QtCore/QTimer>
+#include <QtGui/QKeyEvent>
+#include <QtGui/QMenu>
+#include <QtGui/QClipboard>
 
 #include <KApplication>
 #include <KIcon>

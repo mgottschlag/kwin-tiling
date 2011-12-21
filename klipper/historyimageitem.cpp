@@ -18,8 +18,8 @@
 */
 #include "historyimageitem.h"
 
-#include <QMimeData>
-#include <QCryptographicHash>
+#include <QtCore/QMimeData>
+#include <QtCore/QCryptographicHash>
 
 #include <kdebug.h>
 

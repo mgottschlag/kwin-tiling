@@ -20,7 +20,7 @@
 #ifndef ACTIONSTREEWIDGET_H
 #define ACTIONSTREEWIDGET_H
 
-#include <QTreeWidget>
+#include <QtGui/QTreeWidget>
 
 /**
  * Custom tree widget class to make KConfigDialog properly

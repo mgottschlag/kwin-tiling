@@ -19,7 +19,7 @@
 #ifndef HISTORYURLITEM_H
 #define HISTORYURLITEM_H
 
-#include <QMap>
+#include <QtCore/QMap>
 
 #include <kurl.h>
 
