@@ -1,6 +1,6 @@
 /* This file is part of the KDE project
 
-   Copyright (C) by Andrew Stanley-Jones
+   Copyright (C) by Andrew Stanley-Jones <asj@cban.com>
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
    Copyright (C) 2008 by Dmitry Suzdalev <dimsuz@gmail.com>
