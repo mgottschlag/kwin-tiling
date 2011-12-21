@@ -23,6 +23,7 @@
 #include <QHash>
 #include <QRegExp>
 #include <QStringList>
+
 #include <ksharedconfig.h>
 
 class History;

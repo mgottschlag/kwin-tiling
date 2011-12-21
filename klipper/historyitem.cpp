@@ -20,7 +20,6 @@
 #include "historyitem.h"
 
 #include <QMap>
-
 #include <QPixmap>
 #include <QCryptographicHash>
 

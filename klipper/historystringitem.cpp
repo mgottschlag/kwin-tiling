@@ -18,6 +18,7 @@
    Boston, MA 02110-1301, USA.
 */
 #include "historystringitem.h"
+
 #include <QCryptographicHash>
 
 HistoryStringItem::HistoryStringItem( const QString& data )

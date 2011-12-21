@@ -21,13 +21,14 @@
 
 #include "configdialog.h"
 
+#include <QHeaderView>
+
 #include <KLocale>
 #include <KMenu>
 #include <KShortcutsDialog>
 #include <KDebug>
 #include <KEditListWidget>
 
-#include <QHeaderView>
 
 #include "klipper.h"
 #include "editactiondialog.h"

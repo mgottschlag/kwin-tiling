@@ -20,10 +20,11 @@
 #ifndef HISTORYURLITEM_H
 #define HISTORYURLITEM_H
 
-#include "historyitem.h"
-
 #include <QMap>
+
 #include <kurl.h>
+
+#include "historyitem.h"
 
 /**
  * An URL entry in the clipboard history.

@@ -24,6 +24,8 @@
 
 #include "klipper.h"
 
+#include <zlib.h>
+
 #include <QtDBus/QDBusConnection>
 
 #include <kaboutdata.h>
@@ -54,8 +56,6 @@
 #include <prison/DataMatrixBarcode>
 #include <prison/QRCodeBarcode>
 #endif
-
-#include <zlib.h>
 
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>

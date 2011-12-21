@@ -25,12 +25,11 @@
 
 #include <kglobal.h>
 #include <klocale.h>
+#include <KNotification>
 
 #include "klipper.h"
 #include "history.h"
 #include "klipperpopup.h"
-
-#include <KNotification>
 
 KlipperTray::KlipperTray()
     : KStatusNotifierItem()

@@ -21,9 +21,10 @@
 #ifndef TRAY_H
 #define TRAY_H
 
+#include <QPointer>
+
 #include <KStatusNotifierItem>
 #include <KNotification>
-#include <QPointer>
 
 class Klipper;
 

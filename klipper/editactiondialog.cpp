@@ -20,13 +20,13 @@
 
 #include "editactiondialog.h"
 
+#include <QItemDelegate>
+#include <QComboBox>
+
 #include <KDebug>
 
 #include "urlgrabber.h"
-
 #include "ui_editactiondialog.h"
-#include <QItemDelegate>
-#include <QComboBox>
 
 namespace {
     static QString output2text(ClipCommand::Output output) {

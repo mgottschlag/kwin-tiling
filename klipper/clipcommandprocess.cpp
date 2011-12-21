@@ -19,9 +19,11 @@
 */
 
 #include "clipcommandprocess.h"
+
+#include <KCharMacroExpander>
+
 #include "history.h"
 #include "historystringitem.h"
-#include <KCharMacroExpander>
 #include "urlgrabber.h"
 
 ClipCommandProcess::ClipCommandProcess(const ClipAction& action, const ClipCommand& command, const QString& clip, History* history, const HistoryItem* original_item) :

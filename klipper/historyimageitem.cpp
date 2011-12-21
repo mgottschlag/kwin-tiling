@@ -20,10 +20,9 @@
 #include "historyimageitem.h"
 
 #include <QMimeData>
+#include <QCryptographicHash>
 
 #include <kdebug.h>
-
-#include <QCryptographicHash>
 
 namespace {
     QByteArray compute_uuid(const QPixmap& data) {
