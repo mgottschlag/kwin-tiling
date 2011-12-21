@@ -20,7 +20,6 @@
 
 #include <QtCore/QMap>
 #include <QtGui/QPixmap>
-#include <QtCore/QCryptographicHash>
 
 #include <kdebug.h>
 

@@ -20,8 +20,6 @@
 
 #include "configdialog.h"
 
-#include <QtGui/QHeaderView>
-
 #include <KLocale>
 #include <KMenu>
 #include <KShortcutsDialog>
