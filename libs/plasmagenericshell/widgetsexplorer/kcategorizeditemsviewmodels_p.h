@@ -120,6 +120,7 @@ class DefaultItemFilterProxyModel : public QSortFilterProxyModel
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
     Q_PROPERTY(QString filterType READ filterType WRITE setFilterType NOTIFY filterChanged)
     Q_PROPERTY(QVariant filterQuery READ filterQuery WRITE setFilterQuery NOTIFY filterChanged)
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
     DefaultItemFilterProxyModel(QObject *parent = 0);
@@ -146,9 +147,12 @@ public:
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
+    int count() {return rowCount(QModelIndex());}
+
 Q_SIGNALS:
     void searchTermChanged(const QString &term);
     void filterChanged();
+    void countChanged();
 
 private:
     Filter m_filter;

@@ -76,6 +76,12 @@ DefaultFilterModel::DefaultFilterModel(QObject *parent) :
     newRoleNames[FilterDataRole] = "filterData";
 
     setRoleNames(newRoleNames);
+    connect(this, SIGNAL(modelReset()),
+            this, SIGNAL(countChanged()));
+    connect(this, SIGNAL(rowsInserted(QModelIndex, int, int)),
+            this, SIGNAL(countChanged()));
+    connect(this, SIGNAL(rowsRemoved(QModelIndex, int, int)),
+            this, SIGNAL(countChanged()));
 }
 
 void DefaultFilterModel::addFilter(const QString &caption, const Filter &filter, const KIcon &icon)
