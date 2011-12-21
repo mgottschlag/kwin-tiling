@@ -24,7 +24,6 @@
 #include <QtGui/QImage>
 #include <QtGui/QStyleOption>
 
-#include <KStringHandler>
 #include <KLocale>
 #include <KDebug>
 

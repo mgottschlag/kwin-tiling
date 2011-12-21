@@ -33,12 +33,10 @@
 #include <KSaveFile>
 #include <KSessionManager>
 #include <KStandardDirs>
-#include <KSystemTrayIcon>
 #include <KDebug>
 #include <KGlobalSettings>
 #include <KActionCollection>
 #include <KToggleAction>
-#include <KConfigSkeleton>
 #include <KTextEdit>
 
 #include "configdialog.h"

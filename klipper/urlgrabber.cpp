@@ -25,14 +25,12 @@
 #include <QtCore/QFile>
 #include <QtGui/QX11Info>
 
-#include <KConfig>
 #include <KDialog>
 #include <KLocale>
 #include <KMenu>
 #include <KService>
 #include <KDebug>
 #include <KStringHandler>
-#include <KMacroExpanderBase>
 #include <KGlobal>
 #include <KMimeTypeTrader>
 #include <KMimeType>
