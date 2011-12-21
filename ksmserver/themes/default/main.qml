@@ -112,7 +112,7 @@ PlasmaCore.FrameSvgItem {
             }
         }
 
-        focusedButton.focus = true
+        focusedButton.forceActiveFocus()
         timer.running = true;
     }
 
@@ -184,7 +184,6 @@ PlasmaCore.FrameSvgItem {
         id: scope
         width: buttonsLayout.width
         height: buttonsLayout.height
-        focus: true
 
         anchors {
             top: automaticallyDoLabel.bottom
@@ -212,7 +211,7 @@ PlasmaCore.FrameSvgItem {
 
                     onClicked: {
                         console.log("main.qml: logoutRequested")
-                        //logoutRequested()
+                        logoutRequested()
                     }
 
                     onActiveFocusChanged: {
@@ -233,7 +232,7 @@ PlasmaCore.FrameSvgItem {
 
                     onClicked: {
                         console.log("main.qml: haltRequested")
-                        //haltRequested()
+                        haltRequested()
                     }
 
                     onPressAndHold: {
@@ -251,7 +250,7 @@ PlasmaCore.FrameSvgItem {
                                 // 3 == Solid::PowerManagement::HibernateState
                                 contextMenu.append({itemIndex: 3, itemText: i18n("Suspend to Disk")})
                             }
-                            //contextMenu.clicked.connect(shutdownUi.suspendRequested)
+                            contextMenu.clicked.connect(shutdownUi.suspendRequested)
                         }
                         contextMenu.open()
                     }
@@ -280,7 +279,7 @@ PlasmaCore.FrameSvgItem {
 
                     onClicked: {
                         console.log("main.qml: rebootRequested")
-                        //rebootRequested()
+                        rebootRequested()
                     }
 
                     onPressAndHold: {
