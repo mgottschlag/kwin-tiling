@@ -33,25 +33,18 @@ Item {
         id: theme
     }
 
-    PlasmaCore.Dialog {
+    PlasmaComponents.ContextMenu {
         id: categoriesDialog
-        mainItem: Column {
-            Repeater {
-                model: filterModel
-                delegate: Text {
-                    color: theme.textColor
-                    text: display
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            appletsModel.filterType = filterType
-                            appletsModel.filterQuery = filterData
-                        }
-                    }
-                }
-            }
+        visualParent: categoryButton
+        model: filterModel
+        onTriggeredIndex: {
+            var item = filterModel.get(index)
+
+            appletsModel.filterType = item.filterType
+            appletsModel.filterQuery = item.filterData
         }
     }
+
 
     PlasmaCore.Dialog {
         id: tooltipDialog
@@ -90,7 +83,7 @@ Item {
             PlasmaComponents.Button {
                 id: categoryButton
                 text: "Categories"
-                onClicked: {
+                onClicked: {categoriesDialog.open()/*
                     if (categoriesDialog.visible) {
                         categoriesDialog.visible = false
                     } else {
@@ -98,7 +91,7 @@ Item {
                         categoriesDialog.x = pos.x
                         categoriesDialog.y = pos.y
                         categoriesDialog.visible = true
-                    }
+                    }*/
                 }
             }
         }

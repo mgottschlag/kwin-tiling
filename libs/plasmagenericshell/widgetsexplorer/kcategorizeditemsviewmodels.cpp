@@ -109,6 +109,19 @@ void DefaultFilterModel::addSeparator(const QString &caption)
     appendRow(newRow);
 }
 
+QVariantHash DefaultFilterModel::get(int row) const
+{
+    QModelIndex idx = index(row, 0);
+    QVariantHash hash;
+
+    QHash<int, QByteArray>::const_iterator i;
+    for (i = roleNames().constBegin(); i != roleNames().constEnd(); ++i) {
+        hash[i.value()] = data(idx, i.key());
+    }
+
+    return hash;
+}
+
 // DefaultItemFilterProxyModel
 
 DefaultItemFilterProxyModel::DefaultItemFilterProxyModel(QObject *parent)
@@ -128,6 +141,12 @@ void DefaultItemFilterProxyModel::setSourceModel(QAbstractItemModel *sourceModel
     setRoleNames(sourceModel->roleNames());
 
     QSortFilterProxyModel::setSourceModel(model);
+    connect(this, SIGNAL(modelReset()),
+            this, SIGNAL(countChanged()));
+    connect(this, SIGNAL(rowsInserted(QModelIndex, int, int)),
+            this, SIGNAL(countChanged()));
+    connect(this, SIGNAL(rowsRemoved(QModelIndex, int, int)),
+            this, SIGNAL(countChanged()));
 }
 
 QAbstractItemModel *DefaultItemFilterProxyModel::sourceModel() const
@@ -159,6 +178,19 @@ bool DefaultItemFilterProxyModel::filterAcceptsRow(int sourceRow,
     return item &&
         (m_filter.first.isEmpty() || item->passesFiltering(m_filter)) &&
         (m_searchPattern.isEmpty() || item->matches(m_searchPattern));
+}
+
+QVariantHash DefaultItemFilterProxyModel::get(int row) const
+{
+    QModelIndex idx = index(row, 0);
+    QVariantHash hash;
+
+    QHash<int, QByteArray>::const_iterator i;
+    for (i = roleNames().constBegin(); i != roleNames().constEnd(); ++i) {
+        hash[i.value()] = data(idx, i.key());
+    }
+
+    return hash;
 }
 
 bool DefaultItemFilterProxyModel::lessThan(const QModelIndex &left,

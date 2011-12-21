@@ -154,7 +154,7 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
     initRunningApplets();
 
     declarativeWidget = new Plasma::DeclarativeWidget(q);
-    declarativeWidget->setMinimumHeight(128);
+    declarativeWidget->setInitializationDelayed(true);
     declarativeWidget->setQmlPath(KStandardDirs::locate("data", "plasma/widgetsexplorer/widgetsexplorer.qml"));
     mainLayout->addItem(declarativeWidget);
 

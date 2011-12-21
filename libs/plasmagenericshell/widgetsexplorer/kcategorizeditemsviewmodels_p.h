@@ -90,6 +90,8 @@ private:
  */
 class DefaultFilterModel : public QStandardItemModel
 {
+    Q_OBJECT
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
 public:
     enum Roles {
         FilterTypeRole = Qt::UserRole+1,
@@ -109,6 +111,13 @@ public:
      * @param caption The localized string to be displayed as a name of the separator
      */
     void addSeparator(const QString &caption);
+
+    int count() {return rowCount(QModelIndex());}
+
+    Q_INVOKABLE QVariantHash get(int i) const;
+
+Q_SIGNALS:
+    void countChanged();
 };
 
 /**
@@ -148,6 +157,8 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
     int count() {return rowCount(QModelIndex());}
+
+    Q_INVOKABLE QVariantHash get(int i) const;
 
 Q_SIGNALS:
     void searchTermChanged(const QString &term);
