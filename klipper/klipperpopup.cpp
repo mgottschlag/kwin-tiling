@@ -140,7 +140,6 @@ void KlipperPopup::buildFromScratch() {
     m_filterWidget->setFocusPolicy( Qt::NoFocus );
     m_filterWidgetAction->setVisible(false);
 
-    QListIterator<QAction *> i(m_actions);
     for (int i = 0; i < m_actions.count(); i++) {
         if (i == 0)
             addSeparator();
