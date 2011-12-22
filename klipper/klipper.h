@@ -22,17 +22,14 @@
 #define KLIPPER_H
 
 #include <QtCore/QTimer>
-#include <QtGui/QKeyEvent>
-#include <QtGui/QMenu>
+#include <QtGui/QPixmap>
 #include <QtGui/QClipboard>
 
-#include <KApplication>
-#include <KIcon>
+#include <KGlobal>
 
 #include "urlgrabber.h"
 
 class KAction;
-class QClipboard;
 class KToggleAction;
 class KAboutData;
 class KActionCollection;
@@ -40,6 +37,7 @@ class URLGrabber;
 class QTime;
 class History;
 class QAction;
+class QMenu;
 class QMimeData;
 class HistoryItem;
 class KlipperSessionManager;

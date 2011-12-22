@@ -24,6 +24,7 @@
 #include <QtGui/QImage>
 #include <QtGui/QStyleOption>
 
+#include <KMenu>
 #include <KLocale>
 #include <KDebug>
 

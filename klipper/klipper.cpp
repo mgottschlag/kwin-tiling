@@ -25,6 +25,7 @@
 
 #include <zlib.h>
 
+#include <QtGui/QMenu>
 #include <QtDBus/QDBusConnection>
 
 #include <KAboutData>
@@ -38,6 +39,8 @@
 #include <KActionCollection>
 #include <KToggleAction>
 #include <KTextEdit>
+#include <KApplication>
+#include <KIcon>
 
 #include "configdialog.h"
 #include "klippersettings.h"

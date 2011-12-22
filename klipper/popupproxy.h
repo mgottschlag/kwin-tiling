@@ -22,9 +22,9 @@
 #include <QtCore/QObject>
 #include <QtCore/QRegExp>
 
-#include <KMenu>
-
 #include "history.h"
+
+class KMenu;
 
 class HistoryItem;
 class KlipperPopup;

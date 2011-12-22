@@ -18,6 +18,7 @@
 */
 #ifndef HISTORYITEM_H
 #define HISTORYITEM_H
+
 #include <QtGui/QPixmap>
 
 class QString;

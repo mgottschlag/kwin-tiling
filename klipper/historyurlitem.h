@@ -19,8 +19,6 @@
 #ifndef HISTORYURLITEM_H
 #define HISTORYURLITEM_H
 
-#include <QtCore/QMap>
-
 #include <KUrl>
 
 #include "historyitem.h"

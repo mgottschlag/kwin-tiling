@@ -26,6 +26,7 @@ class ClipAction;
 class History;
 class ClipCommand;
 class HistoryItem;
+
 class ClipCommandProcess : public KProcess
 {
     Q_OBJECT

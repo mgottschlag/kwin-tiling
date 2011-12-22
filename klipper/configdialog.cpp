@@ -22,10 +22,9 @@
 
 #include <KLocale>
 #include <KMenu>
-#include <KShortcutsDialog>
+#include <KShortcutsEditor>
 #include <KDebug>
 #include <KEditListWidget>
-
 
 #include "klipper.h"
 #include "editactiondialog.h"

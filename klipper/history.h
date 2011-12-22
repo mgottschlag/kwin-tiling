@@ -20,11 +20,13 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
-#include <QtCore/QList>
-#include <QtGui/QAction>
+#include <QtCore/QObject>
+#include <QtCore/QHash>
+#include <QtCore/QByteArray>
 
 #include "historyitem.h"
 
+class QAction;
 class KlipperPopup;
 
 class History : public QObject

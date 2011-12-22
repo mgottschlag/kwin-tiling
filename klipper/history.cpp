@@ -20,6 +20,8 @@
 */
 #include "history.h"
 
+#include <QtGui/QAction>
+
 #include <KDebug>
 
 #include "historystringitem.h"

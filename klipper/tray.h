@@ -23,8 +23,8 @@
 #include <QtCore/QPointer>
 
 #include <KStatusNotifierItem>
-#include <KNotification>
 
+class KNotification;
 class Klipper;
 
 class KlipperTray : public KStatusNotifierItem

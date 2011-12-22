@@ -20,15 +20,18 @@
 #define KLIPPERPOPUP_H
 
 #include <QtCore/QList>
-#include <QtGui/QWidgetAction>
 
 #include <KMenu>
 
-class History;
-class KHelpMenu;
 class QAction;
-class PopupProxy;
+class QWidgetAction;
+class QKeyEvent;
+
+class KHelpMenu;
 class KLineEdit;
+
+class PopupProxy;
+class History;
 
 /**
  * Default view of clipboard history.

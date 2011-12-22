@@ -25,6 +25,7 @@
 #include <KGlobal>
 #include <KLocale>
 #include <KNotification>
+#include <KIcon>
 
 #include "klipper.h"
 #include "history.h"
