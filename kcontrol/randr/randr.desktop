@@ -194,6 +194,8 @@ Comment[zh_TW]=調整大小及旋轉你的螢幕
 
 X-KDE-Keywords=screen,resolution,resize,rotate,orientation,display,color depth,size,horizontal,vertical,refresh rate
 X-KDE-Keywords[ca]=pantalla,resolució,redimensió,gir,orientació,profunditat de color,mida,horitzontal,vertical,velocitat de refresc
+X-KDE-Keywords[da]=skærm,opløsning,ændr størrelse,orientering,farvedybde,monitor,størrelse,horisontal,vertical,genopfriskningsrate
+X-KDE-Keywords[et]=ekraan,ekraanilahutus,lahutusvõime,eraldusvõime,pööramine,orientatsioon,kuva,monitor,värv,sügavus,suurus,suuruse muutmine,horisontaalne,vertikaalne,uuendamissagedus
 X-KDE-Keywords[fi]=näyttö,resoluutio,tarkkuus,koon muuttaminen,kääntö,suunta,näyttö,värisyvyys,koko,vaakasuunnassa,vaakasuunta,pystysuunnassa,pystysuunta,virkistystaajuus
 X-KDE-Keywords[ia]=schermo,resolution,redimensiona,rota,orientation,monstrator,profunditate de color,dimension,horizontal,vertical,frequentia de refrescar
 X-KDE-Keywords[kk]=screen,resolution,resize,rotate,orientation,display,color depth,size,horizontal,vertical,refresh rate

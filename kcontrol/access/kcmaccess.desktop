@@ -197,7 +197,9 @@ Comment[zh_TW]=方便傷殘人士使用
 
 X-KDE-Keywords=access,accessibility,deaf,impaired,bell,audible bell,visible bell,Keyboard,keys,sticky keys,bounce keys,slow keys,mouse navigation,num pad
 X-KDE-Keywords[ca]=accés,accessibilitat,sord,discapacitat,campana,campana audible,campana visible,Teclat,tecles apegaloses,repetició de tecles,tecles lentes,navegació de ratolí,teclat numèric
+X-KDE-Keywords[da]=tilgang,tilgængelighed,døv,handicappet,klokke,hørbar klokke,synlig klokke,tastatur,taster,sticky keys,bounce keys,langsomme taster,musenavigation,nummerisk tastatur
 X-KDE-Keywords[de]=Behinderung,Maussteuerung,Signale,Tastatur,Tasten,Taubheit,Verlangsamte Tasten,Zahlenblock,Zugang,Zugangshilfen
+X-KDE-Keywords[et]=hõlbustus,kasutusmugavus,kurdid,tummad,puuetega,kell,kuuldav kell,nähtav kell,klaviatuur,klahvid,kleepuvad klahvid,põrkuvad klahvid,aeglased klahvid,hiirega liikumine,numbriklahvistik
 X-KDE-Keywords[fi]=esteettömyys,kuuro,heikentynyt,heikko,varoitus,äänimerkki,visuaalinen äänimerkki,näppäimistö,näppäimet,alas jäävät näppäimet,tahmeat näppäimet,ponnahdusnäppäimet,hitaat näppäimet,hiirinäppäimet,numeronäppäimistö
 X-KDE-Keywords[ia]=accesso,accessibilitate,surde,debilitate,campana,campana audibile,campana visibile,Claviero,claves,claves collose,claves saltante,claves lente,navigation de mus,pad numeric
 X-KDE-Keywords[kk]=access,accessibility,deaf,impaired,bell,audible bell,visible bell,Keyboard,keys,sticky keys,bounce keys,slow keys,mouse navigation,num pad

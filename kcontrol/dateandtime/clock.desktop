@@ -199,7 +199,9 @@ Comment[zh_TW]=日期和時間設定值
 
 X-KDE-Keywords=clock,date,time,time zone
 X-KDE-Keywords[ca]=rellotge,data,hora,zona horària
+X-KDE-Keywords[da]=ur,dato,tid,tidszone
 X-KDE-Keywords[de]=uhr,datum,zeit,zeitzone
+X-KDE-Keywords[et]=kell,kuupäev,kellaaeg,ajavöönd
 X-KDE-Keywords[fi]=kello,päiväys,päivämäärä,aika,kellonaika,aikavyöhyke
 X-KDE-Keywords[ia]=horologio,data,tempore,zona de tempore
 X-KDE-Keywords[kk]=clock,date,time,time zone

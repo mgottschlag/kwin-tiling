@@ -336,13 +336,8 @@ void BackgroundDialog::reloadConfig()
     }
 
     // Wallpaper
-    bool doWallpaper = !d->containment || d->containment.data()->drawWallpaper();
-    #if 0
-    d->wallpaperLabel->setVisible(doWallpaper);
-    #endif
-
+    bool doWallpaper = d->containment && d->containment.data()->drawWallpaper();
     d->backgroundDialogUi.wallpaperGroup->setVisible(doWallpaper);
-    d->backgroundDialogUi.monitor->setVisible(doWallpaper);
     d->preview->setVisible(doWallpaper);
 
     //kDebug() << "do wallpapers?!" << doWallpaper;
