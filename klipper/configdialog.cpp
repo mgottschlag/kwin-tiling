@@ -258,8 +258,7 @@ void ActionsWidget::onAdvanced()
     }
 }
 
-ConfigDialog::ConfigDialog(QWidget *parent, KConfigSkeleton *skeleton, const Klipper* klipper, KActionCollection *collection,
-                           bool isApplet)
+ConfigDialog::ConfigDialog(QWidget* parent, KConfigSkeleton* skeleton, const Klipper* klipper, KActionCollection*collection, bool isApplet)
     : KConfigDialog(parent, "preferences", skeleton),
     m_generalPage(new GeneralWidget(this)),
     m_actionsPage(new ActionsWidget(this)),

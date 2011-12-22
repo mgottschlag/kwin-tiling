@@ -87,14 +87,14 @@ class AdvancedWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit AdvancedWidget( QWidget *parent = 0L );
+    explicit AdvancedWidget( QWidget* parent = 0L );
     ~AdvancedWidget();
 
     void setWMClasses( const QStringList& items );
     QStringList wmClasses() const;
 
 private:
-    KEditListWidget *editListBox;
+    KEditListWidget* editListBox;
 };
 
 class ConfigDialog : public KConfigDialog
@@ -102,7 +102,7 @@ class ConfigDialog : public KConfigDialog
     Q_OBJECT
 
 public:
-    ConfigDialog( QWidget *parent, KConfigSkeleton *config, const Klipper* klipper, KActionCollection *collection, bool isApplet );
+    ConfigDialog( QWidget* parent, KConfigSkeleton* config, const Klipper* klipper, KActionCollection* collection, bool isApplet );
     ~ConfigDialog();
 
 private:
@@ -115,8 +115,8 @@ private:
 
 private:
     GeneralWidget* m_generalPage;
-    ActionsWidget *m_actionsPage;
-    KShortcutsEditor *m_shortcutsWidget;
+    ActionsWidget* m_actionsPage;
+    KShortcutsEditor* m_shortcutsWidget;
 
     const Klipper* m_klipper;
 };

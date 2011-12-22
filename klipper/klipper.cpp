@@ -116,13 +116,13 @@ private:
 static void ensureGlobalSyncOff(KSharedConfigPtr config);
 
 // config == KGlobal::config for process, otherwise applet
-Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
+Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
     : QObject( parent )
     , m_overflowCounter( 0 )
     , m_locklevel( 0 )
     , m_config( config )
     , m_pendingContentsCheck( false )
-    , m_session_managed( new KlipperSessionManager( this ))
+    , m_sessionManager( new KlipperSessionManager( this ))
 {
     setenv("KSNI_NO_DBUSMENU", "1", 1);
     QDBusConnection::sessionBus().registerObject("/klipper", this, QDBusConnection::ExportScriptableSlots);
@@ -147,20 +147,20 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_collection = new KActionCollection( this );
 
     m_toggleURLGrabAction = new KToggleAction( this );
-    m_collection->addAction( "clipboard_action", m_toggleURLGrabAction );
+    m_collection->addAction( "enable-url-action", m_toggleURLGrabAction );
     m_toggleURLGrabAction->setText(i18n("Enable Clipboard &Actions"));
 
-    m_clearHistoryAction = m_collection->addAction( "clearHistoryAction" );
+    m_clearHistoryAction = m_collection->addAction( "clear-history" );
     m_clearHistoryAction->setIcon( KIcon("edit-clear-history") );
     m_clearHistoryAction->setText( i18n("C&lear Clipboard History") );
     connect(m_clearHistoryAction, SIGNAL(triggered()), SLOT(slotAskClearHistory()));
 
-    m_configureAction = m_collection->addAction( "configureAction" );
+    m_configureAction = m_collection->addAction( "configure" );
     m_configureAction->setIcon( KIcon("configure") );
     m_configureAction->setText( i18n("&Configure Klipper...") );
     connect(m_configureAction, SIGNAL(triggered(bool)), SLOT(slotConfigure()));
 
-    m_quitAction = m_collection->addAction( "quitAction" );
+    m_quitAction = m_collection->addAction( "quit" );
     m_quitAction->setIcon( KIcon("application-exit") );
     m_quitAction->setText( i18n("&Quit") );
     connect(m_quitAction, SIGNAL(triggered(bool)), SLOT(slotQuit()));
@@ -187,13 +187,13 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     // if it's too old, drop it and just use load history
     readProperties(m_config.data());
 
-    m_repeatAction = m_collection->addAction("repeat_action");
+    m_repeatAction = m_collection->addAction("repeat-action");
     m_repeatAction->setText(i18n("Manually Invoke Action on Current Clipboard"));
     qobject_cast<KAction*>(m_repeatAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_R));
     connect(m_repeatAction, SIGNAL(triggered()), SLOT(slotRepeatAction()));
 
     // add an edit-possibility
-    m_editAction = m_collection->addAction("edit_clipboard");
+    m_editAction = m_collection->addAction("edit-clipboard");
     m_editAction->setIcon(KIcon("document-properties"));
     m_editAction->setText(i18n("&Edit Contents..."));
     qobject_cast<KAction*>(m_editAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_E), KAction::DefaultShortcut);
@@ -201,17 +201,17 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
 
 #ifdef HAVE_PRISON
     // add barcode for mobile phones
-    m_showBarcodeAction = m_collection->addAction("show_barcode");
+    m_showBarcodeAction = m_collection->addAction("show-barcode");
     m_showBarcodeAction->setText(i18n("&Show Barcode..."));
     connect(m_showBarcodeAction, SIGNAL(triggered()), SLOT(slotShowBarcode()));
 #endif
 
     // Cycle through history
-    m_cycleNextAction = m_collection->addAction("cycleNextAction");
+    m_cycleNextAction = m_collection->addAction("cycle-next");
     m_cycleNextAction->setText(i18n("Next History Item"));
     m_cycleNextAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Down), KAction::DefaultShortcut);
     connect(m_cycleNextAction, SIGNAL(triggered(bool)), SLOT(slotCycleNext()));
-    m_cyclePrevAction = m_collection->addAction("cyclePrevAction");
+    m_cyclePrevAction = m_collection->addAction("cycle-prev");
     m_cyclePrevAction->setText(i18n("Previous History Item"));
     m_cyclePrevAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Up), KAction::DefaultShortcut);
     connect(m_cyclePrevAction, SIGNAL(triggered(bool)), SLOT(slotCyclePrev()));
@@ -249,7 +249,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
 
 Klipper::~Klipper()
 {
-    delete m_session_managed;
+    delete m_sessionManager;
     delete m_showTimer;
     delete m_hideTimer;
     delete m_myURLGrabber;
@@ -359,7 +359,7 @@ void Klipper::saveSettings() const
     // other settings should be saved automatically by KConfigDialog
 }
 
-void Klipper::showPopupMenu( QMenu *menu )
+void Klipper::showPopupMenu( QMenu* menu )
 {
     Q_ASSERT( menu != 0L );
 
@@ -481,7 +481,7 @@ void Klipper::saveHistory(bool empty) {
     ds << crc << data;
 }
 
-void Klipper::readProperties(KConfig *kc)
+void Klipper::readProperties(KConfig* kc)
 {
     QStringList dataList;
 

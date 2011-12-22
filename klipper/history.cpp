@@ -117,7 +117,7 @@ void History::slotClear() {
     emit changed();
 }
 
-void History::slotMoveToTop(QAction *action) {
+void History::slotMoveToTop(QAction* action) {
     QByteArray uuid = action->data().toByteArray();
     if (uuid.isNull()) // not an action from popupproxy
         return;
@@ -146,9 +146,8 @@ void History::slotMoveToTop(const QByteArray& uuid) {
 }
 
 void History::setMaxSize( unsigned max_size ) {
-    m_max_size = max_size;
+    m_maxSize = max_size;
     trim();
-
 }
 
 KlipperPopup* History::popup() {

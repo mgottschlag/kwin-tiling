@@ -254,7 +254,7 @@ void URLGrabber::actionMenu( const HistoryItem* item, bool automatically_invoked
 }
 
 
-void URLGrabber::slotItemSelected(QAction *action)
+void URLGrabber::slotItemSelected(QAction* action)
 {
     if (m_myMenu)
         m_myMenu->hide(); // deleted by the timer or the next action
@@ -276,7 +276,7 @@ void URLGrabber::slotItemSelected(QAction *action)
 }
 
 
-void URLGrabber::execute( const ClipAction *action, int cmdIdx ) const
+void URLGrabber::execute( const ClipAction* action, int cmdIdx ) const
 {
     if (!action) {
         kDebug() << "Action object is null";

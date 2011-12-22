@@ -95,7 +95,7 @@ public:
     /**
      * Get the maximum history size
      */
-    unsigned maxSize() const { return m_max_size; }
+    unsigned maxSize() const { return m_maxSize; }
 
     /**
      * returns true if the user has selected the top item
@@ -118,7 +118,7 @@ public Q_SLOTS:
     /**
      * move the history in position pos to top
      */
-    void slotMoveToTop(QAction *action);
+    void slotMoveToTop(QAction* action);
 
     /**
      * move the history in position pos to top
@@ -166,7 +166,7 @@ private:
     /**
      * The number of clipboard items stored.
      */
-    unsigned m_max_size;
+    unsigned m_maxSize;
 
     /**
      * True if the top is selected by the user

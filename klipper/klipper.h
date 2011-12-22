@@ -58,7 +58,7 @@ public Q_SLOTS:
   Q_SCRIPTABLE void showKlipperManuallyInvokeActionMenu();
 
 public:
-    Klipper(QObject *parent, const KSharedConfigPtr &config);
+    Klipper(QObject* parent, const KSharedConfigPtr& config);
     ~Klipper();
 
     /**
@@ -155,16 +155,16 @@ private Q_SLOTS:
 
 private:
 
-    QClipboard *m_clip;
+    QClipboard* m_clip;
 
-    QTime *m_hideTimer;
-    QTime *m_showTimer;
+    QTime* m_hideTimer;
+    QTime* m_showTimer;
 
     int m_lastClipboard;
     int m_lastSelection;
     History* m_history;
     int m_overflowCounter;
-    KToggleAction *m_toggleURLGrabAction;
+    KToggleAction* m_toggleURLGrabAction;
     QAction* m_clearHistoryAction;
     QAction* m_repeatAction;
     QAction* m_editAction;
@@ -196,7 +196,7 @@ private:
      */
     int m_locklevel;
 
-    URLGrabber *m_myURLGrabber;
+    URLGrabber* m_myURLGrabber;
     QString m_lastURLGrabberTextSelection;
     QString m_lastURLGrabberTextClipboard;
     KSharedConfigPtr m_config;
@@ -207,8 +207,8 @@ private:
 
     bool blockFetchingNewData();
     QString cycleText() const;
-    KlipperSessionManager* m_session_managed;
-    KActionCollection *m_collection;
+    KlipperSessionManager* m_sessionManager;
+    KActionCollection* m_collection;
 };
 
 #endif

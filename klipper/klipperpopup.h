@@ -115,7 +115,7 @@ private:
     /**
      * Action of search widget
      */
-    QWidgetAction *m_filterWidgetAction;
+    QWidgetAction* m_filterWidgetAction;
 
     /**
      * The current number of history items in the clipboard

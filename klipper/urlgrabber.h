@@ -81,18 +81,18 @@ private:
   ActionList m_myMatches;
   QStringList m_myAvoidWindows;
   const HistoryItem* m_myClipItem;
-  ClipAction *m_myCurrentAction;
+  ClipAction* m_myCurrentAction;
 
   // holds mappings of menu action IDs to action commands (action+cmd index in it)
   QHash<QString, QPair<ClipAction*, int> > m_myCommandMapper;
-  KMenu *m_myMenu;
-  QTimer *m_myPopupKillTimer;
+  KMenu* m_myMenu;
+  QTimer* m_myPopupKillTimer;
   int m_myPopupKillTimeout;
   bool m_trimmed;
   History* m_history;
 
 private Q_SLOTS:
-  void slotItemSelected(QAction *action);
+  void slotItemSelected(QAction* action);
   void slotKillPopupMenu();
 
 Q_SIGNALS:
