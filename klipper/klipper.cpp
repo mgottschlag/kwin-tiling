@@ -141,6 +141,8 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
     m_pendingCheckTimer.setSingleShot( true );
     connect( &m_pendingCheckTimer, SIGNAL(timeout()), SLOT(slotCheckPending()));
 
+    m_showTimer = new QTime();
+
     m_history = new History( this );
 
     // we need that collection, otherwise KToggleAction is not happy :}
@@ -148,22 +150,10 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
 
     m_toggleURLGrabAction = new KToggleAction( this );
     m_collection->addAction( "enable-url-action", m_toggleURLGrabAction );
-    m_toggleURLGrabAction->setText(i18n("Enable Clipboard &Actions"));
-
-    m_clearHistoryAction = m_collection->addAction( "clear-history" );
-    m_clearHistoryAction->setIcon( KIcon("edit-clear-history") );
-    m_clearHistoryAction->setText( i18n("C&lear Clipboard History") );
-    connect(m_clearHistoryAction, SIGNAL(triggered()), SLOT(slotAskClearHistory()));
-
-    m_configureAction = m_collection->addAction( "configure" );
-    m_configureAction->setIcon( KIcon("configure") );
-    m_configureAction->setText( i18n("&Configure Klipper...") );
-    connect(m_configureAction, SIGNAL(triggered(bool)), SLOT(slotConfigure()));
-
-    m_quitAction = m_collection->addAction( "quit" );
-    m_quitAction->setIcon( KIcon("application-exit") );
-    m_quitAction->setText( i18n("&Quit") );
-    connect(m_quitAction, SIGNAL(triggered(bool)), SLOT(slotQuit()));
+    m_toggleURLGrabAction->setText(i18n("Enable Clipboard Actions"));
+    m_toggleURLGrabAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
+    connect( m_toggleURLGrabAction, SIGNAL(toggled(bool)),
+             this, SLOT(setURLGrabberEnabled(bool)));
 
     /*
      * Create URL grabber
@@ -179,12 +169,25 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
      */
     loadSettings();
 
-    m_showTimer = new QTime();
-
     // load previous history if configured
     if (m_bKeepContents) {
         loadHistory();
     }
+
+    m_clearHistoryAction = m_collection->addAction( "clear-history" );
+    m_clearHistoryAction->setIcon( KIcon("edit-clear-history") );
+    m_clearHistoryAction->setText( i18n("C&lear Clipboard History") );
+    connect(m_clearHistoryAction, SIGNAL(triggered()), SLOT(slotAskClearHistory()));
+
+    m_configureAction = m_collection->addAction( "configure" );
+    m_configureAction->setIcon( KIcon("configure") );
+    m_configureAction->setText( i18n("&Configure Klipper...") );
+    connect(m_configureAction, SIGNAL(triggered(bool)), SLOT(slotConfigure()));
+
+    m_quitAction = m_collection->addAction( "quit" );
+    m_quitAction->setIcon( KIcon("application-exit") );
+    m_quitAction->setText( i18n("&Quit") );
+    connect(m_quitAction, SIGNAL(triggered(bool)), SLOT(slotQuit()));
 
     m_repeatAction = m_collection->addAction("repeat-action");
     m_repeatAction->setText(i18n("Manually Invoke Action on Current Clipboard"));
@@ -220,13 +223,6 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
     m_showOnMousePos->setText(i18n("Open Klipper at Mouse Position"));
     m_showOnMousePos->setGlobalShortcut(KShortcut(Qt::CTRL+Qt::SHIFT+Qt::Key_V), KAction::DefaultShortcut);
     connect(m_showOnMousePos, SIGNAL(triggered(bool)), this, SLOT(slotPopupMenu()));
-
-    // Actions toggle
-    m_toggleURLGrabAction->setText(i18n("Enable Clipboard Actions"));
-    m_toggleURLGrabAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
-
-    connect( m_toggleURLGrabAction, SIGNAL(toggled(bool)),
-             this, SLOT(setURLGrabberEnabled(bool)));
 
     KlipperPopup* popup = history()->popup();
     connect ( history(), SIGNAL(topChanged()), SLOT(slotHistoryTopChanged()) );
