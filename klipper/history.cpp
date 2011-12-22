@@ -48,12 +48,12 @@ void History::insert( HistoryItem* item ) {
         return;
 
     m_topIsUserSelected = false;
-    items_t::iterator it = m_items.find(item->uuid());
-    if (it != m_items.end()) {
-        if (*it == m_top) {
+    const HistoryItem* existingItem = this->find(item->uuid());
+    if ( existingItem ) {
+        if ( existingItem == m_top) {
             return;
         }
-        slotMoveToTop( item->uuid() );
+        slotMoveToTop( existingItem->uuid() );
     } else {
         forceInsert( item );
     }
