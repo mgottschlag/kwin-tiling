@@ -49,6 +49,14 @@ Item {
             last = source;
             processLastDevice()
         }
+
+        onSourceRemoved: {
+            if (expandedDevice == source) {
+                notifierDialog.currentExpanded = -1;
+                expandedDevice = "";
+            }
+        }
+
         onDataChanged: {
             processLastDevice()
         }
