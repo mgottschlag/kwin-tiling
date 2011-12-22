@@ -84,6 +84,8 @@ void History::trim() {
     while ( i-- ) {
         items_t::iterator it = bottom;
         bottom = m_items.find((*bottom)->previous_uuid());
+        // FIXME: managing memory manually is tedious; use smart pointer instead
+        delete *it;
         m_items.erase(it);
     }
     (*bottom)->chain(m_top);
@@ -111,6 +113,8 @@ void History::remove( const HistoryItem* newItem ) {
 
 
 void History::slotClear() {
+    // FIXME: managing memory manually is tedious; use smart pointer instead
+    qDeleteAll(m_items);
     m_items.clear();
     m_top = 0L;
     emit changed();
