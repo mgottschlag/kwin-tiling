@@ -25,21 +25,22 @@
 
 #include <zlib.h>
 
+#include <QtGui/QMenu>
 #include <QtDBus/QDBusConnection>
 
-#include <kaboutdata.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <ksavefile.h>
-#include <ksessionmanager.h>
-#include <kstandarddirs.h>
-#include <ksystemtrayicon.h>
-#include <kdebug.h>
-#include <kglobalsettings.h>
-#include <kactioncollection.h>
-#include <ktoggleaction.h>
-#include <KConfigSkeleton>
-#include <ktextedit.h>
+#include <KAboutData>
+#include <KLocale>
+#include <KMessageBox>
+#include <KSaveFile>
+#include <KSessionManager>
+#include <KStandardDirs>
+#include <KDebug>
+#include <KGlobalSettings>
+#include <KActionCollection>
+#include <KToggleAction>
+#include <KTextEdit>
+#include <KApplication>
+#include <KIcon>
 
 #include "configdialog.h"
 #include "klippersettings.h"
@@ -143,28 +144,26 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_history = new History( this );
 
     // we need that collection, otherwise KToggleAction is not happy :}
-    //QString defaultGroup( "default" );
     m_collection = new KActionCollection( this );
+
     m_toggleURLGrabAction = new KToggleAction( this );
     m_collection->addAction( "clipboard_action", m_toggleURLGrabAction );
-    m_toggleURLGrabAction->setEnabled( true );
     m_toggleURLGrabAction->setText(i18n("Enable Clipboard &Actions"));
-    //m_toggleURLGrabAction->setGroup( defaultGroup );
+
     m_clearHistoryAction = m_collection->addAction( "clearHistoryAction" );
     m_clearHistoryAction->setIcon( KIcon("edit-clear-history") );
     m_clearHistoryAction->setText( i18n("C&lear Clipboard History") );
     connect(m_clearHistoryAction, SIGNAL(triggered()), SLOT(slotAskClearHistory()));
-    //m_clearHistoryAction->setGroup( defaultGroup );
+
     m_configureAction = m_collection->addAction( "configureAction" );
     m_configureAction->setIcon( KIcon("configure") );
     m_configureAction->setText( i18n("&Configure Klipper...") );
     connect(m_configureAction, SIGNAL(triggered(bool)), SLOT(slotConfigure()));
-    //m_configureAction->setGroup( defaultGroup );
+
     m_quitAction = m_collection->addAction( "quitAction" );
     m_quitAction->setIcon( KIcon("application-exit") );
     m_quitAction->setText( i18n("&Quit") );
     connect(m_quitAction, SIGNAL(triggered(bool)), SLOT(slotQuit()));
-    //quitAction->setGroup( "exit" );
 
     /*
      * Create URL grabber
@@ -623,36 +622,6 @@ void Klipper::slotClearClipboard()
 
     m_clip->clear(QClipboard::Selection);
     m_clip->clear(QClipboard::Clipboard);
-}
-
-
-//XXX: Should die, and the DCOP signal handled sensible.
-QString Klipper::clipboardContents( bool * /*isSelection*/ )
-{
-    kWarning() << "Obsolete function called. Please fix" ;
-
-#if 0
-    bool selection = true;
-    QMimeSource* data = clip->data(QClipboard::Selection);
-
-    if ( data->serialNumber() == m_lastSelection )
-    {
-        QString clipContents = clip->text(QClipboard::Clipboard);
-        if ( clipContents != m_lastClipboard )
-        {
-            contents = clipContents;
-            selection = false;
-        }
-        else
-            selection = true;
-    }
-
-    if ( isSelection )
-        *isSelection = selection;
-
-#endif
-
-    return 0;
 }
 
 HistoryItem* Klipper::applyClipChanges( const QMimeData* clipData )

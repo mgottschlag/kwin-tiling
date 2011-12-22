@@ -20,11 +20,16 @@
 */
 #include "klipperpopup.h"
 
-#include <khelpmenu.h>
-#include <klineedit.h>
-#include <klocale.h>
-#include <kwindowsystem.h>
-#include <kdebug.h>
+#include <QtGui/QApplication>
+#include <QtGui/QKeyEvent>
+#include <QtGui/QWidgetAction>
+
+#include <KHelpMenu>
+#include <KLineEdit>
+#include <KLocale>
+#include <KWindowSystem>
+#include <KDebug>
+#include <KIcon>
 
 #include "history.h"
 #include "klipper.h"

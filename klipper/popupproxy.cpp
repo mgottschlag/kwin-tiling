@@ -18,15 +18,15 @@
 */
 #include "popupproxy.h"
 
-#include <QRegExp>
-#include <QStyle>
-#include <QPixmap>
-#include <QImage>
-#include <QStyleOption>
+#include <QtCore/QRegExp>
+#include <QtGui/QStyle>
+#include <QtGui/QPixmap>
+#include <QtGui/QImage>
+#include <QtGui/QStyleOption>
 
-#include <kstringhandler.h>
-#include <klocale.h>
-#include <kdebug.h>
+#include <KMenu>
+#include <KLocale>
+#include <KDebug>
 
 #include "historyitem.h"
 #include "history.h"

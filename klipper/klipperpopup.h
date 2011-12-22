@@ -19,16 +19,19 @@
 #ifndef KLIPPERPOPUP_H
 #define KLIPPERPOPUP_H
 
-#include <QList>
-#include <QWidgetAction>
+#include <QtCore/QList>
 
-#include <kmenu.h>
+#include <KMenu>
 
-class History;
-class KHelpMenu;
 class QAction;
-class PopupProxy;
+class QWidgetAction;
+class QKeyEvent;
+
+class KHelpMenu;
 class KLineEdit;
+
+class PopupProxy;
+class History;
 
 /**
  * Default view of clipboard history.

@@ -21,18 +21,15 @@
 #ifndef KLIPPER_H
 #define KLIPPER_H
 
-#include <QKeyEvent>
-#include <QMenu>
-#include <QTimer>
-#include <QClipboard>
+#include <QtCore/QTimer>
+#include <QtGui/QPixmap>
+#include <QtGui/QClipboard>
 
-#include <KApplication>
-#include <KIcon>
+#include <KGlobal>
 
 #include "urlgrabber.h"
 
 class KAction;
-class QClipboard;
 class KToggleAction;
 class KAboutData;
 class KActionCollection;
@@ -40,6 +37,7 @@ class URLGrabber;
 class QTime;
 class History;
 class QAction;
+class QMenu;
 class QMimeData;
 class HistoryItem;
 class KlipperSessionManager;
@@ -109,11 +107,6 @@ protected:
      * @empty save empty history instead of actual history
      */
     void saveHistory(bool empty = false);
-    /**
-     * @returns the contents of the selection or, if empty, the contents of
-     * the clipboard.
-     */
-    QString clipboardContents( bool *isSelection = 0L );
 
     void removeFromHistory( const QString& text );
     void setEmptyClipboard();

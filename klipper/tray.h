@@ -20,11 +20,11 @@
 #ifndef TRAY_H
 #define TRAY_H
 
-#include <QPointer>
+#include <QtCore/QPointer>
 
 #include <KStatusNotifierItem>
-#include <KNotification>
 
+class KNotification;
 class Klipper;
 
 class KlipperTray : public KStatusNotifierItem

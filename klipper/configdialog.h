@@ -29,7 +29,6 @@
 
 class KConfigSkeleton;
 class KShortcutsEditor;
-class QPushButton;
 class Klipper;
 class KEditListWidget;
 class KActionCollection;

@@ -20,7 +20,9 @@
 */
 #include "history.h"
 
-#include <kdebug.h>
+#include <QtGui/QAction>
+
+#include <KDebug>
 
 #include "historystringitem.h"
 #include "klipperpopup.h"

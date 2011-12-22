@@ -19,12 +19,12 @@
 #ifndef POPUPPROXY_H
 #define POPUPPROXY_H
 
-#include <QObject>
-#include <QRegExp>
-
-#include <kmenu.h>
+#include <QtCore/QObject>
+#include <QtCore/QRegExp>
 
 #include "history.h"
+
+class KMenu;
 
 class HistoryItem;
 class KlipperPopup;

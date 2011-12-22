@@ -20,12 +20,13 @@
 #ifndef CLIPCOMMANDPROCESS_H
 #define CLIPCOMMANDPROCESS_H
 
-#include <kprocess.h>
+#include <KProcess>
 
 class ClipAction;
 class History;
 class ClipCommand;
 class HistoryItem;
+
 class ClipCommandProcess : public KProcess
 {
     Q_OBJECT

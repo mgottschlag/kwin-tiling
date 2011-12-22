@@ -20,22 +20,20 @@
 
 #include <netwm.h>
 
-#include <QTimer>
-#include <QX11Info>
-#include <QUuid>
-#include <QFile>
+#include <QtCore/QTimer>
+#include <QtCore/QUuid>
+#include <QtCore/QFile>
+#include <QtGui/QX11Info>
 
-#include <kconfig.h>
-#include <kdialog.h>
-#include <klocale.h>
-#include <kmenu.h>
-#include <kservice.h>
-#include <kdebug.h>
-#include <kstringhandler.h>
-#include <kmacroexpander.h>
-#include <kglobal.h>
-#include <kmimetypetrader.h>
-#include <kmimetype.h>
+#include <KDialog>
+#include <KLocale>
+#include <KMenu>
+#include <KService>
+#include <KDebug>
+#include <KStringHandler>
+#include <KGlobal>
+#include <KMimeTypeTrader>
+#include <KMimeType>
 
 #include "klippersettings.h"
 #include "clipcommandprocess.h"

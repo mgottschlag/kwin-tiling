@@ -20,10 +20,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <klocale.h>
-#include <kcmdlineargs.h>
-#include <kaboutdata.h>
-#include <kuniqueapplication.h>
+#include <KLocale>
+#include <KCmdLineArgs>
+#include <KAboutData>
+#include <KUniqueApplication>
 #include <KConfigDialogManager>
 
 #include "tray.h"

@@ -19,9 +19,7 @@
 #ifndef HISTORYURLITEM_H
 #define HISTORYURLITEM_H
 
-#include <QMap>
-
-#include <kurl.h>
+#include <KUrl>
 
 #include "historyitem.h"
 

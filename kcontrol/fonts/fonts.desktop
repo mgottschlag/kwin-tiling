@@ -199,7 +199,9 @@ Comment[zh_TW]=字型設定
 
 X-KDE-Keywords=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI
 X-KDE-Keywords[ca]=tipus de lletres,mida de tipus de lletra,estils,joc de caràcters,jocs de caràcters,plafó,plafó de control,escriptoris,Gestor de fitxers,Barres d'eines,Menú,Títol de finestra,Títol,DPI
+X-KDE-Keywords[da]=skrifttyper,skriftstørrelse,stile,tegnsæt,panel,kontrolpanel,skriveborde,filhåndtering,værktøjslinjer,menu,vinduestitel,titel,DPI
 X-KDE-Keywords[de]=Schriftarten,Schriftgrößen,Zeichensätze,Kontrollleiste,Panel,Stile,Dateimanager,Arbeitsflächen,Werkzeugleisten,Menüs,Fenstertitel,Titel,DPI
+X-KDE-Keywords[et]=fondid,fondi suurus,kodeering,kooditabel,paneel,juhtpaneel,töölauad,failihaldur,tööriistaribad,menüü,aken,tiitel,nimetus,nimi,DPI
 X-KDE-Keywords[fi]=kirjasimet,fontit,kirjasinkoko,fonttikoko,tyylit,merkistöt,paneeli,ohjauskeskus,työpöydät,Tiedostonhallinta,Työkalurivit,Työkalupalkit,Valikko,Ikkunan otsikko,Otsikko,DPI
 X-KDE-Keywords[ia]=fonts,grandor de font,stilos,insimules de characteres,insimules de characteres,pannello,pannello de controlo,scriptorios,Gerente de File,Barra de instrumentos,menu,Titulo de Fenestra,Titulo,DPI
 X-KDE-Keywords[kk]=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI

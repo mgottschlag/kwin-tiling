@@ -297,6 +297,8 @@ void PanelView::setContainment(Plasma::Containment *containment)
         disconnect(oldContainment);
     }
 
+    PlasmaApp::self()->prepareContainment(containment);
+
     connect(containment, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(statusUpdated(Plasma::ItemStatus)));
     connect(containment, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
     connect(containment, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));

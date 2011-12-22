@@ -18,11 +18,10 @@
 */
 #include "historyitem.h"
 
-#include <QMap>
-#include <QPixmap>
-#include <QCryptographicHash>
+#include <QtCore/QMap>
+#include <QtGui/QPixmap>
 
-#include <kdebug.h>
+#include <KDebug>
 
 #include "historystringitem.h"
 #include "historyimageitem.h"

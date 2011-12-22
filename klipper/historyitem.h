@@ -18,7 +18,8 @@
 */
 #ifndef HISTORYITEM_H
 #define HISTORYITEM_H
-#include <QPixmap>
+
+#include <QtGui/QPixmap>
 
 class QString;
 class QMimeData;
@@ -48,7 +49,7 @@ public:
     }
 
     /**
-     * Return the current item as text
+     * Return the current item as pixmap
      * A text would be returned as a null pixmap,
      * which is also the default implementation
      */
