@@ -179,7 +179,6 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
      */
     loadSettings();
 
-    m_hideTimer = new QTime();
     m_showTimer = new QTime();
 
     // load previous history if configured
@@ -231,7 +230,6 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
 
     KlipperPopup* popup = history()->popup();
     connect ( history(), SIGNAL(topChanged()), SLOT(slotHistoryTopChanged()) );
-    connect( popup, SIGNAL(aboutToHide()), SLOT(slotStartHideTimer()) );
     connect( popup, SIGNAL(aboutToShow()), SLOT(slotStartShowTimer()) );
 
     popup->plugAction( m_toggleURLGrabAction );
@@ -251,7 +249,6 @@ Klipper::~Klipper()
 {
     delete m_sessionManager;
     delete m_showTimer;
-    delete m_hideTimer;
     delete m_myURLGrabber;
 }
 
@@ -295,12 +292,6 @@ void Klipper::clearClipboardHistory()
     slotClearClipboard();
     history()->slotClear();
     saveSession();
-}
-
-
-void Klipper::slotStartHideTimer()
-{
-    m_hideTimer->start();
 }
 
 void Klipper::slotStartShowTimer()

@@ -143,7 +143,6 @@ private Q_SLOTS:
     void slotClearClipboard();
 
     void slotQuit();
-    void slotStartHideTimer();
     void slotStartShowTimer();
 
     void slotClearOverflow();
@@ -155,7 +154,6 @@ private:
 
     QClipboard* m_clip;
 
-    QTime* m_hideTimer;
     QTime* m_showTimer;
 
     int m_lastClipboard;
