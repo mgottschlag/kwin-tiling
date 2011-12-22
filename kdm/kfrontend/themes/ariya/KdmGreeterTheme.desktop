@@ -4,6 +4,14 @@
 [KdmGreeterTheme]
 Greeter=ariya.xml
 Name=Ariya
+Name[et]=Ariya
+Name[kk]=Ariya
+Name[nl]=Ariya
+Name[pt]=Ariya
+Name[pt_BR]=Ariya
+Name[sv]=Ariya
+Name[uk]=Арія
+Name[x-test]=xxAriyaxx
 
 Author=Roman Shtylman
 Copyright=GPL 2010 Roman Shtylman | shtylman@gmail.com
