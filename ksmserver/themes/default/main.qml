@@ -17,6 +17,12 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+/**
+ TODO:
+ . use kde-runtime/plasma/declarativeimports/plasmacomponents/qml/ContextMenu.qml
+ instead of a custom ContextMenu component.
+ . find a way to make tab stop work without the extra TAB key press.
+ */
 import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.components 0.1 as PlasmaComponents
@@ -49,7 +55,10 @@ PlasmaCore.FrameSvgItem {
         id: theme
     }
 
-    /*PlasmaCore.SvgItem {
+    /* This is not necessary for themes that follow the specification.
+       Uncomment this and [1] below if the dialog appears without borders or background.
+       You should not use broken themes though.
+      PlasmaCore.SvgItem {
         id: background
 
         anchors {
@@ -83,6 +92,7 @@ PlasmaCore.FrameSvgItem {
         }
 
         if (leftPicture.naturalSize.width < 1) {
+            // [1]
             //background.elementId = "background"
             shutdownUi.width += realMarginLeft + realMarginRight
             shutdownUi.height += realMarginTop + realMarginBottom

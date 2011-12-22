@@ -16,15 +16,68 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+/**Documented API
+Inherits:
+        PlasmaCore.FrameSvgItem
+
+Imports:
+        QtQuick 1.1
+        org.kde.plasma.core
+        org.kde.qtextracomponents
+
+Description:
+        A button with label and icon (at the right) which uses the plasma theme.
+        The button uses hover event to change the background on mouse over, supports tab stop
+        and context menu.
+        Plasma theme is the theme which changes via the systemsetting - workspace appearence
+        - desktop theme.
+
+Properties:
+      * string text:
+        This property holds the text label for the button.
+        For example,the ok button has text 'ok'.
+        The default value for this property is an empty string.
+
+      * string iconSource:
+        This property holds the source url for the Button's icon.
+        The default value is an empty url, which displays no icon.
+
+      * bool smallButton:
+        Make the button use a different SVG element as background.
+        The default is false.
+
+      * bool menu:
+        Indicates if the button will have a context menu. The menu is created by
+        the parent.
+        The default value is false.
+
+       * ContextMenu contextMenu
+        This property holds the contextMenu element.
+        The default is a null Item.
+
+      * Item tabStopNext:
+        This property holds the next Item in a tab stop chain.
+
+      * Item tabStopBack:
+        This property holds the previous Item in a tab stop chain.
+
+Signals:
+      * onClicked:
+        This handler is called when there is a click.
+      * onPressed:
+        This handler is called when there is a press.
+      * onPressAndHold:
+        This handler is called when there is a press and hold.
+**/
+
 import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
-import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.qtextracomponents 0.1
 
 PlasmaCore.FrameSvgItem {
     id: button
-    property string iconSource
     property alias text: labelElement.text
+    property string iconSource
     property bool smallButton: false
     property bool menu: false
     property ContextMenu contextMenu
