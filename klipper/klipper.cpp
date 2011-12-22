@@ -182,10 +182,10 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
     m_hideTimer = new QTime();
     m_showTimer = new QTime();
 
-    // TODO: IIUC readProperties exists only as a wrapper around loadHistory. In case loadHistory fails,
-    // it tries to load some old format history. So: check how "old" this old-loading method is.
-    // if it's too old, drop it and just use load history
-    readProperties(m_config.data());
+    // load previous history if configured
+    if (m_bKeepContents) {
+        loadHistory();
+    }
 
     m_repeatAction = m_collection->addAction("repeat-action");
     m_repeatAction->setText(i18n("Manually Invoke Action on Current Clipboard"));
@@ -429,6 +429,8 @@ bool Klipper::loadHistory() {
         reverseList.prepend( item );
     }
 
+    history()->slotClear();
+
     for ( QList<HistoryItem*>::const_iterator it = reverseList.constBegin();
           it != reverseList.constEnd();
           ++it )
@@ -479,37 +481,6 @@ void Klipper::saveHistory(bool empty) {
     quint32 crc = crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() );
     QDataStream ds ( &history_file );
     ds << crc << data;
-}
-
-void Klipper::readProperties(KConfig* kc)
-{
-    QStringList dataList;
-
-    history()->slotClear();
-
-    if (m_bKeepContents) { // load old clipboard if configured
-        if ( !loadHistory() ) {
-            // Try to load from the old config file.
-            // Remove this at some point.
-            KConfigGroup configGroup(kc, "General");
-            dataList = configGroup.readEntry("ClipboardData",QStringList());
-
-            for (QStringList::ConstIterator it = dataList.constEnd();
-                 it != dataList.constBegin();
-             )
-            {
-                history()->forceInsert( new HistoryStringItem( *( --it ) ) );
-            }
-
-            if ( !dataList.isEmpty() )
-            {
-                m_lastSelection = -1;
-                m_lastClipboard = -1;
-                setClipboard( *history()->first(), Clipboard | Selection );
-            }
-        }
-    }
-
 }
 
 // save session on shutdown. Don't simply use the c'tor, as that may not be called.

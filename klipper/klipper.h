@@ -95,8 +95,6 @@ protected:
      */
     enum SelectionMode { Clipboard = 2, Selection = 4 };
 
-    void readProperties(KConfig *);
-
     /**
      * Loads history from disk.
      */
