@@ -48,7 +48,7 @@ public:
     }
 
     /**
-     * Return the current item as text
+     * Return the current item as pixmap
      * A text would be returned as a null pixmap,
      * which is also the default implementation
      */
