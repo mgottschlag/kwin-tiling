@@ -621,36 +621,6 @@ void Klipper::slotClearClipboard()
     m_clip->clear(QClipboard::Clipboard);
 }
 
-
-//XXX: Should die, and the DCOP signal handled sensible.
-QString Klipper::clipboardContents( bool * /*isSelection*/ )
-{
-    kWarning() << "Obsolete function called. Please fix" ;
-
-#if 0
-    bool selection = true;
-    QMimeSource* data = clip->data(QClipboard::Selection);
-
-    if ( data->serialNumber() == m_lastSelection )
-    {
-        QString clipContents = clip->text(QClipboard::Clipboard);
-        if ( clipContents != m_lastClipboard )
-        {
-            contents = clipContents;
-            selection = false;
-        }
-        else
-            selection = true;
-    }
-
-    if ( isSelection )
-        *isSelection = selection;
-
-#endif
-
-    return 0;
-}
-
 HistoryItem* Klipper::applyClipChanges( const QMimeData* clipData )
 {
     if ( m_locklevel ) {
