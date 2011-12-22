@@ -556,8 +556,6 @@ void Klipper::setURLGrabberEnabled( bool enable )
 
     // make it update its settings
     m_myURLGrabber->loadSettings();
-
-    //m_toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(m_collection->action("clipboard_action"))->globalShortcut());
 }
 
 void Klipper::slotHistoryTopChanged() {
