@@ -145,7 +145,6 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
 
     m_toggleURLGrabAction = new KToggleAction( this );
     m_collection->addAction( "clipboard_action", m_toggleURLGrabAction );
-    m_toggleURLGrabAction->setEnabled( true );
     m_toggleURLGrabAction->setText(i18n("Enable Clipboard &Actions"));
 
     m_clearHistoryAction = m_collection->addAction( "clearHistoryAction" );
