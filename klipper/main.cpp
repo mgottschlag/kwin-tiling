@@ -38,7 +38,7 @@ extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
   KUniqueApplication::addCmdLineOptions();
 
   if (!KUniqueApplication::start()) {
-       fprintf(stderr, "Klipper is already running!\n");
+       fprintf(stderr, "Klipper is already running! Check it in the system tray in the panel.\n");
        exit(0);
   }
   KUniqueApplication app;
