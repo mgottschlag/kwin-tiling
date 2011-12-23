@@ -22,7 +22,6 @@
 #define KLIPPER_H
 
 #include <QtCore/QTimer>
-#include <QtGui/QPixmap>
 #include <QtGui/QClipboard>
 
 #include <KGlobal>
@@ -106,9 +105,6 @@ protected:
      */
     void saveHistory(bool empty = false);
 
-    void removeFromHistory( const QString& text );
-    void setEmptyClipboard();
-
     /**
      * Check data in clipboard, and if it passes these checks,
      * store the data in the clipboard history.
@@ -160,6 +156,7 @@ private:
     int m_lastSelection;
     History* m_history;
     int m_overflowCounter;
+
     KToggleAction* m_toggleURLGrabAction;
     QAction* m_clearHistoryAction;
     QAction* m_repeatAction;
@@ -172,7 +169,7 @@ private:
     KAction* m_cycleNextAction;
     KAction* m_cyclePrevAction;
     KAction* m_showOnMousePos;
-    QPixmap m_pixmap;
+
     bool m_bKeepContents :1;
     bool m_bURLGrabber   :1;
     bool m_bReplayActionInHistory :1;
