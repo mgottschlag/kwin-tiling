@@ -248,7 +248,7 @@ Klipper::~Klipper()
     delete m_myURLGrabber;
 }
 
-// DCOP
+// DBUS
 QString Klipper::getClipboardContents()
 {
     return getClipboardHistoryItem(0);
@@ -262,7 +262,7 @@ void Klipper::showKlipperManuallyInvokeActionMenu() {
 }
 
 
-// DCOP - don't call from Klipper itself
+// DBUS - don't call from Klipper itself
 void Klipper::setClipboardContents(QString s)
 {
     if (s.isEmpty())
@@ -274,14 +274,14 @@ void Klipper::setClipboardContents(QString s)
     history()->insert( item );
 }
 
-// DCOP - don't call from Klipper itself
+// DBUS - don't call from Klipper itself
 void Klipper::clearClipboardContents()
 {
     updateTimestamp();
     slotClearClipboard();
 }
 
-// DCOP - don't call from Klipper itself
+// DBUS - don't call from Klipper itself
 void Klipper::clearClipboardHistory()
 {
     updateTimestamp();
@@ -886,7 +886,7 @@ bool Klipper::ignoreClipboardChanges() const
 // Therefore, qt_x_time needs to be updated to current X server timestamp.
 
 // Call KApplication::updateUserTime() only from functions that are
-// called from outside (DCOP), or from QTimer timeout !
+// called from outside (DBUS), or from QTimer timeout !
 
 static Time next_x_time;
 static Bool update_x_time_predicate( Display*, XEvent* event, XPointer )
