@@ -113,8 +113,6 @@ private:
     Klipper* klipper;
 };
 
-static void ensureGlobalSyncOff(KSharedConfigPtr config);
-
 // config == KGlobal::config for process, otherwise applet
 Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
     : QObject( parent )
@@ -126,9 +124,6 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
 {
     setenv("KSNI_NO_DBUSMENU", "1", 1);
     QDBusConnection::sessionBus().registerObject("/klipper", this, QDBusConnection::ExportScriptableSlots);
-
-    // We don't use the clipboardsynchronizer anymore, and it confuses Klipper
-    ensureGlobalSyncOff(m_config);
 
     updateTimestamp(); // read initial X user time
     m_clip = kapp->clipboard();
@@ -977,18 +972,6 @@ KAboutData* Klipper::m_about_data;
 KAboutData* Klipper::aboutData()
 {
   return m_about_data;
-}
-
-static void ensureGlobalSyncOff(KSharedConfigPtr config) {
-    KConfigGroup cg(config, "General");
-    if ( cg.readEntry( "SynchronizeClipboardAndSelection" , false) ) {
-        kDebug() << "Shutting off global synchronization";
-        cg.writeEntry("SynchronizeClipboardAndSelection", false, KConfig::Normal | KConfig::Global );
-        cg.sync();
-        kapp->setSynchronizeClipboard(false);
-        KGlobalSettings::self()->emitChange( KGlobalSettings::ClipboardConfigChanged, 0 );
-    }
-
 }
 
 void Klipper::slotEditData()
