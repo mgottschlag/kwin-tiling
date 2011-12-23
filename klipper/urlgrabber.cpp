@@ -104,26 +104,26 @@ void URLGrabber::matchingMimeActions(const QString& clipData)
     KUrl url(clipData);
     KConfigGroup cg(KGlobal::config(), "Actions");
     if(!cg.readEntry("EnableMagicMimeActions",true)) {
-    //    kDebug() << "skipping mime magic due to configuration";
-    	return;
+        //kDebug() << "skipping mime magic due to configuration";
+        return;
     }
     if(!url.isValid()) {
-    //    kDebug() << "skipping mime magic due to invalid url";
-    	return;
+        //kDebug() << "skipping mime magic due to invalid url";
+        return;
     }
     if(url.isRelative()) {  //openinng a relative path will just not work. what path should be used?
-    //    kDebug() << "skipping mime magic due to relative url";
-    	return;
+        //kDebug() << "skipping mime magic due to relative url";
+        return;
     }
     if(url.isLocalFile()) {
         if ( clipData == "//") {
-	//    kDebug() << "skipping mime magic due to C++ comment //";
+            //kDebug() << "skipping mime magic due to C++ comment //";
             return;
         }
-	if(!QFile::exists(url.toLocalFile())) {
-	//    kDebug() << "skipping mime magic due to nonexistent localfile";
-	    return;
-	}
+        if(!QFile::exists(url.toLocalFile())) {
+            //kDebug() << "skipping mime magic due to nonexistent localfile";
+            return;
+        }
     }
 
     // try to figure out if clipData contains a filename
@@ -168,7 +168,7 @@ const ActionList& URLGrabber::matchingActions( const QString& clipData, bool aut
     foreach (ClipAction* action, m_myActions) {
         if ( action->matches( clipData ) && (action->automatic() || !automatically_invoked) ) {
             m_myMatches.append( action );
-	}
+        }
     }
 
     return m_myMatches;
@@ -508,7 +508,7 @@ void ClipAction::save( KSharedConfigPtr kc, const QString& group ) const
         cg.writeEntry( "Description", cmd.description );
         cg.writeEntry( "Enabled", cmd.isEnabled );
         cg.writeEntry( "Icon", cmd.pixmap );
-	cg.writeEntry( "Output", static_cast<int>(cmd.output) );
+        cg.writeEntry( "Output", static_cast<int>(cmd.output) );
 
         ++i;
     }
