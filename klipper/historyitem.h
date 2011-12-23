@@ -77,16 +77,16 @@ public:
     static HistoryItem* create( const QMimeData* data );
 
     /**
-     * Create an HistoryItem from MimeSources (i.e., clipboard data)
+     * Create an HistoryItem from data stream (i.e., disk file)
      * returns null if creation fails. In this case, the datastream
      * is left in an undefined state.
      */
-    static HistoryItem* create( QDataStream& aSource );
+    static HistoryItem* create( QDataStream& dataStream );
 
     /**
-     * Inserts this item between before and after
+     * Inserts this item between prev and next
      */
-    void insertBetweeen(HistoryItem* before, HistoryItem* after);
+    void insertBetweeen(HistoryItem* prev, HistoryItem* next);
 
     /**
      * Chain this with next

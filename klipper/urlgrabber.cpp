@@ -38,8 +38,7 @@
 #include "klippersettings.h"
 #include "clipcommandprocess.h"
 
-// TODO:
-// - script-interface?
+// TODO: script-interface?
 #include "history.h"
 #include "historystringitem.h"
 

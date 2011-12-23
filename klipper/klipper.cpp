@@ -1067,7 +1067,7 @@ void Klipper::slotShowBarcode()
 
     dlg.exec();
 }
-#endif //HAVE_DMTX
+#endif //HAVE_PRISON
 
 void Klipper::slotAskClearHistory()
 {
