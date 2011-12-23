@@ -367,18 +367,9 @@ bool Klipper::loadHistory() {
     // don't use "appdata", klipper is also a kicker applet
     QString history_file_name = KStandardDirs::locateLocal( "data", "klipper/history2.lst" );
     QFile history_file( history_file_name );
-    bool oldfile = false;
-    if ( !history_file.exists() ) { // backwards compatibility
-        oldfile = true;
-        history_file_name = KStandardDirs::locateLocal( "data", "klipper/history.lst" );
-        history_file.setFileName( history_file_name );
-        if ( !history_file.exists() ) {
-            history_file_name = KStandardDirs::locateLocal( "data", "kicker/history.lst" );
-            history_file.setFileName( history_file_name );
-            if ( !history_file.exists() ) {
-                return false;
-            }
-        }
+    if ( !history_file.exists() ) {
+        kWarning() << failed_load_warning << ": " << "History file does not exist" ;
+        return false;
     }
     if ( !history_file.open( QIODevice::ReadOnly ) ) {
         kWarning() << failed_load_warning << ": " << history_file.errorString() ;
@@ -386,22 +377,20 @@ bool Klipper::loadHistory() {
     }
     QDataStream file_stream( &history_file );
     if( file_stream.atEnd()) {
-        kWarning() << failed_load_warning ;
+        kWarning() << failed_load_warning << ": " << "Error in reading data" ;
         return false;
     }
-    QDataStream* history_stream = &file_stream;
     QByteArray data;
-    if( !oldfile ) {
-        quint32 crc;
-        file_stream >> crc >> data;
-        if( crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() ) != crc ) {
-            kWarning() << failed_load_warning << ": " << history_file.errorString() ;
-            return false;
-        }
-        history_stream = new QDataStream( &data, QIODevice::ReadOnly );
+    quint32 crc;
+    file_stream >> crc >> data;
+    if( crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() ) != crc ) {
+        kWarning() << failed_load_warning << ": " << "CRC checksum does not match" ;
+        return false;
     }
+    QDataStream history_stream( &data, QIODevice::ReadOnly );
+
     char* version;
-    *history_stream >> version;
+    history_stream >> version;
     delete[] version;
 
     // The list needs to be reversed, as it is saved
@@ -409,9 +398,9 @@ bool Klipper::loadHistory() {
     // items at the top, but the history is created oldest
     // first.
     QList<HistoryItem*> reverseList;
-    for ( HistoryItem* item = HistoryItem::create( *history_stream );
+    for ( HistoryItem* item = HistoryItem::create( history_stream );
           item;
-          item = HistoryItem::create( *history_stream ) )
+          item = HistoryItem::create( history_stream ) )
     {
         reverseList.prepend( item );
     }
@@ -430,9 +419,6 @@ bool Klipper::loadHistory() {
         m_lastClipboard = -1;
         setClipboard( *history()->first(), Clipboard | Selection );
     }
-
-    if( history_stream != &file_stream )
-        delete history_stream;
 
     return true;
 }
