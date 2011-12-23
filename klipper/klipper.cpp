@@ -283,6 +283,14 @@ void Klipper::clearClipboardHistory()
     saveSession();
 }
 
+// DBUS - don't call from Klipper itself
+void Klipper::saveClipboardHistory()
+{
+    if ( m_bKeepContents ) { // save the clipboard eventually
+        saveHistory();
+    }
+}
+
 void Klipper::slotStartShowTimer()
 {
     m_showTimer.start();
