@@ -120,6 +120,10 @@ void URLGrabber::matchingMimeActions(const QString& clipData)
     	return;
     }
     if(url.isLocalFile()) {
+        if ( clipData == "//") {
+	//    kDebug() << "skipping mime magic due to C++ comment //";
+            return;
+        }
 	if(!QFile::exists(url.toLocalFile())) {
 	//    kDebug() << "skipping mime magic due to nonexistent localfile";
 	    return;
