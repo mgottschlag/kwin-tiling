@@ -20,6 +20,8 @@
 #include "interactiveconsole.h"
 
 #include <QDateTime>
+#include <QDBusConnection>
+#include <QDBusMessage>
 #include <QFile>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -54,6 +56,7 @@
 // use text editor KPart for syntax highlighting?
 // interative help?
 static const QString s_autosaveFileName("interactiveconsoleautosave.js");
+static const QString s_kwinService = "org.kde.kwin.Scripting";
 
 InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     : KDialog(parent),
@@ -66,7 +69,8 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
       m_clearAction(KStandardAction::clear(this, SLOT(clearEditor()), this)),
       m_executeAction(new KAction(KIcon("system-run"), i18n("&Execute"), this)),
       m_snippetsMenu(new KMenu(i18n("Templates"), this)),
-      m_fileDialog(0)
+      m_fileDialog(0),
+      m_mode(PlasmaConsole)
 {
     addAction(KStandardAction::close(this, SLOT(close()), this));
     addAction(m_saveAction);
@@ -185,6 +189,11 @@ InteractiveConsole::~InteractiveConsole()
     saveDialogSize(cg);
     cg.writeEntry("SplitterState", m_splitter->saveState());
     kDebug();
+}
+
+void InteractiveConsole::setMode(ConsoleMode mode)
+{
+    m_mode = mode;
 }
 
 void InteractiveConsole::loadScript(const QString &script)
@@ -479,12 +488,30 @@ void InteractiveConsole::evaluateScript()
     QTime t;
     t.start();
 
-    {
+    if (m_mode == PlasmaConsole) {
         WorkspaceScripting::DesktopScriptEngine scriptEngine(m_corona, false, this);
         connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(print(QString)));
         connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(print(QString)));
         connect(&scriptEngine, SIGNAL(createPendingPanelViews()), PlasmaApp::self(), SLOT(createWaitingPanels()));
         scriptEngine.evaluateScript(m_editorPart ? m_editorPart->text() : m_editor->toPlainText());
+    } else if (m_mode == KWinConsole) {
+        QDBusMessage message = QDBusMessage::createMethodCall(s_kwinService, "/Scripting", QString(), "loadScript");
+        QList<QVariant> arguments;
+        arguments << QVariant(path);
+        message.setArguments(arguments);
+        QDBusMessage reply = QDBusConnection::sessionBus().call(message);
+        if (reply.type() == QDBusMessage::ErrorMessage) {
+            print(reply.errorMessage());
+        } else {
+            const int id = reply.arguments().first().toInt();
+            QDBusConnection::sessionBus().connect(s_kwinService, "/" + QString::number(id), QString(), "print", this, SLOT(print(QString)));
+            QDBusConnection::sessionBus().connect(s_kwinService, "/" + QString::number(id), QString(), "printError", this, SLOT(print(QString)));
+            message = QDBusMessage::createMethodCall(s_kwinService, "/" + QString::number(id), QString(), "run");
+            reply = QDBusConnection::sessionBus().call(message);
+            if (reply.type() == QDBusMessage::ErrorMessage) {
+                print(reply.errorMessage());
+            }
+        }
     }
 
     cursor.insertText("\n\n");

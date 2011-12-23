@@ -11,6 +11,11 @@
     <method name="loadScriptInInteractiveConsole">
       <arg name="script" type="s" direction="in"/>
     </method>
+    <method name="showInteractiveKWinConsole">
+    </method>
+    <method name="loadKWinScriptInInteractiveConsole">
+      <arg name="script" type="s" direction="in"/>
+    </method>
     <method name="quit">
     </method>
     <method name="setPerVirtualDesktopViews">

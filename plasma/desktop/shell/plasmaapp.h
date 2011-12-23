@@ -112,6 +112,8 @@ public Q_SLOTS:
 
     void showInteractiveConsole();
     void loadScriptInInteractiveConsole(const QString &script);
+    void showInteractiveKWinConsole();
+    void loadKWinScriptInInteractiveConsole(const QString &script);
 
     Q_SCRIPTABLE void quit();
     void setPerVirtualDesktopViews(bool perDesktopViews);

@@ -455,6 +455,7 @@ void PlasmaApp::showInteractiveConsole()
     if (!console) {
         m_console = console = new InteractiveConsole(m_corona);
     }
+    m_console.data()->setMode(InteractiveConsole::PlasmaConsole);
 
     KWindowSystem::setOnDesktop(console->winId(), KWindowSystem::currentDesktop());
     console->show();
@@ -465,6 +466,22 @@ void PlasmaApp::showInteractiveConsole()
 void PlasmaApp::loadScriptInInteractiveConsole(const QString &script)
 {
     showInteractiveConsole();
+    if (m_console) {
+        m_console.data()->loadScript(script);
+    }
+}
+
+void PlasmaApp::showInteractiveKWinConsole()
+{
+    showInteractiveConsole();
+    if (m_console) {
+        m_console.data()->setMode(InteractiveConsole::KWinConsole);
+    }
+}
+
+void PlasmaApp::loadKWinScriptInInteractiveConsole (const QString &script)
+{
+    showInteractiveKWinConsole();
     if (m_console) {
         m_console.data()->loadScript(script);
     }

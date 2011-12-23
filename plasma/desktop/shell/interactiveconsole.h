@@ -56,6 +56,11 @@ public:
     ~InteractiveConsole();
 
     void loadScript(const QString &path);
+    enum ConsoleMode {
+        PlasmaConsole,
+        KWinConsole
+    };
+    void setMode(ConsoleMode mode);
 
 protected:
     void showEvent(QShowEvent *);
@@ -100,6 +105,7 @@ private:
     KFileDialog *m_fileDialog;
     QWeakPointer<KIO::Job> m_job;
     bool m_closeWhenCompleted;
+    ConsoleMode m_mode;
 };
 
 #endif
