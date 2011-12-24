@@ -144,7 +144,7 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
     m_collection = new KActionCollection( this );
 
     m_toggleURLGrabAction = new KToggleAction( this );
-    m_collection->addAction( "enable-url-action", m_toggleURLGrabAction );
+    m_collection->addAction( "clipboard_action", m_toggleURLGrabAction );
     m_toggleURLGrabAction->setText(i18n("Enable Clipboard Actions"));
     m_toggleURLGrabAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
     connect( m_toggleURLGrabAction, SIGNAL(toggled(bool)),
@@ -184,13 +184,13 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
     m_quitAction->setText( i18n("&Quit") );
     connect(m_quitAction, SIGNAL(triggered(bool)), SLOT(slotQuit()));
 
-    m_repeatAction = m_collection->addAction("repeat-action");
+    m_repeatAction = m_collection->addAction("repeat_action");
     m_repeatAction->setText(i18n("Manually Invoke Action on Current Clipboard"));
     qobject_cast<KAction*>(m_repeatAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_R));
     connect(m_repeatAction, SIGNAL(triggered()), SLOT(slotRepeatAction()));
 
     // add an edit-possibility
-    m_editAction = m_collection->addAction("edit-clipboard");
+    m_editAction = m_collection->addAction("edit_clipboard");
     m_editAction->setIcon(KIcon("document-properties"));
     m_editAction->setText(i18n("&Edit Contents..."));
     qobject_cast<KAction*>(m_editAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_E), KAction::DefaultShortcut);
@@ -204,11 +204,11 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
 #endif
 
     // Cycle through history
-    m_cycleNextAction = m_collection->addAction("cycle-next");
+    m_cycleNextAction = m_collection->addAction("cycleNextAction");
     m_cycleNextAction->setText(i18n("Next History Item"));
     m_cycleNextAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Down), KAction::DefaultShortcut);
     connect(m_cycleNextAction, SIGNAL(triggered(bool)), SLOT(slotCycleNext()));
-    m_cyclePrevAction = m_collection->addAction("cycle-prev");
+    m_cyclePrevAction = m_collection->addAction("cyclePrevAction");
     m_cyclePrevAction->setText(i18n("Previous History Item"));
     m_cyclePrevAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Up), KAction::DefaultShortcut);
     connect(m_cyclePrevAction, SIGNAL(triggered(bool)), SLOT(slotCyclePrev()));
