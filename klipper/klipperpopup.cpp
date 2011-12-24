@@ -114,6 +114,7 @@ void KlipperPopup::slotAboutToShow() {
         if ( !m_filterWidget->text().isEmpty() ) {
             m_dirty = true;
             m_filterWidget->clear();
+            m_filterWidget->setVisible(false);
             m_filterWidgetAction->setVisible(false);
         }
     }
@@ -262,6 +263,7 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
 
         if (m_filterWidget->text().isEmpty()) {
             if (m_filterWidgetAction->isVisible())
+                m_filterWidget->setVisible(false);
                 m_filterWidgetAction->setVisible(false);
         }
         else if (!m_filterWidgetAction->isVisible() )
