@@ -199,7 +199,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_editAction = m_collection->addAction("edit_clipboard");
     m_editAction->setIcon(KIcon("document-properties"));
     m_editAction->setText(i18n("&Edit Contents..."));
-    qobject_cast<KAction*>(m_editAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_E), KAction::DefaultShortcut);
+    qobject_cast<KAction*>(m_editAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_E));
     connect(m_editAction, SIGNAL(triggered()), SLOT(slotEditData()));
 
 #ifdef HAVE_PRISON
@@ -212,17 +212,17 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     // Cycle through history
     m_cycleNextAction = m_collection->addAction("cycleNextAction");
     m_cycleNextAction->setText(i18n("Next History Item"));
-    m_cycleNextAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Down), KAction::DefaultShortcut);
+    m_cycleNextAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Down));
     connect(m_cycleNextAction, SIGNAL(triggered(bool)), SLOT(slotCycleNext()));
     m_cyclePrevAction = m_collection->addAction("cyclePrevAction");
     m_cyclePrevAction->setText(i18n("Previous History Item"));
-    m_cyclePrevAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Up), KAction::DefaultShortcut);
+    m_cyclePrevAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Up));
     connect(m_cyclePrevAction, SIGNAL(triggered(bool)), SLOT(slotCyclePrev()));
 
     // Action to show Klipper popup on mouse position
     m_showOnMousePos = m_collection->addAction("show-on-mouse-pos");
     m_showOnMousePos->setText(i18n("Open Klipper at Mouse Position"));
-    m_showOnMousePos->setGlobalShortcut(KShortcut(Qt::CTRL+Qt::SHIFT+Qt::Key_V), KAction::DefaultShortcut);
+    m_showOnMousePos->setGlobalShortcut(KShortcut(Qt::CTRL+Qt::SHIFT+Qt::Key_V));
     connect(m_showOnMousePos, SIGNAL(triggered(bool)), this, SLOT(slotPopupMenu()));
 
     // Actions toggle
