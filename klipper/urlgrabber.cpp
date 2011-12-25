@@ -20,6 +20,7 @@
 
 #include <netwm.h>
 
+#include <QtCore/QHash>
 #include <QtCore/QTimer>
 #include <QtCore/QUuid>
 #include <QtCore/QFile>
@@ -34,6 +35,7 @@
 #include <KGlobal>
 #include <KMimeTypeTrader>
 #include <KMimeType>
+#include <KCharMacroExpander>
 
 #include "klippersettings.h"
 #include "clipcommandprocess.h"
@@ -150,7 +152,14 @@ void URLGrabber::matchingMimeActions(const QString& clipData)
         ClipAction* action = new ClipAction( QString(), mimetype->comment() );
         KService::List lst = KMimeTypeTrader::self()->query( mimetype->name(), "Application" );
         foreach( const KService::Ptr &service, lst ) {
-            action->addCommand( ClipCommand( service->exec(), service->name(), true, service->icon() ) );
+            QHash<QChar,QString> map;
+            map.insert( 'i', "--icon " + service->icon() );
+            map.insert( 'c', service->name() );
+
+            QString exec = service->exec();
+            exec = KMacroExpander::expandMacros( exec, map ).trimmed();
+
+            action->addCommand( ClipCommand( exec, service->name(), true, service->icon() ) );
         }
         if ( !lst.isEmpty() )
             m_myMatches.append( action );
