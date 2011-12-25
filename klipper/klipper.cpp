@@ -186,14 +186,14 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
 
     m_repeatAction = m_collection->addAction("repeat_action");
     m_repeatAction->setText(i18n("Manually Invoke Action on Current Clipboard"));
-    qobject_cast<KAction*>(m_repeatAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_R));
+    m_repeatAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_R));
     connect(m_repeatAction, SIGNAL(triggered()), SLOT(slotRepeatAction()));
 
     // add an edit-possibility
     m_editAction = m_collection->addAction("edit_clipboard");
     m_editAction->setIcon(KIcon("document-properties"));
     m_editAction->setText(i18n("&Edit Contents..."));
-    qobject_cast<KAction*>(m_editAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_E));
+    m_editAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_E));
     connect(m_editAction, SIGNAL(triggered()), SLOT(slotEditData()));
 
 #ifdef HAVE_PRISON

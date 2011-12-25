@@ -158,14 +158,14 @@ private:
     int m_overflowCounter;
 
     KToggleAction* m_toggleURLGrabAction;
-    QAction* m_clearHistoryAction;
-    QAction* m_repeatAction;
-    QAction* m_editAction;
+    KAction* m_clearHistoryAction;
+    KAction* m_repeatAction;
+    KAction* m_editAction;
 #ifdef HAVE_PRISON
-    QAction* m_showBarcodeAction;
+    KAction* m_showBarcodeAction;
 #endif
-    QAction* m_configureAction;
-    QAction* m_quitAction;
+    KAction* m_configureAction;
+    KAction* m_quitAction;
     KAction* m_cycleNextAction;
     KAction* m_cyclePrevAction;
     KAction* m_showOnMousePos;
