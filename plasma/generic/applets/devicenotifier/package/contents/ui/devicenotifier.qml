@@ -67,6 +67,7 @@ Item {
                     (devicesType == "removable" && data[last]["Removable"] == true) ||
                     (devicesType == "nonRemovable" && data[last]["Removable"] == false)) {
                     expandDevice(last)
+                    last = "";
                 }
             }
         }
