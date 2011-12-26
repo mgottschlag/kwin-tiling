@@ -56,6 +56,10 @@ Item {
         }
 
         onAppletDelegateChanged: {
+            if (!appletDelegate) {
+                toolTipHideTimer.restart()
+                return
+            }
             var point = tooltipDialog.popupPosition(appletDelegate)
             tooltipDialog.x = point.x
             tooltipDialog.y = point.y
@@ -65,6 +69,12 @@ Item {
         Behavior on x {
             NumberAnimation { duration: 250 }
         }
+    }
+    Timer {
+        id: toolTipHideTimer
+        interval: 1000
+        repeat: false
+        onTriggered: tooltipDialog.visible = false
     }
 
     Item {

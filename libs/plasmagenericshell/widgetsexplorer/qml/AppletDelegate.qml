@@ -73,7 +73,6 @@ PlasmaCore.FrameSvgItem {
         anchors.fill: parent
         supportedActions: Qt.MoveAction | Qt.LinkAction
         mimeData {
-            //url: pluginName
             source: parent
         }
         Component.onCompleted: mimeData.setData("text/x-plasmoidservicename", pluginName)
@@ -126,9 +125,8 @@ PlasmaCore.FrameSvgItem {
             onDoubleClicked: {
                 addAppletRequested(pluginName)
             }
-            onEntered: {
-                tooltipDialog.appletDelegate = background
-            }
+            onEntered: tooltipDialog.appletDelegate = background
+            onExited: tooltipDialog.appletDelegate = null
         }
     }
 }
