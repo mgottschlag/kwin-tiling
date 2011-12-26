@@ -67,8 +67,8 @@ public:
   QStringList excludedWMClasses() const { return m_myAvoidWindows; }
   void setExcludedWMClasses( const QStringList& list ) { m_myAvoidWindows = list; }
 
-  bool trimmed() const { return m_trimmed; }
-  void setStripWhiteSpace( bool enable ) { m_trimmed = enable; }
+  bool stripWhiteSpace() const { return m_stripWhiteSpace; }
+  void setStripWhiteSpace( bool enable ) { m_stripWhiteSpace = enable; }
 
 private:
   const ActionList& matchingActions( const QString&, bool automatically_invoked );
@@ -88,7 +88,7 @@ private:
   KMenu* m_myMenu;
   QTimer* m_myPopupKillTimer;
   int m_myPopupKillTimeout;
-  bool m_trimmed;
+  bool m_stripWhiteSpace;
   History* m_history;
 
 private Q_SLOTS:

@@ -49,7 +49,7 @@ URLGrabber::URLGrabber(History* history):
     m_myMenu(0L),
     m_myPopupKillTimer(new QTimer( this )),
     m_myPopupKillTimeout(8),
-    m_trimmed(true),
+    m_stripWhiteSpace(true),
     m_history(history)
 {
     m_myPopupKillTimer->setSingleShot( true );
@@ -198,7 +198,7 @@ void URLGrabber::actionMenu( const HistoryItem* item, bool automatically_invoked
       return;
     }
     QString text(item->text());
-    if (m_trimmed) {
+    if (m_stripWhiteSpace) {
         text = text.trimmed();
     }
     ActionList matchingActionsList = matchingActions( text, automatically_invoked );
@@ -299,7 +299,7 @@ void URLGrabber::execute( const ClipAction* action, int cmdIdx ) const
 
     if ( command.isEnabled ) {
         QString text(m_myClipItem->text());
-        if (m_trimmed) {
+        if (m_stripWhiteSpace) {
             text = text.trimmed();
         }
         ClipCommandProcess* proc = new ClipCommandProcess(*action, command, text, m_history, m_myClipItem);
@@ -314,7 +314,7 @@ void URLGrabber::execute( const ClipAction* action, int cmdIdx ) const
 
 void URLGrabber::loadSettings()
 {
-    m_trimmed = KlipperSettings::stripWhiteSpace();
+    m_stripWhiteSpace = KlipperSettings::stripWhiteSpace();
     m_myAvoidWindows = KlipperSettings::noActionsForWM_CLASS();
     m_myPopupKillTimeout = KlipperSettings::timeoutForActionPopups();
 
