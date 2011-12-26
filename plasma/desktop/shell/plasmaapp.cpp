@@ -1099,10 +1099,21 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
     }
 
     createView(containment);
+}
+
+void PlasmaApp::prepareContainment(Plasma::Containment *containment)
+{
+    if (!containment) {
+        return;
+    }
 
     disconnect(containment, 0, this, 0);
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
+
+    if (isPanelContainment(containment)) {
+        return;
+    }
 
     if ((containment->containmentType() == Plasma::Containment::DesktopContainment ||
          containment->containmentType() == Plasma::Containment::CustomContainment)) {
@@ -1126,7 +1137,7 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
         }
     }
 
-    if (!isPanelContainment(containment) && !KAuthorized::authorize("editable_desktop_icons")) {
+    if (!KAuthorized::authorize("editable_desktop_icons")) {
         containment->setImmutability(Plasma::SystemImmutable);
     }
 }

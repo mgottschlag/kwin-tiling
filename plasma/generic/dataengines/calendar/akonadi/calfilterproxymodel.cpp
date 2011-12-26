@@ -67,6 +67,9 @@ bool CalFilterProxyModel::filterAcceptsRow( int source_row, const QModelIndex &s
   if ( !d->filter ) {
     return true;
   }
+  if ( source_row < 0 || !source_parent.isValid() ) {
+    return false;
+  }
 
   const QModelIndex idx = sourceModel()->index( source_row, 0, source_parent );
   if ( !idx.isValid() ) {

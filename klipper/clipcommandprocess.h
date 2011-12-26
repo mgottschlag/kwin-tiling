@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /*
     Copyright 2009 Esben Mose Hansen <kde@mosehansen.dk>
 
@@ -21,12 +20,13 @@
 #ifndef CLIPCOMMANDPROCESS_H
 #define CLIPCOMMANDPROCESS_H
 
-#include <kprocess.h>
+#include <KProcess>
 
 class ClipAction;
 class History;
 class ClipCommand;
 class HistoryItem;
+
 class ClipCommandProcess : public KProcess
 {
     Q_OBJECT

@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
    Copytight (C) by Andrew Stanley-Jones
@@ -20,16 +19,19 @@
 #ifndef KLIPPERPOPUP_H
 #define KLIPPERPOPUP_H
 
-#include <QList>
-#include <QWidgetAction>
+#include <QtCore/QList>
 
-#include <kmenu.h>
+#include <KMenu>
 
-class History;
-class KHelpMenu;
 class QAction;
-class PopupProxy;
+class QWidgetAction;
+class QKeyEvent;
+
+class KHelpMenu;
 class KLineEdit;
+
+class PopupProxy;
+class History;
 
 /**
  * Default view of clipboard history.
@@ -113,7 +115,7 @@ private:
     /**
      * Action of search widget
      */
-    QWidgetAction *m_filterWidgetAction;
+    QWidgetAction* m_filterWidgetAction;
 
     /**
      * The current number of history items in the clipboard

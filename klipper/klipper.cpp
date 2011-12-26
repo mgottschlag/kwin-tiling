@@ -1,7 +1,6 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
 
-   Copyright (C) by Andrew Stanley-Jones
+   Copyright (C) by Andrew Stanley-Jones <asj@cban.com>
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
    Copyright (C) 2008 by Dmitry Suzdalev <dimsuz@gmail.com>
@@ -24,21 +23,24 @@
 
 #include "klipper.h"
 
+#include <zlib.h>
+
+#include <QtGui/QMenu>
 #include <QtDBus/QDBusConnection>
 
-#include <kaboutdata.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <ksavefile.h>
-#include <ksessionmanager.h>
-#include <kstandarddirs.h>
-#include <ksystemtrayicon.h>
-#include <kdebug.h>
-#include <kglobalsettings.h>
-#include <kactioncollection.h>
-#include <ktoggleaction.h>
-#include <KConfigSkeleton>
-#include <ktextedit.h>
+#include <KAboutData>
+#include <KLocale>
+#include <KMessageBox>
+#include <KSaveFile>
+#include <KSessionManager>
+#include <KStandardDirs>
+#include <KDebug>
+#include <KGlobalSettings>
+#include <KActionCollection>
+#include <KToggleAction>
+#include <KTextEdit>
+#include <KApplication>
+#include <KIcon>
 
 #include "configdialog.h"
 #include "klippersettings.h"
@@ -55,15 +57,12 @@
 #include <prison/QRCodeBarcode>
 #endif
 
-#include <zlib.h>
-
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #endif
 
 //#define NOISY_KLIPPER
-#include <KPassivePopup>
 
 namespace {
     /**
@@ -114,22 +113,17 @@ private:
     Klipper* klipper;
 };
 
-static void ensureGlobalSyncOff(KSharedConfigPtr config);
-
 // config == KGlobal::config for process, otherwise applet
-Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
+Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
     : QObject( parent )
     , m_overflowCounter( 0 )
     , m_locklevel( 0 )
     , m_config( config )
     , m_pendingContentsCheck( false )
-    , m_session_managed( new KlipperSessionManager( this ))
+    , m_sessionManager( new KlipperSessionManager( this ))
 {
     setenv("KSNI_NO_DBUSMENU", "1", 1);
     QDBusConnection::sessionBus().registerObject("/klipper", this, QDBusConnection::ExportScriptableSlots);
-
-    // We don't use the clipboardsynchronizer anymore, and it confuses Klipper
-    ensureGlobalSyncOff(m_config);
 
     updateTimestamp(); // read initial X user time
     m_clip = kapp->clipboard();
@@ -142,31 +136,19 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_pendingCheckTimer.setSingleShot( true );
     connect( &m_pendingCheckTimer, SIGNAL(timeout()), SLOT(slotCheckPending()));
 
+    m_showTimer = new QTime();
+
     m_history = new History( this );
 
     // we need that collection, otherwise KToggleAction is not happy :}
-    //QString defaultGroup( "default" );
     m_collection = new KActionCollection( this );
+
     m_toggleURLGrabAction = new KToggleAction( this );
     m_collection->addAction( "clipboard_action", m_toggleURLGrabAction );
-    m_toggleURLGrabAction->setEnabled( true );
-    m_toggleURLGrabAction->setText(i18n("Enable Clipboard &Actions"));
-    //m_toggleURLGrabAction->setGroup( defaultGroup );
-    m_clearHistoryAction = m_collection->addAction( "clearHistoryAction" );
-    m_clearHistoryAction->setIcon( KIcon("edit-clear-history") );
-    m_clearHistoryAction->setText( i18n("C&lear Clipboard History") );
-    connect(m_clearHistoryAction, SIGNAL(triggered()), SLOT(slotAskClearHistory()));
-    //m_clearHistoryAction->setGroup( defaultGroup );
-    m_configureAction = m_collection->addAction( "configureAction" );
-    m_configureAction->setIcon( KIcon("configure") );
-    m_configureAction->setText( i18n("&Configure Klipper...") );
-    connect(m_configureAction, SIGNAL(triggered(bool)), SLOT(slotConfigure()));
-    //m_configureAction->setGroup( defaultGroup );
-    m_quitAction = m_collection->addAction( "quitAction" );
-    m_quitAction->setIcon( KIcon("application-exit") );
-    m_quitAction->setText( i18n("&Quit") );
-    connect(m_quitAction, SIGNAL(triggered(bool)), SLOT(slotQuit()));
-    //quitAction->setGroup( "exit" );
+    m_toggleURLGrabAction->setText(i18n("Enable Clipboard Actions"));
+    m_toggleURLGrabAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
+    connect( m_toggleURLGrabAction, SIGNAL(toggled(bool)),
+             this, SLOT(setURLGrabberEnabled(bool)));
 
     /*
      * Create URL grabber
@@ -182,29 +164,41 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
      */
     loadSettings();
 
-    m_hideTimer = new QTime();
-    m_showTimer = new QTime();
+    // load previous history if configured
+    if (m_bKeepContents) {
+        loadHistory();
+    }
 
-    // TODO: IIUC readProperties exists only as a wrapper around loadHistory. In case loadHistory fails,
-    // it tries to load some old format history. So: check how "old" this old-loading method is.
-    // if it's too old, drop it and just use load history
-    readProperties(m_config.data());
+    m_clearHistoryAction = m_collection->addAction( "clear-history" );
+    m_clearHistoryAction->setIcon( KIcon("edit-clear-history") );
+    m_clearHistoryAction->setText( i18n("C&lear Clipboard History") );
+    connect(m_clearHistoryAction, SIGNAL(triggered()), SLOT(slotAskClearHistory()));
+
+    m_configureAction = m_collection->addAction( "configure" );
+    m_configureAction->setIcon( KIcon("configure") );
+    m_configureAction->setText( i18n("&Configure Klipper...") );
+    connect(m_configureAction, SIGNAL(triggered(bool)), SLOT(slotConfigure()));
+
+    m_quitAction = m_collection->addAction( "quit" );
+    m_quitAction->setIcon( KIcon("application-exit") );
+    m_quitAction->setText( i18n("&Quit") );
+    connect(m_quitAction, SIGNAL(triggered(bool)), SLOT(slotQuit()));
 
     m_repeatAction = m_collection->addAction("repeat_action");
     m_repeatAction->setText(i18n("Manually Invoke Action on Current Clipboard"));
-    qobject_cast<KAction*>(m_repeatAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_R));
+    m_repeatAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_R));
     connect(m_repeatAction, SIGNAL(triggered()), SLOT(slotRepeatAction()));
 
     // add an edit-possibility
     m_editAction = m_collection->addAction("edit_clipboard");
     m_editAction->setIcon(KIcon("document-properties"));
     m_editAction->setText(i18n("&Edit Contents..."));
-    qobject_cast<KAction*>(m_editAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_E), KAction::DefaultShortcut);
+    m_editAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_E));
     connect(m_editAction, SIGNAL(triggered()), SLOT(slotEditData()));
 
 #ifdef HAVE_PRISON
     // add barcode for mobile phones
-    m_showBarcodeAction = m_collection->addAction("show_barcode");
+    m_showBarcodeAction = m_collection->addAction("show-barcode");
     m_showBarcodeAction->setText(i18n("&Show Barcode..."));
     connect(m_showBarcodeAction, SIGNAL(triggered()), SLOT(slotShowBarcode()));
 #endif
@@ -212,29 +206,21 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     // Cycle through history
     m_cycleNextAction = m_collection->addAction("cycleNextAction");
     m_cycleNextAction->setText(i18n("Next History Item"));
-    m_cycleNextAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Down), KAction::DefaultShortcut);
+    m_cycleNextAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Down));
     connect(m_cycleNextAction, SIGNAL(triggered(bool)), SLOT(slotCycleNext()));
     m_cyclePrevAction = m_collection->addAction("cyclePrevAction");
     m_cyclePrevAction->setText(i18n("Previous History Item"));
-    m_cyclePrevAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Up), KAction::DefaultShortcut);
+    m_cyclePrevAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Up));
     connect(m_cyclePrevAction, SIGNAL(triggered(bool)), SLOT(slotCyclePrev()));
 
     // Action to show Klipper popup on mouse position
     m_showOnMousePos = m_collection->addAction("show-on-mouse-pos");
     m_showOnMousePos->setText(i18n("Open Klipper at Mouse Position"));
-    m_showOnMousePos->setGlobalShortcut(KShortcut(Qt::CTRL+Qt::SHIFT+Qt::Key_V), KAction::DefaultShortcut);
+    m_showOnMousePos->setGlobalShortcut(KShortcut(Qt::CTRL+Qt::SHIFT+Qt::Key_V));
     connect(m_showOnMousePos, SIGNAL(triggered(bool)), this, SLOT(slotPopupMenu()));
-
-    // Actions toggle
-    m_toggleURLGrabAction->setText(i18n("Enable Clipboard Actions"));
-    m_toggleURLGrabAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
-
-    connect( m_toggleURLGrabAction, SIGNAL(toggled(bool)),
-             this, SLOT(setURLGrabberEnabled(bool)));
 
     KlipperPopup* popup = history()->popup();
     connect ( history(), SIGNAL(topChanged()), SLOT(slotHistoryTopChanged()) );
-    connect( popup, SIGNAL(aboutToHide()), SLOT(slotStartHideTimer()) );
     connect( popup, SIGNAL(aboutToShow()), SLOT(slotStartShowTimer()) );
 
     popup->plugAction( m_toggleURLGrabAction );
@@ -252,13 +238,12 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
 
 Klipper::~Klipper()
 {
-    delete m_session_managed;
+    delete m_sessionManager;
     delete m_showTimer;
-    delete m_hideTimer;
     delete m_myURLGrabber;
 }
 
-// DCOP
+// DBUS
 QString Klipper::getClipboardContents()
 {
     return getClipboardHistoryItem(0);
@@ -272,7 +257,7 @@ void Klipper::showKlipperManuallyInvokeActionMenu() {
 }
 
 
-// DCOP - don't call from Klipper itself
+// DBUS - don't call from Klipper itself
 void Klipper::setClipboardContents(QString s)
 {
     if (s.isEmpty())
@@ -284,26 +269,20 @@ void Klipper::setClipboardContents(QString s)
     history()->insert( item );
 }
 
-// DCOP - don't call from Klipper itself
+// DBUS - don't call from Klipper itself
 void Klipper::clearClipboardContents()
 {
     updateTimestamp();
     slotClearClipboard();
 }
 
-// DCOP - don't call from Klipper itself
+// DBUS - don't call from Klipper itself
 void Klipper::clearClipboardHistory()
 {
     updateTimestamp();
     slotClearClipboard();
     history()->slotClear();
     saveSession();
-}
-
-
-void Klipper::slotStartHideTimer()
-{
-    m_hideTimer->start();
 }
 
 void Klipper::slotStartShowTimer()
@@ -362,7 +341,7 @@ void Klipper::saveSettings() const
     // other settings should be saved automatically by KConfigDialog
 }
 
-void Klipper::showPopupMenu( QMenu *menu )
+void Klipper::showPopupMenu( QMenu* menu )
 {
     Q_ASSERT( menu != 0L );
 
@@ -383,18 +362,9 @@ bool Klipper::loadHistory() {
     // don't use "appdata", klipper is also a kicker applet
     QString history_file_name = KStandardDirs::locateLocal( "data", "klipper/history2.lst" );
     QFile history_file( history_file_name );
-    bool oldfile = false;
-    if ( !history_file.exists() ) { // backwards compatibility
-        oldfile = true;
-        history_file_name = KStandardDirs::locateLocal( "data", "klipper/history.lst" );
-        history_file.setFileName( history_file_name );
-        if ( !history_file.exists() ) {
-            history_file_name = KStandardDirs::locateLocal( "data", "kicker/history.lst" );
-            history_file.setFileName( history_file_name );
-            if ( !history_file.exists() ) {
-                return false;
-            }
-        }
+    if ( !history_file.exists() ) {
+        kWarning() << failed_load_warning << ": " << "History file does not exist" ;
+        return false;
     }
     if ( !history_file.open( QIODevice::ReadOnly ) ) {
         kWarning() << failed_load_warning << ": " << history_file.errorString() ;
@@ -402,22 +372,20 @@ bool Klipper::loadHistory() {
     }
     QDataStream file_stream( &history_file );
     if( file_stream.atEnd()) {
-        kWarning() << failed_load_warning ;
+        kWarning() << failed_load_warning << ": " << "Error in reading data" ;
         return false;
     }
-    QDataStream* history_stream = &file_stream;
     QByteArray data;
-    if( !oldfile ) {
-        quint32 crc;
-        file_stream >> crc >> data;
-        if( crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() ) != crc ) {
-            kWarning() << failed_load_warning << ": " << history_file.errorString() ;
-            return false;
-        }
-        history_stream = new QDataStream( &data, QIODevice::ReadOnly );
+    quint32 crc;
+    file_stream >> crc >> data;
+    if( crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() ) != crc ) {
+        kWarning() << failed_load_warning << ": " << "CRC checksum does not match" ;
+        return false;
     }
+    QDataStream history_stream( &data, QIODevice::ReadOnly );
+
     char* version;
-    *history_stream >> version;
+    history_stream >> version;
     delete[] version;
 
     // The list needs to be reversed, as it is saved
@@ -425,12 +393,14 @@ bool Klipper::loadHistory() {
     // items at the top, but the history is created oldest
     // first.
     QList<HistoryItem*> reverseList;
-    for ( HistoryItem* item = HistoryItem::create( *history_stream );
+    for ( HistoryItem* item = HistoryItem::create( history_stream );
           item;
-          item = HistoryItem::create( *history_stream ) )
+          item = HistoryItem::create( history_stream ) )
     {
         reverseList.prepend( item );
     }
+
+    history()->slotClear();
 
     for ( QList<HistoryItem*>::const_iterator it = reverseList.constBegin();
           it != reverseList.constEnd();
@@ -444,9 +414,6 @@ bool Klipper::loadHistory() {
         m_lastClipboard = -1;
         setClipboard( *history()->first(), Clipboard | Selection );
     }
-
-    if( history_stream != &file_stream )
-        delete history_stream;
 
     return true;
 }
@@ -482,37 +449,6 @@ void Klipper::saveHistory(bool empty) {
     quint32 crc = crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() );
     QDataStream ds ( &history_file );
     ds << crc << data;
-}
-
-void Klipper::readProperties(KConfig *kc)
-{
-    QStringList dataList;
-
-    history()->slotClear();
-
-    if (m_bKeepContents) { // load old clipboard if configured
-        if ( !loadHistory() ) {
-            // Try to load from the old config file.
-            // Remove this at some point.
-            KConfigGroup configGroup(kc, "General");
-            dataList = configGroup.readEntry("ClipboardData",QStringList());
-
-            for (QStringList::ConstIterator it = dataList.constEnd();
-                 it != dataList.constBegin();
-             )
-            {
-                history()->forceInsert( new HistoryStringItem( *( --it ) ) );
-            }
-
-            if ( !dataList.isEmpty() )
-            {
-                m_lastSelection = -1;
-                m_lastClipboard = -1;
-                setClipboard( *history()->first(), Clipboard | Selection );
-            }
-        }
-    }
-
 }
 
 // save session on shutdown. Don't simply use the c'tor, as that may not be called.
@@ -601,8 +537,6 @@ void Klipper::setURLGrabberEnabled( bool enable )
 
     // make it update its settings
     m_myURLGrabber->loadSettings();
-
-    //m_toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(m_collection->action("clipboard_action"))->globalShortcut());
 }
 
 void Klipper::slotHistoryTopChanged() {
@@ -625,36 +559,6 @@ void Klipper::slotClearClipboard()
 
     m_clip->clear(QClipboard::Selection);
     m_clip->clear(QClipboard::Clipboard);
-}
-
-
-//XXX: Should die, and the DCOP signal handled sensible.
-QString Klipper::clipboardContents( bool * /*isSelection*/ )
-{
-    kWarning() << "Obsolete function called. Please fix" ;
-
-#if 0
-    bool selection = true;
-    QMimeSource* data = clip->data(QClipboard::Selection);
-
-    if ( data->serialNumber() == m_lastSelection )
-    {
-        QString clipContents = clip->text(QClipboard::Clipboard);
-        if ( clipContents != m_lastClipboard )
-        {
-            contents = clipContents;
-            selection = false;
-        }
-        else
-            selection = true;
-    }
-
-    if ( isSelection )
-        *isSelection = selection;
-
-#endif
-
-    return 0;
 }
 
 HistoryItem* Klipper::applyClipChanges( const QMimeData* clipData )
@@ -963,7 +867,7 @@ bool Klipper::ignoreClipboardChanges() const
 // Therefore, qt_x_time needs to be updated to current X server timestamp.
 
 // Call KApplication::updateUserTime() only from functions that are
-// called from outside (DCOP), or from QTimer timeout !
+// called from outside (DBUS), or from QTimer timeout !
 
 static Time next_x_time;
 static Bool update_x_time_predicate( Display*, XEvent* event, XPointer )
@@ -1070,18 +974,6 @@ KAboutData* Klipper::aboutData()
   return m_about_data;
 }
 
-static void ensureGlobalSyncOff(KSharedConfigPtr config) {
-    KConfigGroup cg(config, "General");
-    if ( cg.readEntry( "SynchronizeClipboardAndSelection" , false) ) {
-        kDebug() << "Shutting off global synchronization";
-        cg.writeEntry("SynchronizeClipboardAndSelection", false, KConfig::Normal | KConfig::Global );
-        cg.sync();
-        kapp->setSynchronizeClipboard(false);
-        KGlobalSettings::self()->emitChange( KGlobalSettings::ClipboardConfigChanged, 0 );
-    }
-
-}
-
 void Klipper::slotEditData()
 {
     const HistoryStringItem* item = dynamic_cast<const HistoryStringItem*>(m_history->first());
@@ -1144,7 +1036,7 @@ void Klipper::slotShowBarcode()
 
     dlg.exec();
 }
-#endif //HAVE_DMTX
+#endif //HAVE_PRISON
 
 void Klipper::slotAskClearHistory()
 {

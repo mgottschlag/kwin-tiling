@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
 
@@ -20,10 +19,11 @@
 #ifndef URLGRABBER_H
 #define URLGRABBER_H
 
-#include <QHash>
-#include <QRegExp>
-#include <QStringList>
-#include <ksharedconfig.h>
+#include <QtCore/QHash>
+#include <QtCore/QRegExp>
+#include <QtCore/QStringList>
+
+#include <KSharedConfig>
 
 class History;
 class HistoryItem;
@@ -81,18 +81,18 @@ private:
   ActionList m_myMatches;
   QStringList m_myAvoidWindows;
   const HistoryItem* m_myClipItem;
-  ClipAction *m_myCurrentAction;
+  ClipAction* m_myCurrentAction;
 
   // holds mappings of menu action IDs to action commands (action+cmd index in it)
   QHash<QString, QPair<ClipAction*, int> > m_myCommandMapper;
-  KMenu *m_myMenu;
-  QTimer *m_myPopupKillTimer;
+  KMenu* m_myMenu;
+  QTimer* m_myPopupKillTimer;
   int m_myPopupKillTimeout;
   bool m_trimmed;
   History* m_history;
 
 private Q_SLOTS:
-  void slotItemSelected(QAction *action);
+  void slotItemSelected(QAction* action);
   void slotKillPopupMenu();
 
 Q_SIGNALS:

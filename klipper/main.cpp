@@ -1,6 +1,5 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
-   Copyright (C) Andrew Stanley-Jones
+   Copyright (C) Andrew Stanley-Jones <asj@cban.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -21,14 +20,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <klocale.h>
-#include <kcmdlineargs.h>
-#include <kaboutdata.h>
-#include <kuniqueapplication.h>
+#include <KLocale>
+#include <KCmdLineArgs>
+#include <KAboutData>
+#include <KUniqueApplication>
 #include <KConfigDialogManager>
 
 #include "tray.h"
-#include "version.h"
 #include "klipper.h"
 
 extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
@@ -38,7 +36,7 @@ extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
   KUniqueApplication::addCmdLineOptions();
 
   if (!KUniqueApplication::start()) {
-       fprintf(stderr, "Klipper is already running!\n");
+       fprintf(stderr, "Klipper is already running! Check it in the system tray in the panel.\n");
        exit(0);
   }
   KUniqueApplication app;

@@ -79,6 +79,7 @@ void Clock::init()
     dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
     connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(resetSize()));
+    //connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(updateClock(int)));
 }
 
 void Clock::constraintsEvent(Plasma::Constraints constraints)
@@ -88,6 +89,21 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::SizeConstraint || constraints & Plasma::FormFactorConstraint) {
         updateSize();
     }
+}
+
+// In case time format has changed, e.g. from 24h to 12h format.
+void Clock::updateClock(int category)
+{
+// kdelibs repo is still closed, so KGlobalSettings::SETTINGS_LOCALE is not available yet.
+// I will remove this after pushing the commit that adds SETTINGS_LOCALE.
+#if 0
+    if (category != KGlobalSettings::SETTINGS_LOCALE) {
+        return;
+    }
+
+    generatePixmap();
+    update();
+#endif
 }
 
 void Clock::resetSize()

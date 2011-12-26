@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
 
@@ -19,11 +18,10 @@
 */
 #include "historyimageitem.h"
 
-#include <QMimeData>
+#include <QtCore/QMimeData>
+#include <QtCore/QCryptographicHash>
 
-#include <kdebug.h>
-
-#include <QCryptographicHash>
+#include <KDebug>
 
 namespace {
     QByteArray compute_uuid(const QPixmap& data) {
@@ -36,7 +34,8 @@ namespace {
 }
 
 HistoryImageItem::HistoryImageItem( const QPixmap& data )
-    : HistoryItem(compute_uuid(data)), m_data( data )
+    : HistoryItem(compute_uuid(data))
+    , m_data( data )
 {
 }
 
@@ -45,7 +44,7 @@ QString HistoryImageItem::text() const {
         m_text = QString( "%1x%2x%3 %4" )
                  .arg( m_data.width() )
                  .arg( m_data.height() )
-               .arg( m_data.depth() );
+                 .arg( m_data.depth() );
     }
     return m_text;
 

@@ -100,8 +100,8 @@ Name[uz]=Sana va vaqt
 Name[uz@cyrillic]=Сана ва вақт
 Name[vi]=Ngày và Giờ
 Name[wa]=Date et eure
-Name[x-test]=xxDate & Timexx
 Name[xh]=Umhla & Ixesha
+Name[x-test]=xxDate & Timexx
 Name[zh_CN]=日期和时间
 Name[zh_TW]=日期和時間
 
@@ -192,13 +192,16 @@ Comment[uz]=Sana va vaqtning moslamalari
 Comment[uz@cyrillic]=Сана ва вақтнинг мосламалари
 Comment[vi]=Thiết lập ngày giờ
 Comment[wa]=Apontiaedjes del date et l' eure
-Comment[x-test]=xxDate and time settingsxx
 Comment[xh]=Izicwangciso zomhla kunye nexesha
+Comment[x-test]=xxDate and time settingsxx
 Comment[zh_CN]=日期和时间设置
 Comment[zh_TW]=日期和時間設定值
 
 X-KDE-Keywords=clock,date,time,time zone
 X-KDE-Keywords[ca]=rellotge,data,hora,zona horària
+X-KDE-Keywords[da]=ur,dato,tid,tidszone
+X-KDE-Keywords[de]=uhr,datum,zeit,zeitzone
+X-KDE-Keywords[et]=kell,kuupäev,kellaaeg,ajavöönd
 X-KDE-Keywords[fi]=kello,päiväys,päivämäärä,aika,kellonaika,aikavyöhyke
 X-KDE-Keywords[ia]=horologio,data,tempore,zona de tempore
 X-KDE-Keywords[kk]=clock,date,time,time zone
