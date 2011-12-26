@@ -68,6 +68,8 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
       m_saveAction(KStandardAction::saveAs(this, SLOT(saveScript()), this)),
       m_clearAction(KStandardAction::clear(this, SLOT(clearEditor()), this)),
       m_executeAction(new KAction(KIcon("system-run"), i18n("&Execute"), this)),
+      m_plasmaAction(new KAction(KIcon("plasma"), i18nc("Toolbar Button to switch to Plasma Scripting Mode", "Plasma"), this)),
+      m_kwinAction(new KAction(KIcon("kwin"), i18nc("Toolbar Button to switch to KWin Scripting Mode", "KWin"), this)),
       m_snippetsMenu(new KMenu(i18n("Templates"), this)),
       m_fileDialog(0),
       m_mode(PlasmaConsole)
@@ -103,12 +105,22 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     useTemplateButton->setText(i18n("Use"));
     connect(useTemplateButton, SIGNAL(triggered(QAction*)), this, SLOT(useTemplate(QAction*)));
 
+    QActionGroup *modeGroup = new QActionGroup(this);
+    modeGroup->addAction(m_plasmaAction);
+    modeGroup->addAction(m_kwinAction);
+    m_plasmaAction->setCheckable(true);
+    m_kwinAction->setCheckable(true);
+    m_plasmaAction->setChecked(true);
+    connect(modeGroup, SIGNAL(triggered(QAction*)), this, SLOT(modeChanged()));
+
     KToolBar *toolBar = new KToolBar(this, true, false);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolBar->addAction(m_loadAction);
     toolBar->addAction(m_saveAction);
     toolBar->addAction(m_clearAction);
     toolBar->addAction(m_executeAction);
+    toolBar->addAction(m_plasmaAction);
+    toolBar->addAction(m_kwinAction);
     toolBar->addWidget(loadTemplateButton);
     toolBar->addWidget(useTemplateButton);
 
@@ -194,6 +206,23 @@ InteractiveConsole::~InteractiveConsole()
 void InteractiveConsole::setMode(ConsoleMode mode)
 {
     m_mode = mode;
+    switch (mode) {
+    case PlasmaConsole:
+        m_plasmaAction->setChecked(true);
+        break;
+    case KWinConsole:
+        m_kwinAction->setChecked(true);
+        break;
+    }
+}
+
+void InteractiveConsole::modeChanged()
+{
+    if (m_plasmaAction->isChecked()) {
+        m_mode = PlasmaConsole;
+    } else if (m_kwinAction->isChecked()) {
+        m_mode = KWinConsole;
+    }
 }
 
 void InteractiveConsole::loadScript(const QString &script)

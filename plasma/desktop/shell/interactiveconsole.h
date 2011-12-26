@@ -86,6 +86,7 @@ private Q_SLOTS:
     void populateTemplatesMenu();
     void loadTemplate(QAction *);
     void useTemplate(QAction *);
+    void modeChanged();
 
 private:
     void onClose();
@@ -100,6 +101,8 @@ private:
     KAction *m_saveAction;
     KAction *m_clearAction;
     KAction *m_executeAction;
+    KAction *m_plasmaAction;
+    KAction *m_kwinAction;
     KMenu *m_snippetsMenu;
 
     KFileDialog *m_fileDialog;
