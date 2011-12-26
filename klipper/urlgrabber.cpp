@@ -234,8 +234,8 @@ void URLGrabber::actionMenu( const HistoryItem* item, bool automatically_invoked
                 action->setData(id);
                 action->setText(item);
 
-                if (!command.pixmap.isEmpty())
-                    action->setIcon(KIcon(command.pixmap));
+                if (!command.icon.isEmpty())
+                    action->setIcon(KIcon(command.icon));
 
                 m_myCommandMapper.insert(id, qMakePair(clipAct,i));
                 m_myMenu->addAction(action);
@@ -416,8 +416,8 @@ void URLGrabber::slotKillPopupMenu()
 ///////////////////////////////////////////////////////////////////////////
 ////////
 
-ClipCommand::ClipCommand(const QString &_command, const QString &_description,
-                         bool _isEnabled, const QString &_icon, Output _output)
+ClipCommand::ClipCommand(const QString&_command, const QString& _description,
+                         bool _isEnabled, const QString& _icon, Output _output)
     : command(_command),
       description(_description),
       isEnabled(_isEnabled),
@@ -425,7 +425,7 @@ ClipCommand::ClipCommand(const QString &_command, const QString &_description,
 {
 
     if (!_icon.isEmpty())
-        pixmap = _icon;
+        icon = _icon;
     else
     {
         // try to find suitable icon
@@ -437,9 +437,9 @@ ClipCommand::ClipCommand(const QString &_command, const QString &_description,
                                          KIconLoader::DefaultState,
                                          QStringList(), 0, true /* canReturnNull */ );
             if ( !iconPix.isNull() )
-                pixmap = appName;
+                icon = appName;
             else
-                pixmap.clear();
+                icon.clear();
         }
     }
 }
@@ -516,7 +516,7 @@ void ClipAction::save( KSharedConfigPtr kc, const QString& group ) const
         cg.writePathEntry( "Commandline", cmd.command );
         cg.writeEntry( "Description", cmd.description );
         cg.writeEntry( "Enabled", cmd.isEnabled );
-        cg.writeEntry( "Icon", cmd.pixmap );
+        cg.writeEntry( "Icon", cmd.icon );
         cg.writeEntry( "Output", static_cast<int>(cmd.output) );
 
         ++i;

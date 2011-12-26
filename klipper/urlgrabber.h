@@ -104,25 +104,25 @@ Q_SIGNALS:
 
 struct ClipCommand
 {
-  /**
-   * What to do with output of command
-   */
-  enum Output {
-    IGNORE, // Discard output
-    REPLACE, // Replace clipboard entry with output
-    ADD // Add output as new clipboard element
-  };
+    /**
+     * What to do with output of command
+     */
+    enum Output {
+        IGNORE, // Discard output
+        REPLACE, // Replace clipboard entry with output
+        ADD // Add output as new clipboard element
+    };
 
-  ClipCommand( const QString & command,
-               const QString & description,
-               bool enabled= true,
-               const QString & icon = QString(),
-               Output output = IGNORE);
+    ClipCommand( const QString& _command,
+                 const QString& _description,
+                 bool enabled=true,
+                 const QString& _icon=QString(),
+                 Output _output=IGNORE);
 
     QString command;
     QString description;
     bool isEnabled;
-    QString pixmap;
+    QString icon;
     Output output;
 };
 
