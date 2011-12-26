@@ -73,9 +73,10 @@ PlasmaCore.FrameSvgItem {
         anchors.fill: parent
         supportedActions: Qt.MoveAction | Qt.LinkAction
         mimeData {
-            url: pluginName
+            //url: pluginName
             source: parent
         }
+        Component.onCompleted: mimeData.setData("text/x-plasmoidservicename", pluginName)
         PlasmaWidgets.IconWidget {
             id:iconWidget
             anchors.left: parent.left
