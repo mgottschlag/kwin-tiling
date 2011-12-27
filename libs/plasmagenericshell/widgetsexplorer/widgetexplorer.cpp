@@ -22,6 +22,7 @@
 
 #include <QDeclarativeContext>
 #include <QDeclarativeEngine>
+#include <QDeclarativeComponent>
 
 #include <kaction.h>
 #include <kconfig.h>
@@ -75,6 +76,7 @@ public:
     void initRunningApplets();
     void containmentDestroyed();
     void setLocation(Plasma::Location loc);
+    void finished();
 
     /**
      * Tracks a new running applet
@@ -167,12 +169,21 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
             filterItemModel.sort(0);
             ctxt->setContextProperty("appletsModel", &filterItemModel);
             ctxt->setContextProperty("filterModel", &filterModel);
-            QObject::connect(declarativeWidget->rootObject(), SIGNAL(addAppletRequested(const QString &)), q, SLOT(addApplet(const QString &)));
-            QObject::connect(declarativeWidget->rootObject(), SIGNAL(closeRequested()), q, SIGNAL(closeClicked()));
+            QObject::connect(declarativeWidget, SIGNAL(finished()), q, SLOT(finished()));
         }
     }
 
     q->setLayout(mainLayout);
+}
+
+void WidgetExplorerPrivate::finished()
+{
+    if (declarativeWidget->mainComponent()->isError()) {
+        return;
+    }
+
+    QObject::connect(declarativeWidget->rootObject(), SIGNAL(addAppletRequested(const QString &)), q, SLOT(addApplet(const QString &)));
+    QObject::connect(declarativeWidget->rootObject(), SIGNAL(closeRequested()), q, SIGNAL(closeClicked()));
 }
 
 void WidgetExplorerPrivate::setLocation(const Plasma::Location loc)
