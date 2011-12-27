@@ -410,8 +410,6 @@ bool Klipper::loadHistory() {
     }
 
     if ( !history()->empty() ) {
-        m_lastSelection = -1;
-        m_lastClipboard = -1;
         setClipboard( *history()->first(), Clipboard | Selection );
     }
 
@@ -669,7 +667,6 @@ void Klipper::checkClipData( bool selectionMode )
 #endif
 #if 0
     kDebug() << "\nselectionMode=" << selectionMode
-              << "\nserialNo=" << clip->data()->serialNumber() << " (sel,cli)=(" << m_lastSelection << "," << m_lastClipboard << ")"
               << "\nowning (sel,cli)=(" << clip->ownsSelection() << "," << clip->ownsClipboard() << ")"
               << "\ntext=" << clip->text( selectionMode ? QClipboard::Selection : QClipboard::Clipboard) << endl;
 
@@ -687,9 +684,7 @@ void Klipper::checkClipData( bool selectionMode )
         kWarning() << "No data in clipboard. This not not supposed to happen.";
         return;
     }
-    // TODO: Rewrite to Qt4 !!!
-    //int lastSerialNo = selectionMode ? m_lastSelection : m_lastClipboard;
-    //bool changed = data->serialNumber() != lastSerialNo;
+
     bool changed = true; // ### FIXME (only relevant under polling, might be better to simply remove polling and rely on XFixes)
     bool clipEmpty = data->formats().isEmpty();
     if (clipEmpty) {
@@ -733,14 +728,6 @@ void Klipper::checkClipData( bool selectionMode )
     else // unknown, ignore
         return;
 
-    // store old contents:
-#if 0
-    if ( selectionMode )
-        m_lastSelection = data->serialNumber();
-    else
-        m_lastClipboard = data->serialNumber();
-#endif
-
     HistoryItem* item = applyClipChanges( data );
     if (changed) {
 #ifdef NOISY_KLIPPER
@@ -780,18 +767,12 @@ void Klipper::setClipboard( const HistoryItem& item, int mode )
         kDebug() << "Setting selection to <" << item.text() << ">";
 #endif
         m_clip->setMimeData( item.mimeData(), QClipboard::Selection );
-#if 0
-        m_lastSelection = clip->data()->serialNumber();<
-#endif
     }
     if ( mode & Clipboard ) {
 #ifdef NOISY_KLIPPER
         kDebug() << "Setting clipboard to <" << item.text() << ">";
 #endif
         m_clip->setMimeData( item.mimeData(), QClipboard::Clipboard );
-#if 0
-        m_lastClipboard = clip->data()->serialNumber();
-#endif
     }
 
 }

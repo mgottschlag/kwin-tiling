@@ -152,8 +152,6 @@ private:
 
     QTime* m_showTimer;
 
-    int m_lastClipboard;
-    int m_lastSelection;
     History* m_history;
     int m_overflowCounter;
 
