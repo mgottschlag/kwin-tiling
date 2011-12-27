@@ -93,16 +93,7 @@ Item {
             PlasmaComponents.Button {
                 id: categoryButton
                 text: "Categories"
-                onClicked: {categoriesDialog.open()/*
-                    if (categoriesDialog.visible) {
-                        categoriesDialog.visible = false
-                    } else {
-                        var pos = categoriesDialog.popupPosition(categoryButton)
-                        categoriesDialog.x = pos.x
-                        categoriesDialog.y = pos.y
-                        categoriesDialog.visible = true
-                    }*/
-                }
+                onClicked: categoriesDialog.open()
             }
         }
         Row {
