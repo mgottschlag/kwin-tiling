@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
 
@@ -19,15 +18,15 @@
 */
 #include "popupproxy.h"
 
-#include <QRegExp>
-#include <QStyle>
-#include <QPixmap>
-#include <QImage>
-#include <QStyleOption>
+#include <QtCore/QRegExp>
+#include <QtGui/QStyle>
+#include <QtGui/QPixmap>
+#include <QtGui/QImage>
+#include <QtGui/QStyleOption>
 
-#include <kstringhandler.h>
-#include <klocale.h>
-#include <kdebug.h>
+#include <KMenu>
+#include <KLocale>
+#include <KDebug>
 
 #include "historyitem.h"
 #include "history.h"

@@ -79,7 +79,9 @@ public:
     ControllerWindow *showWidgetExplorer(int screen, Plasma::Containment *c);
     void hideController(int screen);
 
-    /**
+    void prepareContainment(Plasma::Containment *containment);
+
+        /**
      * create a new activity based on the active one
      */
     void cloneCurrentActivity();

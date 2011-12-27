@@ -49,6 +49,14 @@ Item {
             last = source;
             processLastDevice()
         }
+
+        onSourceRemoved: {
+            if (expandedDevice == source) {
+                notifierDialog.currentExpanded = -1;
+                expandedDevice = "";
+            }
+        }
+
         onDataChanged: {
             processLastDevice()
         }
@@ -59,6 +67,7 @@ Item {
                     (devicesType == "removable" && data[last]["Removable"] == true) ||
                     (devicesType == "nonRemovable" && data[last]["Removable"] == false)) {
                     expandDevice(last)
+                    last = "";
                 }
             }
         }
@@ -242,9 +251,9 @@ Item {
                 return used*100/size;
             }
             leftActionIcon: {
-                if (emblemIcon == "emblem-mounted") {
+                if (emblemIcon == "emblem-mounted" || emblemIcon == "emblem-encrypted-unlocked") {
                     return QIcon("media-eject");
-                } else if (emblemIcon == "emblem-unmounted") {
+                } else if (emblemIcon == "emblem-unmounted" || emblemIcon == "emblem-encrypted-locked") {
                     return QIcon("emblem-mounted");
                 }
                 else return QIcon("");

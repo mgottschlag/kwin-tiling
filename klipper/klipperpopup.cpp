@@ -1,7 +1,6 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
-   Copyright (C) by Andrew Stanley-Jones
+   Copyright (C) by Andrew Stanley-Jones <asj@cban.com>
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
 
    This program is free software; you can redistribute it and/or
@@ -21,11 +20,16 @@
 */
 #include "klipperpopup.h"
 
-#include <khelpmenu.h>
-#include <klineedit.h>
-#include <klocale.h>
-#include <kwindowsystem.h>
-#include <kdebug.h>
+#include <QtGui/QApplication>
+#include <QtGui/QKeyEvent>
+#include <QtGui/QWidgetAction>
+
+#include <KHelpMenu>
+#include <KLineEdit>
+#include <KLocale>
+#include <KWindowSystem>
+#include <KDebug>
+#include <KIcon>
 
 #include "history.h"
 #include "klipper.h"
@@ -114,6 +118,7 @@ void KlipperPopup::slotAboutToShow() {
         if ( !m_filterWidget->text().isEmpty() ) {
             m_dirty = true;
             m_filterWidget->clear();
+            m_filterWidget->setVisible(false);
             m_filterWidgetAction->setVisible(false);
         }
     }
@@ -141,7 +146,6 @@ void KlipperPopup::buildFromScratch() {
     m_filterWidget->setFocusPolicy( Qt::NoFocus );
     m_filterWidgetAction->setVisible(false);
 
-    QListIterator<QAction *> i(m_actions);
     for (int i = 0; i < m_actions.count(); i++) {
         if (i == 0)
             addSeparator();
@@ -262,6 +266,7 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
 
         if (m_filterWidget->text().isEmpty()) {
             if (m_filterWidgetAction->isVisible())
+                m_filterWidget->setVisible(false);
                 m_filterWidgetAction->setVisible(false);
         }
         else if (!m_filterWidgetAction->isVisible() )

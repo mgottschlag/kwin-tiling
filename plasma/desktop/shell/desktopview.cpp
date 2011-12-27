@@ -282,6 +282,7 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         return;
     }
 
+    PlasmaApp::self()->prepareContainment(containment);
     m_init = true;
 
     if (m_dashboard && m_dashboardFollowsDesktop) {
