@@ -240,13 +240,20 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
     case Qt::Key_Tab:
     case Qt::Key_Backtab:
     case Qt::Key_Escape:
-    case Qt::Key_Return:
-    case Qt::Key_Enter:
     {
 #ifdef DEBUG_EVENTS__
         kDebug() << "Passing this event to ancestor (KMenu): " << e;
 #endif
         KMenu::keyPressEvent(e);
+
+        break;
+    }
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
+    {
+        KMenu::keyPressEvent(e);
+        this->hide();
+
         if (activeAction() ==  m_filterWidgetAction)
             setActiveAction(actions().at(TOP_HISTORY_ITEM_INDEX));
 
