@@ -96,6 +96,7 @@ public:
     enum Roles {
         FilterTypeRole = Qt::UserRole+1,
         FilterDataRole = Qt::UserRole+2,
+        SeparatorRole = Qt::UserRole+3
     };
     DefaultFilterModel(QObject *parent = 0);
 

@@ -74,6 +74,7 @@ DefaultFilterModel::DefaultFilterModel(QObject *parent) :
     QHash<int, QByteArray> newRoleNames = roleNames();
     newRoleNames[FilterTypeRole] = "filterType";
     newRoleNames[FilterDataRole] = "filterData";
+    newRoleNames[SeparatorRole] = "separator";
 
     setRoleNames(newRoleNames);
     connect(this, SIGNAL(modelReset()),
@@ -104,6 +105,7 @@ void DefaultFilterModel::addSeparator(const QString &caption)
     QList<QStandardItem *> newRow;
     QStandardItem *item = new QStandardItem(caption);
     item->setEnabled(false);
+    item->setData(true, SeparatorRole);
 
     newRow << item;
     appendRow(newRow);
