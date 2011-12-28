@@ -172,7 +172,7 @@ void KlipperPopup::rebuild( const QString& filter ) {
         }
     }
 
-    // We search case insensitive until no uppercased characters appear in the search term
+    // We search case insensitive until one uppercased character appears in the search term
     Qt::CaseSensitivity caseSens = (filter.toLower() == filter ? Qt::CaseInsensitive : Qt::CaseSensitive);
     QRegExp filterexp( filter, caseSens );
 
