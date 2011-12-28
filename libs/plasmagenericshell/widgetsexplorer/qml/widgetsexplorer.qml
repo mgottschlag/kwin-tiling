@@ -31,6 +31,7 @@ Item {
     signal openWidgetFileRequested()
     signal downloadWidgetsRequested(string type)
     property variant extraActions
+    property variant getWidgetsActions
 
     PlasmaCore.Theme {
         id: theme

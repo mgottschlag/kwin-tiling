@@ -484,6 +484,45 @@ void WidgetExplorer::openWidgetFile()
     assistant->setFocus();
 }
 
+void WidgetExplorer::populateWidgetsMenu()
+{
+    QList <QObject *> actionList;
+
+    QSignalMapper *mapper = new QSignalMapper(this);
+    QObject::connect(mapper, SIGNAL(mapped(QString)), this, SLOT(downloadWidgets(QString)));
+
+    QAction *action = new QAction(KIcon("applications-internet"),
+                                  i18n("Download New Plasma Widgets"), this);
+    QObject::connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
+    mapper->setMapping(action, QString());
+    actionList << action;
+
+    KService::List offers = KServiceTypeTrader::self()->query("Plasma/PackageStructure");
+    foreach (const KService::Ptr &service, offers) {
+        //kDebug() << service->property("X-Plasma-ProvidesWidgetBrowser");
+        if (service->property("X-Plasma-ProvidesWidgetBrowser").toBool()) {
+            QAction *action = new QAction(KIcon("applications-internet"),
+                                          i18nc("%1 is a type of widgets, as defined by "
+                                                "e.g. some plasma-packagestructure-*.desktop files",
+                                                "Download New %1", service->name()), this);
+            QObject::connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
+            mapper->setMapping(action, service->property("X-KDE-PluginInfo-Name").toString());
+            actionList << action;
+        }
+    }
+
+    action = new QAction(this);
+    action->setSeparator(true);
+    actionList << action;
+
+    action = new QAction(KIcon("package-x-generic"),
+                         i18n("Install Widget From Local File..."), this);
+    QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(openWidgetFile()));
+    actionList << action;
+
+    d->declarativeWidget->rootObject()->setProperty("getWidgetsActions", QVariant::fromValue(actionList));
+}
+
 } // namespace Plasma
 
 #include "widgetexplorer.moc"
