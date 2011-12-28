@@ -67,7 +67,6 @@ public:
 
     URLGrabber* urlGrabber() const { return m_myURLGrabber; }
 
-    static void updateTimestamp();
     static void createAboutData();
     static void destroyAboutData();
     static KAboutData* aboutData();
@@ -147,6 +146,8 @@ private Q_SLOTS:
     void loadSettings();
 
 private:
+
+    static void updateTimestamp();
 
     QClipboard* m_clip;
 
