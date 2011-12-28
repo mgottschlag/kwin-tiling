@@ -983,11 +983,12 @@ void Pager::handleHoverLeave()
             m_animations[m_hoverIndex]->setAnimation(animation);
         }
 
-        animation->start(QAbstractAnimation::DeleteWhenStopped);
         animation->setDuration(s_FadeOutDuration);
         animation->setEasingCurve(QEasingCurve::OutQuad);
         animation->setStartValue(1);
         animation->setEndValue(0);
+        animation->start(QAbstractAnimation::DeleteWhenStopped);
+
         m_hoverIndex = -1;
     }
 
@@ -1325,7 +1326,7 @@ void Pager::updateToolTip()
     foreach(const KWindowInfo &winInfo, m_windowInfo){
         if (winInfo.isOnDesktop(hoverDesktopNumber) && !windows.contains(winInfo.win())) {
             bool active = (winInfo.win() == KWindowSystem::activeWindow());
-            if ((taskCounter < 4) || active){    
+            if ((taskCounter < 4) || active){
                 QPixmap icon = KWindowSystem::icon(winInfo.win(), 16, 16, true);
                 if (icon.isNull()) {
                      subtext += "<br />&bull;" + Qt::escape(winInfo.visibleName());
@@ -1336,7 +1337,7 @@ void Pager::updateToolTip()
                 //TODO: elide text that is tooo long
                 subtext += (active ? "<u>" : "") + Qt::escape(winInfo.visibleName()).replace(' ', "&nbsp;") + (active ? "</u>" : "");
 
-                displayedTaskCounter++; 
+                displayedTaskCounter++;
                 windows.append(winInfo.win());
             }
             taskCounter++;
