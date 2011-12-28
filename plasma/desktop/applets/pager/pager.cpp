@@ -172,10 +172,6 @@ void Pager::init()
     KActivities::Consumer *act = new KActivities::Consumer(this);
     connect(act, SIGNAL(currentActivityChanged(QString)), this, SLOT(currentActivityChanged(QString)));
     m_currentActivity = act->currentActivity();
-
-    if (m_desktopCount < 2) {
-        numberOfDesktopsChanged(m_desktopCount);
-    }
 }
 
 void Pager::configChanged()
@@ -705,14 +701,6 @@ void Pager::numberOfDesktopsChanged(int num)
 {
     if (num < 1) {
         return; // refuse to update to zero desktops
-    } else if (num == 1) {
-        m_preHiddenSize = size();
-        setMaximumSize(0, 0);
-        hide();
-    } else if (!isVisible()) {
-        setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-        resize(m_preHiddenSize);
-        show();
     }
 
 #ifdef Q_WS_X11
