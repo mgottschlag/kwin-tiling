@@ -139,16 +139,14 @@ void KlipperPopup::buildFromScratch() {
     addTitle(KIcon("klipper"), i18n("Klipper - Clipboard Tool"));
 
     m_filterWidget = new KLineEditBlackKey(this);
+    m_filterWidget->setFocusPolicy( Qt::NoFocus );
     m_filterWidgetAction = new QWidgetAction(this);
     m_filterWidgetAction->setDefaultWidget(m_filterWidget);
-
-    addAction(m_filterWidgetAction);
-    m_filterWidget->setFocusPolicy( Qt::NoFocus );
     m_filterWidgetAction->setVisible(false);
+    addAction(m_filterWidgetAction);
 
+    addSeparator();
     for (int i = 0; i < m_actions.count(); i++) {
-        if (i == 0)
-            addSeparator();
 
         if (i + 1 == m_actions.count()) {
             addMenu(m_helpmenu->menu())->setIcon(KIcon("help-contents"));
