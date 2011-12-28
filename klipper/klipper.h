@@ -173,7 +173,6 @@ private:
     bool m_bReplayActionInHistory :1;
     bool m_bUseGUIRegExpEditor    :1;
     bool m_bNoNullClipboard       :1;
-    bool m_bTearOffHandle         :1;
     bool m_bIgnoreSelection       :1;
     bool m_bSynchronize           :1;
     bool m_bSelectionTextOnly     :1;
