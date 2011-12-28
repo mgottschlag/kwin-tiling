@@ -98,13 +98,13 @@ KlipperPopup::KlipperPopup( History* history )
       m_filterWidgetAction( 0 ),
       m_nHistoryItems( 0 )
 {
-    KWindowInfo i = KWindowSystem::windowInfo( winId(), NET::WMGeometry );
-    QRect g = i.geometry();
-    QRect screen = KGlobalSettings::desktopGeometry(g.center());
-    int menu_height = ( screen.height() ) * 3/4;
-    int menu_width = ( screen.width() )  * 1/3;
+    KWindowInfo windowInfo = KWindowSystem::windowInfo( winId(), NET::WMGeometry );
+    QRect geometry = windowInfo.geometry();
+    QRect screen = KGlobalSettings::desktopGeometry(geometry.center());
+    int menuHeight = ( screen.height() ) * 3/4;
+    int menuWidth = ( screen.width() )  * 1/3;
 
-    m_popupProxy = new PopupProxy( this, menu_height, menu_width );
+    m_popupProxy = new PopupProxy( this, menuHeight, menuWidth );
 
     connect( this, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()) );
 }
