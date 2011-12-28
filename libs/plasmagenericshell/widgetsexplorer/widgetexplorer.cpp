@@ -184,6 +184,12 @@ void WidgetExplorerPrivate::finished()
 
     QObject::connect(declarativeWidget->rootObject(), SIGNAL(addAppletRequested(const QString &)), q, SLOT(addApplet(const QString &)));
     QObject::connect(declarativeWidget->rootObject(), SIGNAL(closeRequested()), q, SIGNAL(closeClicked()));
+
+    QList<QObject *> actionList;
+    foreach (QAction *action, q->actions()) {
+        actionList << action;
+    }
+    declarativeWidget->rootObject()->setProperty("extraActions", QVariant::fromValue(actionList));
 }
 
 void WidgetExplorerPrivate::setLocation(const Plasma::Location loc)
@@ -384,6 +390,13 @@ bool WidgetExplorer::event(QEvent *event)
         case QEvent::ActionAdded:
         case QEvent::ActionChanged:
         case QEvent::ActionRemoved:
+            if (d->declarativeWidget->rootObject()) {
+                QList<QObject *> actionList;
+                foreach (QAction *action, actions()) {
+                    actionList << action;
+                }
+                d->declarativeWidget->rootObject()->setProperty("extraActions", QVariant::fromValue(actionList));
+            }
             break;
         default:
             break;

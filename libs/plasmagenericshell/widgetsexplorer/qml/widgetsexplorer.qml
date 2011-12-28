@@ -28,6 +28,7 @@ Item {
     property int minimumHeight: 150
     signal addAppletRequested(string pluginName)
     signal closeRequested()
+    property variant extraActions
 
     PlasmaCore.Theme {
         id: theme
@@ -103,9 +104,16 @@ Item {
                 iconSource: "get-hot-new-stuff"
                 text: i18n("Get new widgets")
             }
-            PlasmaComponents.Button {
-                iconSource: "preferences-activities"
-                text: i18n("Activities")
+
+            Repeater {
+                model: extraActions.length
+                PlasmaComponents.Button {
+                    iconSource: extraActions[modelData].icon
+                    text: extraActions[modelData].text
+                    onClicked: {
+                        extraActions[modelData].trigger()
+                    }
+                }
             }
             PlasmaComponents.ToolButton {
                 iconSource: "window-close"
