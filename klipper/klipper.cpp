@@ -651,34 +651,24 @@ void Klipper::checkClipData( bool selectionMode )
 // debug code
 #ifdef NOISY_KLIPPER
     kDebug() << "Checking clip data";
-#endif
-#if 0
+
     kDebug() << "====== c h e c k C l i p D a t a ============================"
               << kBacktrace()
               << "====== c h e c k C l i p D a t a ============================"
               << endl;;
-#endif
-#if 0
+
+
     if ( sender() ) {
-        kDebug() << "sender=" << sender()->name();
+        kDebug() << "sender=" << sender()->objectName();
     } else {
         kDebug() << "no sender";
     }
-#endif
-#if 0
-    kDebug() << "\nselectionMode=" << selectionMode
-              << "\nowning (sel,cli)=(" << clip->ownsSelection() << "," << clip->ownsClipboard() << ")"
-              << "\ntext=" << clip->text( selectionMode ? QClipboard::Selection : QClipboard::Clipboard) << endl;
 
+    kDebug() << "\nselectionMode=" << selectionMode
+              << "\nowning (sel,cli)=(" << m_clip->ownsSelection() << "," << m_clip->ownsClipboard() << ")"
+              << "\ntext=" << m_clip->text( selectionMode ? QClipboard::Selection : QClipboard::Clipboard) << endl;
 #endif
-#if 0
-    const char *format;
-    int i = 0;
-    while ( (format = clip->data()->format( i++ )) )
-    {
-        qDebug( "    format: %s", format);
-    }
-#endif
+
     const QMimeData* data = m_clip->mimeData( selectionMode ? QClipboard::Selection : QClipboard::Clipboard );
     if ( !data ) {
         kWarning() << "No data in clipboard. This not not supposed to happen.";
