@@ -1046,32 +1046,39 @@ void Klipper::slotCyclePrev()
 
 QString Klipper::cycleText() const
 {
+    const int WIDTH_IN_PIXEL = 400;
+
     const HistoryItem* itemprev = m_history->prevInCycle();
     const HistoryItem* item = m_history->first();
     const HistoryItem* itemnext = m_history->nextInCycle();
+
     QFontMetrics font_metrics(m_history->popup()->fontMetrics());
-    QString rv("<table>");
+    QString result("<table>");
+
     if (itemprev) {
-        rv += "<tr><td>";
-        rv += i18n("up");
-        rv += "</td><td>";
-        rv += font_metrics.elidedText(Qt::escape(itemprev->text().simplified()), Qt::ElideMiddle, 400);
-        rv += "</td></tr>";
+        result += "<tr><td>";
+        result += i18n("up");
+        result += "</td><td>";
+        result += font_metrics.elidedText(Qt::escape(itemprev->text().simplified()), Qt::ElideMiddle, WIDTH_IN_PIXEL);
+        result += "</td></tr>";
     }
-    rv += "<tr><td>";
-    rv += i18n("current");
-    rv += "</td><td><b>";
-    rv += font_metrics.elidedText(Qt::escape(item->text().simplified()), Qt::ElideMiddle, 400);
-    rv += "</b></td></tr>";
+
+    result += "<tr><td>";
+    result += i18n("current");
+    result += "</td><td><b>";
+    result += font_metrics.elidedText(Qt::escape(item->text().simplified()), Qt::ElideMiddle, WIDTH_IN_PIXEL);
+    result += "</b></td></tr>";
+
     if (itemnext) {
-        rv += "<tr><td>";
-        rv += i18n("down");
-        rv += "</td><td>";
-        rv += font_metrics.elidedText(Qt::escape(itemnext->text().simplified()), Qt::ElideMiddle, 400);
-        rv += "</td></tr>";
+        result += "<tr><td>";
+        result += i18n("down");
+        result += "</td><td>";
+        result += font_metrics.elidedText(Qt::escape(itemnext->text().simplified()), Qt::ElideMiddle, WIDTH_IN_PIXEL);
+        result += "</td></tr>";
     }
-    rv += "</table>";
-    return rv;
+
+    result += "</table>";
+    return result;
 }
 
 #include "klipper.moc"
