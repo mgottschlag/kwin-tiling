@@ -37,6 +37,7 @@
 #include <kpluginloader.h>
 #include <klineedit.h>
 #include <KStandardDirs>
+#include <KWindowSystem>
 
 #include <plasma/applet.h>
 #include <plasma/corona.h>
@@ -47,6 +48,7 @@
 
 #include "kcategorizeditemsviewmodels_p.h"
 #include "plasmaappletitemmodel_p.h"
+#include "openwidgetassistant_p.h"
 
 //getting the user local
 //KGlobal::dirs()->localkdedir();
@@ -98,6 +100,7 @@ public:
     QHash<QString, int> runningApplets; // applet name => count
     //extra hash so we can look up the names of deleted applets
     QHash<Plasma::Applet *,QString> appletNames;
+    QWeakPointer<Plasma::OpenWidgetAssistant> openAssistant;
 
     PlasmaAppletItemModel itemModel;
     KCategorizedItemsViewModels::DefaultFilterModel filterModel;
@@ -182,8 +185,15 @@ void WidgetExplorerPrivate::finished()
         return;
     }
 
-    QObject::connect(declarativeWidget->rootObject(), SIGNAL(addAppletRequested(const QString &)), q, SLOT(addApplet(const QString &)));
-    QObject::connect(declarativeWidget->rootObject(), SIGNAL(closeRequested()), q, SIGNAL(closeClicked()));
+    QObject::connect(declarativeWidget->rootObject(), SIGNAL(addAppletRequested(const QString &)),
+                     q, SLOT(addApplet(const QString &)));
+    QObject::connect(declarativeWidget->rootObject(), SIGNAL(closeRequested()),
+                     q, SIGNAL(closeClicked()));
+
+    QObject::connect(declarativeWidget->rootObject(), SIGNAL(openWidgetFileRequested()),
+                     q, SLOT(openWidgetFile()));
+    QObject::connect(declarativeWidget->rootObject(), SIGNAL(downloadWidgetsRequested(QString)),
+                     q, SLOT(downloadWidgets(QString)));
 
     QList<QObject *> actionList;
     foreach (QAction *action, q->actions()) {
@@ -410,6 +420,69 @@ void WidgetExplorer::focusInEvent(QFocusEvent* event)
     Q_UNUSED(event);
 }
 
+void WidgetExplorer::downloadWidgets(const QString &type)
+{
+    Plasma::PackageStructure *installer = 0;
+
+    if (!type.isEmpty()) {
+        QString constraint = QString("'%1' == [X-KDE-PluginInfo-Name]").arg(type);
+        KService::List offers = KServiceTypeTrader::self()->query("Plasma/PackageStructure",
+                                                                  constraint);
+        if (offers.isEmpty()) {
+            kDebug() << "could not find requested PackageStructure plugin" << type;
+        } else {
+            KService::Ptr service = offers.first();
+            QString error;
+            installer = service->createInstance<Plasma::PackageStructure>(topLevelWidget(),
+                                                                          QVariantList(), &error);
+            if (installer) {
+                connect(installer, SIGNAL(newWidgetBrowserFinished()),
+                        installer, SLOT(deleteLater()));
+            } else {
+                kDebug() << "found, but could not load requested PackageStructure plugin" << type
+                         << "; reported error was" << error;
+            }
+        }
+    }
+
+    emit closeClicked();
+    if (installer) {
+        installer->createNewWidgetBrowser();
+    } else {
+        // we don't need to delete the default Applet::packageStructure as that
+        // belongs to the applet
+       Plasma::Applet::packageStructure()->createNewWidgetBrowser();
+        /**
+          for reference in a libplasma2 world, the above line equates to this:
+
+          KNS3::DownloadDialog *knsDialog = m_knsDialog.data();
+          if (!knsDialog) {
+          m_knsDialog = knsDialog = new KNS3::DownloadDialog("plasmoids.knsrc", parent);
+          connect(knsDialog, SIGNAL(accepted()), this, SIGNAL(newWidgetBrowserFinished()));
+          }
+
+          knsDialog->show();
+          knsDialog->raise();
+         */
+    }
+}
+
+void WidgetExplorer::openWidgetFile()
+{
+    emit closeClicked();
+
+    Plasma::OpenWidgetAssistant *assistant = d->openAssistant.data();
+    if (!assistant) {
+        assistant = new Plasma::OpenWidgetAssistant(0);
+        d->openAssistant = assistant;
+    }
+
+    KWindowSystem::setOnDesktop(assistant->winId(), KWindowSystem::currentDesktop());
+    assistant->setAttribute(Qt::WA_DeleteOnClose, true);
+    assistant->show();
+    assistant->raise();
+    assistant->setFocus();
+}
 
 } // namespace Plasma
 

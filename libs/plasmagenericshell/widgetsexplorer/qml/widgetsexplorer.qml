@@ -28,6 +28,8 @@ Item {
     property int minimumHeight: 150
     signal addAppletRequested(string pluginName)
     signal closeRequested()
+    signal openWidgetFileRequested()
+    signal downloadWidgetsRequested(string type)
     property variant extraActions
 
     PlasmaCore.Theme {
@@ -46,6 +48,24 @@ Item {
         }
     }
 
+    PlasmaComponents.ContextMenu {
+        id: getWidgetsDialog
+        visualParent: getWidgetsButton
+        //TODO: the various type downloads must be a model
+        PlasmaComponents.MenuItem {
+            icon: QIcon("applications-internet")
+            text: i18n("Download new Plasma widgets")
+            onTriggered: downloadWidgetsRequested("")
+        }
+        PlasmaComponents.MenuItem {
+            separator: true
+        }
+        PlasmaComponents.MenuItem {
+            icon: QIcon("package-x-generic")
+            text: i18n("Install widget from local file...")
+            onTriggered: openWidgetFileRequested()
+        }
+    }
 
     PlasmaCore.Dialog {
         id: tooltipDialog
@@ -101,8 +121,10 @@ Item {
             anchors.right: parent.right
             spacing: 4
             PlasmaComponents.Button {
+                id: getWidgetsButton
                 iconSource: "get-hot-new-stuff"
                 text: i18n("Get new widgets")
+                onClicked: getWidgetsDialog.open()
             }
 
             Repeater {

@@ -109,6 +109,8 @@ public Q_SLOTS:
      * Adds currently selected applets
      */
     void addApplet(const QString &pluginName);
+    void openWidgetFile();
+    void downloadWidgets(const QString &type);
 
 protected Q_SLOTS:
     void immutabilityChanged(Plasma::ImmutabilityType);
