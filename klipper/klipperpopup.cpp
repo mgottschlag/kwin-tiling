@@ -278,7 +278,7 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
             m_filterWidgetAction->setVisible(true);
 
         if (m_filterWidget->text() != lastString) {
-            slotHistoryChanged();
+            m_dirty = true;
             rebuild(m_filterWidget->text());
         }
 
