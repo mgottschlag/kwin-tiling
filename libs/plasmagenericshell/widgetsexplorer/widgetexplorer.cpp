@@ -191,10 +191,6 @@ void WidgetExplorerPrivate::finished()
     QObject::connect(declarativeWidget->rootObject(), SIGNAL(closeRequested()),
                      q, SIGNAL(closeClicked()));
 
-    QObject::connect(declarativeWidget->rootObject(), SIGNAL(openWidgetFileRequested()),
-                     q, SLOT(openWidgetFile()));
-    QObject::connect(declarativeWidget->rootObject(), SIGNAL(downloadWidgetsRequested(QString)),
-                     q, SLOT(downloadWidgets(QString)));
 
     QList<QObject *> actionList;
     foreach (QAction *action, q->actions()) {

@@ -28,8 +28,6 @@ Item {
     property int minimumHeight: 150
     signal addAppletRequested(string pluginName)
     signal closeRequested()
-    signal openWidgetFileRequested()
-    signal downloadWidgetsRequested(string type)
     property variant extraActions
     property variant getWidgetsActions
 
