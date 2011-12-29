@@ -17,8 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import Qt 4.7
-import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
+import QtQuick 1.1
 import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.plasma.core 0.1 as PlasmaCore
 
@@ -112,10 +111,11 @@ Item {
         height: categoryButton.height
         Row {
             spacing: 4
-            PlasmaWidgets.LineEdit {
+            PlasmaComponents.TextField {
                 width: list.width / Math.floor(list.width / 180)
-                height: categoryButton.height
+                clearButtonShown: true
                 onTextChanged: appletsModel.searchTerm = text
+                Component.onCompleted: forceActiveFocus()
             }
             PlasmaComponents.Button {
                 id: categoryButton
