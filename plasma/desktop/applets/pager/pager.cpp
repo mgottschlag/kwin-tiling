@@ -31,12 +31,13 @@
 #include <QTextDocument>
 #include <QPropertyAnimation>
 
+#include <KCModuleInfo>
+#include <KCModuleProxy>
 #include <KColorScheme>
 #include <KConfigDialog>
 #include <KGlobalSettings>
+#include <KIconLoader>
 #include <KSharedConfig>
-#include <KCModuleProxy>
-#include <KCModuleInfo>
 #include <KWindowSystem>
 #include <NETRootInfo>
 
@@ -1181,10 +1182,14 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 
                 painter->drawRect(rect);
 
-                int size = qMin(16, qMin(rect.width(), rect.height()));
-                if (size >= 12 && m_showWindowIcons) {
-                  painter->drawPixmap(rect.x() + (rect.width() - size) / 2, rect.y() + (rect.height() - size) / 2, size, size,
-                    KWindowSystem::icon(m_windowRects[i][j].first, size, size, true));
+                // Draw the window icons/thumbnails
+                // prefer to use the System Settings specified Small icon (usually 16x16)
+                int windowIconSize = qMin(KIconLoader::global()->currentSize(KIconLoader::Small), qMin(rect.width(), rect.height()));
+                if (windowIconSize >= 12 && m_showWindowIcons) {
+                    QPixmap windowIcon = QPixmap(KWindowSystem::icon(m_windowRects[i][j].first, windowIconSize, windowIconSize, true));
+                    int x = rect.x() + (rect.width() - windowIconSize) / 2;
+                    int y = rect.y() + (rect.height() - windowIconSize) / 2;
+                    painter->drawPixmap(x, y, windowIconSize, windowIconSize, windowIcon);
                 }
             }
         }
