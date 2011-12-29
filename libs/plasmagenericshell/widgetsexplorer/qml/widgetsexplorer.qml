@@ -40,31 +40,38 @@ Item {
     PlasmaComponents.ContextMenu {
         id: categoriesDialog
         visualParent: categoryButton
+    }
+    Repeater {
         model: filterModel
-        onTriggeredIndex: {
-            var item = filterModel.get(index)
+        delegate: PlasmaComponents.MenuItem {
+            text: display
+            separator: model["separator"]
+            onClicked: {
+                var item = filterModel.get(index)
 
             appletsModel.filterType = item.filterType
             appletsModel.filterQuery = item.filterData
+            }
+            Component.onCompleted: {
+                parent = categoriesDialog
+            }
         }
     }
 
     PlasmaComponents.ContextMenu {
         id: getWidgetsDialog
         visualParent: getWidgetsButton
-        //TODO: the various type downloads must be a model
-        PlasmaComponents.MenuItem {
-            icon: QIcon("applications-internet")
-            text: i18n("Download new Plasma widgets")
-            onTriggered: downloadWidgetsRequested("")
-        }
-        PlasmaComponents.MenuItem {
-            separator: true
-        }
-        PlasmaComponents.MenuItem {
-            icon: QIcon("package-x-generic")
-            text: i18n("Install widget from local file...")
-            onTriggered: openWidgetFileRequested()
+    }
+    Repeater {
+        model: getWidgetsActions
+        delegate: PlasmaComponents.MenuItem {
+            icon: modelData.icon
+            text: modelData.text
+            separator: modelData.separator
+            onClicked: modelData.trigger()
+            Component.onCompleted: {
+                parent = getWidgetsDialog
+            }
         }
     }
 
