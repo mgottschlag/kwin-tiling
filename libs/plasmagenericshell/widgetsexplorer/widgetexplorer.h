@@ -41,6 +41,17 @@ class Applet;
 class WidgetExplorerPrivate;
 class WidgetExplorerPrivate;
 
+//We need to access the separator property that is not exported by QAction
+class WidgetAction : public QAction
+{
+    Q_OBJECT
+    Q_PROPERTY(bool separator READ isSeparator WRITE setSeparator)
+
+public:
+    WidgetAction(QObject *parent = 0);
+    WidgetAction(const QIcon &icon, const QString &text, QObject *parent);
+};
+
 class PLASMAGENERICSHELL_EXPORT WidgetExplorer : public QGraphicsWidget
 {
 

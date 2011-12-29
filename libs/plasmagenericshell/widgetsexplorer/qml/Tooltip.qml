@@ -49,9 +49,13 @@ MouseArea {
     }
     Column {
         id: nameColumn
-        anchors.left: tooltipIconWidget.right
-        anchors.top: parent.top
-        anchors.right: parent.right
+        anchors {
+            left: tooltipIconWidget.right
+            leftMargin: 8
+            top: parent.top
+            right: parent.right
+        }
+
         Text {
             color: theme.textColor
             text: title

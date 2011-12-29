@@ -60,6 +60,16 @@ using namespace KCategorizedItemsViewModels;
 namespace Plasma
 {
 
+WidgetAction::WidgetAction(QObject *parent)
+    : QAction(parent)
+{
+}
+
+WidgetAction::WidgetAction(const QIcon &icon, const QString &text, QObject *parent)
+    : QAction(icon, text, parent)
+{
+}
+
 class WidgetExplorerPrivate
 {
 
@@ -218,7 +228,7 @@ void WidgetExplorerPrivate::populateWidgetsMenu()
     QSignalMapper *mapper = new QSignalMapper(q);
     QObject::connect(mapper, SIGNAL(mapped(QString)), q, SLOT(downloadWidgets(QString)));
 
-    QAction *action = new QAction(KIcon("applications-internet"),
+    WidgetAction *action = new WidgetAction(KIcon("applications-internet"),
                                   i18n("Download New Plasma Widgets"), q);
     QObject::connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
     mapper->setMapping(action, QString());
@@ -228,7 +238,7 @@ void WidgetExplorerPrivate::populateWidgetsMenu()
     foreach (const KService::Ptr &service, offers) {
         //kDebug() << service->property("X-Plasma-ProvidesWidgetBrowser");
         if (service->property("X-Plasma-ProvidesWidgetBrowser").toBool()) {
-            QAction *action = new QAction(KIcon("applications-internet"),
+            WidgetAction *action = new WidgetAction(KIcon("applications-internet"),
                                           i18nc("%1 is a type of widgets, as defined by "
                                                 "e.g. some plasma-packagestructure-*.desktop files",
                                                 "Download New %1", service->name()), q);
@@ -238,11 +248,11 @@ void WidgetExplorerPrivate::populateWidgetsMenu()
         }
     }
 
-    action = new QAction(q);
+    action = new WidgetAction(q);
     action->setSeparator(true);
     actionList << action;
 
-    action = new QAction(KIcon("package-x-generic"),
+    action = new WidgetAction(KIcon("package-x-generic"),
                          i18n("Install Widget From Local File..."), q);
     QObject::connect(action, SIGNAL(triggered(bool)), q, SLOT(openWidgetFile()));
     actionList << action;
