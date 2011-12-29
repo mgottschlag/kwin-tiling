@@ -76,13 +76,13 @@ private:
     /**
      * Contains the string shown if the menu is empty.
      */
-    QString m_qsEmpty;
+    QString m_textForEmptyHistory;
 
     /**
      * Contains the string shown if the search string has no
      * matches and the menu is not empty.
      */
-    QString m_qsNoMatch;
+    QString m_textForNoMatch;
 
     /**
      * The "document" (clipboard history)
@@ -92,7 +92,7 @@ private:
     /**
      * The help menu
      */
-    KHelpMenu* m_helpmenu;
+    KHelpMenu* m_helpMenu;
 
     /**
      * (unowned) actions to plug into the primary popup menu

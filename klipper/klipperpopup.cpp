@@ -89,10 +89,10 @@ protected:
 
 KlipperPopup::KlipperPopup( History* history )
     : m_dirty( true ),
-      m_qsEmpty( i18n( "<empty clipboard>" ) ),
-      m_qsNoMatch( i18n( "<no matches>" ) ),
+      m_textForEmptyHistory( i18n( "<empty clipboard>" ) ),
+      m_textForNoMatch( i18n( "<no matches>" ) ),
       m_history( history ),
-      m_helpmenu( new KHelpMenu( this, Klipper::aboutData(), false ) ),
+      m_helpMenu( new KHelpMenu( this, Klipper::aboutData(), false ) ),
       m_popupProxy( 0 ),
       m_filterWidget( 0 ),
       m_filterWidgetAction( 0 ),
@@ -149,7 +149,7 @@ void KlipperPopup::buildFromScratch() {
     for (int i = 0; i < m_actions.count(); i++) {
 
         if (i + 1 == m_actions.count()) {
-            addMenu(m_helpmenu->menu())->setIcon(KIcon("help-contents"));
+            addMenu(m_helpMenu->menu())->setIcon(KIcon("help-contents"));
             addSeparator();
         }
 
@@ -185,10 +185,10 @@ void KlipperPopup::rebuild( const QString& filter ) {
     m_nHistoryItems = m_popupProxy->buildParent( TOP_HISTORY_ITEM_INDEX, filterexp );
     if ( m_nHistoryItems == 0 ) {
         if ( m_history->empty() ) {
-            insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(m_qsEmpty, this));
+            insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(m_textForEmptyHistory, this));
         } else {
             palette.setColor( m_filterWidget->foregroundRole(), Qt::red );
-            insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(m_qsNoMatch, this));
+            insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(m_textForNoMatch, this));
         }
         m_nHistoryItems++;
     } else {
