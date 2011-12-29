@@ -67,9 +67,6 @@ private:
     void rebuild( const QString& filter = QString() );
     void buildFromScratch();
 
-    void insertSearchFilter();
-    void removeSearchFilter();
-
 protected:
      virtual void keyPressEvent( QKeyEvent* e );
 
