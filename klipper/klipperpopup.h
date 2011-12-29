@@ -122,11 +122,6 @@ private:
      */
     int m_nHistoryItems;
 
-Q_SIGNALS:
-    void clearHistory();
-    void configure();
-    void quit();
-
 };
 
 #endif
