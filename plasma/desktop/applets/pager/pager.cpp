@@ -58,6 +58,8 @@ const int FAST_UPDATE_DELAY = 100;
 const int UPDATE_DELAY = 500;
 const int DRAG_SWITCH_DELAY = 1000;
 const int MAXDESKTOPS = 20;
+// random(), find a less magic one if you can. -sreich
+const qreal MAX_TEXT_WIDTH = 800;
 
 DesktopRectangle::DesktopRectangle(QObject *parent)
     : QObject(parent),
@@ -1315,7 +1317,7 @@ void Pager::updateToolTip()
 {
     int hoverDesktopNumber = 0;
 
-    for (int i = 0; i < m_desktopCount; i++) {
+    for (int i = 0; i < m_desktopCount; ++i) {
         if (m_rects[i] == m_hoverRect) {
             hoverDesktopNumber = i + 1;
         }
@@ -1330,8 +1332,10 @@ void Pager::updateToolTip()
 
     foreach(const KWindowInfo &winInfo, m_windowInfo){
         if (winInfo.isOnDesktop(hoverDesktopNumber) && !windows.contains(winInfo.win())) {
+
             bool active = (winInfo.win() == KWindowSystem::activeWindow());
             if ((taskCounter < 4) || active){
+
                 QPixmap icon = KWindowSystem::icon(winInfo.win(), 16, 16, true);
                 if (icon.isNull()) {
                      subtext += "<br />&bull;" + Qt::escape(winInfo.visibleName());
@@ -1339,8 +1343,11 @@ void Pager::updateToolTip()
                     data.addResource(Plasma::ToolTipContent::ImageResource, QUrl("wicon://" + QString::number(taskCounter)), QVariant(icon));
                     subtext += "<br /><img src=\"wicon://" + QString::number(taskCounter) + "\"/>&nbsp;";
                 }
-                //TODO: elide text that is tooo long
-                subtext += (active ? "<u>" : "") + Qt::escape(winInfo.visibleName()).replace(' ', "&nbsp;") + (active ? "</u>" : "");
+
+                QFontMetricsF metrics(KGlobalSettings::taskbarFont());
+                const QString combinedString = (active ? "<u>" : "") + Qt::escape(winInfo.visibleName()).replace(' ', "&nbsp;") + (active ? "</u>" : "");
+                // elide text that is too long
+                subtext += metrics.elidedText(combinedString, Qt::ElideMiddle, MAX_TEXT_WIDTH, Qt::TextShowMnemonic);
 
                 displayedTaskCounter++;
                 windows.append(winInfo.win());
