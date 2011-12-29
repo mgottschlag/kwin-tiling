@@ -84,16 +84,26 @@ Item {
         onAppletDelegateChanged: {
             if (!appletDelegate) {
                 toolTipHideTimer.restart()
-                return
+                toolTipShowTimer.running = false
+            } else {
+                toolTipShowTimer.restart()
+                toolTipHideTimer.running = false
             }
-            var point = tooltipDialog.popupPosition(appletDelegate)
-            tooltipDialog.x = point.x
-            tooltipDialog.y = point.y
-            tooltipDialog.visible = true
         }
         mainItem: Tooltip { id: tooltipWidget }
         Behavior on x {
             NumberAnimation { duration: 250 }
+        }
+    }
+    Timer {
+        id: toolTipShowTimer
+        interval: 500
+        repeat: false
+        onTriggered: {
+            var point = tooltipDialog.popupPosition(tooltipDialog.appletDelegate)
+            tooltipDialog.x = point.x
+            tooltipDialog.y = point.y
+            tooltipDialog.visible = true
         }
     }
     Timer {
