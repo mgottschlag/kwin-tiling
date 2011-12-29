@@ -1335,8 +1335,10 @@ void Pager::updateToolTip()
 
             bool active = (winInfo.win() == KWindowSystem::activeWindow());
             if ((taskCounter < 4) || active){
-
-                QPixmap icon = KWindowSystem::icon(winInfo.win(), 16, 16, true);
+                // prefer to use the System Settings specified Small icon (usually 16x16)
+                // TODO: should we actually be using Small for this? or Panel, Toolbar, etc?
+                int windowIconSize = KIconLoader::global()->currentSize(KIconLoader::Small);
+                QPixmap icon = KWindowSystem::icon(winInfo.win(), windowIconSize, windowIconSize, true);
                 if (icon.isNull()) {
                      subtext += "<br />&bull;" + Qt::escape(winInfo.visibleName());
                 } else {
