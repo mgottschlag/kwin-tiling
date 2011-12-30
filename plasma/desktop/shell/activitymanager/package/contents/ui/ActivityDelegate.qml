@@ -207,7 +207,7 @@ PlasmaCore.FrameSvgItem {
         id: configurationComponent
         MouseArea {
             anchors.fill: parent
-            implicitWidth: iconButton.x + iconButton.width + theme.defaultFont.mSize.width * 12
+            implicitWidth: iconButton.x*3 + iconButton.width + theme.defaultFont.mSize.width * 12
             onClicked: delegateStack.pop()
             PlasmaComponents.Button {
                 id: iconButton
@@ -226,6 +226,7 @@ PlasmaCore.FrameSvgItem {
                     verticalCenter: parent.verticalCenter
                     right: parent.right
                     leftMargin: iconButton.x
+                    rightMargin: iconButton.x
                 }
                 spacing: 4
                 PlasmaComponents.TextField {
