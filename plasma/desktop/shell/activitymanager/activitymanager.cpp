@@ -325,7 +325,7 @@ QList<QVariant> ActivityManager::activityTypeActions()
                 actionDescription["separator"] = false;
                 actionDescription["pluginName"] = QString();
                 actionDescription["scriptFile"] = scriptFile;
-                actionDescription["startupapps"] = startupApps;
+                actionDescription["startupApps"] = startupApps;
 
                 sorted.insert(info.name(), actionDescription);
             }

@@ -82,7 +82,18 @@ Item {
             icon: QIcon(modelData.icon)
             text: modelData.text
             separator: modelData.separator
-            onClicked: activityManager.createActivity(modelData.pluginName)
+            onClicked: {
+                //is a plugin?
+                if (modelData.pluginName) {
+                    activityManager.createActivity(modelData.pluginName)
+                //is a script?
+                } else if (modelData.scriptFile) {
+                    activityManager.createActivityFromScript(modelData.scriptFile,  modelData.text, modelData.icon, modelData.startupApps)
+                //invoke ghns
+                } else {
+                    activityManager.downloadActivityScripts()
+                }
+            }
             Component.onCompleted: {
                 parent = activityTemplatesMenu
             }
