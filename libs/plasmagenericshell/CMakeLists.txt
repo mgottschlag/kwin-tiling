@@ -3,8 +3,6 @@ add_subdirectory(tests)
 set(appletbrowserdialog_SRCS
     widgetsexplorer/kcategorizeditemsviewmodels.cpp
     widgetsexplorer/plasmaappletitemmodel.cpp
-    widgetsexplorer/appleticon.cpp
-    widgetsexplorer/applettooltip.cpp
     widgetsexplorer/widgetexplorer.cpp
     widgetsexplorer/openwidgetassistant.cpp
 )
@@ -22,8 +20,6 @@ set(scripting_SRC
 
 set(plasmagenericshell_LIB_SRCS
     backgrounddialog.cpp
-    abstracticonlist.cpp
-    abstracticon.cpp
     mouseinputbutton.cpp
     mouseplugins.cpp
     mousepluginwidget.cpp

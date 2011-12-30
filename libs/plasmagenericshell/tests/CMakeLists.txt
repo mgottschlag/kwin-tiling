@@ -7,12 +7,8 @@ add_definitions(-DPLASMAGENERICSHELL_EXPORT="")
 set(appletexplorer_SRCS
    ../widgetsexplorer/kcategorizeditemsviewmodels.cpp
    ../widgetsexplorer/plasmaappletitemmodel.cpp
-   ../widgetsexplorer/appleticon.cpp
-   ../widgetsexplorer/applettooltip.cpp
    ../widgetsexplorer/widgetexplorer.cpp
    ../widgetsexplorer/openwidgetassistant.cpp
-   ../abstracticon.cpp
-   ../abstracticonlist.cpp
    main.cpp
    )
 kde4_add_executable(plasmaappletexplorer ${appletexplorer_SRCS})
