@@ -33,6 +33,7 @@
 #include <kstandardaction.h>
 #include <klineedit.h>
 #include <KStandardDirs>
+#include <KServiceTypeTrader>
 
 #include <plasma/applet.h>
 #include <plasma/corona.h>
@@ -46,6 +47,9 @@
 #include "filterbar.h"
 #include "kidenticongenerator.h"
 #include "plasmaapp.h"
+
+#include <scripting/layouttemplatepackagestructure.h>
+#include "scripting/desktopscriptengine.h"
 
 class ActivityManagerPrivate
 {
@@ -269,6 +273,7 @@ QList<QVariant> ActivityManager::activityTypeActions()
 
     QMap<QString, QVariantHash> sorted; //qmap sorts alphabetically
 
+    //regular plugins
     KPluginInfo::List plugins = Plasma::Containment::listContainmentsOfType("desktop");
     foreach (const KPluginInfo& info, plugins) {
         if (info.property("NoDisplay").toBool()) {
@@ -285,8 +290,53 @@ QList<QVariant> ActivityManager::activityTypeActions()
         }
     }
 
+    //templates
+    const QString constraint = QString("[X-Plasma-Shell] == '%1' and 'desktop' ~in [X-Plasma-ContainmentCategories]")
+                                      .arg(KGlobal::mainComponent().componentName());
+    KService::List templates = KServiceTypeTrader::self()->query("Plasma/LayoutTemplate", constraint);
+    foreach (const KService::Ptr &service, templates) {
+        KPluginInfo info(service);
+        Plasma::PackageStructure::Ptr structure(new WorkspaceScripting::LayoutTemplatePackageStructure);
+        const QString path = KStandardDirs::locate("data", structure->defaultPackageRoot() + '/' + info.pluginName() + '/');
+        if (!path.isEmpty()) {
+            Plasma::Package package(path, structure);
+            const QString scriptFile = package.filePath("mainscript");
+            const QStringList startupApps = service->property("X-Plasma-ContainmentLayout-ExecuteOnCreation", QVariant::StringList).toStringList();
+
+            if (!scriptFile.isEmpty() || !startupApps.isEmpty()) {
+                QVariantHash actionDescription;
+
+                actionDescription["icon"] = info.icon();
+                actionDescription["text"] = info.name();
+                actionDescription["separator"] = false;
+                actionDescription["pluginName"] = QString();
+                actionDescription["scriptFile"] = scriptFile;
+                actionDescription["startupapps"] = startupApps;
+
+                sorted.insert(info.name(), actionDescription);
+            }
+        }
+    }
+
     //set up sorted menu
     foreach (QVariantHash actionDescription, sorted) {
+        actions << actionDescription;
+    }
+
+    //separator
+    {
+        QVariantHash actionDescription;
+        actionDescription["separator"] = true;
+        actions << actionDescription;
+    }
+
+    //ghns
+    //FIXME
+    {
+        QVariantHash actionDescription;
+        actionDescription["icon"] = "get-hot-new-stuff";
+        actionDescription["text"] = i18n("Get New Templates...");
+        actionDescription["separator"] = false;
         actions << actionDescription;
     }
 
