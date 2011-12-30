@@ -60,8 +60,7 @@ class ActivityManagerPrivate
 public:
     ActivityManagerPrivate(ActivityManager *w)
         : q(w),
-          containment(0),
-          iconSize(16) //FIXME bad!
+          containment(0)
     {
     }
 
@@ -72,23 +71,11 @@ public:
     Qt::Orientation orientation;
     Plasma::Location location;
     ActivityManager *q;
-    Plasma::ToolButton *close;
     Plasma::Containment *containment;
     Plasma::DeclarativeWidget *declarativeWidget;
     Plasma::Package *package;
 
-    /**
-     * Widget that lists the applets
-     */
-    ActivityList *activityList;
-
-    /**
-     * Widget that contains the search and categories filters
-     */
-    FilterBar *filteringWidget;
-    QGraphicsLinearLayout *filteringLayout;
     QGraphicsLinearLayout *mainLayout;
-    int iconSize;
 };
 
 void ActivityManagerPrivate::init(Plasma::Location loc)
@@ -104,12 +91,7 @@ void ActivityManagerPrivate::init(Plasma::Location loc)
     mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
-    filteringLayout = new QGraphicsLinearLayout(Qt::Horizontal);
-    filteringWidget = new FilterBar(orientation, q);
 
-    activityList = new ActivityList(loc);
-    close = new Plasma::ToolButton;
-    close->setIcon(KIcon("dialog-close"));
 
     Plasma::PackageStructure::Ptr structure = Plasma::PackageStructure::load("Plasma/Generic");
     package = new Plasma::Package(QString(), "org.kde.desktop.activitymanager", structure);
@@ -126,32 +108,6 @@ void ActivityManagerPrivate::init(Plasma::Location loc)
             ctxt->setContextProperty("activityManager", q);
             //QObject::connect(declarativeWidget, SIGNAL(finished()), q, SLOT(finished()));
         }
-    }
-
-    //connect
-    QObject::connect(filteringWidget, SIGNAL(searchTermChanged(QString)), activityList, SLOT(searchTermChanged(QString)));
-    QObject::connect(filteringWidget, SIGNAL(addWidgetsRequested()), q, SIGNAL(addWidgetsRequested()));
-    QObject::connect(close, SIGNAL(clicked()), q, SIGNAL(closeClicked()));
-
-    //adding to layout
-    if (orientation == Qt::Horizontal) {
-        filteringLayout->addItem(filteringWidget);
-    } else {
-        mainLayout->addItem(filteringWidget);
-    }
-
-    mainLayout->addItem(filteringLayout);
-    mainLayout->addItem(activityList);
-    activityList->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mainLayout->setAlignment(activityList, Qt::AlignTop | Qt::AlignHCenter);
-
-    if (orientation == Qt::Horizontal) {
-        filteringLayout->addItem(close);
-        filteringLayout->setAlignment(close, Qt::AlignVCenter | Qt::AlignHCenter);
-    } else {
-        mainLayout->setAlignment(filteringWidget, Qt::AlignTop | Qt::AlignHCenter);
-        mainLayout->setStretchFactor(activityList, 10);
-        mainLayout->addItem(close);
     }
 
     q->setLayout(mainLayout);
@@ -171,24 +127,6 @@ void ActivityManagerPrivate::setLocation(Plasma::Location loc)
     }
 
     location = loc;
-//FIXME bet I could make this more efficient
-    orientation = orient;
-    filteringWidget->setOrientation(orientation);
-    activityList->setLocation(containment->location());
-    if (orientation == Qt::Horizontal) {
-        mainLayout->removeItem(filteringWidget);
-        mainLayout->removeItem(close);
-        filteringLayout->addItem(filteringWidget);
-        filteringLayout->addItem(close);
-        filteringLayout->setAlignment(close, Qt::AlignVCenter | Qt::AlignHCenter);
-    } else {
-        filteringLayout->removeItem(filteringWidget);
-        filteringLayout->removeItem(close);
-        mainLayout->insertItem(0, filteringWidget);
-        mainLayout->addItem(close);
-        mainLayout->setAlignment(filteringWidget, Qt::AlignTop | Qt::AlignHCenter);
-        mainLayout->setStretchFactor(activityList, 10);
-    }
 }
 
 void ActivityManagerPrivate::containmentDestroyed()
@@ -226,17 +164,6 @@ void ActivityManager::setLocation(Plasma::Location loc)
 Plasma::Location ActivityManager::location()
 {
     return d->location;
-}
-
-void ActivityManager::setIconSize(int size)
-{
-    d->activityList->setIconSize(size);
-    adjustSize();
-}
-
-int ActivityManager::iconSize() const
-{
-    return d->activityList->iconSize();
 }
 
 QPixmap ActivityManager::pixmapForActivity(const QString &activityId)
@@ -370,13 +297,6 @@ QString ActivityManager::chooseIcon() const
     QString icon = dialog->openDialog();
     dialog->deleteLater();
     return icon;
-}
-
-void ActivityManager::focusInEvent(QFocusEvent* event)
-{
-    Q_UNUSED(event);
-    qDebug() << "ActivityManager::focusInEvent()";
-    QTimer::singleShot(300, d->filteringWidget, SLOT(setFocus())); 
 }
 
 #include "activitymanager.moc"

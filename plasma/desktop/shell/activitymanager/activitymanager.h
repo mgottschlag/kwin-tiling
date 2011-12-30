@@ -58,17 +58,6 @@ public:
      */
     Plasma::Location location();
 
-    //FIXME what logic does this iconsize thing follow?
-    /**
-     * Sets the icon size
-     */
-    void setIconSize(int size);
-
-    /**
-     * @return the icon size
-     */
-    int iconSize() const;
-
     QList<QVariant> activityTypeActions();
 
     Q_INVOKABLE QPixmap pixmapForActivity(const QString &activityId);
@@ -83,9 +72,6 @@ Q_SIGNALS:
     void closeClicked();
     void addWidgetsRequested();
     void activityTypeActionsChanged();
-
-protected:
-    void focusInEvent(QFocusEvent *event);
 
 private:
     Q_PRIVATE_SLOT(d, void containmentDestroyed())

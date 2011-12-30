@@ -438,8 +438,6 @@ void ControllerWindow::showActivityManager()
             m_activityManager->resize(m_activityManager->size().width(), height());
         }
 
-        m_activityManager->setIconSize(KIconLoader::SizeHuge);
-
         setGraphicsWidget(m_activityManager);
 
         connect(m_activityManager, SIGNAL(addWidgetsRequested()), this, SLOT(showWidgetExplorer()));
