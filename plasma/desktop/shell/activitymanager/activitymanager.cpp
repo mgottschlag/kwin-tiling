@@ -21,33 +21,21 @@
 
 #include "activitymanager.h"
 
+#include <QGraphicsLinearLayout>
 #include <QDeclarativeContext>
 #include <QDeclarativeEngine>
 #include <QDeclarativeComponent>
 
-#include <kaction.h>
-#include <kconfig.h>
-#include <kconfiggroup.h>
-#include <kmenu.h>
-#include <kpushbutton.h>
-#include <kstandardaction.h>
-#include <klineedit.h>
 #include <KStandardDirs>
 #include <KServiceTypeTrader>
 #include <knewstuff3/downloaddialog.h>
 #include <KIconDialog>
 #include <KWindowSystem>
 
-#include <plasma/applet.h>
-#include <plasma/corona.h>
 #include <plasma/containment.h>
 #include <plasma/package.h>
-#include <plasma/widgets/toolbutton.h>
-#include <plasma/widgets/lineedit.h>
 #include <plasma/widgets/declarativewidget.h>
 
-#include "activitylist.h"
-#include "filterbar.h"
 #include "kidenticongenerator.h"
 #include "plasmaapp.h"
 
@@ -106,7 +94,6 @@ void ActivityManagerPrivate::init(Plasma::Location loc)
         QDeclarativeContext *ctxt = declarativeWidget->engine()->rootContext();
         if (ctxt) {
             ctxt->setContextProperty("activityManager", q);
-            //QObject::connect(declarativeWidget, SIGNAL(finished()), q, SLOT(finished()));
         }
     }
 
