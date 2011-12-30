@@ -171,19 +171,6 @@ Item {
         snapMode: ListView.SnapToItem
         model: appletsModel
 
-        onContentXChanged: {
-            if (!scrollBar.moving) {
-                scrollBar.value = contentX/10
-            }
-        }
-
-        onContentWidthChanged: {
-            if (!scrollBar.moving) {
-                scrollBar.minimum = 0
-                scrollBar.maximum = (contentWidth - width)/10
-            }
-        }
-
         delegate: AppletDelegate {}
     }
     PlasmaComponents.ScrollBar {
