@@ -70,9 +70,13 @@ Item {
 
     Item {
         id: topBar
-        anchors.top: parent.top
-        anchors.left:parent.left
-        anchors.right: parent.right
+        anchors {
+            top: parent.top
+            left:parent.left
+            right: parent.right
+
+            margins: 4
+        }
         height: filterField.height
 
         PlasmaComponents.TextField {
@@ -103,7 +107,6 @@ Item {
     }
     ListView {
         id: list
-        anchors.topMargin: 4
         anchors.top: topBar.bottom
         anchors.left:parent.left
         anchors.right: parent.right
@@ -117,9 +120,13 @@ Item {
             }
             filterRole: "Name"
             filterRegExp: ".*"+filterField.text+".*"
-         }
+        }
 
         delegate: ActivityDelegate {}
+        header: Item {
+            width: 4
+            height: 4
+        }
     }
     PlasmaComponents.ScrollBar {
         id: scrollBar
