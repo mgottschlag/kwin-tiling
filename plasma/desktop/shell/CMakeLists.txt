@@ -7,11 +7,7 @@ include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs
 add_subdirectory(configupdates)
 
 set(activitymanager_SRCS
-    activitymanager/activitycontrols.cpp
     activitymanager/activitymanager.cpp
-    activitymanager/activityicon.cpp
-    activitymanager/activitylist.cpp
-    activitymanager/filterbar.cpp
     activitymanager/kidenticongenerator.cpp
 )
 
