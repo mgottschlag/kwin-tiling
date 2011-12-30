@@ -42,6 +42,7 @@
 #include <plasma/applet.h>
 #include <plasma/corona.h>
 #include <plasma/containment.h>
+#include <plasma/package.h>
 #include <plasma/widgets/toolbutton.h>
 #include <plasma/widgets/lineedit.h>
 #include <Plasma/DeclarativeWidget>
@@ -112,6 +113,7 @@ public:
     //extra hash so we can look up the names of deleted applets
     QHash<Plasma::Applet *,QString> appletNames;
     QWeakPointer<Plasma::OpenWidgetAssistant> openAssistant;
+    Plasma::Package *package;
 
     PlasmaAppletItemModel itemModel;
     KCategorizedItemsViewModels::DefaultFilterModel filterModel;
@@ -169,9 +171,12 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
 
     initRunningApplets();
 
+    Plasma::PackageStructure::Ptr structure = Plasma::PackageStructure::load("Plasma/Generic");
+    package = new Plasma::Package(QString(), "org.kde.desktop.widgetexplorer", structure);
+
     declarativeWidget = new Plasma::DeclarativeWidget(q);
     declarativeWidget->setInitializationDelayed(true);
-    declarativeWidget->setQmlPath(KStandardDirs::locate("data", "plasma/widgetsexplorer/widgetsexplorer.qml"));
+    declarativeWidget->setQmlPath(package->filePath("mainscript"));
     mainLayout->addItem(declarativeWidget);
 
     if (declarativeWidget->engine()) {

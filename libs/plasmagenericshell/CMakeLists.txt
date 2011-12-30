@@ -46,7 +46,7 @@ endif(UNIX AND Q_WS_X11)
 set_target_properties(plasmagenericshell PROPERTIES VERSION ${GENERIC_LIB_VERSION}
 SOVERSION ${GENERIC_LIB_SOVERSION} )
 
-install(DIRECTORY widgetsexplorer/qml/ DESTINATION ${DATA_INSTALL_DIR}/plasma/widgetsexplorer)
+install(DIRECTORY widgetsexplorer/package/ DESTINATION ${DATA_INSTALL_DIR}/plasma/packages/org.kde.desktop.widgetexplorer)
 
 install(TARGETS plasmagenericshell EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
 INSTALL(FILES plasma-layout-template.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR})

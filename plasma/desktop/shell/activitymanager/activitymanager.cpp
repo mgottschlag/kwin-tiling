@@ -28,12 +28,14 @@
 #include <kpushbutton.h>
 #include <kstandardaction.h>
 #include <klineedit.h>
+#include <KStandardDirs>
 
 #include <plasma/applet.h>
 #include <plasma/corona.h>
 #include <plasma/containment.h>
 #include <plasma/widgets/toolbutton.h>
 #include <plasma/widgets/lineedit.h>
+#include <plasma/widgets/declarativewidget.h>
 
 #include "activitylist.h"
 #include "filterbar.h"
@@ -59,6 +61,7 @@ public:
     ActivityManager *q;
     Plasma::ToolButton *close;
     Plasma::Containment *containment;
+    Plasma::DeclarativeWidget *declarativeWidget;
 
     /**
      * Widget that lists the applets
