@@ -250,11 +250,17 @@ PlasmaCore.FrameSvgItem {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: i18n("Apply")
                     onClicked: {
-                        /*var activityId = model["DataEngineSource"]
+                        var activityId = model["DataEngineSource"]
                         var service = activitySource.serviceForSource(activityId)
-                        var operation = service.operationDescription("remove")
-                        operation["Id"] = activityId
-                        service.startOperationCall(operation)*/
+
+                        var operation = service.operationDescription("setName")
+                        operation["Name"] = activityNameField.text
+                        service.startOperationCall(operation)
+
+                        var operation = service.operationDescription("setIcon")
+                        operation["Icon"] = iconButton.iconSource
+                        service.startOperationCall(operation)
+
                         delegateStack.pop()
                     }
                     anchors {
