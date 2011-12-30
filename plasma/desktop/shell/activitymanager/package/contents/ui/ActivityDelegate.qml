@@ -22,6 +22,7 @@ import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.draganddrop 1.0
+import org.kde.qtextracomponents 0.1
 
 PlasmaCore.FrameSvgItem {
     id: background
@@ -80,8 +81,8 @@ PlasmaCore.FrameSvgItem {
         }
     }
 
-    PlasmaWidgets.IconWidget {
-        id:iconWidget
+    QIconItem {
+        id: iconWidget
         anchors {
             left: parent.left
             top: parent.top
@@ -90,7 +91,8 @@ PlasmaCore.FrameSvgItem {
             topMargin: background.margins.top
             bottomMargin: background.margins.bottom
         }
-        width: Math.min(64, height)
+        width: theme.hugeIconSize
+        height: width
         icon: QIcon(Icon)
     }
     Column {
@@ -114,9 +116,13 @@ PlasmaCore.FrameSvgItem {
             wrapMode: Text.Wrap
         }
         Row {
-            visible: model["State"] == "Running"
+            id: buttonsRow
+            enabled: model["State"] == "Running"
+            opacity: enabled ? 1 : 0.2
             anchors.horizontalCenter: parent.horizontalCenter
+
             PlasmaComponents.ToolButton {
+                id: configureButton
                 iconSource: "configure"
             }
             PlasmaComponents.ToolButton {

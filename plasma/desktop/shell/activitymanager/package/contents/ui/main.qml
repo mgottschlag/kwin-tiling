@@ -24,7 +24,8 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 Item {
     id: main
     property int minimumWidth: 200
-    property int minimumHeight: 150
+    property int minimumHeight: 125
+
     signal addAppletRequested(string pluginName)
     signal closeRequested()
     property variant extraActions
