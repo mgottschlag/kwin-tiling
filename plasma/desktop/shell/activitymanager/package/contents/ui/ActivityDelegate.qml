@@ -20,6 +20,7 @@
 import Qt 4.7
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 import org.kde.plasma.core 0.1 as PlasmaCore
+import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.draganddrop 1.0
 
 PlasmaCore.FrameSvgItem {
@@ -69,6 +70,15 @@ PlasmaCore.FrameSvgItem {
         NumberAnimation { duration: 250 }
     }
 
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            var activityId = model["DataEngineSource"]
+            var service = activitySource.serviceForSource(activityId)
+            var operation = service.operationDescription("setCurrent")
+            service.startOperationCall(operation)
+        }
+    }
 
     PlasmaWidgets.IconWidget {
         id:iconWidget
@@ -86,34 +96,38 @@ PlasmaCore.FrameSvgItem {
     Column {
         anchors {
             left: iconWidget.right
-            top: parent.top
             right: parent.right
-            bottom: parent.bottom
+            verticalCenter: parent.verticalCenter
 
             leftMargin: background.margins.left
-            topMargin: background.margins.top
             rightMargin: background.margins.right
-            bottomMargin: background.margins.bottom
         }
-        Text {
+        PlasmaComponents.Label {
             id: titleText
             color: theme.textColor
             text: Name
             anchors.left: parent.left
             anchors.right: parent.right
+            horizontalAlignment: Text.AlignHCenter
             height: paintedHeight
             clip: true
             wrapMode: Text.Wrap
         }
-    }
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            var activityId = model["DataEngineSource"]
-            print(activityId)
-            var service = activitySource.serviceForSource(activityId)
-            var operation = service.operationDescription("setCurrent")
-            service.startOperationCall(operation)
+        Row {
+            visible: model["State"] == "Running"
+            anchors.horizontalCenter: parent.horizontalCenter
+            PlasmaComponents.ToolButton {
+                iconSource: "configure"
+            }
+            PlasmaComponents.ToolButton {
+                iconSource: "media-playback-stop"
+                onClicked: {
+                    var activityId = model["DataEngineSource"]
+                    var service = activitySource.serviceForSource(activityId)
+                    var operation = service.operationDescription("stop")
+                    service.startOperationCall(operation)
+                }
+            }
         }
     }
 }
