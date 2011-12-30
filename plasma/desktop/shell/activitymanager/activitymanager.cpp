@@ -263,35 +263,6 @@ void ActivityManager::setContainment(Plasma::Containment *containment)
     }
 }
 
-/*QList<QObject *> ActivityManager::activityTypeActions()
-{
-    QList<QObject *> actions;
-
-    QMap<QString, QAction*> sorted; //qmap sorts alphabetically
-
-    KPluginInfo::List plugins = Plasma::Containment::listContainmentsOfType("desktop");
-    foreach (const KPluginInfo& info, plugins) {
-        if (info.property("NoDisplay").toBool()) {
-            continue;
-        }
-        QAction *action;
-        if (info.pluginName() == "desktop") { //suggest this one for newbies
-            actions << new QAction(KIcon(info.icon()), i18n("Empty Desktop"), this);
-        } else {
-            action = new QAction(KIcon(info.icon()), info.name(), this);
-            sorted.insert(info.name(), action);
-        }
-        action->setData(info.pluginName());
-    }
-
-    //set up sorted menu
-    foreach (QAction *action, sorted) {
-        actions << action;
-    }
-
-    return actions;
-}*/
-
 QList<QVariant> ActivityManager::activityTypeActions()
 {
     QList<QVariant> actions;
