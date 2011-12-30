@@ -66,6 +66,7 @@ Item {
         PlasmaComponents.MenuItem {
             icon: QIcon("edit-copy")
             text: i18n("Clone current activity")
+            onClicked: activityManager.cloneCurrentActivity()
         }
     }
 

@@ -45,6 +45,7 @@
 #include "activitylist.h"
 #include "filterbar.h"
 #include "kidenticongenerator.h"
+#include "plasmaapp.h"
 
 class ActivityManagerPrivate
 {
@@ -234,6 +235,11 @@ int ActivityManager::iconSize() const
 QPixmap ActivityManager::pixmapForActivity(const QString &activityId)
 {
     return KIdenticonGenerator::self()->generatePixmap(KIconLoader::SizeHuge, activityId);
+}
+
+void ActivityManager::cloneCurrentActivity()
+{
+    PlasmaApp::self()->cloneCurrentActivity();
 }
 
 void ActivityManager::setContainment(Plasma::Containment *containment)
