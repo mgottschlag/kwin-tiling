@@ -178,7 +178,6 @@ PlasmaCore.FrameSvgItem {
                         left: parent.left
                         right: parent.right
                     }
-                    height: paintedHeight
                     horizontalAlignment: Text.AlignHCenter
                     text: i18n("Remove activity %1?", Name)
                 }
@@ -218,6 +217,13 @@ PlasmaCore.FrameSvgItem {
                 }
                 x: y
                 width: height
+                QPixmapItem {
+                    anchors.centerIn: parent
+                    width: theme.largeIconSize
+                    height: width
+                    smooth: true
+                    pixmap: Icon ? undefined : activityManager.pixmapForActivity(model["DataEngineSource"])
+                }
             }
             Column {
                 id: configurationLayout
