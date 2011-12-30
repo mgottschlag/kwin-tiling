@@ -83,6 +83,7 @@ Item {
             id: filterField
             width: list.width / Math.floor(list.width / 180)
             clearButtonShown: true
+            placeholderText: i18n("Enter search term...")
             Component.onCompleted: forceActiveFocus()
         }
 

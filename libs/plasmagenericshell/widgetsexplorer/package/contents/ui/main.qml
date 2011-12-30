@@ -124,6 +124,7 @@ Item {
             PlasmaComponents.TextField {
                 width: list.width / Math.floor(list.width / 180)
                 clearButtonShown: true
+                placeholderText: i18n("Enter search term...")
                 onTextChanged: appletsModel.searchTerm = text
                 Component.onCompleted: forceActiveFocus()
             }
