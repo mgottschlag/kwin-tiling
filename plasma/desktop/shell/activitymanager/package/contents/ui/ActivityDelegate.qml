@@ -25,7 +25,7 @@ import org.kde.qtextracomponents 0.1
 
 PlasmaCore.FrameSvgItem {
     id: background
-    width: list.width / Math.floor(list.width / 180)
+    width: Math.max((delegateStack.currentPage ? delegateStack.currentPage.implicitWidth : 0) + margins.left+margins.right, (list.width / Math.floor(list.width / 180)))
     height: list.height
     imagePath: "widgets/tasks"
     prefix: Current? "focus" : "normal"
@@ -62,87 +62,136 @@ PlasmaCore.FrameSvgItem {
     Behavior on x {
         NumberAnimation { duration: 250 }
     }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            var activityId = model["DataEngineSource"]
-            var service = activitySource.serviceForSource(activityId)
-            var operation = service.operationDescription("setCurrent")
-            service.startOperationCall(operation)
-        }
+    Behavior on width {
+        NumberAnimation { duration: 250 }
     }
 
-    QIconItem {
-        id: iconWidget
+    PlasmaComponents.PageStack {
+        id: delegateStack
         anchors {
-            left: parent.left
-            top: parent.top
-            bottom: parent.bottom
+            fill: parent
             leftMargin: background.margins.left
             topMargin: background.margins.top
+            rightMargin: background.margins.right
             bottomMargin: background.margins.bottom
         }
-        width: theme.hugeIconSize
-        height: width
-        icon: QIcon(Icon)
+        clip: true
+        initialPage: iconComponent
     }
-    QPixmapItem {
-        anchors.fill: iconWidget
-        pixmap: Icon ? undefined : activityManager.pixmapForActivity(model["DataEngineSource"])
-    }
-    QIconItem {
-        width: theme.mediumIconSize
-        height: width
-        anchors.centerIn: iconWidget
-        icon: QIcon("media-playback-start")
-        visible: model["State"] != "Running"
-    }
-    Column {
-        anchors {
-            left: iconWidget.right
-            right: parent.right
-            verticalCenter: parent.verticalCenter
 
-            leftMargin: background.margins.left
-            rightMargin: background.margins.right
-        }
-        PlasmaComponents.Label {
-            id: titleText
-            color: theme.textColor
-            text: Name
-            anchors.left: parent.left
-            anchors.right: parent.right
-            horizontalAlignment: Text.AlignHCenter
-            height: paintedHeight
-            clip: true
-            wrapMode: Text.Wrap
-        }
-        Row {
-            id: buttonsRow
-            visible: model["State"] == "Running"
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            PlasmaComponents.ToolButton {
-                id: configureButton
-                iconSource: "configure"
-            }
-            PlasmaComponents.ToolButton {
-                iconSource: "media-playback-stop"
+    Component {
+        id: iconComponent
+        Item {
+            anchors.fill: parent
+            MouseArea {
+                anchors.fill: parent
                 onClicked: {
                     var activityId = model["DataEngineSource"]
                     var service = activitySource.serviceForSource(activityId)
-                    var operation = service.operationDescription("stop")
+                    var operation = service.operationDescription("setCurrent")
                     service.startOperationCall(operation)
                 }
             }
+
+            QIconItem {
+                id: iconWidget
+                anchors.verticalCenter: parent.verticalCenter
+                x: y
+                width: theme.hugeIconSize
+                height: width
+                icon: QIcon(Icon)
+            }
+            QPixmapItem {
+                anchors.fill: iconWidget
+                pixmap: Icon ? undefined : activityManager.pixmapForActivity(model["DataEngineSource"])
+            }
+            QIconItem {
+                width: theme.mediumIconSize
+                height: width
+                anchors.centerIn: iconWidget
+                icon: QIcon("media-playback-start")
+                visible: model["State"] != "Running"
+            }
+            Column {
+                anchors {
+                    left: iconWidget.right
+                    right: parent.right
+                    verticalCenter: parent.verticalCenter
+
+                    leftMargin: background.margins.left
+                }
+                PlasmaComponents.Label {
+                    id: titleText
+                    color: theme.textColor
+                    text: Name
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    horizontalAlignment: Text.AlignHCenter
+                    height: paintedHeight
+                    clip: true
+                    wrapMode: Text.Wrap
+                }
+                Row {
+                    id: buttonsRow
+                    visible: model["State"] == "Running"
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    PlasmaComponents.ToolButton {
+                        id: configureButton
+                        iconSource: "configure"
+                    }
+                    PlasmaComponents.ToolButton {
+                        iconSource: "media-playback-stop"
+                        onClicked: {
+                            var activityId = model["DataEngineSource"]
+                            var service = activitySource.serviceForSource(activityId)
+                            var operation = service.operationDescription("stop")
+                            service.startOperationCall(operation)
+                        }
+                    }
+                }
+                PlasmaComponents.ToolButton {
+                    visible: model["State"] != "Running"
+                    iconSource: "edit-delete"
+                    text: i18n("Delete")
+                    width: Math.min(implicitWidth, parent.width)
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    onClicked: delegateStack.push(confirmationComponent)
+                }
+            }
         }
-        PlasmaComponents.ToolButton {
-            visible: model["State"] != "Running"
-            iconSource: "edit-delete"
-            text: i18n("Delete")
-            width: Math.min(implicitWidth, parent.width)
-            anchors.horizontalCenter: parent.horizontalCenter
+    }
+
+    Component {
+        id: confirmationComponent
+        MouseArea {
+            anchors.fill: parent
+            implicitWidth: Math.max(parent.width, confirmationLabel.paintedWidth)
+            onClicked: delegateStack.pop()
+            Column {
+                anchors.fill: parent
+                spacing: 4
+                PlasmaComponents.Label {
+                    id: confirmationLabel
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+                    height: paintedHeight
+                    horizontalAlignment: Text.AlignHCenter
+                    text: i18n("Remove activity %1?", Name)
+                }
+
+                PlasmaComponents.Button {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: i18n("Remove")
+                }
+                PlasmaComponents.Button {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: i18n("Cancel")
+                    onClicked: delegateStack.pop()
+                }
+            }
         }
     }
 }
