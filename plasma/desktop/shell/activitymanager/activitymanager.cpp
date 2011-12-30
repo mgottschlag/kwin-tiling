@@ -21,6 +21,10 @@
 
 #include "activitymanager.h"
 
+#include <QDeclarativeContext>
+#include <QDeclarativeEngine>
+#include <QDeclarativeComponent>
+
 #include <kaction.h>
 #include <kconfig.h>
 #include <kconfiggroup.h>
@@ -106,6 +110,15 @@ void ActivityManagerPrivate::init(Plasma::Location loc)
     declarativeWidget->setInitializationDelayed(true);
     declarativeWidget->setQmlPath(package->filePath("mainscript"));
     mainLayout->addItem(declarativeWidget);
+
+    //the activitymanager class will be directly accessible from qml
+    if (declarativeWidget->engine()) {
+        QDeclarativeContext *ctxt = declarativeWidget->engine()->rootContext();
+        if (ctxt) {
+            ctxt->setContextProperty("activityManager", q);
+            //QObject::connect(declarativeWidget, SIGNAL(finished()), q, SLOT(finished()));
+        }
+    }
 
     //connect
     QObject::connect(filteringWidget, SIGNAL(searchTermChanged(QString)), activityList, SLOT(searchTermChanged(QString)));

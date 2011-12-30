@@ -98,10 +98,11 @@ Item {
             PlasmaComponents.Button {
                 iconSource: "plasma"
                 text: i18n("Add widgets")
+                onClicked: activityManager.addWidgetsRequested()
             }
             PlasmaComponents.ToolButton {
                 iconSource: "window-close"
-                onClicked: main.closeRequested()
+                onClicked: activityManager.closeClicked()
             }
         }
     }

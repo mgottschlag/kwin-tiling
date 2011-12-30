@@ -31,13 +31,6 @@ PlasmaCore.FrameSvgItem {
     imagePath: "widgets/tasks"
     prefix: Current? "focus" : "normal"
 
-    property variant icon: decoration
-    property string title: name
-    property string description: model.description
-    property string author: model.author
-    property string email: model.email
-    property string license: model.license
-
     ListView.onRemove: SequentialAnimation {
         PropertyAction {
             target: background
