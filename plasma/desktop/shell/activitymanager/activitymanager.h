@@ -82,7 +82,6 @@ Q_SIGNALS:
 
 protected:
     void focusInEvent(QFocusEvent *event);
-    void populateActivityMenu();
 
 private:
     Q_PRIVATE_SLOT(d, void containmentDestroyed())
