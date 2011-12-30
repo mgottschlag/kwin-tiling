@@ -82,7 +82,7 @@ Item {
             icon: QIcon(modelData.icon)
             text: modelData.text
             separator: modelData.separator
-            onClicked: activityManager.createActivity(pluginName)
+            onClicked: activityManager.createActivity(modelData.pluginName)
             Component.onCompleted: {
                 parent = activityTemplatesMenu
             }

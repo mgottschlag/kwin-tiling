@@ -33,7 +33,7 @@ class ActivityManagerPrivate;
 class ActivityManager : public QGraphicsWidget
 {
     Q_OBJECT
-    Q_PROPERTY(QList<QVariant> activityTypeActions READ activityTypeActions)
+    Q_PROPERTY(QList<QVariant> activityTypeActions READ activityTypeActions NOTIFY activityTypeActionsChanged)
 
 public:
     //FIXME must learn about 'explicit'
@@ -74,11 +74,14 @@ public:
     Q_INVOKABLE QPixmap pixmapForActivity(const QString &activityId);
     Q_INVOKABLE void cloneCurrentActivity();
     Q_INVOKABLE void createActivity(const QString &pluginName);
+    Q_INVOKABLE void createActivityFromScript(const QString &script, const QString &name, const QString &icon, const QStringList &startupApps);
+    Q_INVOKABLE void downloadActivityScripts();
 
 Q_SIGNALS:
     void locationChanged(Plasma::Location loc);
     void closeClicked();
     void addWidgetsRequested();
+    void activityTypeActionsChanged();
 
 protected:
     void focusInEvent(QFocusEvent *event);

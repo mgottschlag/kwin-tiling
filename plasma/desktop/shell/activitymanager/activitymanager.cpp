@@ -34,6 +34,7 @@
 #include <klineedit.h>
 #include <KStandardDirs>
 #include <KServiceTypeTrader>
+#include <knewstuff3/downloaddialog.h>
 
 #include <plasma/applet.h>
 #include <plasma/corona.h>
@@ -248,7 +249,20 @@ void ActivityManager::cloneCurrentActivity()
 
 void ActivityManager::createActivity(const QString &pluginName)
 {
-    
+    PlasmaApp::self()->createActivity(pluginName);
+}
+
+void ActivityManager::createActivityFromScript(const QString &script, const QString &name, const QString &icon, const QStringList &startupApps)
+{
+    PlasmaApp::self()->createActivityFromScript(script, name, icon, startupApps);
+}
+
+void ActivityManager::downloadActivityScripts()
+{
+    KNS3::DownloadDialog *dialog = new KNS3::DownloadDialog( "activities.knsrc", 0 );
+    connect(dialog, SIGNAL(accepted()), this, SIGNAL(activityTypeActionsChanged()));
+    connect(dialog, SIGNAL(accepted()), dialog, SLOT(deleteLater()));
+    dialog->show();
 }
 
 void ActivityManager::setContainment(Plasma::Containment *containment)
