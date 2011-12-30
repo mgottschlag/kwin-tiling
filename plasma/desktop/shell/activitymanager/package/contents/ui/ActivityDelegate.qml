@@ -185,6 +185,13 @@ PlasmaCore.FrameSvgItem {
                 PlasmaComponents.Button {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: i18n("Remove")
+                    onClicked: {
+                        var activityId = model["DataEngineSource"]
+                        var service = activitySource.serviceForSource(activityId)
+                        var operation = service.operationDescription("remove")
+                        operation["Id"] = activityId
+                        service.startOperationCall(operation)
+                    }
                 }
                 PlasmaComponents.Button {
                     anchors.horizontalCenter: parent.horizontalCenter
