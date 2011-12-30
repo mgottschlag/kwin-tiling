@@ -33,6 +33,8 @@ class ActivityManagerPrivate;
 class ActivityManager : public QGraphicsWidget
 {
     Q_OBJECT
+    Q_PROPERTY(QList<QVariant> activityTypeActions READ activityTypeActions)
+
 public:
     //FIXME must learn about 'explicit'
     ActivityManager(Plasma::Location loc, QGraphicsItem *parent=0);
@@ -67,8 +69,11 @@ public:
      */
     int iconSize() const;
 
+    QList<QVariant> activityTypeActions();
+
     Q_INVOKABLE QPixmap pixmapForActivity(const QString &activityId);
     Q_INVOKABLE void cloneCurrentActivity();
+    Q_INVOKABLE void createActivity(const QString &pluginName);
 
 Q_SIGNALS:
     void locationChanged(Plasma::Location loc);

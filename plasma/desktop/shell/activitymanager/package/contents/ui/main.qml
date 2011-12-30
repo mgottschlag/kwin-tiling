@@ -62,6 +62,7 @@ Item {
         PlasmaComponents.MenuItem {
             icon: QIcon("user-desktop")
             text: i18n("Empty Desktop")
+            onClicked: activityManager.createActivity("desktop")
         }
         PlasmaComponents.MenuItem {
             icon: QIcon("edit-copy")
@@ -70,28 +71,24 @@ Item {
         }
     }
 
+
     PlasmaComponents.ContextMenu {
         id: activityTemplatesMenu
         visualParent: templatesItem
-        PlasmaComponents.MenuItem {
-            text: "subitem1"
-        }
-        PlasmaComponents.MenuItem {
-            text: "subitem2"
-        }
     }
-   /* Repeater {
-        model: getWidgetsActions
+    Repeater {
+        model: activityManager.activityTypeActions
         delegate: PlasmaComponents.MenuItem {
-            icon: modelData.icon
+            icon: QIcon(modelData.icon)
             text: modelData.text
             separator: modelData.separator
-            onClicked: modelData.trigger()
+            onClicked: activityManager.createActivity(pluginName)
             Component.onCompleted: {
-                parent = newActivityMenu
+                parent = activityTemplatesMenu
             }
         }
-    }*/
+    }
+
 
     Item {
         id: topBar
