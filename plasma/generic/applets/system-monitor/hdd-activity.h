@@ -1,6 +1,8 @@
 /*
  *   Copyright (C) 2007 Petri Damsten <damu@iki.fi>
  *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
+ *   Copyright (C) 2011 Shaun Reich <shaun.reich@kdemail.net>
+ *
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -17,27 +19,30 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef HDD_HEADER
-#define HDD_HEADER
+#ifndef HDD_ACTIVITY_HEADER
+#define HDD_ACTIVITY_HEADER
 
-#include <Plasma/DataEngine>
+#include "applet.h"
+#include "ui_hdd-activity-config.h"
+
 #include <QHash>
 #include <QStandardItemModel>
-#include <applet.h>
-#include "ui_hdd-config.h"
+
+#include <Plasma/DataEngine>
 
 namespace Plasma {
     class Meter;
 }
+
 class MonitorIcon;
 class QGraphicsLinearLayout;
 
-class Hdd : public SM::Applet
+class Hdd_Activity : public SM::Applet
 {
     Q_OBJECT
     public:
-        Hdd(QObject *parent, const QVariantList &args);
-        ~Hdd();
+        Hdd_Activity(QObject *parent, const QVariantList &args);
+        ~Hdd_Activity();
 
         virtual void init();
         virtual void createConfigurationInterface(KConfigDialog *parent);
@@ -68,6 +73,6 @@ class Hdd : public SM::Applet
         QStringList mounted();
 };
 
-K_EXPORT_PLASMA_APPLET(sm_hdd, Hdd)
+K_EXPORT_PLASMA_APPLET(sm_hdd_activity, Hdd_Activity)
 
 #endif

@@ -1,6 +1,7 @@
 /*
  *   Copyright (C) 2007 Petri Damsten <damu@iki.fi>
  *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
+ *   Copyright (C) 2011 Shaun Reich <shaun.reich@kdemail.net>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -17,18 +18,20 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "hdd.h"
+#include "hdd-activity.h"
 #include "monitoricon.h"
-#include <Plasma/Meter>
-#include <Plasma/Containment>
-#include <Plasma/Theme>
-#include <Plasma/ToolTipManager>
+
 #include <KConfigDialog>
 #include <KColorUtils>
 #include <QFileInfo>
 #include <QGraphicsLinearLayout>
 
-Hdd::Hdd(QObject *parent, const QVariantList &args)
+#include <Plasma/Meter>
+#include <Plasma/Containment>
+#include <Plasma/Theme>
+#include <Plasma/ToolTipManager>
+
+Hdd_Activity::Hdd_Activity(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args)
 {
     setHasConfigurationInterface(true);
@@ -36,11 +39,11 @@ Hdd::Hdd(QObject *parent, const QVariantList &args)
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
 }
 
-Hdd::~Hdd()
+Hdd_Activity::~Hdd_Activity()
 {
 }
 
-void Hdd::init()
+void Hdd_Activity::init()
 {
     KGlobal::locale()->insertCatalog("plasma_applet_system-monitor");
     QString predicateString("IS StorageVolume");
@@ -51,7 +54,7 @@ void Hdd::init()
     configChanged();
 }
 
-void Hdd::configChanged()
+void Hdd_Activity::configChanged()
 {
     KConfigGroup cg = config();
     QStringList sources = cg.readEntry("uuids", mounted());
@@ -60,7 +63,7 @@ void Hdd::configChanged()
     connectToEngine();
 }
 
-QStringList Hdd::mounted()
+QStringList Hdd_Activity::mounted()
 {
     Plasma::DataEngine::Data data;
     QString predicate("IS StorageVolume");
@@ -77,7 +80,7 @@ QStringList Hdd::mounted()
     return result;
 }
 
-void Hdd::createConfigurationInterface(KConfigDialog *parent)
+void Hdd_Activity::createConfigurationInterface(KConfigDialog *parent)
 {
     QWidget *widget = new QWidget();
     ui.setupUi(widget);
@@ -116,7 +119,7 @@ void Hdd::createConfigurationInterface(KConfigDialog *parent)
     connect(ui.intervalSpinBox, SIGNAL(valueChanged(QString)), parent, SLOT(settingsModified()));
 }
 
-void Hdd::configAccepted()
+void Hdd_Activity::configAccepted()
 {
     KConfigGroup cg = config();
     KConfigGroup cgGlobal = globalConfig();
@@ -144,7 +147,7 @@ void Hdd::configAccepted()
     emit configNeedsSaving();
 }
 
-QString Hdd::hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data)
+QString Hdd_Activity::hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data)
 {
     KConfigGroup cg = globalConfig();
     QString label = cg.readEntry(uuid, "");
@@ -155,7 +158,7 @@ QString Hdd::hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data)
     return label;
 }
 
-QString Hdd::guessHddTitle(const Plasma::DataEngine::Data &data)
+QString Hdd_Activity::guessHddTitle(const Plasma::DataEngine::Data &data)
 {
     QString label = data["Label"].toString();
     if (label.isEmpty()) {
@@ -174,7 +177,7 @@ QString Hdd::guessHddTitle(const Plasma::DataEngine::Data &data)
     return label;
 }
 
-QString Hdd::filePath(const Plasma::DataEngine::Data &data)
+QString Hdd_Activity::filePath(const Plasma::DataEngine::Data &data)
 {
     QString label = data["File Path"].toString();
     QVariant accessible = data["Accessible"];
@@ -189,7 +192,7 @@ QString Hdd::filePath(const Plasma::DataEngine::Data &data)
     return label;
 }
 
-bool Hdd::addVisualization(const QString& source)
+bool Hdd_Activity::addVisualization(const QString& source)
 {
     Plasma::Meter *w;
     Plasma::DataEngine *engine = dataEngine("soliddevice");
@@ -244,7 +247,7 @@ bool Hdd::addVisualization(const QString& source)
     return true;
 }
 
-void Hdd::applyTheme(Plasma::Meter *w)
+void Hdd_Activity::applyTheme(Plasma::Meter *w)
 {
     if (!w) {
         return;
@@ -265,14 +268,14 @@ void Hdd::applyTheme(Plasma::Meter *w)
     w->setLabelFont(2, font);
 }
 
-void Hdd::themeChanged()
+void Hdd_Activity::themeChanged()
 {
     foreach (const QString& source, connectedSources()) {
         applyTheme(qobject_cast<Plasma::Meter*>(visualization(source)));
     }
 }
 
-void Hdd::deleteVisualizations()
+void Hdd_Activity::deleteVisualizations()
 {
     foreach(MonitorIcon * icon, m_icons) {
         delete(icon);
@@ -284,7 +287,7 @@ void Hdd::deleteVisualizations()
     m_diskMap.clear();
 }
 
-bool Hdd::isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data)
+bool Hdd_Activity::isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data)
 {
     Plasma::DataEngine *engine = dataEngine("soliddevice");
     if (engine) {
@@ -308,7 +311,7 @@ bool Hdd::isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data)
     return false;
 }
 
-void Hdd::dataUpdated(const QString& source,
+void Hdd_Activity::dataUpdated(const QString& source,
                       const Plasma::DataEngine::Data &data)
 {
     if (m_diskMap.keys().contains(source) && mode() != SM::Applet::Panel) {
@@ -352,4 +355,4 @@ void Hdd::dataUpdated(const QString& source,
     }
 }
 
-#include "hdd.moc"
+#include "hdd-activity.moc"
