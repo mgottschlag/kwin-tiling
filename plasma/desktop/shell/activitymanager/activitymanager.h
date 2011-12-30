@@ -67,6 +67,8 @@ public:
      */
     int iconSize() const;
 
+    Q_INVOKABLE QPixmap pixmapForActivity(const QString &activityId);
+
 Q_SIGNALS:
     void locationChanged(Plasma::Location loc);
     void closeClicked();

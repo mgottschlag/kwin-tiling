@@ -44,7 +44,7 @@
 
 #include "activitylist.h"
 #include "filterbar.h"
-
+#include "kidenticongenerator.h"
 
 class ActivityManagerPrivate
 {
@@ -229,6 +229,11 @@ void ActivityManager::setIconSize(int size)
 int ActivityManager::iconSize() const
 {
     return d->activityList->iconSize();
+}
+
+QPixmap ActivityManager::pixmapForActivity(const QString &activityId)
+{
+    return KIdenticonGenerator::self()->generatePixmap(KIconLoader::SizeHuge, activityId);
 }
 
 void ActivityManager::setContainment(Plasma::Containment *containment)

@@ -87,13 +87,17 @@ PlasmaCore.FrameSvgItem {
         width: theme.hugeIconSize
         height: width
         icon: QIcon(Icon)
-        QIconItem {
-            width: theme.mediumIconSize
-            height: width
-            anchors.centerIn: parent
-            icon: QIcon("media-playback-start")
-            visible: model["State"] != "Running"
-        }
+    }
+    QPixmapItem {
+        anchors.fill: iconWidget
+        pixmap: Icon ? undefined : activityManager.pixmapForActivity(model["DataEngineSource"])
+    }
+    QIconItem {
+        width: theme.mediumIconSize
+        height: width
+        anchors.centerIn: iconWidget
+        icon: QIcon("media-playback-start")
+        visible: model["State"] != "Running"
     }
     Column {
         anchors {
