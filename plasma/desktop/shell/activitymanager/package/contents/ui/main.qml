@@ -24,7 +24,7 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 Item {
     id: main
     property int minimumWidth: 200
-    property int minimumHeight: theme.defaultFont.mSize.height * 9
+    property int minimumHeight: theme.defaultFont.mSize.height * 10
 
     signal addAppletRequested(string pluginName)
     signal closeRequested()

@@ -139,6 +139,7 @@ PlasmaCore.FrameSvgItem {
                     PlasmaComponents.ToolButton {
                         id: configureButton
                         iconSource: "configure"
+                        onClicked: delegateStack.push(configurationComponent)
                     }
                     PlasmaComponents.ToolButton {
                         iconSource: "media-playback-stop"
@@ -197,6 +198,69 @@ PlasmaCore.FrameSvgItem {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: i18n("Cancel")
                     onClicked: delegateStack.pop()
+                }
+            }
+        }
+    }
+
+    Component {
+        id: configurationComponent
+        MouseArea {
+            anchors.fill: parent
+            implicitWidth: iconButton.x + iconButton.width + theme.defaultFont.mSize.width * 12
+            onClicked: delegateStack.pop()
+            PlasmaComponents.Button {
+                id: iconButton
+                iconSource: Icon
+                anchors {
+                    top: configurationLayout.top
+                    bottom: configurationLayout.bottom
+                }
+                x: y
+                width: height
+            }
+            Column {
+                id: configurationLayout
+                anchors {
+                    left: iconButton.right
+                    verticalCenter: parent.verticalCenter
+                    right: parent.right
+                    leftMargin: iconButton.x
+                }
+                spacing: 4
+                PlasmaComponents.TextField {
+                    id: activityNameField
+                    text: Name
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+                }
+
+                PlasmaComponents.Button {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: i18n("Apply")
+                    onClicked: {
+                        /*var activityId = model["DataEngineSource"]
+                        var service = activitySource.serviceForSource(activityId)
+                        var operation = service.operationDescription("remove")
+                        operation["Id"] = activityId
+                        service.startOperationCall(operation)*/
+                        delegateStack.pop()
+                    }
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+                }
+                PlasmaComponents.Button {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: i18n("Cancel")
+                    onClicked: delegateStack.pop()
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
                 }
             }
         }
