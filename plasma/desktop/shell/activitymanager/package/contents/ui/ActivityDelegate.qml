@@ -17,7 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import Qt 4.7
+import QtQuick 1.1
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.components 0.1 as PlasmaComponents
@@ -121,8 +121,7 @@ PlasmaCore.FrameSvgItem {
         }
         Row {
             id: buttonsRow
-            enabled: model["State"] == "Running"
-            opacity: enabled ? 1 : 0.2
+            visible: model["State"] == "Running"
             anchors.horizontalCenter: parent.horizontalCenter
 
             PlasmaComponents.ToolButton {
@@ -138,6 +137,13 @@ PlasmaCore.FrameSvgItem {
                     service.startOperationCall(operation)
                 }
             }
+        }
+        PlasmaComponents.ToolButton {
+            visible: model["State"] != "Running"
+            iconSource: "edit-delete"
+            text: i18n("Delete")
+            width: Math.min(implicitWidth, parent.width)
+            anchors.horizontalCenter: parent.horizontalCenter
         }
     }
 }
