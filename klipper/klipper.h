@@ -21,6 +21,7 @@
 #ifndef KLIPPER_H
 #define KLIPPER_H
 
+#include <QtCore/QTime>
 #include <QtCore/QTimer>
 #include <QtGui/QClipboard>
 
@@ -151,7 +152,7 @@ private:
 
     QClipboard* m_clip;
 
-    QTime* m_showTimer;
+    QTime m_showTimer;
 
     History* m_history;
     int m_overflowCounter;

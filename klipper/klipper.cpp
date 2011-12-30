@@ -136,7 +136,6 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
     m_pendingCheckTimer.setSingleShot( true );
     connect( &m_pendingCheckTimer, SIGNAL(timeout()), SLOT(slotCheckPending()));
 
-    m_showTimer = new QTime();
 
     m_history = new History( this );
 
@@ -239,7 +238,6 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
 Klipper::~Klipper()
 {
     delete m_sessionManager;
-    delete m_showTimer;
     delete m_myURLGrabber;
 }
 
@@ -287,7 +285,7 @@ void Klipper::clearClipboardHistory()
 
 void Klipper::slotStartShowTimer()
 {
-    m_showTimer->start();
+    m_showTimer.start();
 }
 
 void Klipper::loadSettings()
@@ -484,7 +482,7 @@ void Klipper::slotQuit()
     // If the menu was just opened, likely the user
     // selected quit by accident while attempting to
     // click the Klipper icon.
-    if ( m_showTimer->elapsed() < 300 ) {
+    if ( m_showTimer.elapsed() < 300 ) {
         return;
     }
 
