@@ -181,7 +181,7 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
 
     m_quitAction = m_collection->addAction( "quit" );
     m_quitAction->setIcon( KIcon("application-exit") );
-    m_quitAction->setText( i18n("&Quit") );
+    m_quitAction->setText( i18nc("@item:inmenu Quit Klipper", "&Quit") );
     connect(m_quitAction, SIGNAL(triggered(bool)), SLOT(slotQuit()));
 
     m_repeatAction = m_collection->addAction("repeat_action");
