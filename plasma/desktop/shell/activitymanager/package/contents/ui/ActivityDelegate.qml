@@ -222,8 +222,10 @@ PlasmaCore.FrameSvgItem {
                     width: theme.largeIconSize
                     height: width
                     smooth: true
-                    pixmap: Icon ? undefined : activityManager.pixmapForActivity(model["DataEngineSource"])
+                    visible: iconButton.iconSource == ""
+                    pixmap: visible ? undefined : activityManager.pixmapForActivity(model["DataEngineSource"])
                 }
+                onClicked: iconSource = activityManager.chooseIcon()
             }
             Column {
                 id: configurationLayout

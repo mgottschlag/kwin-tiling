@@ -76,6 +76,7 @@ public:
     Q_INVOKABLE void createActivity(const QString &pluginName);
     Q_INVOKABLE void createActivityFromScript(const QString &script, const QString &name, const QString &icon, const QStringList &startupApps);
     Q_INVOKABLE void downloadActivityScripts();
+    Q_INVOKABLE QString chooseIcon() const;
 
 Q_SIGNALS:
     void locationChanged(Plasma::Location loc);

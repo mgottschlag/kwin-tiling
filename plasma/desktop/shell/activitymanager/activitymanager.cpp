@@ -35,6 +35,8 @@
 #include <KStandardDirs>
 #include <KServiceTypeTrader>
 #include <knewstuff3/downloaddialog.h>
+#include <KIconDialog>
+#include <KWindowSystem>
 
 #include <plasma/applet.h>
 #include <plasma/corona.h>
@@ -355,6 +357,19 @@ QList<QVariant> ActivityManager::activityTypeActions()
     }
 
     return actions;
+}
+
+QString ActivityManager::chooseIcon() const
+{
+    KIconDialog *dialog = new KIconDialog;
+    dialog->setup(KIconLoader::Desktop);
+    dialog->setProperty("DoNotCloseController", true);
+    KWindowSystem::setOnDesktop(dialog->winId(), KWindowSystem::currentDesktop());
+    dialog->showDialog();
+    KWindowSystem::forceActiveWindow(dialog->winId());
+    QString icon = dialog->openDialog();
+    dialog->deleteLater();
+    return icon;
 }
 
 void ActivityManager::focusInEvent(QFocusEvent* event)
