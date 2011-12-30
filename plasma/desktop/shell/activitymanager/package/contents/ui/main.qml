@@ -54,6 +54,30 @@ Item {
     PlasmaComponents.ContextMenu {
         id: newActivityMenu
         visualParent: newActivityButton
+        PlasmaComponents.MenuItem {
+            id: templatesItem
+            text: i18n("Templates")
+            onClicked: activityTemplatesMenu.open()
+        }
+        PlasmaComponents.MenuItem {
+            icon: QIcon("user-desktop")
+            text: i18n("Empty Desktop")
+        }
+        PlasmaComponents.MenuItem {
+            icon: QIcon("edit-copy")
+            text: i18n("Clone current activity")
+        }
+    }
+
+    PlasmaComponents.ContextMenu {
+        id: activityTemplatesMenu
+        visualParent: templatesItem
+        PlasmaComponents.MenuItem {
+            text: "subitem1"
+        }
+        PlasmaComponents.MenuItem {
+            text: "subitem2"
+        }
     }
    /* Repeater {
         model: getWidgetsActions
