@@ -33,6 +33,7 @@
 #include <plasma/applet.h>
 #include <plasma/corona.h>
 #include <plasma/containment.h>
+#include <plasma/package.h>
 #include <plasma/widgets/toolbutton.h>
 #include <plasma/widgets/lineedit.h>
 #include <plasma/widgets/declarativewidget.h>
@@ -62,6 +63,7 @@ public:
     Plasma::ToolButton *close;
     Plasma::Containment *containment;
     Plasma::DeclarativeWidget *declarativeWidget;
+    Plasma::Package *package;
 
     /**
      * Widget that lists the applets
@@ -97,6 +99,14 @@ void ActivityManagerPrivate::init(Plasma::Location loc)
     close = new Plasma::ToolButton;
     close->setIcon(KIcon("dialog-close"));
 
+    Plasma::PackageStructure::Ptr structure = Plasma::PackageStructure::load("Plasma/Generic");
+    package = new Plasma::Package(QString(), "org.kde.desktop.activitymanager", structure);
+
+    declarativeWidget = new Plasma::DeclarativeWidget(q);
+    declarativeWidget->setInitializationDelayed(true);
+    declarativeWidget->setQmlPath(package->filePath("mainscript"));
+    mainLayout->addItem(declarativeWidget);
+
     //connect
     QObject::connect(filteringWidget, SIGNAL(searchTermChanged(QString)), activityList, SLOT(searchTermChanged(QString)));
     QObject::connect(filteringWidget, SIGNAL(addWidgetsRequested()), q, SIGNAL(addWidgetsRequested()));
@@ -122,9 +132,6 @@ void ActivityManagerPrivate::init(Plasma::Location loc)
         mainLayout->setStretchFactor(activityList, 10);
         mainLayout->addItem(close);
     }
-
-    //filters & models
-    //initRunningApplets();
 
     q->setLayout(mainLayout);
 }

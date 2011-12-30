@@ -79,6 +79,7 @@ install(FILES activitymanager/activities.knsrc DESTINATION  ${CONFIG_INSTALL_DIR
 install(FILES data/plasma-desktop.notifyrc DESTINATION ${DATA_INSTALL_DIR}/plasma-desktop)
 install(FILES data/layouts/00-defaultLayout.js DESTINATION ${DATA_INSTALL_DIR}/plasma-desktop/init)
 install(FILES data/plasma-desktop-js.xml DESTINATION ${DATA_INSTALL_DIR}/katepart/syntax/)
+install(DIRECTORY activitymanager/package/ DESTINATION ${DATA_INSTALL_DIR}/plasma/packages/org.kde.desktop.activitymanager)
 
 MACRO(INSTALL_PLASMA_JAVASCRIPT_TEMPLATE dir addonPrefix)
    configure_file(${dir}/metadata.desktop ${CMAKE_CURRENT_BINARY_DIR}/plasma-layout-${addonPrefix}.desktop COPYONLY)
