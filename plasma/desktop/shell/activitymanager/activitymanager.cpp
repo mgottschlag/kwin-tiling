@@ -114,6 +114,7 @@ void ActivityManagerPrivate::setLocation(Plasma::Location loc)
     }
 
     location = loc;
+    emit q->orientationChanged();
 }
 
 void ActivityManagerPrivate::containmentDestroyed()
@@ -148,9 +149,14 @@ void ActivityManager::setLocation(Plasma::Location loc)
     emit(locationChanged(loc));
 }
 
-Plasma::Location ActivityManager::location()
+ActivityManager::Location ActivityManager::location()
 {
-    return d->location;
+    return (ActivityManager::Location)d->location;
+}
+
+Qt::Orientation ActivityManager::orientation() const
+{
+    return d->orientation;
 }
 
 QPixmap ActivityManager::pixmapForActivity(const QString &activityId)

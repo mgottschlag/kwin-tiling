@@ -23,8 +23,12 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 
 Item {
     id: main
-    property int minimumWidth: 200
-    property int minimumHeight: theme.defaultFont.mSize.height * 10
+
+    //this is used to perfectly align the filter field and delegates
+    property int cellWidth: theme.defaultFont.mSize.width * 20
+
+    property int minimumWidth: cellWidth + (activityManager.orientation == Qt.Horizontal ? 0 : scrollBar.width)
+    property int minimumHeight: topBar.height + list.delegateHeight + (activityManager.orientation == Qt.Horizontal ? scrollBar.height : 0)
 
     signal addAppletRequested(string pluginName)
     signal closeRequested()
@@ -101,8 +105,12 @@ Item {
     }
 
 
-    Item {
+    Loader {
         id: topBar
+        property string query
+
+        sourceComponent: (activityManager.orientation == Qt.Horizontal) ? horizontalTopBarComponent : verticalTopBarComponent
+        height: item.height
         anchors {
             top: parent.top
             left:parent.left
@@ -110,19 +118,75 @@ Item {
 
             margins: 4
         }
-        height: filterField.height
+    }
+    Component {
+        id: horizontalTopBarComponent
+        Item {
+            anchors {
+                top: parent.top
+                left:parent.left
+                right: parent.right
+            }
+            height: filterField.height
 
-        PlasmaComponents.TextField {
-            id: filterField
-            width: list.width / Math.floor(list.width / 180)
-            clearButtonShown: true
-            placeholderText: i18n("Enter search term...")
-            Component.onCompleted: forceActiveFocus()
+            PlasmaComponents.TextField {
+                id: filterField
+                width: list.width / Math.floor(list.width / cellWidth)
+                clearButtonShown: true
+                onTextChanged: topBar.query = text
+                placeholderText: i18n("Enter search term...")
+                Component.onCompleted: forceActiveFocus()
+            }
+
+            Row {
+                anchors.right: parent.right
+                spacing: 4
+                PlasmaComponents.Button {
+                    id: newActivityButton
+                    iconSource: "list-add"
+                    text: i18n("Create activity...")
+                    onClicked: newActivityMenu.open()
+                }
+                PlasmaComponents.Button {
+                    iconSource: "plasma"
+                    text: i18n("Add widgets")
+                    onClicked: activityManager.addWidgetsRequested()
+                }
+                PlasmaComponents.ToolButton {
+                    iconSource: "window-close"
+                    onClicked: activityManager.closeClicked()
+                }
+            }
         }
-
-        Row {
-            anchors.right: parent.right
+    }
+    Component {
+        id: verticalTopBarComponent
+        Column {
             spacing: 4
+            anchors {
+                top: parent.top
+                left:parent.left
+                right: parent.right
+            }
+
+            PlasmaComponents.ToolButton {
+                anchors.right: parent.right
+                iconSource: "window-close"
+                onClicked: activityManager.closeClicked()
+            }
+
+            PlasmaComponents.TextField {
+                id: filterField
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+                clearButtonShown: true
+                onTextChanged: topBar.query = text
+                placeholderText: i18n("Enter search term...")
+                Component.onCompleted: forceActiveFocus()
+            }
+
             PlasmaComponents.Button {
                 id: newActivityButton
                 iconSource: "list-add"
@@ -134,27 +198,32 @@ Item {
                 text: i18n("Add widgets")
                 onClicked: activityManager.addWidgetsRequested()
             }
-            PlasmaComponents.ToolButton {
-                iconSource: "window-close"
-                onClicked: activityManager.closeClicked()
-            }
         }
     }
+
     ListView {
         id: list
-        anchors.top: topBar.bottom
-        anchors.left:parent.left
-        anchors.right: parent.right
-        anchors.bottom: scrollBar.top
+
+        property int delegateWidth: (activityManager.orientation == Qt.Horizontal) ? (list.width / Math.floor(list.width / cellWidth)) : cellWidth
+        property int delegateHeight: theme.defaultFont.mSize.height * 7
+
+
+        anchors {
+            top: topBar.bottom
+            left: parent.left
+            right: activityManager.orientation == Qt.Horizontal ? parent.right : scrollBar.left
+            bottom: activityManager.orientation == Qt.Horizontal ? scrollBar.top : parent.bottom
+        }
+
         clip: true
-        orientation: ListView.Horizontal
+        orientation: activityManager.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.vertical
         snapMode: ListView.SnapToItem
         model: PlasmaCore.SortFilterModel {
             sourceModel: PlasmaCore.DataModel {
                 dataSource: activitySource
             }
             filterRole: "Name"
-            filterRegExp: ".*"+filterField.text+".*"
+            filterRegExp: ".*"+topBar.query+".*"
         }
 
         delegate: ActivityDelegate {}
@@ -165,10 +234,13 @@ Item {
     }
     PlasmaComponents.ScrollBar {
         id: scrollBar
-        orientation: Qt.Horizontal
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
+        orientation: activityManager.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.Vertical
+        anchors {
+            top: activityManager.orientation == Qt.Horizontal ? undefined : parent.top
+            bottom: parent.bottom
+            left: activityManager.orientation == Qt.Horizontal ? parent.left : undefined
+            right: parent.right
+        }
         flickableItem: list
     }
 }

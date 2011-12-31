@@ -25,8 +25,10 @@ import org.kde.qtextracomponents 0.1
 
 PlasmaCore.FrameSvgItem {
     id: background
-    width: Math.max((delegateStack.currentPage ? delegateStack.currentPage.implicitWidth : 0) + margins.left+margins.right, (list.width / Math.floor(list.width / 180)))
-    height: list.height
+
+    width: Math.max((delegateStack.currentPage ? delegateStack.currentPage.implicitWidth : 0) + margins.left + margins.right, list.delegateWidth)
+    height: list.delegateHeight
+
     imagePath: "widgets/tasks"
     prefix: Current? "focus" : "normal"
 
