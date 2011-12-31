@@ -24,8 +24,10 @@ import org.kde.draganddrop 1.0
 
 PlasmaCore.FrameSvgItem {
     id: background
-    width: list.width / Math.floor(list.width / 180)
-    height: list.height
+
+    width: list.delegateWidth
+    height: list.delegateHeight
+
     imagePath: "widgets/tasks"
     prefix: "normal"
 

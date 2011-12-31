@@ -104,7 +104,7 @@ Item {
         height: item.height
         anchors {
             top: parent.top
-            left:parent.left
+            left: parent.left
             right: parent.right
 
             margins: 4
@@ -227,7 +227,7 @@ Item {
         id: scrollBar
         orientation: activityManager.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.Vertical
         anchors {
-            top: activityManager.orientation == Qt.Horizontal ? undefined : parent.top
+            top: activityManager.orientation == Qt.Horizontal ? undefined : list.top
             bottom: parent.bottom
             left: activityManager.orientation == Qt.Horizontal ? parent.left : undefined
             right: parent.right

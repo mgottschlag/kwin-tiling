@@ -215,13 +215,19 @@ void WidgetExplorerPrivate::finished()
 
 void WidgetExplorerPrivate::setLocation(const Plasma::Location loc)
 {
-    if (location == loc) {
+    Qt::Orientation orient;
+    if (loc == Plasma::LeftEdge || loc == Plasma::RightEdge) {
+        orient = Qt::Vertical;
+    } else {
+        orient = Qt::Horizontal;
+    }
+
+    if (orientation == orient) {
         return;
     }
 
     location = loc;
-    orientation = ((location == Plasma::LeftEdge || location == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
-
+    emit q->orientationChanged();
 }
 
 QObject *WidgetExplorer::widgetsModel() const

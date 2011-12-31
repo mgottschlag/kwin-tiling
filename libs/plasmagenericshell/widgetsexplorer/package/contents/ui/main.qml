@@ -33,7 +33,7 @@ Item {
 
     PlasmaComponents.ContextMenu {
         id: categoriesDialog
-        visualParent: categoryButton
+        visualParent: topBar.categoryButton
     }
     Repeater {
         model: widgetExplorer.filterModel
@@ -54,7 +54,7 @@ Item {
 
     PlasmaComponents.ContextMenu {
         id: getWidgetsDialog
-        visualParent: getWidgetsButton
+        visualParent: topBar.getWidgetsButton
     }
     Repeater {
         model: widgetExplorer.widgetsMenuActions
@@ -110,16 +110,96 @@ Item {
         onTriggered: tooltipDialog.visible = false
     }
 
-    Item {
+    Loader {
         id: topBar
-        anchors.top: parent.top
-        anchors.left:parent.left
-        anchors.right: parent.right
-        height: categoryButton.height
-        Row {
+        property Item categoryButton
+        property Item getWidgetsButton
+
+        sourceComponent: (widgetExplorer.orientation == Qt.Horizontal) ? horizontalTopBarComponent : verticalTopBarComponent
+        height: item.height + 2
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+
+            margins: 4
+        }
+    }
+
+    Component {
+        id: horizontalTopBarComponent
+
+        Item {
+            anchors.top: parent.top
+            anchors.left:parent.left
+            anchors.right: parent.right
+            height: categoryButton.height
+            Row {
+                spacing: 4
+                PlasmaComponents.TextField {
+                    width: list.width / Math.floor(list.width / cellWidth)
+                    clearButtonShown: true
+                    placeholderText: i18n("Enter search term...")
+                    onTextChanged: widgetExplorer.widgetsModel.searchTerm = text
+                    Component.onCompleted: forceActiveFocus()
+                }
+                PlasmaComponents.Button {
+                    id: categoryButton
+                    text: "Categories"
+                    onClicked: categoriesDialog.open()
+                }
+            }
+            Row {
+                anchors.right: parent.right
+                spacing: 4
+                PlasmaComponents.Button {
+                    id: getWidgetsButton
+                    iconSource: "get-hot-new-stuff"
+                    text: i18n("Get new widgets")
+                    onClicked: getWidgetsDialog.open()
+                }
+
+                Repeater {
+                    model: widgetExplorer.extraActions.length
+                    PlasmaComponents.Button {
+                        iconSource: widgetExplorer.extraActions[modelData].icon
+                        text: widgetExplorer.extraActions[modelData].text
+                        onClicked: {
+                            widgetExplorer.extraActions[modelData].trigger()
+                        }
+                    }
+                }
+                PlasmaComponents.ToolButton {
+                    iconSource: "window-close"
+                    onClicked: widgetExplorer.closeClicked()
+                }
+            }
+            Component.onCompleted: {
+                topBar.categoryButton = categoryButton
+                topBar.getWidgetsButton = getWidgetsButton
+            }
+        }
+    }
+
+    Component {
+        id: verticalTopBarComponent
+
+        Column {
+            anchors.top: parent.top
+            anchors.left:parent.left
+            anchors.right: parent.right
             spacing: 4
+
+            PlasmaComponents.ToolButton {
+                anchors.right: parent.right
+                iconSource: "window-close"
+                onClicked: widgetExplorer.closeClicked()
+            }
             PlasmaComponents.TextField {
-                width: list.width / Math.floor(list.width / cellWidth)
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 clearButtonShown: true
                 placeholderText: i18n("Enter search term...")
                 onTextChanged: widgetExplorer.widgetsModel.searchTerm = text
@@ -130,10 +210,9 @@ Item {
                 text: "Categories"
                 onClicked: categoriesDialog.open()
             }
-        }
-        Row {
-            anchors.right: parent.right
-            spacing: 4
+
+
+
             PlasmaComponents.Button {
                 id: getWidgetsButton
                 iconSource: "get-hot-new-stuff"
@@ -151,12 +230,14 @@ Item {
                     }
                 }
             }
-            PlasmaComponents.ToolButton {
-                iconSource: "window-close"
-                onClicked: widgetExplorer.closeClicked()
+
+            Component.onCompleted: {
+                topBar.categoryButton = categoryButton
+                topBar.getWidgetsButton = getWidgetsButton
             }
         }
     }
+
     ListView {
         id: list
 
@@ -174,6 +255,10 @@ Item {
         orientation: widgetExplorer.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.vertical
         snapMode: ListView.SnapToItem
         model: widgetExplorer.widgetsModel
+        header: Item {
+            width: 4
+            height: 4
+        }
 
         delegate: AppletDelegate {}
     }
@@ -181,7 +266,7 @@ Item {
         id: scrollBar
         orientation: widgetExplorer.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.Vertical
         anchors {
-            top: widgetExplorer.orientation == Qt.Horizontal ? undefined : parent.top
+            top: widgetExplorer.orientation == Qt.Horizontal ? undefined : list.top
             bottom: parent.bottom
             left: widgetExplorer.orientation == Qt.Horizontal ? parent.left : undefined
             right: parent.right
