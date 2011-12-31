@@ -192,8 +192,6 @@ void AppletsListWidget::setToolTipPosition()
         return;
     }
 
-    toolTipMoveFrom = m_toolTip->pos();
-
     Plasma::Corona *corona = static_cast<Plasma::WidgetExplorer*>(parentItem())->corona();
     //is the item still not in a scene?
     if (!corona) {
@@ -266,10 +264,8 @@ void AppletsListWidget::setToolTipPosition()
         }
     }
 
-
     //are we out of screen?
     int screen = QApplication::desktop()->screenNumber(v);
-
 
     QRect screenRect = corona->screenGeometry(screen);
     //kDebug() << "==> rect for" << screen << "is" << screenRect;
@@ -284,15 +280,12 @@ void AppletsListWidget::setToolTipPosition()
 
     pos.rx() = qMax(0, pos.x());
 
-
-    toolTipMoveTo = pos;
-
     if (m_toolTip->isVisible()) {
         animation->stop();
-        animation->setEndValue(toolTipMoveTo);
+        animation->setEndValue(pos);
         animation->start();
     } else {
-        m_toolTip->move(toolTipMoveTo);
+        m_toolTip->move(pos);
     }
 }
 
