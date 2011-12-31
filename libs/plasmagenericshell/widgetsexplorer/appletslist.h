@@ -29,6 +29,7 @@
 #include "appleticon.h"
 #include "applettooltip.h"
 #include "abstracticonlist.h"
+class QPropertyAnimation;
 
 
 class AppletsListWidget : public Plasma::AbstractIconList
@@ -61,8 +62,6 @@ private slots:
     void onToolTipEnter();
     void onToolTipLeave();
 
-    void animateToolTipMove();
-    void toolTipMoveTimeLineFrameChanged(int frame);
     void rowsAboutToBeRemoved(const QModelIndex& parent, int row, int column);
 
 protected: //FIXME wuh?
@@ -95,9 +94,7 @@ private:
     QBasicTimer m_toolTipDisappearTimer;
     QBasicTimer m_toolTipAppearWhenAlreadyVisibleTimer;
 
-    QTimeLine toolTipMoveTimeLine;
-    QPoint toolTipMoveFrom;
-    QPoint toolTipMoveTo;
+    QPropertyAnimation *animation;
 };
 
 #endif //APPLETSLIST_H
