@@ -104,7 +104,7 @@ Name[x-test]=xxColorsxx
 Name[zh_CN]=颜色
 Name[zh_TW]=顏色
 
-Comment=Color settings
+Comment=Change the colors used in applications
 Comment[af]=Kleur instellings
 Comment[ar]=إعدادات الألوان
 Comment[ast]=Preferencies de los colores
@@ -196,7 +196,7 @@ Comment[x-test]=xxColor settingsxx
 Comment[zh_CN]=颜色设置
 Comment[zh_TW]=顏色設定
 
-X-KDE-Keywords=colors,colours,scheme,contrast,Widget colors,Color Scheme
+X-KDE-Keywords=colors,colours,scheme,contrast,Widget colors,Color Scheme,color style,color theme
 X-KDE-Keywords[ca]=colors,esquema,contrast,colors d'estris,Esquema de color
 X-KDE-Keywords[da]=farver,tema,kontrast,widget-farver,farvetema
 X-KDE-Keywords[et]=värv,värvid,skeem,kontrast,vidina värvid,värviskeem
