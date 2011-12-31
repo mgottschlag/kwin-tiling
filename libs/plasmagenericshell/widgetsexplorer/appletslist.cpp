@@ -221,8 +221,8 @@ void AppletsListWidget::setToolTipPosition()
     case Plasma::TopEdge: {
         pos.setX(pos.x() + item->boundingRect().width()/2 - s.width()/2);
 
-        if (pos.x() + s.width() > viewGeometry.right()) {
-            pos.setX(viewGeometry.right() - s.width());
+        if (pos.x() + s.width() > viewGeometry.x() + viewGeometry.width()) {
+            pos.setX((viewGeometry.x() + viewGeometry.width()) - s.width());
         } else {
             pos.setX(qMax(pos.x(), viewGeometry.left()));
         }
@@ -232,8 +232,8 @@ void AppletsListWidget::setToolTipPosition()
     case Plasma::RightEdge: {
         pos.setY(pos.y() + item->boundingRect().height()/2 - s.height()/2);
 
-        if (pos.y() + s.height() > viewGeometry.bottom()) {
-            pos.setY(viewGeometry.bottom() - s.height());
+        if (pos.y() + s.height() > viewGeometry.y() + viewGeometry.height()) {
+            pos.setY((viewGeometry.y() + viewGeometry.height()) - s.height());
         } else {
             pos.setY(qMax(pos.y(), viewGeometry.top()));
         }
@@ -250,10 +250,10 @@ void AppletsListWidget::setToolTipPosition()
         pos.setY(viewGeometry.y() - s.height() + v->mapFromScene(item->mapToScene(0,0)).y());
         break;
     case Plasma::TopEdge:
-        pos.setY(viewGeometry.bottom());
+        pos.setY(viewGeometry.y() + viewGeometry.height());
         break;
     case Plasma::LeftEdge:
-        pos.setX(viewGeometry.right());
+        pos.setX(viewGeometry.x() + viewGeometry.width());
         break;
     case Plasma::RightEdge:
         pos.setX(viewGeometry.x() - s.width());
@@ -274,12 +274,12 @@ void AppletsListWidget::setToolTipPosition()
     QRect screenRect = corona->screenGeometry(screen);
     //kDebug() << "==> rect for" << screen << "is" << screenRect;
 
-    if (location() != Plasma::LeftEdge && pos.x() + s.width() > screenRect.right()) {
-        pos.rx() -= ((pos.x() + s.width()) - screenRect.right());
+    if (location() != Plasma::LeftEdge && pos.x() + s.width() > (screenRect.x() + screenRect.width())) {
+        pos.rx() -= ((pos.x() + s.width()) - (screenRect.x() + screenRect.width()));
     }
 
-    if (location() != Plasma::TopEdge && pos.y() + s.height() > screenRect.bottom()) {
-        pos.ry() -= ((pos.y() + s.height()) - screenRect.bottom());
+    if (location() != Plasma::TopEdge && pos.y() + s.height() > (screenRect.y() + screenRect.height())) {
+        pos.ry() -= ((pos.y() + s.height()) - (screenRect.y() + screenRect.height()));
     }
 
     pos.rx() = qMax(0, pos.x());
