@@ -17,10 +17,11 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import Qt 4.7
-import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
+import QtQuick 1.1
+import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.draganddrop 1.0
+import org.kde.qtextracomponents 0.1
 
 PlasmaCore.FrameSvgItem {
     id: background
@@ -74,47 +75,43 @@ PlasmaCore.FrameSvgItem {
             source: parent
         }
         Component.onCompleted: mimeData.setData("text/x-plasmoidservicename", pluginName)
-        PlasmaWidgets.IconWidget {
-            id:iconWidget
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.leftMargin: background.margins.left
-            anchors.topMargin: background.margins.top
-            anchors.bottomMargin: background.margins.bottom
-            width: Math.min(64, height)
-            icon: background.icon
-        }
+
+        QIconItem {
+                id: iconWidget
+                anchors.verticalCenter: parent.verticalCenter
+                x: y
+                width: theme.hugeIconSize
+                height: width
+                icon: background.icon
+            }
         Column {
-            anchors.left: iconWidget.right
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.leftMargin: background.margins.left
-            anchors.topMargin: background.margins.top
-            anchors.rightMargin: background.margins.right
-            anchors.bottomMargin: background.margins.bottom
-            Text {
+            anchors {
+                left: iconWidget.right
+                right: parent.right
+                verticalCenter: parent.verticalCenter
+
+                leftMargin: background.margins.left
+            }
+
+            PlasmaComponents.Label {
                 id: titleText
-                color: theme.textColor
                 text: title
-                font.bold:true
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 height: paintedHeight
                 clip: true
                 wrapMode: Text.Wrap
             }
-            Text {
+            PlasmaComponents.Label {
                 text: description
-                color: theme.textColor
-                anchors.top: titleText.bottom
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
-                //verticalAlignment: Text.AlignVCenter
-                clip:true
-                wrapMode: Text.Wrap
+                font.pointSize: theme.smallestFont.pointSize
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+                elide: Text.ElideRight
             }
         }
         MouseArea {
