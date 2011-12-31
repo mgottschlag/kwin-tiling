@@ -23,12 +23,13 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 
 Item {
     id: main
-    property int minimumWidth: 200
-    property int minimumHeight: 150
 
-    PlasmaCore.Theme {
-        id: theme
-    }
+    //this is used to perfectly align the filter field and delegates
+    property int cellWidth: theme.defaultFont.mSize.width * 20
+
+    property int minimumWidth: cellWidth + (widgetExplorer.orientation == Qt.Horizontal ? 0 : scrollBar.width)
+    property int minimumHeight: topBar.height + list.delegateHeight + (widgetExplorer.orientation == Qt.Horizontal ? scrollBar.height : 0)
+
 
     PlasmaComponents.ContextMenu {
         id: categoriesDialog
@@ -118,7 +119,7 @@ Item {
         Row {
             spacing: 4
             PlasmaComponents.TextField {
-                width: list.width / Math.floor(list.width / 180)
+                width: list.width / Math.floor(list.width / cellWidth)
                 clearButtonShown: true
                 placeholderText: i18n("Enter search term...")
                 onTextChanged: widgetExplorer.widgetsModel.searchTerm = text
@@ -158,13 +159,19 @@ Item {
     }
     ListView {
         id: list
-        anchors.topMargin: 4
-        anchors.top: topBar.bottom
-        anchors.left:parent.left
-        anchors.right: parent.right
-        anchors.bottom: scrollBar.top
+
+        property int delegateWidth: (widgetExplorer.orientation == Qt.Horizontal) ? (list.width / Math.floor(list.width / cellWidth)) : cellWidth
+        property int delegateHeight: theme.defaultFont.mSize.height * 7
+
+        anchors {
+            top: topBar.bottom
+            left: parent.left
+            right: widgetExplorer.orientation == Qt.Horizontal ? parent.right : scrollBar.left
+            bottom: widgetExplorer.orientation == Qt.Horizontal ? scrollBar.top : parent.bottom
+        }
+
         clip: true
-        orientation: ListView.Horizontal
+        orientation: widgetExplorer.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.vertical
         snapMode: ListView.SnapToItem
         model: widgetExplorer.widgetsModel
 
@@ -172,10 +179,13 @@ Item {
     }
     PlasmaComponents.ScrollBar {
         id: scrollBar
-        orientation: Qt.Horizontal
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
+        orientation: widgetExplorer.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.Vertical
+        anchors {
+            top: widgetExplorer.orientation == Qt.Horizontal ? undefined : parent.top
+            bottom: parent.bottom
+            left: widgetExplorer.orientation == Qt.Horizontal ? parent.left : undefined
+            right: parent.right
+        }
         flickableItem: list
     }
 }
