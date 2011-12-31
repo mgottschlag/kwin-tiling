@@ -90,7 +90,6 @@ public:
     void containmentDestroyed();
     void setLocation(Plasma::Location loc);
     void finished();
-    void populateWidgetsMenu();
 
     /**
      * Tracks a new running applet
@@ -186,9 +185,7 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
             filterItemModel.setDynamicSortFilter(true);
             filterItemModel.setSourceModel(&itemModel);
             filterItemModel.sort(0);
-            ctxt->setContextProperty("appletsModel", &filterItemModel);
-            ctxt->setContextProperty("filterModel", &filterModel);
-            QObject::connect(declarativeWidget, SIGNAL(finished()), q, SLOT(finished()));
+            ctxt->setContextProperty("widgetExplorer", q);
         }
     }
 
@@ -201,6 +198,9 @@ void WidgetExplorerPrivate::finished()
         return;
     }
 
+    emit q->widgetsMenuActionsChanged();
+
+    return;
     QObject::connect(declarativeWidget->rootObject(), SIGNAL(addAppletRequested(const QString &)),
                      q, SLOT(addApplet(const QString &)));
     QObject::connect(declarativeWidget->rootObject(), SIGNAL(closeRequested()),
@@ -212,7 +212,6 @@ void WidgetExplorerPrivate::finished()
         actionList << action;
     }
     declarativeWidget->rootObject()->setProperty("extraActions", QVariant::fromValue(actionList));
-    populateWidgetsMenu();
 }
 
 void WidgetExplorerPrivate::setLocation(const Plasma::Location loc)
@@ -226,15 +225,15 @@ void WidgetExplorerPrivate::setLocation(const Plasma::Location loc)
 
 }
 
-void WidgetExplorerPrivate::populateWidgetsMenu()
+QList <QObject *>  WidgetExplorer::widgetsMenuActions()
 {
     QList <QObject *> actionList;
 
-    QSignalMapper *mapper = new QSignalMapper(q);
-    QObject::connect(mapper, SIGNAL(mapped(QString)), q, SLOT(downloadWidgets(QString)));
+    QSignalMapper *mapper = new QSignalMapper(this);
+    QObject::connect(mapper, SIGNAL(mapped(QString)), this, SLOT(downloadWidgets(QString)));
 
     WidgetAction *action = new WidgetAction(KIcon("applications-internet"),
-                                  i18n("Download New Plasma Widgets"), q);
+                                  i18n("Download New Plasma Widgets"), this);
     QObject::connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
     mapper->setMapping(action, QString());
     actionList << action;
@@ -246,23 +245,23 @@ void WidgetExplorerPrivate::populateWidgetsMenu()
             WidgetAction *action = new WidgetAction(KIcon("applications-internet"),
                                           i18nc("%1 is a type of widgets, as defined by "
                                                 "e.g. some plasma-packagestructure-*.desktop files",
-                                                "Download New %1", service->name()), q);
+                                                "Download New %1", service->name()), this);
             QObject::connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
             mapper->setMapping(action, service->property("X-KDE-PluginInfo-Name").toString());
             actionList << action;
         }
     }
 
-    action = new WidgetAction(q);
+    action = new WidgetAction(this);
     action->setSeparator(true);
     actionList << action;
 
     action = new WidgetAction(KIcon("package-x-generic"),
-                         i18n("Install Widget From Local File..."), q);
-    QObject::connect(action, SIGNAL(triggered(bool)), q, SLOT(openWidgetFile()));
+                         i18n("Install Widget From Local File..."), this);
+    QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(openWidgetFile()));
     actionList << action;
 
-    declarativeWidget->rootObject()->setProperty("getWidgetsActions", QVariant::fromValue(actionList));
+    return actionList;
 }
 
 void WidgetExplorerPrivate::initRunningApplets()
@@ -358,9 +357,14 @@ void WidgetExplorer::setLocation(Plasma::Location loc)
     emit(locationChanged(loc));
 }
 
-Plasma::Location WidgetExplorer::location() const
+WidgetExplorer::Location WidgetExplorer::location()
 {
-    return d->location;
+    return (WidgetExplorer::Location)d->location;
+}
+
+Qt::Orientation WidgetExplorer::orientation() const
+{
+    return d->orientation;
 }
 
 void WidgetExplorer::setIconSize(int size)
@@ -453,11 +457,7 @@ bool WidgetExplorer::event(QEvent *event)
         case QEvent::ActionChanged:
         case QEvent::ActionRemoved:
             if (d->declarativeWidget->rootObject()) {
-                QList<QObject *> actionList;
-                foreach (QAction *action, actions()) {
-                    actionList << action;
-                }
-                d->declarativeWidget->rootObject()->setProperty("extraActions", QVariant::fromValue(actionList));
+                emit widgetsMenuActionsChanged();
             }
             break;
         default:

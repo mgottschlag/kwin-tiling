@@ -57,7 +57,39 @@ class PLASMAGENERICSHELL_EXPORT WidgetExplorer : public QGraphicsWidget
 
     Q_OBJECT
 
+    /**
+     * list of all activity creation actions (ie new desktop, new search and launch, etc)
+     */
+    Q_PROPERTY(QList<QObject *> widgetsMenuActions READ widgetsMenuActions NOTIFY widgetsMenuActionsChanged)
+
+    /**
+     * Plasma location of the panel containment the controller is associated to
+     */
+    Q_PROPERTY(Location location READ location NOTIFY locationChanged)
+    Q_ENUMS(Location)
+
+    /**
+     * Orientation the controller will be disaplayed, depends from location
+     */
+    Q_PROPERTY(Qt::Orientation orientation READ orientation NOTIFY orientationChanged)
+
 public:
+    /**
+    * The Location enumeration describes where on screen an element, such as an
+    * Applet or its managing container, is positioned on the screen.
+    **/
+    enum Location {
+        Floating = 0, /**< Free floating. Neither geometry or z-ordering
+                        is described precisely by this value. */
+        Desktop,      /**< On the planar desktop layer, extending across
+                        the full screen from edge to edge */
+        FullScreen,   /**< Full screen */
+        TopEdge,      /**< Along the top of the screen*/
+        BottomEdge,   /**< Along the bottom of the screen*/
+        LeftEdge,     /**< Along the left side of the screen */
+        RightEdge     /**< Along the right side of the screen */
+    };
+
     explicit WidgetExplorer(Plasma::Location loc, QGraphicsItem *parent = 0);
     explicit WidgetExplorer(QGraphicsItem *parent = 0);
     ~WidgetExplorer();
@@ -89,17 +121,12 @@ public:
      */
     Plasma::Corona *corona() const;
 
-    /**
-     * Set the location of the widget explorer
-     *
-     * @arg the new location
-     */
-    void setLocation(const Plasma::Location loc);
 
-    /**
-     * @return the location of the widget explorer
-     */
-    Plasma::Location location() const;
+    void setLocation(const Plasma::Location loc);
+     //FIXME: it's asymmetric due to the problems of QML of exporting enums
+    WidgetExplorer::Location location();
+
+    Qt::Orientation orientation() const;
 
     /**
      * Sets the icon size for the widget explorer
@@ -111,9 +138,13 @@ public:
      */
     int iconSize() const;
 
+    QList <QObject *>  widgetsMenuActions();
+
 Q_SIGNALS:
     void locationChanged(Plasma::Location loc);
+    void orientationChanged();
     void closeClicked();
+    void widgetsMenuActionsChanged();
 
 public Q_SLOTS:
     /**
@@ -138,6 +169,7 @@ private:
     Q_PRIVATE_SLOT(d, void finished())
 
     WidgetExplorerPrivate * const d;
+    friend class WidgetExplorerPrivate;
 };
 
 } // namespace Plasma
