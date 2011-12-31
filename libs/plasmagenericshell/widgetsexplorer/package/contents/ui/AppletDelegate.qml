@@ -46,8 +46,8 @@ PlasmaCore.FrameSvgItem {
         }
         NumberAnimation {
             target: background
-            property: "y"
-            to: background.height
+            property: widgetExplorer.orientation == Qt.Horizontal ? "y" : "x"
+            to: widgetExplorer.orientation == Qt.Horizontal ? background.height : background.width
             duration: 250
             easing.type: Easing.InOutQuad
         }
@@ -60,8 +60,8 @@ PlasmaCore.FrameSvgItem {
 
     ListView.onAdd: NumberAnimation {
             target: background
-            property: "y"
-            from: -background.height
+            property: widgetExplorer.orientation == Qt.Horizontal ? "y" : "x"
+            from: widgetExplorer.orientation == Qt.Horizontal ? -background.height : -background.width
             to: 0
             duration: 250
             easing.type: Easing.InOutQuad
