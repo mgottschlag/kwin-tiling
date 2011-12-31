@@ -40,7 +40,7 @@ class KRequestShutdownHelper
     private slots:
         void processData();
     private:
-#ifndef Q_WS_WIN
+#ifdef Q_WS_X11
         SmcConn connection() const { return conn; }
         SmcConn conn;
 #endif
