@@ -131,9 +131,9 @@ void ActionDetailModel::setIconForCommand(ClipCommand& cmd)
                                         QStringList(), 0, true /* canReturnNull */ );
 
     if ( !iconPix.isNull() ) {
-        cmd.pixmap = command;
+        cmd.icon = command;
     } else {
-        cmd.pixmap.clear();
+        cmd.icon.clear();
     }
 
 }
@@ -188,7 +188,7 @@ QVariant ActionDetailModel::decorationData(ClipCommand* command, ActionDetailMod
 {
     switch (column) {
         case COMMAND_COL:
-            return command->pixmap.isEmpty() ? KIcon( "system-run" ) : KIcon( command->pixmap );
+            return command->icon.isEmpty() ? KIcon( "system-run" ) : KIcon( command->icon );
         case OUTPUT_COL:
         case DESCRIPTION_COL:
             break;

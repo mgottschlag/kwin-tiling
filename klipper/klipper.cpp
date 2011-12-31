@@ -136,7 +136,6 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
     m_pendingCheckTimer.setSingleShot( true );
     connect( &m_pendingCheckTimer, SIGNAL(timeout()), SLOT(slotCheckPending()));
 
-    m_showTimer = new QTime();
 
     m_history = new History( this );
 
@@ -181,7 +180,7 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
 
     m_quitAction = m_collection->addAction( "quit" );
     m_quitAction->setIcon( KIcon("application-exit") );
-    m_quitAction->setText( i18n("&Quit") );
+    m_quitAction->setText( i18nc("@item:inmenu Quit Klipper", "&Quit") );
     connect(m_quitAction, SIGNAL(triggered(bool)), SLOT(slotQuit()));
 
     m_repeatAction = m_collection->addAction("repeat_action");
@@ -239,7 +238,6 @@ Klipper::Klipper(QObject* parent, const KSharedConfigPtr& config)
 Klipper::~Klipper()
 {
     delete m_sessionManager;
-    delete m_showTimer;
     delete m_myURLGrabber;
 }
 
@@ -287,7 +285,7 @@ void Klipper::clearClipboardHistory()
 
 void Klipper::slotStartShowTimer()
 {
-    m_showTimer->start();
+    m_showTimer.start();
 }
 
 void Klipper::loadSettings()
@@ -410,8 +408,6 @@ bool Klipper::loadHistory() {
     }
 
     if ( !history()->empty() ) {
-        m_lastSelection = -1;
-        m_lastClipboard = -1;
         setClipboard( *history()->first(), Clipboard | Selection );
     }
 
@@ -486,7 +482,7 @@ void Klipper::slotQuit()
     // If the menu was just opened, likely the user
     // selected quit by accident while attempting to
     // click the Klipper icon.
-    if ( m_showTimer->elapsed() < 300 ) {
+    if ( m_showTimer.elapsed() < 300 ) {
         return;
     }
 
@@ -653,43 +649,30 @@ void Klipper::checkClipData( bool selectionMode )
 // debug code
 #ifdef NOISY_KLIPPER
     kDebug() << "Checking clip data";
-#endif
-#if 0
+
     kDebug() << "====== c h e c k C l i p D a t a ============================"
               << kBacktrace()
               << "====== c h e c k C l i p D a t a ============================"
               << endl;;
-#endif
-#if 0
+
+
     if ( sender() ) {
-        kDebug() << "sender=" << sender()->name();
+        kDebug() << "sender=" << sender()->objectName();
     } else {
         kDebug() << "no sender";
     }
-#endif
-#if 0
-    kDebug() << "\nselectionMode=" << selectionMode
-              << "\nserialNo=" << clip->data()->serialNumber() << " (sel,cli)=(" << m_lastSelection << "," << m_lastClipboard << ")"
-              << "\nowning (sel,cli)=(" << clip->ownsSelection() << "," << clip->ownsClipboard() << ")"
-              << "\ntext=" << clip->text( selectionMode ? QClipboard::Selection : QClipboard::Clipboard) << endl;
 
+    kDebug() << "\nselectionMode=" << selectionMode
+              << "\nowning (sel,cli)=(" << m_clip->ownsSelection() << "," << m_clip->ownsClipboard() << ")"
+              << "\ntext=" << m_clip->text( selectionMode ? QClipboard::Selection : QClipboard::Clipboard) << endl;
 #endif
-#if 0
-    const char *format;
-    int i = 0;
-    while ( (format = clip->data()->format( i++ )) )
-    {
-        qDebug( "    format: %s", format);
-    }
-#endif
+
     const QMimeData* data = m_clip->mimeData( selectionMode ? QClipboard::Selection : QClipboard::Clipboard );
     if ( !data ) {
         kWarning() << "No data in clipboard. This not not supposed to happen.";
         return;
     }
-    // TODO: Rewrite to Qt4 !!!
-    //int lastSerialNo = selectionMode ? m_lastSelection : m_lastClipboard;
-    //bool changed = data->serialNumber() != lastSerialNo;
+
     bool changed = true; // ### FIXME (only relevant under polling, might be better to simply remove polling and rely on XFixes)
     bool clipEmpty = data->formats().isEmpty();
     if (clipEmpty) {
@@ -733,14 +716,6 @@ void Klipper::checkClipData( bool selectionMode )
     else // unknown, ignore
         return;
 
-    // store old contents:
-#if 0
-    if ( selectionMode )
-        m_lastSelection = data->serialNumber();
-    else
-        m_lastClipboard = data->serialNumber();
-#endif
-
     HistoryItem* item = applyClipChanges( data );
     if (changed) {
 #ifdef NOISY_KLIPPER
@@ -780,18 +755,12 @@ void Klipper::setClipboard( const HistoryItem& item, int mode )
         kDebug() << "Setting selection to <" << item.text() << ">";
 #endif
         m_clip->setMimeData( item.mimeData(), QClipboard::Selection );
-#if 0
-        m_lastSelection = clip->data()->serialNumber();<
-#endif
     }
     if ( mode & Clipboard ) {
 #ifdef NOISY_KLIPPER
         kDebug() << "Setting clipboard to <" << item.text() << ">";
 #endif
         m_clip->setMimeData( item.mimeData(), QClipboard::Clipboard );
-#if 0
-        m_lastClipboard = clip->data()->serialNumber();
-#endif
     }
 
 }
@@ -1075,32 +1044,39 @@ void Klipper::slotCyclePrev()
 
 QString Klipper::cycleText() const
 {
+    const int WIDTH_IN_PIXEL = 400;
+
     const HistoryItem* itemprev = m_history->prevInCycle();
     const HistoryItem* item = m_history->first();
     const HistoryItem* itemnext = m_history->nextInCycle();
+
     QFontMetrics font_metrics(m_history->popup()->fontMetrics());
-    QString rv("<table>");
+    QString result("<table>");
+
     if (itemprev) {
-        rv += "<tr><td>";
-        rv += i18n("up");
-        rv += "</td><td>";
-        rv += font_metrics.elidedText(Qt::escape(itemprev->text().simplified()), Qt::ElideMiddle, 400);
-        rv += "</td></tr>";
+        result += "<tr><td>";
+        result += i18n("up");
+        result += "</td><td>";
+        result += font_metrics.elidedText(Qt::escape(itemprev->text().simplified()), Qt::ElideMiddle, WIDTH_IN_PIXEL);
+        result += "</td></tr>";
     }
-    rv += "<tr><td>";
-    rv += i18n("current");
-    rv += "</td><td><b>";
-    rv += font_metrics.elidedText(Qt::escape(item->text().simplified()), Qt::ElideMiddle, 400);
-    rv += "</b></td></tr>";
+
+    result += "<tr><td>";
+    result += i18n("current");
+    result += "</td><td><b>";
+    result += font_metrics.elidedText(Qt::escape(item->text().simplified()), Qt::ElideMiddle, WIDTH_IN_PIXEL);
+    result += "</b></td></tr>";
+
     if (itemnext) {
-        rv += "<tr><td>";
-        rv += i18n("down");
-        rv += "</td><td>";
-        rv += font_metrics.elidedText(Qt::escape(itemnext->text().simplified()), Qt::ElideMiddle, 400);
-        rv += "</td></tr>";
+        result += "<tr><td>";
+        result += i18n("down");
+        result += "</td><td>";
+        result += font_metrics.elidedText(Qt::escape(itemnext->text().simplified()), Qt::ElideMiddle, WIDTH_IN_PIXEL);
+        result += "</td></tr>";
     }
-    rv += "</table>";
-    return rv;
+
+    result += "</table>";
+    return result;
 }
 
 #include "klipper.moc"

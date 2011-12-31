@@ -137,7 +137,7 @@ void ActionsWidget::updateActionItem( QTreeWidgetItem* item, ClipAction* action 
         QStringList cmdProps;
         cmdProps << command.command << command.description;
         QTreeWidgetItem *child = new QTreeWidgetItem(item, cmdProps);
-        child->setIcon(0, KIcon(command.pixmap.isEmpty() ? "system-run" : command.pixmap));
+        child->setIcon(0, KIcon(command.icon.isEmpty() ? "system-run" : command.icon));
     }
 }
 

@@ -14,6 +14,7 @@ Name[et]=KDE Plasma töötsoon
 Name[eu]=KDE Plasma langunea
 Name[fi]=KDE Plasma-työtila
 Name[fr]=Espace de travail Plasma de KDE
+Name[ga]=Spás Oibre KDE Plasma
 Name[he]=סביבת עבודה של KDE Plasma
 Name[hu]=KDE Plasma munkaterület
 Name[ia]=Spatio de labor de Plasma de KDE
