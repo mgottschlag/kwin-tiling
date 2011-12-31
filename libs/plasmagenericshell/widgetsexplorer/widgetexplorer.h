@@ -143,15 +143,6 @@ public:
 
     Qt::Orientation orientation() const;
 
-    /**
-     * Sets the icon size for the widget explorer
-     */
-    void setIconSize(int size);
-
-    /**
-     * @return the icon size of the wiget explorer
-     */
-    int iconSize() const;
 
     QObject *widgetsModel() const;
     QObject *filterModel() const;

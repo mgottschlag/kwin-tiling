@@ -79,8 +79,7 @@ public:
         : q(w),
           containment(0),
           itemModel(w),
-          filterModel(w),
-          iconSize(16)
+          filterModel(w)
     {
     }
 
@@ -121,7 +120,6 @@ public:
     Plasma::DeclarativeWidget *declarativeWidget;
 
     QGraphicsLinearLayout *mainLayout;
-    int iconSize;
 };
 
 void WidgetExplorerPrivate::initFilters()
@@ -385,18 +383,6 @@ WidgetExplorer::Location WidgetExplorer::location()
 Qt::Orientation WidgetExplorer::orientation() const
 {
     return d->orientation;
-}
-
-void WidgetExplorer::setIconSize(int size)
-{
-    //TODO
-    adjustSize();
-}
-
-int WidgetExplorer::iconSize() const
-{
-    //TODO
-    return 32;
 }
 
 void WidgetExplorer::populateWidgetList(const QString &app)

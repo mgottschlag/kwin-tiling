@@ -931,7 +931,6 @@ void PlasmaApp::showWidgetExplorer(Plasma::Containment *containment)
         QSize viewSize = m_widgetExplorerView->size();
         m_widgetExplorerView->setGraphicsWidget(m_widgetExplorer);
 
-        m_widgetExplorer->setIconSize(KIconLoader::SizeLarge);
         m_widgetExplorerView->installEventFilter(this);
     }
 

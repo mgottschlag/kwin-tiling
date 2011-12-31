@@ -207,7 +207,6 @@ void DashboardView::showWidgetExplorer()
         widgetExplorer->installEventFilter(this);
         widgetExplorer->setContainment(c);
         widgetExplorer->setLocation(Plasma::BottomEdge);
-        widgetExplorer->setIconSize(KIconLoader::SizeHuge);
         widgetExplorer->populateWidgetList();
         widgetExplorer->setMaximumWidth(width());
         widgetExplorer->adjustSize();
