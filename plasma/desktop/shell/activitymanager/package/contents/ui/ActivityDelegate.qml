@@ -61,9 +61,6 @@ PlasmaCore.FrameSvgItem {
         easing.type: Easing.InOutQuad
     }
 
-    Behavior on x {
-        NumberAnimation { duration: 250 }
-    }
     Behavior on width {
         NumberAnimation { duration: 250 }
     }

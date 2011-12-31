@@ -67,10 +67,6 @@ PlasmaCore.FrameSvgItem {
             easing.type: Easing.InOutQuad
         }
 
-    Behavior on x {
-        NumberAnimation { duration: 250 }
-    }
-
     DragArea {
         anchors.fill: parent
         supportedActions: Qt.MoveAction | Qt.LinkAction
