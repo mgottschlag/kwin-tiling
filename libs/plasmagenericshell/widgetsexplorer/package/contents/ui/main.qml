@@ -25,10 +25,6 @@ Item {
     id: main
     property int minimumWidth: 200
     property int minimumHeight: 150
-    signal addAppletRequested(string pluginName)
-    signal closeRequested()
-    property variant extraActions
-    property variant getWidgetsActions
 
     PlasmaCore.Theme {
         id: theme
@@ -39,15 +35,15 @@ Item {
         visualParent: categoryButton
     }
     Repeater {
-        model: filterModel
+        model: widgetExplorer.filterModel
         delegate: PlasmaComponents.MenuItem {
             text: display
             separator: model["separator"]
             onClicked: {
-                var item = filterModel.get(index)
+                var item = widgetExplorer.filterModel.get(index)
 
-            appletsModel.filterType = item.filterType
-            appletsModel.filterQuery = item.filterData
+                widgetExplorer.widgetsModel.filterType = item.filterType
+                widgetExplorer.widgetsModel.filterQuery = item.filterData
             }
             Component.onCompleted: {
                 parent = categoriesDialog
@@ -60,7 +56,7 @@ Item {
         visualParent: getWidgetsButton
     }
     Repeater {
-        model: getWidgetsActions
+        model: widgetExplorer.widgetsMenuActions
         delegate: PlasmaComponents.MenuItem {
             icon: modelData.icon
             text: modelData.text
@@ -125,7 +121,7 @@ Item {
                 width: list.width / Math.floor(list.width / 180)
                 clearButtonShown: true
                 placeholderText: i18n("Enter search term...")
-                onTextChanged: appletsModel.searchTerm = text
+                onTextChanged: widgetExplorer.widgetsModel.searchTerm = text
                 Component.onCompleted: forceActiveFocus()
             }
             PlasmaComponents.Button {
@@ -145,18 +141,18 @@ Item {
             }
 
             Repeater {
-                model: extraActions.length
+                model: widgetExplorer.extraActions.length
                 PlasmaComponents.Button {
-                    iconSource: extraActions[modelData].icon
-                    text: extraActions[modelData].text
+                    iconSource: widgetExplorer.extraActions[modelData].icon
+                    text: widgetExplorer.extraActions[modelData].text
                     onClicked: {
-                        extraActions[modelData].trigger()
+                        widgetExplorer.extraActions[modelData].trigger()
                     }
                 }
             }
             PlasmaComponents.ToolButton {
                 iconSource: "window-close"
-                onClicked: main.closeRequested()
+                onClicked: widgetExplorer.closeClicked()
             }
         }
     }
@@ -170,7 +166,7 @@ Item {
         clip: true
         orientation: ListView.Horizontal
         snapMode: ListView.SnapToItem
-        model: appletsModel
+        model: widgetExplorer.widgetsModel
 
         delegate: AppletDelegate {}
     }

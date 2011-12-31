@@ -58,9 +58,24 @@ class PLASMAGENERICSHELL_EXPORT WidgetExplorer : public QGraphicsWidget
     Q_OBJECT
 
     /**
-     * list of all activity creation actions (ie new desktop, new search and launch, etc)
+     * Model that lists all applets
+     */
+    Q_PROPERTY(QObject * widgetsModel READ widgetsModel CONSTANT)
+
+    /**
+     * Model that lists all applets filters and categories
+     */
+    Q_PROPERTY(QObject * filterModel READ filterModel CONSTANT)
+
+    /**
+     * Actions for adding widgets, like download plasma widgets, download google gadgets, install from local file
      */
     Q_PROPERTY(QList<QObject *> widgetsMenuActions READ widgetsMenuActions NOTIFY widgetsMenuActionsChanged)
+
+    /**
+     * Extra actions assigned by the shell, like switch to activity manager
+     */
+    Q_PROPERTY(QList<QObject *> extraActions READ extraActions NOTIFY extraActionsChanged)
 
     /**
      * Plasma location of the panel containment the controller is associated to
@@ -138,13 +153,18 @@ public:
      */
     int iconSize() const;
 
+    QObject *widgetsModel() const;
+    QObject *filterModel() const;
+
     QList <QObject *>  widgetsMenuActions();
+    QList <QObject *>  extraActions() const;
 
 Q_SIGNALS:
     void locationChanged(Plasma::Location loc);
     void orientationChanged();
     void closeClicked();
     void widgetsMenuActionsChanged();
+    void extraActionsChanged();
 
 public Q_SLOTS:
     /**

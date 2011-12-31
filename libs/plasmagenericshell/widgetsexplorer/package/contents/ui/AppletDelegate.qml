@@ -123,7 +123,7 @@ PlasmaCore.FrameSvgItem {
             anchors.fill: parent
             hoverEnabled: true
             onDoubleClicked: {
-                addAppletRequested(pluginName)
+                widgetExplorer.addApplet(pluginName)
             }
             onEntered: tooltipDialog.appletDelegate = background
             onExited: tooltipDialog.appletDelegate = null

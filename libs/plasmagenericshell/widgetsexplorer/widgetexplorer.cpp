@@ -199,6 +199,7 @@ void WidgetExplorerPrivate::finished()
     }
 
     emit q->widgetsMenuActionsChanged();
+    emit q->extraActionsChanged();
 
     return;
     QObject::connect(declarativeWidget->rootObject(), SIGNAL(addAppletRequested(const QString &)),
@@ -223,6 +224,16 @@ void WidgetExplorerPrivate::setLocation(const Plasma::Location loc)
     location = loc;
     orientation = ((location == Plasma::LeftEdge || location == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
 
+}
+
+QObject *WidgetExplorer::widgetsModel() const
+{
+    return &d->filterItemModel;
+}
+
+QObject *WidgetExplorer::filterModel() const
+{
+    return &d->filterModel;
 }
 
 QList <QObject *>  WidgetExplorer::widgetsMenuActions()
@@ -261,6 +272,15 @@ QList <QObject *>  WidgetExplorer::widgetsMenuActions()
     QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(openWidgetFile()));
     actionList << action;
 
+    return actionList;
+}
+
+QList<QObject *> WidgetExplorer::extraActions() const
+{
+    QList<QObject *> actionList;
+    foreach (QAction *action, actions()) {
+        actionList << action;
+    }
     return actionList;
 }
 
