@@ -23,6 +23,7 @@
 #include <cmath>
 
 #include <QHash>
+#include <QPropertyAnimation>
 
 #include <Plasma/Plasma>
 #include <Plasma/Containment>
@@ -42,17 +43,15 @@ using namespace KCategorizedItemsViewModels;
 AppletsListWidget::AppletsListWidget(Plasma::Location location, QGraphicsItem *parent)
     : AbstractIconList(location, parent)
 {
-    toolTipMoveTimeLine.setFrameRange(0, 100);
-    toolTipMoveTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
-    toolTipMoveTimeLine.setDuration(250);
-    connect(&toolTipMoveTimeLine, SIGNAL(frameChanged(int)),
-            this, SLOT(toolTipMoveTimeLineFrameChanged(int)));
-
     //init tooltip
     m_toolTip = new AppletToolTipWidget(location);
     m_toolTip->setVisible(false);
     connect(m_toolTip, SIGNAL(enter()), this, SLOT(onToolTipEnter()));
     connect(m_toolTip, SIGNAL(leave()), this, SLOT(onToolTipLeave()));
+
+    animation = new QPropertyAnimation(m_toolTip, "pos", this);
+    animation->setEasingCurve(QEasingCurve::InOutQuad);
+    animation->setDuration(250);
 }
 
 AppletsListWidget::~AppletsListWidget()
@@ -293,7 +292,9 @@ void AppletsListWidget::setToolTipPosition()
     toolTipMoveTo = pos;
 
     if (m_toolTip->isVisible()) {
-        animateToolTipMove();
+        animation->stop();
+        animation->setEndValue(toolTipMoveTo);
+        animation->start();
     } else {
         m_toolTip->move(toolTipMoveTo);
     }
@@ -338,24 +339,6 @@ void AppletsListWidget::updateVisibleIcons()
         }
     }
 
-}
-
-void AppletsListWidget::animateToolTipMove()
-{
-    if (toolTipMoveTimeLine.state() != QTimeLine::Running && toolTipMoveFrom != toolTipMoveTo) {
-         toolTipMoveTimeLine.start();
-    }
-}
-
-void AppletsListWidget::toolTipMoveTimeLineFrameChanged(int frame)
-{
-    QPoint newPos;
-
-    newPos = QPoint(
-            (frame/(qreal)100) * (toolTipMoveTo.x() - toolTipMoveFrom.x()) + toolTipMoveFrom.x(),
-            (frame/(qreal)100) * (toolTipMoveTo.y() - toolTipMoveFrom.y()) + toolTipMoveFrom.y());
-
-    m_toolTip->move(newPos);
 }
 
 void AppletsListWidget::populateAllAppletsHash()
