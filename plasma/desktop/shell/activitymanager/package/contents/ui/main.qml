@@ -30,15 +30,6 @@ Item {
     property int minimumWidth: cellWidth + (activityManager.orientation == Qt.Horizontal ? 0 : scrollBar.width)
     property int minimumHeight: topBar.height + list.delegateHeight + (activityManager.orientation == Qt.Horizontal ? scrollBar.height : 0)
 
-    signal addAppletRequested(string pluginName)
-    signal closeRequested()
-    property variant extraActions
-    property variant getWidgetsActions
-
-    PlasmaCore.Theme {
-        id: theme
-    }
-
 
     PlasmaCore.DataSource {
         id: activitySource
