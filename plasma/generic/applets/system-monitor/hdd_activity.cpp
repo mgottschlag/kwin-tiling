@@ -33,8 +33,31 @@
 #include <Plasma/Theme>
 #include <Plasma/ToolTipManager>
 
+/**
+ * Examples of what the regexp has to handle...
+ * It's going to end up matching everything.
+ *
+ * I can limit it later though, to probably just
+ * the entries below.
+ *
+ * disk/sda3_(8:3)/Rate/totalio
+ * disk/md0_(9:0)/Rate/rio
+ * disk/md0_(9:0)/Rate/wio
+ *
+ * Thought Process:
+ * The theory is that on startup, we find all possible sources that match
+ * that pattern. There will be no entries checked by default though;
+ * therefore the user will configure it by loading the settings page,
+ * which will be populated by that list of possible sources.
+ *
+ * The user hits OK, we put all checked entries into a list of entries to watch.
+ * We'll watch only those and provide data accordingly.
+ *
+ * Then just be sure to handle configChanged() properly.
+ */
 Hdd_Activity::Hdd_Activity(QObject *parent, const QVariantList &args)
-    : SM::Applet(parent, args)
+    : SM::Applet(parent, args),
+      m_regexp("disk/.*/Rate/.*")
 {
     kDebug() << "###### HDD ACTIVITY CTOR";
     setHasConfigurationInterface(true);
@@ -65,9 +88,11 @@ void Hdd_Activity::init()
 void Hdd_Activity::sourceChanged(const QString& name)
 {
     kDebug() << "######## sourceChanged name: " << name;
+    kDebug() << "$$$$$$$ regexp captures: " << m_regexp.capturedTexts();
+
     if (m_regexp.indexIn(name) != -1) {
+        kDebug() << "######### REGEXP match successful, hopefully";
         //kDebug() << m_regexp.cap(1);
-        //kWarning() << name; // debug
 //        m_cpus << name;
 //        if (!m_sourceTimer.isActive()) {
 //            m_sourceTimer.start(0);
