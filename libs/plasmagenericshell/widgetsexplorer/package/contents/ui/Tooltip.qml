@@ -112,7 +112,10 @@ MouseArea {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
         }
-        visible: local
+        opacity: local ? 1 : 0
+        Behavior on opacity {
+            NumberAnimation { duration: 250 }
+        }
         iconSource: "application-exit"
         text: i18n("Uninstall")
         onClicked: widgetExplorer.uninstall(pluginName)
