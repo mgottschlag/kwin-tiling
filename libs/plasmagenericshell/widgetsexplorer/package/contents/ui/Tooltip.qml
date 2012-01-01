@@ -17,9 +17,10 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import Qt 4.7
-import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
+import QtQuick 1.1
+import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.plasma.core 0.1 as PlasmaCore
+import org.kde.qtextracomponents 0.1
 
 MouseArea {
     id: main
@@ -39,16 +40,17 @@ MouseArea {
     property string license: tooltipDialog.appletDelegate.license
 
 
-    PlasmaWidgets.IconWidget {
+    QIconItem {
         id: tooltipIconWidget
         anchors.left: parent.left
         anchors.top: parent.top
-        width: 64
-        height: 64
+        width: theme.hugeIconSize
+        height: width
         icon: main.icon
     }
     Column {
         id: nameColumn
+        spacing: 8
         anchors {
             left: tooltipIconWidget.right
             leftMargin: 8
