@@ -153,46 +153,41 @@ void Hdd_Activity::createConfigurationInterface(KConfigDialog *parent)
 
 void Hdd_Activity::configChanged()
 {
-    kDebug() << "#### configChanged";
-    KConfigGroup cg = config();
+    kDebug() << "#### configChanged m_hdds:" << m_hdds;
 
-//    QStringList default_cpus;
-//
-//    if(m_cpus.contains("cpu/system/TotalLoad")) {
-//        default_cpus << "cpu/system/TotalLoad";
-//    } else {
-//        default_cpus = m_cpus;
-//    }
-//
+
+    KConfigGroup cg = config();
+    QStringList default_hdds = m_hdds;
+
     // default to 2 seconds (2000 ms interval
     setInterval(cg.readEntry("interval", 2.0) * 1000.0);
-//    setSources(cg.readEntry("cpus", default_cpus));
-   connectToEngine();
+    setSources(cg.readEntry("hdds", default_hdds));
+    connectToEngine();
 }
 
 void Hdd_Activity::configAccepted()
 {
     kDebug() << "#### configAccepted";
-//    KConfigGroup cg = config();
-//    KConfigGroup cgGlobal = globalConfig();
-//
-//    clear();
-//
-//    for (int i = 0; i < parentItem->rowCount(); ++i) {
-//        QStandardItem *item = parentItem->child(i, 0);
-//        if (item) {
-//            if (item->checkState() == Qt::Checked) {
-//                appendSource(item->data().toString());
-//            }
-//        }
-//    }
-//
-//    cg.writeEntry("cpus", sources());
-//
-//    uint interval = ui.intervalSpinBox->value();
-//    cg.writeEntry("interval", interval);
-//
-//    emit configNeedsSaving();
+    KConfigGroup cg = config();
+    QStandardItem *parentItem = m_hddModel.invisibleRootItem();
+
+    clear();
+
+    for (int i = 0; i < parentItem->rowCount(); ++i) {
+        QStandardItem *item = parentItem->child(i, 0);
+        if (item) {
+            if (item->checkState() == Qt::Checked) {
+                appendSource(item->data().toString());
+            }
+        }
+    }
+
+    cg.writeEntry("hdds", sources());
+
+    uint interval = ui.intervalSpinBox->value();
+    cg.writeEntry("interval", interval);
+
+    emit configNeedsSaving();
 }
 
 bool Hdd_Activity::addVisualization(const QString& source)
