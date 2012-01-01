@@ -48,7 +48,7 @@ Item {
 
     PlasmaComponents.ContextMenu {
         id: newActivityMenu
-        visualParent: newActivityButton
+        visualParent: topBar.newActivityButton
         PlasmaComponents.MenuItem {
             id: templatesItem
             text: i18n("Templates")
@@ -99,6 +99,7 @@ Item {
     Loader {
         id: topBar
         property string query
+        property Item newActivityButton
 
         sourceComponent: (activityManager.orientation == Qt.Horizontal) ? horizontalTopBarComponent : verticalTopBarComponent
         height: item.height
@@ -148,6 +149,9 @@ Item {
                     onClicked: activityManager.closeClicked()
                 }
             }
+            Component.onCompleted: {
+                topBar.newActivityButton = newActivityButton
+            }
         }
     }
     Component {
@@ -188,6 +192,9 @@ Item {
                 iconSource: "plasma"
                 text: i18n("Add widgets")
                 onClicked: activityManager.addWidgetsRequested()
+            }
+            Component.onCompleted: {
+                topBar.newActivityButton = newActivityButton
             }
         }
     }
