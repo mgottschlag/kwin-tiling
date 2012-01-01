@@ -25,6 +25,7 @@
 #include "ui_hdd_activity-config.h"
 #include "applet.h"
 
+#include <QTimer>
 #include <QStandardItemModel>
 #include <QRegExp>
 
@@ -58,6 +59,9 @@ public slots:
 private:
     Ui::config ui;
     QStandardItemModel m_hddModel;
+    QStringList m_hdds;
+
+    QTimer m_sourceTimer;
     QRegExp m_regexp;
 };
 
