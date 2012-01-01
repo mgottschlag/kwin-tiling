@@ -22,7 +22,7 @@
 #ifndef HDD_ACTIVITY_HEADER
 #define HDD_ACTIVITY_HEADER
 
-#include "ui_hdd-activity-config.h"
+#include "ui_hdd_activity-config.h"
 #include "applet.h"
 
 #include <QStandardItemModel>
@@ -54,10 +54,6 @@ public slots:
 
     void configAccepted();
     void configChanged();
-
-protected:
-    QString hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data);
-    QString guessHddTitle(const Plasma::DataEngine::Data &data);
 
 private:
     Ui::config ui;

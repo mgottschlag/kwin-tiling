@@ -24,9 +24,9 @@ target_link_libraries(plasma_applet_sm_hdd ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS
 # HDD Activity Monitor
 
 set(hdd_activity_SRCS
-    hdd-activity.cpp
+    hdd_activity.cpp
 )
-kde4_add_ui_files(hdd_activity_SRCS hdd-activity-config.ui)
+kde4_add_ui_files(hdd_activity_SRCS hdd_activity-config.ui)
 kde4_add_plugin(plasma_applet_sm_hdd_activity ${hdd_activity_SRCS})
 target_link_libraries(plasma_applet_sm_hdd_activity ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 
@@ -89,6 +89,7 @@ install(TARGETS
     plasma_applet-system-monitor
     ${INSTALL_TARGETS_DEFAULT_ARGS})
 install(TARGETS
+    plasma_applet_sm_hdd_activity
     plasma_applet_sm_hdd
     plasma_applet_sm_temperature
     plasma_applet_sm_hwinfo
@@ -98,6 +99,7 @@ install(TARGETS
     plasma_applet_system-monitor
     DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES
+    plasma-applet-sm_hdd_activity.desktop
     plasma-applet-sm_hdd.desktop
     plasma-applet-sm_temperature.desktop
     plasma-applet-sm_hwinfo.desktop
