@@ -124,74 +124,43 @@ void Hdd_Activity::dataUpdated(const QString& source, const Plasma::DataEngine::
 void Hdd_Activity::createConfigurationInterface(KConfigDialog *parent)
 {
     kDebug() << "###### createConfigurationInterface";
-//    QWidget *widget = new QWidget();
-//    ui.setupUi(widget);
-//    m_hddModel.clear();
-//    m_hddModel.setHorizontalHeaderLabels(QStringList() << i18n("Mount Point")
-//                                                       << i18n("Name"));
-//    QStandardItem *parentItem = m_hddModel.invisibleRootItem();
-//    Plasma::DataEngine::Data data;
-//    QString predicateString("IS StorageVolume");
-//
-//    foreach (const QString& uuid, engine()->query(predicateString)[predicateString].toStringList()) {
-//        if (!isValidDevice(uuid, &data)) {
-//            continue;
-//        }
-//        QStandardItem *item1 = new QStandardItem(filePath(data));
-//        item1->setEditable(false);
-//        item1->setCheckable(true);
-//        item1->setData(uuid);
-//        if (sources().contains(uuid)) {
-//            item1->setCheckState(Qt::Checked);
-//        }
-//        QStandardItem *item2 = new QStandardItem(hddTitle(uuid, data));
-//        item2->setData(guessHddTitle(data));
-//        item2->setEditable(true);
-//        parentItem->appendRow(QList<QStandardItem *>() << item1 << item2);
-//    }
-//
-//    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-//    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-//    connect(ui.treeView, SIGNAL(clicked(QModelIndex)), parent, SLOT(settingsModified()));
-//    connect(ui.intervalSpinBox, SIGNAL(valueChanged(QString)), parent, SLOT(settingsModified()));
-//
-//    QWidget *widget = new QWidget();
-//    ui.setupUi(widget);
-//    m_model.clear();
-//    m_model.setHorizontalHeaderLabels(QStringList() << i18n("CPU"));
-//    QStandardItem *parentItem = m_model.invisibleRootItem();
-//
-//    foreach (const QString& cpu, m_cpus) {
-//        if (m_regexp.indexIn(cpu) != -1) {
-//            QStandardItem *item1 = new QStandardItem(cpuTitle(m_regexp.cap(1)));
-//            item1->setEditable(false);
-//            item1->setCheckable(true);
-//            item1->setData(cpu);
-//            if (sources().contains(cpu)) {
-//                item1->setCheckState(Qt::Checked);
-//            }
-//            parentItem->appendRow(QList<QStandardItem *>() << item1);
-//        }
-//    }
-//
-//    ui.treeView->setModel(&m_hddModel);
-//    ui.treeView->resizeColumnToContents(0);
-//    ui.intervalSpinBox->setValue(interval() / 1000.0);
-//    ui.intervalSpinBox->setSuffix(i18nc("second", " s"));
-//    parent->addPage(widget, i18n("Partitions"), "drive-harddisk");
-//
-//    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-//    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-//    connect(ui.treeView, SIGNAL(clicked(QModelIndex)), parent, SLOT(settingsModified()));
-//    connect(ui.intervalSpinBox, SIGNAL(valueChanged(QString)), parent, SLOT(settingsModified()));
+    QWidget *widget = new QWidget();
+    ui.setupUi(widget);
+    m_hddModel.clear();
+    m_hddModel.setHorizontalHeaderLabels(QStringList() << i18n("Mount Point")
+                                                       << i18n("Name"));
+    QStandardItem *parentItem = m_hddModel.invisibleRootItem();
+    Plasma::DataEngine::Data data;
+    QString predicateString("IS StorageVolume");
+
+    foreach (const QString& uuid, engine()->query(predicateString)[predicateString].toStringList()) {
+        if (!isValidDevice(uuid, &data)) {
+            continue;
+        }
+        QStandardItem *item1 = new QStandardItem(filePath(data));
+        item1->setEditable(false);
+        item1->setCheckable(true);
+        item1->setData(uuid);
+        if (sources().contains(uuid)) {
+            item1->setCheckState(Qt::Checked);
+        }
+        QStandardItem *item2 = new QStandardItem(hddTitle(uuid, data));
+        item2->setData(guessHddTitle(data));
+        item2->setEditable(true);
+        parentItem->appendRow(QList<QStandardItem *>() << item1 << item2);
+    }
+
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    connect(ui.treeView, SIGNAL(clicked(QModelIndex)), parent, SLOT(settingsModified()));
+    connect(ui.intervalSpinBox, SIGNAL(valueChanged(QString)), parent, SLOT(settingsModified()));
 }
 
 void Hdd_Activity::configChanged()
 {
     kDebug() << "#### configChanged";
-    //KConfigGroup cg = config();
+    KConfigGroup cg = config();
 
-//    KConfigGroup cg = config();
 //    QStringList default_cpus;
 //
 //    if(m_cpus.contains("cpu/system/TotalLoad")) {
@@ -200,9 +169,10 @@ void Hdd_Activity::configChanged()
 //        default_cpus = m_cpus;
 //    }
 //
-//    setInterval(cg.readEntry("interval", 2.0) * 1000.0);
+    // default to 2 seconds (2000 ms interval
+    setInterval(cg.readEntry("interval", 2.0) * 1000.0);
 //    setSources(cg.readEntry("cpus", default_cpus));
- //   connectToEngine();
+   connectToEngine();
 }
 
 void Hdd_Activity::configAccepted()
