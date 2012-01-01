@@ -56,6 +56,7 @@ PlasmaAppletItem::PlasmaAppletItem(PlasmaAppletItemModel *model,
     setData(info.author(), PlasmaAppletItemModel::AuthorRole);
     setData(info.email(), PlasmaAppletItemModel::EmailRole);
     setData(0, PlasmaAppletItemModel::RunningRole);
+    setData(m_local, PlasmaAppletItemModel::LocalRole);
 }
 
 QString PlasmaAppletItem::pluginName() const
@@ -202,6 +203,7 @@ PlasmaAppletItemModel::PlasmaAppletItemModel(QObject * parent)
     newRoleNames[AuthorRole] = "author";
     newRoleNames[EmailRole] = "email";
     newRoleNames[RunningRole] = "running";
+    newRoleNames[LocalRole] = "local";
 
     setRoleNames(newRoleNames);
 

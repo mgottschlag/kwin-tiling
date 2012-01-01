@@ -38,6 +38,8 @@ PlasmaCore.FrameSvgItem {
     property string author: model.author
     property string email: model.email
     property string license: model.license
+    property string pluginName: model.pluginName
+    property bool local: model.local
 
     ListView.onRemove: SequentialAnimation {
         PropertyAction {

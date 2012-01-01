@@ -150,6 +150,8 @@ public:
     QList <QObject *>  widgetsMenuActions();
     QList <QObject *>  extraActions() const;
 
+    Q_INVOKABLE void uninstall(const QString &pluginName);
+
 Q_SIGNALS:
     void locationChanged(Plasma::Location loc);
     void orientationChanged();

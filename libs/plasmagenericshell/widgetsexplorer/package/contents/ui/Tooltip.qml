@@ -38,7 +38,8 @@ MouseArea {
     property string author: tooltipDialog.appletDelegate.author
     property string email: tooltipDialog.appletDelegate.email
     property string license: tooltipDialog.appletDelegate.license
-
+    property string pluginName: tooltipDialog.appletDelegate.pluginName
+    property bool local: tooltipDialog.appletDelegate.local
 
     QIconItem {
         id: tooltipIconWidget
@@ -104,5 +105,16 @@ MouseArea {
             color: theme.textColor
             wrapMode: Text.Wrap
         }
+    }
+
+    PlasmaComponents.Button {
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            bottom: parent.bottom
+        }
+        visible: local
+        iconSource: "application-exit"
+        text: i18n("Uninstall")
+        onClicked: widgetExplorer.uninstall(pluginName)
     }
 }

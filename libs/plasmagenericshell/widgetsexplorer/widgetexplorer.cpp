@@ -548,6 +548,22 @@ void WidgetExplorer::openWidgetFile()
     assistant->setFocus();
 }
 
+void WidgetExplorer::uninstall(const QString &pluginName)
+{
+    Plasma::PackageStructure installer;
+    installer.uninstallPackage(pluginName,
+                               KStandardDirs::locateLocal("data", "plasma/plasmoids/"));
+
+    //FIXME: moreefficient way rather a linear scan?
+    for (int i = 0; i < d->itemModel.rowCount(); ++i) {
+        QStandardItem *item = d->itemModel.item(i);
+        if (item->data(PlasmaAppletItemModel::PluginNameRole).toString() == pluginName) {
+            d->itemModel.takeRow(i);
+            break;
+        }
+    }
+}
+
 } // namespace Plasma
 
 #include "widgetexplorer.moc"
