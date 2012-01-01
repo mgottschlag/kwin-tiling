@@ -172,9 +172,8 @@ class Client
     Q_PROPERTY(bool transient READ isTransient NOTIFY transientChanged)
     /**
      * The Client to which this Client is a transient if any.
-     * Property uses a QObject. If the property is needed as a Client, perform a qobject_cast.
      **/
-    Q_PROPERTY(QObject *transientFor READ transientFor NOTIFY transientChanged)
+    Q_PROPERTY(KWin::Client *transientFor READ transientFor NOTIFY transientChanged)
     /**
      * By how much the window wishes to grow/shrink at least. Usually QSize(1,1).
      * MAY BE DISOBEYED BY THE WM! It's only for information, do NOT rely on it at all.
@@ -219,6 +218,10 @@ class Client
      * Whether the Client should be excluded from window switching effects.
      **/
     Q_PROPERTY(bool skipSwitcher READ skipSwitcher WRITE setSkipSwitcher NOTIFY skipSwitcherChanged)
+    /**
+     * The "Window Tabs" Group this Client belongs to.
+     **/
+    Q_PROPERTY(KWin::ClientGroup* clientGroup READ clientGroup NOTIFY clientGroupChanged)
 public:
     Client(Workspace* ws);
     Window wrapperId() const;
@@ -642,6 +645,11 @@ signals:
     void moveResizedChanged();
     void iconChanged();
     void skipSwitcherChanged();
+    /**
+     * Emitted whenever the Client's ClientGroup changed. That is whenever the Client is moved to
+     * another group, but not when a Client gets added or removed to the Client's ClientGroup.
+     **/
+    void clientGroupChanged();
 
 private:
     void exportMappingState(int s);   // ICCCM 4.1.3.1, 4.1.4, NETWM 2.5.1
@@ -1169,5 +1177,7 @@ KWIN_COMPARE_PREDICATE(WrapperIdMatchPredicate, Client, Window, cl->wrapperId() 
 KWIN_COMPARE_PREDICATE(InputIdMatchPredicate, Client, Window, cl->inputId() == value);
 
 } // namespace
+Q_DECLARE_METATYPE(KWin::Client*)
+Q_DECLARE_METATYPE(QList<KWin::Client*>)
 
 #endif

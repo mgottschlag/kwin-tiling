@@ -197,7 +197,7 @@ Comment[x-test]=xxMouse settingsxx
 Comment[zh_CN]=鼠标设置
 Comment[zh_TW]=滑鼠設定
 
-X-KDE-Keywords=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed
+X-KDE-Keywords=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,Double Click,Single Click,mapping,right handed,left handed,Pointer Device,Mouse Wheel,Mouse Emulation,Mouse Navigation,Mouse Drag and Drop,Mouse Scrolling,Mouse Sensitivity,Move Mouse with Num Pad,Mouse Num Pad Emulation)
 X-KDE-Keywords[ca]=Ratolí,Acceleració del ratolí,Llindar del ratolí,Botons del ratolí,Selecció,Ombra del cursor,Dispositius d'entrada,Mapatge dels boton,Clic,icones,reacció,Apuntadors,Arrossegar,Clic doble,mapatge,dretà,esquerrà
 X-KDE-Keywords[da]=Mus,Museacceleration,musetærskel,museknapper,markering,markørform,Input-enheder,knapkobling,klik,ikoner,feedback,Pointers,træk,dobbeltklik,kobling,højrehåndet,venstrehåndet
 X-KDE-Keywords[de]=Maus,Mausbeschleunigung,Mausschwellenwert,Maustasten,Auswahl,Cursor,Cursorform,Eingabegeräte,Knöpfe,Buttons,Zuordnungen,Klicks,Zeigegeräte,Doppelklick,Rechtshänder,Linkshänder
