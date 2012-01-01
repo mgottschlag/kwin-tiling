@@ -22,55 +22,47 @@
 #ifndef HDD_ACTIVITY_HEADER
 #define HDD_ACTIVITY_HEADER
 
-#include "applet.h"
 #include "ui_hdd-activity-config.h"
+#include "applet.h"
 
-#include <QHash>
 #include <QStandardItemModel>
+#include <QRegExp>
 
 #include <Plasma/DataEngine>
 
 namespace Plasma {
-    class Meter;
 }
 
-class MonitorIcon;
 class QGraphicsLinearLayout;
 
 class Hdd_Activity : public SM::Applet
 {
     Q_OBJECT
-    public:
-        Hdd_Activity(QObject *parent, const QVariantList &args);
-        ~Hdd_Activity();
+public:
+    Hdd_Activity(QObject *parent, const QVariantList &args);
+    ~Hdd_Activity();
 
-        virtual void init();
-        virtual void createConfigurationInterface(KConfigDialog *parent);
+    virtual void init();
 
-    public slots:
-        void configChanged();
-        void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
+    virtual bool addVisualization(const QString& source);
+    virtual void createConfigurationInterface(KConfigDialog *parent);
 
-    protected:
-        QString hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data);
-        QString guessHddTitle(const Plasma::DataEngine::Data &data);
-        QString filePath(const Plasma::DataEngine::Data &data);
-        bool addVisualization(const QString& source);
-        virtual void deleteVisualizations();
-        bool isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data);
-        void applyTheme(Plasma::Meter *w);
+public slots:
+    void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
+    void sourceChanged(const QString &name);
+    void sourcesChanged();
 
-    protected slots:
-        void configAccepted();
-        void themeChanged();
+    void configAccepted();
+    void configChanged();
 
-    private:
-        Ui::config ui;
-        QStandardItemModel m_hddModel;
-        QHash<const QString, MonitorIcon *> m_icons;
-        QHash<const QString, QGraphicsLinearLayout *> m_layouts;
-        QHash<QString, QList<Plasma::Meter *> > m_diskMap;
-        QStringList mounted();
+protected:
+    QString hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data);
+    QString guessHddTitle(const Plasma::DataEngine::Data &data);
+
+private:
+    Ui::config ui;
+    QStandardItemModel m_hddModel;
+    QRegExp m_regexp;
 };
 
 K_EXPORT_PLASMA_APPLET(sm_hdd_activity, Hdd_Activity)
