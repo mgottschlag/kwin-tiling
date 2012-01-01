@@ -45,16 +45,8 @@
  * disk/md0_(9:0)/Rate/rio
  * disk/md0_(9:0)/Rate/wio
  *
- * Thought Process:
- * The theory is that on startup, we find all possible sources that match
- * that pattern. There will be no entries checked by default though;
- * therefore the user will configure it by loading the settings page,
- * which will be populated by that list of possible sources.
+ * disk/loop should probably be ignored/hidden.
  *
- * The user hits OK, we put all checked entries into a list of entries to watch.
- * We'll watch only those and provide data accordingly.
- *
- * Then just be sure to handle configChanged() properly.
  */
 Hdd_Activity::Hdd_Activity(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args),
@@ -89,11 +81,11 @@ void Hdd_Activity::init()
 void Hdd_Activity::sourceChanged(const QString& name)
 {
     kDebug() << "######## sourceChanged name: " << name;
-    kDebug() << "$$$$$$$ regexp captures: " << m_regexp.capturedTexts();
+    //kDebug() << "###### regexp captures: " << m_regexp.capturedTexts();
 
     if (m_regexp.indexIn(name) != -1) {
         kDebug() << "######### REGEXP match successful, hopefully. Adding:" << name;
-        //kDebug() << "## regexp.cap(1)" << m_regexp.cap(1);
+        kDebug() << "## regexp.cap(0)" << m_regexp.cap(0);
 
         m_hdds.append(name);
 
@@ -112,16 +104,17 @@ void Hdd_Activity::sourcesChanged()
 void Hdd_Activity::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
     kDebug() << "####### dataUpdated source: " << source << " data: " << data;
-   // SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
-   // if (plotter) {
-   //     double value = data["value"].toDouble();
-   //     QString temp = KGlobal::locale()->formatNumber(value, 1);
-   //     plotter->addSample(QList<double>() << value);
-   //     if (mode() == SM::Applet::Panel) {
-   //         setToolTip(source, QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
-   //         .arg(plotter->title()).arg(temp));
-   //     }
-   // }
+    SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
+    if (plotter) {
+        double value = data["value"].toDouble();
+        QString temp = KGlobal::locale()->formatNumber(value, 1);
+        plotter->addSample(QList<double>() << value);
+
+        if (mode() == SM::Applet::Panel) {
+            setToolTip(source, QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
+            .arg(plotter->title()).arg(temp));
+        }
+    }
 }
 
 void Hdd_Activity::createConfigurationInterface(KConfigDialog *parent)
@@ -134,13 +127,13 @@ void Hdd_Activity::createConfigurationInterface(KConfigDialog *parent)
     m_hddModel.setHorizontalHeaderLabels(QStringList() << i18n("Name"));
     QStandardItem *parentItem = m_hddModel.invisibleRootItem();
 
-    foreach (const QString& cpu, m_hdds) {
-        if (m_regexp.indexIn(cpu) != -1) {
+    foreach (const QString& hdd, m_hdds) {
+        if (m_regexp.indexIn(hdd) != -1) {
             QStandardItem *item1 = new QStandardItem(m_regexp.cap(0));
             item1->setEditable(false);
             item1->setCheckable(true);
-            item1->setData(cpu);
-            if (sources().contains(cpu)) {
+            item1->setData(hdd);
+            if (sources().contains(hdd)) {
                 item1->setCheckState(Qt::Checked);
             }
             parentItem->appendRow(QList<QStandardItem *>() << item1);
