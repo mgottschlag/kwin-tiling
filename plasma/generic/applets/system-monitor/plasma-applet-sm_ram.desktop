@@ -129,7 +129,7 @@ Comment[x-test]=xxA RAM usage monitorxx
 Comment[zh_CN]=RAM 利用率监视器
 Comment[zh_TW]=記憶體使用量監視器
 Type=Service
-Icon=media-flash-memory-stick
+Icon=media-flash
 ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_sm_ram

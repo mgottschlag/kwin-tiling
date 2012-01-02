@@ -153,7 +153,7 @@ void SM::Ram::createConfigurationInterface(KConfigDialog *parent)
     ui.treeView->resizeColumnToContents(0);
     ui.intervalSpinBox->setValue(interval() / 1000.0);
     ui.intervalSpinBox->setSuffix(i18nc("second", " s"));
-    parent->addPage(widget, i18n("RAM"), "media-flash-memory-stick");
+    parent->addPage(widget, i18n("RAM"), "media-flash");
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
