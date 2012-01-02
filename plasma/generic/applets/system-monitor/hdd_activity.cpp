@@ -36,27 +36,31 @@
 
 /**
  * Examples of what the regexp has to handle...
- * It's going to end up matching everything.
  *
- * I can limit it later though, to probably just
- * the entries below.
+ * Note actually it's now set to an inclusive-only mode, far cleaner.
+ *
+ * Included items only:
  *
  *
- * disk/md0_(9:0)/Rate/rio
- * disk/md0_(9:0)/Rate/wio
+ * RAID blocks (there *could* be more if not using mdadm, I think):
  *
- * Ignore the following:
+ * disk/md<something>/Rate/rio
+ * disk/md<something>/Rate/wio
  *
- * disk/loop
- * disk/sr* (these are cd disks)
- * disk/<somedisk>/Delta/*
- * disk/<somedisk>/Rate/rblk
- * disk/<somedisk>/rate/wblk
+ * SATA disks:
+ *
+ * disk/sd<something>/Rate/rio
+ * disk/sd<something>/Rate/wio
+ *
+ * IDE/PATA disks:
+ *
+ * disk/hd<something>/Rate/rio
+ * disk/hd<something>/Rate/wio
  *
  */
 Hdd_Activity::Hdd_Activity(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args),
-    m_regexp("disk/(?!loop)(?!sr).*/Rate/(?!blkio)(?!rblk)(?!wblk).*")
+    m_regexp("disk/(?:md|sd|hd).*/Rate/(?:rio|wio)")
 {
     setHasConfigurationInterface(true);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
