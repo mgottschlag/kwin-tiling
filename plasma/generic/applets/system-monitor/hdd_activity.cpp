@@ -80,7 +80,7 @@ void Hdd_Activity::init()
 
 void Hdd_Activity::sourceChanged(const QString& name)
 {
-    kDebug() << "######## sourceChanged name: " << name;
+    //kDebug() << "######## sourceChanged name: " << name;
     //kDebug() << "###### regexp captures: " << m_regexp.capturedTexts();
 
     if (m_regexp.indexIn(name) != -1) {
@@ -103,7 +103,8 @@ void Hdd_Activity::sourcesChanged()
 
 void Hdd_Activity::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
-    kDebug() << "####### dataUpdated source: " << source << " data: " << data;
+    //kDebug() << "####### dataUpdated source: " << source << " data: " << data;
+
     SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
     if (plotter) {
         double value = data["value"].toDouble();
@@ -153,7 +154,7 @@ void Hdd_Activity::createConfigurationInterface(KConfigDialog *parent)
 
 void Hdd_Activity::configChanged()
 {
-    kDebug() << "#### configChanged m_hdds:" << m_hdds;
+    //kDebug() << "#### configChanged m_hdds:" << m_hdds;
 
 
     KConfigGroup cg = config();
@@ -192,7 +193,24 @@ void Hdd_Activity::configAccepted()
 
 bool Hdd_Activity::addVisualization(const QString& source)
 {
-    kDebug() << "#### addVisualization";
+    kDebug() << "#### addVisualization FOR SOURCE:" << source;
+
+    QStringList splits = source.split('/');
+    kDebug() << "### ADD VIS SOURCE SPLITS:" << splits;
+    if (splits.count() < 3) {
+        return false;
+    }
+
+    QString hdd = splits[1];
+    kDebug() << "#### ADD VIS hdd: " << hdd;
+
+    SM::Plotter *plotter = new SM::Plotter(this);
+    plotter->setMinMax(0.0, 100.0);
+    plotter->setTitle(hdd);
+    plotter->setUnit("%");
+
+    appendVisualization(source, plotter);
+    setPreferredItemHeight(80);
     return true;
 }
 
