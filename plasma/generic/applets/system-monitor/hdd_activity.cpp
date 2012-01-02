@@ -41,16 +41,22 @@
  * I can limit it later though, to probably just
  * the entries below.
  *
- * disk/sda3_(8:3)/Rate/totalio
+ *
  * disk/md0_(9:0)/Rate/rio
  * disk/md0_(9:0)/Rate/wio
  *
- * disk/loop should probably be ignored/hidden.
+ * Ignore the following:
+ *
+ * disk/loop
+ * disk/sr* (these are cd disks)
+ * disk/<somedisk>/Delta/*
+ * disk/<somedisk>/Rate/rblk
+ * disk/<somedisk>/rate/wblk
  *
  */
 Hdd_Activity::Hdd_Activity(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args),
-      m_regexp("disk/.*/Rate/.*")
+    m_regexp("disk/(?!loop)(?!sr).*/Rate/(?!blkio)(?!rblk)(?!wblk).*")
 {
     setHasConfigurationInterface(true);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
