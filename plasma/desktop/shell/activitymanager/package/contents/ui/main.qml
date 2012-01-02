@@ -72,6 +72,7 @@ Item {
         visualParent: templatesItem
     }
     Repeater {
+        parent: activityTemplatesMenu
         model: activityManager.activityTypeActions
         delegate: PlasmaComponents.MenuItem {
             icon: QIcon(modelData.icon)

@@ -36,6 +36,7 @@ Item {
         visualParent: topBar.categoryButton
     }
     Repeater {
+        parent: categoriesDialog
         model: widgetExplorer.filterModel
         delegate: PlasmaComponents.MenuItem {
             text: display
@@ -57,6 +58,7 @@ Item {
         visualParent: topBar.getWidgetsButton
     }
     Repeater {
+        parent: getWidgetsDialog
         model: widgetExplorer.widgetsMenuActions
         delegate: PlasmaComponents.MenuItem {
             icon: modelData.icon
