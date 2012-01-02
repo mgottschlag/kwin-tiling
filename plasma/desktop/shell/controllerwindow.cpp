@@ -412,6 +412,7 @@ void ControllerWindow::showWidgetExplorer()
         m_watchedWidget = m_widgetExplorer;
         setGraphicsWidget(m_widgetExplorer);
     }
+    m_view->setFocus();
     m_widgetExplorer->setFocus();
 }
 
@@ -445,6 +446,7 @@ void ControllerWindow::showActivityManager()
         m_activityManager->show();
         setGraphicsWidget(m_activityManager);
     }
+    m_view->setFocus();
     m_activityManager->setFlag(QGraphicsItem::ItemIsFocusable);
     m_activityManager->setFocus();
 }
