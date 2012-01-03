@@ -21,6 +21,7 @@
 #ifndef KLIPPER_H
 #define KLIPPER_H
 
+#include <QtCore/QTime>
 #include <QtCore/QTimer>
 #include <QtGui/QClipboard>
 
@@ -67,7 +68,6 @@ public:
 
     URLGrabber* urlGrabber() const { return m_myURLGrabber; }
 
-    static void updateTimestamp();
     static void createAboutData();
     static void destroyAboutData();
     static KAboutData* aboutData();
@@ -148,12 +148,12 @@ private Q_SLOTS:
 
 private:
 
+    static void updateTimestamp();
+
     QClipboard* m_clip;
 
-    QTime* m_showTimer;
+    QTime m_showTimer;
 
-    int m_lastClipboard;
-    int m_lastSelection;
     History* m_history;
     int m_overflowCounter;
 
@@ -175,7 +175,6 @@ private:
     bool m_bReplayActionInHistory :1;
     bool m_bUseGUIRegExpEditor    :1;
     bool m_bNoNullClipboard       :1;
-    bool m_bTearOffHandle         :1;
     bool m_bIgnoreSelection       :1;
     bool m_bSynchronize           :1;
     bool m_bSelectionTextOnly     :1;

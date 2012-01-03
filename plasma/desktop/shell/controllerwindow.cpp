@@ -390,15 +390,12 @@ void ControllerWindow::showWidgetExplorer()
         m_watchedWidget = m_widgetExplorer;
         m_widgetExplorer->setContainment(m_containment.data());
         m_widgetExplorer->populateWidgetList();
-        m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
         QAction *activityAction = new QAction(KIcon("preferences-activities"), i18n("Activities"), m_widgetExplorer);
         connect(activityAction, SIGNAL(triggered()), this, SLOT(showActivityManager()));
         m_widgetExplorer->addAction(activityAction);
 
         PlasmaApp::self()->corona()->addOffscreenWidget(m_widgetExplorer);
         m_widgetExplorer->show();
-
-        m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
 
         if (orientation() == Qt::Horizontal) {
             m_widgetExplorer->resize(width(), m_widgetExplorer->size().height());
@@ -415,6 +412,7 @@ void ControllerWindow::showWidgetExplorer()
         m_watchedWidget = m_widgetExplorer;
         setGraphicsWidget(m_widgetExplorer);
     }
+    m_view->setFocus();
     m_widgetExplorer->setFocus();
 }
 
@@ -438,8 +436,6 @@ void ControllerWindow::showActivityManager()
             m_activityManager->resize(m_activityManager->size().width(), height());
         }
 
-        m_activityManager->setIconSize(KIconLoader::SizeHuge);
-
         setGraphicsWidget(m_activityManager);
 
         connect(m_activityManager, SIGNAL(addWidgetsRequested()), this, SLOT(showWidgetExplorer()));
@@ -450,6 +446,7 @@ void ControllerWindow::showActivityManager()
         m_activityManager->show();
         setGraphicsWidget(m_activityManager);
     }
+    m_view->setFocus();
     m_activityManager->setFlag(QGraphicsItem::ItemIsFocusable);
     m_activityManager->setFocus();
 }

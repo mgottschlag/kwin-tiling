@@ -99,7 +99,7 @@ Comment[ast]=Configuración de les asociaciones de les tecles
 Comment[be]=Настаўленні клавішных скаротаў
 Comment[be@latin]=Nałady dla poviaziaŭ klavišaŭ z roznymi aperacyjami
 Comment[bg]=Настройки на бързи клавиши
-Comment[bn]=কী-বাইন্ডিং কনফিগারেশন 
+Comment[bn]=কী-বাইন্ডিং কনফিগারেশন
 Comment[bn_IN]=কি-বাইন্ডিং কনফিগারেশন
 Comment[br]=Kefluniañ ereoù stokell
 Comment[bs]=Postava prečica sa tastature
@@ -184,7 +184,7 @@ Comment[x-test]=xxConfiguration of keybindingsxx
 Comment[zh_CN]=键绑定配置
 Comment[zh_TW]=按鍵關聯設定
 
-X-KDE-Keywords=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts
+X-KDE-Keywords=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,global shortcuts
 X-KDE-Keywords[ca]=Tecles,Assignació de tecles globals,Esquema de tecles,Assignació de tecles,dreceres,dreceres d'aplicació
 X-KDE-Keywords[da]=Taster,globale tastebindinger,tasteskema,tastebindinger,genveje,programgenveje
 X-KDE-Keywords[de]=Tasten,Tastenzuordnung,Tastenkürzel,Kurzbefehle,Tastenschema,Tastaturlayout

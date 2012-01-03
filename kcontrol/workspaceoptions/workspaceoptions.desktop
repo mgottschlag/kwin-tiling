@@ -138,7 +138,7 @@ Comment[x-test]=xxGlobal options for the Plasma Workspacexx
 Comment[zh_CN]=Plasma 工作空间的全局选项
 Comment[zh_TW]=Plasma 工作空間的全域選項
 
-X-KDE-Keywords=plasma,workspace,shell,formfactor,dashboard
+X-KDE-Keywords=plasma,workspace,shell,formfactor,dashboard,tooltips,informational tips
 X-KDE-Keywords[ca]=plasma,espai de treball,shell,factor de format,tauler
 X-KDE-Keywords[da]=plasma,arbejdsområde,skal,formfaktor,dashboard,instrumentbræt
 X-KDE-Keywords[et]=plasma,töötsoon,shell,dashboard,konteiner

@@ -79,6 +79,20 @@ class PlasmaAppletItemModel : public QStandardItemModel
     Q_OBJECT
 
 public:
+    enum Roles {
+        NameRole = Qt::UserRole+1,
+        PluginNameRole = Qt::UserRole+2,
+        DescriptionRole = Qt::UserRole+3,
+        CategoryRole = Qt::UserRole+4,
+        LicenseRole = Qt::UserRole+5,
+        WebsiteRole = Qt::UserRole+6,
+        VersionRole = Qt::UserRole+7,
+        AuthorRole = Qt::UserRole+8,
+        EmailRole = Qt::UserRole+9,
+        RunningRole = Qt::UserRole+9,
+        LocalRole = Qt::UserRole+10
+    };
+
     explicit PlasmaAppletItemModel(QObject * parent = 0);
 
     QStringList mimeTypes() const;

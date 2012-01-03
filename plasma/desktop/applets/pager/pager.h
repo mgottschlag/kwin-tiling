@@ -182,7 +182,6 @@ class Pager : public Plasma::Applet
 
         //embedded KCM module in the configuratoin dialog
         KCModuleProxy *m_configureDesktopsWidget;
-        QSizeF m_preHiddenSize;
     };
 
 K_EXPORT_PLASMA_APPLET(pager, Pager)

@@ -49,7 +49,7 @@ URLGrabber::URLGrabber(History* history):
     m_myMenu(0L),
     m_myPopupKillTimer(new QTimer( this )),
     m_myPopupKillTimeout(8),
-    m_trimmed(true),
+    m_stripWhiteSpace(true),
     m_history(history)
 {
     m_myPopupKillTimer->setSingleShot( true );
@@ -198,7 +198,7 @@ void URLGrabber::actionMenu( const HistoryItem* item, bool automatically_invoked
       return;
     }
     QString text(item->text());
-    if (m_trimmed) {
+    if (m_stripWhiteSpace) {
         text = text.trimmed();
     }
     ActionList matchingActionsList = matchingActions( text, automatically_invoked );
@@ -234,8 +234,8 @@ void URLGrabber::actionMenu( const HistoryItem* item, bool automatically_invoked
                 action->setData(id);
                 action->setText(item);
 
-                if (!command.pixmap.isEmpty())
-                    action->setIcon(KIcon(command.pixmap));
+                if (!command.icon.isEmpty())
+                    action->setIcon(KIcon(command.icon));
 
                 m_myCommandMapper.insert(id, qMakePair(clipAct,i));
                 m_myMenu->addAction(action);
@@ -299,7 +299,7 @@ void URLGrabber::execute( const ClipAction* action, int cmdIdx ) const
 
     if ( command.isEnabled ) {
         QString text(m_myClipItem->text());
-        if (m_trimmed) {
+        if (m_stripWhiteSpace) {
             text = text.trimmed();
         }
         ClipCommandProcess* proc = new ClipCommandProcess(*action, command, text, m_history, m_myClipItem);
@@ -314,7 +314,7 @@ void URLGrabber::execute( const ClipAction* action, int cmdIdx ) const
 
 void URLGrabber::loadSettings()
 {
-    m_trimmed = KlipperSettings::stripWhiteSpace();
+    m_stripWhiteSpace = KlipperSettings::stripWhiteSpace();
     m_myAvoidWindows = KlipperSettings::noActionsForWM_CLASS();
     m_myPopupKillTimeout = KlipperSettings::timeoutForActionPopups();
 
@@ -416,8 +416,8 @@ void URLGrabber::slotKillPopupMenu()
 ///////////////////////////////////////////////////////////////////////////
 ////////
 
-ClipCommand::ClipCommand(const QString &_command, const QString &_description,
-                         bool _isEnabled, const QString &_icon, Output _output)
+ClipCommand::ClipCommand(const QString&_command, const QString& _description,
+                         bool _isEnabled, const QString& _icon, Output _output)
     : command(_command),
       description(_description),
       isEnabled(_isEnabled),
@@ -425,7 +425,7 @@ ClipCommand::ClipCommand(const QString &_command, const QString &_description,
 {
 
     if (!_icon.isEmpty())
-        pixmap = _icon;
+        icon = _icon;
     else
     {
         // try to find suitable icon
@@ -437,9 +437,9 @@ ClipCommand::ClipCommand(const QString &_command, const QString &_description,
                                          KIconLoader::DefaultState,
                                          QStringList(), 0, true /* canReturnNull */ );
             if ( !iconPix.isNull() )
-                pixmap = appName;
+                icon = appName;
             else
-                pixmap.clear();
+                icon.clear();
         }
     }
 }
@@ -516,7 +516,7 @@ void ClipAction::save( KSharedConfigPtr kc, const QString& group ) const
         cg.writePathEntry( "Commandline", cmd.command );
         cg.writeEntry( "Description", cmd.description );
         cg.writeEntry( "Enabled", cmd.isEnabled );
-        cg.writeEntry( "Icon", cmd.pixmap );
+        cg.writeEntry( "Icon", cmd.icon );
         cg.writeEntry( "Output", static_cast<int>(cmd.output) );
 
         ++i;

@@ -90,7 +90,14 @@ private:
  */
 class DefaultFilterModel : public QStandardItemModel
 {
+    Q_OBJECT
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
 public:
+    enum Roles {
+        FilterTypeRole = Qt::UserRole+1,
+        FilterDataRole = Qt::UserRole+2,
+        SeparatorRole = Qt::UserRole+3
+    };
     DefaultFilterModel(QObject *parent = 0);
 
     /**
@@ -105,6 +112,13 @@ public:
      * @param caption The localized string to be displayed as a name of the separator
      */
     void addSeparator(const QString &caption);
+
+    int count() {return rowCount(QModelIndex());}
+
+    Q_INVOKABLE QVariantHash get(int i) const;
+
+Q_SIGNALS:
+    void countChanged();
 };
 
 /**
@@ -112,7 +126,11 @@ public:
  */
 class DefaultItemFilterProxyModel : public QSortFilterProxyModel
 {
-Q_OBJECT
+    Q_OBJECT
+    Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
+    Q_PROPERTY(QString filterType READ filterType WRITE setFilterType NOTIFY filterChanged)
+    Q_PROPERTY(QVariant filterQuery READ filterQuery WRITE setFilterQuery NOTIFY filterChanged)
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
     DefaultItemFilterProxyModel(QObject *parent = 0);
@@ -120,61 +138,37 @@ public:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
 
-    void setSearch(const QString &pattern);
+    void setSearchTerm(const QString &pattern);
+    QString searchTerm() const;
+
+    void setFilterType(const QString type);
+    QString filterType() const;
+
+    void setFilterQuery(const QVariant query);
+    QVariant filterQuery() const;
+
     void setFilter(const Filter &filter);
 
     void setSourceModel(QAbstractItemModel *sourceModel);
 
-    QStandardItemModel *sourceModel() const;
+    QAbstractItemModel *sourceModel() const;
 
     int columnCount(const QModelIndex &index) const;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
+    int count() {return rowCount(QModelIndex());}
+
+    Q_INVOKABLE QVariantHash get(int i) const;
+
 Q_SIGNALS:
     void searchTermChanged(const QString &term);
     void filterChanged();
+    void countChanged();
 
 private:
-
-    class InnerProxyModel : public QAbstractItemModel
-    {
-    public:
-        InnerProxyModel(QObject *parent = 0);
-
-        Qt::ItemFlags flags(const QModelIndex &index) const;
-
-        QVariant data(const QModelIndex &index, bool favoriteColumn,
-                      int role = Qt::DisplayRole) const;
-        QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-        bool setData(const QModelIndex &index, const QVariant &value,
-                     int role = Qt::EditRole);
-
-        QVariant headerData(int section, Qt::Orientation orientation,
-                            int role = Qt::DisplayRole) const;
-        bool setHeaderData(int section, Qt::Orientation orientation,
-                           const QVariant &value, int role = Qt::EditRole);
-
-        int rowCount(const QModelIndex &parent = QModelIndex()) const;
-        int columnCount(const QModelIndex &index) const;
-
-        QModelIndex index(int row, int column,
-                          const QModelIndex &parent = QModelIndex()) const;
-        QModelIndex parent(const QModelIndex &index) const;
-
-        QMimeData *mimeData(const QModelIndexList &indexes) const;
-
-        void setSourceModel(QStandardItemModel *sourceModel);
-        QStandardItemModel *sourceModel() const;
-
-    private:
-        QStandardItemModel *m_sourceModel;
-    };
-
     Filter m_filter;
     QString m_searchPattern;
-    InnerProxyModel m_innerModel;
-
 };
 
 } //end of namespace

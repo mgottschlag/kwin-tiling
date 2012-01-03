@@ -67,8 +67,8 @@ public:
   QStringList excludedWMClasses() const { return m_myAvoidWindows; }
   void setExcludedWMClasses( const QStringList& list ) { m_myAvoidWindows = list; }
 
-  bool trimmed() const { return m_trimmed; }
-  void setStripWhiteSpace( bool enable ) { m_trimmed = enable; }
+  bool stripWhiteSpace() const { return m_stripWhiteSpace; }
+  void setStripWhiteSpace( bool enable ) { m_stripWhiteSpace = enable; }
 
 private:
   const ActionList& matchingActions( const QString&, bool automatically_invoked );
@@ -88,7 +88,7 @@ private:
   KMenu* m_myMenu;
   QTimer* m_myPopupKillTimer;
   int m_myPopupKillTimeout;
-  bool m_trimmed;
+  bool m_stripWhiteSpace;
   History* m_history;
 
 private Q_SLOTS:
@@ -104,25 +104,25 @@ Q_SIGNALS:
 
 struct ClipCommand
 {
-  /**
-   * What to do with output of command
-   */
-  enum Output {
-    IGNORE, // Discard output
-    REPLACE, // Replace clipboard entry with output
-    ADD // Add output as new clipboard element
-  };
+    /**
+     * What to do with output of command
+     */
+    enum Output {
+        IGNORE, // Discard output
+        REPLACE, // Replace clipboard entry with output
+        ADD // Add output as new clipboard element
+    };
 
-  ClipCommand( const QString & command,
-               const QString & description,
-               bool enabled= true,
-               const QString & icon = QString(),
-               Output output = IGNORE);
+    ClipCommand( const QString& _command,
+                 const QString& _description,
+                 bool enabled=true,
+                 const QString& _icon=QString(),
+                 Output _output=IGNORE);
 
     QString command;
     QString description;
     bool isEnabled;
-    QString pixmap;
+    QString icon;
     Output output;
 };
 

@@ -35,7 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <signal.h>
 
 #ifdef KWIN_BUILD_SCRIPTING
-#include "scripting/client.h"
 #include "scripting/scripting.h"
 #include "scripting/workspaceproxy.h"
 #endif
@@ -136,10 +135,6 @@ Client::Client(Workspace* ws)
     , input_window(None)
 {
     // TODO: Do all as initialization
-
-#ifdef KWIN_BUILD_SCRIPTING
-    scriptCache = new QHash<QScriptEngine*, ClientResolution>();
-#endif
 #ifdef HAVE_XSYNC
     syncRequest.counter = syncRequest.alarm = None;
     syncRequest.timeout = syncRequest.failsafeTimeout = NULL;
@@ -209,6 +204,8 @@ Client::Client(Workspace* ws)
     connect(this, SIGNAL(geometryShapeChanged(KWin::Toplevel*,QRect)), SIGNAL(geometryChanged()));
     connect(this, SIGNAL(clientMaximizedStateChanged(KWin::Client*,KDecorationDefines::MaximizeMode)), SIGNAL(geometryChanged()));
     connect(this, SIGNAL(clientStepUserMovedResized(KWin::Client*,QRect)), SIGNAL(geometryChanged()));
+    connect(this, SIGNAL(clientStartUserMovedResized(KWin::Client*)), SIGNAL(moveResizedChanged()));
+    connect(this, SIGNAL(clientFinishUserMovedResized(KWin::Client*)), SIGNAL(moveResizedChanged()));
 
     // SELI TODO: Initialize xsizehints??
 }
@@ -233,9 +230,6 @@ Client::~Client()
     delete bridge;
 #ifdef KWIN_BUILD_TABBOX
     delete m_tabBoxClient;
-#endif
-#ifdef KWIN_BUILD_SCRIPTING
-    delete scriptCache;
 #endif
 }
 
@@ -975,6 +969,11 @@ bool Client::isMinimizable() const
     return true;
 }
 
+void Client::setMinimized(bool set)
+{
+    set ? minimize() : unminimize();
+}
+
 /**
  * Minimizes this client plus its transients
  */
@@ -996,8 +995,6 @@ void Client::minimize(bool avoid_animation)
     }
 #endif
 
-    emit s_minimized();
-
     Notify::raise(Notify::Minimize);
 
     minimized = true;
@@ -1013,6 +1010,7 @@ void Client::minimize(bool avoid_animation)
     // Update states of all other windows in this group
     if (clientGroup())
         clientGroup()->updateStates(this);
+    emit minimizedChanged();
 }
 
 void Client::unminimize(bool avoid_animation)
@@ -1047,6 +1045,7 @@ void Client::unminimize(bool avoid_animation)
     // Update states of all other windows in this group
     if (clientGroup())
         clientGroup()->updateStates(this);
+    emit minimizedChanged();
 }
 
 QRect Client::iconGeometry() const
@@ -1070,6 +1069,10 @@ QRect Client::iconGeometry() const
 bool Client::isShadeable() const
 {
     return !isSpecialWindow() && !noBorder() && (rules()->checkShade(ShadeNormal) != rules()->checkShade(ShadeNone));
+}
+
+void Client::setShade(bool set) {
+    set ? setShade(ShadeNormal) : setShade(ShadeNone);
 }
 
 void Client::setShade(ShadeMode mode)
@@ -1146,6 +1149,7 @@ void Client::setShade(ShadeMode mode)
     // Update states of all other windows in this group
     if (clientGroup())
         clientGroup()->updateStates(this);
+    emit shadeChanged();
 }
 
 void Client::shadeHover()
@@ -1551,6 +1555,7 @@ void Client::setSkipSwitcher(bool set)
         return;
     skip_switcher = set;
     updateWindowRules();
+    emit skipSwitcherChanged();
 }
 
 void Client::setModal(bool m)
@@ -1559,6 +1564,7 @@ void Client::setModal(bool m)
     if (modal == m)
         return;
     modal = m;
+    emit modalChanged();
     if (!modal)
         return;
     // Changing modality for a mapped window is weird (?)
@@ -1606,6 +1612,7 @@ void Client::setDesktop(int desktop)
     // Update states of all other windows in this group
     if (clientGroup())
         clientGroup()->updateStates(this);
+    emit desktopChanged();
 }
 
 /**
@@ -1877,6 +1884,7 @@ void Client::setCaption(const QString& _s, bool force)
                 client_group->updateItems();
             decoration->captionChange();
         }
+        emit captionChanged();
     }
 }
 
@@ -1918,6 +1926,7 @@ void Client::setClientGroup(ClientGroup* group)
     unsigned long data[1] = {(unsigned long)workspace()->indexOfClientGroup(group)};
     XChangeProperty(display(), window(), atoms->kde_net_wm_tab_group, XA_CARDINAL, 32,
                     PropModeReplace, (unsigned char*)(data), 1);
+    emit clientGroupChanged();
 }
 
 void Client::dontMoveResize()
@@ -1974,11 +1983,6 @@ void Client::getWMHints()
     checkGroup();
     updateUrgency();
     updateAllowedActions(); // Group affects isMinimizable()
-}
-
-void Client::sl_activated()
-{
-    emit s_activated();
 }
 
 void Client::getMotifHints()
@@ -2066,6 +2070,7 @@ void Client::getIcons()
     }
     if (isManaged() && decoration != NULL)
         decoration->iconChange();
+    emit iconChanged();
 }
 
 QPixmap Client::icon(const QSize& size) const

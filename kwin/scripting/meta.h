@@ -21,46 +21,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KWIN_SCRIPTING_META_H
 #define KWIN_SCRIPTING_META_H
 
-#include "client.h"
-#include "s_clientgroup.h"
-#include <QStringList>
 #include <QScriptValueIterator>
 
+// forward declarations
+class QPoint;
+class QRect;
+class QScriptContext;
+class QSize;
+
+namespace KWin {
+class Client;
+class ClientGroup;
+}
+
 typedef KWin::Client* KClientRef;
-typedef KWin::ClientList KClientList;
 typedef KWin::ClientGroup* KClientGroupRef;
-typedef KWin::Toplevel* KToplevelRef;
-
-namespace KWin
-{
-namespace Chelate
-{
-QScriptValue lazyLogicGenerate(QScriptContext*, QScriptEngine*);
-}
-}
-
-Q_DECLARE_METATYPE(KClientRef)
-Q_DECLARE_METATYPE(QPoint)
-Q_DECLARE_METATYPE(QSize)
-Q_DECLARE_METATYPE(QRect)
-Q_DECLARE_METATYPE(KClientList)
-Q_DECLARE_METATYPE(KClientGroupRef)
-Q_DECLARE_METATYPE(KToplevelRef)
-Q_DECLARE_METATYPE(QList<KWin::ClientGroup*>)
 
 namespace KWin
 {
 namespace MetaScripting
 {
-/**
-  * The toScriptValue and fromScriptValue functions used in qScriptRegisterMetaType.
-  * Conversion functions for KWin::Client*
-  */
-namespace Client
-{
-QScriptValue toScriptValue(QScriptEngine*, const KClientRef&);
-void fromScriptValue(const QScriptValue&, KClientRef&);
-}
 
 /**
   * The toScriptValue and fromScriptValue functions used in qScriptRegisterMetaType.
@@ -70,16 +50,6 @@ namespace ClientGroup
 {
 QScriptValue toScriptValue(QScriptEngine*, const KClientGroupRef&);
 void fromScriptValue(const QScriptValue&, KClientGroupRef&);
-}
-
-/**
-  * The toScriptValue and fromScriptValue functions used in qScriptRegisterMetaType.
-  * Conversion functions for KWin::Toplevel*
-  */
-namespace Toplevel
-{
-QScriptValue toScriptValue(QScriptEngine*, const KToplevelRef&);
-void fromScriptValue(const QScriptValue&, KToplevelRef&);
 }
 
 /**
@@ -114,16 +84,10 @@ QScriptValue toScriptValue(QScriptEngine*, const QRect&);
 void fromScriptValue(const QScriptValue&, QRect&);
 }
 
-/**
-  * The Reference wrapping used previously for storing pointers to objects that were
-  * wrapped. Can still be used for non-QObject converted QScriptValue's, but as of
-  * now, it is not in use anywhere.
-  */
-namespace RefWrapping
+namespace Client
 {
-// Simple template class to wrap pointers within QScriptValue's
-template<typename T> void embed(QScriptValue&, const T);
-template<typename T> T extract(const QScriptValue&);
+QScriptValue toScriptValue(QScriptEngine *eng, const KClientRef &client);
+void fromScriptValue(const QScriptValue &value, KClientRef& client);
 }
 
 /**
@@ -135,11 +99,6 @@ void valueMerge(QScriptValue&, QScriptValue);
   * Registers all the meta conversion to the provided QScriptEngine
   */
 void registration(QScriptEngine* eng);
-
-/**
-  * Get the kind of LazyLogic (tm) function you want
-  */
-QScriptValue getLazyLogicFunction(QScriptEngine*, const QString&);
 
 /**
   * Functions for the JS function objects, config.exists and config.get.
@@ -160,25 +119,6 @@ void supplyConfig(QScriptEngine*, const QVariant&);
   */
 void supplyConfig(QScriptEngine*);
 
-// RefWrapping may be used for objects who use pointer based scriptvalue
-// storage, but do not use caching.
-template <typename T>
-void RefWrapping::embed(QScriptValue& value, const T datum)
-{
-    QScriptEngine* eng = value.engine();
-    value.setData(qScriptValueFromValue(eng,
-                                        static_cast<void*>(
-                                            const_cast<T>(datum)
-                                        )
-                                       ));
-}
-
-template <typename T>
-T RefWrapping::extract(const QScriptValue& value)
-{
-    T datum = static_cast<T>(qscriptvalue_cast<void*>(value.data()));
-    return datum;
-}
 }
 }
 

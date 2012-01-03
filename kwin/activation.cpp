@@ -29,8 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "client.h"
 #include "workspace.h"
 
-#include "scripting/client.h"
-
 #include <fixx11h.h>
 #include <kxerrorhandler.h>
 #include <kstartupinfo.h>
@@ -259,9 +257,6 @@ void Workspace::setActiveClient(Client* c, allowed_t)
     updateColormap();
 
     emit clientActivated(active_client);
-    if (active_client) {
-        active_client->sl_activated();
-    }
     --set_active_client_recursion;
 }
 
@@ -441,7 +436,7 @@ bool Workspace::activateNextClient(Client* c)
             Client *client = *(--it);
 
             // rule out clients which are not really visible.
-            // the screen test is rather superflous for xrandr & twinview since the geometry would differ -> TODO: might be dropped
+            // the screen test is rather superfluous for xrandr & twinview since the geometry would differ -> TODO: might be dropped
             if (!(client->isShown(false) && client->isOnCurrentDesktop() &&
                   client->isOnCurrentActivity() && client->isOnScreen(c ? c->screen() : activeScreen())))
                 continue;
@@ -863,6 +858,7 @@ void Client::setActive(bool act)
             workspace()->updateClientLayer(*it);
     if (decoration != NULL)
         decoration->activeChange();
+    emit activeChanged();
     updateMouseGrab();
     updateUrgency(); // demand attention again if it's still urgent
     workspace()->checkUnredirect();

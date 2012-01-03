@@ -19,66 +19,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 
 #include "meta.h"
+#include "client.h"
+#include "clientgroup.h"
 
-Q_DECLARE_METATYPE(SWrapper::Client*)
-Q_DECLARE_METATYPE(SWrapper::ClientGroup*)
+#include <QtScript/QScriptEngine>
 
 using namespace KWin::MetaScripting;
-
-// Wrapper for KWin::Client* objects
-QScriptValue Client::toScriptValue(QScriptEngine* eng, const KClientRef& client)
-{
-    return SWrapper::Client::generate(client, eng);
-}
-
-void Client::fromScriptValue(const QScriptValue& obj, KWin::Client*& client)
-{
-    SWrapper::Client* wrapper = qscriptvalue_cast<SWrapper::Client*>(obj);
-
-    if (wrapper == 0) {
-        client = 0;
-    } else {
-        client = wrapper->getCentralObject();
-    }
-}
-// End of metas for KWin::Client* objects
 
 // Meta for KWin::ClientGroup* objects
 QScriptValue ClientGroup::toScriptValue(QScriptEngine* eng, const KClientGroupRef& cGrp)
 {
-    return SWrapper::ClientGroup::generate(eng, new SWrapper::ClientGroup(cGrp));
+    return eng->newQObject(cGrp, QScriptEngine::QtOwnership,
+                           QScriptEngine::ExcludeChildObjects | QScriptEngine::ExcludeDeleteLater | QScriptEngine::PreferExistingWrapperObject);
 }
 
 void ClientGroup::fromScriptValue(const QScriptValue& obj, KWin::ClientGroup*& cGrp)
 {
-    SWrapper::ClientGroup* wrapper = qscriptvalue_cast<SWrapper::ClientGroup*>(obj);
-
-    if (wrapper == 0) {
-        cGrp = 0;
-    } else {
-        cGrp = wrapper->getCentralObject();
-    }
+    cGrp = qobject_cast<KWin::ClientGroup*>(obj.toQObject());
 }
 // End of metas for KWin::ClientGroup* objects
-
-// Wrapper for KWin::Toplevel* objects [ONE DIRTY HACK]
-QScriptValue Toplevel::toScriptValue(QScriptEngine* eng, const KToplevelRef& tlevel)
-{
-    Q_UNUSED(eng)
-    Q_UNUSED(tlevel)
-    return QScriptValue();
-}
-
-void Toplevel::fromScriptValue(const QScriptValue& obj, KWin::Toplevel*& tlevel)
-{
-    SWrapper::Client* wrapper = qscriptvalue_cast<SWrapper::Client*>(obj);
-    if (wrapper == 0) {
-        tlevel = 0;
-    } else {
-        tlevel = static_cast<KWin::Client*>(wrapper->getCentralObject());
-    }
-}
-// End of wrapper for KWin::Toplevel* object
 
 // Meta for QPoint object
 QScriptValue Point::toScriptValue(QScriptEngine* eng, const QPoint& point)
@@ -137,8 +96,8 @@ QScriptValue Rect::toScriptValue(QScriptEngine* eng, const QRect& rect)
 
 void Rect::fromScriptValue(const QScriptValue& obj, QRect &rect)
 {
-    QScriptValue w = obj.property("w", QScriptValue::ResolveLocal);
-    QScriptValue h = obj.property("h", QScriptValue::ResolveLocal);
+    QScriptValue w = obj.property("width", QScriptValue::ResolveLocal);
+    QScriptValue h = obj.property("height", QScriptValue::ResolveLocal);
     QScriptValue x = obj.property("x", QScriptValue::ResolveLocal);
     QScriptValue y = obj.property("y", QScriptValue::ResolveLocal);
 
@@ -151,19 +110,29 @@ void Rect::fromScriptValue(const QScriptValue& obj, QRect &rect)
 }
 // End of meta for QRect object
 
+QScriptValue Client::toScriptValue(QScriptEngine *eng, const KClientRef &client)
+{
+    return eng->newQObject(client, QScriptEngine::QtOwnership,
+                           QScriptEngine::ExcludeChildObjects | QScriptEngine::ExcludeDeleteLater | QScriptEngine::PreferExistingWrapperObject);
+}
+
+void Client::fromScriptValue(const QScriptValue &value, KWin::Client* &client)
+{
+    client = qobject_cast<KWin::Client*>(value.toQObject());
+}
+
 // Other helper functions
 void KWin::MetaScripting::registration(QScriptEngine* eng)
 {
-    qScriptRegisterMetaType<KClientRef>(eng, Client::toScriptValue, Client::fromScriptValue);
     qScriptRegisterMetaType<QPoint>(eng, Point::toScriptValue, Point::fromScriptValue);
     qScriptRegisterMetaType<QSize>(eng, Size::toScriptValue, Size::fromScriptValue);
     qScriptRegisterMetaType<QRect>(eng, Rect::toScriptValue, Rect::fromScriptValue);
-    qScriptRegisterMetaType<KToplevelRef>(eng, Toplevel::toScriptValue, Toplevel::fromScriptValue);
+    qScriptRegisterMetaType<KClientRef>(eng, Client::toScriptValue, Client::fromScriptValue);
     qScriptRegisterMetaType<KClientGroupRef>(eng, ClientGroup::toScriptValue, ClientGroup::fromScriptValue);
 
     qScriptRegisterSequenceMetaType<QStringList>(eng);
     qScriptRegisterSequenceMetaType< QList<KWin::ClientGroup*> >(eng);
-    qScriptRegisterSequenceMetaType<KClientList>(eng);
+    qScriptRegisterSequenceMetaType< QList<KWin::Client*> >(eng);
 }
 
 QScriptValue KWin::MetaScripting::configExists(QScriptContext* ctx, QScriptEngine* eng)
@@ -266,13 +235,4 @@ void KWin::MetaScripting::valueMerge(QScriptValue& first, QScriptValue second)
         value_it.next();
         first.setProperty(value_it.name(), value_it.value());
     }
-}
-
-QScriptValue KWin::MetaScripting::getLazyLogicFunction(QScriptEngine* eng, const QString& type)
-{
-    QScriptValue base = eng->newFunction(KWin::Chelate::lazyLogicGenerate, 0);
-    QScriptValue data = eng->newObject();
-    data.setProperty("lazylogic_type", eng->toScriptValue<QString>(type));
-    base.setData(data);
-    return base;
 }

@@ -1861,7 +1861,7 @@ bool Client::isMaximizable() const
 /*!
   Reimplemented to inform the client about the new window position.
  */
-void Client::setGeometry(int x, int y, int w, int h, ForceGeometry_t force, bool emitJs)
+void Client::setGeometry(int x, int y, int w, int h, ForceGeometry_t force)
 {
     // this code is also duplicated in Client::plainResize()
     // Ok, the shading geometry stuff. Generally, code doesn't care about shaded geometry,
@@ -1954,13 +1954,11 @@ void Client::setGeometry(int x, int y, int w, int h, ForceGeometry_t force, bool
     if (clientGroup())
         clientGroup()->updateStates(this);
 
-    if (emitJs == true) {
-        emit s_clientMoved();
-    }
-
+    // TODO: this signal is emitted too often
+    emit geometryChanged();
 }
 
-void Client::plainResize(int w, int h, ForceGeometry_t force, bool emitJs)
+void Client::plainResize(int w, int h, ForceGeometry_t force)
 {
     // this code is also duplicated in Client::setGeometry(), and it's also commented there
     if (shade_geometry_change)
@@ -2006,10 +2004,6 @@ void Client::plainResize(int w, int h, ForceGeometry_t force, bool emitJs)
     }
     updateShape();
 
-    if (emitJs == true) {
-        emit s_clientMoved();
-    }
-
     sendSyntheticConfigureNotify();
     updateWindowRules();
     workspace()->checkActiveScreen(this);
@@ -2026,6 +2020,8 @@ void Client::plainResize(int w, int h, ForceGeometry_t force, bool emitJs)
     // Update states of all other windows in this group
     if (clientGroup())
         clientGroup()->updateStates(this);
+    // TODO: this signal is emitted too often
+    emit geometryChanged();
 }
 
 /*!
@@ -2427,7 +2423,9 @@ void Client::setFullScreen(bool set, bool user)
     }
 #endif
 
-    emit s_fullScreenSet(set, user);
+    if (was_fs != isFullScreen()) {
+        emit fullScreenChanged();
+    }
 }
 
 
@@ -2502,10 +2500,12 @@ void Client::updateFullScreenHack(const QRect& geom)
         } else
             geom = workspace()->clientArea(FullScreenArea, geom.center(), desktop());
         setGeometry(geom);
+        emit fullScreenChanged();
     } else if (fullscreen_mode == FullScreenHack && type == 0) {
         fullscreen_mode = FullScreenNone;
         updateDecoration(false, false);
         // whoever called this must setup correct geometry
+        emit fullScreenChanged();
     }
     StackingUpdatesBlocker blocker(workspace());
     workspace()->updateClientLayer(this);   // active fullscreens get different layer

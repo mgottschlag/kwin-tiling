@@ -459,6 +459,7 @@ public:
     void previousTileLayout();
     bool stopActivity(const QString &id);
     bool startActivity(const QString &id);
+    QStringList activeEffects() const;
 
     void setCurrentScreen(int new_screen);
 
@@ -649,10 +650,6 @@ private slots:
     void configureWM();
     void desktopResized();
     void screenChangeTimeout();
-    void screenAdded(Kephal::Screen*);
-    void screenRemoved(int);
-    void screenResized(Kephal::Screen*, QSize, QSize);
-    void screenMoved(Kephal::Screen*, QPoint, QPoint);
     void slotUpdateToolWindows();
     void delayFocus();
     void gotTemporaryRulesMessage(const QString&);
@@ -702,6 +699,7 @@ private:
     void initShortcuts();
     void initDesktopPopup();
     void initActivityPopup();
+    void restartKWin(const QString &reason);
     void discardPopup();
     void setupWindowShortcut(Client* c);
     void checkCursorPos();
