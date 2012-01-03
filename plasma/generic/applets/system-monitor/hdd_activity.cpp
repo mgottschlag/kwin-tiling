@@ -84,7 +84,7 @@ void Hdd_Activity::init()
     connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(sourceChanged(QString)));
     connect(engine(), SIGNAL(sourceRemoved(QString)), this, SLOT(sourceChanged(QString)));
     foreach (const QString& source, engine()->sources()) {
-        sourceChanged(source);
+     // sourceChanged(source);
     }
 }
 
@@ -95,7 +95,6 @@ void Hdd_Activity::sourceChanged(const QString& name)
 
     if (m_regexp.indexIn(name) != -1) {
         kDebug() << "######### REGEXP match successful, hopefully. Adding:" << name;
-        kDebug() << "## regexp.cap(0)" << m_regexp.cap(0);
 
         m_hdds.append(name);
 
@@ -115,17 +114,17 @@ void Hdd_Activity::dataUpdated(const QString& source, const Plasma::DataEngine::
 {
     //kDebug() << "####### dataUpdated source: " << source << " data: " << data;
 
-    SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
-    if (plotter) {
-        double value = data["value"].toDouble();
-        QString temp = KGlobal::locale()->formatNumber(value, 1);
-        plotter->addSample(QList<double>() << value);
-
-        if (mode() == SM::Applet::Panel) {
-            setToolTip(source, QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
-            .arg(plotter->title()).arg(temp));
-        }
-    }
+//    SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
+//    if (plotter) {
+//        double value = data["value"].toDouble();
+//        QString temp = KGlobal::locale()->formatNumber(value, 1);
+//        plotter->addSample(QList<double>() << value);
+//
+//        if (mode() == SM::Applet::Panel) {
+//            setToolTip(source, QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
+//            .arg(plotter->title()).arg(temp));
+//        }
+//    }
 }
 
 void Hdd_Activity::createConfigurationInterface(KConfigDialog *parent)
@@ -166,14 +165,18 @@ void Hdd_Activity::configChanged()
 {
     //kDebug() << "#### configChanged m_hdds:" << m_hdds;
 
-
     KConfigGroup cg = config();
-    QStringList default_hdds = m_hdds;
+    QStringList default_hdds = QStringList(); //fucking HACK: m_hdds;
 
     // default to 2 seconds (2000 ms interval
     setInterval(cg.readEntry("interval", 2.0) * 1000.0);
     setSources(cg.readEntry("hdds", default_hdds));
-    connectToEngine();
+
+    if (!m_hdds.isEmpty()) {
+        kDebug() << "@@@@ configChanged, reconnecting engine to sources: " << m_hdds;
+        setSources(m_hdds);
+        connectToEngine();
+    }
 }
 
 void Hdd_Activity::configAccepted()
@@ -206,13 +209,15 @@ bool Hdd_Activity::addVisualization(const QString& source)
     kDebug() << "#### addVisualization FOR SOURCE:" << source;
 
     QStringList splits = source.split('/');
-    kDebug() << "### ADD VIS SOURCE SPLITS:" << splits;
+    //kDebug() << "### ADD VIS SOURCE SPLITS:" << splits;
+
+    // 0 == "disk" 1 == "sde_(8:64)" 2 == "Rate" 3 == "rio"
     if (splits.count() < 3) {
         return false;
     }
 
     QString hdd = splits[1];
-    kDebug() << "#### ADD VIS hdd: " << hdd;
+    //kDebug() << "#### ADD VIS hdd: " << hdd;
 
     SM::Plotter *plotter = new SM::Plotter(this);
     plotter->setMinMax(0.0, 100.0);
