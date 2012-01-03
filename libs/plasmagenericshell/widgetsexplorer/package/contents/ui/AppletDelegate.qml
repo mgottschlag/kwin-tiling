@@ -93,6 +93,7 @@ PlasmaCore.FrameSvgItem {
                 verticalCenter: parent.verticalCenter
 
                 leftMargin: background.margins.left
+                rightMargin: background.margins.right
             }
 
             PlasmaComponents.Label {
