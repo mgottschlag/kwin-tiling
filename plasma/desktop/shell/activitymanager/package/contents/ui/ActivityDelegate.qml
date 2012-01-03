@@ -230,7 +230,6 @@ PlasmaCore.FrameSvgItem {
             anchors.fill: parent
 
             implicitWidth: (activityManager.orientation == Qt.Horizontal) ? (iconButton.x*3 + iconButton.width + theme.defaultFont.mSize.width * 12) : parent.width
-            
 
             onClicked: delegateStack.pop()
             PlasmaComponents.Button {
