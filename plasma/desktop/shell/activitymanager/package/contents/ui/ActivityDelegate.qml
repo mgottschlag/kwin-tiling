@@ -125,8 +125,25 @@ PlasmaCore.FrameSvgItem {
                     anchors.right: parent.right
                     horizontalAlignment: Text.AlignHCenter
                     height: paintedHeight
-                    clip: true
-                    wrapMode: Text.Wrap
+                    wrapMode: Text.WordWrap
+                    //go with nowrap only if there is a single word too long
+                    onPaintedWidthChanged: {
+                        wrapTimer.restart()
+                    }
+                    Timer {
+                        id: wrapTimer
+                        interval: 200
+                        onTriggered: {
+                            //give it some pixels of tolerance
+                            if (titleText.paintedWidth > titleText.width + 3) {
+                                titleText.wrapMode = Text.NoWrap
+                                titleText.elide = Text.ElideRight
+                            } else {
+                                titleText.wrapMode = Text.WordWrap
+                                titleText.elide = Text.ElideNone
+                            }
+                        }
+                    }
                 }
                 Row {
                     id: buttonsRow
