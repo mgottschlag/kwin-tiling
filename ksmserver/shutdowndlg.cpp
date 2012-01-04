@@ -243,7 +243,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         kDebug() << "Using QML theme" << fileName;
         m_view->setSource(QUrl::fromLocalFile(fileName));
     }
-    setFocus();
     connect(m_view, SIGNAL(sceneResized(QSize)), SLOT(resizeFromView(QSize)));
     connect(m_view->rootObject(), SIGNAL(logoutRequested()), SLOT(slotLogout()));
     connect(m_view->rootObject(), SIGNAL(haltRequested()), SLOT(slotHalt()));
@@ -253,6 +252,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     connect(m_view->rootObject(), SIGNAL(cancelRequested()), SLOT(reject()));
     connect(m_view->rootObject(), SIGNAL(lockScreenRequested()), SLOT(slotLockScreen()));
     m_view->show();
+    m_view->setFocus();
     adjustSize();
 }
 
