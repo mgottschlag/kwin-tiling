@@ -78,7 +78,7 @@ class KSMShutdownDlg : public QDialog
 
 public:
     static bool confirmShutdown(
-            bool maysd, bool choose, KWorkSpace::ShutdownType& sdtype, QString& bopt, QString& theme );
+            bool maysd, bool choose, KWorkSpace::ShutdownType& sdtype, QString& bopt, const QString& theme );
 
 public Q_SLOTS:
     void slotLogout();

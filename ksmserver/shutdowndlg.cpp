@@ -159,7 +159,7 @@ Q_DECLARE_METATYPE(Solid::PowerManagement::SleepState)
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                                 bool maysd, bool choose, KWorkSpace::ShutdownType sdtype,
-                                QString& theme)
+                                const QString& theme)
   : QDialog( parent, Qt::Popup ) //krazy:exclude=qclasses
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
