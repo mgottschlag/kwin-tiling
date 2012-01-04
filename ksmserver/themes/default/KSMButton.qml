@@ -104,7 +104,7 @@ PlasmaCore.FrameSvgItem {
 
     Text {
         id: labelElement
-        font.pixelSize: Math.max(12, theme.defaultFont.pointSize)
+        font.pixelSize: theme.desktopFont.pointSize
         color: theme.textColor
         anchors {
             verticalCenter: parent.verticalCenter
