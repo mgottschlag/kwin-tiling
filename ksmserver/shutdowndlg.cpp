@@ -341,7 +341,7 @@ void KSMShutdownDlg::slotSuspend(int spdMethod)
 
 bool KSMShutdownDlg::confirmShutdown(
         bool maysd, bool choose, KWorkSpace::ShutdownType& sdtype, QString& bootOption,
-        QString& theme)
+        const QString& theme)
 {
     KSMShutdownDlg* l = new KSMShutdownDlg( 0,
                                             //KSMShutdownFeedback::self(),
