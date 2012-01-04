@@ -97,9 +97,6 @@ private:
     QString m_bootOption;
     QStringList rebootOptions;
     QDeclarativeView* m_view;
-
-private Q_SLOTS:
-    void resizeFromView(const QSize &newSize);
 };
 
 #endif

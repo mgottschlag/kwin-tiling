@@ -240,10 +240,9 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     QString fileName = KStandardDirs::locate("data", QString("ksmserver/themes/%1/main.qml").arg(theme));
     if (QFile::exists(fileName)) {
-        kDebug() << "Using QML theme" << fileName;
+        //kDebug() << "Using QML theme" << fileName;
         m_view->setSource(QUrl::fromLocalFile(fileName));
     }
-    connect(m_view, SIGNAL(sceneResized(QSize)), SLOT(resizeFromView(QSize)));
     connect(m_view->rootObject(), SIGNAL(logoutRequested()), SLOT(slotLogout()));
     connect(m_view->rootObject(), SIGNAL(haltRequested()), SLOT(slotHalt()));
     connect(m_view->rootObject(), SIGNAL(suspendRequested(int)), SLOT(slotSuspend(int)) );
@@ -254,11 +253,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     m_view->show();
     m_view->setFocus();
     adjustSize();
-}
-
-void KSMShutdownDlg::resizeFromView(const QSize &newSize)
-{
-    resize(newSize);
 }
 
 void KSMShutdownDlg::resizeEvent(QResizeEvent *e)

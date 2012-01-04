@@ -162,7 +162,6 @@ PlasmaCore.FrameSvgItem {
     Text {
         id: automaticallyDoLabel
         text: " "
-        // pixelSize does not work with PlasmaComponents.Label, so I am using a Text element here.
         font.pointSize: theme.desktopFont.pointSize*0.8
         color: theme.textColor
         anchors {
