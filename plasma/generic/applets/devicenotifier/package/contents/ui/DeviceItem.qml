@@ -143,7 +143,6 @@ Item {
             id: leftAction
             width: 22
             height: 22
-            z: 900
             anchors {
                 right: parent.right
                 verticalCenter: deviceIcon.verticalCenter
