@@ -243,13 +243,14 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         //kDebug() << "Using QML theme" << fileName;
         m_view->setSource(QUrl::fromLocalFile(fileName));
     }
-    connect(m_view->rootObject(), SIGNAL(logoutRequested()), SLOT(slotLogout()));
-    connect(m_view->rootObject(), SIGNAL(haltRequested()), SLOT(slotHalt()));
-    connect(m_view->rootObject(), SIGNAL(suspendRequested(int)), SLOT(slotSuspend(int)) );
-    connect(m_view->rootObject(), SIGNAL(rebootRequested()), SLOT(slotReboot()));
-    connect(m_view->rootObject(), SIGNAL(rebootRequested2(int)), SLOT(slotReboot(int)) );
-    connect(m_view->rootObject(), SIGNAL(cancelRequested()), SLOT(reject()));
-    connect(m_view->rootObject(), SIGNAL(lockScreenRequested()), SLOT(slotLockScreen()));
+    QGraphicsObject *rootObject = m_view->rootObject();
+    connect(rootObject, SIGNAL(logoutRequested()), SLOT(slotLogout()));
+    connect(rootObject, SIGNAL(haltRequested()), SLOT(slotHalt()));
+    connect(rootObject, SIGNAL(suspendRequested(int)), SLOT(slotSuspend(int)) );
+    connect(rootObject, SIGNAL(rebootRequested()), SLOT(slotReboot()));
+    connect(rootObject, SIGNAL(rebootRequested2(int)), SLOT(slotReboot(int)) );
+    connect(rootObject, SIGNAL(cancelRequested()), SLOT(reject()));
+    connect(rootObject, SIGNAL(lockScreenRequested()), SLOT(slotLockScreen()));
     m_view->show();
     m_view->setFocus();
     adjustSize();
