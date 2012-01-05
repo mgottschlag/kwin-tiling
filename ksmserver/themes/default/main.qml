@@ -21,11 +21,11 @@
  TODO:
  . use kde-runtime/plasma/declarativeimports/plasmacomponents/qml/ContextMenu.qml
  instead of a custom ContextMenu component.
- . find a way to make tab stop work without the extra TAB key press.
  */
 import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.components 0.1 as PlasmaComponents
+import "helper.js" as Helper
 
 PlasmaCore.FrameSvgItem {
     id: shutdownUi
@@ -124,6 +124,22 @@ PlasmaCore.FrameSvgItem {
 
         focusedButton.forceActiveFocus()
         timer.running = true;
+
+        // implement label accelerators in the buttons (the '&' in button's text).
+        var buttons = [ logoutButton, shutdownButton, rebootButton, cancelButton ]
+        for (var b = 0; b < buttons.length; ++b ) {
+            if (buttons[b].accelKey > -1) {
+                Helper.buttonForAccel[String.fromCharCode(buttons[b].accelKey)] = buttons[b];
+            }
+        }
+    }
+
+    // trigger action on Alt+'accelerator' key press. For example: if KSMButton.text == &Cancel,
+    // pressing Alt+'C' or Alt+'c' will trigger KSMButton.clicked().
+    Keys.onPressed: {
+        if ((event.modifiers & Qt.AltModifier) && Helper.buttonForAccel[String.fromCharCode(event.key)] != undefined) {
+            Helper.buttonForAccel[String.fromCharCode(event.key)].clicked()
+        }
     }
 
     Timer {
@@ -210,7 +226,7 @@ PlasmaCore.FrameSvgItem {
 
                 KSMButton {
                     id: logoutButton
-                    text: i18n("Logout")
+                    text: i18n("&Logout")
                     iconSource: "system-log-out"
                     height: 32
                     anchors.right: parent.right
@@ -230,7 +246,7 @@ PlasmaCore.FrameSvgItem {
 
                 KSMButton {
                     id: shutdownButton
-                    text: i18n("Turn Off Computer")
+                    text: i18n("&Turn Off Computer")
                     iconSource: "system-shutdown"
                     height: 32
                     anchors.right: parent.right
@@ -249,15 +265,15 @@ PlasmaCore.FrameSvgItem {
                             contextMenu = shutdownOptionsComponent.createObject(shutdownButton)
                             if (spdMethods.StandbyState) {
                                 // 1 == Solid::PowerManagement::StandbyState
-                                contextMenu.append({itemIndex: 1, itemText: i18n("Standby")})
+                                contextMenu.append({itemIndex: 1, itemText: i18n("&Standby")})
                             }
                             if (spdMethods.SuspendState) {
                                 // 2 == Solid::PowerManagement::SuspendState
-                                contextMenu.append({itemIndex: 2, itemText: i18n("Suspend to RAM")})
+                                contextMenu.append({itemIndex: 2, itemText: i18n("Suspend to &RAM")})
                             }
                             if (spdMethods.HibernateState) {
                                 // 3 == Solid::PowerManagement::HibernateState
-                                contextMenu.append({itemIndex: 3, itemText: i18n("Suspend to Disk")})
+                                contextMenu.append({itemIndex: 3, itemText: i18n("Suspend to &Disk")})
                             }
                             contextMenu.clicked.connect(shutdownUi.suspendRequested)
                         }
@@ -278,7 +294,7 @@ PlasmaCore.FrameSvgItem {
 
                 KSMButton {
                     id: rebootButton
-                    text: i18n("Restart Computer")
+                    text: i18n("&Restart Computer")
                     iconSource: "system-reboot"
                     height: 32
                     anchors.right: parent.right
@@ -326,7 +342,7 @@ PlasmaCore.FrameSvgItem {
             KSMButton {
                 id: cancelButton
                 anchors.right: parent.right
-                text: i18n("Cancel")
+                text: i18n("&Cancel")
                 iconSource: "dialog-cancel"
                 smallButton: true
                 height: 22

@@ -76,13 +76,14 @@ import org.kde.qtextracomponents 0.1
 
 PlasmaCore.FrameSvgItem {
     id: button
-    property alias text: labelElement.text
+    property string text
     property string iconSource
     property bool smallButton: false
     property bool menu: false
     property ContextMenu contextMenu
     property Item tabStopNext
     property Item tabStopBack
+    property int accelKey: -1
 
     signal clicked()
     signal pressed()
@@ -114,6 +115,20 @@ PlasmaCore.FrameSvgItem {
 
         onPaintedWidthChanged: {
             button.width = Math.max(button.width, 5 + labelElement.width + 10 + iconElement.width + 5)
+        }
+    }
+
+    // visual part of the label accelerator implementation. See main.qml (Keys.onPressed) to see the code
+    // that actually triggers the action.
+    onTextChanged: {
+        var i = button.text.indexOf('&')
+
+        if (i > -1) {
+            var stringToReplace = button.text.substr(i, 2)
+            accelKey = stringToReplace.toUpperCase().charCodeAt(1)
+            labelElement.text = button.text.replace(stringToReplace, '<u>'+stringToReplace[1]+'</u>')
+        } else {
+            labelElement.text = button.text
         }
     }
 
@@ -179,7 +194,8 @@ PlasmaCore.FrameSvgItem {
     }
 
     Keys.onPressed: {
-        if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter ||
+        if (event.key == Qt.Key_Return ||
+            event.key == Qt.Key_Enter ||
             event.key == Qt.Key_Space) {
             mouseArea.clicked(null)
         }
