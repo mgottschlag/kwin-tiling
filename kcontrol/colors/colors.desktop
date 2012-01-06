@@ -213,6 +213,7 @@ X-KDE-Keywords[pt_BR]=cores,cores,esquema,contraste,Widget,cores,Esquema de Core
 X-KDE-Keywords[sv]=färger,schema,kontrast,Komponentfärger,Färgschema
 X-KDE-Keywords[uk]=кольори,кольори,схема,контраст,кольори віджетів,схема кольорів
 X-KDE-Keywords[x-test]=xxcolors,colours,scheme,contrast,Widget colors,Color Schemexx
+X-KDE-Keywords[zh_CN]=colors,colours,scheme,contrast,Widget colors,Color Scheme,颜色,配色方案,对比度,元件颜色,颜色方案
 X-KDE-Keywords[zh_TW]=colors,colours,scheme,contrast,Widget colors,Color Scheme
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

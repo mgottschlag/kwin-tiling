@@ -202,6 +202,7 @@ X-KDE-Keywords[pt_BR]=Teclas,combinações de teclas global,esquema de teclas,at
 X-KDE-Keywords[sv]=Tangenter,Globala tangentbindingar,Tangentschema,Tangentbindingar,genvägar,programgenvägar
 X-KDE-Keywords[uk]=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,клавіатура,скорочення,клавіатурні скорочення,схема,загальні клавіатурні скорочення,клавіатурні скорочення програми
 X-KDE-Keywords[x-test]=xxKeys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcutsxx
+X-KDE-Keywords[zh_CN]=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,按键,全局键绑定,按键方案,按键绑定,快捷键,应用程序
 X-KDE-Keywords[zh_TW]=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts
 
 Categories=Qt;KDE;X-KDE-settings-accessibility;

@@ -148,6 +148,7 @@ X-KDE-Keywords[pt_BR]=fonte,fontes,instalador,truetype,type1,bitmap,imagem
 X-KDE-Keywords[sv]=teckensnitt,installation,truetype,type1,bitavbildning
 X-KDE-Keywords[uk]=шрифт,шрифти,встановлювач,truetype,type1,растрові
 X-KDE-Keywords[x-test]=xxfont,fonts,installer,truetype,type1,bitmapxx
+X-KDE-Keywords[zh_CN]=font,fonts,installer,truetype,type1,bitmap,字体,安装器,点阵
 X-KDE-Keywords[zh_TW]=font,fonts,installer,truetype,type1,bitmap
 
 Categories=Qt;KDE;X-KDE-settings-system;
