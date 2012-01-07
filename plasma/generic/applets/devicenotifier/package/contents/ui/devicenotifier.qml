@@ -251,14 +251,13 @@ Item {
                 return used*100/size;
             }
             leftActionIcon: {
-                if (emblemIcon == "emblem-mounted" || emblemIcon == "emblem-encrypted-unlocked") {
+                if (mounted) {
                     return QIcon("media-eject");
-                } else if (emblemIcon == "emblem-unmounted" || emblemIcon == "emblem-encrypted-locked") {
+                } else {
                     return QIcon("emblem-mounted");
                 }
-                else return QIcon("");
             }
-            mounted: emblemIcon=="emblem-mounted"
+            mounted: sdSource.data[udi]["Accessible"] == true;
 
             onLeftActionTriggered: {
                 operationName = mounted ? "unmount" : "mount";
