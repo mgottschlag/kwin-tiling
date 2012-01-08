@@ -291,7 +291,9 @@ void PowermanagementEngine::batteryRemainingTimeChanged(qulonglong time)
 void PowermanagementEngine::batteryRemainingTimeReply(QDBusPendingCallWatcher *watcher)
 {
     QDBusPendingReply<qulonglong> reply = *watcher;
-    if (!reply.isError()) {
+    if (reply.isError()) {
+        kDebug() << "Error getting battery remaining time: " << reply.error().message();
+    } else {
         batteryRemainingTimeChanged(reply.value());
     }
 
