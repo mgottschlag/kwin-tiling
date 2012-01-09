@@ -45,7 +45,7 @@ import org.kde.plasma.components 0.1 as PlasmaComponents
 Item {
     id: root
 
-    property alias text: textArea.text
+    property string text
     property int index: 0
 
     signal clicked
@@ -53,6 +53,10 @@ Item {
     property int implicitWidth: textArea.paintedWidth + 6
     width: parent.width
     height: textArea.paintedHeight + 6
+
+    onTextChanged: {
+        textArea.text = root.text.replace('&', '')
+    }
 
     PlasmaComponents.Label {
         id: textArea
