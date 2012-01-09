@@ -26,7 +26,7 @@ PlasmaCore.FrameSvgItem {
     id: background
 
     width: Math.max((delegateStack.currentPage ? delegateStack.currentPage.implicitWidth : 0) + margins.left + margins.right, list.delegateWidth)
-    height: list.delegateHeight
+    height: Math.max((delegateStack.currentPage ? delegateStack.currentPage.implicitHeight : 0) + margins.top + margins.bottom, list.delegateHeight)
 
     imagePath: "widgets/tasks"
     prefix: Current? "focus" : "normal"
@@ -61,6 +61,9 @@ PlasmaCore.FrameSvgItem {
     }
 
     Behavior on width {
+        NumberAnimation { duration: 250 }
+    }
+    Behavior on height {
         NumberAnimation { duration: 250 }
     }
 
@@ -181,9 +184,13 @@ PlasmaCore.FrameSvgItem {
         id: confirmationComponent
         MouseArea {
             anchors.fill: parent
-            implicitWidth: Math.max(parent.width, confirmationLabel.paintedWidth)
+
+            implicitWidth: (activityManager.orientation == Qt.Horizontal) ? Math.max(parent.width, confirmationLabel.paintedWidth) : parent.width
+            implicitHeight: (activityManager.orientation == Qt.Horizontal) ? parent.height : Math.max(parent.height, confirmationColumn.implicitHeight) 
+
             onClicked: delegateStack.pop()
             Column {
+                id: confirmationColumn
                 anchors.fill: parent
                 spacing: 4
                 PlasmaComponents.Label {
@@ -194,6 +201,7 @@ PlasmaCore.FrameSvgItem {
                     }
                     horizontalAlignment: Text.AlignHCenter
                     text: i18n("Remove activity %1?", Name)
+                    wrapMode: (activityManager.orientation == Qt.Horizontal) ? Text.NoWrap : Text.Wrap
                 }
 
                 PlasmaComponents.Button {
@@ -220,7 +228,9 @@ PlasmaCore.FrameSvgItem {
         id: configurationComponent
         MouseArea {
             anchors.fill: parent
-            implicitWidth: iconButton.x*3 + iconButton.width + theme.defaultFont.mSize.width * 12
+
+            implicitWidth: (activityManager.orientation == Qt.Horizontal) ? (iconButton.x*3 + iconButton.width + theme.defaultFont.mSize.width * 12) : parent.width
+
             onClicked: delegateStack.pop()
             PlasmaComponents.Button {
                 id: iconButton

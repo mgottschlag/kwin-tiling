@@ -203,6 +203,8 @@ X-KDE-Keywords[da]=ur,dato,tid,tidszone
 X-KDE-Keywords[de]=uhr,datum,zeit,zeitzone
 X-KDE-Keywords[et]=kell,kuupäev,kellaaeg,ajavöönd
 X-KDE-Keywords[fi]=kello,päiväys,päivämäärä,aika,kellonaika,aikavyöhyke
+X-KDE-Keywords[ga]=clog,dáta,am,crios ama
+X-KDE-Keywords[hu]=óra,dátum,idő,időzóna
 X-KDE-Keywords[ia]=horologio,data,tempore,zona de tempore
 X-KDE-Keywords[kk]=clock,date,time,time zone
 X-KDE-Keywords[nb]=klokke,dato,tid,tidssone
@@ -213,6 +215,7 @@ X-KDE-Keywords[pt_BR]=relógio,data,hora,fuso horário
 X-KDE-Keywords[sv]=klocka,datum,tid,tidszon
 X-KDE-Keywords[uk]=clock,date,time,time zone,годинник,час,дата,часовий пояс
 X-KDE-Keywords[x-test]=xxclock,date,time,time zonexx
+X-KDE-Keywords[zh_CN]=clock,date,time,time zone,时钟,日期,时间,时区
 X-KDE-Keywords[zh_TW]=clock,date,time,time zone
 
 Categories=Qt;KDE;X-KDE-settings-system;

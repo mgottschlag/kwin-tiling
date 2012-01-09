@@ -203,6 +203,8 @@ X-KDE-Keywords[da]=Klokke,lyd,lydstyrke,tone,varighed
 X-KDE-Keywords[de]=Signalton,Systemton,Klänge,Audio,Sound,Dauer,Lautstärke,Höhen
 X-KDE-Keywords[et]=Kell,audio,heli,helitugevus,toon,kestus
 X-KDE-Keywords[fi]=varoitus,äänimerkki,ääni,äänenvoimakkuus,korkeus,kesto
+X-KDE-Keywords[ga]=Cloigín,Fuaim,Airde,Tuinairde,Fad
+X-KDE-Keywords[hu]=Csengő,Hang,Hang,Hangerő,Hangmagasság,Időtartam
 X-KDE-Keywords[ia]=Campana,Audio,Sono,Volumine,Accordatura,Duration
 X-KDE-Keywords[kk]=Bell,Audio,Sound,Volume,Pitch,Duration
 X-KDE-Keywords[nb]=Bjelle, Lyd,Lydstyrke,Tone,Varighet
@@ -213,5 +215,6 @@ X-KDE-Keywords[pt_BR]=Campainha,Áudio,Som,Volume,Frequência,Duração
 X-KDE-Keywords[sv]=Summer,Ljud,Volym,Tonhöjd,Längd
 X-KDE-Keywords[uk]=Bell,Audio,Sound,Volume,Pitch,Duration,дзвінок,гудок,звук,гучність,тон,тривалість
 X-KDE-Keywords[x-test]=xxBell,Audio,Sound,Volume,Pitch,Durationxx
+X-KDE-Keywords[zh_CN]=Bell,Audio,Sound,Volume,Pitch,Duration,铃声,音效,声音,音量
 X-KDE-Keywords[zh_TW]=Bell,Audio,Sound,Volume,Pitch,Duration
 

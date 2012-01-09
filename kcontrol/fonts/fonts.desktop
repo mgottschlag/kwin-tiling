@@ -203,6 +203,8 @@ X-KDE-Keywords[da]=skrifttyper,skriftstørrelse,stile,tegnsæt,panel,kontrolpane
 X-KDE-Keywords[de]=Schriftarten,Schriftgrößen,Zeichensätze,Kontrollleiste,Panel,Stile,Dateimanager,Arbeitsflächen,Werkzeugleisten,Menüs,Fenstertitel,Titel,DPI
 X-KDE-Keywords[et]=fondid,fondi suurus,kodeering,kooditabel,paneel,juhtpaneel,töölauad,failihaldur,tööriistaribad,menüü,aken,tiitel,nimetus,nimi,DPI
 X-KDE-Keywords[fi]=kirjasimet,fontit,kirjasinkoko,fonttikoko,tyylit,merkistöt,paneeli,ohjauskeskus,työpöydät,Tiedostonhallinta,Työkalurivit,Työkalupalkit,Valikko,Ikkunan otsikko,Otsikko,DPI
+X-KDE-Keywords[ga]=clónna,clófhoirne,clómhéid,stíleanna,tacair charachtar,painéal,painéal rialaithe,deasca,Bainisteoir Comhad,Barraí Uirlisí,Roghchlár,Teideal Fuinneoige,Teideal,PSO
+X-KDE-Keywords[hu]=betűkészletek,betűméret,stílusok,karakterkészletek,karakterkészletek,panel,beállítópanel,asztalok,Fájlkezelő,Eszköztárak,Menü,Ablakcím,Cím,DPI
 X-KDE-Keywords[ia]=fonts,grandor de font,stilos,insimules de characteres,insimules de characteres,pannello,pannello de controlo,scriptorios,Gerente de File,Barra de instrumentos,menu,Titulo de Fenestra,Titulo,DPI
 X-KDE-Keywords[kk]=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI
 X-KDE-Keywords[nb]=skrifttyper,skriftstørrelse,stiler,tegnsett,panel,kontrollpanel,skrivebord,filbehandler,Verktøylinje,Meny,Vindiustittel,tittel,DPI
@@ -213,6 +215,7 @@ X-KDE-Keywords[pt_BR]=fontes,tamanho da fonte,estilos,codificações,codificaç�
 X-KDE-Keywords[sv]=teckensnitt,teckenstorlek,stil,teckenuppsättningar,panel,kontrollpanel,skrivbord,Filhanterare,Verktygsrader,Meny,Fönsternamn,Namn,Punkter/tum
 X-KDE-Keywords[uk]=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI,шрифт,шрифти,розмір,розмір шрифту,стиль,стилі,гарнітура,гарнітури,кодування,набір,символ,символи,набір символів,панель,панель керування,стільниця,стільниці,файл,керування,керування файлами,менеджер,панель інструментів,меню,заголовок,заголовок вікна,роздільність
 X-KDE-Keywords[x-test]=xxfonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPIxx
+X-KDE-Keywords[zh_CN]=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI,字体字体大小,样式,字符集,面板,控制面板,桌面,文件管理器,工具栏,菜单,窗口标题,标题
 X-KDE-Keywords[zh_TW]=fonts,font size,styles,charsets,character sets,panel,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,DPI
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

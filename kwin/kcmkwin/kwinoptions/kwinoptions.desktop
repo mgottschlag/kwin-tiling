@@ -194,6 +194,8 @@ X-KDE-Keywords[ca]=focus,situació,comportament de finestra,animació,elevació,
 X-KDE-Keywords[da]=fokus,placering,vinduesopførsel,animation,hæv,autohæv,vinduesramme,titelbjælke,dobbeltklik
 X-KDE-Keywords[et]=fookus,asetus,paigutus,akende käitumine,animeerimine,animatsioon,esiletoomine,automaatne esiletoomine,aknad,raam,tiitliriba,topeltklõps
 X-KDE-Keywords[fi]=kohdistus,sijoittelu,sijoitus,ikkunoiden käyttäytyminen,animaatio,nosta,automaattinen nosto,ikkunat,kehys,otsikkopalkki,kaksoisnapsautus,tuplanapsautus,kaksoisklikkaus,tuplaklikkaus
+X-KDE-Keywords[ga]=fócas,láithriú,oibriú na bhfuinneog,beochan,ardaigh,uathardaigh,fuinneoga,fráma,ceannteideal,déchliceáil
+X-KDE-Keywords[hu]=fókus,elhelyezés,ablakműködés,animáció,felemelés,automatikus felemelés,ablakok,keret,címsor,dupla kattintás
 X-KDE-Keywords[ia]=focus,placiamento,comportamento de fenestra,animation,altiar,auto altiar,fenestras,quadro,barra de titulo,duple click
 X-KDE-Keywords[kk]=focus,placement,window behavior,animation,raise,auto raise,windows,frame,titlebar,doubleclick
 X-KDE-Keywords[nb]=fokus,plassering,vindusppførsel,animering,hev,autohev,vinduer,ramme,tittellinje,dobbeltklikk
@@ -203,6 +205,7 @@ X-KDE-Keywords[pt_BR]=foco,colocação,comportamento da janela,animação,elevar
 X-KDE-Keywords[sv]=fokus,placering,fönsterbeteende,animering,höj,höj automatiskt,fönster,ram,namnlist,dubbelklick
 X-KDE-Keywords[uk]=focus,placement,window behavior,animation,raise,auto raise,windows,frame,titlebar,doubleclick,фокус,розташування,місце,вікно,поведінка,поведінка вікон,анімація,підняти,підняття,автоматична,автоматично,рамка,заголовок,смужка заголовка,клацання,подвійне
 X-KDE-Keywords[x-test]=xxfocus,placement,window behavior,animation,raise,auto raise,windows,frame,titlebar,doubleclickxx
+X-KDE-Keywords[zh_CN]=focus,placement,window behavior,animation,raise,auto raise,windows,frame,titlebar,doubleclick,焦点,位置,窗口行为,动画,升起,自动升起,窗口,边框,标题栏,双击
 X-KDE-Keywords[zh_TW]=focus,placement,window behavior,animation,raise,auto raise,windows,frame,titlebar,doubleclick
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;
