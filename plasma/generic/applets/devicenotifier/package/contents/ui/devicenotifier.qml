@@ -264,8 +264,6 @@ Item {
                 service = sdSource.serviceForSource(udi);
                 operation = service.operationDescription(operationName);
                 service.startOperationCall(operation);
-                plasmoid.setPopupIconByName("dialog-ok")
-                popupIconTimer.restart()
             }
             property bool isLast: (expandedDevice == udi)
             onIsLastChanged: {

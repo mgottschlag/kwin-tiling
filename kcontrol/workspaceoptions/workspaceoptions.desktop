@@ -140,7 +140,9 @@ Comment[zh_TW]=Plasma 工作空間的全域選項
 
 X-KDE-Keywords=plasma,workspace,shell,formfactor,dashboard,tooltips,informational tips
 X-KDE-Keywords[ca]=plasma,espai de treball,shell,factor de format,tauler
+X-KDE-Keywords[ca@valencia]=plasma,espai de treball,shell,factor de format,tauler
 X-KDE-Keywords[da]=plasma,arbejdsområde,skal,formfaktor,dashboard,instrumentbræt
+X-KDE-Keywords[de]=Plasma,Arbeitsbereich,shell,formfaktor,Format,dashboard
 X-KDE-Keywords[et]=plasma,töötsoon,shell,dashboard,konteiner
 X-KDE-Keywords[fi]=plasma,työtila,ympäristö,kuori,kokoluokka,kojelauta
 X-KDE-Keywords[hu]=plazma,munakterület,héj,formfactor,áttekintő nézet

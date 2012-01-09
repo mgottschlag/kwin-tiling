@@ -200,6 +200,7 @@ Comment[zh_TW]=鍵盤設定
 
 X-KDE-Keywords=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume,NumLock,NumPad,Keyboard type,Keyboard model,Keyboard layout,Key layout,Language,Alternate Keyboard,Keyboard switching,Ctrl Key,Caps Lock,Esperanto,Circumflex,Kill X Server,LED Keyboard,Compose Key
 X-KDE-Keywords[ca]=Teclat,Repetició de teclat,Volum del clic,Dispositius d'entrada,repetició,volum
+X-KDE-Keywords[ca@valencia]=Teclat,Repetició de teclat,Volum del clic,Dispositius d'entrada,repetició,volum
 X-KDE-Keywords[da]=tastatur,tastaturgentagelse,kliklydstyrke,input-enheder,gentagelse,lydstyrke
 X-KDE-Keywords[de]=Tastatur,Tastenwiederholung,Klicklautstärke,Eingabegeräte,Wiederholung,Lautstärke
 X-KDE-Keywords[et]=klaviatuur,klahvikordus,klõpsu heli,sisendseadmed,kordamine,helitugevus

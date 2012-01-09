@@ -160,6 +160,7 @@ Comment[zh_TW]=管理哪些程式要啟動的設定工具。
 
 X-KDE-Keywords=Autostart Manager,autostart,startup,system startup,kde start,cron
 X-KDE-Keywords[ca]=Gestor d'inici automàtic
+X-KDE-Keywords[ca@valencia]=Gestor d'inici automàtic
 X-KDE-Keywords[cs]=Správce automatického spuštění
 X-KDE-Keywords[da]=Autostarthåndtering
 X-KDE-Keywords[de]=Autostart-Verwaltung
