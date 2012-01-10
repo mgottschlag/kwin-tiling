@@ -86,11 +86,23 @@ bool SM::Ram::addVisualization(const QString& source)
         return false;
     }
     QString ram = l[1];
+
     SM::Plotter *plotter = new SM::Plotter(this);
+
+    // 'ram' should be "physical" or "swap". I'm not aware of other values
+    // for it, but who knows.
+    if (ram == "physical") {
+        ram = i18nc("noun, hardware, physical RAM/memory", "physical");
+    } else if (ram == "swap") {
+        ram = i18nc("noun, hardware, swap file/partition", "swap");
+    }
+
     plotter->setTitle(ram);
     plotter->setUnit("B");
+
     appendVisualization(source, plotter);
     setPreferredItemHeight(80);
+
     return true;
 }
 
