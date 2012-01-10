@@ -94,31 +94,83 @@ bool SM::Ram::addVisualization(const QString& source)
     return true;
 }
 
+double SM::Ram::preferredBinaryUnit()
+{
+    KLocale::BinaryUnitDialect binaryUnit = KGlobal::locale()->binaryUnitDialect();
+
+    // this makes me feel all dirty inside. but it's the only way I could find
+    // which will let us know what we should be scaling our graph by, independent
+    // of how locale settings are configured.
+    switch (binaryUnit) {
+        case KLocale::IECBinaryDialect:
+            //fallthrough
+        case KLocale::JEDECBinaryDialect:
+            return 1024;
+            break;
+        case KLocale::MetricBinaryDialect:
+            return 1000;
+            break;
+
+        default:
+            // being careful..I'm sure some genius will invent a new byte unit system ;-)
+            Q_ASSERT_X(0, "preferredBinaryUnit", "invalid binary preference enum returned");
+            return 0;
+    }
+}
+
+QStringList SM::Ram::preferredUnitsList()
+{
+    QStringList units;
+    KLocale::BinaryUnitDialect binaryUnit = KGlobal::locale()->binaryUnitDialect();
+    switch (binaryUnit) {
+        case KLocale::IECBinaryDialect:
+            units << "B" << "KiB" << "MiB" << "GiB" << "TiB";
+            break;
+        case KLocale::JEDECBinaryDialect:
+            units << "B" << "KB" << "MB" << "GB" << "TB";
+            break;
+        case KLocale::MetricBinaryDialect:
+            units << "B" << "kB" << "MB" << "GB" << "TB";
+            break;
+        default:
+            Q_ASSERT_X(0, "preferredBinaryUnit", "invalid binary preference enum returned");
+    }
+
+    return units;
+}
+
 void SM::Ram::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
     SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
     if (plotter) {
         /* A factor to convert from default units to bytes.
-         * If units is not "KB", assume it is bytes. */
-        const double factor = (data["units"].toString() == "KB") ? 1024.0 : 1.0;
+         * If units is not "KB", assume it is bytes.
+         * NOTE: the dataengine refers to KB == 1024. so it's KiB as well.
+         * Though keep in mind, KB does not imply 1024 and can be KB == 1000 as well.
+         */
+        const double preferredUnit = preferredBinaryUnit();
+        const double factor = (data["units"].toString() == "KB") ? preferredUnit : 1.0;
         const double value_b = data["value"].toDouble() * factor;
         const double max_b = data["max"].toDouble() * factor;
-        static const QStringList units = QStringList() << "B" << "KiB" << "MiB" << "GiB" << "TiB";
+        const QStringList units = preferredUnitsList();
+
         if (value_b > m_max[source]) {
             m_max[source] = max_b;
             plotter->setMinMax(0.0, max_b);
             qreal scale = 1.0;
             int i = 0;
-            while (max_b / scale > 1024.0 && i < units.size()) {
-                scale *= 1024.0;
+            while (max_b / scale > factor && i < units.size()) {
+                scale *= factor;
                 ++i;
             }
+
             plotter->setUnit(units[i]);
             plotter->setScale(scale);
         }
 
         plotter->addSample(QList<double>() << value_b);
         QString temp = KGlobal::locale()->formatByteSize(value_b);
+
         if (mode() == SM::Applet::Panel) {
             setToolTip(source, QString("<tr><td>%1</td><td>%2</td><td>of</td><td>%3</td></tr>")
                                       .arg(plotter->title())
