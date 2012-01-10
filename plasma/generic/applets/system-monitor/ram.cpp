@@ -200,17 +200,30 @@ void SM::Ram::createConfigurationInterface(KConfigDialog *parent)
     m_model.setHorizontalHeaderLabels(QStringList() << i18n("RAM"));
     QStandardItem *parentItem = m_model.invisibleRootItem();
     QRegExp rx("mem/(\\w+)/.*");
+    QString ramName;
 
     foreach (const QString& ram, m_memories) {
         if (rx.indexIn(ram) != -1) {
-            QStandardItem *item1 = new QStandardItem(rx.cap(1));
-            item1->setEditable(false);
-            item1->setCheckable(true);
-            item1->setData(ram);
-            if (sources().contains(ram)) {
-                item1->setCheckState(Qt::Checked);
+            ramName = rx.cap(1);
+
+            // 'ram' should be "physical" or "swap". I'm not aware of other values
+            // for it, but who knows. (see also addVisualization)
+            if (ramName == "physical") {
+                ramName = i18nc("noun, hardware, physical RAM/memory", "physical");
+            } else if (ramName == "swap") {
+                ramName = i18nc("noun, hardware, swap file/partition", "swap");
             }
-            parentItem->appendRow(item1);
+
+            QStandardItem *ramItem = new QStandardItem(ramName);
+            ramItem->setEditable(false);
+            ramItem->setCheckable(true);
+            ramItem->setData(ram);
+
+            if (sources().contains(ram)) {
+                ramItem->setCheckState(Qt::Checked);
+            }
+
+            parentItem->appendRow(ramItem);
         }
     }
 
@@ -237,10 +250,15 @@ void SM::Ram::configAccepted()
         QStandardItem *item = parentItem->child(i, 0);
         if (item) {
             if (item->checkState() == Qt::Checked) {
+                // data() is the untranslated string
+                // for use with sources
                 appendSource(item->data().toString());
             }
         }
     }
+
+    // note we write and read non-translated
+    // version to config file.
     cg.writeEntry("memories", sources());
 
     double interval = ui.intervalSpinBox->value();
