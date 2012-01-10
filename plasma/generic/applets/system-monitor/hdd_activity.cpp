@@ -57,10 +57,14 @@
  * disk/hd<something>/Rate/rio
  * disk/hd<something>/Rate/wio
  *
+ * Does NOT include partitions, since I don't think many people will use that.
+ *
+ * RAID regexp handling needs further testing, I have a feeling it works just for me.
+ *
  */
 Hdd_Activity::Hdd_Activity(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args),
-    m_regexp("disk/(?:md|sd|hd).*/Rate/(?:rio|wio)")
+    m_regexp("disk/(?:md|sd|hd)[a-z|0-9]_.*/Rate/(?:rio|wio)")
 {
     setHasConfigurationInterface(true);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
