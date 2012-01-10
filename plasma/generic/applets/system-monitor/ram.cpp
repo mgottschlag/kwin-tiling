@@ -210,9 +210,10 @@ void SM::Ram::createConfigurationInterface(KConfigDialog *parent)
             if (sources().contains(ram)) {
                 item1->setCheckState(Qt::Checked);
             }
-            parentItem->appendRow(QList<QStandardItem *>() << item1);
+            parentItem->appendRow(item1);
         }
     }
+
     ui.treeView->setModel(&m_model);
     ui.treeView->resizeColumnToContents(0);
     ui.intervalSpinBox->setValue(interval() / 1000.0);
