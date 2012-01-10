@@ -118,17 +118,17 @@ void Hdd_Activity::dataUpdated(const QString& source, const Plasma::DataEngine::
 {
     //kDebug() << "####### dataUpdated source: " << source << " data: " << data;
 
-//    SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
-//    if (plotter) {
-//        double value = data["value"].toDouble();
-//        QString temp = KGlobal::locale()->formatNumber(value, 1);
-//        plotter->addSample(QList<double>() << value);
-//
-//        if (mode() == SM::Applet::Panel) {
-//            setToolTip(source, QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
-//            .arg(plotter->title()).arg(temp));
-//        }
-//    }
+    SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
+    if (plotter) {
+        double value = data["value"].toDouble();
+        QString temp = KGlobal::locale()->formatNumber(value, 1);
+        plotter->addSample(QList<double>() << value);
+
+        if (mode() == SM::Applet::Panel) {
+            setToolTip(source, QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
+            .arg(plotter->title()).arg(temp));
+        }
+    }
 }
 
 void Hdd_Activity::createConfigurationInterface(KConfigDialog *parent)
