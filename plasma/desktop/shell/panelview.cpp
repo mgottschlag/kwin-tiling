@@ -436,6 +436,7 @@ Plasma::Location PanelView::location() const
 void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
 {
     m_visibilityMode = mode;
+    kDebug() << "mode is" << mode;
 
     if (mode == LetWindowsCover) {
         KWindowSystem::setState(winId(), NET::KeepBelow);
@@ -459,12 +460,17 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
     config().writeEntry("panelVisibility", (int)mode);
 
     //if the user didn't cause this, hide again in a bit
-    if ((mode == AutoHide || mode == LetWindowsCover) && !m_editing) {
-        if (m_mousePollTimer) {
-            m_mousePollTimer->stop();
-        }
+    if (!m_editing) {
+        updateStruts();
 
-        QTimer::singleShot(2000, this, SLOT(startAutoHide()));
+        if (mode == AutoHide || mode == LetWindowsCover) {
+            if (m_mousePollTimer) {
+                m_mousePollTimer->stop();
+            }
+
+            kDebug() << "and we're going to start an autohide...";
+            QTimer::singleShot(2000, this, SLOT(startAutoHide()));
+        }
     }
 
     KWindowSystem::setOnAllDesktops(winId(), true);
