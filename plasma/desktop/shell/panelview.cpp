@@ -436,7 +436,6 @@ Plasma::Location PanelView::location() const
 void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
 {
     m_visibilityMode = mode;
-    kDebug() << "mode is" << mode;
 
     if (mode == LetWindowsCover) {
         KWindowSystem::setState(winId(), NET::KeepBelow);
@@ -468,7 +467,6 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
                 m_mousePollTimer->stop();
             }
 
-            kDebug() << "and we're going to start an autohide...";
             QTimer::singleShot(2000, this, SLOT(startAutoHide()));
         }
     }
