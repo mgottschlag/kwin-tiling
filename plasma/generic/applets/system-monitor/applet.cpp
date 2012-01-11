@@ -270,7 +270,7 @@ void Applet::clear()
 void Applet::displayNoAvailableSources()
 {
     KIcon appletIcon(icon());
-    m_noSourcesIcon = new Plasma::IconWidget(appletIcon, "", this);
+    m_noSourcesIcon = new Plasma::IconWidget(appletIcon, i18n("No data sources have been configured."), this);
     mainLayout()->addItem(m_noSourcesIcon);
     m_preferredItemHeight = MINIMUM;
 }
