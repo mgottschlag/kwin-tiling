@@ -204,6 +204,9 @@ void IconApplet::setUrl(const KUrl& url, bool fromConfigDialog)
             if (m_text.isEmpty() && m_url.isLocalFile()) {
                 //handle special case like the / folder
                 m_text = m_url.directory();
+            } else if (m_url.protocol().contains("http")) {
+                m_text = m_url.prettyUrl();
+                m_text.remove(QRegExp("http://(www.)*"));
             } else if (m_text.isEmpty()) {
                 m_text = m_url.prettyUrl();
 
