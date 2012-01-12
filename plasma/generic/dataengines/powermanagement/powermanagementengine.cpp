@@ -184,9 +184,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
 Plasma::Service* PowermanagementEngine::serviceForSource(const QString &source)
 {
     if (source == "PowerDevil") {
-        PowerManagementService *service = new PowerManagementService(source);
-        service->setParent(this);
-        return service;
+        return new PowerManagementService(this);
     }
 
     return 0;
