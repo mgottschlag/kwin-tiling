@@ -35,7 +35,7 @@ PlasmaCore.FrameSvgItem {
     property int realMarginRight: margins.right
 
     width: realMarginLeft + 2 * buttonsLayout.width + realMarginRight
-    height: realMarginTop + automaticallyDoLabel.height + buttonsLayout.height + realMarginBottom
+    height: 2*realMarginTop + automaticallyDoLabel.height + buttonsLayout.height + realMarginBottom
 
     imagePath: "dialogs/shutdowndialog"
 
@@ -100,6 +100,15 @@ PlasmaCore.FrameSvgItem {
             automaticallyDoLabel.anchors.rightMargin = 2*realMarginRight
             leftPicture.anchors.leftMargin = 2*realMarginLeft
             buttonsLayout.anchors.rightMargin = 2*realMarginRight
+        } else {
+            var pictureWidth = shutdownUi.height * leftPicture.naturalSize.width / leftPicture.naturalSize.height
+
+            if (pictureWidth < leftPicture.naturalSize.width) {
+                leftPicture.width = pictureWidth;
+                leftPicture.height = pictureWidth * leftPicture.naturalSize.height / leftPicture.naturalSize.width
+            }
+
+            shutdownUi.width = realMarginLeft + leftPicture.width + buttonsLayout.width + realMarginRight
         }
 
         if (choose || sdtype == ShutdownType.ShutdownTypeNone) {
@@ -190,7 +199,7 @@ PlasmaCore.FrameSvgItem {
 
     PlasmaCore.SvgItem {
         id: leftPicture
-        width: buttonsLayout.width
+        width: naturalSize.width
         height: width * naturalSize.height / naturalSize.width
         smooth: true
         anchors {
@@ -228,7 +237,6 @@ PlasmaCore.FrameSvgItem {
                     id: logoutButton
                     text: i18n("&Logout")
                     iconSource: "system-log-out"
-                    height: 32
                     anchors.right: parent.right
                     visible: (choose || sdtype == ShutdownType.ShutdownTypeNone)
                     tabStopNext: shutdownButton
@@ -248,7 +256,6 @@ PlasmaCore.FrameSvgItem {
                     id: shutdownButton
                     text: i18n("&Turn Off Computer")
                     iconSource: "system-shutdown"
-                    height: 32
                     anchors.right: parent.right
                     visible: (choose || sdtype == ShutdownType.ShutdownTypeHalt)
                     menu: spdMethods.StandbyState | spdMethods.SuspendState | spdMethods.HibernateState
@@ -261,6 +268,9 @@ PlasmaCore.FrameSvgItem {
                     }
 
                     onPressAndHold: {
+                        if (!menu) {
+                            return
+                        }
                         if (!contextMenu) {
                             contextMenu = shutdownOptionsComponent.createObject(shutdownButton)
                             if (spdMethods.StandbyState) {
@@ -296,7 +306,6 @@ PlasmaCore.FrameSvgItem {
                     id: rebootButton
                     text: i18n("&Restart Computer")
                     iconSource: "system-reboot"
-                    height: 32
                     anchors.right: parent.right
                     menu: rebootOptions["options"].length > 0
                     tabStopNext: cancelButton
@@ -308,6 +317,9 @@ PlasmaCore.FrameSvgItem {
                     }
 
                     onPressAndHold: {
+                        if (!menu) {
+                            return
+                        }
                         if (!contextMenu) {
                             contextMenu = rebootOptionsComponent.createObject(rebootButton)
                             var options = rebootOptions["options"]
@@ -345,7 +357,6 @@ PlasmaCore.FrameSvgItem {
                 text: i18n("&Cancel")
                 iconSource: "dialog-cancel"
                 smallButton: true
-                height: 22
                 tabStopNext: logoutButton
                 tabStopBack: rebootButton
 

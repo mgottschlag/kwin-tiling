@@ -84,6 +84,7 @@ PlasmaCore.FrameSvgItem {
     property Item tabStopNext
     property Item tabStopBack
     property int accelKey: -1
+    height: 32
 
     signal clicked()
     signal pressed()
@@ -114,7 +115,7 @@ PlasmaCore.FrameSvgItem {
         }
 
         onPaintedWidthChanged: {
-            button.width = Math.max(button.width, 5 + labelElement.width + 10 + iconElement.width + 5)
+            button.width = Math.max(button.width, 5 + labelElement.width + 20 + iconElement.width + 5)
         }
     }
 
@@ -169,6 +170,11 @@ PlasmaCore.FrameSvgItem {
             background.elementId = button.smallButton ? "button-small-hover" : "button-hover"
         } else {
             background.elementId = button.smallButton ? "button-small-normal" : "button-normal"
+        }
+        if (button.smallButton) {
+            height = 22
+        } else {
+            height = background.naturalSize.height
         }
     }
 
