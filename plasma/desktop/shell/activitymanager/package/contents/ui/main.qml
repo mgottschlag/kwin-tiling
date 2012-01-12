@@ -28,7 +28,7 @@ Item {
     property int cellWidth: theme.defaultFont.mSize.width * 20
 
     property int minimumWidth: cellWidth + (activityManager.orientation == Qt.Horizontal ? 0 : scrollBar.width)
-    property int minimumHeight: topBar.height + list.delegateHeight + (activityManager.orientation == Qt.Horizontal ? scrollBar.height : 0)
+    property int minimumHeight: topBar.height + list.delegateHeight + (activityManager.orientation == Qt.Horizontal ? scrollBar.height : 0) + 4
 
 
     PlasmaCore.DataSource {
@@ -103,7 +103,7 @@ Item {
         property Item newActivityButton
 
         sourceComponent: (activityManager.orientation == Qt.Horizontal) ? horizontalTopBarComponent : verticalTopBarComponent
-        height: item.height
+        height: item.height + 2
         anchors {
             top: parent.top
             left: parent.left
@@ -124,7 +124,11 @@ Item {
 
             PlasmaComponents.TextField {
                 id: filterField
-                width: list.width / Math.floor(list.width / cellWidth)
+                anchors {
+                    left: parent.left
+                    leftMargin: 2
+                }
+                width: list.width / Math.floor(list.width / cellWidth) - 4
                 clearButtonShown: true
                 onTextChanged: topBar.query = text
                 placeholderText: i18n("Enter search term...")
@@ -204,7 +208,7 @@ Item {
         id: list
 
         property int delegateWidth: (activityManager.orientation == Qt.Horizontal) ? (list.width / Math.floor(list.width / cellWidth)) : cellWidth
-        property int delegateHeight: theme.defaultFont.mSize.height * 7
+        property int delegateHeight: theme.defaultFont.mSize.height * 7 - 4
 
 
         anchors {
@@ -212,9 +216,11 @@ Item {
             left: parent.left
             right: activityManager.orientation == Qt.Horizontal ? parent.right : scrollBar.left
             bottom: activityManager.orientation == Qt.Horizontal ? scrollBar.top : parent.bottom
+            leftMargin: 4
+            rightMargin: 4
+            bottomMargin: 4
         }
 
-        clip: true
         orientation: activityManager.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.vertical
         snapMode: ListView.SnapToItem
         model: PlasmaCore.SortFilterModel {
@@ -226,10 +232,6 @@ Item {
         }
 
         delegate: ActivityDelegate {}
-        header: Item {
-            width: 4
-            height: 4
-        }
     }
     PlasmaComponents.ScrollBar {
         id: scrollBar

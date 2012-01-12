@@ -28,7 +28,7 @@ Item {
     property int cellWidth: theme.defaultFont.mSize.width * 20
 
     property int minimumWidth: cellWidth + (widgetExplorer.orientation == Qt.Horizontal ? 0 : scrollBar.width)
-    property int minimumHeight: topBar.height + list.delegateHeight + (widgetExplorer.orientation == Qt.Horizontal ? scrollBar.height : 0)
+    property int minimumHeight: topBar.height + list.delegateHeight + (widgetExplorer.orientation == Qt.Horizontal ? scrollBar.height : 0) + 4
 
 
     PlasmaComponents.ContextMenu {
@@ -137,14 +137,20 @@ Item {
         id: horizontalTopBarComponent
 
         Item {
-            anchors.top: parent.top
-            anchors.left:parent.left
-            anchors.right: parent.right
+            anchors {
+                top: parent.top
+                left:parent.left
+                right: parent.right
+            }
             height: categoryButton.height
             Row {
                 spacing: 4
+                anchors {
+                    left: parent.left
+                    leftMargin: 1
+                }
                 PlasmaComponents.TextField {
-                    width: list.width / Math.floor(list.width / cellWidth)
+                    width: list.width / Math.floor(list.width / cellWidth) - 4
                     clearButtonShown: true
                     placeholderText: i18n("Enter search term...")
                     onTextChanged: widgetExplorer.widgetsModel.searchTerm = text
@@ -249,23 +255,21 @@ Item {
         id: list
 
         property int delegateWidth: (widgetExplorer.orientation == Qt.Horizontal) ? (list.width / Math.floor(list.width / cellWidth)) : cellWidth
-        property int delegateHeight: theme.defaultFont.mSize.height * 7
+        property int delegateHeight: theme.defaultFont.mSize.height * 7 - 4
 
         anchors {
             top: topBar.bottom
             left: parent.left
             right: widgetExplorer.orientation == Qt.Horizontal ? parent.right : scrollBar.left
             bottom: widgetExplorer.orientation == Qt.Horizontal ? scrollBar.top : parent.bottom
+            leftMargin: 4
+            rightMargin: 4
+            bottomMargin: 4
         }
 
-        clip: true
         orientation: widgetExplorer.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.vertical
         snapMode: ListView.SnapToItem
         model: widgetExplorer.widgetsModel
-        header: Item {
-            width: 4
-            height: 4
-        }
 
         delegate: AppletDelegate {}
     }
