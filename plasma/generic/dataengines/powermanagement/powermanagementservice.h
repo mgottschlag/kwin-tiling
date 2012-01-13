@@ -32,7 +32,7 @@ class PowerManagementService : public Plasma::Service
     Q_OBJECT
 
 public:
-    PowerManagementService(QObject *parent = 0);
+    PowerManagementService(QObject *parent = 0, const QVariantList args = QVariantList());
     ServiceJob *createJob(const QString &operation, QMap<QString, QVariant> &parameters);
 };
 
