@@ -196,12 +196,19 @@ QStringList RandrMonitorModule::activeMonitors() const
 void RandrMonitorModule::checkInhibition()
 {
     if (!have_randr) {
-      return;
+        kDebug() << "Can't check inhibition, XRandR minor to 1.2 detected";
+        return;
+    }
+
+    if (!isLidPresent()) {
+        kDebug() << "This feature is only for laptop, and there is no Lid present";
+        return;
     }
 
     QStringList activeMonitorsList = activeMonitors();
     kDebug(7131) << "Active monitor list";
     kDebug(7131) << activeMonitorsList;
+
     bool inhibit = false;
     Q_FOREACH(const QString monitor, activeMonitorsList) {
         if (!monitor.contains("LVDS")) {
@@ -218,6 +225,29 @@ void RandrMonitorModule::checkInhibition()
         kDebug(7131) << "Inhibing: " << m_inhibitionCookie;
     }
 }
+
+bool RandrMonitorModule::isLidPresent()
+{
+    QDBusMessage call = QDBusMessage::createMethodCall("org.freedesktop.UPower",
+                                                  "/org/freedesktop/UPower",
+                                                  "org.freedesktop.DBus.Properties",
+                                                  "Get");
+    QList <QVariant> args;
+    args.append(QVariant::fromValue<QString>(QString("org.freedesktop.UPower")));
+    args.append(QVariant::fromValue<QString>(QString("LidIsPresent")));
+    call.setArguments(args);
+
+    QDBusMessage msg =  QDBusConnection::systemBus().call(call);
+    QDBusReply<QDBusVariant> reply(msg);
+
+    if (!reply.isValid()) {
+        kDebug(7131) << reply.error();
+        return false;
+    }
+
+    return reply.value().variant().toBool();
+}
+
 
 void RandrMonitorModule::checkResumeFromSuspend()
 {
