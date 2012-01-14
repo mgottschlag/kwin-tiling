@@ -50,7 +50,7 @@ RandrMonitorModule::RandrMonitorModule( QObject* parent, const QList<QVariant>& 
 
     QDBusReply <bool> re =  QDBusConnection::systemBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement");
     if (!re.value()) {
-        kDebug(7131) << "PowerManagement not loaded, waiting for it";
+        kDebug() << "PowerManagement not loaded, waiting for it";
         QDBusServiceWatcher *serviceWatcher = new QDBusServiceWatcher("org.kde.Solid.PowerManagement", QDBusConnection::sessionBus(),
                                                                   QDBusServiceWatcher::WatchForRegistration, this);
         connect(serviceWatcher, SIGNAL(serviceRegistered(QString)), this, SLOT(checkInhibition()));
@@ -206,8 +206,8 @@ void RandrMonitorModule::checkInhibition()
     }
 
     QStringList activeMonitorsList = activeMonitors();
-    kDebug(7131) << "Active monitor list";
-    kDebug(7131) << activeMonitorsList;
+    kDebug() << "Active monitor list";
+    kDebug() << activeMonitorsList;
 
     bool inhibit = false;
     Q_FOREACH(const QString monitor, activeMonitorsList) {
@@ -220,12 +220,12 @@ void RandrMonitorModule::checkInhibition()
     }
 
     if (m_inhibitionCookie > 0 && !inhibit) {
-        kDebug(7131) << "Stopping: " << m_inhibitionCookie;
+        kDebug() << "Stopping: " << m_inhibitionCookie;
         Solid::PowerManagement::stopSuppressingSleep(m_inhibitionCookie);
         m_inhibitionCookie = -1;
     } else if (m_inhibitionCookie < 0 && inhibit) { // If we are NOT inhibiting and we should, do it
         m_inhibitionCookie = Solid::PowerManagement::beginSuppressingSleep();
-        kDebug(7131) << "Inhibing: " << m_inhibitionCookie;
+        kDebug() << "Inhibing: " << m_inhibitionCookie;
     }
 }
 
@@ -244,7 +244,7 @@ bool RandrMonitorModule::isLidPresent()
     QDBusReply<QDBusVariant> reply(msg);
 
     if (!reply.isValid()) {
-        kDebug(7131) << reply.error();
+        kDebug() << reply.error();
         return false;
     }
 
