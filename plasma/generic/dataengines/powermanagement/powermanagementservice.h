@@ -34,6 +34,10 @@ class PowerManagementService : public Plasma::Service
 public:
     PowerManagementService(QObject *parent = 0, const QVariantList args = QVariantList());
     ServiceJob *createJob(const QString &operation, QMap<QString, QVariant> &parameters);
+
+private:
+    // actually a uint*
+    QVariant m_screensaverInhibitCookie;
 };
 
 #endif // POWERMANAGEMENTSERVICE_H

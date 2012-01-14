@@ -24,11 +24,17 @@ PowerManagementService::PowerManagementService(QObject *parent, const QVariantLi
     : Plasma::Service(parent, args)
 {
     setName("powermanagementservice");
+
+    Q_ASSERT(!args.isEmpty());
+    m_screensaverInhibitCookie = args.at(0);
 }
 
 ServiceJob *PowerManagementService::createJob(const QString &operation,
                                            QMap<QString, QVariant> &parameters)
 {
+    // trying to pass this uint* from powermanagementengine, to service, now to serviceJob
+    // so that it can change it's value. It's ass backwards, yep.
+    parameters["screensaverInhibitCookie"] = m_screensaverInhibitCookie;
     return new PowerManagementJob(operation, parameters, this);
 }
 
