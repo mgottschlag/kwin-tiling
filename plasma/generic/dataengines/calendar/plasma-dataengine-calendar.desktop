@@ -145,7 +145,7 @@ Comment[zh_CN]=日历数据引擎
 Comment[zh_TW]=行事曆資料引擎
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
-Icon=calendar
+Icon=view-calendar
 X-KDE-Library=plasma_engine_calendar
 
 X-KDE-PluginInfo-Author=Davide Bettio
