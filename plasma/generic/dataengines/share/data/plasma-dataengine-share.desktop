@@ -108,6 +108,7 @@ Comment[zh_CN]=用不同服务共享内容的引擎
 Comment[zh_TW]=用不同的服務來分享內容的引擎
 Type=Service
 X-KDE-ServiceTypes=Plasma/DataEngine
+Icon=document-share
 
 X-KDE-Library=plasma_engine_share
 X-KDE-PluginInfo-Author=Artur de Souza
