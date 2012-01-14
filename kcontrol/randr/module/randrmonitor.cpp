@@ -195,6 +195,10 @@ QStringList RandrMonitorModule::activeMonitors() const
 
 void RandrMonitorModule::checkInhibition()
 {
+    if (!have_randr) {
+      return;
+    }
+
     QStringList activeMonitorsList = activeMonitors();
     kDebug(7131) << "Active monitor list";
     kDebug(7131) << activeMonitorsList;
