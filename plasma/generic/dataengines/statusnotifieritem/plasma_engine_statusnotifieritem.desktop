@@ -107,7 +107,7 @@ Comment[wa]=Moteur po l' informacion so l' estat do programe, båzé sol protoco
 Comment[x-test]=xxEngine for applications' status information, based on the Status Notifier protocol.xx
 Comment[zh_CN]=用于提供应用程序状态信息的引擎，急于状态通知协议。
 Comment[zh_TW]=基於狀態通知器協定的應用程式狀態資訊引擎。
-Icon=
+Icon=preferences-desktop-notification
 
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
