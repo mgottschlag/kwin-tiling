@@ -28,12 +28,17 @@ namespace KWin
 KWIN_EFFECT(fade, FadeEffect)
 
 FadeEffect::FadeEffect()
+    : fadeInStep(0.0)
+    , fadeOutStep(0.0)
+    , fadeInTime(0)
+    , fadeOutTime(0)
+    , fadeWindows(false)
 {
     reconfigure(ReconfigureAll);
     connect(effects, SIGNAL(windowAdded(EffectWindow*)), this, SLOT(slotWindowAdded(EffectWindow*)));
     connect(effects, SIGNAL(windowClosed(EffectWindow*)), this, SLOT(slotWindowClosed(EffectWindow*)));
     connect(effects, SIGNAL(windowDeleted(EffectWindow*)), this, SLOT(slotWindowDeleted(EffectWindow*)));
-    connect(effects, SIGNAL(windowOpacityChanged(EffectWindow*,qreal,qreal)), this, SLOT(slotWindowOpacityChanged(EffectWindow*,qreal)));
+    connect(effects, SIGNAL(windowOpacityChanged(EffectWindow*,qreal,qreal)), this, SLOT(slotWindowOpacityChanged(EffectWindow*)));
 }
 
 void FadeEffect::reconfigure(ReconfigureFlags)
@@ -46,8 +51,6 @@ void FadeEffect::reconfigure(ReconfigureFlags)
     // Add all existing windows to the window list
     // TODO: Enabling desktop effects should trigger windowAdded() on all windows
     windows.clear();
-    if (!fadeWindows)
-        return;
 }
 
 void FadeEffect::prePaintScreen(ScreenPrePaintData& data, int time)
@@ -150,7 +153,7 @@ void FadeEffect::paintWindow(EffectWindow* w, int mask, QRegion region, WindowPa
     effects->paintWindow(w, mask, region, data);
 }
 
-void FadeEffect::slotWindowOpacityChanged(EffectWindow* w, qreal old_opacity)
+void FadeEffect::slotWindowOpacityChanged(EffectWindow* w)
 {
     if (!windows.contains(w) || !isFadeWindow(w))
         return;
@@ -169,12 +172,14 @@ void FadeEffect::slotWindowAdded(EffectWindow* w)
 
 void FadeEffect::slotWindowClosed(EffectWindow* w)
 {
-    if (!fadeWindows || !isFadeWindow(w))
+    // In the cases, where we are still fading in or are not responsible, we do not fade out.
+    if (!fadeWindows || !isFadeWindow(w) || windows.contains(w)) {
         return;
-    if (!windows.contains(w))
-        windows[ w ].opacity = w->opacity();
-    if (windows[ w ].opacity == 1.0)
+    }
+    windows[ w ].opacity = w->opacity();
+    if (windows[ w ].opacity == 1.0) {
         windows[ w ].opacity -= 0.1 / fadeOutTime;
+    }
     windows[ w ].deleted = true;
     w->refWindow();
     w->addRepaintFull();

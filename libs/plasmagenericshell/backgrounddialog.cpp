@@ -245,6 +245,8 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
 
     if (d->containment && d->containment.data()->hasConfigurationInterface()) {
         d->containment.data()->createConfigurationInterface(this);
+        connect(this, SIGNAL(applyClicked()), d->containment.data(), SLOT(configDialogFinished()));
+        connect(this, SIGNAL(okClicked()), d->containment.data(), SLOT(configDialogFinished()));
     }
 
     QSize dialogSize = QSize(650, 720).expandedTo(sizeHint());
@@ -524,6 +526,8 @@ void BackgroundDialog::saveConfig()
             //add the new containment's config
             if (d->containment.data()->hasConfigurationInterface()) {
                 d->containment.data()->createConfigurationInterface(this);
+                connect(this, SIGNAL(applyClicked()), d->containment.data(), SLOT(configDialogFinished()));
+                connect(this, SIGNAL(okClicked()), d->containment.data(), SLOT(configDialogFinished()));
             }
             connect(d->containment.data(), SIGNAL(destroyed()), this, SLOT(close()));
         }

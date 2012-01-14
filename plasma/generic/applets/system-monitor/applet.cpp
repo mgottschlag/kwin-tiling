@@ -116,6 +116,11 @@ void Applet::removeLayout()
 
     deleteVisualizations();
 
+    // reset it to no configuration
+    // assumes that this only gets called when there's
+    // > 0 sources.
+    setConfigurationRequired(false);
+
     delete(m_noSourcesIcon);
     m_noSourcesIcon = 0;
 
@@ -270,9 +275,12 @@ void Applet::clear()
 void Applet::displayNoAvailableSources()
 {
     KIcon appletIcon(icon());
-    m_noSourcesIcon = new Plasma::IconWidget(appletIcon, "", this);
+    m_noSourcesIcon = new Plasma::IconWidget(appletIcon, QString(), this);
     mainLayout()->addItem(m_noSourcesIcon);
+
     m_preferredItemHeight = MINIMUM;
+
+    setConfigurationRequired(true, i18n("No data sources being displayed"));
 }
 
 KConfigGroup Applet::config()

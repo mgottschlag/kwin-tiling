@@ -142,7 +142,7 @@ Comment[zh_CN]=来自多个在线信息源的天气数据
 Comment[zh_TW]=不同線上來源的天氣資料
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
-Icon=
+Icon=weather-clear
 X-KDE-Library=plasma_engine_weather
 
 X-KDE-PluginInfo-Author=Shawn Starr

@@ -309,7 +309,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
             if (containment) {
                 Plasma::Corona *corona = containment->corona();
                 if (corona) {
-                    int vdesk = KWindowSystem::currentDesktop();
+                    int vdesk = KWindowSystem::currentDesktop() - 1;
                     Plasma::Containment *desktop = corona->containmentForScreen(containment->screen(), vdesk);
                     //PVDA disabled?
                     if (!desktop) {

@@ -459,12 +459,16 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
     config().writeEntry("panelVisibility", (int)mode);
 
     //if the user didn't cause this, hide again in a bit
-    if ((mode == AutoHide || mode == LetWindowsCover) && !m_editing) {
-        if (m_mousePollTimer) {
-            m_mousePollTimer->stop();
-        }
+    if (!m_editing) {
+        updateStruts();
 
-        QTimer::singleShot(2000, this, SLOT(startAutoHide()));
+        if (mode == AutoHide || mode == LetWindowsCover) {
+            if (m_mousePollTimer) {
+                m_mousePollTimer->stop();
+            }
+
+            QTimer::singleShot(2000, this, SLOT(startAutoHide()));
+        }
     }
 
     KWindowSystem::setOnAllDesktops(winId(), true);

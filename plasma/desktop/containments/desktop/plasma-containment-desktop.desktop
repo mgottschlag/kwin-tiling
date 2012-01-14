@@ -1,6 +1,6 @@
 [Desktop Entry]
 # ctxt: plasma containment
-Name=Desktop
+Name=Default Desktop
 Name[ar]=سطح المكتب
 Name[ast]=Escritoriu
 Name[bg]=Работен плот
@@ -69,7 +69,7 @@ Name[wa]=Sicribanne
 Name[x-test]=xxDesktopxx
 Name[zh_CN]=桌面
 Name[zh_TW]=桌面
-Comment=Default desktop
+Comment=A clean and simple layout
 Comment[ast]=Escritoriu predetermináu
 Comment[bg]=Работен плот по подразбиране
 Comment[bs]=Podrazumijevana površ

@@ -1,5 +1,5 @@
 /********************************************************************
-Copyright (C) 2009, 2010 Martin Gräßlin <kde@martin-graesslin.com>
+Copyright (C) 2009, 2010, 2012 Martin Gräßlin <mgraesslin@kde.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,17 +23,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdecoration.h>
 #include <kdecorationfactory.h>
 
+class QDeclarativeComponent;
+class QDeclarativeEngine;
+class QDeclarativeItem;
 class QGraphicsSceneMouseEvent;
-class QGraphicsView;
 class QGraphicsScene;
+class QGraphicsView;
 
 namespace Aurorae
 {
 class AuroraeTheme;
-class AuroraeScene;
+class AuroraeClient;
 
 class AuroraeFactory :  public QObject, public KDecorationFactoryUnstable
 {
+    Q_OBJECT
+    Q_PROPERTY(QString leftButtons READ leftButtons NOTIFY buttonsChanged)
+    Q_PROPERTY(QString rightButtons READ rightButtons NOTIFY buttonsChanged)
+    Q_PROPERTY(bool customButtonPositions READ customButtonPositions NOTIFY buttonsChanged)
 public:
     ~AuroraeFactory();
 
@@ -46,20 +53,54 @@ public:
     AuroraeTheme *theme() const {
         return m_theme;
     }
+    QDeclarativeItem *createQmlDecoration(AuroraeClient *client);
+    QString leftButtons();
+    QString rightButtons();
+    bool customButtonPositions();
 
 private:
     AuroraeFactory();
     void init();
 
+Q_SIGNALS:
+    void buttonsChanged();
+
 private:
     static AuroraeFactory *s_instance;
 
     AuroraeTheme *m_theme;
+    QDeclarativeEngine *m_engine;
+    QDeclarativeComponent *m_component;
 };
 
 class AuroraeClient : public KDecorationUnstable
 {
     Q_OBJECT
+    Q_PROPERTY(bool active READ isActive NOTIFY activeChanged)
+    Q_PROPERTY(QString caption READ caption NOTIFY captionChanged)
+    Q_PROPERTY(int desktop READ desktop WRITE setDesktop NOTIFY desktopChanged)
+    Q_PROPERTY(QRect geometry READ geometry)
+    Q_PROPERTY(int height READ height)
+    Q_PROPERTY(QIcon icon READ icon NOTIFY iconChanged)
+    Q_PROPERTY(bool closeable READ isCloseable CONSTANT)
+    Q_PROPERTY(bool maximizeable READ isMaximizable CONSTANT)
+    Q_PROPERTY(bool minimizeable READ isMinimizable CONSTANT)
+    Q_PROPERTY(bool modal READ isModal)
+    Q_PROPERTY(bool moveable READ isMovable CONSTANT)
+    Q_PROPERTY(bool onAllDesktops READ isOnAllDesktops NOTIFY desktopChanged)
+    Q_PROPERTY(bool preview READ isPreview CONSTANT)
+    Q_PROPERTY(bool resizeable READ isResizable CONSTANT)
+    Q_PROPERTY(bool setShade READ isSetShade NOTIFY shadeChanged)
+    Q_PROPERTY(bool shade READ isShade WRITE setShade NOTIFY shadeChanged)
+    Q_PROPERTY(bool shadeable READ isShadeable)
+    Q_PROPERTY(bool keepAbove READ keepAbove WRITE setKeepAbove NOTIFY keepAboveChangedWrapper)
+    Q_PROPERTY(bool keepBelow READ keepBelow WRITE setKeepBelow NOTIFY keepBelowChangedWrapper)
+    Q_PROPERTY(bool maximized READ isMaximized NOTIFY maximizeChanged)
+    Q_PROPERTY(bool providesContextHelp READ providesContextHelp)
+    Q_PROPERTY(QRect transparentRect READ transparentRect)
+    Q_PROPERTY(int width READ width)
+    Q_PROPERTY(qulonglong windowId READ windowId CONSTANT)
+    // TODO: window tabs - they suck for dynamic features
 public:
     AuroraeClient(KDecorationBridge* bridge, KDecorationFactory* factory);
     virtual ~AuroraeClient();
@@ -77,32 +118,37 @@ public:
     // optional overrides
     virtual void padding(int &left, int &right, int &top, int &bottom) const;
     virtual void reset(long unsigned int changed);
+    bool isMaximized() const;
 
-private slots:
+Q_SIGNALS:
+    void activeChanged();
+    void captionChanged();
+    void desktopChanged();
+    void iconChanged();
+    void maximizeChanged();
+    void shadeChanged();
+    void keepAboveChangedWrapper();
+    void keepBelowChangedWrapper();
+
+public slots:
     void menuClicked();
     void toggleShade();
-    void keepAboveChanged(bool above);
-    void keepBelowChanged(bool below);
     void toggleKeepAbove();
     void toggleKeepBelow();
+    void titlePressed(int button, int buttons);
+    void titleReleased(int button, int buttons);
+    void titleMouseMoved(int button, int buttons);
     void titlePressed(Qt::MouseButton button, Qt::MouseButtons buttons);
     void titleReleased(Qt::MouseButton button, Qt::MouseButtons buttons);
     void titleMouseMoved(Qt::MouseButton button, Qt::MouseButtons buttons);
-    void tabMouseButtonPress(QGraphicsSceneMouseEvent *e, int index);
-    void tabMouseButtonRelease(QGraphicsSceneMouseEvent *e, int index);
-    void tabRemoved(int index);
-    void tabMoved(int index, int before);
-    void tabMovedToGroup(long int uid, int before);
 
-protected:
-    virtual bool eventFilter(QObject *o, QEvent *e);
+private slots:
+    void themeChanged();
 
 private:
-    void updateWindowShape();
-    void checkTabs(bool force = false);
-    AuroraeScene *m_scene;
     QGraphicsView *m_view;
-    bool m_clickInProgress;
+    QGraphicsScene *m_scene;
+    QDeclarativeItem *m_item;
 };
 
 }

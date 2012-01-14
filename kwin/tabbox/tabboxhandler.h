@@ -80,7 +80,6 @@ class DesktopModel;
 class ClientModel;
 class TabBoxConfig;
 class TabBoxClient;
-class TabBoxView;
 class TabBoxHandlerPrivate;
 typedef QList< TabBoxClient* > TabBoxClientList;
 
@@ -257,11 +256,6 @@ public:
     * @see DesktopModel::desktopIndex
     */
     int desktop(const QModelIndex& index) const;
-    /**
-    * @return The current selected desktop. If there is no selected desktop
-    * or TabBoxMode is not TabBoxConfig::DesktopTabBox -1 will be returned.
-    */
-    int currentSelectedDesktop() const;
 
     /**
     * Handles additional grabbed key events by the TabBox controller.
@@ -278,15 +272,6 @@ public:
     * @return True if the view contains the point, otherwise false.
     */
     bool containsPos(const QPoint& pos) const;
-    /**
-    * Returns the index at the given position in global coordinates
-    * of the view.
-    * @param pos The position in global coordinates
-    * @return The model index at given position. If there is no item
-    * at the position or the position is not in the view an invalid
-    * model index will be returned;
-    */
-    QModelIndex indexAt(const QPoint& pos) const;
     /**
     * @param client The TabBoxClient whose index should be returned
     * @return Returns the ModelIndex of given TabBoxClient or an invalid ModelIndex
@@ -325,11 +310,6 @@ public:
     Qt::Alignment embeddedAlignment() const;
     void resetEmbedded();
 
-    /**
-    * @return The tabBoxView Widget
-    */
-    QWidget* tabBoxView() const;
-
 protected:
     /**
      * Show the outline of the current selected window
@@ -357,7 +337,6 @@ signals:
     * @see setConfig
     */
     void configChanged();
-    void ready();
     void embeddedChanged(bool enabled);
     void selectedIndexChanged();
 

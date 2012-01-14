@@ -165,8 +165,10 @@ Comment[zh_TW]=設定工作階段管理程式與登出設定值
 
 X-KDE-Keywords=ksmserver,session,logout,confirmation,save,restore
 X-KDE-Keywords[ca]=ksmserver,sessió,sortida,confirmació,desa,restauració
+X-KDE-Keywords[ca@valencia]=ksmserver,sessió,eixida,confirmació,alça,restauració
 X-KDE-Keywords[da]=ksmserver,session,log ud,bekræftelse,gem,genskab
 X-KDE-Keywords[de]=Ksmserver,Sitzung,Abmelden,Logout,Bestätigung,Speichern,Wiederherstellen
+X-KDE-Keywords[es]=ksmserver,sesión,cierre de sesión,confirmación,guardado,restauración
 X-KDE-Keywords[et]=ksmserver,seanss,väljalogimine,kinnitus,salvestamine,taastamine
 X-KDE-Keywords[fi]=ksmserver,istunto,uloskirjautuminen,kirjaudu,ulos,varmistus,varmista,tallennus,tallentaminen,tallenna,palautus,palautuminen,palauta
 X-KDE-Keywords[ga]=ksmserver,seisiún,logáil amach,dearbhú,sábháil,athchóiriú

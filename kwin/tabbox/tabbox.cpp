@@ -329,7 +329,7 @@ TabBox::TabBox(QObject *parent)
     m_desktopListConfig.setDesktopSwitchingMode(TabBoxConfig::StaticDesktopSwitching);
     m_desktopListConfig.setLayout(TabBoxConfig::VerticalLayout);
     m_tabBox = new TabBoxHandlerImpl(this);
-    connect(m_tabBox, SIGNAL(ready()), SLOT(handlerReady()));
+    QTimer::singleShot(0, this, SLOT(handlerReady()));
     connect(m_tabBox, SIGNAL(selectedIndexChanged()), SIGNAL(itemSelected()));
 
     m_tabBoxMode = TabBoxDesktopMode; // init variables
@@ -643,36 +643,16 @@ bool TabBox::handleMouseEvent(XEvent* e)
             close();  // click outside closes tab
             return true;
         }
-    }
-    if (m_tabBoxMode == TabBoxWindowsMode || m_tabBoxMode == TabBoxWindowsAlternativeMode) {
-        // pass to declarative view
-        return false;
-    }
-
-    // not declarative view
-    if (e->type != ButtonPress) {
-        return true;
-    }
-    QPoint pos(e->xbutton.x_root, e->xbutton.y_root);
-    QModelIndex index;
-    if (e->xbutton.button == Button1 || e->xbutton.button == Button2 || e->xbutton.button == Button3) {
-        index = m_tabBox->indexAt(pos);
-        if (e->xbutton.button == Button2 && index.isValid()) {
-            if (TabBoxClientImpl* client = static_cast< TabBoxClientImpl* >(m_tabBox->client(index))) {
-                if (Workspace::self()->hasClient(client->client())) {
-                    client->client()->closeWindow();
-                    return true;
-                }
+        if (e->xbutton.button == Button5 || e->xbutton.button == Button4) {
+            // mouse wheel event
+            const QModelIndex index = m_tabBox->nextPrev(e->xbutton.button == Button5);
+            if (index.isValid()) {
+                setCurrentIndex(index);
             }
+            return true;
         }
-    } else {
-        // mouse wheel event
-        index = m_tabBox->nextPrev(e->xbutton.button == Button5);
     }
-
-    if (index.isValid())
-        setCurrentIndex(index);
-    return true;
+    return false;
 }
 
 void TabBox::grabbedKeyEvent(QKeyEvent* event)

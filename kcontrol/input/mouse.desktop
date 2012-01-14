@@ -199,8 +199,10 @@ Comment[zh_TW]=滑鼠設定
 
 X-KDE-Keywords=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,Double Click,Single Click,mapping,right handed,left handed,Pointer Device,Mouse Wheel,Mouse Emulation,Mouse Navigation,Mouse Drag and Drop,Mouse Scrolling,Mouse Sensitivity,Move Mouse with Num Pad,Mouse Num Pad Emulation)
 X-KDE-Keywords[ca]=Ratolí,Acceleració del ratolí,Llindar del ratolí,Botons del ratolí,Selecció,Ombra del cursor,Dispositius d'entrada,Mapatge dels boton,Clic,icones,reacció,Apuntadors,Arrossegar,Clic doble,mapatge,dretà,esquerrà
+X-KDE-Keywords[ca@valencia]=Ratolí,Acceleració del ratolí,Llindar del ratolí,Botons del ratolí,Selecció,Ombra del cursor,Dispositius d'entrada,Mapatge dels boton,Clic,icones,reacció,Apuntadors,Arrossegar,Clic doble,mapatge,dretà,esquerrà
 X-KDE-Keywords[da]=Mus,Museacceleration,musetærskel,museknapper,markering,markørform,Input-enheder,knapkobling,klik,ikoner,feedback,Pointers,træk,dobbeltklik,kobling,højrehåndet,venstrehåndet
-X-KDE-Keywords[de]=Maus,Mausbeschleunigung,Mausschwellenwert,Maustasten,Auswahl,Cursor,Cursorform,Eingabegeräte,Knöpfe,Buttons,Zuordnungen,Klicks,Zeigegeräte,Doppelklick,Rechtshänder,Linkshänder
+X-KDE-Keywords[de]=Maus,Mausbeschleunigung,Mausschwellwert,Maustasten,Auswahl,Cursor,Cursorform,Eingabegeräte,Knöpfe,Buttons,Zuordnungen,Klicks,Zeigegeräte,Doppelklick,Rechtshänder,Linkshänder,Ziehen
+X-KDE-Keywords[es]=Ratón,Aceleración de ratón,Umbral del ratón,Botones del ratón,Selección,Forma del cursor,Dispositivos de entrada,Mapeo de botones,Clic,iconos,reacción,Punteros,Arrastrar,Doble clic,mapeo,diestro,zurdo
 X-KDE-Keywords[et]=hiir,hiire kiirendamine,hiire lävi,hiirenupud,valik,kursori kuju,sisendseadmed,nuppude seostamine,klõps,klõpsamine,ikoonid,tagasiside,lohistamine,topeltklõps,paremakäelised,vasakukäelised
 X-KDE-Keywords[fi]=Hiiri,Osoittimen kiihdytys,Osoittimen raja-arvo,Hiiripainikkeet,Valinta,Osoittimen muoto,Syötelaitteet,Painikkeiden kuvaus,Napsauta,Napsautus,kuvakkeet,tuntuma,Osoittimet,Raahaus,Kaksoisnapsautus,kuvaus,oikeakätinen,oikeakätisyys,vasenkätinen,vasenkätisyys
 X-KDE-Keywords[hu]=Egér,egérgyorsítás,Egérküszöb,Egérgombok,Kijelölér,Kurzorforma,Beviteli eszközök,Gombhozzárendelés,Kattintés,ikonok,visszajelzés,Mutatók,Fogás,Dupla kattintés,leképezés,jobb kezes,bal kezes

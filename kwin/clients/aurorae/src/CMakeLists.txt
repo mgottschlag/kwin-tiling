@@ -3,16 +3,13 @@ include_directories( ./lib )
 
 set(kwin3_aurorae_PART_SRCS
     aurorae.cpp
-    lib/auroraebutton.cpp
-    lib/auroraescene.cpp
-    lib/auroraetab.cpp
     lib/auroraetheme.cpp
     lib/themeconfig.cpp
 )
 
 kde4_add_plugin(kwin3_aurorae ${kwin3_aurorae_PART_SRCS})
 
-target_link_libraries(kwin3_aurorae ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} kdecorations)
+target_link_libraries(kwin3_aurorae ${KDE4_KDEUI_LIBS} ${QT_QTDECLARATIVE_LIBRARY} kdecorations)
 
 install(TARGETS kwin3_aurorae  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
@@ -20,3 +17,12 @@ install(TARGETS kwin3_aurorae  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES aurorae.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kwin )
 install( FILES aurorae.knsrc  DESTINATION  ${CONFIG_INSTALL_DIR} )
+install( FILES
+    qml/aurorae.qml
+    qml/AuroraeButton.qml
+    qml/AuroraeButtonGroup.qml
+    qml/AuroraeMaximizeButton.qml
+    qml/Decoration.qml
+    qml/DecorationButton.qml
+    qml/MenuButton.qml
+    DESTINATION ${DATA_INSTALL_DIR}/kwin/aurorae )
