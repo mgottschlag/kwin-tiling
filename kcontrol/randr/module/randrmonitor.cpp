@@ -211,11 +211,14 @@ void RandrMonitorModule::checkInhibition()
 
     bool inhibit = false;
     Q_FOREACH(const QString monitor, activeMonitorsList) {
-        if (!monitor.contains("LVDS")) {
+        //LVDS is the default type reported by most drivers, default is needed because the
+        //NVIDIA binary blob always report default as active monitor.
+        if (!monitor.contains("LVDS") && !monitor.contains("default")) {
             inhibit = true;
             break;
         }
     }
+
     if (m_inhibitionCookie > 0 && !inhibit) {
         kDebug(7131) << "Stopping: " << m_inhibitionCookie;
         Solid::PowerManagement::stopSuppressingSleep(m_inhibitionCookie);
