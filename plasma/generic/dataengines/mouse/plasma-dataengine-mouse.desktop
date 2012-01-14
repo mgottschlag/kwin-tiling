@@ -139,7 +139,7 @@ Comment[zh_CN]=鼠标位置和光标
 Comment[zh_TW]=滑鼠位置與游標
 Type=Service
 X-KDE-ServiceTypes=Plasma/DataEngine
-Icon=
+Icon=input-mouse
 X-KDE-Library=plasma_engine_mouse
 
 X-KDE-PluginInfo-Author=
