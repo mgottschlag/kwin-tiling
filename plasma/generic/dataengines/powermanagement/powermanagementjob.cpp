@@ -45,7 +45,7 @@ void PowerManagementJob::start()
     const QString operation = operationName();
     //kDebug() << "starting operation  ... " << operation;
 
-    if (operation == "setScreensaverInhibited") {
+    if (operation == "inhibitScreensaver") {
         // retrieve the cookie which the dataengine passed to service
         // and now to us...
         QVariant variant = parameters().value("screensaverInhibitCookie");
@@ -70,7 +70,7 @@ void PowerManagementJob::start()
         }
 
         return;
-    } else if (operation == "setScreensaverUninhibited") {
+    } else if (operation == "uninhibitScreensaver") {
         QVariant variant = parameters().value("screensaverInhibitCookie");
         uint* cookie = variant.value<uint*>();
 

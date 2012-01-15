@@ -3,13 +3,18 @@
     "http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
 <kcfg>
 
-    <group name="setScreensaverInhibited">
+    <group name="inhibitScreensaver">
         <entry name="Reason" type="String">
             <label>The reason the caller (and/or applet calling) is preventing the screensaver from activating.</label>
         </entry>
     </group>
 
-    <group name="setScreensaverUninhibited"> </group>
+    <!-->
+    *  Note that it's uninhibit, not unInhibit, like it is actually for
+    *  org.freedesktop.screensaver. That's because I think that's stupid and bound
+    *  to cause mistakes. -sreich
+    </!-->
+    <group name="uninhibitScreensaver"> </group>
 
     <group name="lockScreen"> </group>
     <group name="suspend"> </group>
