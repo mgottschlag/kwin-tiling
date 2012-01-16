@@ -44,7 +44,7 @@ Item {
         opacity: 0
         anchors.fill: parent
     }
-    Item {
+    MouseArea {
         id: container
         anchors {
             fill: parent
@@ -53,6 +53,34 @@ Item {
             rightMargin: padding.margins.right
             bottomMargin: padding.margins.bottom
         }
+        hoverEnabled: true
+        onEntered: {
+            notifierDialog.currentIndex = index;
+            notifierDialog.highlightItem.opacity = 1;
+        }
+        onExited: {
+            notifierDialog.highlightItem.opacity = expanded ? 1 : 0;
+        }
+        onClicked: {
+            if (leftAction.visible
+            && mouse.x>=leftAction.x && mouse.x<=leftAction.x+leftAction.width
+            && mouse.y>=leftAction.y && mouse.y<=leftAction.y+leftAction.height)
+            {
+                leftActionTriggered();
+            }
+            else {
+                var actions = hpSource.data[udi]["actions"];
+                if (actions.length==1) {
+                    service = hpSource.serviceForSource(udi);
+                    operation = service.operationDescription("invokeAction");
+                    operation.predicate = actions[0]["predicate"];
+                    service.startOperationCall(operation);
+                } else {
+                    notifierDialog.currentExpanded = expanded ? -1 : index;
+                }
+            }
+        }
+
         // FIXME: Device item loses focus on mounting/unmounting it,
         // or specifically, when some UI element changes.
         QIconItem {
@@ -105,7 +133,7 @@ Item {
                 font.italic: true
                 font.pointSize: theme.smallestFont.pointSize
                 color: "#99"+(theme.textColor.toString().substr(1))
-                opacity: mouseArea.containsMouse || expanded ? 1 : 0;
+                opacity: container.containsMouse || expanded ? 1 : 0;
 
                 Behavior on opacity { NumberAnimation { duration: 150 } }
             }
@@ -199,44 +227,6 @@ Item {
             }
             running: visible
             visible: deviceItem.state != 0
-        }
-
-        MouseArea {
-            id: mouseArea
-            anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-                bottom: labelsColumn.bottom
-                // to remove the gap between device items
-            }
-            hoverEnabled: true
-            onEntered: {
-                notifierDialog.currentIndex = index;
-                notifierDialog.highlightItem.opacity = 1;
-            }
-            onExited: {
-                notifierDialog.highlightItem.opacity = expanded ? 1 : 0;
-            }
-            onClicked: {
-                if (leftAction.visible
-                && mouse.x>=leftAction.x && mouse.x<=leftAction.x+leftAction.width
-                && mouse.y>=leftAction.y && mouse.y<=leftAction.y+leftAction.height)
-                {
-                    leftActionTriggered();
-                }
-                else {
-                    var actions = hpSource.data[udi]["actions"];
-                    if (actions.length==1) {
-                        service = hpSource.serviceForSource(udi);
-                        operation = service.operationDescription("invokeAction");
-                        operation.predicate = actions[0]["predicate"];
-                        service.startOperationCall(operation);
-                    } else {
-                        notifierDialog.currentExpanded = expanded ? -1 : index;
-                    }
-                }
-            }
         }
 
         ListView {
