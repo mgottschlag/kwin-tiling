@@ -25,8 +25,10 @@ PowerManagementService::PowerManagementService(QObject *parent, const QVariantLi
 {
     setName("powermanagementservice");
 
-    Q_ASSERT(!args.isEmpty());
+    Q_ASSERT_X(!args.isEmpty() && args.length() >= 2, "powermanagementservice",
+               "no valid args were passed, the service was constructed improperly by the engine");
     m_screensaverInhibitCookie = args.at(0);
+    m_powerManagementInhibitCookie = args.at(1);
 }
 
 ServiceJob *PowerManagementService::createJob(const QString &operation,
@@ -35,6 +37,7 @@ ServiceJob *PowerManagementService::createJob(const QString &operation,
     // trying to pass this uint* from powermanagementengine, to service, now to serviceJob
     // so that it can change it's value. It's ass backwards, yep.
     parameters["screensaverInhibitCookie"] = m_screensaverInhibitCookie;
+    parameters["powerManagementInhibitCookie"] = m_powerManagementInhibitCookie;
     return new PowerManagementJob(operation, parameters, this);
 }
 

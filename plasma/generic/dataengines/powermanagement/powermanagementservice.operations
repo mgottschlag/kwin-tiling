@@ -16,6 +16,21 @@
     </!-->
     <group name="uninhibitScreensaver"> </group>
 
+
+    <group name="inhibitPowerManagement">
+        <entry name="Reason" type="String">
+            <label>The reason the caller (and/or applet calling) is preventing powermanagement from taking place.</label>
+        </entry>
+    </group>
+
+    <!-->
+    *  Note that it's uninhibit, not unInhibit, like it is actually for
+    *  org.freedesktop.powermanagement. That's because I think that's stupid and bound
+    *  to cause mistakes. -sreich
+    </!-->
+    <group name="uninhibitPowerManagement"> </group>
+
+
     <group name="lockScreen"> </group>
     <group name="suspend"> </group>
     <group name="suspendToRam"> </group>

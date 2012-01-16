@@ -38,6 +38,7 @@ public:
 private:
     // actually a uint*
     QVariant m_screensaverInhibitCookie;
+    QVariant m_powerManagementInhibitCookie;
 };
 
 #endif // POWERMANAGEMENTSERVICE_H

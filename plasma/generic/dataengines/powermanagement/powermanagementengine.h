@@ -73,6 +73,8 @@ private:
      * (couldn't think of a better way, good luck ;)
      */
     uint m_screensaverInhibitCookie;
+    // basically identical to screensaver cookie
+    uint m_powerManagementInhibitCookie;
 
     QHash<QString, QString> m_batterySources;  // <udi, Battery0>
 
