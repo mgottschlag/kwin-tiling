@@ -28,4 +28,9 @@
             <label>UID of the activity to remove. (optional)</label>
         </entry>
     </group>
+    <group name="setEncrypted">
+        <entry name="Encrypted" type="Bool">
+            <label>True to encrypt the activity, false to decrypt</label>
+        </entry>
+    </group>
 </kcfg>
