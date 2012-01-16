@@ -98,7 +98,7 @@ Item {
                 id: emblem
                 width: 16
                 height: 16
-                icon: QIcon(emblemIcon)
+                icon: deviceItem.state == 0 ? QIcon(emblemIcon) : QIcon();
                 anchors {
                     left: parent.left
                     bottom: parent.bottom
@@ -129,7 +129,7 @@ Item {
                 // FIXME: state changes do not reach the plasmoid if the
                 // device was already attached when the plasmoid was
                 // initialized
-                text: deviceItem.state==0 ? container.idleStatus() : (deviceItem.state==1 ? i18nc("Accessing is a less technical word for Mounting; translation should be short and mean \'Currently mounting this device\'", "Accessing...") : i18nc("Removing is a less technical word for Unmounting; translation shoud be short and mean \'Currently unmounting this device\'", "Removing..."))
+                text: deviceItem.state ==0 ? container.idleStatus() : (deviceItem.state==1 ? i18nc("Accessing is a less technical word for Mounting; translation should be short and mean \'Currently mounting this device\'", "Accessing...") : i18nc("Removing is a less technical word for Unmounting; translation shoud be short and mean \'Currently unmounting this device\'", "Removing..."))
                 font.italic: true
                 font.pointSize: theme.smallestFont.pointSize
                 color: "#99"+(theme.textColor.toString().substr(1))
@@ -196,7 +196,7 @@ Item {
         PlasmaCore.ToolTip {
             target: deviceIcon
             subText: {
-                if (model["Accessible"]) {
+                if (model["Accessible"] || deviceItem.state != 0) {
                     if (model["Removable"]) {
                         return i18n("It is currently <b>not safe</b> to remove this device: applications may be accessing it. Click the eject button to safely remove this device.")
                     } else {
@@ -225,7 +225,7 @@ Item {
                 verticalCenter: deviceIcon.verticalCenter
             }
             running: visible
-            visible: state!=0
+            visible: deviceItem.state != 0
         }
 
         ListView {
