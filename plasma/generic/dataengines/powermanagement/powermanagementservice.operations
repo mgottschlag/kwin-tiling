@@ -2,23 +2,6 @@
 <!DOCTYPE kcfg SYSTEM
     "http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
 <kcfg>
-
-    <!-->
-    * These methods are based around Solid, their names and parameters as well
-    * (since that's what they use)
-    </!-->
-    <group name="beginSuppressingScreenPowerManagement">
-        <entry name="Reason" type="String">
-            <label>
-                Give a reason for not allowing screen power management, to be used in
-                giving user feedback about why a screen power management event was prevented)
-                (also inhibits screensaver)
-            </label>
-        </entry>
-    </group>
-
-   <group name="stopSuppressingScreenPowerManagement"> </group>
-
     <group name="lockScreen"> </group>
     <group name="suspend"> </group>
     <group name="suspendToRam"> </group>

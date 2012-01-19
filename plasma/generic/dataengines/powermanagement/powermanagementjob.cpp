@@ -22,9 +22,6 @@
 #include <QDBusPendingReply>
 
 #include <KAuthorized>
-#include <KApplication>
-
-#include <Solid/PowerManagement>
 
 // kde-workspace/libs
 #include <kworkspace/kworkspace.h>
@@ -47,48 +44,11 @@ void PowerManagementJob::start()
     const QString operation = operationName();
     //kDebug() << "starting operation  ... " << operation;
 
-    if (operation == "beginSuppressingScreenPowerManagement") {
-        // retrieve the cookie which the dataengine passed to service
-        // and now to us...
-        QVariant variant = parameters().value("screenPowerManagementCookie");
-        int* cookie = variant.value<int*>();
-
-        if (*cookie == -1) {
-
-            const QString& reason = parameters().value("Reason").toString();
-            *cookie = Solid::PowerManagement::beginSuppressingScreenPowerManagement(reason);
-
-            setResult(true);
-        } else {
-            // the DPMS is supposedly already inhibited by us (plasma shell).
-            // no point in doing it again
-            setResult(false);
-        }
-
-        return;
-    } else if (operation == "stopSuppressingScreenPowerManagement") {
-        QVariant variant = parameters().value("screenPowerManagementCookie");
-        int* cookie = variant.value<int*>();
-
-        if (*cookie != -1) {
-            Solid::PowerManagement::stopSuppressingScreenPowerManagement(*cookie);
-
-            // reset the cookie to invalid, so we won't get called if need not be.
-            *cookie = -1;
-
-            setResult(true);
-        } else {
-            // was never inhibited by this engine.
-            setResult(false);
-        }
-
-        return;
-    } else if (operation == "lockScreen") {
+    if (operation == "lockScreen") {
         if (KAuthorized::authorizeKAction("lock_screen")) {
             const QString interface("org.freedesktop.ScreenSaver");
             QDBusInterface screensaver(interface, "/ScreenSaver");
             screensaver.asyncCall("Lock");
-
             setResult(true);
             return;
         }

@@ -65,20 +65,9 @@ private:
 
     QStringList m_sources;
 
-    /**
-     * We send a ref to this to the service, then to the servicejob,
-     * so that it can set it to the value returned
-     * which gives us a unique identifying cookie. Should be -1 if uncalled.
-     *
-     * (couldn't think of a better way, good luck ;)
-     */
-    int m_screenPowerManagementCookie;
-
     QHash<QString, QString> m_batterySources;  // <udi, Battery0>
 
 };
-
-Q_DECLARE_METATYPE(int*)
 
 
 #endif
