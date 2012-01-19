@@ -74,6 +74,10 @@ void PowerManagementJob::start()
         setResult(Solid::PowerManagement::beginSuppressingSleep(parameters().value("reason").toString()));
     } else if (operation == "stopSuppressingSleep") {
         setResult(Solid::PowerManagement::stopSuppressingSleep(parameters().value("cookie").toInt()));
+    } else if (operation == "beginSuppressingScreenPowerManagement") {
+        setResult(Solid::PowerManagement::beginSuppressingScreenPowerManagement(parameters().value("reason").toString()));
+    } else if (operation == "stopSuppressingScreenPowerManagement") {
+        setResult(Solid::PowerManagement::stopSuppressingScreenPowerManagement(parameters().value("cookie").toInt()));
     }
 
     kDebug() << "don't know what to do with " << operation;
