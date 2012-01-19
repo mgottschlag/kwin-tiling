@@ -30,6 +30,8 @@
 
 #include <kdebug.h>
 
+#include <Solid/PowerManagement>
+
 PowerManagementJob::PowerManagementJob(const QString &operation, QMap<QString, QVariant> &parameters, QObject *parent) :
     ServiceJob(parent->objectName(), operation, parameters, parent)
 {
@@ -68,6 +70,10 @@ void PowerManagementJob::start()
         requestShutDown();
         setResult(true);
         return;
+    } else if (operation == "beginSuppressingSleep") {
+        setResult(Solid::PowerManagement::beginSuppressingSleep(parameters().value("reason").toString()));
+    } else if (operation == "stopSuppressingSleep") {
+        setResult(Solid::PowerManagement::stopSuppressingSleep(parameters().value("cookie").toInt()));
     }
 
     kDebug() << "don't know what to do with " << operation;

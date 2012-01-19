@@ -8,4 +8,15 @@
     <group name="suspendToDisk"> </group>
     <group name="suspendHybrid"> </group>
     <group name="requestShutDown"> </group>
+
+    <group name="beginSuppressingSleep">
+        <entry name="reason" type="String">
+            <label>States why sleep is being inhibited</label>
+        </entry>
+    </group>
+    <group name="stopSuppressingSleep">
+        <entry name="cookie" type="Int">
+            <label>The cookie obtained from beginSuppressingSleep, representing the inhibition to release</label>
+        </entry>
+    </group>
 </kcfg>
