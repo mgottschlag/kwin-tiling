@@ -42,6 +42,6 @@ class PowerManagementJob : public Plasma::ServiceJob
         QString callForType(const SuspendType &type);
 };
 
-Q_DECLARE_METATYPE(uint*)
+Q_DECLARE_METATYPE(int*)
 
 #endif // POWERMANAGEMENTJOB_H

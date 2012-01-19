@@ -36,9 +36,8 @@ public:
     ServiceJob *createJob(const QString &operation, QMap<QString, QVariant> &parameters);
 
 private:
-    // actually a uint*
-    QVariant m_screensaverInhibitCookie;
-    QVariant m_powerManagementInhibitCookie;
+    // actually an int*
+    QVariant m_screenPowerManagementCookie;
 };
 
 #endif // POWERMANAGEMENTSERVICE_H

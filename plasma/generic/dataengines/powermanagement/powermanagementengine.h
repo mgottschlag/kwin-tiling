@@ -67,20 +67,18 @@ private:
 
     /**
      * We send a ref to this to the service, then to the servicejob,
-     * so that it can set it to the value returned by screensaver::inhibit,
+     * so that it can set it to the value returned
      * which gives us a unique identifying cookie. Should be -1 if uncalled.
      *
      * (couldn't think of a better way, good luck ;)
      */
-    uint m_screensaverInhibitCookie;
-    // basically identical to screensaver cookie
-    uint m_powerManagementInhibitCookie;
+    int m_screenPowerManagementCookie;
 
     QHash<QString, QString> m_batterySources;  // <udi, Battery0>
 
 };
 
-Q_DECLARE_METATYPE(uint*)
+Q_DECLARE_METATYPE(int*)
 
 
 #endif
