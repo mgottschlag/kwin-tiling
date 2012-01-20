@@ -271,7 +271,7 @@ void KVirtualBGRenderer::enableTiling(bool enable)
 }
 
 
-MyApplication::MyApplication(const char *conf, int argc, char **argv)
+MyApplication::MyApplication(const char *conf, int &argc, char **argv)
     : QApplication(argc, argv)
     , renderer(KSharedConfig::openConfig(QFile::decodeName(conf)))
 {
