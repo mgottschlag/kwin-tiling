@@ -31,7 +31,7 @@ class SplashWindow;
 class SplashApp: public QApplication {
 
 public:
-    SplashApp(Display * display, int argc, char ** argv);
+    SplashApp(Display * display, int &argc, char ** argv);
     ~SplashApp();
 
     Display * display() const;
