@@ -38,12 +38,18 @@ SessionRunner::SessionRunner(QObject *parent, const QVariantList &args)
     setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File | 
                     Plasma::RunnerContext::NetworkLocation);
 
-    addSyntax(Plasma::RunnerSyntax(i18nc("log out command", "logout"),
-                     i18n("Logs out, exiting the current desktop session")));
-    addSyntax(Plasma::RunnerSyntax(i18nc("shutdown computer command", "shutdown"),
-                     i18n("Turns off the computer")));
-    addSyntax(Plasma::RunnerSyntax(i18nc("lock screen command", "lock"),
-                     i18n("Locks the current sessions and starts the screen saver")));
+    m_canLogout = KAuthorized::authorizeKAction("logout") && KAuthorized::authorize("logout");
+    if (m_canLogout) {
+        addSyntax(Plasma::RunnerSyntax(i18nc("log out command", "logout"),
+                  i18n("Logs out, exiting the current desktop session")));
+        addSyntax(Plasma::RunnerSyntax(i18nc("shutdown computer command", "shutdown"),
+                  i18n("Turns off the computer")));
+    }
+
+    if (KAuthorized::authorizeKAction("lock_screen") && m_canLogout) {
+        addSyntax(Plasma::RunnerSyntax(i18nc("lock screen command", "lock"),
+                  i18n("Locks the current sessions and starts the screen saver")));
+    }
 
     Plasma::RunnerSyntax rebootSyntax(i18nc("restart computer command", "restart"), i18n("Reboots the computer"));
     rebootSyntax.addExampleQuery(i18nc("restart computer command", "reboot"));
@@ -70,41 +76,47 @@ SessionRunner::~SessionRunner()
 
 void SessionRunner::matchCommands(QList<Plasma::QueryMatch> &matches, const QString& term)
 {
-      if (term.compare(i18nc("log out command","logout"), Qt::CaseInsensitive) == 0 ||
-          term.compare(i18n("log out"), Qt::CaseInsensitive) == 0) {
-          Plasma::QueryMatch match(this);
-          match.setText(i18nc("log out command","Logout"));
-          match.setIcon(KIcon("system-log-out"));
-          match.setData(LogoutAction);
-          match.setType(Plasma::QueryMatch::ExactMatch);
-          match.setRelevance(0.9);
-          matches << match;
-      } else if (term.compare(i18nc("restart computer command", "restart"), Qt::CaseInsensitive) == 0 ||
-                 term.compare(i18nc("restart computer command", "reboot"), Qt::CaseInsensitive) == 0) {
-          Plasma::QueryMatch match(this);
-          match.setText(i18n("Restart the computer"));
-          match.setIcon(KIcon("system-reboot"));
-          match.setData(RestartAction);
-          match.setType(Plasma::QueryMatch::ExactMatch);
-          match.setRelevance(0.9);
-          matches << match;
-      } else if (term.compare(i18nc("shutdown computer command","shutdown"), Qt::CaseInsensitive) == 0) {
-          Plasma::QueryMatch match(this);
-          match.setText(i18n("Shutdown the computer"));
-          match.setIcon(KIcon("system-shutdown"));
-          match.setData(ShutdownAction);
-          match.setType(Plasma::QueryMatch::ExactMatch);
-          match.setRelevance(0.9);
-          matches << match;
-      } else if (term.compare(i18nc("lock screen command","lock"), Qt::CaseInsensitive) == 0) {
-          Plasma::QueryMatch match(this);
-          match.setText(i18n("Lock the screen"));
-          match.setIcon(KIcon("system-lock-screen"));
-          match.setData(LockAction);
-          match.setType(Plasma::QueryMatch::ExactMatch);
-          match.setRelevance(0.9);
-          matches << match;
-      }
+    if (!m_canLogout) {
+        return;
+    }
+
+    if (term.compare(i18nc("log out command","logout"), Qt::CaseInsensitive) == 0 ||
+            term.compare(i18n("log out"), Qt::CaseInsensitive) == 0) {
+        Plasma::QueryMatch match(this);
+        match.setText(i18nc("log out command","Logout"));
+        match.setIcon(KIcon("system-log-out"));
+        match.setData(LogoutAction);
+        match.setType(Plasma::QueryMatch::ExactMatch);
+        match.setRelevance(0.9);
+        matches << match;
+    } else if (term.compare(i18nc("restart computer command", "restart"), Qt::CaseInsensitive) == 0 ||
+            term.compare(i18nc("restart computer command", "reboot"), Qt::CaseInsensitive) == 0) {
+        Plasma::QueryMatch match(this);
+        match.setText(i18n("Restart the computer"));
+        match.setIcon(KIcon("system-reboot"));
+        match.setData(RestartAction);
+        match.setType(Plasma::QueryMatch::ExactMatch);
+        match.setRelevance(0.9);
+        matches << match;
+    } else if (term.compare(i18nc("shutdown computer command","shutdown"), Qt::CaseInsensitive) == 0) {
+        Plasma::QueryMatch match(this);
+        match.setText(i18n("Shutdown the computer"));
+        match.setIcon(KIcon("system-shutdown"));
+        match.setData(ShutdownAction);
+        match.setType(Plasma::QueryMatch::ExactMatch);
+        match.setRelevance(0.9);
+        matches << match;
+    } else if (term.compare(i18nc("lock screen command","lock"), Qt::CaseInsensitive) == 0) {
+        if (KAuthorized::authorizeKAction("lock_screen")) {
+            Plasma::QueryMatch match(this);
+            match.setText(i18n("Lock the screen"));
+            match.setIcon(KIcon("system-lock-screen"));
+            match.setData(LockAction);
+            match.setType(Plasma::QueryMatch::ExactMatch);
+            match.setRelevance(0.9);
+            matches << match;
+        }
+    }
 }
 
 void SessionRunner::match(Plasma::RunnerContext &context)
