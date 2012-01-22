@@ -31,9 +31,6 @@ add_subdirectory( desktoptheme )
 add_subdirectory( standard_actions )
 add_subdirectory( keys )
 add_subdirectory( workspaceoptions )
-if(X11_Xinerama_FOUND)
-	add_subdirectory( xinerama )
-endif(X11_Xinerama_FOUND)
 
 # TODO needs porting
 #add_subdirectory( smartcard )
