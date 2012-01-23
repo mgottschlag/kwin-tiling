@@ -1,6 +1,4 @@
 /*
- *   Copyright (C) 2007 Petri Damsten <damu@iki.fi>
- *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
  *   Copyright (C) 2011, 2012 Shaun Reich <shaun.reich@kdemail.net>
  *
  *
@@ -59,6 +57,9 @@ public slots:
 private:
     Ui::config ui;
     QStandardItemModel m_hddModel;
+
+    // the hdd sources being watched.
+    // loaded from config and updated when config changed.
     QStringList m_hdds;
 
     QTimer m_sourceTimer;

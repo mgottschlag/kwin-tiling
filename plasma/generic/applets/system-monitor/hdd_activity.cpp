@@ -1,6 +1,4 @@
 /*
- *   Copyright (C) 2007 Petri Damsten <damu@iki.fi>
- *   Copyright (C) 2010 Michel Lafon-Puyo <michel.lafonpuyo@gmail.com>
  *   Copyright (C) 2011, 2012 Shaun Reich <shaun.reich@kdemail.net>
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -153,6 +151,7 @@ void Hdd_Activity::createConfigurationInterface(KConfigDialog *parent)
             parentItem->appendRow(QList<QStandardItem *>() << item1);
         }
     }
+
     ui.treeView->setModel(&m_hddModel);
     ui.treeView->resizeColumnToContents(0);
     ui.intervalSpinBox->setValue(interval() / 1000.0);
@@ -170,7 +169,7 @@ void Hdd_Activity::configChanged()
     //kDebug() << "#### configChanged m_hdds:" << m_hdds;
 
     KConfigGroup cg = config();
-    QStringList default_hdds = QStringList(); //fucking HACK: m_hdds;
+    QStringList default_hdds = m_hdds;
 
     // default to 2 seconds (2000 ms interval
     setInterval(cg.readEntry("interval", 2.0) * 1000.0);
@@ -189,6 +188,7 @@ void Hdd_Activity::configAccepted()
     KConfigGroup cg = config();
     QStandardItem *parentItem = m_hddModel.invisibleRootItem();
 
+    m_hdds.clear();
     clear();
 
     for (int i = 0; i < parentItem->rowCount(); ++i) {
@@ -196,6 +196,7 @@ void Hdd_Activity::configAccepted()
         if (item) {
             if (item->checkState() == Qt::Checked) {
                 appendSource(item->data().toString());
+                m_hdds << item->data().toString();
             }
         }
     }
