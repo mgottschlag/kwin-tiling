@@ -10,6 +10,7 @@ X-KDE-System-Settings-Parent-Category=desktop-appearance
 X-DocPath=kcontrol/cursortheme/index.html
 
 Name=Cursor Theme
+Name[ar]=سِمة المؤشر
 Name[ast]=Tema de cursores
 Name[bg]=Тема за курсора
 Name[bn]=কার্সর থীম
@@ -67,6 +68,7 @@ Name[zh_CN]=光标主题
 Name[zh_TW]=游標主題
 
 Comment=Customize the mouse cursor appearance
+Comment[ar]=خصص مظهر سِمة مؤشر الفأرة
 Comment[ast]=Personalizar l'apariencia del cursor del mur
 Comment[bg]=Настройки на изгледа на курсора на мишката
 Comment[bn]=মাউস কার্সর-এর চেহারা পছন্দমত বদলান
@@ -121,6 +123,7 @@ Comment[zh_CN]=定制鼠标指针外观
 Comment[zh_TW]=自訂滑鼠游標外觀
 
 X-KDE-Keywords=Mouse,Cursor,Theme
+X-KDE-Keywords[ar]=سمة,مؤشر,فأرة
 X-KDE-Keywords[ca]=Ratolí,Cursor,Tema
 X-KDE-Keywords[ca@valencia]=Ratolí,Cursor,Tema
 X-KDE-Keywords[cs]=Myš,Kurzor,Motiv

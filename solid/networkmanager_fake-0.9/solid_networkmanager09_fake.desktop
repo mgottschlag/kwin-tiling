@@ -4,6 +4,7 @@ X-KDE-ServiceTypes=SolidNetworkManager
 X-KDE-Library=solid_networkmanager09_fake
 InitialPreference=101
 Name=Fake NetworkManager 0.9
+Name[ar]=مدير الشبكة المزيف 0.9
 Name[ca]=NetworkManager 0.9 fals
 Name[ca@valencia]=NetworkManager 0.9 fals
 Name[cs]=Falešný NetworkManager 0.9

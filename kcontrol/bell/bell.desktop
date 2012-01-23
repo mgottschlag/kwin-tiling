@@ -198,6 +198,7 @@ Comment[zh_CN]=系统铃声配置
 Comment[zh_TW]=系統鈴聲組態
 
 X-KDE-Keywords=Bell,Audio,Sound,Volume,Pitch,Duration
+X-KDE-Keywords[ar]=جرس,صوت,درجة الصوت,نبرة,مدّة
 X-KDE-Keywords[ca]=Campana,Àudio,So,Volum,To,Durada
 X-KDE-Keywords[ca@valencia]=Campana,Àudio,So,Volum,To,Durada
 X-KDE-Keywords[da]=Klokke,lyd,lydstyrke,tone,varighed
