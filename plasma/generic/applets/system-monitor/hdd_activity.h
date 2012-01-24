@@ -58,9 +58,20 @@ private:
     Ui::config ui;
     QStandardItemModel m_hddModel;
 
-    // the hdd sources being watched.
-    // loaded from config and updated when config changed.
+    /**
+     * the hdd sources being watched.
+     * loaded from config and updated when config changed.
+     */
     QStringList m_hdds;
+
+    /**
+     * For each raw hdd name source, stores
+     * reads at 0, writes at 1.
+     *
+     * Needed because we get those dataUpdated changes
+     * separately.
+    */
+    QMap<QString, QVector<double> > m_data;
 
     QTimer m_sourceTimer;
     QRegExp m_regexp;

@@ -114,17 +114,39 @@ void Hdd_Activity::sourcesChanged()
 
 void Hdd_Activity::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
-    //kDebug() << "####### dataUpdated source: " << source << " data: " << data;
+    kDebug() << "####### dataUpdated source: " << source << " data: " << data;
 
     SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
     if (plotter) {
         double value = data["value"].toDouble();
-        QString temp = KGlobal::locale()->formatNumber(value, 1);
-        plotter->addSample(QList<double>() << value);
 
-        if (mode() == SM::Applet::Panel) {
-            setToolTip(source, QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
-            .arg(plotter->title()).arg(temp));
+        QVector<double>& valueVector = m_data[source];
+
+        if (valueVector.size() < 2) {
+            valueVector.resize(2);
+        }
+
+        // add data to the hash, since we obtain the pair
+        // on separate dataUpdated calls, so we'll need to map them
+        if (source.endsWith("rio")) {
+            valueVector[0] = value;
+        } else if (source.endsWith("wio")) {
+            valueVector[1] = value;
+        }
+
+        kDebug() << "***** VALUEVECTOR COUNT: " << valueVector.count();
+
+        //only graph it if it's got both rio and wio
+        if (valueVector.count() == 2) {
+            QString temp = KGlobal::locale()->formatNumber(value, 1);
+
+            //FIXME: allow plotter->addSample overload for QVector.
+            plotter->addSample(valueVector.toList());
+
+            if (mode() == SM::Applet::Panel) {
+                setToolTip(source, QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
+                .arg(plotter->title()).arg(temp));
+            }
         }
     }
 }
@@ -228,6 +250,7 @@ bool Hdd_Activity::addVisualization(const QString& source)
     plotter->setMinMax(0.0, 100.0);
     plotter->setTitle(hdd);
     plotter->setUnit("%");
+    plotter->setCustomPlots(QList<QColor>() << QColor("#0099ff") << QColor("#91ff00"));
 
     appendVisualization(source, plotter);
     setPreferredItemHeight(80);
