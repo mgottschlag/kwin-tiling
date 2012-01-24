@@ -62,7 +62,7 @@
  */
 Hdd_Activity::Hdd_Activity(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args),
-    m_regexp("disk/(?:md|sd|hd)[a-z|0-9]_.*/Rate/(?:rio|wio)")
+    m_regexp("disk/(?:md|sd|hd)[a-z|0-9]_.*/Rate/(?:rblk|wblk)")
 {
     setHasConfigurationInterface(true);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -128,15 +128,15 @@ void Hdd_Activity::dataUpdated(const QString& source, const Plasma::DataEngine::
 
         // add data to the hash, since we obtain the pair
         // on separate dataUpdated calls, so we'll need to map them
-        if (source.endsWith("rio")) {
+        if (source.endsWith("rblk")) {
             valueVector[0] = value;
-        } else if (source.endsWith("wio")) {
+        } else if (source.endsWith("wblk")) {
             valueVector[1] = value;
         }
 
         kDebug() << "***** VALUEVECTOR COUNT: " << valueVector.count();
 
-        //only graph it if it's got both rio and wio
+        //only graph it if it's got both rblk and wblk
         if (valueVector.count() == 2) {
             QString temp = KGlobal::locale()->formatNumber(value, 1);
 
@@ -238,7 +238,7 @@ bool Hdd_Activity::addVisualization(const QString& source)
     QStringList splits = source.split('/');
     //kDebug() << "### ADD VIS SOURCE SPLITS:" << splits;
 
-    // 0 == "disk" 1 == "sde_(8:64)" 2 == "Rate" 3 == "rio"
+    // 0 == "disk" 1 == "sde_(8:64)" 2 == "Rate" 3 == "rblk"
     if (splits.count() < 3) {
         return false;
     }
