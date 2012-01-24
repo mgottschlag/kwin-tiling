@@ -249,8 +249,11 @@ bool Hdd_Activity::addVisualization(const QString& source)
     SM::Plotter *plotter = new SM::Plotter(this);
     plotter->setTitle(hdd);
 
-    // FIXME: localize properly..including units. don't think ksysguard does it automagically
-    plotter->setUnit("KB/s");
+    // FIXME: localize properly..including units.
+    // ksysguard just gives us 1024 KiB for sources, we need to convert for anything else.
+    plotter->setUnit("KiB/s");
+
+    // should be read/write
     plotter->setCustomPlots(QList<QColor>() << QColor("#0099ff") << QColor("#91ff00"));
 
     appendVisualization(source, plotter);
