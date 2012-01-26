@@ -268,8 +268,8 @@ bool Hdd_Activity::addVisualization(const QString& source)
         // ksysguard just gives us 1024 KiB for sources, we need to convert for anything else.
         plotter->setUnit("KiB/s");
 
-        // should be read/write
-        plotter->setCustomPlots(QList<QColor>() << QColor("#0099ff") << QColor("#91ff00"));
+        // should be read, write, respectively
+        plotter->setCustomPlots(QList<QColor>() << QColor("#0057AE") << QColor("#E20800"));
 
         appendVisualization(source, plotter);
         setPreferredItemHeight(80);
