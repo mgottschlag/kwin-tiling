@@ -12,7 +12,7 @@ X-KDE-System-Settings-Parent-Category=workspace-behavior
 X-KDE-Weight=60
 
 Name=Virtual Desktops
-Name[ar]=أسطح المكتب الإفتراضية
+Name[ar]=أسطح المكتب الافتراضية
 Name[ast]=Escritorios virtuales
 Name[bg]=Виртуални работни плотове
 Name[bs]=Virtuelne površi
@@ -75,7 +75,7 @@ Name[zh_TW]=虛擬桌面
 
 Comment=You can configure how many virtual desktops there are.
 Comment[af]=Jy kan opstel hoeveel virtuele werkskerms daar is.
-Comment[ar]=تستطيع ضبط عدد أسطح المكتب الإفتراضية
+Comment[ar]=تستطيع ضبط عدد أسطح المكتب الافتراضية
 Comment[ast]=Configuración del númberu d'escritorios virtuales.
 Comment[be]=Тут вы можаце змяніць колькасць віртуальных стальніц.
 Comment[be@latin]=Tut možna naładzić, kolki jość virtualnych rabočych stałoŭ.
@@ -180,6 +180,7 @@ X-KDE-Keywords[nl]=bureaublad,bureaubladen,nummer,virtueel bureaublad
 X-KDE-Keywords[pa]=ਡੈਸਕਟਾਪ,ਨੰਬਰ,ਵਰਚੁਅਲ ਡੈਸਕਟਾਪ
 X-KDE-Keywords[pt]=ecrã,ecrãs,número,ecrã virtual
 X-KDE-Keywords[pt_BR]=área de trabalho,áreas de trabalho,número,área de trabalho virtual
+X-KDE-Keywords[ro]=birou,birouri,număr,birou virtual
 X-KDE-Keywords[sr]=desktop,desktops,number,virtual desktop,површ,број,виртуелна површ
 X-KDE-Keywords[sr@ijekavian]=desktop,desktops,number,virtual desktop,површ,број,виртуелна површ
 X-KDE-Keywords[sr@ijekavianlatin]=desktop,desktops,number,virtual desktop,površ,broj,virtuelna površ

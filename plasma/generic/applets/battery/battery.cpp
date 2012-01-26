@@ -1066,14 +1066,16 @@ void Battery::toggleInhibit(bool toggle)
 {
     using namespace Solid::PowerManagement;
 
-    if (m_inhibitCookies.first > 0 && m_inhibitCookies.second > 0 && !toggle) {
+    if (m_inhibitCookies.first > 0 && m_inhibitCookies.second > 0 && toggle) {
         // Release inhibition
+        kDebug() << "Releasing inhibition";
         stopSuppressingSleep(m_inhibitCookies.first);
         stopSuppressingScreenPowerManagement(m_inhibitCookies.second);
 
         m_inhibitCookies = qMakePair< int, int >(-1, -1);
-    } else if (m_inhibitCookies.first < 0 && m_inhibitCookies.second < 0 && toggle) {
+    } else if (m_inhibitCookies.first < 0 && m_inhibitCookies.second < 0 && !toggle) {
         // Trigger inhibition
+        kDebug() << "Trigger inhibition";
         QString reason = i18n("The battery applet has enabled system-wide inhibition");
         m_inhibitCookies = qMakePair< int, int >(beginSuppressingSleep(reason),
                                                  beginSuppressingScreenPowerManagement(reason));

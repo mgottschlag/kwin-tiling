@@ -1,5 +1,6 @@
 [Desktop Entry]
 Comment=Default desktop toolbox for the Plasma desktop shell
+Comment[ar]=صندوق أدوات سطح المكتب الافتراضي لصدفة سطح مكتب بلازما
 Comment[ast]=Barra de ferramientes pal escritoriu por defeutu pal shell Plasma
 Comment[bg]=Стандартен набор инструменти за настолната обвивка Plasma
 Comment[bs]=Podrazumijevana alatnica površi za plazma školjku površi
@@ -53,6 +54,7 @@ Comment[zh_CN]=离子桌面外壳的默认桌面工具箱
 Comment[zh_TW]=預設的 Plasma 桌面 shell 的桌面工具盒
 Icon=plasma
 Name=Desktop toolbox
+Name[ar]=صندوق أدوات سطح المكتب
 Name[ast]=Caxa de ferramientes del escritoriu
 Name[bg]=Настолна кутия с инструменти
 Name[bs]=Alatnica površi

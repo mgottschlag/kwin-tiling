@@ -199,6 +199,7 @@ Comment[zh_CN]=键盘设置
 Comment[zh_TW]=鍵盤設定
 
 X-KDE-Keywords=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume
+X-KDE-Keywords[ar]=لوحة مفاتيح,تكرار,جهاز,أداة,أجهزة,إدخال,تكرار
 X-KDE-Keywords[ca]=Teclat,Repetició de teclat,Volum del clic,Dispositius d'entrada,repetició,volum
 X-KDE-Keywords[ca@valencia]=Teclat,Repetició de teclat,Volum del clic,Dispositius d'entrada,repetició,volum
 X-KDE-Keywords[da]=tastatur,tastaturgentagelse,kliklydstyrke,input-enheder,gentagelse,lydstyrke
