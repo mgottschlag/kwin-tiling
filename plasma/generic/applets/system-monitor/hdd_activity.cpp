@@ -143,8 +143,10 @@ void Hdd_Activity::dataUpdated(const QString& source, const Plasma::DataEngine::
     // not a rblk vis, so one just holds all data.
     SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(sneakySource));
 
-    // NOTE: should be guaranteed valid?
-    Q_ASSERT(plotter);
+    // plotter is invalid if we're e.g. switching monitored stuff
+    if (!plotter) {
+        return;
+    }
 
     kDebug() << "***** VALUEVECTOR COUNT: " << valueVector.count();
 
