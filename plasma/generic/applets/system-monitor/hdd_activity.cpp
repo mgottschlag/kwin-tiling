@@ -116,37 +116,48 @@ void Hdd_Activity::dataUpdated(const QString& source, const Plasma::DataEngine::
 {
     kDebug() << "####### dataUpdated source: " << source << " data: " << data;
 
-    SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
-    if (plotter) {
-        double value = data["value"].toDouble();
 
-        QVector<double>& valueVector = m_data[source];
+    const double value = data["value"].toDouble();
+    QVector<double>& valueVector = m_data[source];
 
-        if (valueVector.size() < 2) {
-            valueVector.resize(2);
-        }
+    if (valueVector.size() < 2) {
+        valueVector.resize(2);
+    }
 
-        // add data to the hash, since we obtain the pair
-        // on separate dataUpdated calls, so we'll need to map them
-        if (source.endsWith("rblk")) {
-            valueVector[0] = value;
-        } else if (source.endsWith("wblk")) {
-            valueVector[1] = value;
-        }
+    QString sneakySource = source;
+    // we're interested in all source for a device which are
+    // rblk and wblk. however, only 1 vis per that. so it wouldn't be unique and we'd only
+    // get the values for rblk.
+    // so add data to the hash, since we obtain the pair
+    // on separate dataUpdated calls, so we'll need to map them
+    if (sneakySource.endsWith("rblk")) {
+        valueVector[0] = value;
+    } else if (sneakySource.endsWith("wblk")) {
+        valueVector[1] = value;
+        //make the source *appear* to be a rblk.
+        sneakySource.remove("wblk");
+        sneakySource.append("rblk");
+    }
 
-        kDebug() << "***** VALUEVECTOR COUNT: " << valueVector.count();
+    // we look up the visualization that is /...disk/rblk only. there is
+    // not a rblk vis, so one just holds all data.
+    SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(sneakySource));
 
-        //only graph it if it's got both rblk and wblk
-        if (valueVector.count() == 2) {
-            QString temp = KGlobal::locale()->formatNumber(value, 1);
+    // NOTE: should be guaranteed valid?
+    Q_ASSERT(plotter);
 
-            //FIXME: allow plotter->addSample overload for QVector.
-            plotter->addSample(valueVector.toList());
+    kDebug() << "***** VALUEVECTOR COUNT: " << valueVector.count();
 
-            if (mode() == SM::Applet::Panel) {
-                setToolTip(source, QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
-                .arg(plotter->title()).arg(temp));
-            }
+    //only graph it if it's got both rblk and wblk
+    if (valueVector.count() == 2) {
+        QString temp = KGlobal::locale()->formatNumber(value, 1);
+
+        //FIXME: allow plotter->addSample overload for QVector.
+        plotter->addSample(valueVector.toList());
+
+        if (mode() == SM::Applet::Panel) {
+            setToolTip(source, QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
+            .arg(plotter->title()).arg(temp));
         }
     }
 }
@@ -233,31 +244,39 @@ void Hdd_Activity::configAccepted()
 
 bool Hdd_Activity::addVisualization(const QString& source)
 {
-    kDebug() << "#### addVisualization FOR SOURCE:" << source;
-
     QStringList splits = source.split('/');
-    //kDebug() << "### ADD VIS SOURCE SPLITS:" << splits;
+
+    kDebug() << "#### addVisualization FOR SOURCE:" << source << "SPLIT COUNT: " << splits.count() << "SPLIT AT 3: " << splits.at(3);
 
     // 0 == "disk" 1 == "sde_(8:64)" 2 == "Rate" 3 == "rblk"
-    if (splits.count() < 3) {
-        return false;
+    Q_ASSERT(splits.count() == 4);
+
+    // only monitor rblk for each device. we watch all sources/connect to them
+    // but only need 1 vis per actual device (otherwise there'd be 1 for rblk, 1
+    // for wblk, which isn't what I have in mind -sreich
+    if (splits.at(3) == "rblk") {
+        QString hdd = splits[1];
+
+        //kDebug() << "#### ADD VIS hdd: " << hdd;
+
+        SM::Plotter *plotter = new SM::Plotter(this);
+        plotter->setTitle(hdd);
+
+        // FIXME: localize properly..including units.
+        // ksysguard just gives us 1024 KiB for sources, we need to convert for anything else.
+        plotter->setUnit("KiB/s");
+
+        // should be read/write
+        plotter->setCustomPlots(QList<QColor>() << QColor("#0099ff") << QColor("#91ff00"));
+
+        appendVisualization(source, plotter);
+        setPreferredItemHeight(80);
     }
 
-    QString hdd = splits[1];
-    //kDebug() << "#### ADD VIS hdd: " << hdd;
-
-    SM::Plotter *plotter = new SM::Plotter(this);
-    plotter->setTitle(hdd);
-
-    // FIXME: localize properly..including units.
-    // ksysguard just gives us 1024 KiB for sources, we need to convert for anything else.
-    plotter->setUnit("KiB/s");
-
-    // should be read/write
-    plotter->setCustomPlots(QList<QColor>() << QColor("#0099ff") << QColor("#91ff00"));
-
-    appendVisualization(source, plotter);
-    setPreferredItemHeight(80);
+    // if we return false here, it thinks we don't want
+    // source updates for this source
+    // which makes sense (since there's no vis). but not in
+    // this case.
     return true;
 }
 

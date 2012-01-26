@@ -43,7 +43,7 @@ public:
 
     virtual void init();
 
-    virtual bool addVisualization(const QString& source);
+    virtual bool addVisualization(const QString &source);
     virtual void createConfigurationInterface(KConfigDialog *parent);
 
 public slots:
