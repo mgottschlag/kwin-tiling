@@ -257,7 +257,9 @@ bool Hdd_Activity::addVisualization(const QString& source)
     // but only need 1 vis per actual device (otherwise there'd be 1 for rblk, 1
     // for wblk, which isn't what I have in mind -sreich
     if (splits.at(3) == "rblk") {
-        QString hdd = splits[1];
+
+        QString hdd = source;
+        hdd = hdd.remove("rblk");
 
         //kDebug() << "#### ADD VIS hdd: " << hdd;
 
