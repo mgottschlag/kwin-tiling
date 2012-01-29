@@ -62,7 +62,7 @@ private:
      * the hdd sources being watched.
      * loaded from config and updated when config changed.
      */
-    QStringList m_hdds;
+    QStringList m_watchedHdds;
 
     /**
      * For each raw hdd name source, stores

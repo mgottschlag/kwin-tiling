@@ -66,8 +66,8 @@ Hdd_Activity::Hdd_Activity(QObject *parent, const QVariantList &args)
 {
     setHasConfigurationInterface(true);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_sourceTimer.setSingleShot(true);
-    connect(&m_sourceTimer, SIGNAL(timeout()), this, SLOT(sourcesChanged()));
+//    m_sourceTimer.setSingleShot(true);
+//    connect(&m_sourceTimer, SIGNAL(timeout()), this, SLOT(sourcesChanged()));
 }
 
 Hdd_Activity::~Hdd_Activity()
@@ -80,14 +80,15 @@ void Hdd_Activity::init()
     setEngine(dataEngine("systemmonitor"));
     setTitle(i18n("Disk Activity"), true);
 
-    configChanged();
-
     /* At the time this method is running, not all sources may be connected. */
     connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(sourceChanged(QString)));
     connect(engine(), SIGNAL(sourceRemoved(QString)), this, SLOT(sourceChanged(QString)));
+
     foreach (const QString& source, engine()->sources()) {
-     // sourceChanged(source);
+        sourceChanged(source);
     }
+
+    configChanged();
 }
 
 void Hdd_Activity::sourceChanged(const QString& name)
@@ -98,7 +99,7 @@ void Hdd_Activity::sourceChanged(const QString& name)
     if (m_regexp.indexIn(name) != -1) {
         kDebug() << "######### REGEXP match successful, hopefully. Adding:" << name;
 
-        m_hdds.append(name);
+        m_watchedHdds.append(name);
 
         if (!m_sourceTimer.isActive()) {
             m_sourceTimer.start(0);
@@ -174,7 +175,7 @@ void Hdd_Activity::createConfigurationInterface(KConfigDialog *parent)
     m_hddModel.setHorizontalHeaderLabels(QStringList() << i18n("Name"));
     QStandardItem *parentItem = m_hddModel.invisibleRootItem();
 
-    foreach (const QString& hdd, m_hdds) {
+    foreach (const QString& hdd, m_watchedHdds) {
         if (m_regexp.indexIn(hdd) != -1) {
             QStandardItem *item1 = new QStandardItem(m_regexp.cap(0));
             item1->setEditable(false);
@@ -204,17 +205,13 @@ void Hdd_Activity::configChanged()
     //kDebug() << "#### configChanged m_hdds:" << m_hdds;
 
     KConfigGroup cg = config();
-    QStringList default_hdds = m_hdds;
+    QStringList default_hdds = m_watchedHdds;
 
     // default to 2 seconds (2000 ms interval
     setInterval(cg.readEntry("interval", 2.0) * 1000.0);
     setSources(cg.readEntry("hdds", default_hdds));
 
-    if (!m_hdds.isEmpty()) {
-        kDebug() << "@@@@ configChanged, reconnecting engine to sources: " << m_hdds;
-        setSources(m_hdds);
-        connectToEngine();
-    }
+    connectToEngine();
 }
 
 void Hdd_Activity::configAccepted()
@@ -223,7 +220,7 @@ void Hdd_Activity::configAccepted()
     KConfigGroup cg = config();
     QStandardItem *parentItem = m_hddModel.invisibleRootItem();
 
-    m_hdds.clear();
+    m_watchedHdds.clear();
     clear();
 
     for (int i = 0; i < parentItem->rowCount(); ++i) {
@@ -231,11 +228,12 @@ void Hdd_Activity::configAccepted()
         if (item) {
             if (item->checkState() == Qt::Checked) {
                 appendSource(item->data().toString());
-                m_hdds << item->data().toString();
+                m_watchedHdds << item->data().toString();
             }
         }
     }
 
+    kDebug() << "***** WRITING ENTRY HDDS SOURCES: " << sources();
     cg.writeEntry("hdds", sources());
 
     uint interval = ui.intervalSpinBox->value();
