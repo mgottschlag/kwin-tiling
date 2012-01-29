@@ -242,10 +242,9 @@ void Applet::connectSource(const QString& source)
 
 void Applet::disconnectSources()
 {
-   Plasma::DataEngine *engine = dataEngine("soliddevice");
-   if (engine) {
+   if (m_engine) {
       foreach (const QString &source, m_connectedSources) {
-         engine->disconnectSource(source, this);
+         m_engine->disconnectSource(source, this);
       }
    }
    m_connectedSources.clear();
