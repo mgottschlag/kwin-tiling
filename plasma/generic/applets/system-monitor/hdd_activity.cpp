@@ -220,7 +220,6 @@ void Hdd_Activity::configAccepted()
     KConfigGroup cg = config();
     QStandardItem *parentItem = m_hddModel.invisibleRootItem();
 
-    m_possibleHdds.clear();
     clear();
 
     for (int i = 0; i < parentItem->rowCount(); ++i) {
@@ -228,7 +227,6 @@ void Hdd_Activity::configAccepted()
         if (item) {
             if (item->checkState() == Qt::Checked) {
                 appendSource(item->data().toString());
-                m_possibleHdds << item->data().toString();
             }
         }
     }
