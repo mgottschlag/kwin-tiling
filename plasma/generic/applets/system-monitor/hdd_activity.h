@@ -59,10 +59,11 @@ private:
     QStandardItemModel m_hddModel;
 
     /**
-     * the hdd sources being watched.
-     * loaded from config and updated when config changed.
+     * The hdd sources that would be interesting to watch.
+     * Does not necessarily mean they're being watched,
+     * sources() indicates that.
      */
-    QStringList m_watchedHdds;
+    QStringList m_possibleHdds;
 
     /**
      * For each raw hdd name source, stores

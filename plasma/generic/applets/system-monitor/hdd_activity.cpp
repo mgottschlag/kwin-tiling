@@ -99,7 +99,7 @@ void Hdd_Activity::sourceChanged(const QString& name)
     if (m_regexp.indexIn(name) != -1) {
         kDebug() << "######### REGEXP match successful, hopefully. Adding:" << name;
 
-        m_watchedHdds.append(name);
+        m_possibleHdds.append(name);
 
         if (!m_sourceTimer.isActive()) {
             m_sourceTimer.start(0);
@@ -175,7 +175,7 @@ void Hdd_Activity::createConfigurationInterface(KConfigDialog *parent)
     m_hddModel.setHorizontalHeaderLabels(QStringList() << i18n("Name"));
     QStandardItem *parentItem = m_hddModel.invisibleRootItem();
 
-    foreach (const QString& hdd, m_watchedHdds) {
+    foreach (const QString& hdd, m_possibleHdds) {
         if (m_regexp.indexIn(hdd) != -1) {
             QStandardItem *item1 = new QStandardItem(m_regexp.cap(0));
             item1->setEditable(false);
@@ -205,7 +205,7 @@ void Hdd_Activity::configChanged()
     //kDebug() << "#### configChanged m_hdds:" << m_hdds;
 
     KConfigGroup cg = config();
-    QStringList default_hdds = m_watchedHdds;
+    QStringList default_hdds = m_possibleHdds;
 
     // default to 2 seconds (2000 ms interval
     setInterval(cg.readEntry("interval", 2.0) * 1000.0);
@@ -220,7 +220,7 @@ void Hdd_Activity::configAccepted()
     KConfigGroup cg = config();
     QStandardItem *parentItem = m_hddModel.invisibleRootItem();
 
-    m_watchedHdds.clear();
+    m_possibleHdds.clear();
     clear();
 
     for (int i = 0; i < parentItem->rowCount(); ++i) {
@@ -228,7 +228,7 @@ void Hdd_Activity::configAccepted()
         if (item) {
             if (item->checkState() == Qt::Checked) {
                 appendSource(item->data().toString());
-                m_watchedHdds << item->data().toString();
+                m_possibleHdds << item->data().toString();
             }
         }
     }
