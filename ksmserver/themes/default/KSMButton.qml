@@ -84,7 +84,7 @@ PlasmaCore.FrameSvgItem {
     property Item tabStopNext
     property Item tabStopBack
     property int accelKey: -1
-    height: 32
+    height: theme.desktopFont.mSize.height + 22
 
     signal clicked()
     signal pressed()
@@ -172,9 +172,9 @@ PlasmaCore.FrameSvgItem {
             background.elementId = button.smallButton ? "button-small-normal" : "button-normal"
         }
         if (button.smallButton) {
-            height = 22
+            height = theme.desktopFont.mSize.height + 12
         } else {
-            height = background.naturalSize.height
+            height = theme.desktopFont.mSize.height + 22
         }
     }
 
