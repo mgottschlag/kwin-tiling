@@ -104,7 +104,7 @@ void listPlugins(const KPluginInfo::List & plugins)
     }
 
     QMap<QString, QString>::const_iterator it;
-    for (it = applets.constBegin(); it != applets.constEnd(); it++) {
+    for (it = applets.constBegin(); it != applets.constEnd(); ++it) {
         QString applet("%1 - %2");
 
         applet = applet.arg(it.key().leftJustified(maxLen, ' ')).arg(it.value());
@@ -135,6 +135,7 @@ int main(int argc, char **argv)
     options.add("list-wallpapers", ki18n("Displays a list of known wallpapers"));
     options.add("lc");
     options.add("list-containments", ki18n("Displays a list of known containments"));
+    options.add("nosaveconfig", ki18n("Disables save and restore of the config between runs"));
     options.add("l");
     options.add("location <name>", ki18nc("Do not translate floating, desktop, fullscreen, top, bottom, left nor right", "The location constraint to start the Containment with (floating, desktop, fullscreen, top, bottom, left, right)"), "floating");
     options.add("p");
@@ -212,7 +213,12 @@ int main(int argc, char **argv)
     kDebug() << "setting auth policy";
     Plasma::AuthorizationManager::self()->setAuthorizationPolicy(Plasma::AuthorizationManager::PinPairing);
 
-    FullView view(formfactor, location);
+    const bool persistentConfig = args->isSet("saveconfig");
+    if (!persistentConfig) {
+        kWarning() << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& WARNING: Applet configuration will not be restored or saved.";
+    }
+
+    FullView view(formfactor, location, persistentConfig);
 
     if (args->isSet("list-remote")) {
         kDebug() << "list remote...";

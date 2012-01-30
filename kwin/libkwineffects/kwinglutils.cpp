@@ -689,6 +689,20 @@ GLShader *ShaderManager::pushShader(ShaderType type, bool reset)
     return shader;
 }
 
+void ShaderManager::resetAllShaders()
+{
+    if (!m_inited || !m_valid) {
+        return;
+    }
+    pushShader(SimpleShader, true);
+    pushShader(GenericShader, true);
+    pushShader(ColorShader, true);
+    popShader();
+    popShader();
+    popShader();
+}
+
+
 void ShaderManager::pushShader(GLShader *shader)
 {
     // only bind shader if it is not already bound
@@ -1061,7 +1075,11 @@ void GLRenderTarget::blitFromFramebuffer(const QRect &source, const QRect &desti
     if (!GLRenderTarget::blitSupported()) {
         return;
     }
-#ifndef KWIN_HAVE_OPENGLES
+#ifdef KWIN_HAVE_OPENGLES
+    Q_UNUSED(source)
+    Q_UNUSED(destination)
+    Q_UNUSED(filter)
+#else
     GLRenderTarget::pushRenderTarget(this);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFramebuffer);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
@@ -1136,10 +1154,10 @@ GLVertexBuffer *GLVertexBufferPrivate::streamingBuffer = NULL;
 
 void GLVertexBufferPrivate::legacyPainting(QRegion region, GLenum primitiveMode)
 {
+    Q_UNUSED(region)
 #ifdef KWIN_HAVE_OPENGLES
     Q_UNUSED(primitiveMode)
 #else
-    Q_UNUSED(region)
     // Enable arrays
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(dimension, GL_FLOAT, 0, legacyVertices.constData());
@@ -1197,10 +1215,10 @@ void GLVertexBufferPrivate::corePainting(const QRegion& region, GLenum primitive
 
 void GLVertexBufferPrivate::fallbackPainting(const QRegion& region, GLenum primitiveMode)
 {
+    Q_UNUSED(region)
 #ifdef KWIN_HAVE_OPENGLES
     Q_UNUSED(primitiveMode)
 #else
-    Q_UNUSED(region)
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glBindBuffer(GL_ARRAY_BUFFER, buffers[ 0 ]);

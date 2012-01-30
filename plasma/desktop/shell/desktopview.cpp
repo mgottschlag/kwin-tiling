@@ -42,7 +42,6 @@
 
 #include "dashboardview.h"
 #include "desktopcorona.h"
-#include "kworkspace/kactivitycontroller.h"
 #include "plasmaapp.h"
 #include "plasma-shell-desktop.h"
 
@@ -283,6 +282,7 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         return;
     }
 
+    PlasmaApp::self()->prepareContainment(containment);
     m_init = true;
 
     if (m_dashboard && m_dashboardFollowsDesktop) {

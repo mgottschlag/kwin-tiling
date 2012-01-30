@@ -133,7 +133,7 @@ Comment[x-test]=xxA system temperature monitorxx
 Comment[zh_CN]=系统温度监视器
 Comment[zh_TW]=系統溫度監視器
 Type=Service
-Icon=media-flash
+Icon=view-statistics
 ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_sm_temperature

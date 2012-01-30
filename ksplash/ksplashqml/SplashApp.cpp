@@ -24,7 +24,7 @@
 
 #define TEST_STEP_INTERVAL 2000
 
-SplashApp::SplashApp(Display * display, int argc, char ** argv)
+SplashApp::SplashApp(Display * display, int &argc, char ** argv)
     : QApplication(display, argc, argv),
       m_display(display), m_stage(0),
       m_testing(false)

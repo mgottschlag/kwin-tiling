@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
    Copyright (C) 2008 by Dmitry Suzdalev <dimsuz@gmail.com>
@@ -30,7 +29,6 @@
 
 class KConfigSkeleton;
 class KShortcutsEditor;
-class QPushButton;
 class Klipper;
 class KEditListWidget;
 class KActionCollection;
@@ -89,14 +87,14 @@ class AdvancedWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit AdvancedWidget( QWidget *parent = 0L );
+    explicit AdvancedWidget( QWidget* parent = 0L );
     ~AdvancedWidget();
 
     void setWMClasses( const QStringList& items );
     QStringList wmClasses() const;
 
 private:
-    KEditListWidget *editListBox;
+    KEditListWidget* editListBox;
 };
 
 class ConfigDialog : public KConfigDialog
@@ -104,7 +102,7 @@ class ConfigDialog : public KConfigDialog
     Q_OBJECT
 
 public:
-    ConfigDialog( QWidget *parent, KConfigSkeleton *config, const Klipper* klipper, KActionCollection *collection, bool isApplet );
+    ConfigDialog( QWidget* parent, KConfigSkeleton* config, const Klipper* klipper, KActionCollection* collection, bool isApplet );
     ~ConfigDialog();
 
 private:
@@ -117,8 +115,8 @@ private:
 
 private:
     GeneralWidget* m_generalPage;
-    ActionsWidget *m_actionsPage;
-    KShortcutsEditor *m_shortcutsWidget;
+    ActionsWidget* m_actionsPage;
+    KShortcutsEditor* m_shortcutsWidget;
 
     const Klipper* m_klipper;
 };

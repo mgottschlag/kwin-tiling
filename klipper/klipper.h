@@ -1,6 +1,5 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
-   Copyright (C) by Andrew Stanley-Jones
+   Copyright (C) by Andrew Stanley-Jones <asj@cban.com>
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
    Copyright (C) 2008 by Dmitry Suzdalev <dimsuz@gmail.com>
 
@@ -22,18 +21,15 @@
 #ifndef KLIPPER_H
 #define KLIPPER_H
 
-#include <QKeyEvent>
-#include <QMenu>
-#include <QTimer>
-#include <QClipboard>
+#include <QtCore/QTime>
+#include <QtCore/QTimer>
+#include <QtGui/QClipboard>
 
-#include <KApplication>
-#include <KIcon>
+#include <KGlobal>
 
 #include "urlgrabber.h"
 
 class KAction;
-class QClipboard;
 class KToggleAction;
 class KAboutData;
 class KActionCollection;
@@ -41,6 +37,7 @@ class URLGrabber;
 class QTime;
 class History;
 class QAction;
+class QMenu;
 class QMimeData;
 class HistoryItem;
 class KlipperSessionManager;
@@ -61,7 +58,7 @@ public Q_SLOTS:
   Q_SCRIPTABLE void showKlipperManuallyInvokeActionMenu();
 
 public:
-    Klipper(QObject *parent, const KSharedConfigPtr &config);
+    Klipper(QObject* parent, const KSharedConfigPtr& config);
     ~Klipper();
 
     /**
@@ -71,7 +68,6 @@ public:
 
     URLGrabber* urlGrabber() const { return m_myURLGrabber; }
 
-    static void updateTimestamp();
     static void createAboutData();
     static void destroyAboutData();
     static KAboutData* aboutData();
@@ -98,8 +94,6 @@ protected:
      */
     enum SelectionMode { Clipboard = 2, Selection = 4 };
 
-    void readProperties(KConfig *);
-
     /**
      * Loads history from disk.
      */
@@ -110,14 +104,6 @@ protected:
      * @empty save empty history instead of actual history
      */
     void saveHistory(bool empty = false);
-    /**
-     * @returns the contents of the selection or, if empty, the contents of
-     * the clipboard.
-     */
-    QString clipboardContents( bool *isSelection = 0L );
-
-    void removeFromHistory( const QString& text );
-    void setEmptyClipboard();
 
     /**
      * Check data in clipboard, and if it passes these checks,
@@ -153,7 +139,6 @@ private Q_SLOTS:
     void slotClearClipboard();
 
     void slotQuit();
-    void slotStartHideTimer();
     void slotStartShowTimer();
 
     void slotClearOverflow();
@@ -163,34 +148,33 @@ private Q_SLOTS:
 
 private:
 
-    QClipboard *m_clip;
+    static void updateTimestamp();
 
-    QTime *m_hideTimer;
-    QTime *m_showTimer;
+    QClipboard* m_clip;
 
-    int m_lastClipboard;
-    int m_lastSelection;
+    QTime m_showTimer;
+
     History* m_history;
     int m_overflowCounter;
-    KToggleAction *m_toggleURLGrabAction;
-    QAction* m_clearHistoryAction;
-    QAction* m_repeatAction;
-    QAction* m_editAction;
+
+    KToggleAction* m_toggleURLGrabAction;
+    KAction* m_clearHistoryAction;
+    KAction* m_repeatAction;
+    KAction* m_editAction;
 #ifdef HAVE_PRISON
-    QAction* m_showBarcodeAction;
+    KAction* m_showBarcodeAction;
 #endif
-    QAction* m_configureAction;
-    QAction* m_quitAction;
+    KAction* m_configureAction;
+    KAction* m_quitAction;
     KAction* m_cycleNextAction;
     KAction* m_cyclePrevAction;
     KAction* m_showOnMousePos;
-    QPixmap m_pixmap;
+
     bool m_bKeepContents :1;
     bool m_bURLGrabber   :1;
     bool m_bReplayActionInHistory :1;
     bool m_bUseGUIRegExpEditor    :1;
     bool m_bNoNullClipboard       :1;
-    bool m_bTearOffHandle         :1;
     bool m_bIgnoreSelection       :1;
     bool m_bSynchronize           :1;
     bool m_bSelectionTextOnly     :1;
@@ -204,7 +188,7 @@ private:
      */
     int m_locklevel;
 
-    URLGrabber *m_myURLGrabber;
+    URLGrabber* m_myURLGrabber;
     QString m_lastURLGrabberTextSelection;
     QString m_lastURLGrabberTextClipboard;
     KSharedConfigPtr m_config;
@@ -215,8 +199,8 @@ private:
 
     bool blockFetchingNewData();
     QString cycleText() const;
-    KlipperSessionManager* m_session_managed;
-    KActionCollection *m_collection;
+    KlipperSessionManager* m_sessionManager;
+    KActionCollection* m_collection;
 };
 
 #endif

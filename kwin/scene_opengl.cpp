@@ -254,6 +254,7 @@ void SceneOpenGL::windowGeometryShapeChanged(KWin::Toplevel* c)
 
 void SceneOpenGL::windowOpacityChanged(KWin::Toplevel* t)
 {
+    Q_UNUSED(t)
 #if 0 // not really needed, windows are painted on every repaint
     // and opacity is used when applying texture, not when
     // creating it
@@ -325,7 +326,6 @@ bool SceneOpenGL::Texture::load(const QImage& image, GLenum target)
 
 bool SceneOpenGL::Texture::load(const QPixmap& pixmap, GLenum target)
 {
-    Q_D(Texture);
     if (pixmap.isNull())
         return false;
 
@@ -586,20 +586,18 @@ void SceneOpenGL::Window::performPaint(int mask, QRegion region, WindowPaintData
     }
 
     // paint the content
-    if (!(mask & PAINT_DECORATION_ONLY)) {
-        texture.bind();
-        prepareStates(Content, data.opacity * data.contents_opacity, data.brightness, data.saturation, data.shader);
-        renderQuads(mask, region, data.quads.select(WindowQuadContents), &texture);
-        restoreStates(Content, data.opacity * data.contents_opacity, data.brightness, data.saturation, data.shader);
-        texture.unbind();
+    texture.bind();
+    prepareStates(Content, data.opacity * data.contents_opacity, data.brightness, data.saturation, data.shader);
+    renderQuads(mask, region, data.quads.select(WindowQuadContents), &texture);
+    restoreStates(Content, data.opacity * data.contents_opacity, data.brightness, data.saturation, data.shader);
+    texture.unbind();
 #ifndef KWIN_HAVE_OPENGLES
-        if (static_cast<SceneOpenGL*>(scene)->debug) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            renderQuads(mask, region, data.quads.select(WindowQuadContents), &texture);
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
-#endif
+    if (static_cast<SceneOpenGL*>(scene)->debug) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        renderQuads(mask, region, data.quads.select(WindowQuadContents), &texture);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
+#endif
 
     if (sceneShader) {
         ShaderManager::instance()->popShader();

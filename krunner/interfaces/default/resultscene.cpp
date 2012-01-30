@@ -85,6 +85,7 @@ QSize ResultScene::minimumSizeHint() const
 void ResultScene::setWidth(int width)
 {
     const bool resizeItems = width != sceneRect().width();
+    m_selectionBar->resize(width, m_selectionBar->size().height());
 
     if (resizeItems) {
         foreach (ResultItem *item, m_items) {
@@ -148,8 +149,8 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     const int maxItemsAllowed = 50;
 
     if (m_items.isEmpty()) {
-        QTime t;
-        t.start();
+        //QTime t;
+        //t.start();
         for (int i = 0; i < maxItemsAllowed; ++i) {
             ResultItem *item = new ResultItem(m_resultData, 0);
             item->setContentsMargins(m_itemMarginLeft, m_itemMarginTop,
@@ -165,7 +166,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         }
 
         arrangeItems();
-        kDebug() << "creating all items took" << t.elapsed();
+        //kDebug() << "creating all items took" << t.elapsed();
     }
 
     // we keep track of what was previously focused so if the user changes focus
@@ -203,7 +204,10 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     }
 
     const bool keepFocus = currentFocus && currentFocus->isValid() && currentFocus->id() == lastFocusId;
-    if (!keepFocus) {
+    if (keepFocus) {
+        m_selectionBar->show();
+        emit ensureVisibility(currentFocus);
+    } else {
         clearSelection();
         ResultItem *first = m_items.at(0);
         setFocusItem(first);

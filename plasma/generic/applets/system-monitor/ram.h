@@ -49,6 +49,25 @@ class Ram : public Applet
         void configChanged();
 
     private:
+        // below methods exist because KLocale has no nice
+        // way of getting this info :(
+        // thought about adding it to the api, but perhaps this
+        // code is the only one that uses it?
+        /**
+         * The preferred binary unit byte value
+         * e.g. KiB, kiB, KIB, etc.
+         * @return double 1024 or 1000
+         */
+        double preferredBinaryUnit();
+
+        /**
+         * The preferred binary unit abbreviations.
+         * @return QStringList B, KiB, MiB, GiB, TiB.\
+         * or whatever is best fit for current binary unit
+         * settings via klocale.
+         */
+        QStringList preferredUnitsList();
+
         Ui::config ui;
         QStandardItemModel m_model;
         QStringList m_memories;

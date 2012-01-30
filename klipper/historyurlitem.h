@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
 
@@ -17,13 +16,12 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#ifndef _HISTORYURLITEM_H_
-#define _HISTORYURLITEM_H_
+#ifndef HISTORYURLITEM_H
+#define HISTORYURLITEM_H
+
+#include <KUrl>
 
 #include "historyitem.h"
-
-#include <QMap>
-#include <kurl.h>
 
 /**
  * An URL entry in the clipboard history.
@@ -31,7 +29,7 @@
 class HistoryURLItem : public HistoryItem
 {
 public:
-    HistoryURLItem( const KUrl::List &urls, KUrl::MetaDataMap metaData, bool cut );
+    HistoryURLItem( const KUrl::List& urls, KUrl::MetaDataMap metaData, bool cut );
     virtual QString text() const;
     virtual bool operator==( const HistoryItem& rhs) const;
     virtual QMimeData* mimeData() const;

@@ -60,6 +60,7 @@ class RandrMonitorModule
         QList< RandROutput* > activeOutputs( RandRDisplay &display );
         QList< RandROutput* > validCrtcOutputs( RandRDisplay &display );
         QList< RandROutput* > outputs( RandRDisplay &display, bool connected = false, bool active = false, bool validCrtc = false );
+        bool isLidPresent();
         bool have_randr;
         int randr_base;
         int randr_error;

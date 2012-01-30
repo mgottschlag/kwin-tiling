@@ -144,7 +144,9 @@ void RootInfo::changeActiveWindow(Window w, NET::RequestSource src, Time timesta
             src = NET::FromTool;
         if (src == NET::FromTool)
             workspace->activateClient(c, true);   // force
-        else { // NET::FromApplication
+        else if (c == workspace->mostRecentlyActivatedClient()) {
+            return; // WORKAROUND? With > 1 plasma activities, we cause this ourselves. bug #240673
+        } else { // NET::FromApplication
             Client* c2;
             if (workspace->allowClientActivation(c, timestamp, false, true))
                 workspace->activateClient(c);
@@ -354,12 +356,12 @@ bool Workspace::workspaceEvent(XEvent * e)
 // Note: Now the save-set support in Client::mapRequestEvent() actually requires that
 // this code doesn't check the parent to be root.
 //            if ( e->xmaprequest.parent == root ) {
-            c = createClient(e->xmaprequest.window, false);
-            if (c == NULL)   // refused to manage, simply map it (most probably override redirect)
+            if (c = createClient(e->xmaprequest.window, false))
+                c->windowEvent(e);
+            else // refused to manage, simply map it (most probably override redirect)
                 XMapRaised(display(), e->xmaprequest.window);
             return true;
-        }
-        if (c) {
+        } else {
             c->windowEvent(e);
             updateFocusChains(c, FocusChainUpdate);
             return true;
@@ -857,6 +859,8 @@ void Client::propertyNotifyEvent(XPropertyEvent* e)
             checkActivities();
         else if (e->atom == atoms->kde_net_wm_block_compositing)
             updateCompositeBlocking(true);
+        else if (e->atom == atoms->kde_first_in_window_list)
+            updateFirstInTabBox();
         break;
     }
 }
@@ -895,7 +899,7 @@ void Client::enterNotifyEvent(XCrossingEvent* e)
         }
 
         QPoint currentPos(e->x_root, e->y_root);
-        if (options->focusPolicy != Options::FocusStrictlyUnderMouse && (isDesktop() || isDock()))
+        if (isDesktop() || isDock())
             return;
         // for FocusFollowsMouse, change focus only if the mouse has actually been moved, not if the focus
         // change came because of window changes (e.g. closing a window) - #92290
@@ -943,9 +947,9 @@ void Client::leaveNotifyEvent(XCrossingEvent* e)
                 shadeHoverTimer->start(options->shadeHoverInterval);
             }
         }
-        if (options->focusPolicy == Options::FocusStrictlyUnderMouse)
-            if (isActive() && lostMouse)
-                workspace()->requestFocus(0) ;
+        if (options->focusPolicy == Options::FocusStrictlyUnderMouse && isActive() && lostMouse) {
+            workspace()->requestDelayFocus(0);
+        }
         return;
     }
 }
@@ -1558,7 +1562,7 @@ void Client::keyPressEvent(uint key_code)
 void Client::syncEvent(XSyncAlarmNotifyEvent* e)
 {
     if (e->alarm == syncRequest.alarm && XSyncValueEqual(e->counter_value, syncRequest.value)) {
-        ready_for_painting = true;
+        setReadyForPainting();
         syncRequest.isPending = false;
         if (syncRequest.failsafeTimeout)
             syncRequest.failsafeTimeout->stop();
@@ -1566,7 +1570,7 @@ void Client::syncEvent(XSyncAlarmNotifyEvent* e)
             if (syncRequest.timeout)
                 syncRequest.timeout->stop();
             performMoveResize();
-        } else
+        } else // setReadyForPainting does as well, but there's a small chance for resize syncs after the resize ended
             addRepaintFull();
     }
 }
@@ -1656,7 +1660,7 @@ void Toplevel::propertyNotifyEvent(XPropertyEvent* e)
             getWindowRole();
         else if (e->atom == atoms->kde_net_wm_shadow)
             getShadow();
-        else if (e->atom == atoms->kde_net_wm_opaque_region)
+        else if (e->atom == atoms->net_wm_opaque_region)
             getWmOpaqueRegion();
         break;
     }

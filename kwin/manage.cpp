@@ -32,10 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "rules.h"
 #include "group.h"
 
-#ifdef KWIN_BUILD_SCRIPTING
-#include "scripting/workspaceproxy.h"
-#endif
-
 namespace KWin
 {
 
@@ -47,16 +43,6 @@ namespace KWin
 bool Client::manage(Window w, bool isMapped)
 {
     StackingUpdatesBlocker stacking_blocker(workspace());
-
-#ifdef KWIN_BUILD_SCRIPTING
-    //Scripting call. Does not use a signal/slot mechanism
-    //as ensuring connections was a bit difficult between
-    //so many clients and the workspace
-    SWrapper::WorkspaceProxy* ws_wrap = SWrapper::WorkspaceProxy::instance();
-    if (ws_wrap != 0) {
-        ws_wrap->sl_clientManaging(this);
-    }
-#endif
 
     grabXServer();
 
@@ -142,6 +128,7 @@ bool Client::manage(Window w, bool isMapped)
 
     original_skip_taskbar = skip_taskbar = (info->state() & NET::SkipTaskbar) != 0;
     skip_pager = (info->state() & NET::SkipPager) != 0;
+    updateFirstInTabBox();
 
     setupCompositing();
 
@@ -323,10 +310,11 @@ bool Client::manage(Window w, bool isMapped)
     bool dontKeepInArea = false;
     if (!noBorder()) {
         setClientGroup(NULL);
+        bool autogrouping = rules()->checkAutogrouping(options->autogroupSimilarWindows);
         // Automatically add to previous groups on session restore
         if (session && session->clientGroupClient && session->clientGroupClient != this && session->clientGroupClient->clientGroup())
             session->clientGroupClient->clientGroup()->add(this, -1, true);
-        else if (isMapped)
+        else if (isMapped && autogrouping)
             // If the window is already mapped (Restarted KWin) add any windows that already have the
             // same geometry to the same client group. (May incorrectly handle maximized windows)
             foreach (ClientGroup * group, workspace()->clientGroups)
@@ -615,6 +603,7 @@ bool Client::manage(Window w, bool isMapped)
     // TODO: there's a small problem here - isManaged() depends on the mapping state,
     // but this client is not yet in Workspace's client list at this point, will
     // be only done in addClient()
+    emit clientManaging(this);
     return true;
 }
 

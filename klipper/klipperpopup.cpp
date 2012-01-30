@@ -1,7 +1,6 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
-   Copyright (C) by Andrew Stanley-Jones
+   Copyright (C) by Andrew Stanley-Jones <asj@cban.com>
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
 
    This program is free software; you can redistribute it and/or
@@ -19,14 +18,19 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-
-#include <khelpmenu.h>
-#include <klineedit.h>
-#include <klocale.h>
-#include <kwindowsystem.h>
-#include <kdebug.h>
-
 #include "klipperpopup.h"
+
+#include <QtGui/QApplication>
+#include <QtGui/QKeyEvent>
+#include <QtGui/QWidgetAction>
+
+#include <KHelpMenu>
+#include <KLineEdit>
+#include <KLocale>
+#include <KWindowSystem>
+#include <KDebug>
+#include <KIcon>
+
 #include "history.h"
 #include "klipper.h"
 #include "popupproxy.h"
@@ -85,22 +89,22 @@ protected:
 
 KlipperPopup::KlipperPopup( History* history )
     : m_dirty( true ),
-      m_qsEmpty( i18n( "<empty clipboard>" ) ),
-      m_qsNoMatch( i18n( "<no matches>" ) ),
+      m_textForEmptyHistory( i18n( "<empty clipboard>" ) ),
+      m_textForNoMatch( i18n( "<no matches>" ) ),
       m_history( history ),
-      m_helpmenu( new KHelpMenu( this, Klipper::aboutData(), false ) ),
+      m_helpMenu( new KHelpMenu( this, Klipper::aboutData(), false ) ),
       m_popupProxy( 0 ),
       m_filterWidget( 0 ),
       m_filterWidgetAction( 0 ),
       m_nHistoryItems( 0 )
 {
-    KWindowInfo i = KWindowSystem::windowInfo( winId(), NET::WMGeometry );
-    QRect g = i.geometry();
-    QRect screen = KGlobalSettings::desktopGeometry(g.center());
-    int menu_height = ( screen.height() ) * 3/4;
-    int menu_width = ( screen.width() )  * 1/3;
+    KWindowInfo windowInfo = KWindowSystem::windowInfo( winId(), NET::WMGeometry );
+    QRect geometry = windowInfo.geometry();
+    QRect screen = KGlobalSettings::desktopGeometry(geometry.center());
+    int menuHeight = ( screen.height() ) * 3/4;
+    int menuWidth = ( screen.width() )  * 1/3;
 
-    m_popupProxy = new PopupProxy( this, menu_height, menu_width );
+    m_popupProxy = new PopupProxy( this, menuHeight, menuWidth );
 
     connect( this, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()) );
 }
@@ -114,6 +118,7 @@ void KlipperPopup::slotAboutToShow() {
         if ( !m_filterWidget->text().isEmpty() ) {
             m_dirty = true;
             m_filterWidget->clear();
+            m_filterWidget->setVisible(false);
             m_filterWidgetAction->setVisible(false);
         }
     }
@@ -134,20 +139,17 @@ void KlipperPopup::buildFromScratch() {
     addTitle(KIcon("klipper"), i18n("Klipper - Clipboard Tool"));
 
     m_filterWidget = new KLineEditBlackKey(this);
+    m_filterWidget->setFocusPolicy( Qt::NoFocus );
     m_filterWidgetAction = new QWidgetAction(this);
     m_filterWidgetAction->setDefaultWidget(m_filterWidget);
-
-    addAction(m_filterWidgetAction);
-    m_filterWidget->setFocusPolicy( Qt::NoFocus );
     m_filterWidgetAction->setVisible(false);
+    addAction(m_filterWidgetAction);
 
-    QListIterator<QAction *> i(m_actions);
+    addSeparator();
     for (int i = 0; i < m_actions.count(); i++) {
-        if (i == 0)
-            addSeparator();
 
         if (i + 1 == m_actions.count()) {
-            addMenu(m_helpmenu->menu())->setIcon(KIcon("help-contents"));
+            addMenu(m_helpMenu->menu())->setIcon(KIcon("help-contents"));
             addSeparator();
         }
 
@@ -170,7 +172,7 @@ void KlipperPopup::rebuild( const QString& filter ) {
         }
     }
 
-    // We search case insensitive until no uppercased characters appear in the search term
+    // We search case insensitive until one uppercased character appears in the search term
     Qt::CaseSensitivity caseSens = (filter.toLower() == filter ? Qt::CaseInsensitive : Qt::CaseSensitive);
     QRegExp filterexp( filter, caseSens );
 
@@ -183,10 +185,10 @@ void KlipperPopup::rebuild( const QString& filter ) {
     m_nHistoryItems = m_popupProxy->buildParent( TOP_HISTORY_ITEM_INDEX, filterexp );
     if ( m_nHistoryItems == 0 ) {
         if ( m_history->empty() ) {
-            insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(m_qsEmpty, this));
+            insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(m_textForEmptyHistory, this));
         } else {
             palette.setColor( m_filterWidget->foregroundRole(), Qt::red );
-            insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(m_qsNoMatch, this));
+            insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(m_textForNoMatch, this));
         }
         m_nHistoryItems++;
     } else {
@@ -239,13 +241,20 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
     case Qt::Key_Tab:
     case Qt::Key_Backtab:
     case Qt::Key_Escape:
-    case Qt::Key_Return:
-    case Qt::Key_Enter:
     {
 #ifdef DEBUG_EVENTS__
         kDebug() << "Passing this event to ancestor (KMenu): " << e;
 #endif
         KMenu::keyPressEvent(e);
+
+        break;
+    }
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
+    {
+        KMenu::keyPressEvent(e);
+        this->hide();
+
         if (activeAction() ==  m_filterWidgetAction)
             setActiveAction(actions().at(TOP_HISTORY_ITEM_INDEX));
 
@@ -262,13 +271,14 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
 
         if (m_filterWidget->text().isEmpty()) {
             if (m_filterWidgetAction->isVisible())
+                m_filterWidget->setVisible(false);
                 m_filterWidgetAction->setVisible(false);
         }
         else if (!m_filterWidgetAction->isVisible() )
             m_filterWidgetAction->setVisible(true);
 
         if (m_filterWidget->text() != lastString) {
-            slotHistoryChanged();
+            m_dirty = true;
             rebuild(m_filterWidget->text());
         }
 

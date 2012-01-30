@@ -33,9 +33,40 @@ class ActivityManagerPrivate;
 class ActivityManager : public QGraphicsWidget
 {
     Q_OBJECT
+    /**
+     * list of all activity creation actions (ie new desktop, new search and launch, etc)
+     */
+    Q_PROPERTY(QList<QVariant> activityTypeActions READ activityTypeActions NOTIFY activityTypeActionsChanged)
+
+    /**
+     * Plasma location of the panel containment the controller is associated to
+     */
+    Q_PROPERTY(Location location READ location NOTIFY locationChanged)
+    Q_ENUMS(Location)
+
+    /**
+     * Orientation the controller will be disaplayed, depends from location
+     */
+    Q_PROPERTY(Qt::Orientation orientation READ orientation NOTIFY orientationChanged)
+
 public:
-    //FIXME must learn about 'explicit'
-    ActivityManager(Plasma::Location loc, QGraphicsItem *parent=0);
+   /**
+    * The Location enumeration describes where on screen an element, such as an
+    * Applet or its managing container, is positioned on the screen.
+    **/
+    enum Location {
+        Floating = 0, /**< Free floating. Neither geometry or z-ordering
+                        is described precisely by this value. */
+        Desktop,      /**< On the planar desktop layer, extending across
+                        the full screen from edge to edge */
+        FullScreen,   /**< Full screen */
+        TopEdge,      /**< Along the top of the screen*/
+        BottomEdge,   /**< Along the bottom of the screen*/
+        LeftEdge,     /**< Along the left side of the screen */
+        RightEdge     /**< Along the right side of the screen */
+    };
+
+    explicit ActivityManager(Plasma::Location loc, QGraphicsItem *parent=0);
     ActivityManager(QGraphicsItem *parent=0);
     ~ActivityManager();
 
@@ -46,39 +77,34 @@ public:
      */
     void setContainment(Plasma::Containment *containment);
 
-    /**
-     * set location
-     */
     void setLocation(Plasma::Location loc);
 
-    /**
-     * @return the location
-     */
-    Plasma::Location location();
+    //FIXME: it's asymmetric due to the problems of QML of exporting enums
+    ActivityManager::Location location();
 
-    //FIXME what logic does this iconsize thing follow?
-    /**
-     * Sets the icon size
-     */
-    void setIconSize(int size);
+    Qt::Orientation orientation() const;
 
-    /**
-     * @return the icon size
-     */
-    int iconSize() const;
+    QList<QVariant> activityTypeActions();
+
+    Q_INVOKABLE QPixmap pixmapForActivity(const QString &activityId);
+    Q_INVOKABLE void cloneCurrentActivity();
+    Q_INVOKABLE void createActivity(const QString &pluginName);
+    Q_INVOKABLE void createActivityFromScript(const QString &script, const QString &name, const QString &icon, const QStringList &startupApps);
+    Q_INVOKABLE void downloadActivityScripts();
+    Q_INVOKABLE QString chooseIcon() const;
 
 Q_SIGNALS:
     void locationChanged(Plasma::Location loc);
+    void orientationChanged();
     void closeClicked();
     void addWidgetsRequested();
-
-protected:
-    void focusInEvent(QFocusEvent *event);
+    void activityTypeActionsChanged();
 
 private:
     Q_PRIVATE_SLOT(d, void containmentDestroyed())
 
     ActivityManagerPrivate * const d;
+    friend class ActivityManagerPrivate;
 
 };
 

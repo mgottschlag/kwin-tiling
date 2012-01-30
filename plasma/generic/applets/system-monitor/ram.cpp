@@ -86,12 +86,69 @@ bool SM::Ram::addVisualization(const QString& source)
         return false;
     }
     QString ram = l[1];
+
     SM::Plotter *plotter = new SM::Plotter(this);
+
+    // 'ram' should be "physical" or "swap". I'm not aware of other values
+    // for it, but who knows.
+    if (ram == "physical") {
+        ram = i18nc("noun, hardware, physical RAM/memory", "physical");
+    } else if (ram == "swap") {
+        ram = i18nc("noun, hardware, swap file/partition", "swap");
+    }
+
     plotter->setTitle(ram);
     plotter->setUnit("B");
+
     appendVisualization(source, plotter);
     setPreferredItemHeight(80);
+
     return true;
+}
+
+double SM::Ram::preferredBinaryUnit()
+{
+    KLocale::BinaryUnitDialect binaryUnit = KGlobal::locale()->binaryUnitDialect();
+
+    // this makes me feel all dirty inside. but it's the only way I could find
+    // which will let us know what we should be scaling our graph by, independent
+    // of how locale settings are configured.
+    switch (binaryUnit) {
+        case KLocale::IECBinaryDialect:
+            //fallthrough
+        case KLocale::JEDECBinaryDialect:
+            return 1024;
+            break;
+        case KLocale::MetricBinaryDialect:
+            return 1000;
+            break;
+
+        default:
+            // being careful..I'm sure some genius will invent a new byte unit system ;-)
+            Q_ASSERT_X(0, "preferredBinaryUnit", "invalid binary preference enum returned");
+            return 0;
+    }
+}
+
+QStringList SM::Ram::preferredUnitsList()
+{
+    QStringList units;
+    KLocale::BinaryUnitDialect binaryUnit = KGlobal::locale()->binaryUnitDialect();
+    switch (binaryUnit) {
+        case KLocale::IECBinaryDialect:
+            units << "B" << "KiB" << "MiB" << "GiB" << "TiB";
+            break;
+        case KLocale::JEDECBinaryDialect:
+            units << "B" << "KB" << "MB" << "GB" << "TB";
+            break;
+        case KLocale::MetricBinaryDialect:
+            units << "B" << "kB" << "MB" << "GB" << "TB";
+            break;
+        default:
+            Q_ASSERT_X(0, "preferredBinaryUnit", "invalid binary preference enum returned");
+    }
+
+    return units;
 }
 
 void SM::Ram::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
@@ -99,26 +156,33 @@ void SM::Ram::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(source));
     if (plotter) {
         /* A factor to convert from default units to bytes.
-         * If units is not "KB", assume it is bytes. */
-        const double factor = (data["units"].toString() == "KB") ? 1024.0 : 1.0;
+         * If units is not "KB", assume it is bytes.
+         * NOTE: the dataengine refers to KB == 1024. so it's KiB as well.
+         * Though keep in mind, KB does not imply 1024 and can be KB == 1000 as well.
+         */
+        const double preferredUnit = preferredBinaryUnit();
+        const double factor = (data["units"].toString() == "KB") ? preferredUnit : 1.0;
         const double value_b = data["value"].toDouble() * factor;
         const double max_b = data["max"].toDouble() * factor;
-        static const QStringList units = QStringList() << "B" << "KiB" << "MiB" << "GiB" << "TiB";
+        const QStringList units = preferredUnitsList();
+
         if (value_b > m_max[source]) {
             m_max[source] = max_b;
             plotter->setMinMax(0.0, max_b);
             qreal scale = 1.0;
             int i = 0;
-            while (max_b / scale > 1024.0 && i < units.size()) {
-                scale *= 1024.0;
+            while (max_b / scale > factor && i < units.size()) {
+                scale *= factor;
                 ++i;
             }
+
             plotter->setUnit(units[i]);
             plotter->setScale(scale);
         }
 
         plotter->addSample(QList<double>() << value_b);
         QString temp = KGlobal::locale()->formatByteSize(value_b);
+
         if (mode() == SM::Applet::Panel) {
             setToolTip(source, QString("<tr><td>%1</td><td>%2</td><td>of</td><td>%3</td></tr>")
                                       .arg(plotter->title())
@@ -136,24 +200,38 @@ void SM::Ram::createConfigurationInterface(KConfigDialog *parent)
     m_model.setHorizontalHeaderLabels(QStringList() << i18n("RAM"));
     QStandardItem *parentItem = m_model.invisibleRootItem();
     QRegExp rx("mem/(\\w+)/.*");
+    QString ramName;
 
     foreach (const QString& ram, m_memories) {
         if (rx.indexIn(ram) != -1) {
-            QStandardItem *item1 = new QStandardItem(rx.cap(1));
-            item1->setEditable(false);
-            item1->setCheckable(true);
-            item1->setData(ram);
-            if (sources().contains(ram)) {
-                item1->setCheckState(Qt::Checked);
+            ramName = rx.cap(1);
+
+            // 'ram' should be "physical" or "swap". I'm not aware of other values
+            // for it, but who knows. (see also addVisualization)
+            if (ramName == "physical") {
+                ramName = i18nc("noun, hardware, physical RAM/memory", "physical");
+            } else if (ramName == "swap") {
+                ramName = i18nc("noun, hardware, swap file/partition", "swap");
             }
-            parentItem->appendRow(QList<QStandardItem *>() << item1);
+
+            QStandardItem *ramItem = new QStandardItem(ramName);
+            ramItem->setEditable(false);
+            ramItem->setCheckable(true);
+            ramItem->setData(ram);
+
+            if (sources().contains(ram)) {
+                ramItem->setCheckState(Qt::Checked);
+            }
+
+            parentItem->appendRow(ramItem);
         }
     }
+
     ui.treeView->setModel(&m_model);
     ui.treeView->resizeColumnToContents(0);
     ui.intervalSpinBox->setValue(interval() / 1000.0);
     ui.intervalSpinBox->setSuffix(i18nc("second", " s"));
-    parent->addPage(widget, i18n("RAM"), "media-flash-memory-stick");
+    parent->addPage(widget, i18n("RAM"), "media-flash");
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
@@ -172,10 +250,15 @@ void SM::Ram::configAccepted()
         QStandardItem *item = parentItem->child(i, 0);
         if (item) {
             if (item->checkState() == Qt::Checked) {
+                // data() is the untranslated string
+                // for use with sources
                 appendSource(item->data().toString());
             }
         }
     }
+
+    // note we write and read non-translated
+    // version to config file.
     cg.writeEntry("memories", sources());
 
     double interval = ui.intervalSpinBox->value();

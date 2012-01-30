@@ -45,8 +45,6 @@ class PowerDevilRunner : public Plasma::AbstractRunner
         void addSuspendMatch(int value, QList<Plasma::QueryMatch> &matches);
         bool parseQuery(const QString& query, const QList<QRegExp>& rxList, QString& parameter) const;
 
-        QDBusConnection m_dbus;
-
         StringStringMap m_availableProfiles;
         QHash<QString, QString> m_profileIcon;
         QHash<int, QString> m_suspendMethods;

@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
 
@@ -17,18 +16,19 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#include <QRegExp>
-#include <QStyle>
-#include <QPixmap>
-#include <QImage>
-#include <QStyleOption>
+#include "popupproxy.h"
 
-#include <kstringhandler.h>
-#include <klocale.h>
-#include <kdebug.h>
+#include <QtCore/QRegExp>
+#include <QtGui/QStyle>
+#include <QtGui/QPixmap>
+#include <QtGui/QImage>
+#include <QtGui/QStyleOption>
+
+#include <KMenu>
+#include <KLocale>
+#include <KDebug>
 
 #include "historyitem.h"
-#include "popupproxy.h"
 #include "history.h"
 #include "klipperpopup.h"
 

@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
    Copytight (C) by Andrew Stanley-Jones
@@ -20,16 +19,19 @@
 #ifndef KLIPPERPOPUP_H
 #define KLIPPERPOPUP_H
 
-#include <QList>
-#include <QWidgetAction>
+#include <QtCore/QList>
 
-#include <kmenu.h>
+#include <KMenu>
 
-class History;
-class KHelpMenu;
 class QAction;
-class PopupProxy;
+class QWidgetAction;
+class QKeyEvent;
+
+class KHelpMenu;
 class KLineEdit;
+
+class PopupProxy;
+class History;
 
 /**
  * Default view of clipboard history.
@@ -65,9 +67,6 @@ private:
     void rebuild( const QString& filter = QString() );
     void buildFromScratch();
 
-    void insertSearchFilter();
-    void removeSearchFilter();
-
 protected:
      virtual void keyPressEvent( QKeyEvent* e );
 
@@ -77,13 +76,13 @@ private:
     /**
      * Contains the string shown if the menu is empty.
      */
-    QString m_qsEmpty;
+    QString m_textForEmptyHistory;
 
     /**
      * Contains the string shown if the search string has no
      * matches and the menu is not empty.
      */
-    QString m_qsNoMatch;
+    QString m_textForNoMatch;
 
     /**
      * The "document" (clipboard history)
@@ -93,7 +92,7 @@ private:
     /**
      * The help menu
      */
-    KHelpMenu* m_helpmenu;
+    KHelpMenu* m_helpMenu;
 
     /**
      * (unowned) actions to plug into the primary popup menu
@@ -113,17 +112,12 @@ private:
     /**
      * Action of search widget
      */
-    QWidgetAction *m_filterWidgetAction;
+    QWidgetAction* m_filterWidgetAction;
 
     /**
      * The current number of history items in the clipboard
      */
     int m_nHistoryItems;
-
-Q_SIGNALS:
-    void clearHistory();
-    void configure();
-    void quit();
 
 };
 

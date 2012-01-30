@@ -19,9 +19,9 @@
 #ifndef ACTIVITYRUNNER_H
 #define ACTIVITYRUNNER_H
 
-#include <kworkspace/kactivitycontroller.h>
-
 #include <Plasma/AbstractRunner>
+
+#include <KActivities/Controller>
 
 class ActivityRunner : public Plasma::AbstractRunner
 {
@@ -37,12 +37,12 @@ class ActivityRunner : public Plasma::AbstractRunner
     private Q_SLOTS:
         void prep();
         void down();
-        void serviceStatusChanged(KActivityConsumer::ServiceStatus status);
+        void serviceStatusChanged(KActivities::Consumer::ServiceStatus status);
 
     private:
-        void addMatch(const KActivityInfo &activity, QList<Plasma::QueryMatch> &matches);
+        void addMatch(const KActivities::Info &activity, QList<Plasma::QueryMatch> &matches);
 
-        KActivityController *m_activities;
+        KActivities::Controller *m_activities;
         const QString m_keywordi18n;
         const QString m_keyword;
         bool m_enabled;

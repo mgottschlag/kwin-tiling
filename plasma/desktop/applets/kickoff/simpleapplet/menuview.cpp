@@ -140,6 +140,7 @@ public:
     QPoint mousePressPos;
     QList<QStandardItem*> items;
     QHash<QAbstractItemModel*, QAction*> modelsHeader;
+    QList<QWeakPointer<QAbstractItemModel> > models;
 };
 
 MenuView::MenuView(QWidget *parent, const QString &title, const QIcon &icon)
@@ -159,12 +160,11 @@ MenuView::MenuView(QWidget *parent, const QString &title, const QIcon &icon)
 
 MenuView::~MenuView()
 {
-    // delete all the models before we are; we can't let ~QObject do this
-    // for us since by that point it is too late and we'll get all 
-    foreach (QObject *child, children()) {
-        if (QAbstractItemModel *model = qobject_cast<QAbstractItemModel *>(child)) {
+    QListIterator<QWeakPointer<QAbstractItemModel> > it(d->models);
+    while (it.hasNext()) {
+        QAbstractItemModel *model = it.next().data();
+        if (model) {
             model->disconnect(this);
-            delete model;
         }
     }
 
@@ -277,23 +277,33 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
 
             return true;
         }
-    } break;
+
+        break;
+    }
+
     case QEvent::MouseButtonPress: {
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
         QMenu *watchedMenu = qobject_cast<QMenu*>(watched);
         if (watchedMenu) {
             d->mousePressPos = mouseEvent->pos();
         }
-    } break;
+
+        break;
+    }
+
     case QEvent::MouseButtonRelease: {
         QMenu *watchedMenu = qobject_cast<QMenu*>(watched);
         if (watchedMenu) {
             d->mousePressPos = QPoint();
         }
-    } break;
+
+        break;
+    }
+
     case QEvent::Hide: {
         emit afterBeingHidden();
-    } break;
+        break;
+    }
 
     case QEvent::ToolTip: {
         bool hide = true;
@@ -308,17 +318,20 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
                 if ((toolTip != watchedMenu->activeAction()->text()) && (watchedMenu->activeAction()->menu() == 0)) {
                 QToolTip::showText(helpEvent->globalPos(), toolTip);
                 hide = false ;
-		}
-	    }
-	} 
+                }
+            }
+        }
 
-   if (hide) {
-         QToolTip::hideText();
-         event->ignore();
-   }
-    } break;
-    
-    default: break;
+        if (hide) {
+            QToolTip::hideText();
+            event->ignore();
+        }
+
+        break;
+    }
+
+    default:
+        break;
     }
 
     return KMenu::eventFilter(watched, event);
@@ -332,17 +345,19 @@ void MenuView::addModel(QAbstractItemModel *model, MenuView::ModelOptions option
     header->setVisible(false);
 
     d->modelsHeader.insert(model, header);
+    d->models.append(model);
 
-    if(options & MergeFirstLevel) {
+    if (options & MergeFirstLevel) {
         const int count = model->rowCount();
-        for(int row = 0; row < count; ++row) {
+        for (int row = 0; row < count; ++row) {
             QModelIndex index = model->index(row, 0, QModelIndex());
             Q_ASSERT(index.isValid());
 
             const QString title = index.data(Qt::DisplayRole).value<QString>();
-            if (count > 1 && ! title.isEmpty() && model->rowCount(index) > 0)
+            if (count > 1 && ! title.isEmpty() && model->rowCount(index) > 0) {
                 addTitle(title);
-            
+            }
+
             model->blockSignals(true);
             model->setData(index, qVariantFromValue(this->menuAction()), Private::ActionRole);
             model->blockSignals(false);
@@ -357,7 +372,6 @@ void MenuView::addModel(QAbstractItemModel *model, MenuView::ModelOptions option
         d->buildBranch(this, model, root);
     }
 
-//connect(model, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int)));
     connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int)));
     connect(model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int)));
     connect(model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
@@ -388,8 +402,10 @@ QModelIndex MenuView::indexForAction(QAction *action) const
 
 QAction *MenuView::actionForIndex(const QModelIndex& index) const
 {
-    if (!index.isValid())
+    if (!index.isValid()) {
         return this->menuAction();
+    }
+
     const QAbstractItemModel *model = index.model();
     Q_ASSERT(model);
     QVariant v = model->data(index, Private::ActionRole);
@@ -407,7 +423,7 @@ bool MenuView::isValidIndex(const QModelIndex& index) const
 
 void MenuView::rowsInserted(const QModelIndex& parent, int start, int end)
 {
-    kDebug()<<start<<end;
+    kDebug() << start << end;
 
     Q_ASSERT(parent.isValid());
     Q_ASSERT(parent.model());
@@ -416,7 +432,9 @@ void MenuView::rowsInserted(const QModelIndex& parent, int start, int end)
     QMenu *menu = isValidIndex(parent) ? actionForIndex(parent)->menu() : this;
 
     QAbstractItemModel *model = const_cast<QAbstractItemModel*>(parent.model());
-    Q_ASSERT(model);
+    if (!model) {
+        return;
+    }
 
     QList<QAction*> newActions;
     for (int row = start; row <= end; row++) {
@@ -444,49 +462,30 @@ void MenuView::rowsInserted(const QModelIndex& parent, int start, int end)
     }
 
     if (lastidx >= 0) {
-        if (offset < start)
+        if (offset < start) {
             lastidx++; // insert action the item right after the last valid index
-        if (lastidx < menu->actions().count())
+        }
+
+        if (lastidx < menu->actions().count()) {
             menu->insertActions(menu->actions()[lastidx], newActions);
-        else
+        } else {
             lastidx = -1;
+        }
     }
-    if (lastidx < 0) // just append the action
+
+    if (lastidx < 0) {
+        // just append the action
         menu->addActions(newActions);
+    }
 }
 
 void MenuView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int end)
 {
-    kDebug()<<start<<end;
-#if 0
-    Q_ASSERT(parent.isValid());
-    Q_ASSERT(parent.model());
-    QAbstractItemModel *model = const_cast<QAbstractItemModel*>(parent.model());
-    Q_ASSERT(model);
-    for (int row = end; row >= start; --row) {
-        QModelIndex index = model->index(row, d->column, parent);
-        QAction *action = actionForIndex(index);
-        Q_ASSERT(action);
-        QMenu *menu = dynamic_cast<QMenu*>(action->parent());
-        Q_ASSERT(menu);
-        menu->removeAction(action);
-    }
-    /*
-    QAction *menuAction = 0;
-    if(parent.model()->data(parent, Private::ActionRole).isValid()) menuAction = actionForIndex(parent);
-    Q_ASSERT(menuAction);
-    QMenu *menu = menuAction->menu();
-    Q_ASSERT(menu);
-    QList<QAction*> actions = menu->actions();
-    Q_ASSERT(end < actions.count());
-    for (int row = end; row >= start; row--) menu->removeAction(actions[row]);
-    */
-#else
+    kDebug() << start << end;
     Q_UNUSED(parent);
     Q_UNUSED(start);
     Q_UNUSED(end);
     modelReset();
-#endif
 }
 
 void MenuView::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
@@ -549,7 +548,7 @@ void MenuView::actionTriggered(QAction *action)
         d->launcher->openUrl(url.url());
     } else {
         QModelIndex index = indexForAction(action);
-        if(index.isValid()) {
+        if (index.isValid()) {
             d->launcher->openItem(index);
         } else {
             kWarning()<<"Invalid action objectName="<<action->objectName()<<"text="<<action->text()<<"parent="<<(action->parent()?action->parent()->metaObject()->className():"NULL");
@@ -557,9 +556,9 @@ void MenuView::actionTriggered(QAction *action)
     }
 }
 
-void MenuView::contextMenuRequested(const QPoint& pos)
+void MenuView::contextMenuRequested(const QPoint &pos)
 {
-    KMenu* menu = qobject_cast<KMenu*>(sender());
+    KMenu *menu = qobject_cast<KMenu *>(sender());
     emit customContextMenuRequested(menu, pos);
 }
 

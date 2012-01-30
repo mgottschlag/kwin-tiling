@@ -1,5 +1,5 @@
 /********************************************************************
-Copyright (C) 2009, 2010 Martin Gräßlin <kde@martin-graesslin.com>
+Copyright (C) 2009, 2010, 2012 Martin Gräßlin <mgraesslin@kde.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,15 +16,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 
 #include "aurorae.h"
-#include "auroraescene.h"
 #include "auroraetheme.h"
 
 #include <QApplication>
-#include <QGraphicsView>
-#include <QGraphicsSceneMouseEvent>
+#include <QtDeclarative/QDeclarativeComponent>
+#include <QtDeclarative/QDeclarativeContext>
+#include <QtDeclarative/QDeclarativeEngine>
+#include <QtDeclarative/QDeclarativeItem>
+#include <QtGui/QGraphicsView>
 
 #include <KConfig>
 #include <KConfigGroup>
+#include <KStandardDirs>
 #include <Plasma/FrameSvg>
 
 namespace Aurorae
@@ -34,12 +37,16 @@ AuroraeFactory::AuroraeFactory()
         : QObject()
         , KDecorationFactoryUnstable()
         , m_theme(new AuroraeTheme(this))
+        , m_engine(new QDeclarativeEngine(this))
+        , m_component(new QDeclarativeComponent(m_engine, this))
 {
     init();
 }
 
 void AuroraeFactory::init()
 {
+    qRegisterMetaType<uint>("Qt::MouseButtons");
+
     KConfig conf("auroraerc");
     KConfigGroup group(&conf, "Engine");
 
@@ -49,8 +56,14 @@ void AuroraeFactory::init()
     m_theme->loadTheme(themeName, config);
     m_theme->setBorderSize((KDecorationDefines::BorderSize)themeGroup.readEntry<int>("BorderSize", KDecorationDefines::BorderNormal));
     m_theme->setButtonSize((KDecorationDefines::BorderSize)themeGroup.readEntry<int>("ButtonSize", KDecorationDefines::BorderNormal));
-    m_theme->setShowTooltips(options()->showTooltips());
     m_theme->setTabDragMimeType(clientGroupItemDragMimeType());
+    // setup the QML engine
+    foreach (const QString &importPath, KGlobal::dirs()->findDirs("module", "imports")) {
+        m_engine->addImportPath(importPath);
+    }
+    m_component->loadUrl(QUrl(KStandardDirs::locate("data", "kwin/aurorae/aurorae.qml")));
+    m_engine->rootContext()->setContextProperty("auroraeTheme", m_theme);
+    m_engine->rootContext()->setContextProperty("options", this);
 }
 
 AuroraeFactory::~AuroraeFactory()
@@ -69,8 +82,20 @@ AuroraeFactory *AuroraeFactory::instance()
 
 bool AuroraeFactory::reset(unsigned long changed)
 {
-    init();
-    resetDecorations(changed);
+    if (changed & SettingButtons) {
+        emit buttonsChanged();
+    }
+    const KConfig conf("auroraerc");
+    const KConfigGroup group(&conf, "Engine");
+    const QString themeName = group.readEntry("ThemeName", "example-deco");
+    const KConfig config("aurorae/themes/" + themeName + '/' + themeName + "rc", KConfig::FullConfig, "data");
+    const KConfigGroup themeGroup(&conf, themeName);
+    if (themeName != m_theme->themeName()) {
+        m_theme->loadTheme(themeName, config);
+        resetDecorations(changed);
+    }
+    m_theme->setBorderSize((KDecorationDefines::BorderSize)themeGroup.readEntry<int>("BorderSize", KDecorationDefines::BorderNormal));
+    m_theme->setButtonSize((KDecorationDefines::BorderSize)themeGroup.readEntry<int>("ButtonSize", KDecorationDefines::BorderNormal));
     return false; // need hard reset
 }
 
@@ -82,27 +107,18 @@ bool AuroraeFactory::supports(Ability ability) const
     case AbilityButtonMenu:
     case AbilityButtonSpacer:
     case AbilityExtendIntoClientArea:
-        return true;
     case AbilityButtonMinimize:
-        return m_theme->hasButton(MinimizeButton);
     case AbilityButtonMaximize:
-        return m_theme->hasButton(MaximizeButton) || m_theme->hasButton(RestoreButton);
     case AbilityButtonClose:
-        return m_theme->hasButton(CloseButton);
     case AbilityButtonAboveOthers:
-        return m_theme->hasButton(KeepAboveButton);
     case AbilityButtonBelowOthers:
-        return m_theme->hasButton(KeepBelowButton);
     case AbilityButtonShade:
-        return m_theme->hasButton(ShadeButton);
     case AbilityButtonOnAllDesktops:
-        return m_theme->hasButton(AllDesktopsButton);
     case AbilityButtonHelp:
-        return m_theme->hasButton(HelpButton);
     case AbilityProvidesShadow:
         return true; // TODO: correct value from theme
     case AbilityClientGrouping:
-        return true;
+        return false;
     case AbilityUsesBlurBehind:
         return true;
     default:
@@ -123,6 +139,27 @@ QList< KDecorationDefines::BorderSize > AuroraeFactory::borderSizes() const
         BorderVeryHuge << BorderOversized;
 }
 
+QDeclarativeItem *AuroraeFactory::createQmlDecoration(Aurorae::AuroraeClient *client)
+{
+    QDeclarativeContext *context = new QDeclarativeContext(m_engine->rootContext(), this);
+    context->setContextProperty("decoration", client);
+    return qobject_cast< QDeclarativeItem* >(m_component->create(context));
+}
+
+QString AuroraeFactory::rightButtons()
+{
+    return options()->titleButtonsRight();
+}
+
+QString AuroraeFactory::leftButtons()
+{
+    return options()->titleButtonsLeft();
+}
+
+bool AuroraeFactory::customButtonPositions()
+{
+    return options()->customButtonPositions();
+}
 
 AuroraeFactory *AuroraeFactory::s_instance = NULL;
 
@@ -131,50 +168,23 @@ AuroraeFactory *AuroraeFactory::s_instance = NULL;
 *******************************************************/
 AuroraeClient::AuroraeClient(KDecorationBridge *bridge, KDecorationFactory *factory)
     : KDecorationUnstable(bridge, factory)
-    , m_clickInProgress(false)
+    , m_view(NULL)
+    , m_scene(new QGraphicsScene(this))
+    , m_item(AuroraeFactory::instance()->createQmlDecoration(this))
 {
-    m_scene = new AuroraeScene(AuroraeFactory::instance()->theme(),
-                               options()->customButtonPositions() ? options()->titleButtonsLeft() : AuroraeFactory::instance()->theme()->defaultButtonsLeft(),
-                               options()->customButtonPositions() ? options()->titleButtonsRight() : AuroraeFactory::instance()->theme()->defaultButtonsRight(),
-                               providesContextHelp(), NULL);
-    connect(m_scene, SIGNAL(closeWindow()), SLOT(closeWindow()));
-    connect(m_scene, SIGNAL(maximize(Qt::MouseButtons)), SLOT(maximize(Qt::MouseButtons)));
-    connect(m_scene, SIGNAL(showContextHelp()), SLOT(showContextHelp()));
-    connect(m_scene, SIGNAL(minimizeWindow()), SLOT(minimize()));
-    connect(m_scene, SIGNAL(menuClicked()), SLOT(menuClicked()));
-    connect(m_scene, SIGNAL(menuDblClicked()), SLOT(closeWindow()));
-    connect(m_scene, SIGNAL(toggleOnAllDesktops()), SLOT(toggleOnAllDesktops()));
-    connect(m_scene, SIGNAL(toggleShade()), SLOT(toggleShade()));
-    connect(m_scene, SIGNAL(toggleKeepAbove()), SLOT(toggleKeepAbove()));
-    connect(m_scene, SIGNAL(toggleKeepBelow()), SLOT(toggleKeepBelow()));
-    connect(m_scene, SIGNAL(titlePressed(Qt::MouseButton,Qt::MouseButtons)),
-            SLOT(titlePressed(Qt::MouseButton,Qt::MouseButtons)));
-    connect(m_scene, SIGNAL(titleReleased(Qt::MouseButton,Qt::MouseButtons)),
-            SLOT(titleReleased(Qt::MouseButton,Qt::MouseButtons)));
-    connect(m_scene, SIGNAL(titleDoubleClicked()), SLOT(titlebarDblClickOperation()));
-    connect(m_scene, SIGNAL(titleMouseMoved(Qt::MouseButton,Qt::MouseButtons)), 
-            SLOT(titleMouseMoved(Qt::MouseButton,Qt::MouseButtons)));
-    connect(m_scene, SIGNAL(wheelEvent(int)), SLOT(titlebarMouseWheelOperation(int)));
-    connect(m_scene, SIGNAL(tabMouseButtonPress(QGraphicsSceneMouseEvent*,int)),
-            SLOT(tabMouseButtonPress(QGraphicsSceneMouseEvent*,int)));
-    connect(m_scene, SIGNAL(tabMouseButtonRelease(QGraphicsSceneMouseEvent*,int)),
-            SLOT(tabMouseButtonRelease(QGraphicsSceneMouseEvent*,int)));
-    connect(m_scene, SIGNAL(tabRemoved(int)), SLOT(tabRemoved(int)));
-    connect(m_scene, SIGNAL(tabMoved(int,int)), SLOT(tabMoved(int,int)));
-    connect(m_scene, SIGNAL(tabMovedToGroup(long int,int)), SLOT(tabMovedToGroup(long int,int)));
-    connect(this, SIGNAL(keepAboveChanged(bool)), SLOT(keepAboveChanged(bool)));
-    connect(this, SIGNAL(keepBelowChanged(bool)), SLOT(keepBelowChanged(bool)));
+    connect(this, SIGNAL(keepAboveChanged(bool)), SIGNAL(keepAboveChangedWrapper()));
+    connect(this, SIGNAL(keepBelowChanged(bool)), SIGNAL(keepBelowChangedWrapper()));
 }
 
 AuroraeClient::~AuroraeClient()
 {
     m_view->setParent(NULL);
     m_view->deleteLater();
-    m_scene->deleteLater();
 }
 
 void AuroraeClient::init()
 {
+    m_scene->setItemIndexMethod(QGraphicsScene::NoIndex);
     // HACK: we need to add the GraphicsView as a child widget to a normal widget
     // the GraphicsView eats the mouse release event and by that kwin core starts to move
     // the decoration each time the decoration is clicked
@@ -183,83 +193,99 @@ void AuroraeClient::init()
     createMainWidget();
     widget()->setAttribute(Qt::WA_TranslucentBackground);
     widget()->setAttribute(Qt::WA_NoSystemBackground);
-    widget()->installEventFilter(this);
     m_view = new QGraphicsView(m_scene, widget());
     m_view->setAttribute(Qt::WA_TranslucentBackground);
+    m_view->setWindowFlags(Qt::X11BypassWindowManagerHint);
     m_view->setFrameShape(QFrame::NoFrame);
+    m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_view->setOptimizationFlags(QGraphicsView::DontSavePainterState);
+    m_view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
     QPalette pal = m_view->palette();
     pal.setColor(m_view->backgroundRole(), Qt::transparent);
     m_view->setPalette(pal);
     QPalette pal2 = widget()->palette();
     pal2.setColor(widget()->backgroundRole(), Qt::transparent);
     widget()->setPalette(pal2);
-    m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    // scene initialisation
-    m_scene->setActive(isActive(), false);
-    m_scene->setIcon(icon());
-    m_scene->setAllDesktops(isOnAllDesktops());
-    m_scene->setMaximizeMode(options()->moveResizeMaximizedWindows() ? MaximizeRestore : maximizeMode());
-    m_scene->setShade(isShade());
-    m_scene->setKeepAbove(keepAbove());
-    m_scene->setKeepBelow(keepBelow());
-    m_scene->setFont(KDecoration::options()->font(true), true);
-    m_scene->setFont(KDecoration::options()->font(false), false);
+    m_scene->addItem(m_item);
+
     AuroraeFactory::instance()->theme()->setCompositingActive(compositingActive());
+    connect(AuroraeFactory::instance()->theme(), SIGNAL(themeChanged()), SLOT(themeChanged()));
 }
 
 void AuroraeClient::activeChange()
 {
-    if (m_scene->isActive() != isActive()) {
-        m_scene->setActive(isActive());
-    }
+    emit activeChanged();
 }
 
 void AuroraeClient::captionChange()
 {
-    checkTabs(true);
+    emit captionChanged();
 }
 
 void AuroraeClient::iconChange()
 {
-    m_scene->setIcon(icon());
+    emit iconChanged();
 }
 
 void AuroraeClient::desktopChange()
 {
-    m_scene->setAllDesktops(isOnAllDesktops());
+    emit desktopChanged();
 }
 
 void AuroraeClient::maximizeChange()
 {
     if (!options()->moveResizeMaximizedWindows()) {
-        m_scene->setMaximizeMode(maximizeMode());
+        emit maximizeChanged();
     }
 }
 
 void AuroraeClient::resize(const QSize &s)
 {
+    if (m_item) {
+        m_item->setWidth(s.width());
+        m_item->setHeight(s.height());
+    }
     m_scene->setSceneRect(QRectF(QPoint(0, 0), s));
-    m_scene->updateLayout();
     m_view->resize(s);
     widget()->resize(s);
-    updateWindowShape();
 }
 
 void AuroraeClient::shadeChange()
 {
-    m_scene->setShade(isShade());
+    emit shadeChanged();
 }
 
 void AuroraeClient::borders(int &left, int &right, int &top, int &bottom) const
 {
+    if (!m_item) {
+        left = right = top = bottom = 0;
+        return;
+    }
     const bool maximized = maximizeMode() == MaximizeFull && !options()->moveResizeMaximizedWindows();
-    AuroraeFactory::instance()->theme()->borders(left, top, right, bottom, maximized);
+    if (maximized) {
+        left = m_item->property("borderLeftMaximized").toInt();
+        right = m_item->property("borderRightMaximized").toInt();
+        top = m_item->property("borderTopMaximized").toInt();
+        bottom = m_item->property("borderBottomMaximized").toInt();
+    } else {
+        left = m_item->property("borderLeft").toInt();
+        right = m_item->property("borderRight").toInt();
+        top = m_item->property("borderTop").toInt();
+        bottom = m_item->property("borderBottom").toInt();
+    }
 }
 
 void AuroraeClient::padding(int &left, int &right, int &top, int &bottom) const
 {
-    AuroraeFactory::instance()->theme()->padding(left, top, right, bottom);
+    if (!m_item) {
+        left = right = top = bottom = 0;
+        return;
+    }
+    left = m_item->property("paddingLeft").toInt();
+    right = m_item->property("paddingRight").toInt();
+    top = m_item->property("paddingTop").toInt();
+    bottom = m_item->property("paddingBottom").toInt();
 }
 
 QSize AuroraeClient::minimumSize() const
@@ -315,18 +341,6 @@ KDecorationDefines::Position AuroraeClient::mousePosition(const QPoint &point) c
 
 void AuroraeClient::reset(long unsigned int changed)
 {
-    if (changed & SettingCompositing) {
-        updateWindowShape();
-        AuroraeFactory::instance()->theme()->setCompositingActive(compositingActive());
-    }
-    if (changed & SettingButtons) {
-        m_scene->setButtons(options()->customButtonPositions() ? options()->titleButtonsLeft() : AuroraeFactory::instance()->theme()->defaultButtonsLeft(),
-                            options()->customButtonPositions() ? options()->titleButtonsRight() : AuroraeFactory::instance()->theme()->defaultButtonsRight());
-    }
-    if (changed & SettingFont) {
-        m_scene->setFont(KDecoration::options()->font(true), true);
-        m_scene->setFont(KDecoration::options()->font(false), false);
-    }
     KDecoration::reset(changed);
 }
 
@@ -340,22 +354,6 @@ void AuroraeClient::toggleShade()
     setShade(!isShade());
 }
 
-void AuroraeClient::keepAboveChanged(bool above)
-{
-    if (above && m_scene->isKeepBelow()) {
-        m_scene->setKeepBelow(false);
-    }
-    m_scene->setKeepAbove(above);
-}
-
-void AuroraeClient::keepBelowChanged(bool below)
-{
-    if (below && m_scene->isKeepAbove()) {
-        m_scene->setKeepAbove(false);
-    }
-    m_scene->setKeepBelow(below);
-}
-
 void AuroraeClient::toggleKeepAbove()
 {
     setKeepAbove(!keepAbove());
@@ -366,33 +364,24 @@ void AuroraeClient::toggleKeepBelow()
     setKeepBelow(!keepBelow());
 }
 
-void AuroraeClient::updateWindowShape()
+bool AuroraeClient::isMaximized() const
 {
-    bool maximized = maximizeMode()==KDecorationDefines::MaximizeFull && !options()->moveResizeMaximizedWindows();
-    int w=widget()->width();
-    int h=widget()->height();
+    return maximizeMode()==KDecorationDefines::MaximizeFull && !options()->moveResizeMaximizedWindows();
+}
 
-    if (maximized || compositingActive()) {
-        QRegion mask(0,0,w,h);
-        setMask(mask);
-        return;
-    }
+void AuroraeClient::titlePressed(int button, int buttons)
+{
+    titlePressed(static_cast<Qt::MouseButton>(button), static_cast<Qt::MouseButtons>(buttons));
+}
 
-    int pl, pt, pr, pb;
-    padding(pl, pr, pt, pb);
-    Plasma::FrameSvg *deco = AuroraeFactory::instance()->theme()->decoration();
-    if (!deco->hasElementPrefix("decoration-opaque")) {
-        // opaque element is missing: set generic mask
-        w = w - pl - pr;
-        h = h - pt - pb;
-        QRegion mask(pl, pt, w, h);
-        setMask(mask);
-        return;
-    }
-    deco->setElementPrefix("decoration-opaque");
-    deco->resizeFrame(QSize(w-pl-pr, h-pt-pb));
-    QRegion mask = deco->mask().translated(pl, pt);
-    setMask(mask);
+void AuroraeClient::titleReleased(int button, int buttons)
+{
+    titleReleased(static_cast<Qt::MouseButton>(button), static_cast<Qt::MouseButtons>(buttons));
+}
+
+void AuroraeClient::titleMouseMoved(int button, int buttons)
+{
+    titleMouseMoved(static_cast<Qt::MouseButton>(button), static_cast<Qt::MouseButtons>(buttons));
 }
 
 void AuroraeClient::titlePressed(Qt::MouseButton button, Qt::MouseButtons buttons)
@@ -422,70 +411,15 @@ void AuroraeClient::titleMouseMoved(Qt::MouseButton button, Qt::MouseButtons but
     event = 0;
 }
 
-void AuroraeClient::checkTabs(bool force)
+void AuroraeClient::themeChanged()
 {
-    if (m_scene->tabCount() == 1 && clientGroupItems().count() == 1 && !force) {
-        return;
+    m_scene->clear();
+    m_item = AuroraeFactory::instance()->createQmlDecoration(this);
+    if (m_item) {
+        m_item->setWidth(m_scene->sceneRect().width());
+        m_item->setHeight(m_scene->sceneRect().height());
     }
-    while (m_scene->tabCount() < clientGroupItems().count()) {
-        m_scene->addTab(QString());
-    }
-    while (m_scene->tabCount() > clientGroupItems().count()) {
-        m_scene->removeLastTab();
-    }
-    QList<AuroraeTabData> data;
-    foreach (const ClientGroupItem &item, clientGroupItems()) {
-        data << AuroraeTabData(item.title(), item.icon());
-    }
-    m_scene->setAllTabData(data);
-    m_scene->setFocusedTab(visibleClientGroupItem());
-}
-
-bool AuroraeClient::eventFilter(QObject *o, QEvent *e)
-{
-    if (o != widget()) {
-        return false;
-    }
-    if (e->type() == QEvent::Paint) {
-        checkTabs();
-    }
-    return false;
-}
-
-void AuroraeClient::tabMouseButtonPress(QGraphicsSceneMouseEvent *e, int index)
-{
-    if (buttonToWindowOperation(e->buttons()) == OperationsOp) {
-        displayClientMenu(index, e->screenPos());
-        return;
-    } else if (buttonToWindowOperation(e->buttons()) == ClientGroupDragOp) {
-        m_scene->setUniqueTabDragId(index, itemId(index));
-    }
-    titlePressed(e->button(), e->buttons());
-    m_clickInProgress = true;
-}
-
-void AuroraeClient::tabMouseButtonRelease(QGraphicsSceneMouseEvent *e, int index)
-{
-    if (m_clickInProgress) {
-        setVisibleClientGroupItem(index);
-    }
-    titleReleased(e->button(), e->buttons());
-    m_clickInProgress = false;
-}
-
-void AuroraeClient::tabRemoved(int index)
-{
-    removeFromClientGroup(index);
-}
-
-void AuroraeClient::tabMoved(int index, int before)
-{
-    moveItemInClientGroup(index, before);
-}
-
-void AuroraeClient::tabMovedToGroup(long int uid, int before)
-{
-    moveItemToClientGroup(uid, before);
+    m_scene->addItem(m_item);
 }
 
 } // namespace Aurorae

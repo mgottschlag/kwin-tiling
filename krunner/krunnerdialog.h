@@ -45,7 +45,8 @@ class KRunnerDialog : public QWidget
         void setFreeFloating(bool floating);
         bool freeFloating() const;
 
-        bool isManualResizing() const;
+        enum ResizeMode { NotResizing = 0, VerticalResizing, HorizontalResizing };
+        ResizeMode manualResizing() const;
         virtual void setConfigWidget(QWidget *w) = 0;
 
     public Q_SLOTS:
@@ -59,7 +60,6 @@ class KRunnerDialog : public QWidget
         void mouseReleaseEvent(QMouseEvent *event);
         void mouseMoveEvent(QMouseEvent *event);
         void leaveEvent(QEvent *e);
-        bool event(QEvent *event);
         void showEvent(QShowEvent *);
         void hideEvent(QHideEvent *);
         void moveEvent(QMoveEvent *);
@@ -93,7 +93,7 @@ class KRunnerDialog : public QWidget
          * React to screen changes
          */
         void screenRemoved(int screen);
-        void screenChanged(Kephal::Screen* screen);
+        void screenGeometryChanged(Kephal::Screen* screen);
         void resetScreenPos();
 
         void compositingChanged(bool);
@@ -107,13 +107,14 @@ class KRunnerDialog : public QWidget
         PanelShadows *m_shadows;
         Plasma::FrameSvg *m_background;
         QPixmap *m_cachedBackground;
-        QHash<int, QPoint> m_screenPos;
         QPoint m_lastPressPos;
+        QPoint m_customPos;
         int m_topBorderHeight;
         int m_leftBorderWidth;
         int m_rightBorderWidth;
         int m_bottomBorderHeight;
-        int m_oldScreen;
+        int m_shownOnScreen;
+        qreal m_offset;
         bool m_floating : 1;
         bool m_resizing : 1;
         bool m_rightResize : 1;

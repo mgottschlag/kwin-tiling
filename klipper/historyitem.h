@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
 
@@ -17,9 +16,10 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#ifndef _HISTORYITEM_H_
-#define _HISTORYITEM_H_
-#include <QPixmap>
+#ifndef HISTORYITEM_H
+#define HISTORYITEM_H
+
+#include <QtGui/QPixmap>
 
 class QString;
 class QMimeData;
@@ -49,7 +49,7 @@ public:
     }
 
     /**
-     * Return the current item as text
+     * Return the current item as pixmap
      * A text would be returned as a null pixmap,
      * which is also the default implementation
      */
@@ -77,16 +77,16 @@ public:
     static HistoryItem* create( const QMimeData* data );
 
     /**
-     * Create an HistoryItem from MimeSources (i.e., clipboard data)
+     * Create an HistoryItem from data stream (i.e., disk file)
      * returns null if creation fails. In this case, the datastream
      * is left in an undefined state.
      */
-    static HistoryItem* create( QDataStream& aSource );
+    static HistoryItem* create( QDataStream& dataStream );
 
     /**
-     * Inserts this item between before and after
+     * Inserts this item between prev and next
      */
-    void insertBetweeen(HistoryItem* before, HistoryItem* after);
+    void insertBetweeen(HistoryItem* prev, HistoryItem* next);
 
     /**
      * Chain this with next

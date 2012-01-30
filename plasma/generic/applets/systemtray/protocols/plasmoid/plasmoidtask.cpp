@@ -99,6 +99,9 @@ QGraphicsWidget* PlasmoidTask::createWidget(Plasma::Applet *host)
     m_takenByParent = true;
     applet->setParent(host);
     applet->setParentItem(host);
+    KConfigGroup group = applet->config();
+    group = group.parent();
+    applet->restore(group);
     applet->init();
     applet->updateConstraints(Plasma::StartupCompletedConstraint);
     applet->flushPendingConstraintsEvents();

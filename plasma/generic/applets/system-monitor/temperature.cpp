@@ -118,7 +118,7 @@ void Temperature::createConfigurationInterface(KConfigDialog *parent)
     ui.intervalSpinBox->setValue(interval() / 1000.0);
     ui.intervalSpinBox->setSuffix(i18nc("second", " s"));
     parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
-    parent->addPage(widget, i18n("Temperature"), "media-flash");
+    parent->addPage(widget, i18n("Temperature"), "view-statistics");
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));

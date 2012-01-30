@@ -140,13 +140,12 @@ void SingleView::updateGeometry()
 
     //kDebug() << "New applet geometry is" << m_applet->geometry();
 
-    if (m_applet && m_applet->size().toSize() != size()) {
-        if (m_applet) {
+    if (m_applet) {
+        if (m_applet->size().toSize() != size()) {
             m_applet->resize(size());
         }
 
         setSceneRect(m_applet->sceneBoundingRect());
-
     }
 
     if ((windowFlags() & Qt::FramelessWindowHint) &&

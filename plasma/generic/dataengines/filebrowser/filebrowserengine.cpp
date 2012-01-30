@@ -27,7 +27,7 @@
 #include <KFileMetaInfo>
 
 #define InvalidIfEmpty(A) ((A.isEmpty())?(QVariant()):(QVariant(A)))
-#define forMatchingSources for (DataEngine::SourceDict::iterator it = sources.begin(); it != sources.end(); it++) \
+#define forMatchingSources for (DataEngine::SourceDict::iterator it = sources.begin(); it != sources.end(); ++it) \
   if (dir == QDir(it.key()))
 
 FileBrowserEngine::FileBrowserEngine(QObject* parent, const QVariantList& args) :
@@ -137,7 +137,7 @@ void FileBrowserEngine::updateData(const QString &path, EventType event)
                 kDebug() << "MATCH";
                 it.value()->setData("item.type", QVariant("file"));
 
-                for (QHash< QString, KFileMetaInfoItem >::const_iterator i = kfmi.items().constBegin(); i != kfmi.items().constEnd(); i++) {
+                for (QHash< QString, KFileMetaInfoItem >::const_iterator i = kfmi.items().constBegin(); i != kfmi.items().constEnd(); ++i) {
                     it.value()->setData(i.key(), i.value().value());
                 }
             }
@@ -157,7 +157,7 @@ void FileBrowserEngine::clearData(const QString &path)
     QDir dir(path);
     const DataEngine::SourceDict sources = containerDict();
     for (DataEngine::SourceDict::const_iterator it = sources.begin(); it
-            != sources.end(); it++) {
+            != sources.end(); ++it) {
         if (dir == QDir(it.key())) {
             kDebug() << "matched: "<< path << " "<< it.key();
             it.value()->removeAllData();

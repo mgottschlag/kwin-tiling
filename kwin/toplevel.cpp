@@ -104,7 +104,11 @@ QRect Toplevel::decorationRect() const
 
 void Toplevel::detectShape(Window id)
 {
+    const bool wasShape = is_shape;
     is_shape = Extensions::hasShape(id);
+    if (wasShape != is_shape) {
+        emit shapedChanged();
+    }
 }
 
 // used only by Deleted::copy()
@@ -329,6 +333,17 @@ void Toplevel::setOpacity(double new_opacity)
     }
 }
 
+void Toplevel::setReadyForPainting()
+{
+    if (!ready_for_painting) {
+        ready_for_painting = true;
+        if (compositing()) {
+            addRepaintFull();
+            emit windowShown(this);
+        }
+    }
+}
+
 void Toplevel::deleteEffectWindow()
 {
     delete effect_window;
@@ -408,7 +423,7 @@ void Toplevel::getWmOpaqueRegion()
         int rformat;
         unsigned long nitems;
         if (XGetWindowProperty(display(), client,
-                               atoms->kde_net_wm_opaque_region, 0, length, false, XA_CARDINAL,
+                               atoms->net_wm_opaque_region, 0, length, false, XA_CARDINAL,
                                &type, &rformat, &nitems, &bytes_after_return,
                                reinterpret_cast< unsigned char** >(&data)) == Success) {
             if (type != XA_CARDINAL || rformat != 32 || nitems%4) {
@@ -433,6 +448,16 @@ void Toplevel::getWmOpaqueRegion()
     } while (bytes_after_return > 0);
 
     opaque_region = new_opaque_region;
+}
+
+bool Toplevel::isClient() const
+{
+    return false;
+}
+
+bool Toplevel::isDeleted() const
+{
+    return false;
 }
 
 } // namespace

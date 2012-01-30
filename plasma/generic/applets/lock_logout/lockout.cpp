@@ -36,16 +36,14 @@
 #include <KIcon>
 #include <KJob>
 #include <KAuthorized>
+#include <kworkspace/kworkspace.h>
+
 #ifndef Q_OS_WIN
 #include <KConfigDialog>
 #include <KSharedConfig>
-#include <kworkspace/kworkspace.h>
 #include <krunner_interface.h>
 #include <screensaver_interface.h>
-#endif
-
-// Windows
-#ifdef Q_OS_WIN
+#else
 #include <windows.h>
 #endif // Q_OS_WIN
 

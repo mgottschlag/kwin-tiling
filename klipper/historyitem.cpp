@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
 
@@ -17,14 +16,13 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#include <QMap>
-
-#include <QPixmap>
-#include <QCryptographicHash>
-
-#include <kdebug.h>
-
 #include "historyitem.h"
+
+#include <QtCore/QMap>
+#include <QtGui/QPixmap>
+
+#include <KDebug>
+
 #include "historystringitem.h"
 #include "historyimageitem.h"
 #include "historyurlitem.h"
@@ -49,8 +47,8 @@ HistoryItem* HistoryItem::create( const QMimeData* data )
     {
         KUrl::MetaDataMap metaData;
         KUrl::List urls = KUrl::List::fromMimeData(data, &metaData);
-        QByteArray a = data->data("application/x-kde-cutselection");
-        bool cut = !a.isEmpty() && (a.at(0) == '1'); // true if 1
+        QByteArray bytes = data->data("application/x-kde-cutselection");
+        bool cut = !bytes.isEmpty() && (bytes.at(0) == '1'); // true if 1
         return new HistoryURLItem(urls, metaData, cut);
     }
     if (data->hasText())
@@ -66,29 +64,29 @@ HistoryItem* HistoryItem::create( const QMimeData* data )
     return 0; // Failed.
 }
 
-HistoryItem* HistoryItem::create( QDataStream& aSource ) {
-    if ( aSource.atEnd() ) {
+HistoryItem* HistoryItem::create( QDataStream& dataStream ) {
+    if ( dataStream.atEnd() ) {
         return 0;
     }
     QString type;
-    aSource >> type;
+    dataStream >> type;
     if ( type == "url" ) {
         KUrl::List urls;
         QMap< QString, QString > metaData;
         int cut;
-        aSource >> urls;
-        aSource >> metaData;
-        aSource >> cut;
+        dataStream >> urls;
+        dataStream >> metaData;
+        dataStream >> cut;
         return new HistoryURLItem( urls, metaData, cut );
     }
     if ( type == "string" ) {
         QString text;
-        aSource >> text;
+        dataStream >> text;
         return new HistoryStringItem( text );
     }
     if ( type == "image" ) {
         QPixmap image;
-        aSource >> image;
+        dataStream >> image;
         return new HistoryImageItem( image );
     }
     kWarning() << "Failed to restore history item: Unknown type \"" << type << "\"" ;
@@ -103,24 +101,24 @@ void HistoryItem::chain(HistoryItem* next)
     next->m_previous_uuid = uuid();
 }
 
-void HistoryItem::insertBetweeen(HistoryItem* before, HistoryItem* after)
+void HistoryItem::insertBetweeen(HistoryItem* prev, HistoryItem* next)
 {
-    if (before && after) {
-        before->chain(this);
-        chain(after);
+    if (prev && next) {
+        prev->chain(this);
+        chain(next);
     } else {
-        Q_ASSERT(!before && !after);
+        Q_ASSERT(!prev && !next);
         // First item in chain
         m_next_uuid = m_uuid;
         m_previous_uuid = m_uuid;
     }
 #if 0 // Extra checks, if anyone ever needs them
-    Q_ASSERT(before->uuid() == m_previous_uuid);
-    Q_ASSERT(before->next_uuid() == m_uuid);
-    Q_ASSERT(after->previous_uuid() == m_uuid);
-    Q_ASSERT(after->uuid() == m_next_uuid);
-    Q_ASSERT(before->uuid() != uuid());
-    Q_ASSERT(after->uuid() != uuid());
+    Q_ASSERT(prev->uuid() == m_previous_uuid);
+    Q_ASSERT(prev->next_uuid() == m_uuid);
+    Q_ASSERT(next->previous_uuid() == m_uuid);
+    Q_ASSERT(next->uuid() == m_next_uuid);
+    Q_ASSERT(prev->uuid() != uuid());
+    Q_ASSERT(next->uuid() != uuid());
 #endif
 }
 

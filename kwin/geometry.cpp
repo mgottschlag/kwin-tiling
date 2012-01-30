@@ -30,10 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "client.h"
 #include "workspace.h"
 
-#ifdef KWIN_BUILD_SCRIPTING
-#include "scripting/workspaceproxy.h"
-#endif
-
 #include <kapplication.h>
 #include <kglobal.h>
 #include <kwindowsystem.h>
@@ -80,8 +76,9 @@ void Workspace::desktopResized()
 #ifdef KWIN_BUILD_SCREENEDGES
     m_screenEdge.update(true);
 #endif
-    if (compositing())
-        compositeResetTimer.start(0);
+    if (effects) {
+        static_cast<EffectsHandlerImpl*>(effects)->desktopResized(geom.size());
+    }
 }
 
 void Workspace::saveOldScreenSizes()
@@ -1852,14 +1849,16 @@ bool Client::isMaximizable() const
         if (!isMovable() || !isResizable() || isToolbar())  // SELI isToolbar() ?
             return false;
     }
-    return true;
+    if (rules()->checkMaximize(MaximizeRestore) == MaximizeRestore && rules()->checkMaximize(MaximizeFull) != MaximizeRestore)
+        return true;
+    return false;
 }
 
 
 /*!
   Reimplemented to inform the client about the new window position.
  */
-void Client::setGeometry(int x, int y, int w, int h, ForceGeometry_t force, bool emitJs)
+void Client::setGeometry(int x, int y, int w, int h, ForceGeometry_t force)
 {
     // this code is also duplicated in Client::plainResize()
     // Ok, the shading geometry stuff. Generally, code doesn't care about shaded geometry,
@@ -1952,13 +1951,11 @@ void Client::setGeometry(int x, int y, int w, int h, ForceGeometry_t force, bool
     if (clientGroup())
         clientGroup()->updateStates(this);
 
-    if (emitJs == true) {
-        emit s_clientMoved();
-    }
-
+    // TODO: this signal is emitted too often
+    emit geometryChanged();
 }
 
-void Client::plainResize(int w, int h, ForceGeometry_t force, bool emitJs)
+void Client::plainResize(int w, int h, ForceGeometry_t force)
 {
     // this code is also duplicated in Client::setGeometry(), and it's also commented there
     if (shade_geometry_change)
@@ -2004,10 +2001,6 @@ void Client::plainResize(int w, int h, ForceGeometry_t force, bool emitJs)
     }
     updateShape();
 
-    if (emitJs == true) {
-        emit s_clientMoved();
-    }
-
     sendSyntheticConfigureNotify();
     updateWindowRules();
     workspace()->checkActiveScreen(this);
@@ -2024,6 +2017,8 @@ void Client::plainResize(int w, int h, ForceGeometry_t force, bool emitJs)
     // Update states of all other windows in this group
     if (clientGroup())
         clientGroup()->updateStates(this);
+    // TODO: this signal is emitted too often
+    emit geometryChanged();
 }
 
 /*!
@@ -2100,24 +2095,13 @@ void Client::maximize(MaximizeMode m)
  */
 void Client::setMaximize(bool vertically, bool horizontally)
 {
-#ifdef KWIN_BUILD_SCRIPTING
-    //Scripting call. Does not use a signal/slot mechanism
-    //as ensuring connections was a bit difficult between
-    //so many clients and the workspace
-    SWrapper::WorkspaceProxy* ws_wrap = SWrapper::WorkspaceProxy::instance();
-    if (ws_wrap != 0) {
-        ws_wrap->sl_clientMaximizeSet(this, QPair<bool, bool>(vertically, horizontally));
-    }
-#endif
-
-    emit maximizeSet(QPair<bool, bool>(vertically, horizontally));
-
     // changeMaximize() flips the state, so change from set->flip
     changeMaximize(
         max_mode & MaximizeVertical ? !vertically : vertically,
         max_mode & MaximizeHorizontal ? !horizontally : horizontally,
         false);
     emit clientMaximizedStateChanged(this, max_mode);
+    emit clientMaximizedStateChanged(this, vertically, horizontally);
 
     // Update states of all other windows in this group
     if (clientGroup())
@@ -2127,8 +2111,15 @@ void Client::setMaximize(bool vertically, bool horizontally)
 static bool changeMaximizeRecursion = false;
 void Client::changeMaximize(bool vertical, bool horizontal, bool adjust)
 {
-    if (!isMaximizable() || changeMaximizeRecursion)
+    if (changeMaximizeRecursion)
         return;
+    {
+        // isMovable() and isResizable() may be false for maximized windows
+        // with moving/resizing maximized windows disabled
+        TemporaryAssign< MaximizeMode > tmp(max_mode, MaximizeRestore);
+        if (!isMovable() || !isResizable() || isToolbar())  // SELI isToolbar() ?
+            return;
+    }
 
     MaximizeMode old_mode = max_mode;
     // 'adjust == true' means to update the size only, e.g. after changing workspace size
@@ -2411,14 +2402,10 @@ void Client::setFullScreen(bool set, bool user)
     updateWindowRules();
     workspace()->checkUnredirect();
 
-#ifdef KWIN_BUILD_SCRIPTING
-    SWrapper::WorkspaceProxy* ws_object = SWrapper::WorkspaceProxy::instance();
-    if (ws_object != 0) {
-        ws_object->sl_clientFullScreenSet(this, set, user);
+    if (was_fs != isFullScreen()) {
+        emit clientFullScreenSet(this, set, user);
+        emit fullScreenChanged();
     }
-#endif
-
-    emit s_fullScreenSet(set, user);
 }
 
 
@@ -2493,10 +2480,12 @@ void Client::updateFullScreenHack(const QRect& geom)
         } else
             geom = workspace()->clientArea(FullScreenArea, geom.center(), desktop());
         setGeometry(geom);
+        emit fullScreenChanged();
     } else if (fullscreen_mode == FullScreenHack && type == 0) {
         fullscreen_mode = FullScreenNone;
         updateDecoration(false, false);
         // whoever called this must setup correct geometry
+        emit fullScreenChanged();
     }
     StackingUpdatesBlocker blocker(workspace());
     workspace()->updateClientLayer(this);   // active fullscreens get different layer
@@ -2558,7 +2547,7 @@ bool Client::startMoveResize()
     // If we have quick maximization enabled then it's safe to automatically restore windows
     // when starting a move as the user can undo their action by moving the window back to
     // the top of the screen. When the setting is disabled then doing so is confusing.
-    if (maximizeMode() != MaximizeRestore && options->moveResizeMaximizedWindows()) {
+    if (maximizeMode() != MaximizeRestore && (maximizeMode() != MaximizeFull || options->moveResizeMaximizedWindows())) {
         // allow moveResize, but unset maximization state in resize case
         if (mode != PositionCenter) { // means "isResize()" but moveResizeMode = true is set below
             geom_restore = geom_pretile = geometry(); // "restore" to current geometry
@@ -2580,6 +2569,7 @@ bool Client::startMoveResize()
     }
 
     moveResizeMode = true;
+    s_haveResizeEffect = effects && static_cast<EffectsHandlerImpl*>(effects)->provides(Effect::Resize);
     moveResizeStartScreen = screen();
     workspace()->setClientIsMoving(this);
     initialMoveResizeGeom = moveResizeGeom = geometry();
@@ -3034,7 +3024,7 @@ void Client::handleMoveResize(int x, int y, int x_root, int y_root)
         return;
 
 #ifdef HAVE_XSYNC
-    if (isResize() && syncRequest.counter != None) {
+    if (isResize() && syncRequest.counter != None && !s_haveResizeEffect) {
         if (!syncRequest.timeout) {
             syncRequest.timeout = new QTimer(this);
             connect(syncRequest.timeout, SIGNAL(timeout()), SLOT(performMoveResize()));
@@ -3062,7 +3052,11 @@ void Client::performMoveResize()
 #ifdef KWIN_BUILD_TILING
     if (!workspace()->tiling()->isEnabled())
 #endif
-        setGeometry(moveResizeGeom);
+    {
+        if (isMove() || (isResize() && !s_haveResizeEffect)) {
+            setGeometry(moveResizeGeom);
+        }
+    }
 #ifdef HAVE_XSYNC
     if (isResize() && syncRequest.counter != None)
         addRepaintFull();

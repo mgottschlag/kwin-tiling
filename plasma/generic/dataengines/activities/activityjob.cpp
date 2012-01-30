@@ -18,9 +18,10 @@
 
 #include "activityjob.h"
 
-#include <kworkspace/kactivitycontroller.h>
+#include <KActivities/Controller>
+#include <KDebug>
 
-ActivityJob::ActivityJob(KActivityController *controller, const QString &id, const QString &operation, QMap<QString, QVariant> &parameters, QObject *parent) :
+ActivityJob::ActivityJob(KActivities::Controller *controller, const QString &id, const QString &operation, QMap<QString, QVariant> &parameters, QObject *parent) :
     ServiceJob(parent->objectName(), operation, parameters, parent),
     m_activityController(controller),
     m_id(id)
@@ -78,6 +79,11 @@ void ActivityJob::start()
     }
     if (operation == "setIcon") {
         m_activityController->setActivityIcon(m_id, parameters()["Icon"].toString());
+        setResult(true);
+        return;
+    }
+    if (operation == "setEncrypted") {
+        m_activityController->setActivityEncrypted(m_id, parameters()["Encrypted"].toBool());
         setResult(true);
         return;
     }

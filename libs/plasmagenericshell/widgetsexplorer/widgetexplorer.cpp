@@ -20,6 +20,10 @@
 
 #include "widgetexplorer.h"
 
+#include <QDeclarativeContext>
+#include <QDeclarativeEngine>
+#include <QDeclarativeComponent>
+
 #include <kaction.h>
 #include <kconfig.h>
 #include <kconfiggroup.h>
@@ -32,17 +36,20 @@
 #include <kcomponentdata.h>
 #include <kpluginloader.h>
 #include <klineedit.h>
+#include <KStandardDirs>
+#include <KWindowSystem>
 
 #include <plasma/applet.h>
 #include <plasma/corona.h>
 #include <plasma/containment.h>
+#include <plasma/package.h>
 #include <plasma/widgets/toolbutton.h>
 #include <plasma/widgets/lineedit.h>
+#include <Plasma/DeclarativeWidget>
 
 #include "kcategorizeditemsviewmodels_p.h"
 #include "plasmaappletitemmodel_p.h"
-#include "appletslist.h"
-#include "appletsfiltering.h"
+#include "openwidgetassistant_p.h"
 
 //getting the user local
 //KGlobal::dirs()->localkdedir();
@@ -54,6 +61,16 @@ using namespace KCategorizedItemsViewModels;
 namespace Plasma
 {
 
+WidgetAction::WidgetAction(QObject *parent)
+    : QAction(parent)
+{
+}
+
+WidgetAction::WidgetAction(const QIcon &icon, const QString &text, QObject *parent)
+    : QAction(icon, text, parent)
+{
+}
+
 class WidgetExplorerPrivate
 {
 
@@ -62,8 +79,7 @@ public:
         : q(w),
           containment(0),
           itemModel(w),
-          filterModel(w),
-          iconSize(16)
+          filterModel(w)
     {
     }
 
@@ -72,6 +88,7 @@ public:
     void initRunningApplets();
     void containmentDestroyed();
     void setLocation(Plasma::Location loc);
+    void finished();
 
     /**
      * Tracks a new running applet
@@ -93,21 +110,16 @@ public:
     QHash<QString, int> runningApplets; // applet name => count
     //extra hash so we can look up the names of deleted applets
     QHash<Plasma::Applet *,QString> appletNames;
+    QWeakPointer<Plasma::OpenWidgetAssistant> openAssistant;
+    Plasma::Package *package;
 
     PlasmaAppletItemModel itemModel;
     KCategorizedItemsViewModels::DefaultFilterModel filterModel;
+    DefaultItemFilterProxyModel filterItemModel;
 
-    /**
-     * Widget that lists the applets
-     */
-    AppletsListWidget *appletsListWidget;
+    Plasma::DeclarativeWidget *declarativeWidget;
 
-    /**
-     * Widget that contains the search and categories filters
-     */
-    FilteringWidget *filteringWidget;
     QGraphicsLinearLayout *mainLayout;
-    int iconSize;
 };
 
 void WidgetExplorerPrivate::initFilters()
@@ -138,8 +150,6 @@ void WidgetExplorerPrivate::initFilters()
                               KCategorizedItemsViewModels::Filter("category", category.second));
     }
 
-    filteringWidget->setModel(&filterModel);
-    appletsListWidget->setFilterModel(&filterModel);
 }
 
 void WidgetExplorerPrivate::init(Plasma::Location loc)
@@ -152,46 +162,130 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
     mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
     mainLayout->setContentsMargins(0, 4, 0, 0);
     mainLayout->setSpacing(0);
-    filteringWidget = new FilteringWidget(orientation, q);
-    appletsListWidget = new AppletsListWidget(location);
 
     //connect
-    QObject::connect(appletsListWidget, SIGNAL(appletDoubleClicked(PlasmaAppletItem*)), q, SLOT(addApplet(PlasmaAppletItem*)));
-    QObject::connect(filteringWidget->textSearch(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
-    QObject::connect(filteringWidget, SIGNAL(filterChanged(int)), appletsListWidget, SLOT(filterChanged(int)));
-    QObject::connect(filteringWidget, SIGNAL(closeClicked()), q, SIGNAL(closeClicked()));
+ //QObject::connect(filteringWidget, SIGNAL(closeClicked()), q, SIGNAL(closeClicked()));
 
-    mainLayout->addItem(filteringWidget);
-    mainLayout->addItem(appletsListWidget);
-    appletsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mainLayout->setAlignment(appletsListWidget, Qt::AlignTop | Qt::AlignHCenter);
-
-    if (orientation == Qt::Vertical) {
-        mainLayout->setAlignment(filteringWidget, Qt::AlignTop | Qt::AlignHCenter);
-        mainLayout->setStretchFactor(appletsListWidget, 10);
-    }
-
-    //filters & models
-    appletsListWidget->setItemModel(&itemModel);
     initRunningApplets();
+
+    Plasma::PackageStructure::Ptr structure = Plasma::PackageStructure::load("Plasma/Generic");
+    package = new Plasma::Package(QString(), "org.kde.desktop.widgetexplorer", structure);
+
+    declarativeWidget = new Plasma::DeclarativeWidget(q);
+    declarativeWidget->setInitializationDelayed(true);
+    declarativeWidget->setQmlPath(package->filePath("mainscript"));
+    mainLayout->addItem(declarativeWidget);
+
+    if (declarativeWidget->engine()) {
+        QDeclarativeContext *ctxt = declarativeWidget->engine()->rootContext();
+        if (ctxt) {
+            filterItemModel.setSortCaseSensitivity(Qt::CaseInsensitive);
+            filterItemModel.setDynamicSortFilter(true);
+            filterItemModel.setSourceModel(&itemModel);
+            filterItemModel.sort(0);
+            ctxt->setContextProperty("widgetExplorer", q);
+        }
+    }
 
     q->setLayout(mainLayout);
 }
 
+void WidgetExplorerPrivate::finished()
+{
+    if (declarativeWidget->mainComponent()->isError()) {
+        return;
+    }
+
+    emit q->widgetsMenuActionsChanged();
+    emit q->extraActionsChanged();
+
+    return;
+    QObject::connect(declarativeWidget->rootObject(), SIGNAL(addAppletRequested(const QString &)),
+                     q, SLOT(addApplet(const QString &)));
+    QObject::connect(declarativeWidget->rootObject(), SIGNAL(closeRequested()),
+                     q, SIGNAL(closeClicked()));
+
+
+    QList<QObject *> actionList;
+    foreach (QAction *action, q->actions()) {
+        actionList << action;
+    }
+    declarativeWidget->rootObject()->setProperty("extraActions", QVariant::fromValue(actionList));
+}
+
 void WidgetExplorerPrivate::setLocation(const Plasma::Location loc)
 {
-    if (location == loc) {
+    Qt::Orientation orient;
+    if (loc == Plasma::LeftEdge || loc == Plasma::RightEdge) {
+        orient = Qt::Vertical;
+    } else {
+        orient = Qt::Horizontal;
+    }
+
+    if (orientation == orient) {
         return;
     }
 
     location = loc;
-    orientation = ((location == Plasma::LeftEdge || location == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
-    filteringWidget->setListOrientation(orientation);
-    appletsListWidget->setLocation(loc);
-    if (orientation == Qt::Vertical) {
-        mainLayout->setAlignment(filteringWidget, Qt::AlignTop | Qt::AlignHCenter);
-        mainLayout->setStretchFactor(appletsListWidget, 10);
+    emit q->orientationChanged();
+}
+
+QObject *WidgetExplorer::widgetsModel() const
+{
+    return &d->filterItemModel;
+}
+
+QObject *WidgetExplorer::filterModel() const
+{
+    return &d->filterModel;
+}
+
+QList <QObject *>  WidgetExplorer::widgetsMenuActions()
+{
+    QList <QObject *> actionList;
+
+    QSignalMapper *mapper = new QSignalMapper(this);
+    QObject::connect(mapper, SIGNAL(mapped(QString)), this, SLOT(downloadWidgets(QString)));
+
+    WidgetAction *action = new WidgetAction(KIcon("applications-internet"),
+                                  i18n("Download New Plasma Widgets"), this);
+    QObject::connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
+    mapper->setMapping(action, QString());
+    actionList << action;
+
+    KService::List offers = KServiceTypeTrader::self()->query("Plasma/PackageStructure");
+    foreach (const KService::Ptr &service, offers) {
+        //kDebug() << service->property("X-Plasma-ProvidesWidgetBrowser");
+        if (service->property("X-Plasma-ProvidesWidgetBrowser").toBool()) {
+            WidgetAction *action = new WidgetAction(KIcon("applications-internet"),
+                                          i18nc("%1 is a type of widgets, as defined by "
+                                                "e.g. some plasma-packagestructure-*.desktop files",
+                                                "Download New %1", service->name()), this);
+            QObject::connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
+            mapper->setMapping(action, service->property("X-KDE-PluginInfo-Name").toString());
+            actionList << action;
+        }
     }
+
+    action = new WidgetAction(this);
+    action->setSeparator(true);
+    actionList << action;
+
+    action = new WidgetAction(KIcon("package-x-generic"),
+                         i18n("Install Widget From Local File..."), this);
+    QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(openWidgetFile()));
+    actionList << action;
+
+    return actionList;
+}
+
+QList<QObject *> WidgetExplorer::extraActions() const
+{
+    QList<QObject *> actionList;
+    foreach (QAction *action, actions()) {
+        actionList << action;
+    }
+    return actionList;
 }
 
 void WidgetExplorerPrivate::initRunningApplets()
@@ -287,20 +381,14 @@ void WidgetExplorer::setLocation(Plasma::Location loc)
     emit(locationChanged(loc));
 }
 
-Plasma::Location WidgetExplorer::location() const
+WidgetExplorer::Location WidgetExplorer::location()
 {
-    return d->location;
+    return (WidgetExplorer::Location)d->location;
 }
 
-void WidgetExplorer::setIconSize(int size)
+Qt::Orientation WidgetExplorer::orientation() const
 {
-    d->appletsListWidget->setIconSize(size);
-    adjustSize();
-}
-
-int WidgetExplorer::iconSize() const
-{
-    return d->appletsListWidget->iconSize();
+    return d->orientation;
 }
 
 void WidgetExplorer::populateWidgetList(const QString &app)
@@ -308,12 +396,9 @@ void WidgetExplorer::populateWidgetList(const QString &app)
     d->application = app;
     d->itemModel.setApplication(app);
     d->initFilters();
-    //d->appletsListWidget->setFilterModel(&d->filterModel);
 
-    //FIXME: AFAIK this shouldn't be necessary ... but here it is. need to find out what in that
-    //       maze of models and views is screwing up
-    d->appletsListWidget->setItemModel(&d->itemModel);
     d->itemModel.setRunningApplets(d->runningApplets);
+
 }
 
 QString WidgetExplorer::application()
@@ -355,14 +440,9 @@ Plasma::Corona *WidgetExplorer::corona() const
     return 0;
 }
 
-void WidgetExplorer::addApplet(PlasmaAppletItem *appletItem)
+void WidgetExplorer::addApplet(const QString &pluginName)
 {
-    if (!d->containment || !appletItem) {
-        return;
-    }
-
-    kDebug() << appletItem->pluginName();
-    d->containment->addApplet(appletItem->pluginName());
+    d->containment->addApplet(pluginName);
 }
 
 void WidgetExplorer::immutabilityChanged(Plasma::ImmutabilityType type)
@@ -380,15 +460,6 @@ void WidgetExplorer::keyPressEvent(QKeyEvent *event)
         return;
     }
 
-    Plasma::LineEdit *lineEdit = d->filteringWidget->textSearch();
-    const QString newText = event->text();
-    if (newText.isEmpty()) {
-        QGraphicsWidget::keyPressEvent(event);
-    } else {
-        lineEdit->setText(lineEdit->text() + event->text());
-        lineEdit->nativeWidget()->setCursorPosition(lineEdit->text().length());
-        lineEdit->setFocus();
-    }
 }
 
 bool WidgetExplorer::event(QEvent *event)
@@ -397,7 +468,9 @@ bool WidgetExplorer::event(QEvent *event)
         case QEvent::ActionAdded:
         case QEvent::ActionChanged:
         case QEvent::ActionRemoved:
-            d->filteringWidget->updateActions(actions());
+            if (d->declarativeWidget->rootObject()) {
+                emit widgetsMenuActionsChanged();
+            }
             break;
         default:
             break;
@@ -409,9 +482,87 @@ bool WidgetExplorer::event(QEvent *event)
 void WidgetExplorer::focusInEvent(QFocusEvent* event)
 {
     Q_UNUSED(event);
-    d->filteringWidget->textSearch()->setFocus();
 }
 
+void WidgetExplorer::downloadWidgets(const QString &type)
+{
+    Plasma::PackageStructure *installer = 0;
+
+    if (!type.isEmpty()) {
+        QString constraint = QString("'%1' == [X-KDE-PluginInfo-Name]").arg(type);
+        KService::List offers = KServiceTypeTrader::self()->query("Plasma/PackageStructure",
+                                                                  constraint);
+        if (offers.isEmpty()) {
+            kDebug() << "could not find requested PackageStructure plugin" << type;
+        } else {
+            KService::Ptr service = offers.first();
+            QString error;
+            installer = service->createInstance<Plasma::PackageStructure>(topLevelWidget(),
+                                                                          QVariantList(), &error);
+            if (installer) {
+                connect(installer, SIGNAL(newWidgetBrowserFinished()),
+                        installer, SLOT(deleteLater()));
+            } else {
+                kDebug() << "found, but could not load requested PackageStructure plugin" << type
+                         << "; reported error was" << error;
+            }
+        }
+    }
+
+    emit closeClicked();
+    if (installer) {
+        installer->createNewWidgetBrowser();
+    } else {
+        // we don't need to delete the default Applet::packageStructure as that
+        // belongs to the applet
+       Plasma::Applet::packageStructure()->createNewWidgetBrowser();
+        /**
+          for reference in a libplasma2 world, the above line equates to this:
+
+          KNS3::DownloadDialog *knsDialog = m_knsDialog.data();
+          if (!knsDialog) {
+          m_knsDialog = knsDialog = new KNS3::DownloadDialog("plasmoids.knsrc", parent);
+          connect(knsDialog, SIGNAL(accepted()), this, SIGNAL(newWidgetBrowserFinished()));
+          }
+
+          knsDialog->show();
+          knsDialog->raise();
+         */
+    }
+}
+
+void WidgetExplorer::openWidgetFile()
+{
+    emit closeClicked();
+
+    Plasma::OpenWidgetAssistant *assistant = d->openAssistant.data();
+    if (!assistant) {
+        assistant = new Plasma::OpenWidgetAssistant(0);
+        d->openAssistant = assistant;
+    }
+
+    KWindowSystem::setOnDesktop(assistant->winId(), KWindowSystem::currentDesktop());
+    assistant->setAttribute(Qt::WA_DeleteOnClose, true);
+    assistant->show();
+    assistant->raise();
+    assistant->setFocus();
+}
+
+void WidgetExplorer::uninstall(const QString &pluginName)
+{
+    Plasma::PackageStructure installer;
+    installer.uninstallPackage(pluginName,
+                               KStandardDirs::locateLocal("data", "plasma/plasmoids/"));
+
+    //FIXME: moreefficient way rather a linear scan?
+    for (int i = 0; i < d->itemModel.rowCount(); ++i) {
+        QStandardItem *item = d->itemModel.item(i);
+        if (item->data(PlasmaAppletItemModel::PluginNameRole).toString() == pluginName) {
+            d->itemModel.takeRow(i);
+            break;
+        }
+    }
+}
 
 } // namespace Plasma
 

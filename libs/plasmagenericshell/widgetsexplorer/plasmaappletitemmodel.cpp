@@ -44,6 +44,19 @@ PlasmaAppletItem::PlasmaAppletItem(PlasmaAppletItemModel *model,
     const QString iconName = m_info.icon().isEmpty() ? "application-x-plasma" : info.icon();
     KIcon icon(iconName);
     setIcon(icon);
+
+    //set plugininfo parts as roles in the model, only way qml can understand it
+    setData(info.name(), PlasmaAppletItemModel::NameRole);
+    setData(info.pluginName(), PlasmaAppletItemModel::PluginNameRole);
+    setData(info.comment(), PlasmaAppletItemModel::DescriptionRole);
+    setData(info.category().toLower(), PlasmaAppletItemModel::CategoryRole);
+    setData(info.fullLicense().name(KAboutData::FullName), PlasmaAppletItemModel::LicenseRole);
+    setData(info.website(), PlasmaAppletItemModel::WebsiteRole);
+    setData(info.version(), PlasmaAppletItemModel::VersionRole);
+    setData(info.author(), PlasmaAppletItemModel::AuthorRole);
+    setData(info.email(), PlasmaAppletItemModel::EmailRole);
+    setData(0, PlasmaAppletItemModel::RunningRole);
+    setData(m_local, PlasmaAppletItemModel::LocalRole);
 }
 
 QString PlasmaAppletItem::pluginName() const
@@ -99,6 +112,7 @@ int PlasmaAppletItem::running() const
 void PlasmaAppletItem::setRunning(int count)
 {
     m_runningCount = count;
+    setData(count, PlasmaAppletItemModel::RunningRole);
     emitDataChanged();
 }
 
@@ -176,6 +190,24 @@ PlasmaAppletItemModel::PlasmaAppletItemModel(QObject * parent)
     m_configGroup = KConfigGroup(&config, "Applet Browser");
     m_favorites = m_configGroup.readEntry("favorites").split(',');
     connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)), this, SLOT(populateModel(QStringList)));
+
+    //This is to make QML that is understand it
+    QHash<int, QByteArray> newRoleNames = roleNames();
+    newRoleNames[NameRole] = "name";
+    newRoleNames[PluginNameRole] = "pluginName";
+    newRoleNames[DescriptionRole] = "description";
+    newRoleNames[CategoryRole] = "category";
+    newRoleNames[LicenseRole] = "license";
+    newRoleNames[WebsiteRole] = "website";
+    newRoleNames[VersionRole] = "version";
+    newRoleNames[AuthorRole] = "author";
+    newRoleNames[EmailRole] = "email";
+    newRoleNames[RunningRole] = "running";
+    newRoleNames[LocalRole] = "local";
+
+    setRoleNames(newRoleNames);
+
+    setSortRole(Qt::DisplayRole);
 }
 
 void PlasmaAppletItemModel::populateModel(const QStringList &whatChanged)

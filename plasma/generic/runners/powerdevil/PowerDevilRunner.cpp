@@ -35,7 +35,6 @@
 
 PowerDevilRunner::PowerDevilRunner(QObject *parent, const QVariantList &args)
         : Plasma::AbstractRunner(parent),
-          m_dbus(QDBusConnection::sessionBus()),
           m_shortestCommand(1000)
 {
     Q_UNUSED(args)
@@ -109,17 +108,18 @@ PowerDevilRunner::~PowerDevilRunner()
 void PowerDevilRunner::initUpdateTriggers()
 {
     // Also receive updates triggered through the DBus
-    if (m_dbus.interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
-        if (!m_dbus.connect("org.kde.Solid.PowerManagement",
-                            "/org/kde/Solid/PowerManagement",
-                            "org.kde.Solid.PowerManagement",
-                            "profileChanged", this, SLOT(updateStatus()))) {
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    if (dbus.interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
+        if (!dbus.connect("org.kde.Solid.PowerManagement",
+                          "/org/kde/Solid/PowerManagement",
+                          "org.kde.Solid.PowerManagement",
+                          "profileChanged", this, SLOT(updateStatus()))) {
             kDebug() << "error!";
         }
-        if (!m_dbus.connect("org.kde.Solid.PowerManagement",
-                            "/org/kde/Solid/PowerManagement",
-                            "org.kde.Solid.PowerManagement",
-                            "configurationReloaded", this, SLOT(updateStatus()))) {
+        if (!dbus.connect("org.kde.Solid.PowerManagement",
+                          "/org/kde/Solid/PowerManagement",
+                          "org.kde.Solid.PowerManagement",
+                          "configurationReloaded", this, SLOT(updateStatus()))) {
             kDebug() << "error!";
         }
     }
@@ -301,7 +301,7 @@ void PowerDevilRunner::run(const Plasma::RunnerContext &context, const Plasma::Q
 
     QDBusInterface iface("org.kde.Solid.PowerManagement",
                          "/org/kde/Solid/PowerManagement",
-                         "org.kde.Solid.PowerManagement", m_dbus);
+                         "org.kde.Solid.PowerManagement");
     if (match.id().startsWith("PowerDevil_ProfileChange")) {
         iface.asyncCall("loadProfile", match.data().toString());
     } else if (match.id() == "PowerDevil_BrightnessChange") {

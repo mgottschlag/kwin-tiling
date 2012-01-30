@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
    Copyright (C) 2008-2009 by Dmitry Suzdalev <dimsuz@gmail.com>
@@ -23,11 +22,9 @@
 
 #include <KLocale>
 #include <KMenu>
-#include <KShortcutsDialog>
+#include <KShortcutsEditor>
 #include <KDebug>
 #include <KEditListWidget>
-
-#include <QHeaderView>
 
 #include "klipper.h"
 #include "editactiondialog.h"
@@ -140,7 +137,7 @@ void ActionsWidget::updateActionItem( QTreeWidgetItem* item, ClipAction* action 
         QStringList cmdProps;
         cmdProps << command.command << command.description;
         QTreeWidgetItem *child = new QTreeWidgetItem(item, cmdProps);
-        child->setIcon(0, KIcon(command.pixmap.isEmpty() ? "system-run" : command.pixmap));
+        child->setIcon(0, KIcon(command.icon.isEmpty() ? "system-run" : command.icon));
     }
 }
 
@@ -261,8 +258,7 @@ void ActionsWidget::onAdvanced()
     }
 }
 
-ConfigDialog::ConfigDialog(QWidget *parent, KConfigSkeleton *skeleton, const Klipper* klipper, KActionCollection *collection,
-                           bool isApplet)
+ConfigDialog::ConfigDialog(QWidget* parent, KConfigSkeleton* skeleton, const Klipper* klipper, KActionCollection*collection, bool isApplet)
     : KConfigDialog(parent, "preferences", skeleton),
     m_generalPage(new GeneralWidget(this)),
     m_actionsPage(new ActionsWidget(this)),

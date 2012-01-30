@@ -135,7 +135,6 @@ void TaskSource::updateTask(::TaskManager::TaskChanges taskChanges)
             setData("onAllDesktops", taskPtr->isOnAllDesktops());
             setData("desktop", taskPtr->desktop());
             break;
-            break;
         case TaskManager::ActivitiesChanged:
             setData("onCurrentActivity", taskPtr->isOnCurrentActivity());
             setData("onAllActivities", taskPtr->isOnAllActivities());

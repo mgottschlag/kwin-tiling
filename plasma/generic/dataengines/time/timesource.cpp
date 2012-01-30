@@ -78,8 +78,11 @@ void TimeSource::setTimeZone(const QString &tz)
 
 TimeSource::~TimeSource()
 {
-    delete m_sun;
+    // First delete the moon, that does not delete the Sun, and then the Sun
+    // If the Sun is deleted before the moon, the moon has a invalid pointer
+    // to where the Sun was pointing.
     delete m_moon;
+    delete m_sun;
 }
 
 void TimeSource::updateTime()

@@ -190,7 +190,9 @@ void SceneOpenGL::paint(QRegion damage, ToplevelList toplevels)
     if (m_overlayWindow->window())  // show the window only after the first pass, since
         m_overlayWindow->show();   // that pass may take long
     lastRenderTime = renderTimer.elapsed();
-    flushBuffer(mask, damage);
+    if (!damage.isEmpty()) {
+        flushBuffer(mask, damage);
+    }
     // do cleanup
     stacking_order.clear();
     checkGLError("PostPaint");
@@ -203,7 +205,6 @@ void SceneOpenGL::waitSync()
 
 void SceneOpenGL::flushBuffer(int mask, QRegion damage)
 {
-    Q_UNUSED(damage)
     glFlush();
     if (mask & PAINT_SCREEN_REGION && surfaceHasSubPost && eglPostSubBufferNV) {
         QRect damageRect = damage.boundingRect();
@@ -215,6 +216,13 @@ void SceneOpenGL::flushBuffer(int mask, QRegion damage)
     eglWaitGL();
     // TODO: remove for wayland
     XFlush(display());
+}
+
+void SceneOpenGL::screenGeometryChanged(const QSize &size)
+{
+    glViewport(0,0, size.width(), size.height());
+    Scene::screenGeometryChanged(size);
+    ShaderManager::instance()->resetAllShaders();
 }
 
 //****************************************

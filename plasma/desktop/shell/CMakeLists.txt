@@ -7,11 +7,7 @@ include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs
 add_subdirectory(configupdates)
 
 set(activitymanager_SRCS
-    activitymanager/activitycontrols.cpp
     activitymanager/activitymanager.cpp
-    activitymanager/activityicon.cpp
-    activitymanager/activitylist.cpp
-    activitymanager/filterbar.cpp
     activitymanager/kidenticongenerator.cpp
 )
 
@@ -53,7 +49,7 @@ kde4_add_app_icon(plasma_SRCS "${KDE4_INSTALL_DIR}/share/icons/oxygen/*/apps/pla
 
 kde4_add_kdeinit_executable(plasma-desktop ${plasma_SRCS})
 
-target_link_libraries(kdeinit_plasma-desktop ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_KTEXTEDITOR_LIBS} ${KDE4_KIDLETIME_LIBS} ${QT_QTSCRIPT_LIBRARY} kworkspace kactivities plasmagenericshell)
+target_link_libraries(kdeinit_plasma-desktop ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_KTEXTEDITOR_LIBS} ${KDE4_KIDLETIME_LIBS} ${QT_QTSCRIPT_LIBRARY} ${KACTIVITIES_LIBRARY} kworkspace kactivities plasmagenericshell ${QT_QTDECLARATIVE_LIBRARY})
 
 if(UNIX AND Q_WS_X11)
     target_link_libraries(kdeinit_plasma-desktop ${X11_LIBRARIES})
@@ -79,6 +75,7 @@ install(FILES activitymanager/activities.knsrc DESTINATION  ${CONFIG_INSTALL_DIR
 install(FILES data/plasma-desktop.notifyrc DESTINATION ${DATA_INSTALL_DIR}/plasma-desktop)
 install(FILES data/layouts/00-defaultLayout.js DESTINATION ${DATA_INSTALL_DIR}/plasma-desktop/init)
 install(FILES data/plasma-desktop-js.xml DESTINATION ${DATA_INSTALL_DIR}/katepart/syntax/)
+install(DIRECTORY activitymanager/package/ DESTINATION ${DATA_INSTALL_DIR}/plasma/packages/org.kde.desktop.activitymanager)
 
 MACRO(INSTALL_PLASMA_JAVASCRIPT_TEMPLATE dir addonPrefix)
    configure_file(${dir}/metadata.desktop ${CMAKE_CURRENT_BINARY_DIR}/plasma-layout-${addonPrefix}.desktop COPYONLY)

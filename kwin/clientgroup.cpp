@@ -266,39 +266,44 @@ void ClientGroup::setVisible(Client* c)
     for (ClientList::const_iterator i = clients_.constBegin(); i != clients_.constEnd(); ++i)
         if ((*i) != c)
             (*i)->setClientShown(false);
+    emit visibleChanged();
 }
 
 void ClientGroup::updateStates(Client* main, Client* only)
 {
-    for (ClientList::const_iterator i = clients_.constBegin(); i != clients_.constEnd(); ++i)
-        if ((*i) != main && (!only || (*i) == only)) {
-            if ((*i)->isMinimized() != main->isMinimized()) {
+    ClientList toBeRemoved;
+    for (ClientList::const_iterator i = clients_.constBegin(), end = clients_.constEnd(); i != end; ++i) {
+        Client *c = (*i);
+        if (c != main && (!only || c == only)) {
+            if (c->isMinimized() != main->isMinimized()) {
                 if (main->isMinimized())
-                    (*i)->minimize(true);
+                    c->minimize(true);
                 else
-                    (*i)->unminimize(true);
+                    c->unminimize(true);
             }
-            if ((*i)->isShade() != main->isShade())
-                (*i)->setShade(main->isShade() ? ShadeNormal : ShadeNone);
-            if ((*i)->geometry() != main->geometry())
-                (*i)->setGeometry(main->geometry());
-            if ((*i)->desktop() != main->desktop())
-                (*i)->setDesktop(main->desktop());
-            if ((*i)->isOnAllDesktops() != main->isOnAllDesktops())
-                (*i)->setOnAllDesktops(main->isOnAllDesktops());
-            if ((*i)->activities() != main->activities())
-                (*i)->setOnActivities(main->activities());
-            if ((*i)->keepAbove() != main->keepAbove())
-                (*i)->setKeepAbove(main->keepAbove());
-            if ((*i)->keepBelow() != main->keepBelow())
-                (*i)->setKeepBelow(main->keepBelow());
+            if (c->isShade() != main->isShade())
+                c->setShade(main->isShade() ? ShadeNormal : ShadeNone);
+            if (c->geometry() != main->geometry())
+                c->setGeometry(main->geometry());
+            if (c->desktop() != main->desktop())
+                c->setDesktop(main->desktop());
+            if (c->isOnAllDesktops() != main->isOnAllDesktops())
+                c->setOnAllDesktops(main->isOnAllDesktops());
+            if (c->activities() != main->activities())
+                c->setOnActivities(main->activities());
+            if (c->keepAbove() != main->keepAbove())
+                c->setKeepAbove(main->keepAbove());
+            if (c->keepBelow() != main->keepBelow())
+                c->setKeepBelow(main->keepBelow());
 
             // If it's not possible to have the same states then ungroup them, TODO: Check all states
-            if ((*i)->geometry() != main->geometry())
-                remove(*i);
-            if ((*i)->desktop() != main->desktop())
-                remove(*i);
+            if (c->geometry() != main->geometry() || c->desktop() != main->desktop())
+                toBeRemoved << c;
         }
+    }
+
+    for (ClientList::const_iterator i = toBeRemoved.constBegin(), end = toBeRemoved.constEnd(); i != end; ++i)
+        remove(*i);
 }
 
 void ClientGroup::updateItems()
@@ -331,6 +336,9 @@ void ClientGroup::updateMinMaxSize()
         //kWarning(1212) << "ClientGroup's min size is greater than its max size. Setting max to min.";
         maxSize_ = minSize_;
     }
+    // TODO: only emit if really changed
+    emit minSizeChanged();
+    emit maxSizeChanged();
 
     // Ensure all windows are within these sizes
     const QSize size = clients_[visible_]->clientSize();

@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // includes
 #include <QtDeclarative/QDeclarativeImageProvider>
 #include <QtDeclarative/QDeclarativeView>
+#include "tabboxconfig.h"
 
 // forward declaration
 class QAbstractItemModel;
@@ -52,25 +53,35 @@ class DeclarativeView : public QDeclarativeView
 {
     Q_OBJECT
 public:
-    DeclarativeView(QAbstractItemModel *model, QWidget *parent = NULL);
+    DeclarativeView(QAbstractItemModel *model, TabBoxConfig::TabBoxMode mode, QWidget *parent = NULL);
     virtual void showEvent(QShowEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
     void setCurrentIndex(const QModelIndex &index);
-    QModelIndex indexAt(const QPoint &pos) const;
+
+protected:
+    virtual void hideEvent(QHideEvent *event);
+    virtual bool x11Event(XEvent *e);
 
 public Q_SLOTS:
     void slotUpdateGeometry();
+    void slotEmbeddedChanged(bool enabled);
 private Q_SLOTS:
-    void updateQmlSource();
+    void updateQmlSource(bool force = false);
     void currentIndexChanged(int row);
+    void slotWindowChanged(WId wId, unsigned int properties);
 private:
     QAbstractItemModel *m_model;
+    TabBoxConfig::TabBoxMode m_mode;
     QRect m_currentScreenGeometry;
     /**
     * Background Frame required for setting the blur mask
     */
     Plasma::FrameSvg* m_frame;
     QString m_currentLayout;
+    int m_cachedWidth;
+    int m_cachedHeight;
+    //relative position to the embedding window
+    QPoint m_relativePos;
 };
 
 } // namespace TabBox

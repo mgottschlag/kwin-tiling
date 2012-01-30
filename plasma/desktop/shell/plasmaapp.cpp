@@ -75,10 +75,11 @@
 #include <Plasma/Wallpaper>
 #include <Plasma/WindowEffects>
 
+#include <KActivities/Controller>
+
 #include <kephal/screens.h>
 
 #include <plasmagenericshell/backgrounddialog.h>
-#include "kworkspace/kactivitycontroller.h"
 
 #include "activity.h"
 #include "appadaptor.h"
@@ -87,7 +88,6 @@
 #include "desktopcorona.h"
 #include "desktopview.h"
 #include "interactiveconsole.h"
-#include "kworkspace/kactivityinfo.h"
 #include "panelshadows.h"
 #include "panelview.h"
 #include "plasma-shell-desktop.h"
@@ -455,6 +455,7 @@ void PlasmaApp::showInteractiveConsole()
     if (!console) {
         m_console = console = new InteractiveConsole(m_corona);
     }
+    m_console.data()->setMode(InteractiveConsole::PlasmaConsole);
 
     KWindowSystem::setOnDesktop(console->winId(), KWindowSystem::currentDesktop());
     console->show();
@@ -465,6 +466,22 @@ void PlasmaApp::showInteractiveConsole()
 void PlasmaApp::loadScriptInInteractiveConsole(const QString &script)
 {
     showInteractiveConsole();
+    if (m_console) {
+        m_console.data()->loadScript(script);
+    }
+}
+
+void PlasmaApp::showInteractiveKWinConsole()
+{
+    showInteractiveConsole();
+    if (m_console) {
+        m_console.data()->setMode(InteractiveConsole::KWinConsole);
+    }
+}
+
+void PlasmaApp::loadKWinScriptInInteractiveConsole (const QString &script)
+{
+    showInteractiveKWinConsole();
     if (m_console) {
         m_console.data()->loadScript(script);
     }
@@ -552,10 +569,8 @@ ControllerWindow *PlasmaApp::showController(int screen, Plasma::Containment *con
     }
 
     controller->show();
-    Plasma::WindowEffects::slideWindow(controller, Plasma::BottomEdge);
-    KWindowSystem::setOnAllDesktops(controller->winId(), true);
+    Plasma::WindowEffects::slideWindow(controller, controller->location());
     QTimer::singleShot(0, controller, SLOT(activate()));
-    KWindowSystem::setState(controller->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky | NET::KeepAbove);
     return controller;
 }
 
@@ -780,7 +795,6 @@ bool PlasmaApp::canRelocatePanel(PanelView * view, Kephal::Screen *screen)
             pv->location() == view->location() &&
             pv->geometry().intersects(newGeom)) {
             return false;
-            break;
         }
     }
 
@@ -802,9 +816,9 @@ DesktopView* PlasmaApp::viewForScreen(int screen, int desktop) const
     return 0;
 }
 
-DesktopCorona* PlasmaApp::corona()
+DesktopCorona* PlasmaApp::corona(bool createIfMissing)
 {
-    if (!m_corona) {
+    if (!m_corona && createIfMissing) {
         QTime t;
         t.start();
         DesktopCorona *c = new DesktopCorona(this);
@@ -1102,10 +1116,21 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
     }
 
     createView(containment);
+}
+
+void PlasmaApp::prepareContainment(Plasma::Containment *containment)
+{
+    if (!containment) {
+        return;
+    }
 
     disconnect(containment, 0, this, 0);
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
+
+    if (isPanelContainment(containment)) {
+        return;
+    }
 
     if ((containment->containmentType() == Plasma::Containment::DesktopContainment ||
          containment->containmentType() == Plasma::Containment::CustomContainment)) {
@@ -1129,7 +1154,7 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
         }
     }
 
-    if (!isPanelContainment(containment) && !KAuthorized::authorize("editable_desktop_icons")) {
+    if (!KAuthorized::authorize("editable_desktop_icons")) {
         containment->setImmutability(Plasma::SystemImmutable);
     }
 }
@@ -1226,7 +1251,7 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
 
 void PlasmaApp::cloneCurrentActivity()
 {
-    KActivityController controller;
+    KActivities::Controller controller;
     //getting the current activity is *so* much easier than the current containment(s) :) :)
     QString oldId = controller.currentActivity();
     Activity *oldActivity = m_corona->activity(oldId);
@@ -1423,7 +1448,7 @@ void PlasmaApp::plasmoidAccessFinished(Plasma::AccessAppletJob *job)
 
 void PlasmaApp::createActivity(const QString &plugin)
 {
-    KActivityController controller;
+    KActivities::Controller controller;
     QString id = controller.addActivity(i18nc("Default name for a new activity", "New Activity"));
 
     Activity *a = m_corona->activity(id);
@@ -1435,7 +1460,7 @@ void PlasmaApp::createActivity(const QString &plugin)
 
 void PlasmaApp::createActivityFromScript(const QString &script, const QString &name, const QString &icon, const QStringList &startupApps)
 {
-    KActivityController controller;
+    KActivities::Controller controller;
     m_loadingActivity = controller.addActivity(name);
     Activity *a = m_corona->activity(m_loadingActivity);
     Q_ASSERT(a);

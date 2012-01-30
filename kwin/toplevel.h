@@ -28,8 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdecoration.h>
 #include <kdebug.h>
 
-#include "kactivityconsumer.h"
-
 #include "utils.h"
 #include "workspace.h"
 
@@ -48,6 +46,117 @@ class Toplevel
     : public QObject, public KDecorationDefines
 {
     Q_OBJECT
+    Q_PROPERTY(bool alpha READ hasAlpha CONSTANT)
+    Q_PROPERTY(qulonglong frameId READ frameId)
+    Q_PROPERTY(QRect geometry READ geometry NOTIFY geometryChanged)
+    Q_PROPERTY(int height READ height)
+    Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity NOTIFY opacityChanged)
+    Q_PROPERTY(QPoint pos READ pos)
+    Q_PROPERTY(int screen READ screen)
+    Q_PROPERTY(QSize size READ size)
+    Q_PROPERTY(int width READ width)
+    Q_PROPERTY(qulonglong windowId READ window CONSTANT)
+    Q_PROPERTY(int x READ x)
+    Q_PROPERTY(int y READ y)
+    Q_PROPERTY(int desktop READ desktop)
+    Q_PROPERTY(QRect rect READ rect)
+    Q_PROPERTY(QPoint clientPos READ clientPos)
+    Q_PROPERTY(QSize clientSize READ clientSize)
+    Q_PROPERTY(QByteArray resourceName READ resourceName)
+    Q_PROPERTY(QByteArray resourceClass READ resourceClass)
+    Q_PROPERTY(QByteArray windowRole READ windowRole)
+    /**
+     * Returns whether the window is a desktop background window (the one with wallpaper).
+     * See _NET_WM_WINDOW_TYPE_DESKTOP at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(bool desktopWindow READ isDesktop)
+    /**
+     * Returns whether the window is a dock (i.e. a panel).
+     * See _NET_WM_WINDOW_TYPE_DOCK at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(bool dock READ isDock)
+    /**
+     * Returns whether the window is a standalone (detached) toolbar window.
+     * See _NET_WM_WINDOW_TYPE_TOOLBAR at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(bool toolbar READ isToolbar)
+    /**
+     * Returns whether the window is a torn-off menu.
+     * See _NET_WM_WINDOW_TYPE_MENU at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(bool menu READ isMenu)
+    /**
+     * Returns whether the window is a "normal" window, i.e. an application or any other window
+     * for which none of the specialized window types fit.
+     * See _NET_WM_WINDOW_TYPE_NORMAL at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(bool normalWindow READ isNormalWindow)
+    /**
+     * Returns whether the window is a dialog window.
+     * See _NET_WM_WINDOW_TYPE_DIALOG at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(bool dialog READ isDialog)
+    /**
+     * Returns whether the window is a splashscreen. Note that many (especially older) applications
+     * do not support marking their splash windows with this type.
+     * See _NET_WM_WINDOW_TYPE_SPLASH at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(bool splash READ isSplash)
+    /**
+     * Returns whether the window is a utility window, such as a tool window.
+     * See _NET_WM_WINDOW_TYPE_UTILITY at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(bool utility READ isUtility)
+    /**
+     * Returns whether the window is a dropdown menu (i.e. a popup directly or indirectly open
+     * from the applications menubar).
+     * See _NET_WM_WINDOW_TYPE_DROPDOWN_MENU at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(bool dropdownMenu READ isDropdownMenu)
+    /**
+     * Returns whether the window is a popup menu (that is not a torn-off or dropdown menu).
+     * See _NET_WM_WINDOW_TYPE_POPUP_MENU at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(bool popupMenu READ isPopupMenu)
+    /**
+     * Returns whether the window is a tooltip.
+     * See _NET_WM_WINDOW_TYPE_TOOLTIP at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(bool tooltip READ isTooltip)
+    /**
+     * Returns whether the window is a window with a notification.
+     * See _NET_WM_WINDOW_TYPE_NOTIFICATION at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(bool notification READ isNotification)
+    /**
+     * Returns whether the window is a combobox popup.
+     * See _NET_WM_WINDOW_TYPE_COMBO at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(bool comboBox READ isComboBox)
+    /**
+     * Returns whether the window is a Drag&Drop icon.
+     * See _NET_WM_WINDOW_TYPE_DND at http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(bool dndIcon READ isDNDIcon)
+    /**
+     * Returns the NETWM window type
+     * See http://standards.freedesktop.org/wm-spec/wm-spec-latest.html .
+     */
+    Q_PROPERTY(int windowType READ windowType)
+    Q_PROPERTY(QStringList activities READ activities)
+    /**
+     * Whether this Toplevel is managed by KWin (it has control over its placement and other
+     * aspects, as opposed to override-redirect windows that are entirely handled by the application).
+     **/
+    Q_PROPERTY(bool managed READ isClient CONSTANT)
+    /**
+     * Whether this Toplevel represents an already deleted window and only kept for the compositor for animations.
+     **/
+    Q_PROPERTY(bool deleted READ isDeleted CONSTANT)
+    /**
+     * Whether the window has an own shape
+     **/
+    Q_PROPERTY(bool shaped READ shape NOTIFY shapedChanged)
 public:
     Toplevel(Workspace *ws);
     Window frameId() const;
@@ -69,6 +178,8 @@ public:
     virtual QRect decorationRect() const; // rect including the decoration shadows
     virtual QRect transparentRect() const = 0;
     virtual QRegion decorationPendingRegion() const; // decoration region that needs to be repainted
+    virtual bool isClient() const;
+    virtual bool isDeleted() const;
 
     // prefer isXXX() instead
     // 0 for supported types means default for managed/unmanaged types
@@ -121,10 +232,10 @@ public:
     bool updateUnredirectedState();
     bool unredirected() const;
     void suspendUnredirect(bool suspend);
-    void addRepaint(const QRect& r);
-    void addRepaint(const QRegion& r);
-    void addRepaint(int x, int y, int w, int h);
-    virtual void addRepaintFull();
+    Q_INVOKABLE void addRepaint(const QRect& r);
+    Q_INVOKABLE void addRepaint(const QRegion& r);
+    Q_INVOKABLE void addRepaint(int x, int y, int w, int h);
+    Q_INVOKABLE virtual void addRepaintFull();
     // these call workspace->addRepaint(), but first transform the damage if needed
     void addWorkspaceRepaint(const QRect& r);
     void addWorkspaceRepaint(int x, int y, int w, int h);
@@ -158,7 +269,7 @@ public:
 
     /**
      * This method returns the area that the Toplevel window reports to be opaque.
-     * It is supposed to only provide valueable information if @link hasAlpha is @c true .
+     * It is supposed to only provide valuable information if @link hasAlpha is @c true .
      * @see hasAlpha
      **/
     const QRegion& opaqueRegion() const;
@@ -170,6 +281,13 @@ signals:
     void geometryChanged();
     void geometryShapeChanged(KWin::Toplevel* toplevel, const QRect& old);
     void windowClosed(KWin::Toplevel* toplevel, KWin::Deleted* deleted);
+    void windowShown(KWin::Toplevel* toplevel);
+    /**
+     * Signal emitted when the window's shape state changed. That is if it did not have a shape
+     * and received one or if the shape was withdrawn. Think of Chromium enabling/disabling KWin's
+     * decoration.
+     **/
+    void shapedChanged();
 
 protected:
     virtual ~Toplevel();
@@ -184,6 +302,7 @@ protected:
     void addDamageFull();
     void getWmClientLeader();
     void getWmClientMachine();
+    void setReadyForPainting();
 
     /**
      * This function fetches the opaque region from this Toplevel.

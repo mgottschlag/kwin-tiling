@@ -20,8 +20,8 @@
 #include "activityengine.h"
 #include "activityservice.h"
 
-#include <kworkspace/kactivitycontroller.h>
-#include <kworkspace/kactivityinfo.h>
+#include <KActivities/Controller>
+#include <KActivities/Info>
 
 #include <QApplication>
 
@@ -37,7 +37,7 @@ void ActivityEngine::init()
         //hack for the netbook
         //FIXME can I read a setting or something instead?
     } else {
-        m_activityController = new KActivityController(this);
+        m_activityController = new KActivities::Controller(this);
         m_currentActivity = m_activityController->currentActivity();
         QStringList activities = m_activityController->listActivities();
         //setData("allActivities", activities);
@@ -52,56 +52,63 @@ void ActivityEngine::init()
         //some convenience sources for times when checking every activity source would suck
         //it starts with _ so that it can easily be filtered out of sources()
         //maybe I should just make it not included in sources() instead?
+        m_runningActivities = m_activityController->listActivities(KActivities::Info::Running);
         setData("Status", "Current", m_currentActivity);
-        setData("Status", "Running", m_activityController->listActivities(KActivityInfo::Running));
+        setData("Status", "Running", m_runningActivities);
     }
 }
 
 void ActivityEngine::insertActivity(const QString &id)
 {
     //id -> name, icon, state
-    KActivityInfo *activity = new KActivityInfo(id, this);
+    KActivities::Info *activity = new KActivities::Info(id, this);
+    m_activities[id] = activity;
     setData(id, "Name", activity->name());
     setData(id, "Icon", activity->icon());
     setData(id, "Current", m_currentActivity == id);
+    setData(id, "Encrypted", activity->isEncrypted());
 
     QString state;
     switch (activity->state()) {
-        case KActivityInfo::Running:
+        case KActivities::Info::Running:
             state = "Running";
             break;
-        case KActivityInfo::Starting:
+        case KActivities::Info::Starting:
             state = "Starting";
             break;
-        case KActivityInfo::Stopping:
+        case KActivities::Info::Stopping:
             state = "Stopping";
             break;
-        case KActivityInfo::Stopped:
+        case KActivities::Info::Stopped:
             state = "Stopped";
             break;
-        case KActivityInfo::Invalid:
+        case KActivities::Info::Invalid:
         default:
             state = "Invalid";
     }
     setData(id, "State", state);
 
     connect(activity, SIGNAL(infoChanged()), this, SLOT(activityDataChanged()));
-    connect(activity, SIGNAL(stateChanged(KActivityInfo::State)), this, SLOT(activityStateChanged()));
+    connect(activity, SIGNAL(stateChanged(KActivities::Info::State)), this, SLOT(activityStateChanged()));
+
+    m_runningActivities << id;
 }
 
 void ActivityEngine::activityAdded(const QString &id)
 {
     insertActivity(id);
-    setData("Status", "Running",
-            m_activityController->listActivities(KActivityInfo::Running)); //FIXME horribly inefficient
+    setData("Status", "Running", m_runningActivities);
 }
 
 void ActivityEngine::activityRemoved(const QString &id)
 {
-    //FIXME delete the KActivityInfo
     removeSource(id);
-    setData("Status", "Running",
-            m_activityController->listActivities(KActivityInfo::Running)); //FIXME horribly inefficient
+    KActivities::Info *activity = m_activities.take(id);
+    if (activity) {
+        delete activity;
+    }
+    m_runningActivities.removeAll(id);
+    setData("Status", "Running", m_runningActivities);
 }
 
 void ActivityEngine::currentActivityChanged(const QString &id)
@@ -114,43 +121,52 @@ void ActivityEngine::currentActivityChanged(const QString &id)
 
 void ActivityEngine::activityDataChanged()
 {
-    KActivityInfo *activity = qobject_cast<KActivityInfo*>(sender());
+    KActivities::Info *activity = qobject_cast<KActivities::Info*>(sender());
     if (!activity) {
         return;
     }
     setData(activity->id(), "Name", activity->name());
     setData(activity->id(), "Icon", activity->icon());
+    setData(activity->id(), "Encrypted", activity->isEncrypted());
     setData(activity->id(), "Current", m_currentActivity == activity->id());
 }
 
 void ActivityEngine::activityStateChanged()
 {
-    KActivityInfo *activity = qobject_cast<KActivityInfo*>(sender());
+    KActivities::Info *activity = qobject_cast<KActivities::Info*>(sender());
+    const QString id = activity->id();
     if (!activity) {
         return;
     }
     QString state;
     switch (activity->state()) {
-        case KActivityInfo::Running:
+        case KActivities::Info::Running:
             state = "Running";
             break;
-        case KActivityInfo::Starting:
+        case KActivities::Info::Starting:
             state = "Starting";
             break;
-        case KActivityInfo::Stopping:
+        case KActivities::Info::Stopping:
             state = "Stopping";
             break;
-        case KActivityInfo::Stopped:
+        case KActivities::Info::Stopped:
             state = "Stopped";
             break;
-        case KActivityInfo::Invalid:
+        case KActivities::Info::Invalid:
         default:
             state = "Invalid";
     }
-    setData(activity->id(), "State", state);
+    setData(id, "State", state);
 
-    setData("Status", "Running",
-            m_activityController->listActivities(KActivityInfo::Running)); //FIXME horribly inefficient
+    if (activity->state() == KActivities::Info::Running) {
+        if (!m_runningActivities.contains(id)) {
+            m_runningActivities << id;
+        }
+    } else {
+        m_runningActivities.removeAll(id);
+    }
+
+    setData("Status", "Running", m_runningActivities);
 }
 
 

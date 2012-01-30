@@ -46,6 +46,10 @@
 
 #include <kworkspace/kworkspace.h>
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
+
 class EmptyGraphicsItem : public QGraphicsWidget
 {
     public:

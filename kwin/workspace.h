@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QElapsedTimer>
 #include <kmanagerselection.h>
 
-#include "kactivitycontroller.h"
+#include <KActivities/Controller>
 
 #include "plugins.h"
 #include "utils.h"
@@ -307,7 +307,7 @@ private:
     QString activity_;
     QStringList allActivities_;
 
-    KActivityController activityController_;
+    KActivities::Controller activityController_;
 
 #ifdef KWIN_BUILD_TILING
     Tiling* m_tiling;
@@ -334,7 +334,7 @@ public:
         return allActivities_;
     }
     QStringList openActivityList() const {
-        return activityController_.listActivities(KActivityInfo::Running);
+        return activityController_.listActivities(KActivities::Info::Running);
     }
 
     // True when performing Workspace::updateClientArea().
@@ -459,6 +459,7 @@ public:
     void previousTileLayout();
     bool stopActivity(const QString &id);
     bool startActivity(const QString &id);
+    QStringList activeEffects() const;
 
     void setCurrentScreen(int new_screen);
 
@@ -649,10 +650,6 @@ private slots:
     void configureWM();
     void desktopResized();
     void screenChangeTimeout();
-    void screenAdded(Kephal::Screen*);
-    void screenRemoved(int);
-    void screenResized(Kephal::Screen*, QSize, QSize);
-    void screenMoved(Kephal::Screen*, QPoint, QPoint);
     void slotUpdateToolWindows();
     void delayFocus();
     void gotTemporaryRulesMessage(const QString&);
@@ -702,6 +699,7 @@ private:
     void initShortcuts();
     void initDesktopPopup();
     void initActivityPopup();
+    void restartKWin(const QString &reason);
     void discardPopup();
     void setupWindowShortcut(Client* c);
     void checkCursorPos();

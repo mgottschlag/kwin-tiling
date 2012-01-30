@@ -1,6 +1,5 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
-   Copyright (C) Andrew Stanley-Jones
+   Copyright (C) Andrew Stanley-Jones <asj@cban.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -17,8 +16,8 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#ifndef _VERSION_H_
-#define _VERSION_H_
+#ifndef VERSION_H
+#define VERSION_H
 
 static const char * const klipper_version = "v0.9.7";
 

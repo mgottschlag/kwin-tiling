@@ -151,16 +151,6 @@ public:
         return m_svg->elementSize("bottomright") - m_svg->elementSize("hint-glow-radius");
     }
 
-    bool event(QEvent *event)
-    {
-        if (event->type() == QEvent::Paint) {
-            QPainter p(this);
-            p.setCompositionMode(QPainter::CompositionMode_Source);
-            p.fillRect(rect(), Qt::transparent);
-        }
-        return QWidget::event(event);
-    }
-
     void updateStrength(QPoint point)
     {
         QPoint localPoint = mapFromGlobal(point);
@@ -214,6 +204,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_triggerEntered(false),
       m_respectStatus(true)
 {
+    setAttribute(Qt::WA_TranslucentBackground);
     PlasmaApp::self()->panelShadows()->addWindow(this);
 
     // KWin setup
@@ -305,6 +296,8 @@ void PanelView::setContainment(Plasma::Containment *containment)
     if (oldContainment) {
         disconnect(oldContainment);
     }
+
+    PlasmaApp::self()->prepareContainment(containment);
 
     connect(containment, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(statusUpdated(Plasma::ItemStatus)));
     connect(containment, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
@@ -466,12 +459,16 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
     config().writeEntry("panelVisibility", (int)mode);
 
     //if the user didn't cause this, hide again in a bit
-    if ((mode == AutoHide || mode == LetWindowsCover) && !m_editing) {
-        if (m_mousePollTimer) {
-            m_mousePollTimer->stop();
-        }
+    if (!m_editing) {
+        updateStruts();
 
-        QTimer::singleShot(2000, this, SLOT(startAutoHide()));
+        if (mode == AutoHide || mode == LetWindowsCover) {
+            if (m_mousePollTimer) {
+                m_mousePollTimer->stop();
+            }
+
+            QTimer::singleShot(2000, this, SLOT(startAutoHide()));
+        }
     }
 
     KWindowSystem::setOnAllDesktops(winId(), true);
@@ -1263,6 +1260,7 @@ void PanelView::unhide(bool destroyTrigger)
     if (!isVisible()) {
         Plasma::WindowEffects::slideWindow(this, location());
         show();
+        KWindowSystem::raiseWindow(winId());
     }
 
     KWindowSystem::setOnAllDesktops(winId(), true);
@@ -1425,32 +1423,6 @@ void PanelView::leaveEvent(QEvent *event)
     }
 }
 
-void PanelView::drawBackground(QPainter *painter, const QRectF &rect)
-{
-    if (PlasmaApp::hasComposite()) {
-        painter->setCompositionMode(QPainter::CompositionMode_Source);
-        painter->fillRect(rect.toAlignedRect(), Qt::transparent);
-    } else {
-        Plasma::View::drawBackground(painter, rect);
-    }
-}
-
-void PanelView::paintEvent(QPaintEvent *event)
-{
-    Plasma::View::paintEvent(event);
-}
-
-bool PanelView::event(QEvent *event)
-{
-    if (event->type() == QEvent::Paint) {
-        QPainter p(this);
-        p.setCompositionMode(QPainter::CompositionMode_Source);
-        p.fillRect(rect(), Qt::transparent);
-    }
-
-    return Plasma::View::event(event);
-}
-
 void PanelView::appletAdded(Plasma::Applet *applet)
 {
     if (m_panelController && containment()->containmentType() == Plasma::Containment::PanelContainment) {
@@ -1575,7 +1547,7 @@ void PanelView::createUnhideTrigger()
 
 
     attributes.event_mask = EnterWindowMask | LeaveWindowMask | PointerMotionMask |
-                            KeyPressMask | KeyPressMask | ButtonPressMask |
+                            KeyPressMask | ButtonPressMask |
                             ButtonReleaseMask | ButtonMotionMask |
                             KeymapStateMask | VisibilityChangeMask |
                             StructureNotifyMask | ResizeRedirectMask |

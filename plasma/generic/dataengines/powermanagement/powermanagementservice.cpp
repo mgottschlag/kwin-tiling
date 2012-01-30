@@ -20,8 +20,8 @@
 #include "powermanagementservice.h"
 #include "powermanagementjob.h"
 
-PowerManagementService::PowerManagementService(const QString &source)
-    : m_id(source)
+PowerManagementService::PowerManagementService(QObject *parent)
+    : Plasma::Service(parent)
 {
     setName("powermanagementservice");
 }

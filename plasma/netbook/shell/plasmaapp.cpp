@@ -931,7 +931,6 @@ void PlasmaApp::showWidgetExplorer(Plasma::Containment *containment)
         QSize viewSize = m_widgetExplorerView->size();
         m_widgetExplorerView->setGraphicsWidget(m_widgetExplorer);
 
-        m_widgetExplorer->setIconSize(KIconLoader::SizeLarge);
         m_widgetExplorerView->installEventFilter(this);
     }
 
@@ -1273,7 +1272,7 @@ void PlasmaApp::createUnhideTrigger()
 
 
     attributes.event_mask = EnterWindowMask | LeaveWindowMask | PointerMotionMask |
-                            KeyPressMask | KeyPressMask | ButtonPressMask |
+                            KeyPressMask | ButtonPressMask |
                             ButtonReleaseMask | ButtonMotionMask |
                             KeymapStateMask | VisibilityChangeMask |
                             StructureNotifyMask | ResizeRedirectMask |

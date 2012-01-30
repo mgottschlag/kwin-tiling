@@ -5,6 +5,7 @@ X-KDE-KInfoCenter-Category=graphical_information
 Icon=folder-documents
 
 Name=Graphical Information
+Name[ar]=المعلومات الرسومية
 Name[ast]=Información gráfica
 Name[bg]=Данни за графичната система
 Name[bs]=Podaci o grafici
@@ -33,7 +34,7 @@ Name[kk]=Графикалық мәлімет
 Name[km]=ព័ត៌មាន​ប្រជាសាស្ត្រ
 Name[kn]=ಚಿತ್ರಾತ್ಮಕ ಮಾಹಿತಿ
 Name[ko]=그래픽 정보
-Name[lt]=Grafinė informacija
+Name[lt]=Grafikos informacija
 Name[lv]=Grafiskā informācija
 Name[nb]=Grafisk informasjon
 Name[nds]=Graafsche Informatschonen

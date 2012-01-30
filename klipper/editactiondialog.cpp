@@ -20,13 +20,13 @@
 
 #include "editactiondialog.h"
 
+#include <QtGui/QItemDelegate>
+#include <QtGui/QComboBox>
+
 #include <KDebug>
 
 #include "urlgrabber.h"
-
 #include "ui_editactiondialog.h"
-#include <QItemDelegate>
-#include <QComboBox>
 
 namespace {
     static QString output2text(ClipCommand::Output output) {
@@ -131,9 +131,9 @@ void ActionDetailModel::setIconForCommand(ClipCommand& cmd)
                                         QStringList(), 0, true /* canReturnNull */ );
 
     if ( !iconPix.isNull() ) {
-        cmd.pixmap = command;
+        cmd.icon = command;
     } else {
-        cmd.pixmap.clear();
+        cmd.icon.clear();
     }
 
 }
@@ -188,7 +188,7 @@ QVariant ActionDetailModel::decorationData(ClipCommand* command, ActionDetailMod
 {
     switch (column) {
         case COMMAND_COL:
-            return command->pixmap.isEmpty() ? KIcon( "system-run" ) : KIcon( command->pixmap );
+            return command->icon.isEmpty() ? KIcon( "system-run" ) : KIcon( command->icon );
         case OUTPUT_COL:
         case DESCRIPTION_COL:
             break;
@@ -266,6 +266,9 @@ EditActionDialog::EditActionDialog(QWidget* parent)
     QWidget* dlgWidget = new QWidget(this);
     m_ui = new Ui::EditActionDialog;
     m_ui->setupUi(dlgWidget);
+
+    m_ui->leRegExp->setClearButtonShown(true);
+    m_ui->leDescription->setClearButtonShown(true);
 
     m_ui->pbAddCommand->setIcon(KIcon("list-add"));
     m_ui->pbRemoveCommand->setIcon(KIcon("list-remove"));
