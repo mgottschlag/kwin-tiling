@@ -47,6 +47,8 @@ SplashWindow::SplashWindow(bool testing)
     rootContext()->setContextProperty("screenSize", size());
     setSource(QUrl(themeDir(QApplication::arguments().at(1)) + "/main.qml"));
     setStyleSheet("background: #000000; border: none");
+    setAttribute(Qt::WA_OpaquePaintEvent);
+    setAttribute(Qt::WA_NoSystemBackground);
     //be sure it will be eventually closed
     //FIXME: should never be stuck
     QTimer::singleShot(30000, this, SLOT(close()));
