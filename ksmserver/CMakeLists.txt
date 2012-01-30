@@ -4,9 +4,14 @@ add_subdirectory( kcm )
 endif(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
 add_subdirectory( tests )
 
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/ksmserver ${CMAKE_MODULE_PATH})
+find_package(KDeclarative REQUIRED)
+macro_log_feature(KDECLARATIVE_FOUND "libkdeclarative" "KDE Declarative (QML) support from kdelibs" "http://www.kde.org" TRUE "" "Required by ksmserver.")
+
 include_directories(
    ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs
    ${QIMAGEBLITZ_INCLUDES}
+   ${KDECLARATIVE_INCLUDE_DIR}
 )
 
 check_library_exists(ICE _IceTransNoListen "" HAVE__ICETRANSNOLISTEN)
@@ -54,7 +59,7 @@ kde4_add_kdeinit_executable( ksmserver ${ksmserver_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_ksmserver ${KDE4_PLASMA_LIBS} kworkspace
    ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${QIMAGEBLITZ_LIBRARIES} ${KDE4_SOLID_LIBS} ${X11_LIBRARIES} ${X11_Xrender_LIB}
-   ${QT_QTDECLARATIVE_LIBRARY} kdeclarative
+   ${QT_QTDECLARATIVE_LIBRARY} ${KDECLARATIVE_LIBRARIES}
 )
 
 install(TARGETS kdeinit_ksmserver ${INSTALL_TARGETS_DEFAULT_ARGS})
