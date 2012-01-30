@@ -1,6 +1,6 @@
 /*
 *   Copyright (C) 2011 by Marco Martin <mart@kde.org>
-*   Copyright (C) 2011 by Lamarque V. Souza <lamarque@kde.org>
+*   Copyright (C) 2011-2012 by Lamarque V. Souza <lamarque@kde.org>
 *
 *   This program is free software; you can redistribute it and/or modify
 *   it under the terms of the GNU Library General Public License as
