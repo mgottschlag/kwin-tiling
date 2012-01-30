@@ -2,6 +2,9 @@
 Encoding=UTF-8
 Keywords=
 Name=Activity manager for the desktop
+Name[hu]=Aktivitáskezelő az asztalhoz
+Name[uk]=Керування просторами дій для стільниці
+Name[x-test]=xxActivity manager for the desktopxx
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/GenericPackage

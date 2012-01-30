@@ -2,6 +2,9 @@
 Encoding=UTF-8
 Keywords=
 Name=Widget explorer for the desktop
+Name[hu]=Widgetböngésző az asztalhoz
+Name[uk]=Перегляд віджетів на стільниці
+Name[x-test]=xxWidget explorer for the desktopxx
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/GenericPackage
