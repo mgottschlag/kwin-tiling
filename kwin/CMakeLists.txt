@@ -105,7 +105,6 @@ set(kwin_KDEINIT_SRCS
    toplevel.cpp
    unmanaged.cpp
    scene.cpp
-   scene_basic.cpp
    scene_xrender.cpp
    scene_opengl.cpp
    thumbnailitem.cpp
@@ -121,9 +120,8 @@ if(KWIN_BUILD_SCRIPTING)
     set(
         kwin_KDEINIT_SRCS ${kwin_KDEINIT_SRCS}
         scripting/scripting.cpp
-        scripting/workspace.cpp
+        scripting/workspace_wrapper.cpp
         scripting/meta.cpp
-        scripting/workspaceproxy.cpp
         scripting/timer.cpp
     )
 endif(KWIN_BUILD_SCRIPTING)

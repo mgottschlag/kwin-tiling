@@ -2,19 +2,32 @@
 <!DOCTYPE kcfg SYSTEM
     "http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
 <kcfg>
-
-    <group name="setScreensaverInhibited">
-        <entry name="Reason" type="String">
-            <label>The reason the caller (and/or applet calling) is preventing the screensaver from activating.</label>
-        </entry>
-    </group>
-
-    <group name="setScreensaverUninhibited"> </group>
-
     <group name="lockScreen"> </group>
     <group name="suspend"> </group>
     <group name="suspendToRam"> </group>
     <group name="suspendToDisk"> </group>
     <group name="suspendHybrid"> </group>
     <group name="requestShutDown"> </group>
+
+    <group name="beginSuppressingSleep">
+        <entry name="reason" type="String">
+            <label>States why sleep is being inhibited</label>
+        </entry>
+    </group>
+    <group name="stopSuppressingSleep">
+        <entry name="cookie" type="Int">
+            <label>The cookie obtained from beginSuppressingSleep, representing the inhibition to release</label>
+        </entry>
+    </group>
+
+    <group name="beginSuppressingScreenPowerManagement">
+        <entry name="reason" type="String">
+            <label>States why screen power management is being inhibited</label>
+        </entry>
+    </group>
+    <group name="stopSuppressingScreenPowerManagement">
+        <entry name="cookie" type="Int">
+            <label>The cookie obtained from beginSuppressingScreenPowerManagement, representing the inhibition to release</label>
+        </entry>
+    </group>
 </kcfg>

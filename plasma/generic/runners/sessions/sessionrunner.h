@@ -46,6 +46,7 @@ class SessionRunner : public Plasma::AbstractRunner
 
         QString m_triggerWord;
         KDisplayManager dm;
+        bool m_canLogout;
 };
 
 K_EXPORT_PLASMA_RUNNER(sessions, SessionRunner)

@@ -87,7 +87,7 @@ class MyApplication : public QApplication {
     Q_OBJECT
 
   public:
-    MyApplication(const char *conf, int argc, char **argv);
+    MyApplication(const char *conf, int &argc, char **argv);
 
   private Q_SLOTS:
     void renderDone();

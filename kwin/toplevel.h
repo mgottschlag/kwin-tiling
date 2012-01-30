@@ -144,6 +144,19 @@ class Toplevel
      */
     Q_PROPERTY(int windowType READ windowType)
     Q_PROPERTY(QStringList activities READ activities)
+    /**
+     * Whether this Toplevel is managed by KWin (it has control over its placement and other
+     * aspects, as opposed to override-redirect windows that are entirely handled by the application).
+     **/
+    Q_PROPERTY(bool managed READ isClient CONSTANT)
+    /**
+     * Whether this Toplevel represents an already deleted window and only kept for the compositor for animations.
+     **/
+    Q_PROPERTY(bool deleted READ isDeleted CONSTANT)
+    /**
+     * Whether the window has an own shape
+     **/
+    Q_PROPERTY(bool shaped READ shape NOTIFY shapedChanged)
 public:
     Toplevel(Workspace *ws);
     Window frameId() const;
@@ -165,6 +178,8 @@ public:
     virtual QRect decorationRect() const; // rect including the decoration shadows
     virtual QRect transparentRect() const = 0;
     virtual QRegion decorationPendingRegion() const; // decoration region that needs to be repainted
+    virtual bool isClient() const;
+    virtual bool isDeleted() const;
 
     // prefer isXXX() instead
     // 0 for supported types means default for managed/unmanaged types
@@ -217,10 +232,10 @@ public:
     bool updateUnredirectedState();
     bool unredirected() const;
     void suspendUnredirect(bool suspend);
-    void addRepaint(const QRect& r);
-    void addRepaint(const QRegion& r);
-    void addRepaint(int x, int y, int w, int h);
-    virtual void addRepaintFull();
+    Q_INVOKABLE void addRepaint(const QRect& r);
+    Q_INVOKABLE void addRepaint(const QRegion& r);
+    Q_INVOKABLE void addRepaint(int x, int y, int w, int h);
+    Q_INVOKABLE virtual void addRepaintFull();
     // these call workspace->addRepaint(), but first transform the damage if needed
     void addWorkspaceRepaint(const QRect& r);
     void addWorkspaceRepaint(int x, int y, int w, int h);
@@ -266,6 +281,13 @@ signals:
     void geometryChanged();
     void geometryShapeChanged(KWin::Toplevel* toplevel, const QRect& old);
     void windowClosed(KWin::Toplevel* toplevel, KWin::Deleted* deleted);
+    void windowShown(KWin::Toplevel* toplevel);
+    /**
+     * Signal emitted when the window's shape state changed. That is if it did not have a shape
+     * and received one or if the shape was withdrawn. Think of Chromium enabling/disabling KWin's
+     * decoration.
+     **/
+    void shapedChanged();
 
 protected:
     virtual ~Toplevel();
@@ -280,6 +302,7 @@ protected:
     void addDamageFull();
     void getWmClientLeader();
     void getWmClientMachine();
+    void setReadyForPainting();
 
     /**
      * This function fetches the opaque region from this Toplevel.

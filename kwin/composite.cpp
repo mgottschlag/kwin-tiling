@@ -49,7 +49,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "effects.h"
 #include "overlaywindow.h"
 #include "scene.h"
-#include "scene_basic.h"
 #include "scene_xrender.h"
 #include "scene_opengl.h"
 #include "shadow.h"
@@ -101,10 +100,6 @@ void Workspace::setupCompositing()
     cm_selection->claim(true);   // force claiming
 
     switch(options->compositingMode) {
-        /*case 'B':
-            kDebug( 1212 ) << "X compositing";
-            scene = new SceneBasic( this );
-          break; // don't fall through (this is a testing one) */
     case OpenGLCompositing: {
         kDebug(1212) << "Initializing OpenGL compositing";
 
@@ -534,8 +529,7 @@ void Toplevel::setupCompositing()
         return;
     damage_handle = XDamageCreate(display(), frameId(), XDamageReportRawRectangles);
     damage_region = QRegion(0, 0, width(), height());
-    effect_window = new EffectWindowImpl();
-    effect_window->setWindow(this);
+    effect_window = new EffectWindowImpl(this);
     unredirect = false;
     workspace()->checkUnredirect(true);
     scene->windowAdded(this);
@@ -663,11 +657,13 @@ void Client::damageNotifyEvent(XDamageNotifyEvent* e)
 #ifdef HAVE_XSYNC
     if (syncRequest.isPending && isResize())
         return;
-    if (syncRequest.counter == None)   // cannot detect complete redraw, consider done now
-        ready_for_painting = true;
+    if (!ready_for_painting) { // avoid "setReadyForPainting()" function calling overhead
+        if (syncRequest.counter == None)   // cannot detect complete redraw, consider done now
+            setReadyForPainting();
 #else
-    ready_for_painting = true;
+        setReadyForPainting();
 #endif
+    }
 
     Toplevel::damageNotifyEvent(e);
 }

@@ -47,7 +47,6 @@ Q_DECLARE_METATYPE(StringStringMap)
 PowermanagementEngine::PowermanagementEngine(QObject* parent, const QVariantList& args)
         : Plasma::DataEngine(parent, args)
         , m_sources(basicSourceNames())
-        , m_screensaverInhibitCookie(-1)
 {
     Q_UNUSED(args)
     qDBusRegisterMetaType< StringStringMap >();
@@ -185,7 +184,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
 Plasma::Service* PowermanagementEngine::serviceForSource(const QString &source)
 {
     if (source == "PowerDevil") {
-        return new PowerManagementService(this, QVariantList() << QVariant::fromValue(&m_screensaverInhibitCookie));
+        return new PowerManagementService(this);
     }
 
     return 0;

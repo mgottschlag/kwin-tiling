@@ -257,7 +257,7 @@ Item {
                     return QIcon("emblem-mounted");
                 }
             }
-            mounted: sdSource.data[udi]["Accessible"] == true;
+            mounted: model["Accessible"]
 
             onLeftActionTriggered: {
                 operationName = mounted ? "unmount" : "mount";

@@ -22,7 +22,6 @@
 #include <QDBusPendingReply>
 
 #include <KAuthorized>
-#include <KApplication>
 
 // kde-workspace/libs
 #include <kworkspace/kworkspace.h>
@@ -30,6 +29,8 @@
 #include "powermanagementjob.h"
 
 #include <kdebug.h>
+
+#include <Solid/PowerManagement>
 
 PowerManagementJob::PowerManagementJob(const QString &operation, QMap<QString, QVariant> &parameters, QObject *parent) :
     ServiceJob(parent->objectName(), operation, parameters, parent)
@@ -45,59 +46,11 @@ void PowerManagementJob::start()
     const QString operation = operationName();
     //kDebug() << "starting operation  ... " << operation;
 
-    if (operation == "setScreensaverInhibited") {
-        // retrieve the cookie which the dataengine passed to service
-        // and now to us...
-        QVariant variant = parameters().value("screensaverInhibitCookie");
-        uint* cookie = variant.value<uint*>();
-
-        if (*cookie == -1) {
-            const QString interface("org.freedesktop.ScreenSaver");
-            QDBusInterface screensaver(interface, "/ScreenSaver");
-
-            QDBusMessage message = screensaver.call("Inhibit", qAppName(), parameters().value("Reason"));
-
-            bool valid = false;
-            *cookie = message.arguments().at(0).toUInt(&valid);
-
-            Q_ASSERT(valid);
-
-            setResult(valid);
-        } else {
-            // the screensaver is supposedly already inhibited by us (plasma shell).
-            // no point in doing it again
-            setResult(false);
-        }
-
-        return;
-    } else if (operation == "setScreensaverUninhibited") {
-        QVariant variant = parameters().value("screensaverInhibitCookie");
-        uint* cookie = variant.value<uint*>();
-
-        if (*cookie != -1) {
-            QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.ScreenSaver", "/ScreenSaver", "org.freedesktop.ScreenSaver", "UnInhibit");
-
-            message << *cookie;
-            // reset the cookie to invalid, so we won't get called if need not be.
-            *cookie = -1;
-
-            bool response = QDBusConnection::sessionBus().send(message);
-            Q_ASSERT(response);
-
-            setResult(true);
-        } else {
-            // was never inhibited by this engine.
-            // we're powerless against it...
-            setResult(false);
-    }
-
-        return;
-    } else if (operation == "lockScreen") {
+    if (operation == "lockScreen") {
         if (KAuthorized::authorizeKAction("lock_screen")) {
             const QString interface("org.freedesktop.ScreenSaver");
             QDBusInterface screensaver(interface, "/ScreenSaver");
             screensaver.asyncCall("Lock");
-
             setResult(true);
             return;
         }
@@ -117,6 +70,14 @@ void PowerManagementJob::start()
         requestShutDown();
         setResult(true);
         return;
+    } else if (operation == "beginSuppressingSleep") {
+        setResult(Solid::PowerManagement::beginSuppressingSleep(parameters().value("reason").toString()));
+    } else if (operation == "stopSuppressingSleep") {
+        setResult(Solid::PowerManagement::stopSuppressingSleep(parameters().value("cookie").toInt()));
+    } else if (operation == "beginSuppressingScreenPowerManagement") {
+        setResult(Solid::PowerManagement::beginSuppressingScreenPowerManagement(parameters().value("reason").toString()));
+    } else if (operation == "stopSuppressingScreenPowerManagement") {
+        setResult(Solid::PowerManagement::stopSuppressingScreenPowerManagement(parameters().value("cookie").toInt()));
     }
 
     kDebug() << "don't know what to do with " << operation;

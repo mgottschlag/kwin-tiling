@@ -66,6 +66,7 @@ void ActivityEngine::insertActivity(const QString &id)
     setData(id, "Name", activity->name());
     setData(id, "Icon", activity->icon());
     setData(id, "Current", m_currentActivity == id);
+    setData(id, "Encrypted", activity->isEncrypted());
 
     QString state;
     switch (activity->state()) {
@@ -126,6 +127,7 @@ void ActivityEngine::activityDataChanged()
     }
     setData(activity->id(), "Name", activity->name());
     setData(activity->id(), "Icon", activity->icon());
+    setData(activity->id(), "Encrypted", activity->isEncrypted());
     setData(activity->id(), "Current", m_currentActivity == activity->id());
 }
 

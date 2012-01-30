@@ -22,8 +22,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "scripting.h"
 // own
 #include "meta.h"
+#include "workspace_wrapper.h"
 // KDE
 #include <kstandarddirs.h>
+#include <KDE/KDebug>
 // Qt
 #include <QtDBus/QDBusConnection>
 #include <QtCore/QSettings>
@@ -52,7 +54,7 @@ KWin::Script::Script(int scriptId, QString scriptName, QDir dir, QObject *parent
     , m_engine(new QScriptEngine(this))
     , m_scriptDir(dir)
     , m_configFile(QFileInfo(m_scriptFile).completeBaseName() + QString(".kwscfg"))
-    , m_workspace(new SWrapper::Workspace(m_engine))
+    , m_workspace(new WorkspaceWrapper(m_engine))
     , m_running(false)
 {
     m_scriptFile.setFileName(dir.filePath(scriptName));
@@ -76,8 +78,11 @@ void KWin::Script::run()
         return;
     }
     if (m_scriptFile.open(QIODevice::ReadOnly)) {
-        m_workspace->attach(m_engine);
+        QScriptValue workspace = m_engine->newQObject(m_workspace, QScriptEngine::QtOwnership,
+                                QScriptEngine::ExcludeSuperClassContents | QScriptEngine::ExcludeDeleteLater);
+        m_engine->globalObject().setProperty("workspace", workspace, QScriptValue::Undeletable);
         m_engine->globalObject().setProperty("QTimer", constructTimerClass(m_engine));
+        m_engine->globalObject().setProperty("KWin", m_engine->newQMetaObject(&WorkspaceWrapper::staticMetaObject));
         QObject::connect(m_engine, SIGNAL(signalHandlerException(QScriptValue)), this, SLOT(sigException(QScriptValue)));
         KWin::MetaScripting::registration(m_engine);
 
@@ -156,9 +161,6 @@ void KWin::Scripting::start()
     for (int i = 0; i < scriptList.size(); i++) {
         loadScript(scriptsDir.filePath(scriptList.at(i)));
     }
-
-    // Initialize singletons. Currently, only KWin::Workspace.
-    SWrapper::Workspace::initialize(KWin::Workspace::self());
 
     runScripts();
 }
