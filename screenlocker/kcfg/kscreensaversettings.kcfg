@@ -88,5 +88,10 @@
       <label></label>
       <whatsthis></whatsthis>
     </entry>
+    <entry key="GreeterQML" type="String">
+      <default>kscreenlocker/lockscreen.qml</default>
+      <label></label>
+      <whatsthis></whatsthis>
+    </entry>
   </group>
 </kcfg>

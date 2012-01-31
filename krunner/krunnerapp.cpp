@@ -146,17 +146,6 @@ void KRunnerApp::initialize()
         connect(a, SIGNAL(triggered(bool)), SLOT(switchUser()));
     }
 
-    //FIXME: lock/logout should be in the session management runner which also provides similar
-    // functions
-#ifdef Q_WS_X11
-    if (KAuthorized::authorize(QLatin1String("lock_screen"))) {
-        a = m_actionCollection->addAction(QLatin1String("Lock Session"));
-        a->setText(i18n("Lock Session"));
-        a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_L));
-        connect(a, SIGNAL(triggered(bool)), &m_saver, SLOT(Lock()));
-    }
-#endif
-
     //Setup the interface after we have set up the actions
     //TODO: if !KAuthorized::authorize("run_comand") (and !"switch_user" i suppose?)
     //      then we probably don't need the interface at all. would be another place

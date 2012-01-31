@@ -1,0 +1,8 @@
+[Desktop Entry]
+Exec=kscreenlocker
+X-DBUS-StartupType=none
+Name=Screenlocker Daemon
+Type=Service
+X-KDE-StartupNotify=false
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=1

@@ -54,6 +54,8 @@ int main(int argc, char **argv)
 
     PlasmaApp *app = PlasmaApp::self();
     QApplication::setWindowIcon(KIcon("plasma"));
+    KGlobal::locale()->insertCatalog(QLatin1String( "libkworkspace" ));
+    KGlobal::locale()->insertCatalog(QLatin1String( "kscreenlocker_greet" ));
     app->disableSessionManagement(); // I assume we'd never want a screensaver thing reppearing on login?
     int rc = app->exec();
     delete app;

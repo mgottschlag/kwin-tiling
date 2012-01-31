@@ -20,9 +20,6 @@
 #define KRUNNERAPP_H
 
 #include <kuniqueapplication.h>
-#ifdef Q_WS_X11
-#include "saverengine.h"
-#endif
 
 class KActionCollection;
 class KDialog;
@@ -49,9 +46,6 @@ public:
     KActionCollection* actionCollection();
 
     virtual int newInstance();
-#ifdef Q_WS_X11
-    SaverEngine& screensaver() { return m_saver; }
-#endif
 
 public Q_SLOTS:
     // DBUS interface. if you change these methods, you MUST run:
@@ -102,9 +96,6 @@ private:
 
     Plasma::RunnerManager *m_runnerManager;
     KActionCollection *m_actionCollection;
-#ifdef Q_WS_X11
-    SaverEngine m_saver;
-#endif
     KRunnerDialog *m_interface;
     KSystemActivityDialog *m_tasks;
     StartupId *m_startupId;

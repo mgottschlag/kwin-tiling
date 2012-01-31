@@ -25,8 +25,7 @@
 
 #include <Plasma/Corona>
 
-class QDBusMessage;
-class QDBusError;
+class QDeclarativeEngine;
 
 /**
  * @short A Corona for the screensaver
@@ -46,18 +45,31 @@ public:
     virtual int numScreens() const;
     virtual QRect screenGeometry(int id) const;
 
+protected:
+    virtual bool eventFilter(QObject *watched, QEvent *event);
+
 private Q_SLOTS:
     void updateActions(Plasma::ImmutabilityType immutability);
     void toggleLock();
-    void unlock(QDBusMessage reply);
-    void dbusError(QDBusError error);
     void unlockDesktop();
     void numScreensUpdated(int newCount);
+    void greeterAccepted();
+    void greeterCanceled();
 
 private:
+    enum UnlockMode {
+        AppletLock,
+        ScreenLock
+    };
     void init();
+    void createGreeter();
+    void capsLocked();
 
     int m_numScreens;
+    QDeclarativeEngine *m_engine;
+    QGraphicsObject *m_greeterItem;
+    UnlockMode m_mode;
+    bool m_capsLocked;
 };
 
 #endif

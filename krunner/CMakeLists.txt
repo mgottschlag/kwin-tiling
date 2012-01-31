@@ -10,14 +10,8 @@ include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard
                     ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/screensaver
                     ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
 
-macro_bool_to_01(X11_Xscreensaver_FOUND HAVE_XSCREENSAVER)
-macro_log_feature(HAVE_XSCREENSAVER "libxss" "XScreenSaver Library" "http://www.x.org/" FALSE "" "Needed to enable screensaver status check")
-configure_file(config-xautolock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-xautolock.h)
-
-set(krunner_KCFG_SRCS kcfg/krunnersettings.kcfgc kcfg/kscreensaversettings.kcfgc kcfg/klaunchsettings.kcfgc)
+set(krunner_KCFG_SRCS kcfg/krunnersettings.kcfgc kcfg/klaunchsettings.kcfgc)
 set(krunner_dbusAppXML dbus/org.kde.krunner.App.xml)
-set(screensaver_dbusXML dbus/org.freedesktop.ScreenSaver.xml)
-set(kscreensaver_dbusXML dbus/org.kde.screensaver.xml)
 
 
 set(default_interface_SRCS
@@ -56,14 +50,8 @@ if(NOT WIN32)
 set(krunner_SRCS
     ${krunner_SRCS}
     ksystemactivitydialog.cpp
-    startupid.cpp
-    screensaver/saverengine.cpp
-    screensaver/xautolock.cpp
-    screensaver/xautolock_diy.c
-    screensaver/xautolock_engine.c)
+    startupid.cpp)
 
-qt4_add_dbus_adaptor(krunner_SRCS ${screensaver_dbusXML} saverengine.h SaverEngine)
-qt4_add_dbus_adaptor(krunner_SRCS ${kscreensaver_dbusXML} saverengine.h SaverEngine kscreensaveradaptor KScreenSaverAdaptor)
 endif(NOT WIN32)
 
 kde4_add_kdeinit_executable(krunner ${krunner_SRCS})
@@ -82,14 +70,9 @@ if(X11_Xcursor_FOUND)
   target_link_libraries(kdeinit_krunner ${X11_Xcursor_LIB})
 endif(X11_Xcursor_FOUND)
 
-if(NOT WIN32)
-add_subdirectory( lock )
-endif(NOT WIN32)
-
 install(TARGETS kdeinit_krunner ${INSTALL_TARGETS_DEFAULT_ARGS} )
 install(TARGETS krunner         ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 install(FILES krunner.desktop  DESTINATION  ${AUTOSTART_INSTALL_DIR})
-install(FILES kcfg/kscreensaversettings.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES kcfg/klaunch.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
-install(FILES ${krunner_dbusAppXML} ${screensaver_dbusXML} ${kscreensaver_dbusXML} DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
+install(FILES ${krunner_dbusAppXML} DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )

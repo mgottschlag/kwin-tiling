@@ -4,8 +4,8 @@
 //
 // Copyright 2004 Chris Howells <howells@kde.org>
 
-#include "lockprocess.h"
 #include "autologout.h"
+#include "lockwindow.h"
 
 #include <kapplication.h>
 #include <klocale.h>
@@ -29,7 +29,7 @@
 
 #define COUNTDOWN 30
 
-AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, Qt::X11BypassWindowManagerHint)
+AutoLogout::AutoLogout(ScreenLocker::LockWindow *parent) : QDialog(NULL, Qt::X11BypassWindowManagerHint)
 {
     QLabel *pixLabel = new QLabel( this );
     pixLabel->setObjectName( QLatin1String( "pixlabel" ) );
@@ -64,7 +64,7 @@ AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, Qt::X11BypassWindo
 
     mCountdownTimerId = startTimer(1000/25);
 
-    connect(qApp, SIGNAL(activity()), SLOT(slotActivity()));
+    connect(parent, SIGNAL(userActivity()), SLOT(slotActivity()));
 }
 
 AutoLogout::~AutoLogout()

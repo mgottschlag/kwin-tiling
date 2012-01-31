@@ -25,10 +25,8 @@
 
 #include "krunnerapp.h"
 #ifdef Q_WS_X11
-#include "saverengine.h"
 #include "startupid.h"
 #endif
-#include "kscreensaversettings.h" // contains screen saver config
 #include "klaunchsettings.h" // contains startup config
 
 #ifdef Q_WS_X11

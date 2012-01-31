@@ -9,7 +9,14 @@
 #ifndef AUTOLOGOUT_H
 #define AUTOLOGOUT_H
 
-#include <QLayout>
+#include <QtCore/QTimer>
+#include <QtGui/QDialog>
+#include <QtGui/QLayout>
+
+namespace ScreenLocker
+{
+class LockWindow;
+}
 
 class LockProcess;
 class QGridLayout;
@@ -22,7 +29,7 @@ class AutoLogout : public QDialog
     Q_OBJECT
 
 public:
-    AutoLogout(LockProcess *parent);
+    AutoLogout(ScreenLocker::LockWindow *parent);
     ~AutoLogout();
     virtual void setVisible(bool visible);
 
