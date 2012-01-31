@@ -1,4 +1,4 @@
-# Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
+# Copyright 2012 Lamarque V. Souza <Lamarque.Souza.ext@basyskom.com>
 # Find the native KDeclarative includes and library
 # This module defines
 #  KDECLARATIVE_INCLUDE_DIR, where to find kdeclarative.h
@@ -8,7 +8,7 @@
 #  KDECLARATIVE_LIBRARY, where to find the KDeclarative library.
 
 #=============================================================================
-# Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
+# Copyright 2012 Lamarque V. Souza <Lamarque.Souza.ext@basyskom.com>
 #
 # Distributed under the OSI-approved BSD License (the "License");
 # see accompanying file Copyright.txt for details.
