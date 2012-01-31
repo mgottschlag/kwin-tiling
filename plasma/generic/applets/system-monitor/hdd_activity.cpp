@@ -177,14 +177,31 @@ void Hdd_Activity::createConfigurationInterface(KConfigDialog *parent)
 
     foreach (const QString& hdd, m_possibleHdds) {
         if (m_regexp.indexIn(hdd) != -1) {
-            QStandardItem *item1 = new QStandardItem(m_regexp.cap(0));
-            item1->setEditable(false);
-            item1->setCheckable(true);
-            item1->setData(hdd);
-            if (sources().contains(hdd)) {
-                item1->setCheckState(Qt::Checked);
+            if (hdd.endsWith("rblk")) {
+
+                // so the user only sees 1 device (which includes both rblk/wblk
+                QString trimmedHdd = hdd;
+                trimmedHdd.remove("rblk");
+
+                QStandardItem *item1 = new QStandardItem(trimmedHdd);
+                item1->setEditable(false);
+                item1->setCheckable(true);
+
+                // store the pair of real sources (rblk, wblk) into data
+                QStringList realSources;
+                realSources.append(trimmedHdd + "rblk");
+                realSources.append(trimmedHdd + "wblk");
+
+                item1->setData(realSources);
+
+                // but the behind the scenes still uses the source separation,
+                // so be sure to use that.
+                if (sources().contains(hdd)) {
+                    item1->setCheckState(Qt::Checked);
+                }
+
+                parentItem->appendRow(QList<QStandardItem *>() << item1);
             }
-            parentItem->appendRow(QList<QStandardItem *>() << item1);
         }
     }
 
@@ -209,7 +226,9 @@ void Hdd_Activity::configChanged()
 
     // default to 2 seconds (2000 ms interval
     setInterval(cg.readEntry("interval", 2.0) * 1000.0);
+    kDebug() << "CONFIG CHANGED: POSSIBLE ONES: " << m_possibleHdds;
     setSources(cg.readEntry("hdds", default_hdds));
+    kDebug() << "CONFIG CHANGED: READ ONES: " << sources();
 
     connectToEngine();
 }
@@ -226,7 +245,12 @@ void Hdd_Activity::configAccepted()
         QStandardItem *item = parentItem->child(i, 0);
         if (item) {
             if (item->checkState() == Qt::Checked) {
-                appendSource(item->data().toString());
+                QStringList actualSources = item->data().toStringList();
+
+                const QString& rblk = actualSources.at(0);
+                const QString& wblk = actualSources.at(1);
+                appendSource(rblk);
+                appendSource(wblk);
             }
         }
     }
