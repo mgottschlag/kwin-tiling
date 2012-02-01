@@ -52,7 +52,7 @@ Item {
             id: dialogItem
             percent: pmSource.data["Battery0"]["Percent"]
             pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
-            screenBrightness: pmSource.data["PowerDevil"]["Screen brightness"]
+            screenBrightness: pmSource.data["PowerDevil"]["Screen Brightness"]
             onSleepClicked: {
                 dialog.visible=false
                 service = pmSource.serviceForSource("PowerDevil");
@@ -71,48 +71,8 @@ Item {
                 operation.brightness = screenBrightness;
                 service.startOperationCall(operation);
             }
-            /*onProfileChanged: {
-                profileKey = findProfile(profile);
-                if (profileKey!="") {
-                    service = pmSource.serviceForSource("PowerDevil");
-                    operation = service.operationDescription("setProfile");
-                    operation.profile = profileKey;
-                    service.startOperationCall(operation);
-                }
-            }*/
         }
     }
-
-    /*function findProfile (profile) {
-        var profiles = pmSource.data["PowerDevil"]["Available profiles"];
-        for (var i in profiles) {
-            if (profiles[i] == profile)
-                return i;
-        }
-        return "";
-    }
-
-    function populateProfiles () {
-        var profiles = pmSource.data["PowerDevil"]["Available profiles"];
-        var currentProfile = pmSource.data["PowerDevil"]["Current profile"];
-
-        var ctr = 0;
-        var found = false;
-
-        dialogItem.clearProfiles();
-        for (var i in profiles) {
-            dialogItem.addProfile (profiles[i]);
-            if (profiles[i] == currentProfile) {
-                dialogItem.setProfile(ctr);
-                found = true;
-            }
-            ctr++;
-        }
-
-        if (!found) {
-            dialogItem.setProfile(-1);
-        }
-    }*/
 
     MouseArea {
         id: mouseArea
