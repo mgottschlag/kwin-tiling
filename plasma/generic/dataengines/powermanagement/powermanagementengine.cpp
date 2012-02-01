@@ -3,6 +3,7 @@
  *   Copyright 2007-2008 Sebastian Kuegler <sebas@kde.org>
  *   CopyRight 2007 Maor Vanmak <mvanmak1@gmail.com>
  *   Copyright 2008 Dario Freddi <drf54321@gmail.com>
+ *   Copyright 2011 Viranch Mehta <viranch.mehta@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
