@@ -124,7 +124,9 @@ void LinearAppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         return;
     }
 
-    disconnect(m_applet, SIGNAL(destroyed()), this, SLOT(appletDestroyed()));
+    if (m_applet) {
+        disconnect(m_applet, SIGNAL(destroyed()), this, SLOT(appletDestroyed()));
+    }
     m_applet = 0;
 
     Plasma::Applet *oldApplet = 0;
@@ -146,10 +148,12 @@ void LinearAppletOverlay::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if (m_spacer) {
         QPointF delta = event->pos()-event->lastPos();
-        if (m_containment->formFactor() == Plasma::Vertical) {
-            m_applet->moveBy(0, delta.y());
-        } else {
-            m_applet->moveBy(delta.x(), 0);
+        if (m_applet) {
+            if (m_containment->formFactor() == Plasma::Vertical) {
+                m_applet->moveBy(0, delta.y());
+            } else {
+                m_applet->moveBy(delta.x(), 0);
+            }
         }
         showSpacer(event->pos());
     }
@@ -170,7 +174,9 @@ void LinearAppletOverlay::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     if (m_spacer && m_layout) {
         m_layout->removeItem(m_spacer);
-        m_layout->insertItem(m_spacerIndex, m_applet);
+        if (m_applet) {
+            m_layout->insertItem(m_spacerIndex, m_applet);
+        }
     }
 
     delete m_spacer;

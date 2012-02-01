@@ -42,8 +42,6 @@ public:
     ~SaverDesktop();
     void init();
 
-    QList<QAction*> contextualActions();
-
 private slots:
     void newApplet(Plasma::Applet *applet, const QPointF &pos);
 

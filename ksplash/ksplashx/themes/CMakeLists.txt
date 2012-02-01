@@ -1,1 +1,1 @@
-add_subdirectory( default )
+add_subdirectory( horos )

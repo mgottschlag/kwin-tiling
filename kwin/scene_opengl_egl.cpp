@@ -190,7 +190,9 @@ void SceneOpenGL::paint(QRegion damage, ToplevelList toplevels)
     if (m_overlayWindow->window())  // show the window only after the first pass, since
         m_overlayWindow->show();   // that pass may take long
     lastRenderTime = renderTimer.elapsed();
-    flushBuffer(mask, damage);
+    if (!damage.isEmpty()) {
+        flushBuffer(mask, damage);
+    }
     // do cleanup
     stacking_order.clear();
     checkGLError("PostPaint");
@@ -203,7 +205,6 @@ void SceneOpenGL::waitSync()
 
 void SceneOpenGL::flushBuffer(int mask, QRegion damage)
 {
-    Q_UNUSED(damage)
     glFlush();
     if (mask & PAINT_SCREEN_REGION && surfaceHasSubPost && eglPostSubBufferNV) {
         QRect damageRect = damage.boundingRect();
@@ -215,6 +216,13 @@ void SceneOpenGL::flushBuffer(int mask, QRegion damage)
     eglWaitGL();
     // TODO: remove for wayland
     XFlush(display());
+}
+
+void SceneOpenGL::screenGeometryChanged(const QSize &size)
+{
+    glViewport(0,0, size.width(), size.height());
+    Scene::screenGeometryChanged(size);
+    ShaderManager::instance()->resetAllShaders();
 }
 
 //****************************************
@@ -240,10 +248,6 @@ void SceneOpenGL::Texture::findTarget()
     d->m_target = GL_TEXTURE_2D;
 }
 
-void SceneOpenGL::TexturePrivate::release()
-{
-}
-
 bool SceneOpenGL::Texture::load(const Pixmap& pix, const QSize& size,
                                 int depth, QRegion region)
 {
@@ -258,11 +262,9 @@ bool SceneOpenGL::Texture::load(const Pixmap& pix, const QSize& size,
         return false;
 
     glGenTextures(1, &d->m_texture);
+    setWrapMode(GL_CLAMP_TO_EDGE);
+    setFilter(GL_LINEAR);
     bind();
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     const EGLint attribs[] = {
         EGL_IMAGE_PRESERVED_KHR, EGL_TRUE,
         EGL_NONE
@@ -273,6 +275,7 @@ bool SceneOpenGL::Texture::load(const Pixmap& pix, const QSize& size,
     if (EGL_NO_IMAGE_KHR == d->m_image) {
         kDebug(1212) << "failed to create egl image";
         unbind();
+        discard();
         return false;
     }
     glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, (GLeglImageOES)d->m_image);
@@ -283,18 +286,13 @@ bool SceneOpenGL::Texture::load(const Pixmap& pix, const QSize& size,
     return true;
 }
 
-void SceneOpenGL::TexturePrivate::bind()
+void SceneOpenGL::TexturePrivate::onDamage()
 {
-    GLTexturePrivate::bind();
     if (options->glStrictBinding) {
         // This is just implemented to be consistent with
         // the example in mesa/demos/src/egl/opengles1/texture_from_pixmap.c
         eglWaitNative(EGL_CORE_NATIVE_ENGINE);
         glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, (GLeglImageOES) m_image);
     }
-}
-
-void SceneOpenGL::TexturePrivate::unbind()
-{
-    GLTexturePrivate::unbind();
+    GLTexturePrivate::onDamage();
 }

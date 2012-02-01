@@ -2,7 +2,6 @@
  *   Copyright 2007 Aaron Seigo <aseigo@kde.org>
  *   Copyright 2007-2008 Sebastian Kuegler <sebas@kde.org>
  *   Copyright 2008 Dario Freddi <drf54321@gmail.com>
- *   Copyright 2011 Viranch Mehta <viranch.mehta@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -22,7 +21,6 @@
 #ifndef POWERMANAGEMENTENGINE_H
 #define POWERMANAGEMENTENGINE_H
 
-#include <Plasma/Service>
 #include <Plasma/DataEngine>
 
 #include <solid/battery.h>
@@ -31,7 +29,7 @@
 #include <QtDBus/QDBusConnection>
 #include <QHash>
 
-class PowermanagementService;
+class QDBusPendingCallWatcher;
 
 /**
  * This class provides runtime information about the battery and AC status
@@ -60,18 +58,16 @@ private slots:
     void deviceAdded(const QString& udi);
     void profileChanged(const QString &current);
     void batteryRemainingTimeChanged(qulonglong time);
-    void availableProfilesChanged();
-    void screenBrightnessChanged(int brightness);
-    void reloadPowerDevilData();
+    void batteryRemainingTimeReply(QDBusPendingCallWatcher*);
 
 private:
     QStringList basicSourceNames() const;
 
     QStringList m_sources;
 
-    QHash<QString, QString> m_batterySources;
+    QHash<QString, QString> m_batterySources;  // <udi, Battery0>
 
-    friend class PowermanagementJob;
 };
+
 
 #endif

@@ -26,6 +26,15 @@
 #include <Plasma/Corona>
 #include <Plasma/Theme>
 
+//#define DEBUG_CONSOLE
+#ifdef DEBUG_CONSOLE
+#include <QGraphicsLinearLayout>
+#include <Plasma/Frame>
+#include <Plasma/TextBrowser>
+#endif
+
+#include <../../../desktop/toolboxes/internaltoolbox.h>
+
 using namespace Plasma;
 
 SaverDesktop::SaverDesktop(QObject *parent, const QVariantList &args)
@@ -33,9 +42,9 @@ SaverDesktop::SaverDesktop(QObject *parent, const QVariantList &args)
       m_lockDesktopAction(0),
       m_appletBrowserAction(0)
 {
-        setContainmentType(CustomContainment);
-        connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)), SLOT(newApplet(Plasma::Applet*,QPointF)));
-        setHasConfigurationInterface(true);
+    setContainmentType(CustomContainment);
+    connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)), SLOT(newApplet(Plasma::Applet*,QPointF)));
+    setHasConfigurationInterface(true);
 }
 
 SaverDesktop::~SaverDesktop()
@@ -46,14 +55,34 @@ void SaverDesktop::init()
 {
     Containment::init();
 
-    //remove the desktop actions
-    QAction *unwanted = action("zoom in");
-    delete unwanted;
-    unwanted = action("zoom out");
-    delete unwanted;
-    unwanted = action("add sibling containment");
-    delete unwanted;
+    // trigger the creation of the toolbox. ugly! :) but nicer than having our own toolbox plugin
+    // just for the screensaver?
+    QAction *dummy = new QAction(this);
+    addToolBoxAction(dummy);
+    removeToolBoxAction(dummy);
+    delete dummy;
 
+    Plasma::AbstractToolBox *tools = toolBox();
+    InternalToolBox *internal = dynamic_cast<InternalToolBox *>(tools);
+
+#ifdef DEBUG_CONSOLE
+    Plasma::Frame *f = new Plasma::Frame(this);
+    f->setGeometry(QRectF(100, 100, 500, 500));
+    QGraphicsLinearLayout *l = new QGraphicsLinearLayout(f);
+    l->addItem(msgs);
+    Plasma::TextBrowser *msgs new Plasma::TextBrowser(this);
+    msgs->setText(QString("got %1 with %2 actions").arg((int)internal).arg(tools ?
+                tools->metaObject()->className() : "NADA"));
+#endif
+
+    if (internal) {
+        // remove all the actions pre-made for us here
+        foreach (QAction *action, internal->actions()) {
+            internal->removeTool(action);
+        }
+    }
+
+    // add our own actions. huzzah.
     QAction *leave = corona()->action("unlock desktop");
     if (leave) {
         addToolBoxAction(leave);
@@ -74,26 +103,6 @@ void SaverDesktop::init()
     if (a) {
         addToolBoxAction(a);
     }
-}
-
-QList<QAction*> SaverDesktop::contextualActions()
-{
-    if (!m_appletBrowserAction) {
-        m_appletBrowserAction = action("add widgets");
-        m_lockDesktopAction = corona()->action("unlock widgets");
-    }
-    QAction *config = action("configure");
-    QAction *quit = corona()->action("unlock desktop");
-
-    QList<QAction*> actions;
-    actions.append(m_appletBrowserAction);
-    if (config) {
-        actions.append(config);
-    }
-    actions.append(m_lockDesktopAction);
-    actions.append(quit);
-
-    return actions;
 }
 
 void SaverDesktop::newApplet(Plasma::Applet *applet, const QPointF &pos)

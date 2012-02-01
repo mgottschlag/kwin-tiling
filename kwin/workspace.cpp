@@ -66,9 +66,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "tiling/tilinglayout.h"
 #include "tiling/tiling.h"
 #endif
-#ifdef KWIN_BUILD_SCRIPTING
-#include "scripting/scripting.h"
-#endif
 
 #include <X11/extensions/shape.h>
 #include <X11/keysym.h>
@@ -251,10 +248,10 @@ Workspace::Workspace(bool restore)
 
     init();
 
-    connect(Kephal::Screens::self(), SIGNAL(screenAdded(Kephal::Screen*)), SLOT(screenAdded(Kephal::Screen*)));
-    connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)), SLOT(screenRemoved(int)));
-    connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)), SLOT(screenResized(Kephal::Screen*,QSize,QSize)));
-    connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)), SLOT(screenMoved(Kephal::Screen*,QPoint,QPoint)));
+    connect(Kephal::Screens::self(), SIGNAL(screenAdded(Kephal::Screen*)), &screenChangedTimer, SLOT(start()));
+    connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)), &screenChangedTimer, SLOT(start()));
+    connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)), &screenChangedTimer, SLOT(start()));
+    connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)), &screenChangedTimer, SLOT(start()));
 
     connect(&activityController_, SIGNAL(currentActivityChanged(QString)), SLOT(updateCurrentActivity(QString)));
     connect(&activityController_, SIGNAL(activityRemoved(QString)), SLOT(activityRemoved(QString)));
@@ -269,30 +266,6 @@ void Workspace::screenChangeTimeout()
 {
     kDebug() << "It is time to call desktopResized";
     desktopResized();
-}
-
-void Workspace::screenAdded(Kephal::Screen* screen)
-{
-    kDebug();
-    screenChangedTimer.start();
-}
-
-void Workspace::screenRemoved(int screen)
-{
-    kDebug();
-    screenChangedTimer.start();
-}
-
-void Workspace::screenResized(Kephal::Screen* screen, QSize old, QSize newSize)
-{
-    kDebug();
-    screenChangedTimer.start();
-}
-
-void Workspace::screenMoved(Kephal::Screen* screen, QPoint old, QPoint newPos)
-{
-    kDebug();
-    screenChangedTimer.start();
 }
 
 void Workspace::init()
@@ -638,7 +611,7 @@ void Workspace::addClient(Client* c, allowed_t)
         updateToolWindows(true);
     checkNonExistentClients();
 #ifdef KWIN_BUILD_TABBOX
-    if (tabBox()->isGrabbed())
+    if (tabBox()->isDisplayed())
         tab_box->reset(true);
 #endif
 }
@@ -672,7 +645,7 @@ void Workspace::removeClient(Client* c, allowed_t)
         Notify::raise(Notify::Delete);
 
 #ifdef KWIN_BUILD_TABBOX
-    if (tabBox()->isGrabbed() && tabBox()->currentClient() == c)
+    if (tabBox()->isDisplayed() && tabBox()->currentClient() == c)
         tab_box->nextPrev(true);
 #endif
 
@@ -708,7 +681,7 @@ void Workspace::removeClient(Client* c, allowed_t)
     updateCompositeBlocking();
 
 #ifdef KWIN_BUILD_TABBOX
-    if (tabBox()->isGrabbed())
+    if (tabBox()->isDisplayed())
         tab_box->reset(true);
 #endif
 
@@ -1044,10 +1017,24 @@ void Workspace::slotReconfigure()
     }
 }
 
+void Workspace::restartKWin(const QString &reason)
+{
+    kDebug(1212) << "restarting kwin for:" << reason;
+    char cmd[1024]; // copied from crashhandler - maybe not the best way to do?
+    sprintf(cmd, "%s --replace &", QFile::encodeName(QCoreApplication::applicationFilePath()).constData());
+    system(cmd);
+}
+
 void Workspace::slotReinitCompositing()
 {
     // Reparse config. Config options will be reloaded by setupCompositing()
     KGlobal::config()->reparseConfiguration();
+    const QString graphicsSystem = KConfigGroup(KSharedConfig::openConfig("kwinrc"), "Compositing").readEntry("GraphicsSystem", "");
+    if ((Extensions::nonNativePixmaps() && graphicsSystem == "native") ||
+        (!Extensions::nonNativePixmaps() && (graphicsSystem == "raster" || graphicsSystem == "raster")) ) {
+        restartKWin("explicitly reconfigured graphicsSystem change");
+        return;
+    }
 
     // Update any settings that can be set in the compositing kcm.
 #ifdef KWIN_BUILD_SCREENEDGES
@@ -1151,6 +1138,9 @@ QStringList Workspace::configModules(bool controlCenter)
 #endif
 #ifdef KWIN_BUILD_SCREENEDGES
              << "kwinscreenedges"
+#endif
+#ifdef KWIN_BUILD_SCRIPTING
+             << "kwinscripts"
 #endif
              ;
     return args;

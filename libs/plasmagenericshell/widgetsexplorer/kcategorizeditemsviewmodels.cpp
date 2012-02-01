@@ -70,6 +70,19 @@ DefaultFilterModel::DefaultFilterModel(QObject *parent) :
     QStandardItemModel(0, 1, parent)
 {
     setHeaderData(1, Qt::Horizontal, i18n("Filters"));
+    //This is to make QML that is understand it
+    QHash<int, QByteArray> newRoleNames = roleNames();
+    newRoleNames[FilterTypeRole] = "filterType";
+    newRoleNames[FilterDataRole] = "filterData";
+    newRoleNames[SeparatorRole] = "separator";
+
+    setRoleNames(newRoleNames);
+    connect(this, SIGNAL(modelReset()),
+            this, SIGNAL(countChanged()));
+    connect(this, SIGNAL(rowsInserted(QModelIndex, int, int)),
+            this, SIGNAL(countChanged()));
+    connect(this, SIGNAL(rowsRemoved(QModelIndex, int, int)),
+            this, SIGNAL(countChanged()));
 }
 
 void DefaultFilterModel::addFilter(const QString &caption, const Filter &filter, const KIcon &icon)
@@ -80,6 +93,8 @@ void DefaultFilterModel::addFilter(const QString &caption, const Filter &filter,
     if (!icon.isNull()) {
         item->setIcon(icon);
     }
+    item->setData(filter.first, FilterTypeRole);
+    item->setData(filter.second, FilterDataRole);
 
     newRow << item;
     appendRow(newRow);
@@ -90,15 +105,29 @@ void DefaultFilterModel::addSeparator(const QString &caption)
     QList<QStandardItem *> newRow;
     QStandardItem *item = new QStandardItem(caption);
     item->setEnabled(false);
+    item->setData(true, SeparatorRole);
 
     newRow << item;
     appendRow(newRow);
 }
 
+QVariantHash DefaultFilterModel::get(int row) const
+{
+    QModelIndex idx = index(row, 0);
+    QVariantHash hash;
+
+    QHash<int, QByteArray>::const_iterator i;
+    for (i = roleNames().constBegin(); i != roleNames().constEnd(); ++i) {
+        hash[i.value()] = data(idx, i.key());
+    }
+
+    return hash;
+}
+
 // DefaultItemFilterProxyModel
 
-DefaultItemFilterProxyModel::DefaultItemFilterProxyModel(QObject *parent) :
-    QSortFilterProxyModel(parent), m_innerModel(parent)
+DefaultItemFilterProxyModel::DefaultItemFilterProxyModel(QObject *parent)
+    : QSortFilterProxyModel(parent)
 {
 }
 
@@ -111,13 +140,20 @@ void DefaultItemFilterProxyModel::setSourceModel(QAbstractItemModel *sourceModel
         return;
     }
 
-    m_innerModel.setSourceModel(model);
-    QSortFilterProxyModel::setSourceModel(&m_innerModel);
+    setRoleNames(sourceModel->roleNames());
+
+    QSortFilterProxyModel::setSourceModel(model);
+    connect(this, SIGNAL(modelReset()),
+            this, SIGNAL(countChanged()));
+    connect(this, SIGNAL(rowsInserted(QModelIndex, int, int)),
+            this, SIGNAL(countChanged()));
+    connect(this, SIGNAL(rowsRemoved(QModelIndex, int, int)),
+            this, SIGNAL(countChanged()));
 }
 
-QStandardItemModel *DefaultItemFilterProxyModel::sourceModel() const
+QAbstractItemModel *DefaultItemFilterProxyModel::sourceModel() const
 {
-    return m_innerModel.sourceModel();
+    return QSortFilterProxyModel::sourceModel();
 }
 
 int DefaultItemFilterProxyModel::columnCount(const QModelIndex &index) const
@@ -128,7 +164,7 @@ int DefaultItemFilterProxyModel::columnCount(const QModelIndex &index) const
 
 QVariant DefaultItemFilterProxyModel::data(const QModelIndex &index, int role) const
 {
-    return m_innerModel.data(index, (index.column() == 1), role);
+    return QSortFilterProxyModel::data(index, role);
 }
 
 bool DefaultItemFilterProxyModel::filterAcceptsRow(int sourceRow,
@@ -146,6 +182,19 @@ bool DefaultItemFilterProxyModel::filterAcceptsRow(int sourceRow,
         (m_searchPattern.isEmpty() || item->matches(m_searchPattern));
 }
 
+QVariantHash DefaultItemFilterProxyModel::get(int row) const
+{
+    QModelIndex idx = index(row, 0);
+    QVariantHash hash;
+
+    QHash<int, QByteArray>::const_iterator i;
+    for (i = roleNames().constBegin(); i != roleNames().constEnd(); ++i) {
+        hash[i.value()] = data(idx, i.key());
+    }
+
+    return hash;
+}
+
 bool DefaultItemFilterProxyModel::lessThan(const QModelIndex &left,
         const QModelIndex &right) const
 {
@@ -154,11 +203,16 @@ bool DefaultItemFilterProxyModel::lessThan(const QModelIndex &left,
             sourceModel()->data(right).toString()) < 0;
 }
 
-void DefaultItemFilterProxyModel::setSearch(const QString &pattern)
+void DefaultItemFilterProxyModel::setSearchTerm(const QString &pattern)
 {
     m_searchPattern = pattern;
     invalidateFilter();
     emit searchTermChanged(pattern);
+}
+
+QString DefaultItemFilterProxyModel::searchTerm() const
+{
+    return m_searchPattern;
 }
 
 void DefaultItemFilterProxyModel::setFilter(const Filter &filter)
@@ -168,113 +222,28 @@ void DefaultItemFilterProxyModel::setFilter(const Filter &filter)
     emit filterChanged();
 }
 
-// DefaultItemFilterProxyModel::InnerProxyModel
-
-DefaultItemFilterProxyModel::InnerProxyModel::InnerProxyModel(QObject *parent) :
-    QAbstractItemModel(parent), m_sourceModel(NULL)
+void DefaultItemFilterProxyModel::setFilterType(const QString type)
 {
+    m_filter.first = type;
+    invalidateFilter();
+    emit filterChanged();
 }
 
-Qt::ItemFlags DefaultItemFilterProxyModel::InnerProxyModel::flags(const QModelIndex &index) const
+QString DefaultItemFilterProxyModel::filterType() const
 {
-    if (!m_sourceModel) {
-        return 0;
-    }
-    return m_sourceModel->flags(index);
+    return m_filter.first;
 }
 
-QVariant DefaultItemFilterProxyModel::InnerProxyModel::data(
-    const QModelIndex &index, bool favoriteColumn, int role) const
+void DefaultItemFilterProxyModel::setFilterQuery(const QVariant query)
 {
-    Q_UNUSED(favoriteColumn);
-    return data(index, role);
+    m_filter.second = query;
+    invalidateFilter();
+    emit filterChanged();
 }
 
-QVariant DefaultItemFilterProxyModel::InnerProxyModel::data(
-        const QModelIndex &index, int role) const
+QVariant DefaultItemFilterProxyModel::filterQuery() const
 {
-    if (!m_sourceModel) {
-        return QVariant();
-    }
-    return m_sourceModel->data(index, role);
-}
-
-QVariant DefaultItemFilterProxyModel::InnerProxyModel::headerData(
-    int section, Qt::Orientation orientation, int role) const
-{
-    Q_UNUSED(orientation);
-    Q_UNUSED(role);
-    return QVariant(section);
-}
-
-int DefaultItemFilterProxyModel::InnerProxyModel::rowCount(const QModelIndex &parent) const
-{
-    if (!m_sourceModel) {
-        return 0;
-    }
-    return m_sourceModel->rowCount(parent);
-}
-
-bool DefaultItemFilterProxyModel::InnerProxyModel::setData(
-    const QModelIndex &index, const QVariant &value, int role)
-{
-    if (!m_sourceModel) {
-        return false;
-    }
-    return m_sourceModel->setData(index, value, role);
-}
-
-bool DefaultItemFilterProxyModel::InnerProxyModel::setHeaderData(
-    int section, Qt::Orientation orientation, const QVariant &value, int role)
-{
-    Q_UNUSED(section);
-    Q_UNUSED(value);
-    Q_UNUSED(orientation);
-    Q_UNUSED(role);
-    return false;
-}
-
-QModelIndex DefaultItemFilterProxyModel::InnerProxyModel::index(
-    int row, int column, const QModelIndex &parent) const
-{
-    Q_UNUSED(column);
-    if (!m_sourceModel) {
-        return QModelIndex();
-    }
-    return m_sourceModel->index(row, 0, parent);
-}
-
-QModelIndex DefaultItemFilterProxyModel::InnerProxyModel::parent(const QModelIndex &index) const
-{
-    if (!m_sourceModel) {
-        return QModelIndex();
-    }
-    return m_sourceModel->parent(index);
-}
-
-QMimeData *DefaultItemFilterProxyModel::InnerProxyModel::mimeData(
-    const QModelIndexList &indexes) const
-{
-    if (!m_sourceModel) {
-        return NULL;
-    }
-    return m_sourceModel->mimeData(indexes);
-}
-
-int DefaultItemFilterProxyModel::InnerProxyModel::columnCount(const QModelIndex &index) const
-{
-    Q_UNUSED(index);
-    return COLUMN_COUNT;
-}
-
-void DefaultItemFilterProxyModel::InnerProxyModel::setSourceModel(QStandardItemModel *sourceModel)
-{
-    m_sourceModel = sourceModel;
-}
-
-QStandardItemModel *DefaultItemFilterProxyModel::InnerProxyModel::sourceModel() const
-{
-    return m_sourceModel;
+    return m_filter.second;
 }
 
 }

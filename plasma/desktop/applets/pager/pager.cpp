@@ -31,12 +31,13 @@
 #include <QTextDocument>
 #include <QPropertyAnimation>
 
+#include <KCModuleInfo>
+#include <KCModuleProxy>
 #include <KColorScheme>
 #include <KConfigDialog>
 #include <KGlobalSettings>
+#include <KIconLoader>
 #include <KSharedConfig>
-#include <KCModuleProxy>
-#include <KCModuleInfo>
 #include <KWindowSystem>
 #include <NETRootInfo>
 
@@ -57,6 +58,8 @@ const int FAST_UPDATE_DELAY = 100;
 const int UPDATE_DELAY = 500;
 const int DRAG_SWITCH_DELAY = 1000;
 const int MAXDESKTOPS = 20;
+// random(), find a less magic one if you can. -sreich
+const qreal MAX_TEXT_WIDTH = 800;
 
 DesktopRectangle::DesktopRectangle(QObject *parent)
     : QObject(parent),
@@ -172,10 +175,6 @@ void Pager::init()
     KActivities::Consumer *act = new KActivities::Consumer(this);
     connect(act, SIGNAL(currentActivityChanged(QString)), this, SLOT(currentActivityChanged(QString)));
     m_currentActivity = act->currentActivity();
-
-    if (m_desktopCount < 2) {
-        numberOfDesktopsChanged(m_desktopCount);
-    }
 }
 
 void Pager::configChanged()
@@ -705,14 +704,6 @@ void Pager::numberOfDesktopsChanged(int num)
 {
     if (num < 1) {
         return; // refuse to update to zero desktops
-    } else if (num == 1) {
-        m_preHiddenSize = size();
-        setMaximumSize(0, 0);
-        hide();
-    } else if (!isVisible()) {
-        setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-        resize(m_preHiddenSize);
-        show();
     }
 
 #ifdef Q_WS_X11
@@ -995,11 +986,12 @@ void Pager::handleHoverLeave()
             m_animations[m_hoverIndex]->setAnimation(animation);
         }
 
-        animation->start(QAbstractAnimation::DeleteWhenStopped);
         animation->setDuration(s_FadeOutDuration);
         animation->setEasingCurve(QEasingCurve::OutQuad);
         animation->setStartValue(1);
         animation->setEndValue(0);
+        animation->start(QAbstractAnimation::DeleteWhenStopped);
+
         m_hoverIndex = -1;
     }
 
@@ -1192,10 +1184,14 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 
                 painter->drawRect(rect);
 
-                int size = qMin(16, qMin(rect.width(), rect.height()));
-                if (size >= 12 && m_showWindowIcons) {
-                  painter->drawPixmap(rect.x() + (rect.width() - size) / 2, rect.y() + (rect.height() - size) / 2, size, size,
-                    KWindowSystem::icon(m_windowRects[i][j].first, size, size, true));
+                // Draw the window icons/thumbnails
+                // prefer to use the System Settings specified Small icon (usually 16x16)
+                int windowIconSize = qMin(KIconLoader::global()->currentSize(KIconLoader::Small), qMin(rect.width(), rect.height()));
+                if (windowIconSize >= 12 && m_showWindowIcons) {
+                    QPixmap windowIcon = QPixmap(KWindowSystem::icon(m_windowRects[i][j].first, windowIconSize, windowIconSize, true));
+                    int x = rect.x() + (rect.width() - windowIconSize) / 2;
+                    int y = rect.y() + (rect.height() - windowIconSize) / 2;
+                    painter->drawPixmap(x, y, windowIconSize, windowIconSize, windowIcon);
                 }
             }
         }
@@ -1321,7 +1317,7 @@ void Pager::updateToolTip()
 {
     int hoverDesktopNumber = 0;
 
-    for (int i = 0; i < m_desktopCount; i++) {
+    for (int i = 0; i < m_desktopCount; ++i) {
         if (m_rects[i] == m_hoverRect) {
             hoverDesktopNumber = i + 1;
         }
@@ -1336,19 +1332,26 @@ void Pager::updateToolTip()
 
     foreach(const KWindowInfo &winInfo, m_windowInfo){
         if (winInfo.isOnDesktop(hoverDesktopNumber) && !windows.contains(winInfo.win())) {
+
             bool active = (winInfo.win() == KWindowSystem::activeWindow());
-            if ((taskCounter < 4) || active){    
-                QPixmap icon = KWindowSystem::icon(winInfo.win(), 16, 16, true);
+            if ((taskCounter < 4) || active){
+                // prefer to use the System Settings specified Small icon (usually 16x16)
+                // TODO: should we actually be using Small for this? or Panel, Toolbar, etc?
+                int windowIconSize = KIconLoader::global()->currentSize(KIconLoader::Small);
+                QPixmap icon = KWindowSystem::icon(winInfo.win(), windowIconSize, windowIconSize, true);
                 if (icon.isNull()) {
                      subtext += "<br />&bull;" + Qt::escape(winInfo.visibleName());
                 } else {
                     data.addResource(Plasma::ToolTipContent::ImageResource, QUrl("wicon://" + QString::number(taskCounter)), QVariant(icon));
                     subtext += "<br /><img src=\"wicon://" + QString::number(taskCounter) + "\"/>&nbsp;";
                 }
-                //TODO: elide text that is tooo long
-                subtext += (active ? "<u>" : "") + Qt::escape(winInfo.visibleName()).replace(' ', "&nbsp;") + (active ? "</u>" : "");
 
-                displayedTaskCounter++; 
+                QFontMetricsF metrics(KGlobalSettings::taskbarFont());
+                const QString combinedString = (active ? "<u>" : "") + Qt::escape(winInfo.visibleName()).replace(' ', "&nbsp;") + (active ? "</u>" : "");
+                // elide text that is too long
+                subtext += metrics.elidedText(combinedString, Qt::ElideMiddle, MAX_TEXT_WIDTH, Qt::TextShowMnemonic);
+
+                displayedTaskCounter++;
                 windows.append(winInfo.win());
             }
             taskCounter++;

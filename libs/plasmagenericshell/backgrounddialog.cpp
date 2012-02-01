@@ -245,6 +245,8 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
 
     if (d->containment && d->containment.data()->hasConfigurationInterface()) {
         d->containment.data()->createConfigurationInterface(this);
+        connect(this, SIGNAL(applyClicked()), d->containment.data(), SLOT(configDialogFinished()));
+        connect(this, SIGNAL(okClicked()), d->containment.data(), SLOT(configDialogFinished()));
     }
 
     QSize dialogSize = QSize(650, 720).expandedTo(sizeHint());
@@ -336,13 +338,8 @@ void BackgroundDialog::reloadConfig()
     }
 
     // Wallpaper
-    bool doWallpaper = !d->containment || d->containment.data()->drawWallpaper();
-    #if 0
-    d->wallpaperLabel->setVisible(doWallpaper);
-    #endif
-
+    bool doWallpaper = d->containment && d->containment.data()->drawWallpaper();
     d->backgroundDialogUi.wallpaperGroup->setVisible(doWallpaper);
-    d->backgroundDialogUi.monitor->setVisible(doWallpaper);
     d->preview->setVisible(doWallpaper);
 
     //kDebug() << "do wallpapers?!" << doWallpaper;
@@ -529,6 +526,8 @@ void BackgroundDialog::saveConfig()
             //add the new containment's config
             if (d->containment.data()->hasConfigurationInterface()) {
                 d->containment.data()->createConfigurationInterface(this);
+                connect(this, SIGNAL(applyClicked()), d->containment.data(), SLOT(configDialogFinished()));
+                connect(this, SIGNAL(okClicked()), d->containment.data(), SLOT(configDialogFinished()));
             }
             connect(d->containment.data(), SIGNAL(destroyed()), this, SLOT(close()));
         }
@@ -557,6 +556,7 @@ void BackgroundDialog::settingsModified(bool modified)
 {
     d->modified = modified;
     updateButtons();
+		saveConfig();
 }
 
 bool BackgroundDialog::hasChanged()

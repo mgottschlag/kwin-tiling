@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /*
     Copyright 2009 Esben Mose Hansen <kde@mosehansen.dk>
 
@@ -19,9 +18,11 @@
 */
 
 #include "clipcommandprocess.h"
+
+#include <KCharMacroExpander>
+
 #include "history.h"
 #include "historystringitem.h"
-#include <KCharMacroExpander>
 #include "urlgrabber.h"
 
 ClipCommandProcess::ClipCommandProcess(const ClipAction& action, const ClipCommand& command, const QString& clip, History* history, const HistoryItem* original_item) :

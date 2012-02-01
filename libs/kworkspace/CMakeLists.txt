@@ -46,13 +46,9 @@ set_source_files_properties(${kwin_xml} PROPERTIES INCLUDE "interface_util.h")
 
 qt4_add_dbus_interface( kworkspace_LIB_SRCS ${kwin_xml} kwin_interface )
 
-if(WIN32)
-    set (LIB_MODE)
-else(WIN32)
-    set (LIB_MODE SHARED)
-endif(WIN32)
 
-kde4_add_library(kworkspace ${LIB_MODE} ${kworkspace_LIB_SRCS})
+
+kde4_add_library(kworkspace SHARED ${kworkspace_LIB_SRCS})
 
 target_link_libraries(kworkspace  ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES} ${KDE4_PLASMA_LIBS} )
 

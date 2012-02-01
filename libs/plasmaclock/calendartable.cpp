@@ -750,7 +750,8 @@ Plasma::DataEngine *CalendarTablePrivate::calendarEngine()
 void CalendarTablePrivate::checkIfCalendarEngineNeeded()
 {
     if (calendarDataEngine && !displayHolidays && !displayEvents) {
-        calendarDataEngine = Plasma::DataEngineManager::self()->loadEngine("calendar");
+        Plasma::DataEngineManager::self()->unloadEngine("calendar");
+        calendarDataEngine = 0;
     }
 }
 

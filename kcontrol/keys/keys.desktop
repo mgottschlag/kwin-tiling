@@ -32,6 +32,7 @@ Name[eo]=Ĝeneralaj Klavkombinoj
 Name[es]=Accesos rápidos de teclado globales
 Name[et]=Globaalsed kiirklahvid
 Name[eu]=Teklatu laster-tekla globalak
+Name[fa]=میان‌برهای صفحه‌ کلید سراسری
 Name[fi]=Näppäimistön yleispikavalinnat
 Name[fr]=Raccourcis globaux de clavier
 Name[fy]=Globale fluchkeppelings
@@ -183,6 +184,10 @@ Comment[x-test]=xxConfiguration of keybindingsxx
 Comment[zh_CN]=键绑定配置
 Comment[zh_TW]=按鍵關聯設定
 
-X-KDE-Keywords=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts
+X-KDE-Keywords=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,global shortcuts
+X-KDE-Keywords[pt]=Teclas,combinações de teclas,global,esquema de teclas,atalhos de teclado,atalhos,atalhos das aplicações
+X-KDE-Keywords[pt_BR]=Teclas,combinações de teclas global,esquema de teclas,atalhos de teclado,atalhos,atalhos dos aplicativos, atalhos globais
+X-KDE-Keywords[uk]=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,global shortcuts,клавіатура,скорочення,клавіатурні скорочення,схема,загальні клавіатурні скорочення,клавіатурні скорочення програми,загальні скорочення
+X-KDE-Keywords[x-test]=xxKeys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,global shortcutsxx
 
 Categories=Qt;KDE;X-KDE-settings-accessibility;

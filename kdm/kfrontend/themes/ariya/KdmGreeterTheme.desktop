@@ -1,0 +1,40 @@
+# This is not really a .desktop file like the rest, but it is useful to treat
+# it as such
+
+[KdmGreeterTheme]
+Greeter=ariya.xml
+Name=Ariya
+Name[ca]=Ariya
+Name[ca@valencia]=Ariya
+Name[cs]=Ariya
+Name[da]=Ariya
+Name[de]=Ariya
+Name[es]=Ariya
+Name[et]=Ariya
+Name[fi]=Ariya
+Name[hu]=Ariya
+Name[ia]=Ariya
+Name[it]=Ariya
+Name[kk]=Ariya
+Name[ko]=Ariya
+Name[nb]=Ariya
+Name[nds]=Ariya
+Name[nl]=Ariya
+Name[pl]=Ariya
+Name[pt]=Ariya
+Name[pt_BR]=Ariya
+Name[ro]=Ariya
+Name[sk]=Ariya
+Name[sl]=Ariya
+Name[sr]=Арија
+Name[sr@ijekavian]=Арија
+Name[sr@ijekavianlatin]=Arija
+Name[sr@latin]=Arija
+Name[sv]=Ariya
+Name[uk]=Арія
+Name[x-test]=xxAriyaxx
+Name[zh_TW]=Ariya
+
+Author=Roman Shtylman
+Copyright=GPL 2010 Roman Shtylman | shtylman@gmail.com
+Screenshot=screenshot.png

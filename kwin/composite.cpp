@@ -49,7 +49,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "effects.h"
 #include "overlaywindow.h"
 #include "scene.h"
-#include "scene_basic.h"
 #include "scene_xrender.h"
 #include "scene_opengl.h"
 #include "shadow.h"
@@ -101,10 +100,6 @@ void Workspace::setupCompositing()
     cm_selection->claim(true);   // force claiming
 
     switch(options->compositingMode) {
-        /*case 'B':
-            kDebug( 1212 ) << "X compositing";
-            scene = new SceneBasic( this );
-          break; // don't fall through (this is a testing one) */
     case OpenGLCompositing: {
         kDebug(1212) << "Initializing OpenGL compositing";
 
@@ -232,8 +227,17 @@ void Workspace::finishCompositing()
 void Workspace::fallbackToXRenderCompositing()
 {
     finishCompositing();
-    options->compositingMode = XRenderCompositing;
-    setupCompositing();
+    KConfigGroup config(KSharedConfig::openConfig("kwinrc"), "Compositing");
+    config.writeEntry("Backend", "XRender");
+    config.writeEntry("GraphicsSystem", "native");
+    config.sync();
+    if (Extensions::nonNativePixmaps()) { // must restart to change the graphicssystem
+        restartKWin("automatic graphicssystem change for XRender backend");
+        return;
+    } else {
+        options->compositingMode = XRenderCompositing;
+        setupCompositing();
+    }
 }
 
 void Workspace::lostCMSelection()
@@ -264,6 +268,13 @@ void Workspace::toggleCompositing()
             Notify::raise(Notify::CompositingSuspendedDbus, message);
         }
     }
+}
+
+QStringList Workspace::activeEffects() const
+{
+    if (effects)
+        return static_cast< EffectsHandlerImpl* >(effects)->activeEffects();
+    return QStringList();
 }
 
 void Workspace::updateCompositeBlocking(Client *c)
@@ -518,8 +529,7 @@ void Toplevel::setupCompositing()
         return;
     damage_handle = XDamageCreate(display(), frameId(), XDamageReportRawRectangles);
     damage_region = QRegion(0, 0, width(), height());
-    effect_window = new EffectWindowImpl();
-    effect_window->setWindow(this);
+    effect_window = new EffectWindowImpl(this);
     unredirect = false;
     workspace()->checkUnredirect(true);
     scene->windowAdded(this);
@@ -647,11 +657,13 @@ void Client::damageNotifyEvent(XDamageNotifyEvent* e)
 #ifdef HAVE_XSYNC
     if (syncRequest.isPending && isResize())
         return;
-    if (syncRequest.counter == None)   // cannot detect complete redraw, consider done now
-        ready_for_painting = true;
+    if (!ready_for_painting) { // avoid "setReadyForPainting()" function calling overhead
+        if (syncRequest.counter == None)   // cannot detect complete redraw, consider done now
+            setReadyForPainting();
 #else
-    ready_for_painting = true;
+        setReadyForPainting();
 #endif
+    }
 
     Toplevel::damageNotifyEvent(e);
 }
@@ -804,6 +816,7 @@ void Client::setupCompositing()
     Toplevel::setupCompositing();
     updateVisibility(); // for internalKeep()
     updateDecoration(true, true);
+    move(calculateGravitation(true)); // we just polluted the gravity because the window likely has no decoration yet
 }
 
 void Client::finishCompositing()
@@ -811,6 +824,8 @@ void Client::finishCompositing()
     Toplevel::finishCompositing();
     updateVisibility();
     updateDecoration(true, true);
+    // for safety in case KWin is just resizing the window
+    s_haveResizeEffect = false;
 }
 
 bool Client::shouldUnredirect() const

@@ -50,7 +50,7 @@ RandrMonitorModule::RandrMonitorModule( QObject* parent, const QList<QVariant>& 
 
     QDBusReply <bool> re =  QDBusConnection::systemBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement");
     if (!re.value()) {
-        kDebug(7131) << "PowerManagement not loaded, waiting for it";
+        kDebug() << "PowerManagement not loaded, waiting for it";
         QDBusServiceWatcher *serviceWatcher = new QDBusServiceWatcher("org.kde.Solid.PowerManagement", QDBusConnection::sessionBus(),
                                                                   QDBusServiceWatcher::WatchForRegistration, this);
         connect(serviceWatcher, SIGNAL(serviceRegistered(QString)), this, SLOT(checkInhibition()));
@@ -195,25 +195,62 @@ QStringList RandrMonitorModule::activeMonitors() const
 
 void RandrMonitorModule::checkInhibition()
 {
+    if (!have_randr) {
+        kDebug() << "Can't check inhibition, XRandR minor to 1.2 detected";
+        return;
+    }
+
+    if (!isLidPresent()) {
+        kDebug() << "This feature is only for laptop, and there is no Lid present";
+        return;
+    }
+
     QStringList activeMonitorsList = activeMonitors();
-    kDebug(7131) << "Active monitor list";
-    kDebug(7131) << activeMonitorsList;
+    kDebug() << "Active monitor list";
+    kDebug() << activeMonitorsList;
+
     bool inhibit = false;
     Q_FOREACH(const QString monitor, activeMonitorsList) {
-        if (!monitor.contains("LVDS")) {
+        //LVDS is the default type reported by most drivers, default is needed because the
+        //NVIDIA binary blob always report default as active monitor.
+        if (!monitor.contains("LVDS") && !monitor.contains("default")) {
             inhibit = true;
             break;
         }
     }
+
     if (m_inhibitionCookie > 0 && !inhibit) {
-        kDebug(7131) << "Stopping: " << m_inhibitionCookie;
+        kDebug() << "Stopping: " << m_inhibitionCookie;
         Solid::PowerManagement::stopSuppressingSleep(m_inhibitionCookie);
         m_inhibitionCookie = -1;
     } else if (m_inhibitionCookie < 0 && inhibit) { // If we are NOT inhibiting and we should, do it
         m_inhibitionCookie = Solid::PowerManagement::beginSuppressingSleep();
-        kDebug(7131) << "Inhibing: " << m_inhibitionCookie;
+        kDebug() << "Inhibing: " << m_inhibitionCookie;
     }
 }
+
+bool RandrMonitorModule::isLidPresent()
+{
+    QDBusMessage call = QDBusMessage::createMethodCall("org.freedesktop.UPower",
+                                                  "/org/freedesktop/UPower",
+                                                  "org.freedesktop.DBus.Properties",
+                                                  "Get");
+    QList <QVariant> args;
+    args.append(QVariant::fromValue<QString>(QString("org.freedesktop.UPower")));
+    args.append(QVariant::fromValue<QString>(QString("LidIsPresent")));
+    call.setArguments(args);
+
+    QDBusMessage msg =  QDBusConnection::systemBus().call(call);
+    QDBusReply<QDBusVariant> reply(msg);
+
+    if (!reply.isValid()) {
+        kDebug() << reply.error();
+        return false;
+    }
+
+    return reply.value().variant().toBool();
+}
+
 
 void RandrMonitorModule::checkResumeFromSuspend()
 {

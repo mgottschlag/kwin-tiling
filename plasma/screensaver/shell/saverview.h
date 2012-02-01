@@ -47,8 +47,7 @@ signals:
     void hidden();
 
 protected:
-    void drawBackground(QPainter * painter, const QRectF & rect);
-    void keyPressEvent(QKeyEvent *event);
+    void drawBackground(QPainter *painter, const QRectF & rect);
     void paintEvent(QPaintEvent *event);
 
 public slots:

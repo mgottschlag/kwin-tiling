@@ -1,0 +1,21 @@
+[Desktop Entry]
+Encoding=UTF-8
+Keywords=
+Name=Widget explorer for the desktop
+Name[hu]=Widgetböngésző az asztalhoz
+Name[pt]=Explorador de elementos para o ecrã
+Name[pt_BR]=Explorador de widgets para a área de trabalho
+Name[uk]=Перегляд віджетів на стільниці
+Name[x-test]=xxWidget explorer for the desktopxx
+Type=Service
+
+X-KDE-ServiceTypes=Plasma/GenericPackage
+X-KDE-ParentApp=
+X-KDE-PluginInfo-Author=Marco Martin
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Email=mart@kde.org
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-Name=org.kde.desktop.widgetexplorer
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-Plasma-MainScript=ui/main.qml

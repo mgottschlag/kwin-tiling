@@ -79,6 +79,15 @@ public:
         StackingOrderSwitching ///< Sort by current stacking order
     };
     /**
+    * ClientMinimizedMode defines the mode used to create the TabBoxClient List
+    * in the TabBoxClientModel
+    */
+    enum ClientMinimizedMode {
+        IgnoreMinimizedStatus, ///< TabBoxClients are included no matter they are minimized or not
+        ExcludeMinimizedClients, ///< Exclude minimized TabBoxClients
+        OnlyMinimizedClients ///< Only minimized TabBoxClients are included
+    };
+    /**
     * DesktopSwitchingMode defines the sorting of the desktops in the
     * TabBoxDesktopModel.
     */
@@ -93,18 +102,6 @@ public:
     enum TabBoxMode {
         ClientTabBox,///< TabBox uses TabBoxClientModel
         DesktopTabBox///< TabBox uses TabBoxDesktopModel
-    };
-    /**
-    * SelectedItemViewPosition defines where an additional view only showing the selected item is shown.
-    * This second view is useful when using for example icon only layout and wanting to provide the
-    * caption of selected item.
-    */
-    enum SelectedItemViewPosition {
-        NonePosition,///< There is no additional view for selected item
-        AbovePosition,///< Additional view is positioned above of the switching list
-        BelowPosition,///< Additional view is positioned below of the switching list
-        LeftPosition,///< Additional view is positioned left of the switching list
-        RightPosition///< Additional view is positioned right of the switching list
     };
     TabBoxConfig();
     ~TabBoxConfig();
@@ -158,17 +155,18 @@ public:
     */
     ClientSwitchingMode clientSwitchingMode() const;
     /**
+    * @return The current ClientMinimizedMode
+    * This option only applies for TabBoxMode ClientTabBox.
+    * @see setClientMinimizedMode
+    * @see defaultMinimizedMode
+    */
+    ClientMinimizedMode clientMinimizedMode() const;
+    /**
     * @return The current DesktopSwitchingMode
     * This option only applies for TabBoxMode DesktopTabBox.
     * @see setDesktopSwitchingMode
     */
     DesktopSwitchingMode desktopSwitchingMode() const;
-    /**
-    * @return The position of the selected item view.
-    * @see setSelectedItemViewPosition
-    * @see defaultSelectedItemViewPosition
-    */
-    SelectedItemViewPosition selectedItemViewPosition() const;
     /**
     * @return The minimum width in percent of screen width the TabBox should use.
     * @see setMinWidth
@@ -241,16 +239,17 @@ public:
     */
     void setClientSwitchingMode(ClientSwitchingMode switchingMode);
     /**
+    * @param minimizedMode The new ClientMinimizedMode to be used.
+    * This option only applies for TabBoxMode ClientTabBox.
+    * @see clientMinimizedMode
+    */
+    void setClientMinimizedMode(ClientMinimizedMode minimizedMode);
+    /**
     * @param switchingMode The new DesktopSwitchingMode to be used.
     * This option only applies for TabBoxMode DesktopTabBox.
     * @see desktopSwitchingMode
     */
     void setDesktopSwitchingMode(DesktopSwitchingMode switchingMode);
-    /**
-    * @param viewPosition The new position of the selected item view
-    * @see selectedItemViewPosition
-    */
-    void setSelectedItemViewPosition(SelectedItemViewPosition viewPosition);
     /**
     * @param value The minimum width of TabBox in percent of screen width.
     * @see minWidth
@@ -284,11 +283,11 @@ public:
     static ClientSwitchingMode defaultSwitchingMode() {
         return FocusChainSwitching;
     }
+    static ClientMinimizedMode defaultMinimizedMode() {
+        return IgnoreMinimizedStatus;
+    }
     static LayoutMode defaultLayoutMode() {
         return VerticalLayout;
-    }
-    static SelectedItemViewPosition defaultSelectedItemViewPosition() {
-        return NonePosition;
     }
     static bool defaultShowTabBox() {
         return true;

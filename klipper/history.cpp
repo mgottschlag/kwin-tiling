@@ -1,7 +1,6 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
-   Copyright (C) by Andrew Stanley-Jones
+   Copyright (C) by Andrew Stanley-Jones <asj@cban.com>
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
 
    This program is free software; you can redistribute it and/or
@@ -19,9 +18,12 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#include <kdebug.h>
-
 #include "history.h"
+
+#include <QtGui/QAction>
+
+#include <KDebug>
+
 #include "historystringitem.h"
 #include "klipperpopup.h"
 
@@ -46,12 +48,12 @@ void History::insert( HistoryItem* item ) {
         return;
 
     m_topIsUserSelected = false;
-    items_t::iterator it = m_items.find(item->uuid());
-    if (it != m_items.end()) {
-        if (*it == m_top) {
+    const HistoryItem* existingItem = this->find(item->uuid());
+    if ( existingItem ) {
+        if ( existingItem == m_top) {
             return;
         }
-        slotMoveToTop( item->uuid() );
+        slotMoveToTop( existingItem->uuid() );
     } else {
         forceInsert( item );
     }
@@ -83,6 +85,8 @@ void History::trim() {
     while ( i-- ) {
         items_t::iterator it = bottom;
         bottom = m_items.find((*bottom)->previous_uuid());
+        // FIXME: managing memory manually is tedious; use smart pointer instead
+        delete *it;
         m_items.erase(it);
     }
     (*bottom)->chain(m_top);
@@ -110,12 +114,14 @@ void History::remove( const HistoryItem* newItem ) {
 
 
 void History::slotClear() {
+    // FIXME: managing memory manually is tedious; use smart pointer instead
+    qDeleteAll(m_items);
     m_items.clear();
     m_top = 0L;
     emit changed();
 }
 
-void History::slotMoveToTop(QAction *action) {
+void History::slotMoveToTop(QAction* action) {
     QByteArray uuid = action->data().toByteArray();
     if (uuid.isNull()) // not an action from popupproxy
         return;
@@ -144,9 +150,8 @@ void History::slotMoveToTop(const QByteArray& uuid) {
 }
 
 void History::setMaxSize( unsigned max_size ) {
-    m_max_size = max_size;
+    m_maxSize = max_size;
     trim();
-
 }
 
 KlipperPopup* History::popup() {

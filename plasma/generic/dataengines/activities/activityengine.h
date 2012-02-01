@@ -20,6 +20,8 @@
 #ifndef ACTIVITY_ENGINE_H
 #define ACTIVITY_ENGINE_H
 
+#include <QtCore/QHash>
+
 #include <Plasma/Service>
 #include <Plasma/DataEngine>
 
@@ -28,6 +30,7 @@ class ActivityService;
 namespace KActivities
 {
     class Controller;
+    class Info;
 }
 
 class ActivityEngine : public Plasma::DataEngine
@@ -51,6 +54,8 @@ private:
     void insertActivity(const QString &id);
 
     KActivities::Controller *m_activityController;
+    QHash<QString, KActivities::Info *> m_activities;
+    QStringList m_runningActivities;
     QString m_currentActivity;
 
     friend class ActivityService;

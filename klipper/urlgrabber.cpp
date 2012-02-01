@@ -1,4 +1,3 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) (C) 2000,2001,2002 by Carsten Pfeiffer <pfeiffer@kde.org>
 
@@ -17,32 +16,31 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
+#include "urlgrabber.h"
 
 #include <netwm.h>
 
-#include <QTimer>
-#include <QX11Info>
-#include <QUuid>
-#include <QFile>
+#include <QtCore/QHash>
+#include <QtCore/QTimer>
+#include <QtCore/QUuid>
+#include <QtCore/QFile>
+#include <QtGui/QX11Info>
 
-#include <kconfig.h>
-#include <kdialog.h>
-#include <klocale.h>
-#include <kmenu.h>
-#include <kservice.h>
-#include <kdebug.h>
-#include <kstringhandler.h>
-#include <kmacroexpander.h>
-#include <kglobal.h>
-#include <kmimetypetrader.h>
-#include <kmimetype.h>
+#include <KDialog>
+#include <KLocale>
+#include <KMenu>
+#include <KService>
+#include <KDebug>
+#include <KStringHandler>
+#include <KGlobal>
+#include <KMimeTypeTrader>
+#include <KMimeType>
+#include <KCharMacroExpander>
 
 #include "klippersettings.h"
-#include "urlgrabber.h"
 #include "clipcommandprocess.h"
 
-// TODO:
-// - script-interface?
+// TODO: script-interface?
 #include "history.h"
 #include "historystringitem.h"
 
@@ -51,7 +49,7 @@ URLGrabber::URLGrabber(History* history):
     m_myMenu(0L),
     m_myPopupKillTimer(new QTimer( this )),
     m_myPopupKillTimeout(8),
-    m_trimmed(true),
+    m_stripWhiteSpace(true),
     m_history(history)
 {
     m_myPopupKillTimer->setSingleShot( true );
@@ -108,22 +106,26 @@ void URLGrabber::matchingMimeActions(const QString& clipData)
     KUrl url(clipData);
     KConfigGroup cg(KGlobal::config(), "Actions");
     if(!cg.readEntry("EnableMagicMimeActions",true)) {
-    //    kDebug() << "skipping mime magic due to configuration";
-    	return;
+        //kDebug() << "skipping mime magic due to configuration";
+        return;
     }
     if(!url.isValid()) {
-    //    kDebug() << "skipping mime magic due to invalid url";
-    	return;
+        //kDebug() << "skipping mime magic due to invalid url";
+        return;
     }
     if(url.isRelative()) {  //openinng a relative path will just not work. what path should be used?
-    //    kDebug() << "skipping mime magic due to relative url";
-    	return;
+        //kDebug() << "skipping mime magic due to relative url";
+        return;
     }
     if(url.isLocalFile()) {
-	if(!QFile::exists(url.toLocalFile())) {
-	//    kDebug() << "skipping mime magic due to nonexistant localfile";
-	    return;
-	}
+        if ( clipData == "//") {
+            //kDebug() << "skipping mime magic due to C++ comment //";
+            return;
+        }
+        if(!QFile::exists(url.toLocalFile())) {
+            //kDebug() << "skipping mime magic due to nonexistent localfile";
+            return;
+        }
     }
 
     // try to figure out if clipData contains a filename
@@ -139,7 +141,7 @@ void URLGrabber::matchingMimeActions(const QString& clipData)
     // That is even if we've url like "http://www.kde.org/somescript.pl", we'll
     // still treat that as html page, because determining a mimetype using kio
     // might take a long time, and i want this function to be quick!
-    if ( ( clipData.startsWith( "http://" ) || clipData.startsWith( "https://"))
+    if ( ( clipData.startsWith( QLatin1String("http://") ) || clipData.startsWith( QLatin1String("https://") ) )
          && mimetype->name() != "text/html" )
     {
         // use a fake path to create a mimetype that corresponds to "text/html"
@@ -150,7 +152,14 @@ void URLGrabber::matchingMimeActions(const QString& clipData)
         ClipAction* action = new ClipAction( QString(), mimetype->comment() );
         KService::List lst = KMimeTypeTrader::self()->query( mimetype->name(), "Application" );
         foreach( const KService::Ptr &service, lst ) {
-            action->addCommand( ClipCommand( service->exec(), service->name(), true, service->icon() ) );
+            QHash<QChar,QString> map;
+            map.insert( 'i', "--icon " + service->icon() );
+            map.insert( 'c', service->name() );
+
+            QString exec = service->exec();
+            exec = KMacroExpander::expandMacros( exec, map ).trimmed();
+
+            action->addCommand( ClipCommand( exec, service->name(), true, service->icon() ) );
         }
         if ( !lst.isEmpty() )
             m_myMatches.append( action );
@@ -168,7 +177,7 @@ const ActionList& URLGrabber::matchingActions( const QString& clipData, bool aut
     foreach (ClipAction* action, m_myActions) {
         if ( action->matches( clipData ) && (action->automatic() || !automatically_invoked) ) {
             m_myMatches.append( action );
-	}
+        }
     }
 
     return m_myMatches;
@@ -189,7 +198,7 @@ void URLGrabber::actionMenu( const HistoryItem* item, bool automatically_invoked
       return;
     }
     QString text(item->text());
-    if (m_trimmed) {
+    if (m_stripWhiteSpace) {
         text = text.trimmed();
     }
     ActionList matchingActionsList = matchingActions( text, automatically_invoked );
@@ -225,8 +234,8 @@ void URLGrabber::actionMenu( const HistoryItem* item, bool automatically_invoked
                 action->setData(id);
                 action->setText(item);
 
-                if (!command.pixmap.isEmpty())
-                    action->setIcon(KIcon(command.pixmap));
+                if (!command.icon.isEmpty())
+                    action->setIcon(KIcon(command.icon));
 
                 m_myCommandMapper.insert(id, qMakePair(clipAct,i));
                 m_myMenu->addAction(action);
@@ -257,7 +266,7 @@ void URLGrabber::actionMenu( const HistoryItem* item, bool automatically_invoked
 }
 
 
-void URLGrabber::slotItemSelected(QAction *action)
+void URLGrabber::slotItemSelected(QAction* action)
 {
     if (m_myMenu)
         m_myMenu->hide(); // deleted by the timer or the next action
@@ -279,7 +288,7 @@ void URLGrabber::slotItemSelected(QAction *action)
 }
 
 
-void URLGrabber::execute( const ClipAction *action, int cmdIdx ) const
+void URLGrabber::execute( const ClipAction* action, int cmdIdx ) const
 {
     if (!action) {
         kDebug() << "Action object is null";
@@ -290,7 +299,7 @@ void URLGrabber::execute( const ClipAction *action, int cmdIdx ) const
 
     if ( command.isEnabled ) {
         QString text(m_myClipItem->text());
-        if (m_trimmed) {
+        if (m_stripWhiteSpace) {
             text = text.trimmed();
         }
         ClipCommandProcess* proc = new ClipCommandProcess(*action, command, text, m_history, m_myClipItem);
@@ -305,7 +314,7 @@ void URLGrabber::execute( const ClipAction *action, int cmdIdx ) const
 
 void URLGrabber::loadSettings()
 {
-    m_trimmed = KlipperSettings::stripWhiteSpace();
+    m_stripWhiteSpace = KlipperSettings::stripWhiteSpace();
     m_myAvoidWindows = KlipperSettings::noActionsForWM_CLASS();
     m_myPopupKillTimeout = KlipperSettings::timeoutForActionPopups();
 
@@ -407,8 +416,8 @@ void URLGrabber::slotKillPopupMenu()
 ///////////////////////////////////////////////////////////////////////////
 ////////
 
-ClipCommand::ClipCommand(const QString &_command, const QString &_description,
-                         bool _isEnabled, const QString &_icon, Output _output)
+ClipCommand::ClipCommand(const QString&_command, const QString& _description,
+                         bool _isEnabled, const QString& _icon, Output _output)
     : command(_command),
       description(_description),
       isEnabled(_isEnabled),
@@ -416,7 +425,7 @@ ClipCommand::ClipCommand(const QString &_command, const QString &_description,
 {
 
     if (!_icon.isEmpty())
-        pixmap = _icon;
+        icon = _icon;
     else
     {
         // try to find suitable icon
@@ -428,9 +437,9 @@ ClipCommand::ClipCommand(const QString &_command, const QString &_description,
                                          KIconLoader::DefaultState,
                                          QStringList(), 0, true /* canReturnNull */ );
             if ( !iconPix.isNull() )
-                pixmap = appName;
+                icon = appName;
             else
-                pixmap.clear();
+                icon.clear();
         }
     }
 }
@@ -507,8 +516,8 @@ void ClipAction::save( KSharedConfigPtr kc, const QString& group ) const
         cg.writePathEntry( "Commandline", cmd.command );
         cg.writeEntry( "Description", cmd.description );
         cg.writeEntry( "Enabled", cmd.isEnabled );
-        cg.writeEntry( "Icon", cmd.pixmap );
-	cg.writeEntry( "Output", static_cast<int>(cmd.output) );
+        cg.writeEntry( "Icon", cmd.icon );
+        cg.writeEntry( "Output", static_cast<int>(cmd.output) );
 
         ++i;
     }

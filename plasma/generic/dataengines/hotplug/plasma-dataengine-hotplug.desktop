@@ -130,7 +130,7 @@ Comment[zh_CN]=跟踪热插拔设备的产生与消失。
 Comment[zh_TW]=追蹤熱插拔裝置的插入與拔除。
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
-Icon=notifier
+Icon=drive-removable-media-usb
 X-KDE-Library=plasma_engine_hotplug
 
 X-KDE-PluginInfo-Author=

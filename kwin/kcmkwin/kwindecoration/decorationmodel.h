@@ -30,14 +30,10 @@ class KDesktopFile;
 class KDecorationPlugins;
 class KDecorationPreview;
 
-namespace Aurorae
-{
-class AuroraeTheme;
-class AuroraeScene;
-}
-
 namespace KWin
 {
+
+class DecorationButtons;
 
 class DecorationModelData
 {
@@ -99,7 +95,7 @@ public:
     /**
     * Changes the button state and regenerates the preview.
     */
-    void changeButtons(bool custom, const QString& left, const QString& right);
+    void changeButtons(const DecorationButtons *buttons);
     /**
     * Changes the button state without regenerating the preview.
     */
@@ -113,11 +109,11 @@ public:
 
 public slots:
     void regeneratePreview(const QModelIndex& index, const QSize& size);
+    void regeneratePreviews();
 
 private:
     void findDecorations();
     void findAuroraeThemes();
-    void regeneratePreviews();
     void metaData(DecorationModelData& data, const KDesktopFile& df);
     QList<DecorationModelData> m_decorations;
     KDecorationPlugins* m_plugins;
@@ -125,8 +121,6 @@ private:
     bool m_customButtons;
     QString m_leftButtons;
     QString m_rightButtons;
-    Aurorae::AuroraeTheme* m_theme;
-    Aurorae::AuroraeScene* m_scene;
     KSharedConfigPtr m_config;
     QWidget* m_renderWidget;
 };

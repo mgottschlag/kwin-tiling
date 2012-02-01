@@ -135,7 +135,7 @@ Comment[sv]=Enhetsdata via Solid
 Comment[tg]=Данные SolidDevice для плазмоидов
 Comment[th]=ข้อมูลของอุปกรณ์ผ่านทาง Solid
 Comment[tr]=Solid üzerinden aygıt verisi
-Comment[ug]=Solid ئارقىلىق ئۈسكۈنە سانلىق مەلۇماتىغا ئېرىشىدۇ
+Comment[ug]=Solid ئارقىلىق ئۈسكۈنە سانلىق-مەلۇماتىغا ئېرىشىدۇ
 Comment[uk]=Дані щодо пристроїв з Solid
 Comment[wa]=Dinêyes di l' éndjin avou Solid
 Comment[x-test]=xxDevice data via Solidxx
@@ -143,7 +143,7 @@ Comment[zh_CN]=通过 Solid 获得设备数据
 Comment[zh_TW]=透過 Solid 的裝置資料
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
-Icon=alarmclock
+Icon=drive-harddisk
 X-KDE-Library=plasma_engine_soliddevice
 
 X-KDE-PluginInfo-Author=

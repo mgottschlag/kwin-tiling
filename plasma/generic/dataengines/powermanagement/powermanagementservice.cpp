@@ -1,10 +1,10 @@
 /*
  *   Copyright 2011 Sebastian Kügler <sebas@kde.org>
- *   Copyright 2011 Viranch Mehta <viranch.mehta@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU Library General Public License version 2 as
- *   published by the Free Software Foundation
+ *   it under the terms of the GNU Library General Public License as
+ *   published by the Free Software Foundation; either version 2 or
+ *   (at your option) any later version.
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,16 +20,16 @@
 #include "powermanagementservice.h"
 #include "powermanagementjob.h"
 
-PowermanagementService::PowermanagementService(const QString &source, QObject *parent)
-    : m_id(source)
+PowerManagementService::PowerManagementService(QObject *parent)
+    : Plasma::Service(parent)
 {
     setName("powermanagementservice");
 }
 
-Plasma::ServiceJob *PowermanagementService::createJob(const QString &operation,
+ServiceJob *PowerManagementService::createJob(const QString &operation,
                                            QMap<QString, QVariant> &parameters)
 {
-    return new PowermanagementJob(operation, parameters, parent());
+    return new PowerManagementJob(operation, parameters, this);
 }
 
 #include "powermanagementservice.moc"

@@ -144,7 +144,7 @@ Comment[zh_CN]=关于文件和目录的信息。
 Comment[zh_TW]=關於檔案與目錄的資訊。
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
-Icon=unknown
+Icon=system-file-manager
 X-KDE-Library=plasma_engine_filebrowser
 
 X-KDE-PluginInfo-Author=

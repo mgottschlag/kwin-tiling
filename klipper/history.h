@@ -1,7 +1,6 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
-   Copyright (C) Andrew Stanley-Jones
+   Copyright (C) Andrew Stanley-Jones <asj@cban.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -21,11 +20,13 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
-#include <QAction>
-#include <QList>
+#include <QtCore/QObject>
+#include <QtCore/QHash>
+#include <QtCore/QByteArray>
 
 #include "historyitem.h"
 
+class QAction;
 class KlipperPopup;
 
 class History : public QObject
@@ -94,7 +95,7 @@ public:
     /**
      * Get the maximum history size
      */
-    unsigned maxSize() const { return m_max_size; }
+    unsigned maxSize() const { return m_maxSize; }
 
     /**
      * returns true if the user has selected the top item
@@ -117,7 +118,7 @@ public Q_SLOTS:
     /**
      * move the history in position pos to top
      */
-    void slotMoveToTop(QAction *action);
+    void slotMoveToTop(QAction* action);
 
     /**
      * move the history in position pos to top
@@ -165,7 +166,7 @@ private:
     /**
      * The number of clipboard items stored.
      */
-    unsigned m_max_size;
+    unsigned m_maxSize;
 
     /**
      * True if the top is selected by the user

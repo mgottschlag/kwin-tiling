@@ -18,7 +18,6 @@ endif(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
 if(KWIN_PLASMA_ACTIVE)
     set(KWIN_BUILD_DECORATIONS OFF)
     set(KWIN_BUILD_KCMS OFF)
-    set(KWIN_BUILD_TABBOX OFF)
     set(KWIN_BUILD_TILING OFF)
     set(KWIN_BUILD_DESKTOPCHANGEOSD OFF)
     set(KWIN_BUILD_SCREENEDGES OFF)
@@ -106,7 +105,6 @@ set(kwin_KDEINIT_SRCS
    toplevel.cpp
    unmanaged.cpp
    scene.cpp
-   scene_basic.cpp
    scene_xrender.cpp
    scene_opengl.cpp
    thumbnailitem.cpp
@@ -122,14 +120,8 @@ if(KWIN_BUILD_SCRIPTING)
     set(
         kwin_KDEINIT_SRCS ${kwin_KDEINIT_SRCS}
         scripting/scripting.cpp
-        scripting/workspace.cpp
-        scripting/client.cpp
+        scripting/workspace_wrapper.cpp
         scripting/meta.cpp
-        scripting/toplevel.cpp
-        scripting/windowinfo.cpp
-        scripting/s_clientgroup.cpp
-        scripting/workspaceproxy.cpp
-        scripting/chelate.cpp
         scripting/timer.cpp
     )
 endif(KWIN_BUILD_SCRIPTING)
@@ -138,15 +130,11 @@ if(KWIN_BUILD_TABBOX)
     set(
         kwin_KDEINIT_SRCS ${kwin_KDEINIT_SRCS}
         tabbox/tabbox.cpp
-        tabbox/clientitemdelegate.cpp
         tabbox/clientmodel.cpp
         tabbox/declarative.cpp
-        tabbox/desktopitemdelegate.cpp
         tabbox/desktopmodel.cpp
-        tabbox/itemlayoutconfig.cpp
         tabbox/tabboxconfig.cpp
         tabbox/tabboxhandler.cpp
-        tabbox/tabboxview.cpp
   )
 endif(KWIN_BUILD_TABBOX)
 
@@ -196,10 +184,6 @@ if(KWIN_BUILD_SCRIPTING)
     set(kwinLibs ${kwinLibs} ${QT_QTSCRIPT_LIBRARY})
 endif(KWIN_BUILD_SCRIPTING)
 
-if(KWIN_BUILD_TABBOX)
-    set(kwinLibs ${kwinLibs} ${QT_QTXML_LIBRARY})
-endif(KWIN_BUILD_TABBOX)
-
 kde4_add_kdeinit_executable( kwin ${kwin_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_kwin ${kwinLibs})
@@ -247,16 +231,17 @@ install(TARGETS kwinnvidiahack ${INSTALL_TARGETS_DEFAULT_ARGS} LIBRARY NAMELINK_
 install( FILES kwin.kcfg  DESTINATION  ${KCFG_INSTALL_DIR} )
 install( FILES kwin.notifyrc  DESTINATION  ${DATA_INSTALL_DIR}/kwin )
 install( FILES org.kde.KWin.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
-install( FILES tabbox/DefaultTabBoxLayouts.xml DESTINATION ${DATA_INSTALL_DIR}/kwin )
 install( FILES
     tabbox/qml/informative.qml
     tabbox/qml/big_icons.qml
     tabbox/qml/compact.qml
+    tabbox/qml/desktop.qml
     tabbox/qml/small_icons.qml
     tabbox/qml/tabbox.qml
     tabbox/qml/text.qml
     tabbox/qml/thumbnails.qml
     tabbox/qml/IconTabBox.qml
+    tabbox/qml/window_strip.qml
     DESTINATION ${DATA_INSTALL_DIR}/kwin/tabbox )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} )

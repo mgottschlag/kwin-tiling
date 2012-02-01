@@ -1,7 +1,7 @@
 [Global]
 IconName=drive-harddisk
 Comment=KDE Free Space Notifier Daemon
-Comment[ar]=مراقب كدي لمنبه المساحة الفارغة
+Comment[ar]=مراقب كدي لمنبه المساحة الحرّة
 Comment[ast]=Degorriu de notificaciones d'espaciu llibre de KDE
 Comment[bg]=Демон на KDE за свободно пространство
 Comment[bn]=কে.ডি.ই. ফ্রী স্পেস বিজ্ঞপ্তি ডিমন
@@ -286,7 +286,7 @@ Comment[zh_TW]=用於警告通知
 
 [Event/freespacenotif]
 Name=Running low on disk space
-Name[ar]=مساحة القرص منخفضة
+Name[ar]=قارب القرص على الامتلاء
 Name[ast]=Queda poco espaciu en discu
 Name[bg]=Дисковото пространство е твърде малко
 Name[bn]=ডিস্ক-এ বেশী জায়গা বাকি নেই

@@ -74,7 +74,7 @@ public Q_SLOTS:
     void activate();
     void showWidgetExplorer();
     void showActivityManager();
-    void closeIfNotFocussed();
+    virtual void closeIfNotFocussed();
 
 protected:
     void setGraphicsWidget(QGraphicsWidget *widget);
@@ -85,7 +85,6 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event);
 
 private Q_SLOTS:
-    void onActiveWindowChanged(WId id);
     void backgroundChanged();
     void adjustAndSetMaxSize();
     void syncToGraphicsWidget();
@@ -96,13 +95,13 @@ private:
     Plasma::FrameSvg *m_background;
     QWeakPointer<Plasma::Containment> m_containment;
     int m_screen;
-    Plasma::Corona *m_corona;
     QGraphicsView *m_view;
     QGraphicsWidget *m_watchedWidget;
     ActivityManager *m_activityManager;
     Plasma::WidgetExplorer *m_widgetExplorer;
     QGraphicsWidget *m_graphicsWidget;
     QTimer *m_adjustViewTimer;
+    bool m_ignoredWindowClosed;
 };
 
 #endif

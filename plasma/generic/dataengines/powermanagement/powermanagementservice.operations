@@ -9,15 +9,25 @@
     <group name="suspendHybrid"> </group>
     <group name="requestShutDown"> </group>
 
-    <group name="setBrightness">
-        <entry name="brightness" type="Int">
-          <label>The value of the screen brightness</label>
+    <group name="beginSuppressingSleep">
+        <entry name="reason" type="String">
+            <label>States why sleep is being inhibited</label>
+        </entry>
+    </group>
+    <group name="stopSuppressingSleep">
+        <entry name="cookie" type="Int">
+            <label>The cookie obtained from beginSuppressingSleep, representing the inhibition to release</label>
         </entry>
     </group>
 
-    <group name="setProfile">
-        <entry name="profile" type="String">
-          <label>The name of the power profile to load</label>
+    <group name="beginSuppressingScreenPowerManagement">
+        <entry name="reason" type="String">
+            <label>States why screen power management is being inhibited</label>
+        </entry>
+    </group>
+    <group name="stopSuppressingScreenPowerManagement">
+        <entry name="cookie" type="Int">
+            <label>The cookie obtained from beginSuppressingScreenPowerManagement, representing the inhibition to release</label>
         </entry>
     </group>
 </kcfg>

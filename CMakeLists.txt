@@ -2,8 +2,8 @@ project(KDEBASE_WORKSPACE)
 
 # Used e.g. in KDE4WorkspaceConfig.cmake, Alex
 set(KDE4WORKSPACE_VERSION_MAJOR 4)
-set(KDE4WORKSPACE_VERSION_MINOR 7)
-set(KDE4WORKSPACE_VERSION_PATCH 90)
+set(KDE4WORKSPACE_VERSION_MINOR 8)
+set(KDE4WORKSPACE_VERSION_PATCH 00)
 set(KDE4WORKSPACE_VERSION ${KDE4WORKSPACE_VERSION_MAJOR}.${KDE4WORKSPACE_VERSION_MINOR}.${KDE4WORKSPACE_VERSION_PATCH} )
 
 
@@ -12,15 +12,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_P
 
 #search packages used by KDE
 set(QT_MIN_VERSION "4.7.0")
-set(KDE_MIN_VERSION "4.7.0")
+set(KDE_MIN_VERSION "4.8.0")
 set(SOPRANO_MIN_VERSION "2.5.63")
 find_package(KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package(Strigi REQUIRED)
 find_package(ZLIB REQUIRED)
-find_package(KActivities REQUIRED)
+find_package(KActivities 6.0.0 REQUIRED)
 find_package(DBusMenuQt 0.6.0 REQUIRED)
 find_package(QImageBlitz REQUIRED)
-find_package(KActivities REQUIRED)
 macro_optional_find_package(OpenGL)
 macro_optional_find_package(OpenGLES)
 
@@ -141,7 +140,9 @@ if(NOT WIN32)
    macro_optional_add_subdirectory( ksplash )
    macro_optional_add_subdirectory( powerdevil )
    macro_optional_add_subdirectory( qguiplatformplugin_kde )
-   macro_optional_add_subdirectory( ksysguard )
+   if (NOT CMAKE_SYSTEM_NAME MATCHES Darwin)
+      macro_optional_add_subdirectory( ksysguard )
+   endif (NOT CMAKE_SYSTEM_NAME MATCHES Darwin)
 endif(NOT WIN32)
 
 if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")

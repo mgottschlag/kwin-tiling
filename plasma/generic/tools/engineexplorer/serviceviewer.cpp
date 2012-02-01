@@ -55,19 +55,25 @@ ServiceViewer::ServiceViewer(Plasma::DataEngine *engine, const QString &source, 
 
     if (m_engine) {
         engineName = KStringHandler::capwords(m_engine->name());
+        kDebug() << "########### CALLING SERVICE FOR SOURCE: " << m_source;
         m_service = m_engine->serviceForSource(m_source);
-        Q_ASSERT(m_service);
-        serviceName = m_service->name();
-        updateOperations();
-        connect(m_service, SIGNAL(operationsChanged()), this, SLOT(updateOperations()));
-        connect(m_service, SIGNAL(finished(Plasma::ServiceJob*)), this,
-                SLOT(operationResult(Plasma::ServiceJob*)));
-        connect(m_engine, SIGNAL(destroyed(QObject*)), this, SLOT(engineDestroyed()));
+
+        if (m_service != 0) {
+            serviceName = m_service->name();
+            updateOperations();
+            connect(m_service, SIGNAL(operationsChanged()), this, SLOT(updateOperations()));
+            connect(m_service, SIGNAL(finished(Plasma::ServiceJob*)), this,
+                    SLOT(operationResult(Plasma::ServiceJob*)));
+            connect(m_engine, SIGNAL(destroyed(QObject*)), this, SLOT(engineDestroyed()));
+        } else {
+            KMessageBox::sorry(this, i18n("No valid service was returned. Verify that a service is available for this source."));
+            close();
+        }
     }
 
     setWindowTitle(i18nc("%1 is a Plasma service name", "%1 Service Explorer", serviceName));
 
-    QString title = i18nc("Source: name of the data, Service: writes data instead of fetching", "DataEngine: <b>%1</b>; Source: <b>%2</b>; Service <b>%3</b>", engineName, m_source, serviceName);
+    QString title = i18nc("Source: name of the data, Service: writes data instead of fetching", "DataEngine: <b>%1</b>; Source: <b>%2</b>; Service: <b>%3</b>", engineName, m_source, serviceName);
     m_title->setText(title);
     m_operations->setFocus();
 }
@@ -168,8 +174,8 @@ void ServiceViewer::operationResult(Plasma::ServiceJob *job)
 
     if (job->error()) {
         KMessageBox::information(this,
-                                 i18n("%1 operation with destination %2 failed. "
-                                      "The error was:<p><b>%3</b>", job->operationName(), job->destination(),
+                                 i18n("<b>'%1'</b> operation with destination <b>'%2'</b> failed. "
+                                      "<p>The error was: <b>'%3'</b></p>", job->operationName(), job->destination(),
                                       QString::number(job->error()) + ": " + job->errorString()),
                                  i18n("Operation Result"));
     } else {
@@ -179,8 +185,8 @@ void ServiceViewer::operationResult(Plasma::ServiceJob *job)
         }
 
         KMessageBox::information(this,
-                                 i18n("%1 operation with destination %2 returned successfully. "
-                                      "The result was:<p><b>%3</b>", job->operationName(),
+                                 i18n("<b>'%1'</b> operation with destination <b>'%2'</b> returned successfully. "
+                                      "<p>The result was: <b>'%3'</b></p>", job->operationName(),
                                       job->destination(), result),
                                  i18n("Operation Result"));
     }

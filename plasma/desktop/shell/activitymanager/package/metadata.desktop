@@ -1,0 +1,22 @@
+[Desktop Entry]
+Encoding=UTF-8
+Keywords=
+Name=Activity manager for the desktop
+Name[cs]=Správce aktivit pro pracovní plochu
+Name[hu]=Aktivitáskezelő az asztalhoz
+Name[pt]=Gestor de actividades para o ecrã
+Name[pt_BR]=Gerenciador de atividades para a área de trabalho
+Name[uk]=Керування просторами дій для стільниці
+Name[x-test]=xxActivity manager for the desktopxx
+Type=Service
+
+X-KDE-ServiceTypes=Plasma/GenericPackage
+X-KDE-ParentApp=
+X-KDE-PluginInfo-Author=Marco Martin
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Email=mart@kde.org
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-Name=org.kde.desktop.activitymanager
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-Plasma-MainScript=ui/main.qml

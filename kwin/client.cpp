@@ -34,12 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <signal.h>
 
-#ifdef KWIN_BUILD_SCRIPTING
-#include "scripting/client.h"
-#include "scripting/scripting.h"
-#include "scripting/workspaceproxy.h"
-#endif
-
 #include "bridge.h"
 #include "group.h"
 #include "workspace.h"
@@ -70,6 +64,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace KWin
 {
+
+bool Client::s_haveResizeEffect = false;
 
 // Creating a client:
 //  - only by calling Workspace::createClient()
@@ -127,16 +123,13 @@ Client::Client(Workspace* ws)
     , demandAttentionKNotifyTimer(NULL)
     , m_responsibleForDecoPixmap(false)
     , paintRedirector(0)
+    , m_firstInTabBox(false)
     , electricMaximizing(false)
     , activitiesDefined(false)
     , needsSessionInteract(false)
     , input_window(None)
 {
     // TODO: Do all as initialization
-
-#ifdef KWIN_BUILD_SCRIPTING
-    scriptCache = new QHash<QScriptEngine*, ClientResolution>();
-#endif
 #ifdef HAVE_XSYNC
     syncRequest.counter = syncRequest.alarm = None;
     syncRequest.timeout = syncRequest.failsafeTimeout = NULL;
@@ -206,6 +199,8 @@ Client::Client(Workspace* ws)
     connect(this, SIGNAL(geometryShapeChanged(KWin::Toplevel*,QRect)), SIGNAL(geometryChanged()));
     connect(this, SIGNAL(clientMaximizedStateChanged(KWin::Client*,KDecorationDefines::MaximizeMode)), SIGNAL(geometryChanged()));
     connect(this, SIGNAL(clientStepUserMovedResized(KWin::Client*,QRect)), SIGNAL(geometryChanged()));
+    connect(this, SIGNAL(clientStartUserMovedResized(KWin::Client*)), SIGNAL(moveResizedChanged()));
+    connect(this, SIGNAL(clientFinishUserMovedResized(KWin::Client*)), SIGNAL(moveResizedChanged()));
 
     // SELI TODO: Initialize xsizehints??
 }
@@ -230,9 +225,6 @@ Client::~Client()
     delete bridge;
 #ifdef KWIN_BUILD_TABBOX
     delete m_tabBoxClient;
-#endif
-#ifdef KWIN_BUILD_SCRIPTING
-    delete scriptCache;
 #endif
 }
 
@@ -943,6 +935,9 @@ bool Client::isMinimizable() const
 {
     if (isSpecialWindow())
         return false;
+    if (!rules()->checkMinimize(true))
+        return false;
+
     if (isTransient()) {
         // #66868 - Let other xmms windows be minimized when the mainwindow is minimized
         bool shown_mainwindow = false;
@@ -969,6 +964,11 @@ bool Client::isMinimizable() const
     return true;
 }
 
+void Client::setMinimized(bool set)
+{
+    set ? minimize() : unminimize();
+}
+
 /**
  * Minimizes this client plus its transients
  */
@@ -977,17 +977,8 @@ void Client::minimize(bool avoid_animation)
     if (!isMinimizable() || isMinimized())
         return;
 
-#ifdef KWIN_BUILD_SCRIPTING
-    //Scripting call. Does not use a signal/slot mechanism
-    //as ensuring connections was a bit difficult between
-    //so many clients and the workspace
-    SWrapper::WorkspaceProxy* ws_wrap = SWrapper::WorkspaceProxy::instance();
-    if (ws_wrap != 0) {
-        ws_wrap->sl_clientMinimized(this);
-    }
-#endif
-
-    emit s_minimized();
+    if (isShade()) // NETWM restriction - KWindowInfo::isMinimized() == Hidden && !Shaded
+        info->setState(0, NET::Shaded);
 
     Notify::raise(Notify::Minimize);
 
@@ -1004,6 +995,7 @@ void Client::minimize(bool avoid_animation)
     // Update states of all other windows in this group
     if (clientGroup())
         clientGroup()->updateStates(this);
+    emit minimizedChanged();
 }
 
 void Client::unminimize(bool avoid_animation)
@@ -1011,14 +1003,12 @@ void Client::unminimize(bool avoid_animation)
     if (!isMinimized())
         return;
 
-#ifdef KWIN_BUILD_SCRIPTING
-    SWrapper::WorkspaceProxy* ws_wrap = SWrapper::WorkspaceProxy::instance();
-    if (ws_wrap != 0) {
-        ws_wrap->sl_clientUnminimized(this);
+    if (rules()->checkMinimize(false)) {
+        return;
     }
-#endif
 
-    emit s_unminimized();
+    if (isShade()) // NETWM restriction - KWindowInfo::isMinimized() == Hidden && !Shaded
+        info->setState(NET::Shaded, NET::Shaded);
 
     Notify::raise(Notify::UnMinimize);
     minimized = false;
@@ -1031,6 +1021,7 @@ void Client::unminimize(bool avoid_animation)
     // Update states of all other windows in this group
     if (clientGroup())
         clientGroup()->updateStates(this);
+    emit minimizedChanged();
 }
 
 QRect Client::iconGeometry() const
@@ -1053,13 +1044,17 @@ QRect Client::iconGeometry() const
 
 bool Client::isShadeable() const
 {
-    return !isSpecialWindow() && !noBorder();
+    return !isSpecialWindow() && !noBorder() && (rules()->checkShade(ShadeNormal) != rules()->checkShade(ShadeNone));
+}
+
+void Client::setShade(bool set) {
+    set ? setShade(ShadeNormal) : setShade(ShadeNone);
 }
 
 void Client::setShade(ShadeMode mode)
 {
-    if (!isShadeable())
-        return;
+    if (isSpecialWindow() || noBorder())
+        mode = ShadeNone;
     mode = rules()->checkShade(mode);
     if (shade_mode == mode)
         return;
@@ -1130,6 +1125,7 @@ void Client::setShade(ShadeMode mode)
     // Update states of all other windows in this group
     if (clientGroup())
         clientGroup()->updateStates(this);
+    emit shadeChanged();
 }
 
 void Client::shadeHover()
@@ -1535,6 +1531,7 @@ void Client::setSkipSwitcher(bool set)
         return;
     skip_switcher = set;
     updateWindowRules();
+    emit skipSwitcherChanged();
 }
 
 void Client::setModal(bool m)
@@ -1543,8 +1540,7 @@ void Client::setModal(bool m)
     if (modal == m)
         return;
     modal = m;
-    if (!modal)
-        return;
+    emit modalChanged();
     // Changing modality for a mapped window is weird (?)
     // _NET_WM_STATE_MODAL should possibly rather be _NET_WM_WINDOW_TYPE_MODAL_DIALOG
 }
@@ -1590,6 +1586,7 @@ void Client::setDesktop(int desktop)
     // Update states of all other windows in this group
     if (clientGroup())
         clientGroup()->updateStates(this);
+    emit desktopChanged();
 }
 
 /**
@@ -1861,6 +1858,7 @@ void Client::setCaption(const QString& _s, bool force)
                 client_group->updateItems();
             decoration->captionChange();
         }
+        emit captionChanged();
     }
 }
 
@@ -1902,6 +1900,15 @@ void Client::setClientGroup(ClientGroup* group)
     unsigned long data[1] = {(unsigned long)workspace()->indexOfClientGroup(group)};
     XChangeProperty(display(), window(), atoms->kde_net_wm_tab_group, XA_CARDINAL, 32,
                     PropModeReplace, (unsigned char*)(data), 1);
+    emit clientGroupChanged();
+}
+
+bool Client::isVisibleInClientGroup() const
+{
+    if (!client_group) {
+        return true;
+    }
+    return (client_group->visible() == this);
 }
 
 void Client::dontMoveResize()
@@ -1960,24 +1967,19 @@ void Client::getWMHints()
     updateAllowedActions(); // Group affects isMinimizable()
 }
 
-void Client::sl_activated()
-{
-    emit s_activated();
-}
-
 void Client::getMotifHints()
 {
     bool mgot_noborder, mnoborder, mresize, mmove, mminimize, mmaximize, mclose;
     Motif::readFlags(client, mgot_noborder, mnoborder, mresize, mmove, mminimize, mmaximize, mclose);
-    if (mgot_noborder) {
+    if (mgot_noborder && motif_noborder != mnoborder) {
         motif_noborder = mnoborder;
         // If we just got a hint telling us to hide decorations, we do so.
         if (motif_noborder)
-            noborder = true;
+            noborder = rules()->checkNoBorder(true);
         // If the Motif hint is now telling us to show decorations, we only do so if the app didn't
         // instruct us to hide decorations in some other way, though.
-        else if (!motif_noborder && !app_noborder)
-            noborder = false;
+        else if (!app_noborder)
+            noborder = rules()->checkNoBorder(false);
     }
     if (!hasNETSupport()) {
         // NETWM apps should set type and size constraints
@@ -2050,6 +2052,7 @@ void Client::getIcons()
     }
     if (isManaged() && decoration != NULL)
         decoration->iconChange();
+    emit iconChanged();
 }
 
 QPixmap Client::icon(const QSize& size) const
@@ -2179,8 +2182,7 @@ void Client::sendSyncRequest()
 void Client::removeSyncSupport()
 {
     if (!ready_for_painting) {
-        ready_for_painting = true;
-        addRepaintFull();
+        setReadyForPainting();
         return;
     }
     syncRequest.isPending = false;
@@ -2391,6 +2393,29 @@ QRect Client::decorationRect() const
     } else {
         return QRect(0, 0, width(), height());
     }
+}
+
+void Client::updateFirstInTabBox()
+{
+    // TODO: move into KWindowInfo
+    Atom type;
+    int format, status;
+    unsigned long nitems = 0;
+    unsigned long extra = 0;
+    unsigned char *data = 0;
+    status = XGetWindowProperty(display(), window(), atoms->kde_first_in_window_list, 0, 1, false, atoms->kde_first_in_window_list, &type, &format, &nitems, &extra, &data);
+    if (status == Success && format == 32 && nitems == 1) {
+        setFirstInTabBox(true);
+    } else {
+        setFirstInTabBox(false);
+    }
+    if (data)
+        XFree(data);
+}
+
+bool Client::isClient() const
+{
+    return true;
 }
 
 } // namespace

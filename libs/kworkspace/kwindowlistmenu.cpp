@@ -34,7 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtDBus/QtDBus>
 #include <klocale.h>
 #include <kstringhandler.h>
-#ifndef WIN32
+#ifdef Q_WS_X11
 #include <fixx11h.h>
 #endif
 #include <kstyle.h>
@@ -74,7 +74,7 @@ KWindowListMenu::~KWindowListMenu()
 
 static bool standaloneDialog( const KWindowInfo* info, const QList<KWindowInfo*>& list )
 {
-#ifndef Q_WS_WIN
+#ifdef Q_WS_X11
   WId group = info->groupLeader();
 
   if ( group == 0 )

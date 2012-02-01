@@ -1,6 +1,5 @@
-// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
-   Copyright (C) by Andrew Stanley-Jones
+   Copyright (C) by Andrew Stanley-Jones <asj@cban.com>
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
 
    This program is free software; you can redistribute it and/or
@@ -18,13 +17,14 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#ifndef _TRAY_H_
-#define _TRAY_H_
+#ifndef TRAY_H
+#define TRAY_H
+
+#include <QtCore/QPointer>
 
 #include <KStatusNotifierItem>
-#include <KNotification>
-#include <QPointer>
 
+class KNotification;
 class Klipper;
 
 class KlipperTray : public KStatusNotifierItem
@@ -33,9 +33,11 @@ class KlipperTray : public KStatusNotifierItem
 
 public:
     KlipperTray();
+
 public slots:
     void slotSetToolTipFromHistory();
-    void passive_popup(const QString& caption, const QString& text);
+    void slotPassivePopup(const QString& caption, const QString& text);
+
 private:
     Klipper* m_klipper;
     QPointer<KNotification> m_notification;

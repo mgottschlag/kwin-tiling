@@ -342,14 +342,10 @@ void LogSensor::stopLogging()
   timerOff();
 }
 
-void LogSensor::timerTick( )
-{
-  KSGRD::SensorMgr->sendRequest( mHostName, mSensorName, (KSGRD::SensorClient*) this, 42 );
-}
-
 void LogSensor::timerEvent ( QTimerEvent * event )
 {
-  timerTick();
+  Q_UNUSED(event);
+  KSGRD::SensorMgr->sendRequest( mHostName, mSensorName, static_cast<KSGRD::SensorClient*>(this), 42 );
 }
 
 void LogSensor::answerReceived( int id, const QList<QByteArray>& answer ) //virtual
@@ -460,6 +456,8 @@ bool SensorLogger::addSensor( const QString& hostName, const QString& sensorName
 
       mModel->addSensor( sensor );
     }
+  } else {
+    return false;  //User cancelled dialog, so don't add sensor logger
   }
 
   return true;

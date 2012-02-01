@@ -138,7 +138,7 @@ Comment[x-test]=xxPlaces, as seen in the file manager and in file dialogs.xx
 Comment[zh_CN]=提供文件管理器和文件对话框里能看到的位置。
 Comment[zh_TW]=在檔案管理員與檔案對話框中看到的「地方」項目。
 Type=Service
-Icon=folder
+Icon=folder-favorites
 
 X-KDE-ServiceTypes=Plasma/DataEngine
 X-KDE-Library=plasma_engine_places
