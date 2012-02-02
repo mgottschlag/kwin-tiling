@@ -33,43 +33,11 @@
 #include <KPluginLoader>
 
 #include <QVBoxLayout>
+
 //---------------------------------------------------------------------------------------------
 
-K_PLUGIN_FACTORY(JoystickFactory,
-        registerPlugin<Joystick>();
-        )
+K_PLUGIN_FACTORY(JoystickFactory, registerPlugin<Joystick>();)
 K_EXPORT_PLUGIN(JoystickFactory("joystick"))
-
-extern "C"
-{
-  KDE_EXPORT bool test_joystick()
-  { /* Code stolen from JoyWidget::init() */
-    int i;
-    char dev[30];
-
-    for (i = 0; i < 5; i++)  // check the first 5 devices
-    {
-      sprintf(dev, "/dev/js%d", i);  // first look in /dev
-      JoyDevice *joy = new JoyDevice(dev);
-
-      if ( joy->open() != JoyDevice::SUCCESS )
-      {
-        delete joy;
-        sprintf(dev, "/dev/input/js%d", i);  // then look in /dev/input
-        joy = new JoyDevice(dev);
-
-        if ( joy->open() != JoyDevice::SUCCESS )
-        {
-          delete joy;
-          continue;    // try next number
-        }
-      }
-
-      return true; /* We have at least one joystick and should hence be shown */
-    }
-    return false;
-  }
-}
 
 //---------------------------------------------------------------------------------------------
 
