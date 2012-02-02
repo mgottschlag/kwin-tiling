@@ -106,6 +106,7 @@ Name[zh_CN]=日期和时间
 Name[zh_TW]=日期和時間
 
 Comment=Configure date and time settings
+Comment[cs]=Nastavení voleb data a času
 Comment[pt]=Configuração das opções da data e hora
 Comment[pt_BR]=Configuração das opções de data e hora
 Comment[uk]=Налаштування параметрів дати і часу
