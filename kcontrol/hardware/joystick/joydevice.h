@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2003 by Martin Koller                                   *
- *   m.koller@surfeu.at                                                    *
+ *   kollix@aon.at                                                         *
  *   This file is part of the KDE Control Center Module for Joysticks      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -16,7 +16,7 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 #ifndef _JOYDEVICE_H_
 #define _JOYDEVICE_H_

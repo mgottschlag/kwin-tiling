@@ -135,6 +135,8 @@ int main(int argc, char **argv)
     options.add("list-wallpapers", ki18n("Displays a list of known wallpapers"));
     options.add("lc");
     options.add("list-containments", ki18n("Displays a list of known containments"));
+    options.add("lt");
+    options.add("list-themes", ki18n("Displays a list of known themes"));
     options.add("nosaveconfig", ki18n("Disables save and restore of the config between runs"));
     options.add("l");
     options.add("location <name>", ki18nc("Do not translate floating, desktop, fullscreen, top, bottom, left nor right", "The location constraint to start the Containment with (floating, desktop, fullscreen, top, bottom, left, right)"), "floating");
@@ -174,10 +176,34 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    if (args->isSet("list-themes")) {
+        listPlugins(Plasma::Theme::listThemeInfo());
+        return 0;
+    }
+
     QString pluginName;
     if (args->count() > 0) {
         pluginName = args->arg(0);
+
+        kDebug() << "setting applet to" << pluginName;
+
+        KPluginInfo::List appletList = Plasma::Applet::listAppletInfo();
+
+        foreach (const KPluginInfo& info, appletList) {
+
+            if (info.pluginName() == pluginName) {
+                goto appletFound;
+            }
+        }
+
+        kError() << "Fatal error. Applet: " + pluginName +
+            " is invalid. Did you run kbuildsycoca4? List known containments through --list";
+        kError() << "Note: only accepts applet Plugin Name (visible through --list), not user-visible name";
+        return 1;
+
     }
+
+appletFound:
 
     QString formfactor = args->getOption("formfactor");
     kDebug() << "setting FormFactor to" << args->getOption("formfactor");
@@ -186,14 +212,56 @@ int main(int argc, char **argv)
     kDebug() << "setting Location to" << args->getOption("location");
 
     QString containment = args->getOption("containment");
-    kDebug() << "setting containment to" << containment;
+    if (args->isSet("containment")) {
+
+        kDebug() << "setting containment to" << containment;
+
+        KPluginInfo::List containmentList = Plasma::Containment::listContainments();
+
+        foreach (const KPluginInfo& info, containmentList) {
+
+            if (info.pluginName() == containment) {
+                goto containmentFound;
+            }
+        }
+
+        kError() << "Fatal error. Containment: " + containment +
+            " is invalid. Did you run kbuildsycoca4? List known containments through --list-containments";
+        kError() << "Note: only accepts containment Plugin Name (visible through --list-containments), not user-visible name";
+        return 1;
+
+    }
+
+containmentFound:
 
     if (args->isSet("theme")) {
-        QString theme = args->getOption("theme");
-        Plasma::Theme::defaultTheme()->setUseGlobalSettings(false);
-        Plasma::Theme::defaultTheme()->setThemeName(theme);
-        kDebug() << "setting theme to" << theme;
+        QString themeName = args->getOption("theme");
+
+        kDebug() << "setting theme to" << themeName;
+
+        KPluginInfo::List themeList = Plasma::Theme::listThemeInfo();
+
+        foreach (const KPluginInfo& info, themeList) {
+
+            if (info.pluginName() == themeName) {
+
+                Plasma::Theme *defaultTheme = Plasma::Theme::defaultTheme();
+                defaultTheme->setUseGlobalSettings(false);
+                defaultTheme->setThemeName(themeName);
+
+
+                goto themeFound;
+            }
+        }
+
+        kError() << "Fatal error. Theme: " + themeName +
+            " is invalid. Did you run kbuildsycoca4? List known themes through --list-themes";
+        kError() << "Note: only accepts theme Plugin Name (visible through --list-themes), not user-visible name";
+        return 1;
+
     }
+
+themeFound:
 
     QString wallpaper;
     if (args->isSet("wallpaper")) {

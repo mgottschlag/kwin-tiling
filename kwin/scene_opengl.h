@@ -114,9 +114,7 @@ public:
     TexturePrivate();
     virtual ~TexturePrivate();
 
-    virtual void bind();
-    virtual void unbind();
-    virtual void release();
+    virtual void onDamage();
 
 #ifndef KWIN_HAVE_OPENGLES
     GLXPixmap m_glxpixmap; // the glx pixmap the texture is bound to, only for tfp_mode

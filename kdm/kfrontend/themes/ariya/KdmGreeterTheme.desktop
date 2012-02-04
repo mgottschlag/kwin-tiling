@@ -24,6 +24,7 @@ Name[pl]=Ariya
 Name[pt]=Ariya
 Name[pt_BR]=Ariya
 Name[ro]=Ariya
+Name[sk]=Ariya
 Name[sl]=Ariya
 Name[sr]=Арија
 Name[sr@ijekavian]=Арија
@@ -34,6 +35,6 @@ Name[uk]=Арія
 Name[x-test]=xxAriyaxx
 Name[zh_TW]=Ariya
 
-Author=Roman Shtylman
-Copyright=GPL 2010 Roman Shtylman | shtylman@gmail.com
+Author=Roman Shtylman & Eshat Cakar
+Copyright=GPL 2010 Roman Shtylman | shtylman@gmail.com, 2012 Eshat Cakar
 Screenshot=screenshot.png

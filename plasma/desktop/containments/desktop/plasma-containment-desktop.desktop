@@ -1,11 +1,16 @@
 [Desktop Entry]
 # ctxt: plasma containment
 Name=Default Desktop
+Name[cs]=Výchozí plocha
 Name[hu]=Alapértelmezett asztal
+Name[pt]=Ecrã por Omissão
+Name[pt_BR]=Área de trabalho padrão
 Name[uk]=Типова стільниця
 Name[x-test]=xxDefault Desktopxx
 Comment=A clean and simple layout
 Comment[hu]=Egy tiszta és egyszerű elrendezés
+Comment[pt]=Uma disposição limpa e simples
+Comment[pt_BR]=Um leiaute limpo e simples
 Comment[uk]=Просте компонування
 Comment[x-test]=xxA clean and simple layoutxx
 Icon=user-desktop

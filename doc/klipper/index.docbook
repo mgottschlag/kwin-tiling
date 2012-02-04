@@ -80,7 +80,7 @@ url="http://bugs.kde.org">KDEs bugzilla</ulink> or use the "report bug" feature.
  usual.</para>
 
 <note><para>The shortcut for this action has to be configured in the 
-<guilabel>System Tray Setting</guilabel> on the <guilabel>Entries</guilabel>
+<guilabel>System Tray Settings</guilabel> on the <guilabel>Entries</guilabel>
 page.</para></note>
 
 <para>You can search through the clipboard history by opening it

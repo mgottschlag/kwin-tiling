@@ -556,6 +556,7 @@ void BackgroundDialog::settingsModified(bool modified)
 {
     d->modified = modified;
     updateButtons();
+		saveConfig();
 }
 
 bool BackgroundDialog::hasChanged()

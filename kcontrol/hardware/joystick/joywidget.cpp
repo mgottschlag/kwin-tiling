@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2003 by Martin Koller                                   *
- *   m.koller@surfeu.at                                                    *
+ *   Copyright (C) 2003,2012 by Martin Koller                              *
+ *   kollix@aon.at                                                         *
  *   This file is part of the KDE Control Center Module for Joysticks      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -39,10 +39,12 @@
 #include <kiconloader.h>
 #include <kcombobox.h>
 #include <kurlcompletion.h>
+#include <kmessagewidget.h>
 
 #include <stdio.h>
 #include <kvbox.h>
 #include <kdebug.h>
+
 //--------------------------------------------------------------
 static QString PRESSED = I18N_NOOP("PRESSED");
 //--------------------------------------------------------------
@@ -69,20 +71,9 @@ JoyWidget::JoyWidget(QWidget *parent)
 
   // create area to show an icon + message if no joystick was detected
   {
-    messageBox = new QFrame(this);
-    messageBox->setFrameStyle(QFrame::StyledPanel);
-    QHBoxLayout *box = new QHBoxLayout(messageBox);
-    box->setSpacing(KDialog::spacingHint());
-
-    QLabel *icon = new QLabel(messageBox);
-    icon->setPixmap(KIconLoader::global()->loadIcon("dialog-warning", KIconLoader::NoGroup,
-                                                    KIconLoader::SizeMedium, KIconLoader::DefaultState, QStringList(), 0, true));
-    icon->setFixedSize(icon->sizeHint());
-    message = new QLabel(messageBox);
-
-    box->addWidget(icon);
-    box->addWidget(message);
-
+    messageBox = new KMessageWidget(this);
+    messageBox->setMessageType(KMessageWidget::Error);
+    messageBox->setCloseButtonVisible(false);
     messageBox->hide();
 
     mainVbox->addWidget(messageBox);
@@ -225,8 +216,7 @@ void JoyWidget::init()
   if ( device->count() == 0 )
   {
     messageBox->show();
-    message->setWordWrap(true);
-    message->setText(QString("<qt><b>%1</b></qt>").arg(
+    messageBox->setText(QString("<qt>%1</qt>").arg(
       i18n("No joystick device automatically found on this computer.<br />"
            "Checks were done in /dev/js[0-4] and /dev/input/js[0-4]<br />"
            "If you know that there is one attached, please enter the correct device file.")));
