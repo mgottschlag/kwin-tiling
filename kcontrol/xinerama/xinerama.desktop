@@ -3,7 +3,7 @@ Icon=preferences-desktop-display-multiple
 Type=Service
 X-KDE-ServiceTypes=KCModule
 Exec=kcmshell4 xinerama
-X-DocPath=kcontrol/multiplemonitors.html
+#X-DocPath=kcontrol/multiplemonitors.html
 # This is still awfully broken, first of all Hidden= here doesn't work
 # for some reason and second this is statically done at kbuildsycoca time.
 # X-KDE-Test-Module (KCModuleLoader::testModule() in KDE3) needs to be brought back.
@@ -13,6 +13,8 @@ X-KDE-ParentApp=kcontrol
 X-KDE-Library=kcm_xinerama
 
 X-KDE-System-Settings-Parent-Category=display
+
+X-DocPath=kcontrol/multiplemonitors/index.html
 
 Name=Multiple Monitors
 Name[af]=Veelvuldige Skerms
