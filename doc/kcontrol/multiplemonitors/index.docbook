@@ -63,7 +63,7 @@ pull a window to a specific point of screen &mdash; for example an edge.
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Enable multiple monitor window maximization support</guilabel></term>
+<term><guilabel>Enable multiple monitor window maximize support</guilabel></term>
 <listitem><para>
 By enabling this option, you will make &kde; keep windows on one monitor when
 they are maximized, unless manually changed. Disabling it, will make &kde;
@@ -82,7 +82,7 @@ possible monitor.
 
 </variablelist>
 
-<para>Below, there is a tabled displaying the coordination of all monitors which
+<para>Below, there is a table displaying the coordination of all monitors which
 &kde; can detect. The table shows:</para>
 
 <itemizedlist>
