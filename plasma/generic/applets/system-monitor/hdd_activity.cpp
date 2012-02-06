@@ -66,8 +66,6 @@ Hdd_Activity::Hdd_Activity(QObject *parent, const QVariantList &args)
 {
     setHasConfigurationInterface(true);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-//    m_sourceTimer.setSingleShot(true);
-//    connect(&m_sourceTimer, SIGNAL(timeout()), this, SLOT(sourcesChanged()));
 }
 
 Hdd_Activity::~Hdd_Activity()
@@ -97,7 +95,6 @@ void Hdd_Activity::sourceChanged(const QString& name)
     //kDebug() << "###### regexp captures: " << m_regexp.capturedTexts();
 
     if (m_regexp.indexIn(name) != -1) {
-        kDebug() << "######### REGEXP match successful, hopefully. Adding:" << name;
 
         m_possibleHdds.append(name);
 
@@ -109,13 +106,11 @@ void Hdd_Activity::sourceChanged(const QString& name)
 
 void Hdd_Activity::sourcesChanged()
 {
-    kDebug() << "###### sourcesChanged";
     configChanged();
 }
 
 void Hdd_Activity::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
-    kDebug() << "####### dataUpdated source: " << source << " data: " << data;
 
 
     const double value = data["value"].toDouble();
@@ -149,8 +144,6 @@ void Hdd_Activity::dataUpdated(const QString& source, const Plasma::DataEngine::
         return;
     }
 
-    kDebug() << "***** VALUEVECTOR COUNT: " << valueVector.count();
-
     //only graph it if it's got both rblk and wblk
     if (valueVector.count() == 2) {
         QString temp = KGlobal::locale()->formatNumber(value, 1);
@@ -167,7 +160,6 @@ void Hdd_Activity::dataUpdated(const QString& source, const Plasma::DataEngine::
 
 void Hdd_Activity::createConfigurationInterface(KConfigDialog *parent)
 {
-    kDebug() << "###### createConfigurationInterface";
 
     QWidget *widget = new QWidget();
     ui.setupUi(widget);
@@ -226,16 +218,13 @@ void Hdd_Activity::configChanged()
 
     // default to 2 seconds (2000 ms interval
     setInterval(cg.readEntry("interval", 2.0) * 1000.0);
-    kDebug() << "CONFIG CHANGED: POSSIBLE ONES: " << m_possibleHdds;
     setSources(cg.readEntry("hdds", default_hdds));
-    kDebug() << "CONFIG CHANGED: READ ONES: " << sources();
 
     connectToEngine();
 }
 
 void Hdd_Activity::configAccepted()
 {
-    kDebug() << "#### configAccepted";
     KConfigGroup cg = config();
     QStandardItem *parentItem = m_hddModel.invisibleRootItem();
 
@@ -255,7 +244,6 @@ void Hdd_Activity::configAccepted()
         }
     }
 
-    kDebug() << "***** WRITING ENTRY HDDS SOURCES: " << sources();
     cg.writeEntry("hdds", sources());
 
     uint interval = ui.intervalSpinBox->value();
@@ -267,8 +255,6 @@ void Hdd_Activity::configAccepted()
 bool Hdd_Activity::addVisualization(const QString& source)
 {
     QStringList splits = source.split('/');
-
-    kDebug() << "#### addVisualization FOR SOURCE:" << source << "SPLIT COUNT: " << splits.count() << "SPLIT AT 3: " << splits.at(3);
 
     // 0 == "disk" 1 == "sde_(8:64)" 2 == "Rate" 3 == "rblk"
     Q_ASSERT(splits.count() == 4);
