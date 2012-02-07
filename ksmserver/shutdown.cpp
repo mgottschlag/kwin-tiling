@@ -154,8 +154,7 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
     if ( !logoutConfirmed ) {
         KApplication::kApplication()->updateUserTimestamp();
         KSMShutdownFeedback::start(); // make the screen gray
-        //QString theme = cg.readEntry( "theme", "default" );
-        QString theme = cg.readEntry( "theme", "contour" );
+        QString theme = cg.readEntry( "theme", "default" );
         logoutConfirmed = KSMShutdownDlg::confirmShutdown( maysd, choose, sdtype, bopt, theme);
         // ###### We can't make the screen remain gray while talking to the apps,
         // because this prevents interaction ("do you want to save", etc.)
