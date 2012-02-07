@@ -52,6 +52,7 @@ public Q_SLOTS:
   Q_SCRIPTABLE void setClipboardContents(QString s);
   Q_SCRIPTABLE void clearClipboardContents();
   Q_SCRIPTABLE void clearClipboardHistory();
+  Q_SCRIPTABLE void saveClipboardHistory();
   Q_SCRIPTABLE QStringList getClipboardHistoryMenu();
   Q_SCRIPTABLE QString getClipboardHistoryItem(int i);
   Q_SCRIPTABLE void showKlipperPopupMenu();

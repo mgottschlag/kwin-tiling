@@ -59,7 +59,7 @@ KCMXinerama::KCMXinerama(QWidget *parent, const QVariantList &)
 
 	about->addAuthor(ki18n("George Staikos"), KLocalizedString(), "staikos@kde.org");
 	setAboutData( about );
-        setButtons(Apply);
+        setButtons(Help | Apply);
 	setQuickHelp( i18n("<h1>Multiple Monitors</h1> This module allows you to configure KDE support"
      " for multiple monitors."));
 
