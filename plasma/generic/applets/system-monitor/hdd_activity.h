@@ -74,7 +74,6 @@ private:
     */
     QMap<QString, QVector<double> > m_data;
 
-    QTimer m_sourceTimer;
     QRegExp m_regexp;
 };
 

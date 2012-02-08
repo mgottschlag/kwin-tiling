@@ -95,12 +95,7 @@ void Hdd_Activity::sourceChanged(const QString& name)
     //kDebug() << "###### regexp captures: " << m_regexp.capturedTexts();
 
     if (m_regexp.indexIn(name) != -1) {
-
         m_possibleHdds.append(name);
-
-        if (!m_sourceTimer.isActive()) {
-            m_sourceTimer.start(0);
-        }
     }
 }
 
