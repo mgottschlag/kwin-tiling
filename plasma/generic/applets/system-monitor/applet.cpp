@@ -359,7 +359,7 @@ void Applet::appendVisualization(const QString& source, QGraphicsWidget *visuali
     }
     m_visualizations[source] = visualization;
     mainLayout()->addItem(visualization);
-    connect(visualization, SIGNAL(destroyed(QObject*)), this, SLOT(visualizationDestroied(QObject*)));
+    connect(visualization, SIGNAL(destroyed(QObject*)), this, SLOT(visualizationDestroyed(QObject*)));
 }
 
 QGraphicsWidget * Applet::visualization(const QString& source)
@@ -367,7 +367,7 @@ QGraphicsWidget * Applet::visualization(const QString& source)
     return m_visualizations[source].data();
 }
 
-void Applet::visualizationDestroied(QObject *visualization)
+void Applet::visualizationDestroyed(QObject *visualization)
 {
     QString key;
     QHash<QString, QWeakPointer<QGraphicsWidget> >::const_iterator i;
