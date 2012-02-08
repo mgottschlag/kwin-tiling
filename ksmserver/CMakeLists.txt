@@ -2,7 +2,6 @@
 if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
 add_subdirectory( kcm )
 endif(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
-add_subdirectory( tests )
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/ksmserver ${CMAKE_MODULE_PATH})
 find_package(KDeclarative REQUIRED)
@@ -13,6 +12,8 @@ include_directories(
    ${QIMAGEBLITZ_INCLUDES}
    ${KDECLARATIVE_INCLUDE_DIR}
 )
+
+add_subdirectory( tests )
 
 check_library_exists(ICE _IceTransNoListen "" HAVE__ICETRANSNOLISTEN)
 configure_file(config-ksmserver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-ksmserver.h)
