@@ -1,13 +1,13 @@
 [Desktop Entry]
 Encoding=UTF-8
-Name=Hard Disk Activity Monitor
+Name=Hard Disk I/O Monitor
 Name[nl]=Volgt de activiteit van de harde schijf
 Name[pt]=Monitor da Actividade do Disco
 Name[pt_BR]=Monitor da atividade do disco rígido
 Name[uk]=Монітор роботи жорсткого диска
 Name[x-test]=xxHard Disk Activity Monitorxx
 
-Comment=A hard disk activity monitor
+Comment=An applet that monitors hard disk throughput and input/output
 Comment[nl]=Een monitor voor de activiteit van de harde schijf
 Comment[pt]=Um monitor da utilização do disco rígido
 Comment[pt_BR]=Um monitor da atividade do disco rígido
