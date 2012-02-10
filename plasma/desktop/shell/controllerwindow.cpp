@@ -491,7 +491,18 @@ void ControllerWindow::closeIfNotFocussed()
         if (info.windowType(NET::DesktopMask | NET::DockMask | NET::PopupMenuMask) == -1) {
             // an unfortunate little hack to allow windows to be tagged in a way that they don't
             // close the controller
-            if (widget->property("DoNotCloseController").isNull()) {
+            bool shouldClose = true;
+            QWidget *checkWidget = widget;
+            while (checkWidget) {
+                if (!checkWidget->property("DoNotCloseController").isNull()) {
+                    shouldClose = false;
+                    break;
+                }
+
+                checkWidget = checkWidget->parentWidget();
+            }
+
+            if (shouldClose) {
                 // single shot to work around Qt 4.8+ bug in event loop count in x11event handler
                 QTimer::singleShot(0, this, SLOT(deleteLater()));
             } else {
