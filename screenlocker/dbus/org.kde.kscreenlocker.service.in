@@ -1,4 +1,0 @@
-[D-BUS Service]
-Name=org.kde.kscreenlocker
-Exec=@CMAKE_INSTALL_PREFIX@/bin/kscreenlocker
-

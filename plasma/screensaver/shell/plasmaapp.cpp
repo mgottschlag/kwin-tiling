@@ -66,7 +66,6 @@
 #include <fixx11h.h>
 
 Atom tag; //FIXME should this be a member var or what?
-Atom tag2;
 const unsigned char DIALOG = 1; //FIXME this is really bad code
 const unsigned char VIEW = 2;
 
@@ -207,7 +206,6 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
 
     //we have to keep an eye on created windows
     tag = XInternAtom(QX11Info::display(), "_KDE_SCREENSAVER_OVERRIDE", False);
-    tag2 = XInternAtom(QX11Info::display(), "_KDE_SCREEN_LOCKER", False);
     qApp->installEventFilter(this);
 
     // this line initializes the corona.
@@ -471,7 +469,6 @@ bool PlasmaApp::eventFilter(QObject *obj, QEvent *event)
             }
 
             XChangeProperty(QX11Info::display(), widget->effectiveWinId(), tag, tag, 8, PropModeReplace, &data, 1);
-            XChangeProperty(QX11Info::display(), widget->effectiveWinId(), tag2, tag2, 32, PropModeReplace, 0, 0);
             kDebug() << "tagged" << widget << widget->effectiveWinId() << "as" << data;
         }
     }
