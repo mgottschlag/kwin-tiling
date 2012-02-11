@@ -106,25 +106,34 @@ void SM::Net::dataUpdated(const QString& source,
                           const Plasma::DataEngine::Data &data)
 {
     QStringList splitted = source.split('/');
+
     if (splitted.length() < 4) {
         return;
     }
+
     QString interface = splitted[2];
     int index = (splitted[3] == "receiver") ? 0 : 1;
+
     if (!m_data.contains(interface)) {
         m_data[interface] = QList<double>() << -1 << -1;
     }
+
     m_data[interface][index] = qMax(0.0, data["value"].toDouble());
+
     if (!m_data[interface].contains(-1)) {
+
         SM::Plotter *plotter = qobject_cast<SM::Plotter*>(visualization(interface));
         if (plotter) {
             plotter->addSample(m_data[interface]);
+
             if (mode() == SM::Applet::Panel) {
-                setToolTip(interface,
-                        QString("<tr><td>%1</td><td>in</td><td>%2</td><td>out</td><td>%3</td></tr>")
-                                .arg(plotter->title())
-                                .arg(m_data[interface][0])
-                                .arg(m_data[interface][1]));
+                const double downstream = m_data[interface][0];
+                const double upstream = m_data[interface][1];
+
+
+                QString translatedString = i18n("<tr><td>Interface:%1</td><td>Upstream:%2</td><td>Downstream:%3</td></tr>", plotter->title(), upstream, downstream);
+
+                setToolTip(interface, translatedString);
             }
         }
         m_data[interface] = QList<double>() << -1 << -1;
