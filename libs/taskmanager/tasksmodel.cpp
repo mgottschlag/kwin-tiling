@@ -194,6 +194,10 @@ int TasksModel::columnCount(const QModelIndex &) const
 
 int TasksModel::rowCount(const QModelIndex &parent) const
 {
+    if (!d->rootGroup) {
+        return 0;
+    }
+
     if (!parent.isValid()) {
         return d->rootGroup->members().count();
     }
