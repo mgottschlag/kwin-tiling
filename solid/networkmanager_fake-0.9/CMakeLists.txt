@@ -38,5 +38,3 @@ target_link_libraries(solid_networkmanager09_fake ${KDE4_KDECORE_LIBS} ${KDE4_SO
 install(TARGETS solid_networkmanager09_fake DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES solid_networkmanager09_fake.desktop DESTINATION ${SERVICES_INSTALL_DIR}/solidbackends )
-
-kde4_install_icons( ${ICON_INSTALL_DIR} )
