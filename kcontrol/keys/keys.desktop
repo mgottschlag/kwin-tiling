@@ -2,11 +2,10 @@
 Exec=kcmshell4 keys
 Icon=preferences-desktop-keyboard-shortcut
 Type=Service
-X-KDE-ServiceTypes=KCModule,KCModuleInit
+X-KDE-ServiceTypes=KCModule
 X-DocPath=kcontrol/keys/index.html
 
 X-KDE-Library=kcm_keys
-X-KDE-Init-Symbol=keys
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=shortcuts-and-gestures
