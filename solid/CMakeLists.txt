@@ -3,6 +3,7 @@ macro_optional_find_package(NetworkManager)
     
 add_subdirectory(kcm)
 add_subdirectory(solid-actions-kcm)
+add_subdirectory(icons)
 
 IF("${CMAKE_SYSTEM}" MATCHES "Linux")
   add_subdirectory(solidshell)
