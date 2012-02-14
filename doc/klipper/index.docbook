@@ -30,8 +30,8 @@
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2011-06-20</date>
-<releaseinfo>0.9.7 (&kde; 4.7)</releaseinfo>
+<date>2012-01-18</date>
+<releaseinfo>0.9.7 (&kde; 4.8)</releaseinfo>
 
 <abstract>
 <para>&klipper; is the &kde; clipboard cut &amp; paste utility.</para>
@@ -71,7 +71,6 @@ url="http://bugs.kde.org">KDEs bugzilla</ulink> or use the "report bug" feature.
 </mediaobject>
 </screenshot>
 
- <!-- shortcut Ctrl+ALt+V is defined in System Tray Setting on page Items -->
 <para>To display the clipboard history, click on the &klipper; icon in
  the &kde; panel, or press <keycombo
  action="simul">&Ctrl;&Alt;<keycap>V</keycap> </keycombo>. Previous
@@ -79,6 +78,10 @@ url="http://bugs.kde.org">KDEs bugzilla</ulink> or use the "report bug" feature.
  appears. Selecting one of these copies it to the clipboard, from
  where it can be pasted into any &kde; or X application as
  usual.</para>
+
+<note><para>The shortcut for this action has to be configured in the 
+<guilabel>System Tray Settings</guilabel> on the <guilabel>Entries</guilabel>
+page.</para></note>
 
 <para>You can search through the clipboard history by opening it
 (click on &klipper;) and typing your query. The results are updated as
@@ -231,7 +234,12 @@ below.</para>
 
 <variablelist>
 
-<!-- not in 4.7 varlistentry>
+<!-- not in 4.7, but action is back in 4.8
+http://commits.kde.org/kde-workspace/90944a8c6bb9e22e4089870f49f898eec083518d
+Fix regression in Klipper, which broke the "Show at mouse position" feature
+back in 4.5.
+
+varlistentry>
 <term><guilabel>Popup menu at mouse-cursor position</guilabel></term>
 <listitem><para>Make the &klipper; popup menus appear at the position of
 the mouse cursor, instead of their default position (in the &kde; Panel).
@@ -345,6 +353,8 @@ press the <guibutton>Edit Action</guibutton> button. A dialog will appear in whi
 expression text can be edited as you wish.</para></listitem>
 </varlistentry>
 
+<!--Enable MIME-based actions
+  -->
 <varlistentry>
 <term>Adding Expressions/Actions</term>
 <listitem><para>Click the <guibutton>Add Action</guibutton> button

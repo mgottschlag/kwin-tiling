@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2003 by Martin Koller                                   *
- *   m.koller@surfeu.at                                                    *
+ *   kollix@aon.at                                                         *
  *   This file is part of the KDE Control Center Module for Joysticks      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *

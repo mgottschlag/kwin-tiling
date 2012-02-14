@@ -146,24 +146,23 @@ void IconApplet::setUrl(const KUrl& url, bool fromConfigDialog)
     disconnect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)),
                this, SLOT(checkService(QStringList)));
 
+    m_hasDesktopFile = false;
     delete m_watcher;
     m_watcher = 0;
+
+    // if local
+    //   if not a directory and executable
+    //     make desktop file
+    //    desktop file
     if (m_url.isLocalFile()) {
         m_watcher = new KDirWatch;
         m_watcher->addFile(m_url.toLocalFile());
         connect(m_watcher, SIGNAL(deleted(QString)), this, SLOT(delayedDestroy()));
-    }
 
-    // if local
-    //   if executable
-    //     make desktop file
-    //    desktop file
-    m_hasDesktopFile = false;
-    if (m_url.isLocalFile()) {
         QFileInfo fi(m_url.toLocalFile());
         if (KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
             m_hasDesktopFile = true;
-        } else if (fi.isExecutable()) {
+        } else if (!fi.isDir() && fi.isExecutable()) {
             const QString suggestedName = fi.baseName();
             const QString file = KService::newServicePath(false, suggestedName);
             KDesktopFile df(file);

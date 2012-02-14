@@ -18,7 +18,6 @@
 
 #include "locationrunner.h"
 
-#include <QDir>
 #include <QMimeData>
 
 #include <KDebug>
@@ -29,6 +28,7 @@
 #include <KUrl>
 #include <KIcon>
 #include <KProtocolInfo>
+#include <KUriFilter>
 
 #include <kservicetypetrader.h>
 
@@ -46,60 +46,6 @@ LocationsRunner::LocationsRunner(QObject *parent, const QVariantList& args)
 
 LocationsRunner::~LocationsRunner()
 {
-}
-
-static void processUrl(KUrl &url, const QString &term)
-{
-    if (url.protocol().isEmpty()) {
-        const int idx = term.indexOf('/');
-
-        url.clear();
-        url.setHost(term.left(idx));
-        if (idx != -1) {
-            //allow queries
-            const int queryStart = term.indexOf('?', idx);
-            int pathLength = -1;
-            if ((queryStart > -1) && (idx < queryStart)) {
-                pathLength = queryStart - idx;
-                url.setQuery(term.mid(queryStart));
-            }
-
-            url.setPath(term.mid(idx, pathLength));
-        }
-        if (term.startsWith("ftp")) {
-            url.setProtocol("ftp");
-        }
-        else {
-            url.setProtocol("http");
-        }
-    }
-}
-
-//Suports accessing man/info-pages with '#' as the triggering shortcut
-//Replaces the '#' sign with "man" and "##" with "info:"
-QString manInfoLookup(QString term)
-{
-    if (term.startsWith("##")) {
-        return term.replace(0, 2, "info:");
-    } else if (term.startsWith("#")) {
-        return term.replace(0, 1, "man:");
-    }
-
-    return term;
-}
-
-//Any url that has a protocol or that looks like a url is accepted
-bool couldBeUrl(const QString &term)
-{
-    //Does not support a port, as then everything that is before the colon would be interpreted as protocol
-    static const QString ip4vPart("(25[0-5]|2[0-4]\\d|1?\\d\\d?)");//0-255 is allowed
-    static const QString ipv4('(' + ip4vPart + "\\." + ip4vPart + "\\." + ip4vPart + "\\." + ip4vPart + ')');
-    static const QString fqnd("([^/]+\\.[a-zA-Z]{2,})");
-    static const QString host("^(" + ipv4 + '|' + fqnd + ")");
-    QRegExp rx(host + "(/.*)?$", Qt::CaseSensitive, QRegExp::RegExp2);
-
-    const KUrl url(term);
-    return (!url.protocol().isEmpty() || rx.exactMatch(term));
 }
 
 void LocationsRunner::match(Plasma::RunnerContext &context)
@@ -141,11 +87,15 @@ void LocationsRunner::match(Plasma::RunnerContext &context)
         match.setId("help");
         context.addMatch(term, match);
     } else if (type == Plasma::RunnerContext::NetworkLocation ||
-               (type == Plasma::RunnerContext::UnknownType &&
-                (term.startsWith('#') || couldBeUrl(term)))) {
+               type == Plasma::RunnerContext::UnknownType) {
 
-        KUrl url(manInfoLookup(term));
-        processUrl(url, term);
+        bool filtered = KUriFilter::self()->filterUri(term, QStringList() << QLatin1String("kshorturifilter"));
+
+        if (!filtered) {
+            return;
+        }
+
+        KUrl url(term);
 
         if (!KProtocolInfo::isKnownProtocol(url.protocol())) {
             return;
@@ -180,36 +130,18 @@ void LocationsRunner::match(Plasma::RunnerContext &context)
 
 void LocationsRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
-    const QString location = context.query();
+    Q_UNUSED(match)
+
+    QString location = context.query();
 
     if (location.isEmpty()) {
         return;
     }
-    QString data = match.data().toString();
-    Plasma::RunnerContext::Type type = context.type();
 
     //kDebug() << "command: " << context.query();
     //kDebug() << "url: " << location << data;
 
-    KUrl urlToRun(location);
-
-    if (location.startsWith('#')) {
-        urlToRun = manInfoLookup(location);
-    } else if ((type == Plasma::RunnerContext::NetworkLocation || type == Plasma::RunnerContext::UnknownType) &&
-        (data.startsWith("http://") || data.startsWith("ftp://"))) {
-        // the text may have changed while we were running, so we have to refresh
-        // our content
-        processUrl(urlToRun, location);
-    } else if (type != Plasma::RunnerContext::NetworkLocation) {
-        QString path = QDir::cleanPath(KShell::tildeExpand(location));
-
-        //no protocol defined, might be a local folder
-        if (urlToRun.protocol().isEmpty() && (path[0] != '/')) {
-            path.prepend('/').prepend(QDir::currentPath());
-        }
-
-        urlToRun = path;
-    }
+    KUrl urlToRun(KUriFilter::self()->filteredUri(location, QStringList() << QLatin1String("kshorturifilter")));
 
     new KRun(urlToRun, 0);
 }
