@@ -91,6 +91,8 @@ bool KCMInit::runModule(const QString &libName, KService::Ptr service)
             void (*func)() = (void(*)())init;
             func();
             return true;
+        } else {
+            kDebug(1208) << "Module" << libName << "does not actually have a kcminit function";
         }
     }
     return false;

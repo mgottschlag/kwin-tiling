@@ -3,7 +3,7 @@ Exec=kcmshell4 cursortheme
 Icon=edit-select
 Type=Service
 
-X-KDE-ServiceTypes=KCModule,KCModuleInit
+X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_cursortheme
 X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=desktop-appearance

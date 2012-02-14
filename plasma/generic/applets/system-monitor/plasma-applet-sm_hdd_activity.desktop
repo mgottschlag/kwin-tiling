@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Hard Disk I/O Monitor
+Name[cs]=Monitor I/O pevného disku
 Name[nl]=Volgt de activiteit van de harde schijf
 Name[pt]=Monitor de E/S do Disco
 Name[pt_BR]=Monitor de E/S do disco rígido
