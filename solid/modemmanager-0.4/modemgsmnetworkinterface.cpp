@@ -43,6 +43,11 @@ MMModemGsmNetworkInterface::MMModemGsmNetworkInterface(const QString & path, MMM
                 this, SLOT(slotRegistrationInfoChanged(uint,QString,QString)));
     connect( &d->modemGsmNetworkIface, SIGNAL(SignalQuality(uint)),
                 this, SIGNAL(signalQualityChanged(uint)));
+
+    d->signalQuality = d->modemGsmNetworkIface.GetSignalQuality();
+    d->registrationInfo = d->modemGsmNetworkIface.GetRegistrationInfo();
+    d->accessTechnology = (Solid::Control::ModemInterface::AccessTechnology)d->modemGsmNetworkIface.accessTechnology();
+    d->allowedMode = (Solid::Control::ModemInterface::AllowedMode)d->modemGsmNetworkIface.allowedMode();
 }
 
 MMModemGsmNetworkInterface::~MMModemGsmNetworkInterface()
@@ -69,27 +74,34 @@ void MMModemGsmNetworkInterface::propertiesChanged(const QString & interface, co
     }
 }
 
+void MMModemGsmNetworkInterface::slotSignalQualityChanged(uint signalQuality)
+{
+    Q_D(MMModemGsmNetworkInterface);
+    d->signalQuality = signalQuality;
+    emit signalQualityChanged(d->signalQuality);
+}
+
 void MMModemGsmNetworkInterface::slotRegistrationInfoChanged(uint status, const QString & operatorCode, const QString &operatorName)
 {
-    RegistrationInfoType r;
+    Q_D(MMModemGsmNetworkInterface);
 
-    r.status = (Solid::Control::ModemGsmNetworkInterface::RegistrationStatus) status;
-    r.operatorCode = operatorCode;
-    r.operatorName = operatorName;
+    d->registrationInfo.status = (Solid::Control::ModemGsmNetworkInterface::RegistrationStatus) status;
+    d->registrationInfo.operatorCode = operatorCode;
+    d->registrationInfo.operatorName = operatorName;
 
-    emit registrationInfoChanged(r);
+    emit registrationInfoChanged(d->registrationInfo);
 }
 
 Solid::Control::ModemInterface::AllowedMode MMModemGsmNetworkInterface::getAllowedMode() const
 {
     Q_D(const MMModemGsmNetworkInterface);
-    return (Solid::Control::ModemInterface::AllowedMode) d->modemGsmNetworkIface.allowedMode();
+    return d->allowedMode;
 }
 
 Solid::Control::ModemInterface::AccessTechnology MMModemGsmNetworkInterface::getAccessTechnology() const
 {
     Q_D(const MMModemGsmNetworkInterface);
-    return (Solid::Control::ModemInterface::AccessTechnology) d->modemGsmNetworkIface.accessTechnology();
+    return d->accessTechnology;
 }
 
 void MMModemGsmNetworkInterface::registerToNetwork(const QString & networkId)
@@ -130,26 +142,14 @@ Solid::Control::ModemInterface::Band MMModemGsmNetworkInterface::getBand()
 
 RegistrationInfoType MMModemGsmNetworkInterface::getRegistrationInfo()
 {
-    Q_D(MMModemGsmNetworkInterface);
-    QDBusReply< RegistrationInfoType > registrationInfo = d->modemGsmNetworkIface.GetRegistrationInfo();
-
-    if (registrationInfo.isValid())
-        return registrationInfo.value();
-
-    kDebug(1441) << "Error getting registration info for operator: " << registrationInfo.error().name() << ": " << registrationInfo.error().message();
-    return RegistrationInfoType();
+    Q_D(const MMModemGsmNetworkInterface);
+    return d->registrationInfo;
 }
 
 uint MMModemGsmNetworkInterface::getSignalQuality()
 {
-    Q_D(MMModemGsmNetworkInterface);
-    QDBusReply< uint > signalQuality = d->modemGsmNetworkIface.GetSignalQuality();
-
-    if (signalQuality.isValid())
-        return signalQuality.value();
-
-    kDebug(1441) << "Error getting signal quality: " << signalQuality.error().name() << ": " << signalQuality.error().message();
-    return 0;
+    Q_D(const MMModemGsmNetworkInterface);
+    return d->signalQuality;
 }
 
 void MMModemGsmNetworkInterface::setAllowedMode(const Solid::Control::ModemInterface::AllowedMode mode)

@@ -50,6 +50,7 @@ public:
     Solid::Control::ModemInterface::AllowedMode getAllowedMode() const;
     Solid::Control::ModemInterface::AccessTechnology getAccessTechnology() const;
 public Q_SLOTS:
+    void slotSignalQualityChanged(uint signalQuality);
     void slotRegistrationInfoChanged(uint status, const QString & operatorCode, const QString &operatorName);
     void propertiesChanged(const QString & interface, const QVariantMap & properties);
 Q_SIGNALS:
