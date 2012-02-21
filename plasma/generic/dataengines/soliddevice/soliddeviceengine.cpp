@@ -572,6 +572,19 @@ void SolidDeviceEngine::setUnmountingState(const QString &udi)
 void SolidDeviceEngine::setIdleState(Solid::ErrorType error, QVariant errorData, const QString &udi)
 {
     setData(udi, I18N_NOOP("State"), Idle);
+
+    Solid::Device device = m_devicemap.value(udi);
+    if (!device.isValid()) {
+        return;
+    }
+
+    Solid::StorageAccess *storageaccess = device.as<Solid::StorageAccess>();
+    if (!storageaccess) {
+        return;
+    }
+
+    setData(udi, I18N_NOOP("Accessible"), storageaccess->isAccessible());
+    setData(udi, I18N_NOOP("File Path"), storageaccess->filePath());
 }
 
 qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
