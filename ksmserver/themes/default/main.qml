@@ -282,8 +282,8 @@ PlasmaCore.FrameSvgItem {
                                 contextMenu.append({itemIndex: 2, itemText: i18n("Suspend to &RAM")})
                             }
                             if (spdMethods.HibernateState) {
-                                // 3 == Solid::PowerManagement::HibernateState
-                                contextMenu.append({itemIndex: 3, itemText: i18n("Suspend to &Disk")})
+                                // 4 == Solid::PowerManagement::HibernateState
+                                contextMenu.append({itemIndex: 4, itemText: i18n("Suspend to &Disk")})
                             }
                             contextMenu.clicked.connect(shutdownUi.suspendRequested)
                         }
