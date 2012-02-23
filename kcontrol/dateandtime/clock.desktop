@@ -114,6 +114,7 @@ Comment[pt]=Configuração das opções da data e hora
 Comment[pt_BR]=Configuração das opções de data e hora
 Comment[uk]=Налаштування параметрів дати і часу
 Comment[x-test]=xxConfigure date and time settingsxx
+Comment[zh_TW]=設定日期與時間
 
 X-KDE-Keywords=clock,date,time,time zone,ntp,synchronize,calendar,local time,region time
 X-KDE-Keywords[nds]=Klock,Datum,Tiet,Tietrebeet,NTP,synkroniseren,Kalenner,lokaal Tiet
@@ -122,5 +123,6 @@ X-KDE-Keywords[pt]=relógio,data,hora,fuso-horário,ntp,sincronizar,calendário,
 X-KDE-Keywords[pt_BR]=relógio,data,hora,fuso horário,ntp,sincronizar,calendário,hora local,hora regional
 X-KDE-Keywords[uk]=годинник,дата,час,часовий пояс,синхронізація,календар,місцевий час,clock,date,time,time zone,ntp,synchronize,calendar,local time,region time
 X-KDE-Keywords[x-test]=xxclock,date,time,time zone,ntp,synchronize,calendar,local time,region timexx
+X-KDE-Keywords[zh_TW]=clock,date,time,time zone,ntp,synchronize,calendar,local time,region time
 
 Categories=Qt;KDE;X-KDE-settings-system;

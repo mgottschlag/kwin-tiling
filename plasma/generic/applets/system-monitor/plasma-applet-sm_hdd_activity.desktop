@@ -7,6 +7,7 @@ Name[pt]=Monitor de E/S do Disco
 Name[pt_BR]=Monitor de E/S do disco rígido
 Name[uk]=Монітор роботи жорсткого диска
 Name[x-test]=xxHard Disk I/O Monitorxx
+Name[zh_TW]=硬碟使用量 I/O 監視器
 
 Comment=An applet that monitors hard disk throughput and input/output
 Comment[nl]=Een applet die de activiteit van de harde schijf volgt
@@ -14,6 +15,7 @@ Comment[pt]=Uma 'applet' que vigia o rendimento e o fluxo de entrada-saída do d
 Comment[pt_BR]=Um miniaplicativo que monitora o fluxo do disco rígido e a entrada/saída
 Comment[uk]=Аплет, який стежить за даними, які записуються на жорсткий диск та читаються з жорсткого диска
 Comment[x-test]=xxAn applet that monitors hard disk throughput and input/outputxx
+Comment[zh_TW]=監視硬碟效能與 I/O 的小程式
 
 Type=Service
 Icon=drive-harddisk

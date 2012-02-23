@@ -189,5 +189,6 @@ X-KDE-Keywords[pt]=Teclas,combinações de teclas,global,esquema de teclas,atalh
 X-KDE-Keywords[pt_BR]=Teclas,combinações de teclas global,esquema de teclas,atalhos de teclado,atalhos,atalhos dos aplicativos, atalhos globais
 X-KDE-Keywords[uk]=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,global shortcuts,клавіатура,скорочення,клавіатурні скорочення,схема,загальні клавіатурні скорочення,клавіатурні скорочення програми,загальні скорочення
 X-KDE-Keywords[x-test]=xxKeys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,global shortcutsxx
+X-KDE-Keywords[zh_TW]=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,global shortcuts
 
 Categories=Qt;KDE;X-KDE-settings-accessibility;

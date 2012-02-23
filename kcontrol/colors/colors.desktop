@@ -113,6 +113,7 @@ Comment[pt]=Mudar as cores usadas nas aplicações
 Comment[pt_BR]=Alterar as cores usadas nos aplicativos
 Comment[uk]=Зміна кольорів, що використовуються у інтерфейсах програм
 Comment[x-test]=xxChange the colors used in applicationsxx
+Comment[zh_TW]=變更用於應用程式的顏色
 
 X-KDE-Keywords=colors,colours,scheme,contrast,Widget colors,Color Scheme,color style,color theme
 X-KDE-Keywords[nds]=Klöör,Klören,Schema,Kontrast,Lüttprogramm-Klören,Klöörschema,Klöörstil,Klöörmuster
@@ -121,5 +122,6 @@ X-KDE-Keywords[pt]=cores,esquema,contraste,cores dos elementos,esquema de cores,
 X-KDE-Keywords[pt_BR]=cor,cores,esquema,contraste,Cores do widget,Esquema de cores,estilo de cores,tema de cores
 X-KDE-Keywords[uk]=кольори,кольори,схема,контраст,кольори віджетів,схема кольорів,стиль кольорів,тема кольорів,colors,colours,scheme,contrast,Widget colors,Color Scheme,color style,color theme
 X-KDE-Keywords[x-test]=xxcolors,colours,scheme,contrast,Widget colors,Color Scheme,color style,color themexx
+X-KDE-Keywords[zh_TW]=colors,colours,scheme,contrast,Widget colors,Color Scheme,color style,color theme
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;
