@@ -235,11 +235,16 @@ void KSMServer::autoStart0Done()
     kDebug() << t.elapsed();
 #endif
     upAndRunning( "desktop" );
-    kcminitSignals = new QDBusInterface("org.kde.kcminit", "/kcminit", "org.kde.KCMInit", QDBusConnection::sessionBus(), this );
-    if( !kcminitSignals->isValid())
-        kWarning() << "kcminit not running?" ;
-    connect( kcminitSignals, SIGNAL(phase1Done()), SLOT(kcmPhase1Done()));
     state = KcmInitPhase1;
+    kcminitSignals = new QDBusInterface("org.kde.kcminit", "/kcminit", "org.kde.KCMInit", QDBusConnection::sessionBus(), this );
+    if( !kcminitSignals->isValid()) {
+        kWarning() << "kcminit not running? If we are running with mobile profile or in another platform other than X11 this is normal.";
+        delete kcminitSignals;
+        kcminitSignals = 0;
+        QTimer::singleShot(0, this, SLOT(kcmPhase1Done()));
+        return;
+    }
+    connect( kcminitSignals, SIGNAL(phase1Done()), SLOT(kcmPhase1Done()));
     QTimer::singleShot( 10000, this, SLOT(kcmPhase1Timeout())); // protection
 
     org::kde::KCMInit kcminit("org.kde.kcminit", "/kcminit" , QDBusConnection::sessionBus());
@@ -251,7 +256,9 @@ void KSMServer::kcmPhase1Done()
     if( state != KcmInitPhase1 )
         return;
     kDebug( 1218 ) << "Kcminit phase 1 done";
-    disconnect( kcminitSignals, SIGNAL(phase1Done()), this, SLOT(kcmPhase1Done()));
+    if (kcminitSignals) {
+        disconnect( kcminitSignals, SIGNAL(phase1Done()), this, SLOT(kcmPhase1Done()));
+    }
     autoStart1();
 }
 
@@ -372,15 +379,27 @@ void KSMServer::autoStart2()
     org::kde::KLauncher klauncher("org.kde.klauncher", "/KLauncher", QDBusConnection::sessionBus());
     klauncher.autoStart((int)2);
 
+#ifdef KSMSERVER_STARTUP_DEBUG1
+    kDebug() << "klauncher" << t.elapsed();
+#endif
+
     QDBusInterface kded( "org.kde.kded", "/kded", "org.kde.kded" );
     kded.call( "loadSecondPhase" );
 
+#ifdef KSMSERVER_STARTUP_DEBUG1
+    kDebug() << "kded" << t.elapsed();
+#endif
+
     runUserAutostart();
 
-    connect( kcminitSignals, SIGNAL(phase2Done()), SLOT(kcmPhase2Done()));
-    QTimer::singleShot( 10000, this, SLOT(kcmPhase2Timeout())); // protection
-    org::kde::KCMInit kcminit("org.kde.kcminit", "/kcminit" , QDBusConnection::sessionBus());
-    kcminit.runPhase2();
+    if (kcminitSignals) {
+        connect( kcminitSignals, SIGNAL(phase2Done()), SLOT(kcmPhase2Done()));
+        QTimer::singleShot( 10000, this, SLOT(kcmPhase2Timeout())); // protection
+        org::kde::KCMInit kcminit("org.kde.kcminit", "/kcminit" , QDBusConnection::sessionBus());
+        kcminit.runPhase2();
+    } else {
+        QTimer::singleShot(0, this, SLOT(kcmPhase2Done()));
+    }
     if( !defaultSession())
         restoreLegacySession(KGlobal::config().data());
     KNotification::event( "startkde" , QString() , QPixmap() , 0l , KNotification::DefaultEvent  ); // this is the time KDE is up, more or less
@@ -425,9 +444,11 @@ void KSMServer::kcmPhase2Done()
     if( state != FinishingStartup )
         return;
     kDebug( 1218 ) << "Kcminit phase 2 done";
-    disconnect( kcminitSignals, SIGNAL(phase2Done()), this, SLOT(kcmPhase2Done()));
-    delete kcminitSignals;
-    kcminitSignals = NULL;
+    if (kcminitSignals) {
+        disconnect( kcminitSignals, SIGNAL(phase2Done()), this, SLOT(kcmPhase2Done()));
+        delete kcminitSignals;
+        kcminitSignals = 0;
+    }
     waitKcmInit2 = false;
     finishStartup();
 }
