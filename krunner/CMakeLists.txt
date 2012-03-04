@@ -50,6 +50,12 @@ kde4_add_ui_files(krunner_SRCS interfaceOptions.ui)
 kde4_add_kcfg_files(krunner_SRCS ${krunner_KCFG_SRCS})
 
 qt4_add_dbus_adaptor(krunner_SRCS ${krunner_dbusAppXML} krunnerapp.h KRunnerApp)
+if(WIN32)
+	set(BIN_PREFIX bin)
+else(WIN32)
+	set(BIN_PREFIX ${CMAKE_INSTALL_PREFIX}/bin)
+endif(WIN32)
+
 dbus_add_activation_service(dbus/org.kde.krunner.service.in)
 
 if(NOT WIN32)
