@@ -752,7 +752,8 @@ void Battery::openConfig()
     args << QLatin1String("--icon")
         << QLatin1String("preferences-system-power-management")
         << QLatin1String("powerdevilglobalconfig")
-        << QLatin1String("powerdevilprofilesconfig");
+        << QLatin1String("powerdevilprofilesconfig")
+        << QLatin1String("powerdevilactivitiesconfig");
     KToolInvocation::kdeinitExec("kcmshell4", args);
 }
 
