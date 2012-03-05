@@ -844,8 +844,8 @@ void GroupManager::readLauncherConfig(const KConfigGroup &cg)
         }
     }
 
-    foreach (const QString & key, conf.keyList()) {
-        if ("Items"==key) {
+    foreach (const QString &key, conf.keyList()) {
+        if ("Items" == key) {
             continue;
         }
 
@@ -877,7 +877,7 @@ void GroupManager::readLauncherConfig(const KConfigGroup &cg)
     // immediately without the removals KUrl::List, but this is known safe
     // and not a performance bottleneck
     KUrl::List removals;
-    foreach (LauncherItem * launcher, d->launchers) {
+    foreach (LauncherItem *launcher, d->launchers) {
         if (!urls.contains(launcher->launcherUrl())) {
             removals << launcher->launcherUrl();
         }
