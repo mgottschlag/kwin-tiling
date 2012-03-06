@@ -46,7 +46,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <sys/wait.h>
 #include <sys/param.h>
 #ifdef BSD
-# include <utmp.h>
+# ifdef BSD_UTMP
+#  include <utmp.h>
+# endif
+# ifndef _PATH_UTMP
+#  if defined(__FreeBSD_version) && __FreeBSD_version >= 900007
+#   define _PATH_UTMP "/var/run/utmp"
+#  else
+#   error "_PATH_UTMP must be defined"
+#  endif
+# endif
 #endif
 
 #define WANT_CONF_GEN
