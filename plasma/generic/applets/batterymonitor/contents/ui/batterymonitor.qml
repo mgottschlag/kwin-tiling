@@ -23,8 +23,8 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 
 Item {
     id: batterymonitor
-    property int minimumWidth: 400
-    property int minimumHeight: 200
+    property int minimumWidth: dialogItem.width
+    property int minimumHeight: dialogItem.height
 
     property bool show_charge: false
     property bool show_multiple_batteries: false

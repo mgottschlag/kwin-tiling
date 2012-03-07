@@ -42,124 +42,31 @@ Item {
     function setProfile (index)     { profiles.currentIndex = index;    }
     function clearProfiles()        { profiles.clear();                 }*/
 
-    Item {
-        id: labels
-        width: 170
-        height: parent.height
-        anchors {
-            left: parent.left
-            top: parent.top
-            topMargin: 10
-            bottom: parent.bottom
-        }
-
-        Text {
-            id: batteryLabel
-            text: "Battery:"
-            anchors {
-                right: parent.right
-                rightMargin: 10
-            }
-        }
-
-        Text {
-            id: adapterLabel
-            text: "AC Adapter:"
-            anchors {
-                top: batteryLabel.bottom
-                topMargin: 10
-                right: parent.right 
-                rightMargin: 10
-            }
-        }
-
-        Text {
-            id: profileLabel
-            //text: "Power Profile:"
-            text: "Power management\nenabled:"
-            horizontalAlignment: Text.AlignRight
-            anchors {
-                top: adapterLabel.bottom
-                topMargin: 10
-                left: parent.left
-                right: parent.right 
-                rightMargin: 10
-            }
-        }
-
-        Text {
-            id: brightnessLabel
-            text: "Screen Brightness:"
-            anchors {
-                top: profileLabel.bottom
-                topMargin: 10
-                right: parent.right 
-                rightMargin: 10
-            }
-        }
-    }
-
-    Item {
+    Column {
         id: values
-        anchors {
-            left: labels.right
-            right: parent.right
-            top: parent.top
-            topMargin: 10
-            bottom: parent.bottom
-        }
 
-        Text {
-            id: batteryValue
-            text: {
-                if (percent == 0) {
-                    return "Not present";
+        Row {
+            Components.Label {
+                id: batteryLabel
+                text: i18n("Battery:")
+            }
+            Components.Label {
+                id: batteryValue
+                text: {
+                    if (percent == 0) {
+                        return "Not present";
+                    }
+                    var txt=percent+"% (";
+                    if (percent<100) {
+                        if (pluggedIn) txt += "charging";
+                        else txt += "discharging";
+                    } else {
+                        txt += "charged";
+                    }
+                    txt += ")"
+                    return txt;
                 }
-                var txt=percent+"% (";
-                if (percent<100) {
-                    if (pluggedIn) txt += "charging";
-                    else txt += "discharging";
-                } else {
-                    txt += "charged";
-                }
-                txt += ")"
-                return txt;
-            }
-            font.bold: true
-            anchors {
-                left: parent.left
-            }
-        }
-
-        Text {
-            id: adapterValue
-            text: pluggedIn ? "Plugged in" : "Not plugged in"
-            font.bold: true
-            anchors {
-                left: parent.left
-                top: batteryValue.bottom
-                topMargin: 10
-            }
-        }
-
-        /*PlasmaWidgets.ComboBox {
-            id: profiles
-            anchors {
-                left: parent.left
-                top: adapterValue.bottom
-                topMargin: 5
-                right: parent.right
-            }
-            onTextChanged: profileChanged(text)
-        }*/
-        // TODO: what to do on check/uncheck?
-        Components.CheckBox {
-            id: profiles
-            checked: true
-            anchors {
-                left: parent.left
-                top: adapterValue.bottom
-                topMargin: 15
+                font.bold: true
             }
         }
 
@@ -170,41 +77,45 @@ Item {
             stepSize: 10
             anchors {
                 left: parent.left
-                top: profiles.bottom
+                top: batteryValue.bottom
                 topMargin: 6
                 right: parent.right
             }
             onValueChanged: brightnessChanged(value)
         }
 
-        IconButton {
-            id: sleepButton
-            icon: QIcon("system-suspend")
-            iconWidth: 22
-            iconHeight: 22
-            text: "Sleep"
-            anchors {
-                left: parent.left
-                leftMargin: 15
-                top: brightnessSlider.bottom
-                topMargin: 10
+        Row {
+            Components.Label {
+                id: profileLabel
+                text: i18n("Enabled:")
+                horizontalAlignment: Text.AlignRight
             }
-            onClicked: sleepClicked()
+            // TODO: what to do on check/uncheck?
+            Components.Switch {
+                id: profiles
+                checked: true
+            }
         }
 
-        IconButton {
-            id: hibernateButton
-            icon: QIcon("system-suspend-hibernate")
-            iconWidth: 22
-            iconHeight: 22
-            text: "Hibernate"
-            anchors {
-                left: sleepButton.right
-                leftMargin: 15
-                top: brightnessSlider.bottom
-                topMargin: 10
+        Row {
+            anchors.horizontalCenter: parent.horizontalCenter
+            IconButton {
+                id: sleepButton
+                icon: QIcon("system-suspend")
+                iconWidth: 22
+                iconHeight: 22
+                text: "Sleep"
+                onClicked: sleepClicked()
             }
-            onClicked: hibernateClicked()
+
+            IconButton {
+                id: hibernateButton
+                icon: QIcon("system-suspend-hibernate")
+                iconWidth: 22
+                iconHeight: 22
+                text: "Hibernate"
+                onClicked: hibernateClicked()
+            }
         }
     }
 }
