@@ -22,7 +22,7 @@ Keywords[x-test]=xxPower Management, Battery, System, Energyxx
 
 Icon=battery
 Type=Service
-X-KDE-ServiceTypes=Plasma/Applet
+X-KDE-ServiceTypes=Plasma/Applet,Plasma/PopupApplet
 
 X-Plasma-API=declarativeappletscript
 X-Plasma-DefaultSize=100,100

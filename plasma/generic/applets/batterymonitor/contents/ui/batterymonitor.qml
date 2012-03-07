@@ -23,8 +23,8 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 
 Item {
     id: batterymonitor
-    width: 48
-    height: 48
+    property int minimumWidth: 400
+    property int minimumHeight: 200
 
     property bool show_charge: false
     property bool show_multiple_batteries: false
@@ -38,112 +38,109 @@ Item {
         show_multiple_batteries = plasmoid.readConfig("showMultipleBatteries");
     }
 
-    PlasmaCore.DataSource {
+    property Component compactRepresentation: Component {
+        MouseArea {
+            id: mouseArea
+            anchors.fill:parent
+            onClicked: plasmoid.togglePopup()
+
+            PlasmaCore.Svg{
+                id: iconSvg
+                imagePath: "icons/battery"
+            }
+
+            Item {
+                anchors.centerIn: parent
+                width: Math.min(parent.width, parent.height)
+                height: width
+                PlasmaCore.SvgItem {
+                    anchors.fill: parent
+                    svg: iconSvg
+                    elementId: "Battery"
+                }
+
+                PlasmaCore.SvgItem {
+                    anchors.fill: parent
+                    svg: iconSvg
+                    elementId: plasmoid.rootItem.pmSource.data["Battery"]["Has Battery"] ? mouseArea.fillElement(plasmoid.rootItem.pmSource.data["Battery0"]["Percent"]) : "Unavailable"
+                }
+
+                function fillElement(p) {
+                    if (p > 95) {
+                        return "Fill100";
+                    } else if (p > 80) {
+                        return "Fill80";
+                    } else if (p > 50) {
+                        return "Fill60";
+                    } else if (p > 20) {
+                        return "Fill40";
+                    } else if (p > 10) {
+                        return "Fill20";
+                    }
+                    return "";
+                }
+
+                PlasmaCore.SvgItem {
+                    anchors.fill: parent
+                    svg: iconSvg
+                    elementId: plasmoid.rootItem.pmSource.data["AC Adapter"]["Plugged in"] ? "AcAdapter" : ""
+                }
+
+                Rectangle {
+                    id: chargeInfo
+                    width: percent.paintedWidth+4    // 4 = left/right margins
+                    height: percent.paintedHeight+4  // 4 = top/bottom margins
+                    anchors.centerIn: parent
+                    color: "white"
+                    border.color: "grey"
+                    border.width: 2
+                    radius: 3
+                    visible: plasmoid.rootItem.show_charge && plasmoid.rootItem.pmSource.data["Battery"]["Has Battery"]
+                    opacity: 0.7
+
+                    Text {
+                        id: percent
+                        text: plasmoid.rootItem.pmSource.data["Battery0"]["Percent"]+"%"
+                        font.bold: true
+                        anchors.centerIn: parent
+                        visible: parent.visible
+                    }
+                }
+            }
+        }
+    }
+
+    property QtObject pmSource: PlasmaCore.DataSource {
         id: pmSource
         engine: "powermanagement"
         connectedSources: ["AC Adapter", "Battery", "Battery0", "PowerDevil"]
         interval: 0
     }
 
-    PlasmaCore.Dialog {
-        id: dialog
-        windowFlags: Qt.Popup
-        mainItem: PopupDialog {
-            id: dialogItem
-            percent: pmSource.data["Battery0"]["Percent"]
-            pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
-            screenBrightness: pmSource.data["PowerDevil"]["Screen Brightness"]
-            onSleepClicked: {
-                dialog.visible=false
-                service = pmSource.serviceForSource("PowerDevil");
-                operation = service.operationDescription("suspendToRam");
-                service.startOperationCall(operation);
-            }
-            onHibernateClicked: {
-                dialog.visible=false
-                service = pmSource.serviceForSource("PowerDevil");
-                operation = service.operationDescription("suspendToDisk");
-                service.startOperationCall(operation);
-            }
-            onBrightnessChanged: {
-                service = pmSource.serviceForSource("PowerDevil");
-                operation = service.operationDescription("setBrightness");
-                operation.brightness = screenBrightness;
-                service.startOperationCall(operation);
-            }
+    PopupDialog {
+        id: dialogItem
+        percent: pmSource.data["Battery0"]["Percent"]
+        pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
+        screenBrightness: pmSource.data["PowerDevil"]["Screen Brightness"]
+        onSleepClicked: {
+            dialog.visible=false
+            service = pmSource.serviceForSource("PowerDevil");
+            operation = service.operationDescription("suspendToRam");
+            service.startOperationCall(operation);
+        }
+        onHibernateClicked: {
+            dialog.visible=false
+            service = pmSource.serviceForSource("PowerDevil");
+            operation = service.operationDescription("suspendToDisk");
+            service.startOperationCall(operation);
+        }
+        onBrightnessChanged: {
+            service = pmSource.serviceForSource("PowerDevil");
+            operation = service.operationDescription("setBrightness");
+            operation.brightness = screenBrightness;
+            service.startOperationCall(operation);
         }
     }
 
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        onClicked: {
-            if (!dialog.visible) {
-                //populateProfiles();
-                var pos = dialog.popupPosition (batterymonitor, Qt.AlignCenter);
-                dialog.x = pos.x;
-                dialog.y = pos.y;
-            }
-            dialog.visible = !dialog.visible;
-        }
-    }
-
-    PlasmaCore.Svg{
-        id: iconSvg
-        imagePath: "icons/battery"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.fill: parent
-        svg: iconSvg
-        elementId: "Battery"
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.fill: parent
-        svg: iconSvg
-        elementId: pmSource.data["Battery"]["Has Battery"] ? fillElement(pmSource.data["Battery0"]["Percent"]) : "Unavailable"
-    }
-
-    function fillElement(p) {
-        if (p > 95) {
-            return "Fill100";
-        } else if (p > 80) {
-            return "Fill80";
-        } else if (p > 50) {
-            return "Fill60";
-        } else if (p > 20) {
-            return "Fill40";
-        } else if (p > 10) {
-            return "Fill20";
-        }
-        return "";
-    }
-
-    PlasmaCore.SvgItem {
-        anchors.fill: parent
-        svg: iconSvg
-        elementId: pmSource.data["AC Adapter"]["Plugged in"] ? "AcAdapter" : ""
-    }
-
-    Rectangle {
-        id: chargeInfo
-        width: percent.paintedWidth+4    // 4 = left/right margins
-        height: percent.paintedHeight+4  // 4 = top/bottom margins
-        anchors.centerIn: parent
-        color: "white"
-        border.color: "grey"
-        border.width: 2
-        radius: 3
-        visible: show_charge && pmSource.data["Battery"]["Has Battery"]
-        opacity: 0.7
-
-        Text {
-            id: percent
-            text: pmSource.data["Battery0"]["Percent"]+"%"
-            font.bold: true
-            anchors.centerIn: parent
-            visible: parent.visible
-        }
-    }
+    
 }
