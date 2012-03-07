@@ -1,9 +1,9 @@
 project(batterymonitor)
 
 install(DIRECTORY contents
-        DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids/org.kde.batterymonitor/)
+        DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids/battery/)
 install(FILES metadata.desktop
-        DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids/org.kde.batterymonitor)
+        DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids/battery)
 
 install(FILES metadata.desktop
         DESTINATION ${SERVICES_INSTALL_DIR}
