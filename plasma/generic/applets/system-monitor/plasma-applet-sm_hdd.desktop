@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Name=Hard Disk Status
+Name=Hard Disk Space Usage
 Name[ar]=حالة القرص الثابت
 Name[ast]=Estáu del discu duru
 Name[bg]=Състояние на твърдия диск
@@ -60,7 +60,7 @@ Name[wa]=Estat del deure plake
 Name[x-test]=xxHard Disk Statusxx
 Name[zh_CN]=硬盘状态
 Name[zh_TW]=硬碟狀態
-Comment=A hard disk usage monitor
+Comment=An applet that monitors hard disk space usage and percentage
 Comment[ar]=يراقب استعمال القرص الصلب
 Comment[ast]=Monitor del usu de discu
 Comment[be@latin]=Nazirańnik zaniataści ćviordaha dysku

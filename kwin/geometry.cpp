@@ -273,40 +273,16 @@ QRect Workspace::clientArea(clientAreaOption opt, int screen, int desktop) const
 
     switch(opt) {
     case MaximizeArea:
-        if (is_multihead)
-            return sarea;
-        else if (options->xineramaMaximizeEnabled)
-            return sarea;
-        else
-            return warea;
-    case MaximizeFullArea:
-        if (is_multihead)
-            return Kephal::ScreenUtils::screenGeometry(screen_number);
-        else if (options->xineramaMaximizeEnabled)
-            return Kephal::ScreenUtils::screenGeometry(screen);
-        else
-            return Kephal::ScreenUtils::desktopGeometry();
-    case FullScreenArea:
-        if (is_multihead)
-            return Kephal::ScreenUtils::screenGeometry(screen_number);
-        else if (options->xineramaFullscreenEnabled)
-            return Kephal::ScreenUtils::screenGeometry(screen);
-        else
-            return Kephal::ScreenUtils::desktopGeometry();
     case PlacementArea:
-        if (is_multihead)
             return sarea;
-        else if (options->xineramaPlacementEnabled)
-            return sarea;
-        else
-            return warea;
+    case MaximizeFullArea:
+    case FullScreenArea:
     case MovementArea:
+    case ScreenArea:
         if (is_multihead)
             return Kephal::ScreenUtils::screenGeometry(screen_number);
-        else if (options->xineramaMovementEnabled)
-            return Kephal::ScreenUtils::screenGeometry(screen);
         else
-            return Kephal::ScreenUtils::desktopGeometry();
+            return Kephal::ScreenUtils::screenGeometry(screen);
     case WorkArea:
         if (is_multihead)
             return sarea;
@@ -317,11 +293,6 @@ QRect Workspace::clientArea(clientAreaOption opt, int screen, int desktop) const
             return Kephal::ScreenUtils::screenGeometry(screen_number);
         else
             return Kephal::ScreenUtils::desktopGeometry();
-    case ScreenArea:
-        if (is_multihead)
-            return Kephal::ScreenUtils::screenGeometry(screen_number);
-        else
-            return Kephal::ScreenUtils::screenGeometry(screen);
     }
     abort();
 }
@@ -1925,7 +1896,7 @@ void Client::setGeometry(int x, int y, int w, int h, ForceGeometry_t force)
     }
     // SELI TODO won't this be too expensive?
     sendSyntheticConfigureNotify();
-    updateWindowRules();
+    updateWindowRules(Rules::Position|Rules::Size);
 
     // keep track of old maximize mode
     // to detect changes
@@ -2002,7 +1973,7 @@ void Client::plainResize(int w, int h, ForceGeometry_t force)
     updateShape();
 
     sendSyntheticConfigureNotify();
-    updateWindowRules();
+    updateWindowRules(Rules::Position|Rules::Size);
     workspace()->checkActiveScreen(this);
     workspace()->updateStackingOrder();
     workspace()->checkUnredirect();
@@ -2047,7 +2018,7 @@ void Client::move(int x, int y, ForceGeometry_t force)
     }
     XMoveWindow(display(), frameId(), x, y);
     sendSyntheticConfigureNotify();
-    updateWindowRules();
+    updateWindowRules(Rules::Position);
     workspace()->checkActiveScreen(this);
     workspace()->updateStackingOrder();
     workspace()->checkUnredirect();
@@ -2311,7 +2282,7 @@ void Client::changeMaximize(bool vertical, bool horizontal, bool adjust)
     updateAllowedActions();
     if (decoration != NULL)
         decoration->maximizeChange();
-    updateWindowRules();
+    updateWindowRules(Rules::MaximizeVert|Rules::MaximizeHoriz|Rules::Position|Rules::Size);
 }
 
 void Client::resetMaximize()
@@ -2399,7 +2370,7 @@ void Client::setFullScreen(bool set, bool user)
             setGeometry(workspace()->clientArea(MaximizeArea, this));
         }
     }
-    updateWindowRules();
+    updateWindowRules(Rules::Fullscreen|Rules::Position|Rules::Size);
     workspace()->checkUnredirect();
 
     if (was_fs != isFullScreen()) {

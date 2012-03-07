@@ -803,7 +803,7 @@ void Client::setNoBorder(bool set)
         return;
     noborder = set;
     updateDecoration(true, false);
-    updateWindowRules();
+    updateWindowRules(Rules::NoBorder);
 }
 
 void Client::checkNoBorder()
@@ -987,7 +987,7 @@ void Client::minimize(bool avoid_animation)
     updateVisibility();
     updateAllowedActions();
     workspace()->updateMinimizedOfTransients(this);
-    updateWindowRules();
+    updateWindowRules(Rules::Minimize);
     workspace()->updateFocusChains(this, Workspace::FocusChainMakeLast);
     // TODO: merge signal with s_minimized
     emit clientMinimized(this, !avoid_animation);
@@ -1015,7 +1015,7 @@ void Client::unminimize(bool avoid_animation)
     updateVisibility();
     updateAllowedActions();
     workspace()->updateMinimizedOfTransients(this);
-    updateWindowRules();
+    updateWindowRules(Rules::Minimize);
     emit clientUnminimized(this, !avoid_animation);
 
     // Update states of all other windows in this group
@@ -1120,7 +1120,7 @@ void Client::setShade(ShadeMode mode)
     updateAllowedActions();
     if (decoration)
         decoration->shadeChange();
-    updateWindowRules();
+    updateWindowRules(Rules::Shade);
 
     // Update states of all other windows in this group
     if (clientGroup())
@@ -1508,7 +1508,7 @@ void Client::setSkipTaskbar(bool b, bool from_outside)
         return;
     skip_taskbar = b;
     info->setState(b ? NET::SkipTaskbar : 0, NET::SkipTaskbar);
-    updateWindowRules();
+    updateWindowRules(Rules::SkipTaskbar);
     if (was_wants_tab_focus != wantsTabFocus())
         workspace()->updateFocusChains(this,
                                        isActive() ? Workspace::FocusChainMakeFirst : Workspace::FocusChainUpdate);
@@ -1521,7 +1521,7 @@ void Client::setSkipPager(bool b)
         return;
     skip_pager = b;
     info->setState(b ? NET::SkipPager : 0, NET::SkipPager);
-    updateWindowRules();
+    updateWindowRules(Rules::SkipPager);
 }
 
 void Client::setSkipSwitcher(bool set)
@@ -1530,7 +1530,7 @@ void Client::setSkipSwitcher(bool set)
     if (set == skipSwitcher())
         return;
     skip_switcher = set;
-    updateWindowRules();
+    updateWindowRules(Rules::SkipSwitcher);
     emit skipSwitcherChanged();
 }
 
@@ -1581,7 +1581,7 @@ void Client::setDesktop(int desktop)
 
     workspace()->updateFocusChains(this, Workspace::FocusChainMakeFirst);
     updateVisibility();
-    updateWindowRules();
+    updateWindowRules(Rules::Desktop);
 
     // Update states of all other windows in this group
     if (clientGroup())
@@ -1990,9 +1990,12 @@ void Client::getMotifHints()
 
     // mminimize; - Ignore, bogus - E.g. shading or sending to another desktop is "minimizing" too
     // mmaximize; - Ignore, bogus - Maximizing is basically just resizing
+    const bool closabilityChanged = motif_may_close != mclose;
     motif_may_close = mclose; // Motif apps like to crash when they set this hint and WM closes them anyway
     if (isManaged())
         updateDecoration(true);   // Check if noborder state has changed
+    if (decoration && closabilityChanged)
+        decoration->reset(KDecoration::SettingButtons);
 }
 
 void Client::readIcons(Window win, QPixmap* icon, QPixmap* miniicon, QPixmap* bigicon, QPixmap* hugeicon)

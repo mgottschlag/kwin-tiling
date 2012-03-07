@@ -225,13 +225,10 @@ bool Client::manage(Window w, bool isMapped)
     bool partial_keep_in_area = isMapped || session;
     if (isMapped || session)
         area = workspace()->clientArea(FullArea, geom.center(), desktop());
-    else if (options->xineramaPlacementEnabled) {
-        int screen = options->xineramaPlacementScreen;
-        if (screen == -1)   // Active screen
-            screen = asn_data.xinerama() == -1 ? workspace()->activeScreen() : asn_data.xinerama();
+    else {
+        int screen = asn_data.xinerama() == -1 ? workspace()->activeScreen() : asn_data.xinerama();
         area = workspace()->clientArea(PlacementArea, workspace()->screenGeometry(screen).center(), desktop());
-    } else
-        area = workspace()->clientArea(PlacementArea, cursorPos(), desktop());
+    }
 
     if (int type = checkFullScreenHack(geom)) {
         fullscreen_mode = FullScreenHack;
@@ -596,7 +593,7 @@ bool Client::manage(Window w, bool isMapped)
     client_rules.discardTemporary();
     applyWindowRules(); // Just in case
     workspace()->discardUsedWindowRules(this, false);   // Remove ApplyNow rules
-    updateWindowRules(); // Was blocked while !isManaged()
+    updateWindowRules(Rules::All); // Was blocked while !isManaged()
 
     updateCompositeBlocking(true);
 

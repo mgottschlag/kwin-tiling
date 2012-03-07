@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2003 by Martin Koller                                   *
- *   m.koller@surfeu.at                                                    *
+ *   kollix@aon.at                                                         *
  *   This file is part of the KDE Control Center Module for Joysticks      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -33,43 +33,11 @@
 #include <KPluginLoader>
 
 #include <QVBoxLayout>
+
 //---------------------------------------------------------------------------------------------
 
-K_PLUGIN_FACTORY(JoystickFactory,
-        registerPlugin<Joystick>();
-        )
+K_PLUGIN_FACTORY(JoystickFactory, registerPlugin<Joystick>();)
 K_EXPORT_PLUGIN(JoystickFactory("joystick"))
-
-extern "C"
-{
-  KDE_EXPORT bool test_joystick()
-  { /* Code stolen from JoyWidget::init() */
-    int i;
-    char dev[30];
-
-    for (i = 0; i < 5; i++)  // check the first 5 devices
-    {
-      sprintf(dev, "/dev/js%d", i);  // first look in /dev
-      JoyDevice *joy = new JoyDevice(dev);
-
-      if ( joy->open() != JoyDevice::SUCCESS )
-      {
-        delete joy;
-        sprintf(dev, "/dev/input/js%d", i);  // then look in /dev/input
-        joy = new JoyDevice(dev);
-
-        if ( joy->open() != JoyDevice::SUCCESS )
-        {
-          delete joy;
-          continue;    // try next number
-        }
-      }
-
-      return true; /* We have at least one joystick and should hence be shown */
-    }
-    return false;
-  }
-}
 
 //---------------------------------------------------------------------------------------------
 
@@ -80,7 +48,7 @@ Joystick::Joystick(QWidget *parent, const QVariantList &)
   setAboutData(new KAboutData("kcmjoystick", 0, ki18n("KDE Joystick Control Module"), "1.0",
                                ki18n("KDE System Settings Module to test Joysticks"),
                                KAboutData::License_GPL, ki18n("(c) 2004, Martin Koller"),
-                               KLocalizedString(), "m.koller@surfeu.at"));
+                               KLocalizedString(), "kollix@aon.at"));
 
   setQuickHelp( i18n("<h1>Joystick</h1>"
               "This module helps to check if your joystick is working correctly.<br />"

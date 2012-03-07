@@ -213,7 +213,7 @@ void RandrMonitorModule::checkInhibition()
     Q_FOREACH(const QString monitor, activeMonitorsList) {
         //LVDS is the default type reported by most drivers, default is needed because the
         //NVIDIA binary blob always report default as active monitor.
-        if (!monitor.contains("LVDS") && !monitor.contains("default")) {
+        if (!monitor.contains("LVDS") && !monitor.contains("default") && !monitor.contains("eDP")) {
             inhibit = true;
             break;
         }

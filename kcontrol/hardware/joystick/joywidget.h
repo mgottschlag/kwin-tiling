@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2003,2005,2006 by Martin Koller                         *
- *   m.koller@surfeu.at                                                    *
+ *   kollix@aon.at                                                         *
  *   This file is part of the KDE Control Center Module for Joysticks      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -30,6 +30,7 @@ class QLabel;
 class QTableWidget;
 class QTimer;
 class KComboBox;
+class KMessageWidget;
 class QPushButton;
 class QCheckBox;
 class QFrame;
@@ -62,8 +63,7 @@ class JoyWidget : public QWidget
     void restoreCurrDev(); // restores the content of the combobox to reflect the current open device
 
   private:
-    QFrame  *messageBox;
-    QLabel *message;  // in case of no device, show here a message rather than in a dialog
+    KMessageWidget *messageBox;  // in case of no device, show here a message rather than in a dialog
     KComboBox *device;
     PosWidget *xyPos;
     QTableWidget *buttonTbl;

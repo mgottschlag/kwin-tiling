@@ -1,0 +1,34 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Hard Disk I/O Monitor
+Name[nl]=Volgt de activiteit van de harde schijf
+Name[pt]=Monitor da Actividade do Disco
+Name[pt_BR]=Monitor da atividade do disco rígido
+Name[uk]=Монітор роботи жорсткого диска
+Name[x-test]=xxHard Disk Activity Monitorxx
+
+Comment=An applet that monitors hard disk throughput and input/output
+Comment[nl]=Een monitor voor de activiteit van de harde schijf
+Comment[pt]=Um monitor da utilização do disco rígido
+Comment[pt_BR]=Um monitor da atividade do disco rígido
+Comment[uk]=Монітор роботи жорсткого диска
+Comment[x-test]=xxA hard disk activity monitorxx
+
+Type=Service
+Icon=drive-harddisk
+ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_sm_hdd_activity
+X-KDE-PluginInfo-Author=Shaun Reich
+X-KDE-PluginInfo-Email=shaun.reich@kdemail.net
+X-KDE-PluginInfo-Name=sm_hdd_activity
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=System Information
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+
+X-Plasma-Requires-FileDialog=Unused
+X-Plasma-Requires-LaunchApp=Unused
+

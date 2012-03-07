@@ -1,0 +1,28 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Contour
+Name[nl]=Contour
+Name[pt]=Contour
+Name[pt_BR]=Contour
+Name[uk]=Контур
+Name[x-test]=xxContourxx
+Comment=Plasma Active theme
+Comment[nl]=Thema Plasma Active
+Comment[pt]=Tema do Plasma Active
+Comment[pt_BR]=Tema do Plasma Active
+Comment[uk]=Тема портативної Плазми
+Comment[x-test]=xxPlasma Active themexx
+Type=Service
+
+
+X-KDE-PluginInfo-Author=Lamarque V. Souza
+X-KDE-PluginInfo-Email=Lamarque.Souza.ext@basyskom.com
+X-KDE-PluginInfo-Name=contour
+X-KDE-PluginInfo-Version=0.9
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+X-Plasma-API=declarativeappletscript
+#X-Plasma-MainScript=main.qml

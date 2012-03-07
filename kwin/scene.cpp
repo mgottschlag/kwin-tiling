@@ -122,20 +122,9 @@ void Scene::paintScreen(int* mask, QRegion* region)
     pdata.mask = *mask;
     pdata.paint = *region;
 
-    // region only includes all workspace-specific repaints but some effect (e.g. blur)
-    // rely on the full damaged area
-    QRegion dirtyArea;
-    foreach (Window * w, stacking_order) { // bottom to top
-        Toplevel* topw = w->window();
-        dirtyArea |= topw->repaints().translated(topw->pos());
-        dirtyArea |= topw->decorationPendingRegion();
-    }
-    pdata.paint |= dirtyArea;
-
     effects->prePaintScreen(pdata, time_diff);
     *mask = pdata.mask;
-    // Subtract the dirty region and let finalPaintScreen decide which areas have to be drawn
-    *region |= pdata.paint - dirtyArea;
+    *region = pdata.paint;
 
     if (*mask & (PAINT_SCREEN_TRANSFORMED | PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS)) {
         // Region painting is not possible with transformations,
@@ -150,12 +139,14 @@ void Scene::paintScreen(int* mask, QRegion* region)
         *region = QRegion(0, 0, displayWidth(), displayHeight());
     }
     painted_region = *region;
-    if (*mask & PAINT_SCREEN_BACKGROUND_FIRST)
+    if (*mask & PAINT_SCREEN_BACKGROUND_FIRST) {
         paintBackground(*region);
+    }
     ScreenPaintData data;
     effects->paintScreen(*mask, *region, data);
-    foreach (Window * w, stacking_order)
-    effects->postPaintWindow(effectWindow(w));
+    foreach (Window * w, stacking_order) {
+        effects->postPaintWindow(effectWindow(w));
+    }
     effects->postPaintScreen();
     *region |= painted_region;
     // make sure not to go outside of the screen area
@@ -191,8 +182,7 @@ void Scene::idle()
 // the function that'll be eventually called by paintScreen() above
 void Scene::finalPaintScreen(int mask, QRegion region, ScreenPaintData& data)
 {
-    if (mask & (PAINT_SCREEN_TRANSFORMED | PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS
-               | PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS_WITHOUT_FULL_REPAINTS))
+    if (mask & (PAINT_SCREEN_TRANSFORMED | PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS))
         paintGenericScreen(mask, data);
     else
         paintSimpleScreen(mask, region);
@@ -202,13 +192,12 @@ void Scene::finalPaintScreen(int mask, QRegion region, ScreenPaintData& data)
 // It simply paints bottom-to-top.
 void Scene::paintGenericScreen(int orig_mask, ScreenPaintData)
 {
-    if (!(orig_mask & PAINT_SCREEN_BACKGROUND_FIRST))
+    if (!(orig_mask & PAINT_SCREEN_BACKGROUND_FIRST)) {
         paintBackground(infiniteRegion());
+    }
     QList< Phase2Data > phase2;
     foreach (Window * w, stacking_order) { // bottom to top
         Toplevel* topw = w->window();
-        painted_region |= topw->repaints().translated(topw->pos());
-        painted_region |= topw->decorationPendingRegion();
 
         // Reset the repaint_region.
         // This has to be done here because many effects schedule a repaint for
@@ -227,20 +216,22 @@ void Scene::paintGenericScreen(int orig_mask, ScreenPaintData)
         // preparation step
         effects->prePaintWindow(effectWindow(w), data, time_diff);
 #ifndef NDEBUG
-        foreach (const WindowQuad & q, data.quads)
-        if (q.isTransformed())
+        if (data.quads.isTransformed()) {
             kFatal(1212) << "Pre-paint calls are not allowed to transform quads!" ;
+        }
 #endif
-        if (!w->isPaintingEnabled())
+        if (!w->isPaintingEnabled()) {
             continue;
+        }
         phase2.append(Phase2Data(w, infiniteRegion(), data.clip, data.mask, data.quads));
         // transformations require window pixmap
         w->suspendUnredirect(data.mask
                              & (PAINT_WINDOW_TRANSLUCENT | PAINT_SCREEN_TRANSFORMED | PAINT_WINDOW_TRANSFORMED));
     }
 
-    foreach (const Phase2Data & d, phase2)
-    paintWindow(d.window, d.mask, d.region, d.quads);
+    foreach (const Phase2Data & d, phase2) {
+        paintWindow(d.window, d.mask, d.region, d.quads);
+    }
 }
 
 // The optimized case without any transformations at all.
@@ -248,12 +239,8 @@ void Scene::paintGenericScreen(int orig_mask, ScreenPaintData)
 // to reduce painting and improve performance.
 void Scene::paintSimpleScreen(int orig_mask, QRegion region)
 {
-    // TODO PAINT_WINDOW_* flags don't belong here, that's why it's in the assert,
-    // perhaps the two enums should be separated
-    assert((orig_mask & (PAINT_WINDOW_TRANSFORMED | PAINT_SCREEN_TRANSFORMED
-                         | PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS
-                         | PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS_WITHOUT_FULL_REPAINTS
-                         | PAINT_WINDOW_TRANSLUCENT | PAINT_WINDOW_OPAQUE)) == 0);
+    assert((orig_mask & (PAINT_SCREEN_TRANSFORMED
+                         | PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS)) == 0);
     QList< QPair< Window*, Phase2Data > > phase2data;
 
     QRegion dirtyArea = region;
@@ -282,7 +269,7 @@ void Scene::paintSimpleScreen(int orig_mask, QRegion region)
             data.clip = w->clientShape().translated(w->x(), w->y());
         } else if (topw->hasAlpha() && topw->opacity() == 1.0) {
             // the window is partially opaque
-            data.clip = (w->clientShape() & topw->opaqueRegion()).translated(w->x(), w->y());
+            data.clip = (w->clientShape() & topw->opaqueRegion().translated(topw->clientPos())).translated(w->x(), w->y());
         } else {
             data.clip = QRegion();
         }
@@ -290,11 +277,9 @@ void Scene::paintSimpleScreen(int orig_mask, QRegion region)
         // preparation step
         effects->prePaintWindow(effectWindow(w), data, time_diff);
 #ifndef NDEBUG
-        foreach (const WindowQuad & q, data.quads)
-        if (q.isTransformed())
+        if (data.quads.isTransformed()) {
             kFatal(1212) << "Pre-paint calls are not allowed to transform quads!" ;
-        if (data.mask & PAINT_WINDOW_TRANSFORMED)
-            kFatal(1212) << "PAINT_WINDOW_TRANSFORMED without PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS!";
+        }
 #endif
         if (!w->isPaintingEnabled()) {
             w->suspendUnredirect(true);
@@ -318,15 +303,18 @@ void Scene::paintSimpleScreen(int orig_mask, QRegion region)
         // In case there is a window with a higher stackposition which has translucent regions
         // (e.g. decorations) that still have to be drawn, we also have to repaint the current window
         // in these particular regions
-        data->region |= (upperTranslucentDamage & tlw->decorationRect().translated(tlw->pos()));
-
+        if (!(data->mask & PAINT_WINDOW_TRANSFORMED)) {
+            data->region |= (upperTranslucentDamage & tlw->decorationRect().translated(tlw->pos()));
+        } else {
+            data->region |= upperTranslucentDamage;
+        }
         // subtract the parts which will possibly been drawn as part of
         // a higher opaque window
         data->region -= allclips;
 
         // Here we rely on WindowPrePaintData::setTranslucent() to remove
         // the clip if needed.
-        if (!data->clip.isEmpty()) {
+        if (!data->clip.isEmpty() && !(data->mask & PAINT_WINDOW_TRANSFORMED)) {
             // clip away the opaque regions for all windows below this one
             allclips |= data->clip;
             // extend the translucent damage for windows below this by remaining (translucent) regions

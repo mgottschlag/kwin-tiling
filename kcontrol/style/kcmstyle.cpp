@@ -421,7 +421,7 @@ void KCMStyle::save()
         KGlobalSettings::self()->emitChange(KGlobalSettings::StyleChanged);
 
     if ( m_bEffectsDirty ) {
-        KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
+        KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged, KGlobalSettings::SETTINGS_STYLE);
         // ##### FIXME - Doesn't apply all settings correctly due to bugs in
         // KApplication/KToolbar
         KGlobalSettings::self()->emitChange(KGlobalSettings::ToolbarStyleChanged);

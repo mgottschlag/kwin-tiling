@@ -1,4 +1,4 @@
-find_package(PAM)
+macro_optional_find_package(PAM)
 
 include(CheckFunctionExists)
 include(CheckLibraryExists)

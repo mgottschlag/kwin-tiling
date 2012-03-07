@@ -1,0 +1,130 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE">
+]>
+<article lang="&language;">
+<title>Multiple Monitors</title>
+<articleinfo>
+<authorgroup>
+<author>&TC.Hollingsworth; &TC.Hollingsworth.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2012-01-28</date>
+<releaseinfo>&kde; 4.8</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>Systemsettings</keyword>
+<keyword>display</keyword>
+<keyword>monitor</keyword>
+<keyword>screen</keyword>
+</keywordset>
+</articleinfo>
+
+<para>The Multiple Monitors configuration module allows you to configure features
+that make using several displays with &kde; easier.</para>
+
+<screenshot id="screenshot-multiplemonitors">
+<screeninfo>The Multiple Monitors Configuration Module</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="multiplemonitors.png" format="PNG"/></imageobject>
+<textobject><phrase>The Multiple Monitors configuration module.</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<para>The following options are available:</para>
+
+<variablelist>
+
+<varlistentry>
+<term><guilabel>Enable multiple monitor virtual desktop support</guilabel></term>
+<listitem><para>
+This option allows you to have virtual desktops on every one of your monitors.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Enable multiple monitor window resistance support</guilabel></term>
+<listitem><para>
+By enabling this option, you will be able to stretch one window across multiple
+monitors. Disabling it will keep the window inside one monitor.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Enable multiple monitor window placement support</guilabel></term>
+<listitem><para>
+By enabling this option, you will allow &kde; to help you place windows when you
+pull a window to a specific point of screen &mdash; for example an edge.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Enable multiple monitor window maximize support</guilabel></term>
+<listitem><para>
+By enabling this option, you will make &kde; keep windows on one monitor when
+they are maximized, unless manually changed. Disabling it, will make &kde;
+maximize windows across every possible monitor.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Enable multiple monitor window fullscreen support</guilabel></term>
+<listitem><para>
+By enabling this option, you will make &kde; keep the full screened window in one
+monitor. Disabling it, will make &kde; display a fullscreen window across every
+possible monitor.
+</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+<para>Below, there is a table displaying the coordination of all monitors which
+&kde; can detect. The table shows:</para>
+
+<itemizedlist>
+<listitem><para><guilabel>X Coordinate</guilabel> and <guilabel>Y Coordinate</guilabel> -
+position of the monitors on a common coordinate system.</para></listitem>
+<listitem><para><guilabel>Width</guilabel> and <guilabel>Height</guilabel> -
+the resolution of each display, in pixels.</para></listitem>
+</itemizedlist>
+
+<para>The <guilabel>Show unmanaged windows on:</guilabel> drop down box allows you
+to set the monitor, on which new windows unmanaged by &kde; will open.  You can
+select any display, or select <guilabel>Display Containing Pointer</guilabel> to
+open them on the display that currently contains the mouse pointer.</para>
+
+<para>The <guibutton>Identify All Displays</guibutton> button will show a number on each
+screen, allowing you to identify how &kde; classified each monitor.</para>
+
+<note>
+<para>The Multiple Monitors configuration module will be disabled if you do
+not have more than one display connected to your computer and enabled the second display.</para>
+</note>
+
+<screenshot id="screenshot-multiplemonitors-error">
+<screeninfo>Multiple Monitors Error Message</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="multiplemonitors-error.png" format="PNG"/></imageobject>
+<textobject><phrase>The Multiple Monitors error message.</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+ <!-- add <ulink url="help:/kcmdisplay"></ulink> if we have a documentation for kcmdisplay (xrandr)-->
+<para>Enable the second display and configure the monitor layout on the <guilabel>Size &amp; 
+Orientation</guilabel> page in the &systemsettings; module <guilabel>Display and Monitor</guilabel> 
+in the category <guilabel>Hardware</guilabel>.</para>
+</article>
+
+<!--
+Local Variables:
+mode: xml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:;
+-->
