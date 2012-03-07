@@ -26,7 +26,7 @@ import org.kde.qtextracomponents 0.1
 Item {
     id: dialog
     width: 400
-    height: 170
+    //height: 170
 
     property int percent
     property bool pluggedIn

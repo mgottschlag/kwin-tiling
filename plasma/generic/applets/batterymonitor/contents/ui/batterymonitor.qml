@@ -62,7 +62,7 @@ Item {
                 PlasmaCore.SvgItem {
                     anchors.fill: parent
                     svg: iconSvg
-                    elementId: plasmoid.rootItem.pmSource.data["Battery"]["Has Battery"] ? mouseArea.fillElement(plasmoid.rootItem.pmSource.data["Battery0"]["Percent"]) : "Unavailable"
+                    elementId: plasmoid.rootItem.pmSource.data["Battery"]["Has Battery"] ? parent.fillElement(plasmoid.rootItem.pmSource.data["Battery0"]["Percent"]) : "Unavailable"
                 }
 
                 function fillElement(p) {
