@@ -67,7 +67,7 @@ and <guibutton>Move Down</guibutton> buttons is a convenience to help you sort
 the profiles, and has no effect on how they are applied.</para>
 
 </chapter>
-<!--userbase <timestamp>2012-03-07T20:26:06Z</timestamp>-->
+<!--userbase <timestamp>2012-03-09T20:50:14Z</timestamp>-->
 
 <!--userbase-content-->
 <chapter id="overview"><title>Overview</title> 
@@ -382,7 +382,7 @@ the profiles, and has no effect on how they are applied.</para>
   </varlistentry>
   <varlistentry><term><emphasis role="bold">Autogroup in foreground</emphasis></term>
     <listitem>
-    <para>Toggle whether to make the window active when it is added to the <guilabel>Autogroup</guilabel> group.</para>
+    <para>Toggle whether to make the window active when it is added to the current <guilabel>Autogroup</guilabel> group.</para>
      </listitem>
   </varlistentry>
   <varlistentry><term><emphasis role="bold">Autogroup by ID</emphasis></term>
@@ -476,7 +476,7 @@ the profiles, and has no effect on how they are applied.</para>
   </varlistentry>
   <varlistentry><term><emphasis role="bold">Ignore global shortcuts</emphasis></term>
     <listitem>
-    <para>Toggle whether to ignore global shortcuts (as defined by <guilabel>kcmshell4 keys</guilabel>) while the window is active.</para>
+    <para>Toggle whether to ignore global shortcuts (as defined by <menuchoice><guimenu>System Settings</guimenu><guisubmenu>Shortcuts and Gestures</guisubmenu><guimenuitem>Global Shortcuts</guimenuitem></menuchoice> or by running <command>kcmshell4 keys</command>> in <guilabel>konsole</guilabel>) while the window is active.</para>
      </listitem>
   </varlistentry>
   <varlistentry><term><emphasis role="bold">Closeable</emphasis></term>
