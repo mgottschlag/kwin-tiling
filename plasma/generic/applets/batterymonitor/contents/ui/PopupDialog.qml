@@ -17,105 +17,136 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import Qt 4.7
-import org.kde.plasma.core 0.1 as PlasmaCore
-import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
+import QtQuick 1.1
 import org.kde.plasma.components 0.1 as Components
-import org.kde.qtextracomponents 0.1
 
 Item {
     id: dialog
     width: 400
-    //height: 170
+    height: 200
 
     property int percent
     property bool pluggedIn
     property alias screenBrightness: brightnessSlider.value
-    //property alias currentProfileIndex: profiles.currentIndex
+    property int remainingMsec
 
     signal sleepClicked
     signal hibernateClicked
     signal brightnessChanged(int screenBrightness)
-    //signal profileChanged(string profile)
-
-    /*function addProfile(profile)    { profiles.addItem(profile);        }
-    function setProfile (index)     { profiles.currentIndex = index;    }
-    function clearProfiles()        { profiles.clear();                 }*/
-
-    Column {
-        id: values
-
-        Row {
-            Components.Label {
-                id: batteryLabel
-                text: i18n("Battery:")
-            }
-            Components.Label {
-                id: batteryValue
-                text: {
-                    if (percent == 0) {
-                        return "Not present";
-                    }
-                    var txt=percent+"% (";
-                    if (percent<100) {
-                        if (pluggedIn) txt += "charging";
-                        else txt += "discharging";
-                    } else {
-                        txt += "charged";
-                    }
-                    txt += ")"
-                    return txt;
-                }
-                font.bold: true
-            }
+    signal powermanagementChanged(bool checked)
+    
+    Grid {
+        id: positioner
+        columns: 2
+        spacing: 5
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
         }
-
+        
+        Components.Label {
+            text: i18n("Battery:")
+            horizontalAlignment: Text.AlignRight
+            width: longestText.width
+        }
+        Components.Label {
+            text: {
+                if (percent == 0) {
+                    return "Not present";
+                }
+                var txt=percent+"% (";
+                if (percent<100) {
+                    if (pluggedIn) txt += "charging";
+                    else txt += "discharging";
+                } else {
+                    txt += "charged";
+                }
+                txt += ")"
+                return i18n(txt);
+            }
+            font.weight: Font.Bold
+        }
+        
+        Components.Label {
+            text: i18n("AC Adapter:")
+            horizontalAlignment: Text.AlignRight
+            width: longestText.width
+        }
+        Components.Label {
+            text: dialog.pluggedIn ? i18n("Plugged in") : i18n("Not plugged in")
+            font.weight: Font.Bold
+        }
+        
+        Components.Label {
+            text: i18n("Time Remaining:")
+            horizontalAlignment: Text.AlignRight
+            width: longestText.width
+        }
+        Components.Label {
+            text: {
+                var msec = Number(remainingMsec);
+                var hrs = Math.floor(msec/3600000);
+                var mins = Math.floor((msec-(hrs*3600000))/60000);
+                var txt = "";
+                if (hrs==1) txt += "1 hour";
+                else if (hrs>1) txt += hrs+" hours";
+                
+                if (mins>0 && hrs>0) txt += " and ";
+                if (mins==1) txt += "1 minute";
+                else if (mins>0) txt += mins+" minutes";
+                
+                return i18n(txt);
+            }
+            font.weight: Font.Bold
+        }
+        
+        Components.Label {
+            id: longestText
+            text: i18n("Power management enabled:")
+        }
+        Components.Switch {
+            checked: true
+            onCheckedChanged: powermanagementChanged(checked)
+        }
+        
+        Components.Label {
+            text: i18n("Screen Brightness:")
+            horizontalAlignment: Text.AlignRight
+            width: longestText.width
+        }
         Components.Slider {
             id: brightnessSlider
             minimumValue: 0
             maximumValue: 100
             stepSize: 10
-            anchors {
-                left: parent.left
-                top: batteryValue.bottom
-                topMargin: 6
-                right: parent.right
-            }
             onValueChanged: brightnessChanged(value)
         }
-
-        Row {
-            Components.Label {
-                id: profileLabel
-                text: i18n("Enabled:")
-                horizontalAlignment: Text.AlignRight
-            }
-            // TODO: what to do on check/uncheck?
-            Components.Switch {
-                id: profiles
-                checked: true
-            }
+    }
+    
+    Row {
+        anchors {
+            top: positioner.bottom
+            topMargin: 10
+            right: parent.right
+        }
+        
+        IconButton {
+            id: sleepButton
+            icon: QIcon("system-suspend")
+            iconWidth: 22
+            iconHeight: 22
+            text: "Sleep"
+            onClicked: sleepClicked()
         }
 
-        Row {
-            anchors.horizontalCenter: parent.horizontalCenter
-            IconButton {
-                id: sleepButton
-                icon: QIcon("system-suspend")
-                iconWidth: 22
-                iconHeight: 22
-                text: "Sleep"
-                onClicked: sleepClicked()
-            }
-
-            IconButton {
-                id: hibernateButton
-                icon: QIcon("system-suspend-hibernate")
-                iconWidth: 22
-                iconHeight: 22
-                text: "Hibernate"
-                onClicked: hibernateClicked()
-            }
+        IconButton {
+            id: hibernateButton
+            icon: QIcon("system-suspend-hibernate")
+            iconWidth: 22
+            iconHeight: 22
+            text: "Hibernate"
+            onClicked: hibernateClicked()
         }
     }
 }

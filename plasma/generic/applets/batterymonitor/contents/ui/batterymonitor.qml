@@ -18,7 +18,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import Qt 4.7
+import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
 
 Item {
@@ -122,6 +122,7 @@ Item {
         percent: pmSource.data["Battery0"]["Percent"]
         pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
         screenBrightness: pmSource.data["PowerDevil"]["Screen Brightness"]
+        remainingMsec: pmSource.data["Battery"]["Remaining msec"]
         onSleepClicked: {
             dialog.visible=false
             service = pmSource.serviceForSource("PowerDevil");
@@ -139,6 +140,9 @@ Item {
             operation = service.operationDescription("setBrightness");
             operation.brightness = screenBrightness;
             service.startOperationCall(operation);
+        }
+        onPowermanagementChanged: {
+            // TODO
         }
     }
 
