@@ -153,6 +153,7 @@ if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
    macro_optional_add_subdirectory(solid)
    macro_optional_add_subdirectory(kstartupconfig)
    macro_optional_add_subdirectory(freespacenotifier)
+   macro_optional_add_subdirectory(kscreensaver)
 
    # data
    macro_optional_add_subdirectory(doc)
@@ -162,7 +163,6 @@ if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
    endif (Q_WS_X11)
 
    if(NOT WIN32)
-      macro_optional_add_subdirectory(kscreensaver)
       macro_optional_add_subdirectory(kcminit)
       macro_optional_add_subdirectory(khotkeys)
       macro_optional_add_subdirectory(kwrited)

@@ -36,7 +36,9 @@
 #include <kshell.h>
 #include "kscreensaver_vroot.h"
 #include "random.h"
+#ifdef Q_WS_X11
 #include <QX11Info>
+#endif
 #include <QFrame>
 #include <kservicetypetrader.h>
 
@@ -80,7 +82,7 @@ int main(int argc, char *argv[])
 
 	KApplication app;
 
-	Window windowId = 0;
+	WId windowId = 0;
 
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
@@ -93,14 +95,20 @@ int main(int argc, char *argv[])
 
 	if (args->isSet("window-id"))
 	{
+#ifdef Q_WS_WIN
+		windowId = (HWND) args->getOption("window-id").toULong();
+#else
 		windowId = args->getOption("window-id").toInt();
+#endif
 	}
 
+#ifdef Q_WS_X11
 	if (args->isSet("root"))
 	{
 		QX11Info info;
 		windowId = RootWindow(QX11Info::display(), info.screen());
 	}
+#endif
 	args->clear();
 	const KService::List lst = KServiceTypeTrader::self()->query( "ScreenSaver");
         KService::List availableSavers;
@@ -146,7 +154,11 @@ int main(int argc, char *argv[])
             cmd = service->exec();
 
     QHash<QChar, QString> keyMap;
+#ifdef Q_WS_WIN
+    keyMap.insert('w', QString::number((unsigned long)windowId));
+#else
     keyMap.insert('w', QString::number(windowId));
+#endif
     const QStringList words = KShell::splitArgs(KMacroExpander::expandMacrosShellQuote(cmd, keyMap));
     if (!words.isEmpty()) {
         QString exeFile = KStandardDirs::findExe(words.first());
@@ -163,11 +175,13 @@ int main(int argc, char *argv[])
 
 	// If we end up here then we couldn't start a saver.
 	// If we have been supplied a window id or root window then blank it.
+#ifdef Q_WS_X11
 	QX11Info info;
 	Window win = windowId ? windowId : RootWindow(QX11Info::display(), info.screen());
 	XSetWindowBackground(QX11Info::display(), win,
 			BlackPixel(QX11Info::display(), info.screen()));
 	XClearWindow(QX11Info::display(), win);
+#endif
 }
 
 

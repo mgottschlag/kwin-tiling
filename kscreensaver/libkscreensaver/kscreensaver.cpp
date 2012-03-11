@@ -31,6 +31,10 @@
 #include <X11/Xlib.h>
 #endif
 
+#ifdef Q_WS_WIN
+#include <windows.h>
+#endif
+
 //-----------------------------------------------------------------------------
 
 KScreenSaver::KScreenSaver( WId id ) : QWidget(), embeddedWidget(0)
@@ -52,7 +56,12 @@ bool KScreenSaver::event(QEvent* e)
     if (e->type() == QEvent::Polish)
         setAttribute(Qt::WA_StyledBackground, false);
     if ((e->type() == QEvent::Resize) && embeddedWidget)
+    {
         embeddedWidget->resize( size() );
+#ifdef Q_WS_WIN
+        SetWindowPos(embeddedWidget->winId(), HWND_TOP, 0, 0, size().width(), size().height(), 0 );
+#endif
+    }
     return r;
 }
 
@@ -60,8 +69,20 @@ void KScreenSaver::embed( QWidget *w )
 {
     w->resize( size() );
     QApplication::sendPostedEvents();
-#ifdef Q_WS_X11 //FIXME
+#if defined(Q_WS_X11) //FIXME
     XReparentWindow(QX11Info::display(), w->winId(), winId(), 0, 0);
+#elif defined(Q_WS_WIN)
+    SetParent(w->winId(), winId());
+    
+    LONG style = GetWindowLong(w->winId(), GWL_STYLE);
+    style &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU);
+    SetWindowLong(w->winId(), GWL_STYLE, style);
+
+    LONG exStyle = GetWindowLong(w->winId(), GWL_EXSTYLE);
+    exStyle &= ~(WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE);
+    SetWindowLong(w->winId(), GWL_EXSTYLE, exStyle);
+    
+    SetWindowPos(w->winId(), HWND_TOP, 0, 0, size().width(), size().height(), SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 #endif
     w->setGeometry( 0, 0, width(), height() );
     embeddedWidget = w;

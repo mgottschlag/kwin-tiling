@@ -41,7 +41,9 @@
 #include <kcrash.h>
 #include <kaboutdata.h>
 
+#ifdef Q_WS_X11
 #include <QtGui/QX11Info>
+#endif
 
 static void crashHandler( int  )
 {
@@ -103,7 +105,7 @@ protected:
 
 
 //----------------------------------------------------------------------------
-#if defined(Q_WS_QWS) || defined(Q_WS_MACX)
+#if defined(Q_WS_QWS) || defined(Q_WS_MACX) || defined(Q_WS_WIN)
 typedef WId Window;
 #endif
 
@@ -145,13 +147,16 @@ int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverI
     // Set a useful default icon.
     app.setWindowIcon(KIcon("preferences-desktop-screensaver"));
 
+
     if (!pipe(termPipe))
     {
+#ifndef Q_WS_WIN
         struct sigaction sa;
         sa.sa_handler = termHandler;
         sigemptyset(&sa.sa_mask);
         sa.sa_flags = 0;
         sigaction(SIGTERM, &sa, 0);
+#endif
         QSocketNotifier *sn = new QSocketNotifier(termPipe[0], QSocketNotifier::Read, &app);
         QObject::connect(sn, SIGNAL(activated(int)), &app, SLOT(quit()));
     }
@@ -180,7 +185,11 @@ int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverI
 
     if (args->isSet("window-id"))
     {
+#ifdef Q_WS_WIN
+        saveWin = (HWND)(args->getOption("window-id").toULong());
+#else
         saveWin = args->getOption("window-id").toInt();
+#endif
     }
 
 #ifdef Q_WS_X11 //FIXME
