@@ -117,9 +117,7 @@ the profiles, and has no effect on how they are applied.</para>
 </para>
 <para>Should two or more matching rules enable the same attribute, the setting in the <emphasis>first</emphasis> rule in the list is used.
 </para>
-<para><tip><para>You can tailor children windows for the application by placing the more restrictive rules first - see the
-</para>
-<para><link linkend="application-on-all-desktops-and-handle-one-child-window-uniquely">Kopete and Kopete Chat Window</link> example.</para></tip>
+<para><tip><para>You can tailor children windows for the application by placing the more restrictive rules first - see the <link linkend="application-on-all-desktops-and-handle-one-child-window-uniquely">Kopete and Kopete Chat Window</link> example.</para></tip>
 </para>
 </sect2>
 </sect1>
@@ -286,7 +284,7 @@ the profiles, and has no effect on how they are applied.</para>
   </varlistentry>
   <varlistentry><term><emphasis role="bold">Apply Now, Force Temporarily</emphasis></term>
     <listitem>
-    <para>Apply/Force the setting once and unset the attribute.The difference between the two is at run-time, <guilabel>Apply Now</guilabel> allows the attribute to be changed and <guilabel>Force Temporarily</guilabel> prohibits it to be altered until all affected windows exit.</para>
+    <para>Apply/Force the setting once and unset the attribute. The difference between the two is at run-time, <guilabel>Apply Now</guilabel> allows the attribute to be changed and <guilabel>Force Temporarily</guilabel> prohibits it to be altered until all affected windows exit.</para>
      </listitem>
   </varlistentry>
 </variablelist>
@@ -363,7 +361,7 @@ the profiles, and has no effect on how they are applied.</para>
   </varlistentry>
   <varlistentry><term><emphasis role="bold">Obey geometry restrictions</emphasis></term>
     <listitem>
-    <para>Toggle whether to adhere to the window's requested aspect ratio or <emphasis>base increment</emphasis>.In order to understand this attribute, some background is required.  Briefly, windows must request from the Window Manager, a base increment:  the minimum number of <emphasis>height</emphasis> X <emphasis>width</emphasis> pixels per re-size request.  Typically, it's 1x1.  Other windows though, for example terminal emulators or editors, use fixed-fonts and request their base-increment according to the size of one character.</para>
+    <para>Toggle whether to adhere to the window's requested aspect ratio or <emphasis>base increment</emphasis>. In order to understand this attribute, some background is required.  Briefly, windows must request from the Window Manager, a base increment:  the minimum number of <emphasis>height</emphasis> X <emphasis>width</emphasis> pixels per re-size request.  Typically, it's 1x1.  Other windows though, for example terminal emulators or editors, use fixed-fonts and request their base-increment according to the size of one character.</para>
      </listitem>
   </varlistentry>
 </variablelist>
