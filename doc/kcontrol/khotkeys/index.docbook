@@ -116,7 +116,7 @@ Introduction on &kde; TechBase</ulink>.</para></listitem>
 
 <varlistentry id="manage-add-shortcut-keyboard-input">
 <term><guimenuitem>Send Keyboard Input</guimenuitem></term>
-<listitem><para>This information will send keyboard input to the currently
+<listitem><para>This action will send keyboard input to the currently
 running application, just as if you had typed it in yourself.</para></listitem>
 </varlistentry>
 
