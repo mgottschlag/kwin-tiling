@@ -19,11 +19,16 @@
 
 #include "activityengine.h"
 #include "activityservice.h"
+#include "ActivityRankingInterface.h"
 
 #include <KActivities/Controller>
 #include <KActivities/Info>
 
 #include <QApplication>
+#include <QDBusServiceWatcher>
+
+#define ACTIVITYMANAGER_SERVICE "org.kde.kactivitymanagerd"
+#define ACTIVITYRANKING_OBJECT "/ActivityRanking"
 
 ActivityEngine::ActivityEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent, args)
@@ -55,6 +60,22 @@ void ActivityEngine::init()
         m_runningActivities = m_activityController->listActivities(KActivities::Info::Running);
         setData("Status", "Current", m_currentActivity);
         setData("Status", "Running", m_runningActivities);
+
+        m_watcher = new QDBusServiceWatcher(
+            ACTIVITYMANAGER_SERVICE,
+            QDBusConnection::sessionBus(),
+            QDBusServiceWatcher::WatchForRegistration
+                | QDBusServiceWatcher::WatchForUnregistration,
+            this);
+
+        connect(m_watcher, SIGNAL(serviceRegistered(QString)),
+                this, SLOT(enableRanking()));
+        connect(m_watcher, SIGNAL(serviceUnregistered(QString)),
+                this, SLOT(disableRanking()));
+
+        if (QDBusConnection::sessionBus().interface()->isServiceRegistered(ACTIVITYMANAGER_SERVICE)) {
+            enableRanking();
+        }
     }
 }
 
@@ -94,6 +115,65 @@ void ActivityEngine::insertActivity(const QString &id)
     m_runningActivities << id;
 }
 
+void ActivityEngine::disableRanking()
+{
+    delete m_activityRankingClient;
+}
+
+void ActivityEngine::enableRanking()
+{
+    m_activityRankingClient = new org::kde::ActivityManager::ActivityRanking(
+            ACTIVITYMANAGER_SERVICE,
+            ACTIVITYRANKING_OBJECT,
+            QDBusConnection::sessionBus()
+        );
+    connect(m_activityRankingClient, SIGNAL(rankingChanged(QStringList, ActivityDataList)),
+            this, SLOT(rankingChanged(QStringList, ActivityDataList)));
+
+    QDBusMessage msg = QDBusMessage::createMethodCall(ACTIVITYMANAGER_SERVICE,
+                                                      ACTIVITYRANKING_OBJECT,
+                                                      "org.kde.ActivityManager.ActivityRanking",
+                                                      "activities");
+    QDBusPendingReply<ActivityDataList> reply = QDBusConnection::sessionBus().asyncCall(msg);
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+    QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                     this, SLOT(activityScoresReply(QDBusPendingCallWatcher*)));
+}
+
+void ActivityEngine::activityScoresReply(QDBusPendingCallWatcher *watcher)
+{
+    QDBusPendingReply<ActivityDataList> reply = *watcher;
+    if (reply.isError()) {
+        kDebug() << "Error getting activity scores: " << reply.error().message();
+    } else {
+        setActivityScores(reply.value());
+    }
+
+    watcher->deleteLater();
+}
+
+void ActivityEngine::rankingChanged(const QStringList &topActivities, const ActivityDataList &activities)
+{
+    Q_UNUSED(topActivities)
+
+    setActivityScores(activities);
+}
+
+void ActivityEngine::setActivityScores(const ActivityDataList &activities)
+{
+    QSet<QString> presentActivities;
+    foreach (const ActivityData &activity, activities) {
+        setData(activity.id, "Score", activity.score);
+        presentActivities.insert(activity.id);
+    }
+
+    foreach (const QString &activityId, m_activityController->listActivities()) {
+        if (!presentActivities.contains(activityId)) {
+            setData(activityId, "Score", 0);
+        }
+    }
+}
+
 void ActivityEngine::activityAdded(const QString &id)
 {
     insertActivity(id);
@@ -129,6 +209,7 @@ void ActivityEngine::activityDataChanged()
     setData(activity->id(), "Icon", activity->icon());
     setData(activity->id(), "Encrypted", activity->isEncrypted());
     setData(activity->id(), "Current", m_currentActivity == activity->id());
+    setData(activity->id(), "Score", 0);
 }
 
 void ActivityEngine::activityStateChanged()

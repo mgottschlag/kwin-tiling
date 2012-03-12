@@ -25,6 +25,12 @@
 #include <Plasma/Service>
 #include <Plasma/DataEngine>
 
+#include "ActivityData.h"
+#include "ActivityRankingInterface.h"
+
+
+class QDBusServiceWatcher;
+
 class ActivityService;
 
 namespace KActivities
@@ -32,6 +38,7 @@ namespace KActivities
     class Controller;
     class Info;
 }
+
 
 class ActivityEngine : public Plasma::DataEngine
 {
@@ -50,13 +57,22 @@ public slots:
     void activityDataChanged();
     void activityStateChanged();
 
+    void disableRanking();
+    void enableRanking();
+    void rankingChanged(const QStringList &topActivities, const ActivityDataList &activities);
+    void activityScoresReply(QDBusPendingCallWatcher *watcher);
+
 private:
     void insertActivity(const QString &id);
+    void setActivityScores(const ActivityDataList &activities);
 
     KActivities::Controller *m_activityController;
     QHash<QString, KActivities::Info *> m_activities;
     QStringList m_runningActivities;
     QString m_currentActivity;
+
+    org::kde::ActivityManager::ActivityRanking *m_activityRankingClient;
+    QDBusServiceWatcher *m_watcher;
 
     friend class ActivityService;
 };
