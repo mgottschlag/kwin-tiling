@@ -108,6 +108,7 @@ void ActivityEngine::insertActivity(const QString &id)
             state = "Invalid";
     }
     setData(id, "State", state);
+    setData(id, "Score", 0);
 
     connect(activity, SIGNAL(infoChanged()), this, SLOT(activityDataChanged()));
     connect(activity, SIGNAL(stateChanged(KActivities::Info::State)), this, SLOT(activityStateChanged()));
