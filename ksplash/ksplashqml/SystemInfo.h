@@ -30,10 +30,9 @@ QString homeDir()
 {
     const char * kdehome = getenv("KDEHOME");
     const char * home = getenv("HOME");
-    if (kdehome && kdehome[0]) {
+    if (!kdehome || !kdehome[0]) {
         return QString() + home + "/" + KDE_DEFAULT_HOME;
     }
-
     return kdehome;
 }
 
