@@ -108,7 +108,7 @@ void ActivityEngine::insertActivity(const QString &id)
             state = "Invalid";
     }
     setData(id, "State", state);
-    setData(id, "Score", 0);
+    setData(id, "Score", m_activityScores.value(id));
 
     connect(activity, SIGNAL(infoChanged()), this, SLOT(activityDataChanged()));
     connect(activity, SIGNAL(stateChanged(KActivities::Info::State)), this, SLOT(activityStateChanged()));
@@ -163,13 +163,18 @@ void ActivityEngine::rankingChanged(const QStringList &topActivities, const Acti
 void ActivityEngine::setActivityScores(const ActivityDataList &activities)
 {
     QSet<QString> presentActivities;
+    m_activityScores.clear();
+
     foreach (const ActivityData &activity, activities) {
-        setData(activity.id, "Score", activity.score);
+        if (m_activities.contains(activity.id)) {
+            setData(activity.id, "Score", activity.score);
+        }
         presentActivities.insert(activity.id);
+        m_activityScores[activity.id] = activity.score;
     }
 
     foreach (const QString &activityId, m_activityController->listActivities()) {
-        if (!presentActivities.contains(activityId)) {
+        if (!presentActivities.contains(activityId) && m_activities.contains(activityId)) {
             setData(activityId, "Score", 0);
         }
     }
@@ -210,7 +215,7 @@ void ActivityEngine::activityDataChanged()
     setData(activity->id(), "Icon", activity->icon());
     setData(activity->id(), "Encrypted", activity->isEncrypted());
     setData(activity->id(), "Current", m_currentActivity == activity->id());
-    setData(activity->id(), "Score", 0);
+    setData(activity->id(), "Score", m_activityScores.value(activity->id()));
 }
 
 void ActivityEngine::activityStateChanged()

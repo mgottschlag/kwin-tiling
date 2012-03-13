@@ -73,6 +73,7 @@ private:
 
     org::kde::ActivityManager::ActivityRanking *m_activityRankingClient;
     QDBusServiceWatcher *m_watcher;
+    QHash<QString, qreal> m_activityScores;
 
     friend class ActivityService;
 };
