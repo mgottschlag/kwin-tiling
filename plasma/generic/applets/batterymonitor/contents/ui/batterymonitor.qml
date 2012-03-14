@@ -18,7 +18,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import Qt 4.7
+import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
 
 Item {
@@ -28,6 +28,7 @@ Item {
 
     property bool show_charge: false
     property bool show_multiple_batteries: false
+    property bool show_remaining_time: false
 
     Component.onCompleted: {
         plasmoid.addEventListener('ConfigChanged', configChanged);
@@ -36,6 +37,7 @@ Item {
     function configChanged() {
         show_charge = plasmoid.readConfig("showBatteryString");
         show_multiple_batteries = plasmoid.readConfig("showMultipleBatteries");
+        show_remaining_time = plasmoid.readConfig("showRemainingTime");
     }
 
     property Component compactRepresentation: Component {
@@ -48,6 +50,8 @@ Item {
                 id: iconSvg
                 imagePath: "icons/battery"
             }
+
+            property QtObject pmSource: plasmoid.rootItem.pmSource
 
             Item {
                 anchors.centerIn: parent
@@ -62,7 +66,7 @@ Item {
                 PlasmaCore.SvgItem {
                     anchors.fill: parent
                     svg: iconSvg
-                    elementId: plasmoid.rootItem.pmSource.data["Battery"]["Has Battery"] ? parent.fillElement(plasmoid.rootItem.pmSource.data["Battery0"]["Percent"]) : "Unavailable"
+                    elementId: pmSource.data["Battery"]["Has Battery"] ? parent.fillElement(pmSource.data["Battery0"]["Percent"]) : "Unavailable"
                 }
 
                 function fillElement(p) {
@@ -83,7 +87,7 @@ Item {
                 PlasmaCore.SvgItem {
                     anchors.fill: parent
                     svg: iconSvg
-                    elementId: plasmoid.rootItem.pmSource.data["AC Adapter"]["Plugged in"] ? "AcAdapter" : ""
+                    elementId: pmSource.data["AC Adapter"]["Plugged in"] ? "AcAdapter" : ""
                 }
 
                 Rectangle {
@@ -95,12 +99,12 @@ Item {
                     border.color: "grey"
                     border.width: 2
                     radius: 3
-                    visible: plasmoid.rootItem.show_charge && plasmoid.rootItem.pmSource.data["Battery"]["Has Battery"]
+                    visible: plasmoid.rootItem.show_charge && pmSource.data["Battery"]["Has Battery"]
                     opacity: 0.7
 
                     Text {
                         id: percent
-                        text: plasmoid.rootItem.pmSource.data["Battery0"]["Percent"]+"%"
+                        text: i18nc("overlay on the battery, needs to be really tiny", "%1%", pmSource.data["Battery0"]["Percent"]);
                         font.bold: true
                         anchors.centerIn: parent
                         visible: parent.visible
@@ -122,6 +126,8 @@ Item {
         percent: pmSource.data["Battery0"]["Percent"]
         pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
         screenBrightness: pmSource.data["PowerDevil"]["Screen Brightness"]
+        remainingMsec: Number(pmSource.data["Battery"]["Remaining msec"])
+        showRemainingTime: parent.show_remaining_time
         onSleepClicked: {
             dialog.visible=false
             service = pmSource.serviceForSource("PowerDevil");
@@ -140,7 +146,42 @@ Item {
             operation.brightness = screenBrightness;
             service.startOperationCall(operation);
         }
-    }
+        property int cookie1: -1
+        property int cookie2: -1
+        onPowermanagementChanged: {
+            service = pmSource.serviceForSource("PowerDevil");
+            if (checked) {
+                var op1 = service.operationDescription("stopSuppressingSleep");
+                op1.cookie = cookie1;
+                var op2 = service.operationDescription("stopSuppressingScreenPowerManagement");
+                op2.cookie = cookie2;
 
-    
+                var job1 = service.startOperationCall(op1);
+                job1.finished.connect(function(job) {
+                    cookie1 = -1;
+                });
+
+                var job2 = service.startOperationCall(op2);
+                job1.finished.connect(function(job) {
+                    cookie2 = -1;
+                });
+            } else {
+                var reason = i18n("The battery applet has enabled system-wide inhibition");
+                var op1 = service.operationDescription("beginSuppressingSleep");
+                op1.reason = reason;
+                var op2 = service.operationDescription("beginSuppressingScreenPowerManagement");
+                op2.reason = reason;
+
+                var job1 = service.startOperationCall(op1);
+                job1.finished.connect(function(job) {
+                    cookie1 = job.result;
+                });
+
+                var job2 = service.startOperationCall(op2);
+                job1.finished.connect(function(job) {
+                    cookie2 = job.result;
+                });
+            }
+        }
+    }
 }

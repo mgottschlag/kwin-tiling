@@ -17,105 +17,126 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import Qt 4.7
-import org.kde.plasma.core 0.1 as PlasmaCore
-import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
+import QtQuick 1.1
 import org.kde.plasma.components 0.1 as Components
-import org.kde.qtextracomponents 0.1
 
 Item {
     id: dialog
     width: 400
-    //height: 170
+    height: childrenRect.height
 
     property int percent
     property bool pluggedIn
     property alias screenBrightness: brightnessSlider.value
-    //property alias currentProfileIndex: profiles.currentIndex
+    property int remainingMsec
+    property bool showRemainingTime
 
     signal sleepClicked
     signal hibernateClicked
     signal brightnessChanged(int screenBrightness)
-    //signal profileChanged(string profile)
+    signal powermanagementChanged(bool checked)
 
-    /*function addProfile(profile)    { profiles.addItem(profile);        }
-    function setProfile (index)     { profiles.currentIndex = index;    }
-    function clearProfiles()        { profiles.clear();                 }*/
-
-    Column {
-        id: values
-
-        Row {
-            Components.Label {
-                id: batteryLabel
-                text: i18n("Battery:")
-            }
-            Components.Label {
-                id: batteryValue
-                text: {
-                    if (percent == 0) {
-                        return "Not present";
-                    }
-                    var txt=percent+"% (";
-                    if (percent<100) {
-                        if (pluggedIn) txt += "charging";
-                        else txt += "discharging";
-                    } else {
-                        txt += "charged";
-                    }
-                    txt += ")"
-                    return txt;
-                }
-                font.bold: true
-            }
+    Grid {
+        id: positioner
+        columns: 2
+        spacing: 5
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
         }
 
+        Components.Label {
+            text: i18n("Battery:")
+            horizontalAlignment: Text.AlignRight
+        }
+        Components.Label {
+            text: {
+                if (percent == 0) {
+                    return i18nc("Battery is not plugged in", "Not present");
+                }
+                var state;
+                if (pluggedIn) {
+                    if (percent<100) return i18n("%1% (charging)", percent);
+                    else return i18n("%1% (charged)", percent);
+                } else {
+                    return i18n("%1% (discharging)", percent);
+                }
+            }
+            font.weight: Font.Bold
+        }
+
+        Components.Label {
+            text: i18n("AC Adapter:")
+            horizontalAlignment: Text.AlignRight
+        }
+        Components.Label {
+            text: dialog.pluggedIn ? i18n("Plugged in") : i18n("Not plugged in")
+            font.weight: Font.Bold
+        }
+
+        Components.Label {
+            text: i18nc("Label for remaining time", "Time Remaining:")
+            horizontalAlignment: Text.AlignRight
+            visible: timeRemain.visible
+        }
+        Components.Label {
+            id: timeRemain
+            // TODO: give translated and formatted string with KGlobal::locale()->prettyFormatDuration(msec);
+            text: {
+                var time = new Date(remainingMsec);
+                var hrs = i18np("1 hour", "%1 hours", time.getUTCHours());
+                var mins = i18np("1 minute", "%1 minutes", time.getUTCMinutes());
+                return hrs+", "+mins;
+            }
+            font.weight: Font.Bold
+            visible: text!="" && dialog.showRemainingTime
+        }
+
+        Components.Label {
+            text: i18nc("Label for powermanagement inhibition", "Power management enabled:")
+        }
+        Components.Switch {
+            checked: true
+            onCheckedChanged: powermanagementChanged(checked)
+        }
+
+        Components.Label {
+            text: i18n("Screen Brightness:")
+            horizontalAlignment: Text.AlignRight
+        }
         Components.Slider {
             id: brightnessSlider
             minimumValue: 0
             maximumValue: 100
             stepSize: 10
-            anchors {
-                left: parent.left
-                top: batteryValue.bottom
-                topMargin: 6
-                right: parent.right
-            }
             onValueChanged: brightnessChanged(value)
         }
+    }
 
-        Row {
-            Components.Label {
-                id: profileLabel
-                text: i18n("Enabled:")
-                horizontalAlignment: Text.AlignRight
-            }
-            // TODO: what to do on check/uncheck?
-            Components.Switch {
-                id: profiles
-                checked: true
-            }
+    Row {
+        anchors {
+            top: positioner.bottom
+            topMargin: 10
+            right: parent.right
         }
 
-        Row {
-            anchors.horizontalCenter: parent.horizontalCenter
-            IconButton {
-                id: sleepButton
-                icon: QIcon("system-suspend")
-                iconWidth: 22
-                iconHeight: 22
-                text: "Sleep"
-                onClicked: sleepClicked()
-            }
+        IconButton {
+            id: sleepButton
+            icon: QIcon("system-suspend")
+            iconWidth: 22
+            iconHeight: 22
+            text: i18nc("Suspend the computer to RAM; translation should be short", "Sleep")
+            onClicked: sleepClicked()
+        }
 
-            IconButton {
-                id: hibernateButton
-                icon: QIcon("system-suspend-hibernate")
-                iconWidth: 22
-                iconHeight: 22
-                text: "Hibernate"
-                onClicked: hibernateClicked()
-            }
+        IconButton {
+            id: hibernateButton
+            icon: QIcon("system-suspend-hibernate")
+            iconWidth: 22
+            iconHeight: 22
+            text: i18nc("Suspend the computer to disk; translation should be short", "Hibernate")
+            onClicked: hibernateClicked()
         }
     }
 }
