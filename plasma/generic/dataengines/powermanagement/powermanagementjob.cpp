@@ -1,6 +1,5 @@
 /*
  * Copyright 2011 Sebastian Kügler <sebas@kde.org>
- * Copyright 2011 Viranch Mehta <viranch.mehta@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License version 2 as
@@ -19,7 +18,6 @@
 
 #include <QDBusConnection>
 #include <QDBusInterface>
-#include <QDBusConnectionInterface>
 #include <QDBusMessage>
 #include <QDBusPendingReply>
 
@@ -29,7 +27,6 @@
 #include <kworkspace/kworkspace.h>
 
 #include "powermanagementjob.h"
-#include "powermanagementengine.h"
 
 #include <kdebug.h>
 
@@ -73,40 +70,22 @@ void PowerManagementJob::start()
         requestShutDown();
         setResult(true);
         return;
-    } else if (operation == "setBrightness") {
-        if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
-            QDBusMessage call = QDBusMessage::createMethodCall ("org.kde.Solid.PowerManagement",
-                                                                "/org/kde/Solid/PowerManagement",
-                                                                "org.kde.Solid.PowerManagement",
-                                                                "setBrightness");
-            int brightness = parameters().value("brightness").toInt();
-            call.setArguments(QList<QVariant>() << QVariant::fromValue(brightness));
-            QDBusConnection::sessionBus().asyncCall(call);
-            setResult(true);
-            return;
-        } else {
-            kDebug() << "set brightness: DBus org.kde.Solid.PowerMangement not available.";
-        }
-    } else if (operation == "switchUser") {
-        if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.krunner")) {
-            QDBusMessage call = QDBusMessage::createMethodCall ("org.kde.krunner",
-                                                                "/App",
-                                                                "org.kde.krunner.App",
-                                                                "switchUser");
-            QDBusConnection::sessionBus().asyncCall (call);
-            setResult(true);
-            return;
-        } else {
-            kDebug() << "switch user: DBus org.kde.krunner not available.";
-        }
     } else if (operation == "beginSuppressingSleep") {
         setResult(Solid::PowerManagement::beginSuppressingSleep(parameters().value("reason").toString()));
+        return;
     } else if (operation == "stopSuppressingSleep") {
         setResult(Solid::PowerManagement::stopSuppressingSleep(parameters().value("cookie").toInt()));
+        return;
     } else if (operation == "beginSuppressingScreenPowerManagement") {
         setResult(Solid::PowerManagement::beginSuppressingScreenPowerManagement(parameters().value("reason").toString()));
+        return;
     } else if (operation == "stopSuppressingScreenPowerManagement") {
         setResult(Solid::PowerManagement::stopSuppressingScreenPowerManagement(parameters().value("cookie").toInt()));
+        return;
+    } else if (operation == "setBrightness") {
+        setScreenBrightness(parameters().value("brightness").toInt());
+        setResult(true);
+        return;
     }
 
     kDebug() << "don't know what to do with " << operation;
@@ -138,6 +117,16 @@ QString PowerManagementJob::callForType(const SuspendType &type)
             return "suspendToRam";
         break;
     }
+}
+
+void PowerManagementJob::setScreenBrightness(const int value)
+{
+    QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
+                                                      "/org/kde/Solid/PowerManagement",
+                                                      "org.kde.Solid.PowerManagement",
+                                                      "setBrightness");
+    msg.setArguments(QList<QVariant>() << QVariant::fromValue(value));
+    QDBusConnection::sessionBus().asyncCall(msg);
 }
 
 void PowerManagementJob::requestShutDown()
