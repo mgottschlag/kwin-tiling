@@ -1,20 +1,23 @@
 
 var biggestId = 0;
+var tmpBiggestId = 0;
 
 for (var i in activityIds) {
     var activity = activityById(activityIds[i]);
-    for (var j in activity.widgetIds) {
-        if (j > biggestId) {
-            biggestId = j
+    if (activity.widgetIds.length > 0) {
+        tmpBiggestId = Math.max.apply(null, activity.widgetIds);
+        if (tmpBiggestId > biggestId) {
+            biggestId = tmpBiggestId;
         }
     }
 }
 
 for (var i in panelIds) {
     var panel = panelById(panelIds[i]);
-    for (var j in panel.widgetIds) {
-        if (j > biggestId) {
-            biggestId = j
+    if (panel.widgetIds.length > 0) {
+        tmpBiggestId = Math.max.apply(null, panel.widgetIds);
+        if (tmpBiggestId > biggestId) {
+            biggestId = tmpBiggestId;
         }
     }
 }
