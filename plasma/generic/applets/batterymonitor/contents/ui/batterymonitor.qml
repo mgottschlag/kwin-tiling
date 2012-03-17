@@ -126,12 +126,8 @@ Item {
         percent: pmSource.data["Battery0"]["Percent"]
         pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
         screenBrightness: pmSource.data["PowerDevil"]["Screen Brightness"]
-<<<<<<< HEAD
         remainingMsec: Number(pmSource.data["Battery"]["Remaining msec"])
         showRemainingTime: parent.show_remaining_time
-=======
-        remainingMsec: pmSource.data["Battery"]["Remaining msec"]
->>>>>>> d34784102ef6d71fb115fc438680b6dddaf30414
         onSleepClicked: {
             dialog.visible=false
             service = pmSource.serviceForSource("PowerDevil");
@@ -150,7 +146,6 @@ Item {
             operation.brightness = screenBrightness;
             service.startOperationCall(operation);
         }
-<<<<<<< HEAD
         property int cookie1: -1
         property int cookie2: -1
         onPowermanagementChanged: {
@@ -187,10 +182,6 @@ Item {
                     cookie2 = job.result;
                 });
             }
-=======
-        onPowermanagementChanged: {
-            // TODO
->>>>>>> d34784102ef6d71fb115fc438680b6dddaf30414
         }
     }
 }
