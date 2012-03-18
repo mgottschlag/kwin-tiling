@@ -320,6 +320,9 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
                         args << kurl.url() << index.data(Kickoff::IconNameRole);
                         if (kurl.scheme() == "applications") { // it's a service group
                             desktop->addApplet("simplelauncher", args);
+                        } else if (desktop->metaObject()->indexOfSlot("addUrls(KUrl::List)") != -1) {
+                            QMetaObject::invokeMethod(desktop, "addUrls",
+                            Qt::DirectConnection, Q_ARG(KUrl::List, KUrl::List(kurl)));
                         } else {
                             desktop->addApplet("icon", args);
                         }
