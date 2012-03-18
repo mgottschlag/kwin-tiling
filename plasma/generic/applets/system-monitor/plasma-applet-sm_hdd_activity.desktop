@@ -3,6 +3,7 @@ Encoding=UTF-8
 Name=Hard Disk I/O Monitor
 Name[cs]=Monitor I/O pevného disku
 Name[nl]=Volgt de activiteit van de harde schijf
+Name[pl]=Monitor WE/WY dysku twardego
 Name[pt]=Monitor de E/S do Disco
 Name[pt_BR]=Monitor de E/S do disco rígido
 Name[sv]=Övervakning av in- och utmatning för hårddisk
@@ -12,6 +13,7 @@ Name[zh_TW]=硬碟使用量 I/O 監視器
 
 Comment=An applet that monitors hard disk throughput and input/output
 Comment[nl]=Een applet die de activiteit van de harde schijf volgt
+Comment[pl]=Aplet, który monitoruje przepustowość wejścia/wyjścia dysku twardego
 Comment[pt]=Uma 'applet' que vigia o rendimento e o fluxo de entrada-saída do disco
 Comment[pt_BR]=Um miniaplicativo que monitora o fluxo do disco rígido e a entrada/saída
 Comment[sv]=Ett miniprogram som övervakar hårddiskprestanda samt in- och utmatning
