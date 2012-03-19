@@ -65,7 +65,7 @@ enum GroupingAction { LeaveGroupAction = 0
  * @param parent the parent for the action
  * @param desktop the desktop to associate the action with, only used for ToDesktopAction
  */
-QAction *standardGroupableAction(GroupableAction action, AbstractGroupableItem *item, QObject *parent = 0, int desktop = 0);
+TASKMANAGER_EXPORT QAction *standardGroupableAction(GroupableAction action, AbstractGroupableItem *item, QObject *parent = 0, int desktop = 0);
 
 /**
  * Factory method to create standard actions for groupable items.
@@ -74,7 +74,7 @@ QAction *standardGroupableAction(GroupableAction action, AbstractGroupableItem *
  * @param task the task to associate it with
  * @param parent the parent for the action
  */
-QAction *standardTaskAction(TaskAction action, TaskItem *task, QObject *parent = 0);
+TASKMANAGER_EXPORT QAction *standardTaskAction(TaskAction action, TaskItem *task, QObject *parent = 0);
 
 /**
  * Factory method to create standard actions for groupable items.
@@ -84,8 +84,8 @@ QAction *standardTaskAction(TaskAction action, TaskItem *task, QObject *parent =
  * @param strategy the GroupManager used to coorinate the grouping
  * @param parent the parent for the action
  */
-QAction* standardGroupingAction(GroupingAction action, AbstractGroupableItem *item,
-                                GroupManager *strategy, QObject *parent = 0);
+TASKMANAGER_EXPORT QAction* standardGroupingAction(GroupingAction action, AbstractGroupableItem *item,
+                                                   GroupManager *strategy, QObject *parent = 0);
 
 class TASKMANAGER_EXPORT ToolTipMenu : public QMenu
 {
