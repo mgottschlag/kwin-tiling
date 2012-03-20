@@ -22,99 +22,100 @@ import org.kde.plasma.components 0.1 as Components
 
 Item {
     id: dialog
-    width: 400
-    height: 200
+    width: childrenRect.width
+    height: childrenRect.height
 
     property int percent
     property bool pluggedIn
     property alias screenBrightness: brightnessSlider.value
     property int remainingMsec
+    property bool showRemainingTime
+    property alias showSuspendButton: suspendButton.visible
+    property alias showHibernateButton: hibernateButton.visible
 
-    signal sleepClicked
-    signal hibernateClicked
+    property int ram: 0
+    property int disk: 1
+
+    signal suspendClicked(int type)
     signal brightnessChanged(int screenBrightness)
     signal powermanagementChanged(bool checked)
     
-    Grid {
-        id: positioner
-        columns: 2
-        spacing: 5
+    Column {
+        id: labels
         anchors {
             top: parent.top
             left: parent.left
-            right: parent.right
         }
-        
+
         Components.Label {
             text: i18n("Battery:")
-            horizontalAlignment: Text.AlignRight
-            width: longestText.width
-        }
-        Components.Label {
-            text: {
-                if (percent == 0) {
-                    return "Not present";
-                }
-                var txt=percent+"% (";
-                if (percent<100) {
-                    if (pluggedIn) txt += "charging";
-                    else txt += "discharging";
-                } else {
-                    txt += "charged";
-                }
-                txt += ")"
-                return i18n(txt);
-            }
-            font.weight: Font.Bold
+            anchors.right: parent.right
         }
         
         Components.Label {
             text: i18n("AC Adapter:")
-            horizontalAlignment: Text.AlignRight
-            width: longestText.width
-        }
-        Components.Label {
-            text: dialog.pluggedIn ? i18n("Plugged in") : i18n("Not plugged in")
-            font.weight: Font.Bold
+            anchors.right: parent.right
         }
         
         Components.Label {
-            text: i18n("Time Remaining:")
-            horizontalAlignment: Text.AlignRight
-            width: longestText.width
-        }
-        Components.Label {
-            text: {
-                var msec = Number(remainingMsec);
-                var hrs = Math.floor(msec/3600000);
-                var mins = Math.floor((msec-(hrs*3600000))/60000);
-                var txt = "";
-                if (hrs==1) txt += "1 hour";
-                else if (hrs>1) txt += hrs+" hours";
-                
-                if (mins>0 && hrs>0) txt += " and ";
-                if (mins==1) txt += "1 minute";
-                else if (mins>0) txt += mins+" minutes";
-                
-                return i18n(txt);
-            }
-            font.weight: Font.Bold
+            text: i18nc("Label for remaining time", "Time Remaining:")
+            visible: remainingTime.visible
+            anchors.right: parent.right
         }
         
         Components.Label {
-            id: longestText
-            text: i18n("Power management enabled:")
-        }
-        Components.Switch {
-            checked: true
-            onCheckedChanged: powermanagementChanged(checked)
+            text: i18nc("Label for powermanagement inhibition", "Power management enabled:")
+            anchors.right: parent.right
         }
         
         Components.Label {
             text: i18n("Screen Brightness:")
-            horizontalAlignment: Text.AlignRight
-            width: longestText.width
+            anchors.right: parent.right
         }
+        
+    }
+
+    Column {
+        id: values
+        anchors {
+            top: parent.top
+            left: labels.right
+            leftMargin: 5
+        }
+
+        Components.Label {
+            text: {
+                if (percent == 0) {
+                    return i18nc("Battery is not plugged in", "Not present");
+                }
+                var state;
+                if (pluggedIn) {
+                    if (percent<100) return i18n("%1% (charging)", percent);
+                    else return i18n("%1% (charged)", percent);
+                } else {
+                    return i18n("%1% (discharging)", percent);
+                }
+            }
+            font.weight: Font.Bold
+        }
+
+        Components.Label {
+            text: dialog.pluggedIn ? i18n("Plugged in") : i18n("Not plugged in")
+            font.weight: Font.Bold
+        }
+
+        Components.Label {
+            id: remainingTime
+            text: formatDuration(remainingMsec);
+            font.weight: Font.Bold
+            visible: text!="" && showRemainingTime
+        }
+
+        Components.Switch {
+            checked: true
+            onCheckedChanged: powermanagementChanged(checked)
+        }
+
         Components.Slider {
             id: brightnessSlider
             minimumValue: 0
@@ -123,21 +124,32 @@ Item {
             onValueChanged: brightnessChanged(value)
         }
     }
-    
+
+    // TODO: give translated and formatted string with KGlobal::locale()->prettyFormatDuration(msec);
+    function formatDuration(msec) {
+        if (msec==0)
+            return "";
+
+        var time = new Date(msec);
+        var hrs = i18np("1 hour", "%1 hours", time.getUTCHours());
+        var mins = i18np("1 minute", "%1 minutes", time.getUTCMinutes());
+        return hrs+", "+mins;
+    }
+
     Row {
         anchors {
-            top: positioner.bottom
+            top: values.bottom
             topMargin: 10
-            right: parent.right
+            right: values.right
         }
-        
+
         IconButton {
-            id: sleepButton
+            id: suspendButton
             icon: QIcon("system-suspend")
             iconWidth: 22
             iconHeight: 22
-            text: "Sleep"
-            onClicked: sleepClicked()
+            text: i18nc("Suspend the computer to RAM; translation should be short", "Sleep")
+            onClicked: suspendClicked(ram)
         }
 
         IconButton {
@@ -145,8 +157,8 @@ Item {
             icon: QIcon("system-suspend-hibernate")
             iconWidth: 22
             iconHeight: 22
-            text: "Hibernate"
-            onClicked: hibernateClicked()
+            text: i18nc("Suspend the computer to disk; translation should be short", "Hibernate")
+            onClicked: suspendClicked(disk)
         }
     }
 }
