@@ -3,7 +3,6 @@
  *   Copyright 2007-2008 Sebastian Kuegler <sebas@kde.org>
  *   CopyRight 2007 Maor Vanmak <mvanmak1@gmail.com>
  *   Copyright 2008 Dario Freddi <drf54321@gmail.com>
- *   Copyright 2011 Viranch Mehta <viranch.mehta@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -42,11 +41,15 @@
 #include <Plasma/DataContainer>
 #include "powermanagementservice.h"
 
+typedef QMap< QString, QString > StringStringMap;
+Q_DECLARE_METATYPE(StringStringMap)
+
 PowermanagementEngine::PowermanagementEngine(QObject* parent, const QVariantList& args)
         : Plasma::DataEngine(parent, args)
         , m_sources(basicSourceNames())
 {
     Q_UNUSED(args)
+    qDBusRegisterMetaType< StringStringMap >();
 }
 
 PowermanagementEngine::~PowermanagementEngine()
@@ -58,24 +61,25 @@ void PowermanagementEngine::init()
             this,                              SLOT(deviceRemoved(QString)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)),
             this,                              SLOT(deviceAdded(QString)));
+
     if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.Solid.PowerManagement")) {
+        if (!QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement",
+                                                   "/org/kde/Solid/PowerManagement",
+                                                   "org.kde.Solid.PowerManagement",
+                                                   "brightnessChanged", this,
+                                                   SLOT(screenBrightnessChanged(int)))) {
+            kDebug() << "error connecting to Brightness changes via dbus";
+        }
+        else {
+            sourceRequestEvent("PowerDevil");
+            screenBrightnessChanged(0);
+        }
         if (!QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement",
                                                    "/org/kde/Solid/PowerManagement",
                                                    "org.kde.Solid.PowerManagement",
                                                    "batteryRemainingTimeChanged", this,
                                                    SLOT(batteryRemainingTimeChanged(qulonglong)))) {
             kDebug() << "error connecting to remaining time changes";
-        }
-        //screen brightness changes
-        if (!QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement",
-                                                   "/org/kde/Solid/PowerManagement",
-                                                   "org.kde.Solid.PowerManagement",
-                                                   "brightnessChanged", this,
-                                                   SLOT(screenBrightnessChanged(int)))) {
-            kDebug() << "error connecting to brightness changes";
-        } else {
-            sourceRequestEvent("PowerDevil");
-            screenBrightnessChanged(0);
         }
     }
 }
@@ -176,9 +180,9 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
         }
     } else if (name == "PowerDevil") {
         QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
-                                                            "/org/kde/Solid/PowerManagement",
-                                                            "org.kde.Solid.PowerManagement",
-                                                            "brightness");
+                                                          "/org/kde/Solid/PowerManagement",
+                                                          "org.kde.Solid.PowerManagement",
+                                                          "brightness");
         QDBusPendingReply<int> reply = QDBusConnection::sessionBus().asyncCall(msg);
         QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
         QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),

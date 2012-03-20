@@ -56,7 +56,7 @@ Item {
             text: i18n("AC Adapter:")
             anchors.right: parent.right
         }
-        
+
         Components.Label {
             text: i18nc("Label for remaining time", "Time Remaining:")
             visible: remainingTime.visible
@@ -67,7 +67,7 @@ Item {
             text: i18nc("Label for powermanagement inhibition", "Power management enabled:")
             anchors.right: parent.right
         }
-        
+
         Components.Label {
             text: i18n("Screen Brightness:")
             anchors.right: parent.right
@@ -84,6 +84,8 @@ Item {
         }
 
         Components.Label {
+            id: timeRemain
+            // TODO: give translated and formatted string with KGlobal::locale()->prettyFormatDuration(msec);
             text: {
                 if (percent == 0) {
                     return i18nc("Battery is not plugged in", "Not present");
@@ -97,6 +99,7 @@ Item {
                 }
             }
             font.weight: Font.Bold
+            visible: text!="" && dialog.showRemainingTime
         }
 
         Components.Label {

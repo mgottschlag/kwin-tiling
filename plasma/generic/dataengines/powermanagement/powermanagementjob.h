@@ -1,6 +1,5 @@
 /*
  * Copyright 2011 Sebastian Kügler <sebas@kde.org>
- * Copyright 2011 Viranch Mehta <viranch.mehta@gmail.com>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License version 2 as
@@ -41,6 +40,7 @@ class PowerManagementJob : public Plasma::ServiceJob
         bool suspend(const SuspendType &type);
         void requestShutDown();
         QString callForType(const SuspendType &type);
+        void setScreenBrightness(const int value);
 };
 
 #endif // POWERMANAGEMENTJOB_H
