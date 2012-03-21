@@ -86,9 +86,12 @@ MousePluginWidget::MousePluginWidget(const QString &pluginName, const QString &t
 
     //pretty icons for the buttons
     m_aboutButton->setIcon(KIcon("dialog-information"));
+    m_aboutButton->setToolTip(i18nc("About mouse action", "About"));
     m_triggerButton->setIcon(KIcon("input-mouse"));
     m_configButton->setIcon(KIcon("configure"));
+    m_configButton->setToolTip(i18nc("Configure mouse action", "Configure"));
     m_clearButton->setIcon(KIcon("list-remove"));
+    m_clearButton->setToolTip(i18nc("Remove mouse action", "Remove"));
 
     //HACK
     //FIXME what's the Right Way to do this?
