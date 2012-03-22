@@ -84,7 +84,7 @@ KRunnerConfigWidget::KRunnerConfigWidget(Plasma::RunnerManager *manager, QWidget
 
     m_sel->addPlugins(Plasma::RunnerManager::listRunnerInfo(),
                       KPluginSelector::ReadConfigFile,
-                      i18n("Available Features"), QString(),
+                      i18n("Available Plugins"), QString(),
                       KSharedConfig::openConfig(QLatin1String( "krunnerrc" )));
 
     m_buttons = new QDialogButtonBox(this);
