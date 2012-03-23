@@ -294,12 +294,17 @@ void ToDesktopActionImpl::slotToDesktop()
 DesktopsMenu::DesktopsMenu(QWidget *parent, AbstractGroupableItem *item)
     : ToolTipMenu(parent)
 {
+    QActionGroup *group = new QActionGroup(this);
     setTitle(i18n("Move To &Desktop"));
     addAction(new ToCurrentDesktopActionImpl(this, item));
-    addAction(new ToDesktopActionImpl(this, item, 0));      //0 means all desktops
+    QAction *action = new ToDesktopActionImpl(this, item, 0); //0 means all desktops
+    addAction(action);
+    group->addAction(action);
     addSeparator();
     for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
-        addAction(new ToDesktopActionImpl(this, item, i));
+        action = new ToDesktopActionImpl(this, item, i);
+        addAction(action);
+        group->addAction(action);
     }
     setEnabled(item->isActionSupported(NET::ActionChangeDesktop));
 }
