@@ -46,48 +46,19 @@ Item {
             anchors.fill:parent
             onClicked: plasmoid.togglePopup()
 
-            PlasmaCore.Svg{
-                id: iconSvg
-                imagePath: "icons/battery"
-            }
-
             property QtObject pmSource: plasmoid.rootItem.pmSource
 
             Item {
                 anchors.centerIn: parent
                 width: Math.min(parent.width, parent.height)
                 height: width
-                PlasmaCore.SvgItem {
+                
+                BatteryIcon {
+                    imagePath: "icons/battery"
+                    hasBattery: pmSource.data["Battery"]["Has Battery"]
+                    percent: pmSource.data["Battery0"]["Percent"]
+                    pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
                     anchors.fill: parent
-                    svg: iconSvg
-                    elementId: "Battery"
-                }
-
-                PlasmaCore.SvgItem {
-                    anchors.fill: parent
-                    svg: iconSvg
-                    elementId: pmSource.data["Battery"]["Has Battery"] ? parent.fillElement(pmSource.data["Battery0"]["Percent"]) : "Unavailable"
-                }
-
-                function fillElement(p) {
-                    if (p > 95) {
-                        return "Fill100";
-                    } else if (p > 80) {
-                        return "Fill80";
-                    } else if (p > 50) {
-                        return "Fill60";
-                    } else if (p > 20) {
-                        return "Fill40";
-                    } else if (p > 10) {
-                        return "Fill20";
-                    }
-                    return "";
-                }
-
-                PlasmaCore.SvgItem {
-                    anchors.fill: parent
-                    svg: iconSvg
-                    elementId: pmSource.data["AC Adapter"]["Plugged in"] ? "AcAdapter" : ""
                 }
 
                 Rectangle {
@@ -124,6 +95,7 @@ Item {
     PopupDialog {
         id: dialogItem
         percent: pmSource.data["Battery0"]["Percent"]
+        hasBattery: pmSource.data["Battery"]["Has Battery"]
         pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
         screenBrightness: pmSource.data["PowerDevil"]["Screen Brightness"]
         remainingMsec: Number(pmSource.data["Battery"]["Remaining msec"])

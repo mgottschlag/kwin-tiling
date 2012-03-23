@@ -26,6 +26,7 @@ Item {
     height: childrenRect.height
 
     property int percent
+    property bool hasBattery
     property bool pluggedIn
     property alias screenBrightness: brightnessSlider.value
     property int remainingMsec
@@ -159,5 +160,18 @@ Item {
             text: i18nc("Suspend the computer to disk; translation should be short", "Hibernate")
             onClicked: suspendClicked(disk)
         }
+    }
+        
+    BatteryIcon {
+        imagePath: "widgets/battery-oxygen"
+        hasBattery: dialog.hasBattery
+        percent: dialog.percent
+        pluggedIn: dialog.pluggedIn
+        anchors {
+            top: parent.top
+            right: values.right
+        }
+        width: 50
+        height: 50
     }
 }
