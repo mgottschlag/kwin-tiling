@@ -117,7 +117,7 @@ Item {
     property QtObject pmSource: PlasmaCore.DataSource {
         id: pmSource
         engine: "powermanagement"
-        connectedSources: ["AC Adapter", "Battery", "Battery0", "PowerDevil"]
+        connectedSources: ["AC Adapter", "Battery", "Battery0", "PowerDevil", "Sleep States"]
         interval: 0
     }
 

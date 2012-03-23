@@ -64,7 +64,7 @@ Item {
         }
         
         Components.Label {
-            text: i18nc("Label for powermanagement inhibition", "Power management enabled:")
+            text: i18nc("Label for power management inhibition", "Power management enabled:")
             anchors.right: parent.right
         }
 
@@ -84,13 +84,10 @@ Item {
         }
 
         Components.Label {
-            id: timeRemain
-            // TODO: give translated and formatted string with KGlobal::locale()->prettyFormatDuration(msec);
             text: {
                 if (percent == 0) {
                     return i18nc("Battery is not plugged in", "Not present");
                 }
-                var state;
                 if (pluggedIn) {
                     if (percent<100) return i18n("%1% (charging)", percent);
                     else return i18n("%1% (charged)", percent);
@@ -99,7 +96,6 @@ Item {
                 }
             }
             font.weight: Font.Bold
-            visible: text!="" && dialog.showRemainingTime
         }
 
         Components.Label {
