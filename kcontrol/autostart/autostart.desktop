@@ -103,6 +103,7 @@ Name[zh_TW]=自動啟動
 Comment=A configuration tool for managing which programs start up automatically with KDE.
 Comment[cs]=Konfigurační nástroj pro správu automatického spouštění programů při startu KDE.
 Comment[de]=Ein Einrichtungswerkzeug zum Verwalten der automatisch mit KDE zu startenden Anwendungen.
+Comment[ia]=Un instrumento de configuration pro gerer qual programma debe startar automaticamente con KDE..
 Comment[nds]=En Instellwarktüüch, dat de Programmen fastleggt, de automaatsch tosamen mit KDE opropen warrt
 Comment[nl]=Een configuratiehulpmiddel voor het beheren van programma's die automatisch met KDE opstarten.
 Comment[pl]=Narzędzie konfiguracyjne do zrządzania programami automatycznie uruchamianymi wraz z KDE.
@@ -114,6 +115,7 @@ Comment[x-test]=xxA configuration tool for managing which programs start up auto
 Comment[zh_TW]=管理 KDE 要自動啟動哪些程式的設定工具。
 
 X-KDE-Keywords=Autostart Manager,autostart,startup,system startup,kde start,cron
+X-KDE-Keywords[ia]=Gestor de autoinitio,autoinitio,initio,initio de systema.initio de kde,crom
 X-KDE-Keywords[nds]=Autostartpleger,Autostart,Starten,Hoochfohren,KDE-Start,Cron
 X-KDE-Keywords[nl]=Autostartbeheerder,autostarten,opstarten,opstarten systeem,opstarten kde,cron
 X-KDE-Keywords[pl]=Menadżer autostartu,autostart,uruchamianie,uruchamianie systemu,kde start,cron
