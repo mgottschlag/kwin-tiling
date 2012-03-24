@@ -163,7 +163,7 @@ Item {
     }
         
     BatteryIcon {
-        imagePath: "widgets/battery-oxygen"
+        monochrome: false
         hasBattery: dialog.hasBattery
         percent: dialog.percent
         pluggedIn: dialog.pluggedIn

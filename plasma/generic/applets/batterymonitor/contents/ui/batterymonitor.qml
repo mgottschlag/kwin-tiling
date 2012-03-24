@@ -54,7 +54,7 @@ Item {
                 height: width
                 
                 BatteryIcon {
-                    imagePath: "icons/battery"
+                    monochrome: true
                     hasBattery: pmSource.data["Battery"]["Has Battery"]
                     percent: pmSource.data["Battery0"]["Percent"]
                     pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]

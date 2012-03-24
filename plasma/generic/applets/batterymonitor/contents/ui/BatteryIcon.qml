@@ -22,12 +22,15 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 
 Item {
     
-    property alias imagePath: svg.imagePath
+    property bool monochrome
     property bool hasBattery
     property int percent
     property bool pluggedIn
     
-    PlasmaCore.Svg { id: svg }
+    PlasmaCore.Svg {
+        id: svg
+        imagePath: monochrome ? "icons/battery" : "widgets/battery-oxygen"
+    }
 
     PlasmaCore.SvgItem {
         anchors.fill: parent
