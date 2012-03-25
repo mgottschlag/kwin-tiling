@@ -102,7 +102,11 @@ the profiles, and has no effect on how they are applied.</para>
 <para>There are several ways to invoke the &kwin; Rule Editor.  Below are two:
 </para>
 <itemizedlist>
-<listitem><para>Right-click on the title-bar of any window, choose <guilabel>Configure Window Behavior ...</guilabel> and in the <guilabel>Configure</guilabel> window, select <guilabel>Window Rules</guilabel> or</para></listitem>
+<listitem><para>Right-click on the title-bar of any window, choose <guilabel>Configure Window Settings ...</guilabel> and in the <guilabel>Configure</guilabel> window, select <guilabel>Window Rules</guilabel> or</para></listitem>
+</itemizedlist>
+<para><note><para>Pre 4.9:  choose <guilabel>Configure Window Behvaior ...</guilabel></para></note>
+</para>
+<itemizedlist>
 <listitem><para><menuchoice><guimenu>System Settings</guimenu><guisubmenu>Window Behavior</guisubmenu><guimenuitem>Window Rules</guimenuitem></menuchoice></para></listitem>
 </itemizedlist>
 <para>The main window is used to:
@@ -200,7 +204,7 @@ the profiles, and has no effect on how they are applied.</para>
 <itemizedlist>
 <listitem><para><guilabel>Regular Expression</guilabel> - Qt's regular expressions are implemented - see <ulink url="http://doc.qt.nokia.com/latest/qregexp.html">pattern matching using regular expressions</ulink>.</para></listitem>
 </itemizedlist>
-<sect1 id="detect-window-properties"><title>Detect Window Properties</title> 
+<sect1 id="detect-window-properties"><title>Detect Window Properties</title>
 <para>
 <screenshot>
 <screeninfo></screeninfo>
@@ -235,7 +239,7 @@ the profiles, and has no effect on how they are applied.</para>
 </para>
 </sect1>
 </chapter>
-<chapter id="window-attributes1"><title>Window Attributes</title> 
+<chapter id="window-attributes1"><title>Window Attributes</title>
 <para>
 <screenshot>
 <screeninfo></screeninfo>
@@ -258,7 +262,7 @@ the profiles, and has no effect on how they are applied.</para>
 </orderedlist>
 <para>Each attribute has a set of parameters which determines its disposition.
 </para>
-<sect1 id="parameters"><title>Parameters</title> 
+<sect1 id="parameters"><title>Parameters</title>
 <para>Each attribute, minimally, accepts one of the following parameters.  Additional, attribute-specific arguments are listed within each <link linkend="attributes">attribute</link> definition.
 </para>
 <variablelist>
@@ -284,20 +288,19 @@ the profiles, and has no effect on how they are applied.</para>
   </varlistentry>
   <varlistentry><term><emphasis role="bold">Apply Now, Force Temporarily</emphasis></term>
     <listitem>
-    <para>Apply/Force the setting once and unset the attribute. The difference between the two is at run-time, <guilabel>Apply Now</guilabel> allows the attribute to be changed and <guilabel>Force Temporarily</guilabel> prohibits it to be altered until all affected windows exit.</para>
+    <para>Apply/Force the setting once and unset the attribute.The difference between the two is at run-time, <guilabel>Apply Now</guilabel> allows the attribute to be changed and <guilabel>Force Temporarily</guilabel> prohibits it to be altered until all affected windows exit.</para>
      </listitem>
   </varlistentry>
 </variablelist>
 <para><warning><para>For <guilabel>Apply Now</guilabel>, if the rule has no other attributes set, the rule is deleted after evaluation whereas <guilabel>Force Temporarily</guilabel>, the rule is deleted after the last affected window terminates.</para></warning>
 </para>
-
 </sect1>
-<sect1 id="attributes"><title>Attributes</title> 
+<sect1 id="attributes"><title>Attributes</title>
 <para><tip><para>The <guilabel>Detect Window Properties</guilabel> button back-fills attribute-specific values - for more information see <link linkend="window-matching">Window Matching</link>.  For example the height and width values of the <guilabel>Size</guilabel> attribute is set to the height and width of the detected window.</para></tip>
 </para>
 <para><tip><para><guilabel>Yes/No</guilabel> arguments are used to toggle on or off attributes.  Leniency with grammar helps one understand how a setting will be processed.  <inlinemediaobject> <imageobject> <imagedata fileref="Face-smile.png" format="PNG"/> </imageobject> </inlinemediaobject>  For example, the attribute <guilabel>Skip taskbar</guilabel>, when set to <guilabel>No</guilabel> means do not skip the taskbar.  In other words, show the window in the taskbar.  <inlinemediaobject> <imageobject> <imagedata fileref="Face-smile.png" format="PNG"/> </imageobject> </inlinemediaobject></para></tip>
 </para>
-<sect2 id="size--position"><title>Size &amp; Position</title> 
+<sect2 id="size--position"><title>Size &amp; Position</title>
 <variablelist>
   <varlistentry><term><emphasis role="bold">Position</emphasis></term>
     <listitem>
@@ -335,7 +338,7 @@ the profiles, and has no effect on how they are applied.</para>
   <varlistentry><term><emphasis role="bold">Initial placement</emphasis></term>
     <listitem>
     <para>Override the global window placement strategy with one of the following:</para>
-    <itemizedlist>
+<itemizedlist>
 <listitem><para><guilabel>Default</guilabel> - use the global window placement strategy.</para></listitem>
 <listitem><para><guilabel>No Placement</guilabel> - top-left corner.</para></listitem>
 <listitem><para><guilabel>Smart</guilabel> - place where no other window exists.</para></listitem>
@@ -347,6 +350,7 @@ the profiles, and has no effect on how they are applied.</para>
 <listitem><para><guilabel>Under Mouse</guilabel></para></listitem>
 <listitem><para><guilabel>On Main Window</guilabel> - restrict placement of a child window to the boundaries of the parent window.</para></listitem>
 </itemizedlist>
+
      </listitem>
   </varlistentry>
   <varlistentry><term><emphasis role="bold">Ignore requested geometry</emphasis></term>
@@ -361,12 +365,12 @@ the profiles, and has no effect on how they are applied.</para>
   </varlistentry>
   <varlistentry><term><emphasis role="bold">Obey geometry restrictions</emphasis></term>
     <listitem>
-    <para>Toggle whether to adhere to the window's requested aspect ratio or <emphasis>base increment</emphasis>. In order to understand this attribute, some background is required.  Briefly, windows must request from the Window Manager, a base increment:  the minimum number of <emphasis>height</emphasis> X <emphasis>width</emphasis> pixels per re-size request.  Typically, it's 1x1.  Other windows though, for example terminal emulators or editors, use fixed-fonts and request their base-increment according to the size of one character.</para>
+    <para>Toggle whether to adhere to the window's requested aspect ratio or <emphasis>base increment</emphasis>.In order to understand this attribute, some background is required.  Briefly, windows must request from the Window Manager, a base increment:  the minimum number of <emphasis>height</emphasis> X <emphasis>width</emphasis> pixels per re-size request.  Typically, it's 1x1.  Other windows though, for example terminal emulators or editors, use fixed-fonts and request their base-increment according to the size of one character.</para>
      </listitem>
   </varlistentry>
 </variablelist>
 </sect2>
-<sect2 id="arrangement--access"><title>Arrangement &amp; Access</title> 
+<sect2 id="arrangement--access"><title>Arrangement &amp; Access</title>
 <variablelist>
   <varlistentry><term><emphasis role="bold">Keep above, Keep below</emphasis></term>
     <listitem>
@@ -380,7 +384,7 @@ the profiles, and has no effect on how they are applied.</para>
   </varlistentry>
   <varlistentry><term><emphasis role="bold">Autogroup in foreground</emphasis></term>
     <listitem>
-    <para>Toggle whether to make the window active when it is added to the current <guilabel>Autogroup</guilabel> group.</para>
+    <para>Toggle whether to make the window active when it is added to the current Autogroup.</para>
      </listitem>
   </varlistentry>
   <varlistentry><term><emphasis role="bold">Autogroup by ID</emphasis></term>
@@ -430,7 +434,7 @@ the profiles, and has no effect on how they are applied.</para>
   </varlistentry>
 </variablelist>
 </sect2>
-<sect2 id="appearance--fixes"><title>Appearance &amp; Fixes</title> 
+<sect2 id="appearance--fixes"><title>Appearance &amp; Fixes</title>
 <variablelist>
   <varlistentry><term><emphasis role="bold">No titlebar and frame</emphasis></term>
     <listitem>
@@ -461,6 +465,7 @@ the profiles, and has no effect on how they are applied.</para>
 <listitem><para>High</para></listitem>
 <listitem><para>Extreme - The window's focus request is denied.  Focus is only granted by explicitly requesting via the  mousing.</para></listitem>
 </itemizedlist>
+
      </listitem>
   </varlistentry>
 </variablelist>
@@ -474,7 +479,7 @@ the profiles, and has no effect on how they are applied.</para>
   </varlistentry>
   <varlistentry><term><emphasis role="bold">Ignore global shortcuts</emphasis></term>
     <listitem>
-    <para>Toggle whether to ignore global shortcuts (as defined by <menuchoice><guimenu>System Settings</guimenu><guisubmenu>Shortcuts and Gestures</guisubmenu><guimenuitem>Global Shortcuts</guimenuitem></menuchoice> or by running <command>kcmshell4 keys</command> in <guilabel>konsole</guilabel>) while the window is active.</para>
+    <para>Toggle whether to ignore global shortcuts (as defined by <menuchoice><guimenu>System Settings</guimenu><guisubmenu>Shortcuts and Gestures</guisubmenu><guimenuitem>Global Shortcuts</guimenuitem></menuchoice> or by running <varname>kcmshell4 keys</varname> in <guilabel>konsole</guilabel>) while the window is active.</para>
      </listitem>
   </varlistentry>
   <varlistentry><term><emphasis role="bold">Closeable</emphasis></term>
@@ -500,6 +505,7 @@ the profiles, and has no effect on how they are applied.</para>
 <listitem><para>Desktop</para></listitem>
 <listitem><para>Standalone Menubar</para></listitem>
 </itemizedlist>
+
      </listitem>
   </varlistentry>
 </variablelist>
@@ -515,7 +521,7 @@ the profiles, and has no effect on how they are applied.</para>
 </sect2>
 </sect1>
 </chapter>
-<chapter id="examples"><title>Examples</title> 
+<chapter id="examples"><title>Examples</title>
 <para><note><para>The first example details all the necessary steps to create the rules.  In order to keep this page a manageable size, subsequent examples only list steps specific to the example.</para></note>
 </para>
 <para><note><para>The <guilabel>Pager</guilabel> attribute refers to the <guilabel>Virtual Desktop Manager</guilabel>:
@@ -531,7 +537,7 @@ the profiles, and has no effect on how they are applied.</para>
   </mediaobject>
 </screenshot></para></note>
 </para>
-<sect1 id="pin-a-window-to-a-desktop-and-set-other-attributes"><title>Pin a Window to a Desktop and set other Attributes</title> 
+<sect1 id="pin-a-window-to-a-desktop-and-set-other-attributes"><title>Pin a Window to a Desktop and set other Attributes</title>
 <para>Pin &akregator; to <emphasis>Virtual Desktop 2</emphasis>.  Additionally, start the application with a preferred size and position.  For each attribute, use the <guilabel>Apply Initially</guilabel> <link linkend="parameters">parameter</link> so it can be overridden at run-time.
 </para>
 <para>The &kwin; rule is created as follows:
@@ -561,7 +567,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Select the <guilabel>Window Rules</guilabel> option in the left column and click on the <guilabel>New...</guilabel> button:
+<listitem><para>Select the <guilabel>Window Rules</guilabel> in the left column and click on <guilabel>New...</guilabel>:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -573,7 +579,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>The <guilabel>Edit Window-Specific Settings</guilabel> window is displayed.  The <guilabel>Window matching</guilabel> tab is the default tab:
+<listitem><para>The <guilabel>Edit Window-Specific Settings</guilabel> window is displayed.  <guilabel>Window matching</guilabel> is the default tab:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -585,7 +591,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Click on <guilabel>Detect Window Properties</guilabel> and with <guilabel>0s delay</guilabel> the cursor immediately turns into cross-hairs.  Click (anywhere) inside the &akregator; window (but not the title bar).  The window criteria are presented.  Match only by <guilabel>primary class name</guilabel> so leave the check boxes unchecked - for additional information see <link linkend="window-matching">window matching</link>:
+<listitem><para>Click <guilabel>Detect Window Properties</guilabel> with <guilabel>0s delay</guilabel> the cursor immediately turns into cross-hairs.  Click (anywhere) inside the &akregator; window (but not the title bar).  The window criteria are presented.  Match only by primary class name so leave the check boxes unchecked - for additional information see <link linkend="window-matching">window matching</link>:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -597,7 +603,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful <guilabel>Description</guilabel> (which is displayed in the <guilabel>KWin Rule</guilabel> window):
+<listitem><para>Clicking <guilabel>OK</guilabel> the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful text in the <guilabel>Description</guilabel> field (which is displayed in the <guilabel>KWin Rule</guilabel> window):
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -621,7 +627,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window returns to the main <guilabel>KWin Rules</guilabel>.  The new rule with its <guilabel>Description</guilabel> is listed:
+<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window returns to the main <guilabel>KWin Rules</guilabel>.  The new rule with its description is listed:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -637,20 +643,20 @@ the profiles, and has no effect on how they are applied.</para>
 <listitem><para>Done.</para></listitem>
 </orderedlist>
 </sect1>
-<sect1 id="application-on-all-desktops-and-handle-one-child-window-uniquely"><title>Application on all Desktops and Handle One Child Window Uniquely</title> 
-<para>Except for conversation windows, display <guilabel>Kopete</guilabel> and its children windows on all desktops and skip the systray and pager.  For children conversation windows, treat them as the parent window except show them in systray.
+<sect1 id="application-on-all-desktops-and-handle-one-child-window-uniquely"><title>Application on all Desktops and Handle One Child Window Uniquely</title>
+<para>Except for conversation windows, display &kopete; and its children windows on all desktops and skip the systray and pager.  For children conversation windows, treat them as the parent window except show them in systray.
 </para>
 <para>For each attribute, use the <guilabel>Force</guilabel> <link linkend="parameters">parameter</link> so it can not be overridden.
 </para>
 <para>In order to implement the above, two rules need to be created:
 </para>
 <orderedlist>
-<listitem><para>A rule for <emphasis>Kopete Chat</emphasis> and</para></listitem>
-<listitem><para>A rule for <emphasis>Kopete</emphasis></para></listitem>
+<listitem><para>A rule for <guilabel>Kopete Chat</guilabel> and</para></listitem>
+<listitem><para>A rule for &kopete;</para></listitem>
 </orderedlist>
-<para>The <emphasis>Kopete Chat</emphasis> rule's matching-criteria is more restrictive than the <emphasis>Kopete</emphasis> rule as it needs to match a specific <guilabel>Window Role</guilabel>:  the chat window.  Due to <link linkend="rule-evaluation">rule evaluation</link> processing, the <guilabel>Kopete Chat</guilabel> rule must precede the <guilabel>Kopete</guilabel> rule in the <link linkend="kopete-kwin-rule-list"><guilabel>KWin Rule</guilabel> list for <guilabel>Kopete</guilabel>.</link>
+<para>The <guilabel>Kopete Chat</guilabel> rule's matching-criteria is more restrictive than the <emphasis>Kopete</emphasis> rule as it needs to match a specific Window Role:  the chat window.  Due to <link linkend="rule-evaluation">rule evaluation</link> processing, the <guilabel>Kopete Chat</guilabel> rule must precede the &kopete; rule in the <link linkend="kopete-kwin-rule-list">KWin Rule list for Kopete</link>.
 </para>
-<sect2 id="kopete-chat-rule"><title>Kopete Chat Rule</title> 
+<sect2 id="kopete-chat-rule"><title>Kopete Chat Rule</title>
 <para>Assuming a <guilabel>Kopete Chat</guilabel> window is open:
 </para>
 <orderedlist>
@@ -666,7 +672,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful <guilabel>Description</guilabel>:
+<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful text in the <guilabel>Description</guilabel> box:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -692,14 +698,14 @@ the profiles, and has no effect on how they are applied.</para>
 </screenshot></para></listitem>
 <listitem><para>Click through to complete entry of the rule.</para></listitem>
 </orderedlist>
-<para><note><para>The <guilabel>Skip taskbar</guilabel> attribute is set to <guilabel>No</guilabel> to display the window in the taskbar which loosely translates to:  <guilabel>no</guilabel> <emphasis>do not</emphasis> <guilabel>skip taskbar</guilabel> <inlinemediaobject> <imageobject> <imagedata fileref="Face-smile.png" format="PNG"/> </imageobject> </inlinemediaobject>.</para></note>
+<para><note><para>The <guilabel>Skip taskbar</guilabel> attribute is set to <guilabel>No</guilabel> to display the window in the taskbar which loosely translates to:  <emphasis>no</emphasis> <emphasis>do not</emphasis> <emphasis>skip taskbar</emphasis> <inlinemediaobject> <imageobject> <imagedata fileref="Face-smile.png" format="PNG"/> </imageobject> </inlinemediaobject>.</para></note>
 </para>
 </sect2>
-<sect2 id="kopete-rule"><title>Kopete Rule</title> 
-<para>Assuming <guilabel>Kopete</guilabel> is open:
+<sect2 id="kopete-rule"><title>Kopete Rule</title>
+<para>Assuming &kopete; is open:
 </para>
 <orderedlist>
-<listitem><para>Use <guilabel>Detect Window Properties</guilabel> and select the <guilabel>Kopete</guilabel> window.  Match only by <guilabel>primary class name</guilabel> so leave the check boxes unchecked - for additional information see <link linkend="window-matching">window matching</link>:
+<listitem><para>Use <guilabel>Detect Window Properties</guilabel> and select the &kopete; window.  Match only by primary class name so leave the check boxes unchecked - for additional information see <link linkend="window-matching">window matching</link>:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -711,7 +717,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful <guilabel>Description</guilabel>:
+<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful text in the <guilabel>Description</guilabel> box:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -738,8 +744,8 @@ the profiles, and has no effect on how they are applied.</para>
 <listitem><para>Click through to complete entry of the rule.</para></listitem>
 </orderedlist>
 </sect2>
-<sect2 id="kopete-kwin-rule-list"><title>Kopete KWin Rule List</title> 
-<para>As mentioned, due to <link linkend="rule-evaluation">rule evaluation</link> processing, the <guilabel>Kopete Chat</guilabel> rule must precede the <guilabel>Kopete</guilabel> rule:
+<sect2 id="kopete-kwin-rule-list"><title>Kopete KWin Rule List</title>
+<para>As mentioned, due to <link linkend="rule-evaluation">rule evaluation</link> processing, the <guilabel>Kopete Chat</guilabel> rule must precede the &kopete; rule:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -754,13 +760,13 @@ the profiles, and has no effect on how they are applied.</para>
 </para>
 </sect2>
 </sect1>
-<sect1 id="suppress-a-window-from-showing-on-pager"><title>Suppress a Window from showing on Pager</title> 
+<sect1 id="suppress-a-window-from-showing-on-pager"><title>Suppress a Window from showing on Pager</title>
 <para><guilabel>KNotes</guilabel> currently does not allow for its notes to skip the pager however a rule easily solves this shortcoming.
 </para>
 <para>Assuming a <emphasis>sticky note</emphasis>' window is available:
 </para>
 <orderedlist>
-<listitem><para>Use <guilabel>Detect Window Properties</guilabel> and select any <emphasis>sticky note</emphasis> window.  Match only by <guilabel>primary class name</guilabel> so leave the check boxes unchecked - for additional information see <link linkend="window-matching">window matching</link>:
+<listitem><para>Use <guilabel>Detect Window Properties</guilabel> and select any <emphasis>sticky note</emphasis> window.  Match only by primary class name so leave the check boxes unchecked - for additional information see <link linkend="window-matching">window matching</link>:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -772,7 +778,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful <guilabel>Description</guilabel>:
+<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful text in the <guilabel>Description</guilabel> box:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -784,7 +790,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Enable the <guilabel>Skip Pager</guilabel> attribute with the <guilabel>Force</guilabel> the <link linkend="parameters">parameter</link>:
+<listitem><para>Enable the <guilabel>Skip Pager</guilabel> attribute with the <guilabel>Force</guilabel> <link linkend="parameters">parameter</link>:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -799,7 +805,7 @@ the profiles, and has no effect on how they are applied.</para>
 <listitem><para>Click through to complete entry of the rule.</para></listitem>
 </orderedlist>
 </sect1>
-<sect1 id="force-a-window-to-the-top"><title>Force a Window to the Top</title> 
+<sect1 id="force-a-window-to-the-top"><title>Force a Window to the Top</title>
 <para>To pop an active window to the top, set its <guilabel>Focus stealing prevention</guilabel> attribute to <guilabel>None</guilabel>, typically, in conjunction with the <guilabel>Force</guilabel> <link linkend="parameters">parameter</link>:
 <screenshot>
 <screeninfo></screeninfo>
@@ -814,17 +820,17 @@ the profiles, and has no effect on how they are applied.</para>
 </screenshot>
 </para>
 </sect1>
-<sect1 id="multiple-rules-per-application"><title>Multiple Rules per Application</title> 
-<para><guilabel>Thunderbird</guilabel> has several different child windows.  This example:
+<sect1 id="multiple-rules-per-application"><title>Multiple Rules per Application</title>
+<para><application>Thunderbird</application> has several different child windows.  This example:
 </para>
 <itemizedlist>
-<listitem><para>Pin <guilabel>Thunderbird</guilabel>'s main window on <emphasis>Virtual Desktop 1</emphasis> with a specific size and location on the desktop.</para></listitem>
-<listitem><para>Allow the <guilabel>Thunderbird</guilabel> composer window to reside on any desktop and when activated, force focus and pop it to the top of all windows.</para></listitem>
-<listitem><para>Pop the <guilabel>Thunderbird</guilabel> reminder to the top and do not give it focus so it isn't inadvertently dismissed.</para></listitem>
+<listitem><para>Pin <application>Thunderbird</application>'s main window on <emphasis>Virtual Desktop 1</emphasis> with a specific size and location on the desktop.</para></listitem>
+<listitem><para>Allow the <application>Thunderbird</application> composer window to reside on any desktop and when activated, force focus and pop it to the top of all windows.</para></listitem>
+<listitem><para>Pop the <application>Thunderbird</application> reminder to the top and do not give it focus so it isn't inadvertently dismissed.</para></listitem>
 </itemizedlist>
 <para>Each rule's matching criteria is sufficiently restrictive so their order within the main &kwin; window is not important to affect <link linkend="rule-evaluation">rule evaluation</link>.
 </para>
-<sect2 id="thunderbird---main"><title>Thunderbird - Main</title> 
+<sect2 id="thunderbird---main"><title>Thunderbird - Main</title>
 <para>Assuming the <guilabel>Thunderbird Main</guilabel> window is open, sized and position to suit:
 </para>
 <orderedlist>
@@ -840,7 +846,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful <guilabel>Description</guilabel>:
+<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful text in the <guilabel>Description</guilabel> box:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -867,7 +873,7 @@ the profiles, and has no effect on how they are applied.</para>
 <listitem><para>Click through to complete entry of the rule.</para></listitem>
 </orderedlist>
 </sect2>
-<sect2 id="thunderbird---composer"><title>Thunderbird - Composer</title> 
+<sect2 id="thunderbird---composer"><title>Thunderbird - Composer</title>
 <para>Assuming a <guilabel>Thunderbird Composer</guilabel> window is open:
 </para>
 <orderedlist>
@@ -883,7 +889,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful <guilabel>Description</guilabel>:
+<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful text in the <guilabel>Description</guilabel> box:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -910,7 +916,7 @@ the profiles, and has no effect on how they are applied.</para>
 <listitem><para>Click through to complete entry of the rule.</para></listitem>
 </orderedlist>
 </sect2>
-<sect2 id="thunderbird---reminder"><title>Thunderbird - Reminder</title> 
+<sect2 id="thunderbird---reminder"><title>Thunderbird - Reminder</title>
 <para>Assuming a <guilabel>Thunderbird Reminder</guilabel> window is open:
 </para>
 <orderedlist>
@@ -926,7 +932,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful <guilabel>Description</guilabel>:
+<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful text in the <guilabel>Description</guilabel> box:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -956,18 +962,18 @@ the profiles, and has no effect on how they are applied.</para>
 </sect2>
 </sect1>
 </chapter>
-<chapter id="application-workarounds"><title>Application Workarounds</title> 
+<chapter id="application-workarounds"><title>Application Workarounds</title>
 <para>Below are Workarounds for misbehaving applications.
 </para>
 <para><tip><para>If you are unfamiliar with creating &kwin; Rules, see this <link linkend="pin-a-window-to-a-desktop-and-set-other-attributes">detailed example</link> to base your new rule.</para></tip>
 </para>
-<sect1 id="full-screen-re-size-error"><title>Full-screen Re-size Error</title> 
+<sect1 id="full-screen-re-size-error"><title>Full-screen Re-size Error</title>
 <para>&Emacs; and <guilabel>gVim</guilabel>, when maximized (full-screen mode) and under certain conditions may encounter window re-sizing issues - see <ulink url="https://bugs.kde.org/show_bug.cgi?id=252314">Emacs window resizes ...</ulink>  A &kwin; Rule will work-around the issue.
 </para>
 <para>Assuming an &Emacs; window is open:
 </para>
 <orderedlist>
-<listitem><para>Use <guilabel>Detect Window Properties</guilabel> and select the <emphasis>Emacs</emphasis> window.  Match only by <guilabel>primary class name</guilabel> so leave the check boxes unchecked - for additional information see <link linkend="window-matching">window matching</link>
+<listitem><para>Use <guilabel>Detect Window Properties</guilabel> and select the &Emacs; window.  Match only by <guilabel>primary class name</guilabel> so leave the check boxes unchecked - for additional information see <link linkend="window-matching">window matching</link>
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -979,7 +985,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful <guilabel>Description</guilabel>:
+<listitem><para>Clicking <guilabel>OK</guilabel> in the previous window back-fills the results in the <guilabel>Window Matching</guilabel> tab.  Enter a meaningful text in the <guilabel>Description</guilabel> text box:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -991,7 +997,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Ignore &Emacs;'s full-screen request by enabling the <guilabel>Obey geometry restricts</guilabel> attribute, toggling it to off (<guilabel>No</guilabel>) to ignore and <guilabel>Force</guilabel> the <link linkend="parameters">parameter</link>:
+<listitem><para>Ignore &Emacs;'s full-screen request by enabling the <guilabel>Obey geometry restrictions</guilabel> attribute, toggling it to off (<guilabel>No</guilabel>) to ignore and selecting the <guilabel>Force</guilabel>  <link linkend="parameters">parameter</link>:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
@@ -1012,7 +1018,7 @@ the profiles, and has no effect on how they are applied.</para>
 <chapter id="credits">
 <title>Credits and License</title>
       <para>
-Documentation Copyright see the UserBase 
+Documentation Copyright see the UserBase
       <ulink url="http://userbase.kde.org/index.php?title=KWin Rules&amp;action=history">KWin Rules page history</ulink></para>
       <!-- TRANS:CREDIT_FOR_TRANSLATORS -->
 &underFDL;
