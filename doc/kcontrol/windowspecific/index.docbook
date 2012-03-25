@@ -102,9 +102,9 @@ the profiles, and has no effect on how they are applied.</para>
 <para>There are several ways to invoke the &kwin; Rule Editor.  Below are two:
 </para>
 <itemizedlist>
-<listitem><para>Right-click on the title-bar of any window, choose <guilabel>Configure Window Settings ...</guilabel> and in the <guilabel>Configure</guilabel> window, select <guilabel>Window Rules</guilabel> or</para></listitem>
+<listitem><para>Right-click on the title-bar of any window, choose <guilabel>Configure Window Settings...</guilabel> and in the <guilabel>Configure</guilabel> window, select <guilabel>Window Rules</guilabel> or</para></listitem>
 </itemizedlist>
-<para><note><para>Pre 4.9:  choose <guilabel>Configure Window Behvaior ...</guilabel></para></note>
+<para><note><para>Pre 4.9:  choose <guilabel>Configure Window Behavior...</guilabel></para></note>
 </para>
 <itemizedlist>
 <listitem><para><menuchoice><guimenu>System Settings</guimenu><guisubmenu>Window Behavior</guisubmenu><guimenuitem>Window Rules</guimenuitem></menuchoice></para></listitem>
