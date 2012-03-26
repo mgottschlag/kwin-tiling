@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Contour
 Name[ia]=Bordo
+Name[nb]=Kontur
 Name[nds]=Ümreet
 Name[nl]=Contour
 Name[pl]=Kontur
@@ -14,6 +15,7 @@ Name[zh_TW]=輪廓
 Comment=Plasma Active theme
 Comment[cs]=Motiv Plasma Active
 Comment[ia]=Thema de Plasma Active
+Comment[nb]=Aktivt Plasma-tema
 Comment[nl]=Thema Plasma Active
 Comment[pl]=Aktywny motyw Plazmy
 Comment[pt]=Tema do Plasma Active

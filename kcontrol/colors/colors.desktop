@@ -108,6 +108,7 @@ Comment=Change the colors used in applications
 Comment[cs]=Změňte barvy použité v aplikacích
 Comment[de]=Änderung der von Programmen verwendeten Farben
 Comment[ia]=Modifica le colores usate in applicationes
+Comment[nb]=Endre fargene som brukes i programmer
 Comment[nds]=De Programmklören ännern
 Comment[nl]=De in toepassingen gebruikte kleuren wijzigen
 Comment[pl]=Zmień kolory używane w programach
@@ -120,6 +121,7 @@ Comment[zh_TW]=變更用於應用程式的顏色
 
 X-KDE-Keywords=colors,colours,scheme,contrast,Widget colors,Color Scheme,color style,color theme
 X-KDE-Keywords[ia]=colores,colores,schema,contrasto,colores de Widget,Schema de Color,stilo de color, thema de color
+X-KDE-Keywords[nb]=farger,oppsett,kontrast,elementfarger,fargeoppsett,fargestil,fargetema
 X-KDE-Keywords[nds]=Klöör,Klören,Schema,Kontrast,Lüttprogramm-Klören,Klöörschema,Klöörstil,Klöörmuster
 X-KDE-Keywords[nl]=colors,colours, kleuren,scheme,schema,contrast,Widget colors,Widgetkleuren,Color Scheme,kleurschema,kleurstijl,kleurthema
 X-KDE-Keywords[pl]=kolory,schemat,kontrast,kolory elementów interfejsu,zestaw kolorów,styl kolorów,motyw kolorów

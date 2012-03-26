@@ -109,6 +109,7 @@ Comment=Configure date and time settings
 Comment[cs]=Nastavení voleb data a času
 Comment[de]=Einstellungen für Datum und Zeit ändern
 Comment[ia]=Configura preferentias de data e tempore
+Comment[nb]=Innstillinger for dato og tid
 Comment[nds]=Instellen vun Datum un Tiet fastleggen
 Comment[nl]=Instellingen van datum en tijd instellen
 Comment[pl]=Konfiguruj ustawienia daty i czasu
@@ -121,6 +122,7 @@ Comment[zh_TW]=設定日期與時間
 
 X-KDE-Keywords=clock,date,time,time zone,ntp,synchronize,calendar,local time,region time
 X-KDE-Keywords[ia]=horologio,data,tempore,fuso horari,ntp,synchronisa,calendario,tempore local,tempore de region
+X-KDE-Keywords[nb]=klokke,dato,tid,tidssone,ntp,synkronisere,kalender,lokal tid,regiontid
 X-KDE-Keywords[nds]=Klock,Datum,Tiet,Tietrebeet,NTP,synkroniseren,Kalenner,lokaal Tiet
 X-KDE-Keywords[nl]=klok,datum,tijd,tijdzone,ntp,synchroniseren,agenda,lokale tijd,tijd in regio
 X-KDE-Keywords[pl]=zegar,data,czas,strefa czasowa,ntp,synchronizuj,kalendarz,czas lokalny,czas regionalny
