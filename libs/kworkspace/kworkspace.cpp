@@ -53,10 +53,6 @@
 #include <unistd.h>
 #endif // HAVE_UNISTD_H
 
-#ifdef HAVE_MALLOC_H
-#include <malloc.h>
-#endif // HAVE_MALLOC_H
-
 #include <pwd.h>
 #include <sys/types.h>
 
@@ -255,26 +251,6 @@ void propagateSessionManager()
         ::setenv( "SESSION_MANAGER", s.toLatin1(), true  );
     }
 #endif
-}
-
-void trimMalloc()
-{
-#ifndef Q_WS_WIN
-#ifdef M_TRIM_THRESHOLD
-    // Prevent fragmentation of the heap by malloc (glibc).
-    //
-    // The default threshold is 128*1024, which can result in a large memory usage
-    // due to fragmentation especially if we use the raster graphicssystem. On the
-    // otherside if the threshold is too low, free() starts to permanently ask the kernel
-    // about shrinking the heap.
-#ifdef HAVE_UNISTD_H
-    const int pagesize = sysconf(_SC_PAGESIZE);
-#else
-    const int pagesize = 4*1024;
-#endif // HAVE_UNISTD_H
-    mallopt(M_TRIM_THRESHOLD, 5*pagesize);
-#endif // M_TRIM_THRESHOLD
-#endif // Q_WS_WIN
 }
 
 } // end namespace
