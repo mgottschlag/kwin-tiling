@@ -472,12 +472,8 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         //Create the localized date string if needed
         if (m_dateStyle) {
             // JPL This needs a complete rewrite for l10n issues
-            KLocale tmpLocale(*KGlobal::locale());
-            tmpLocale.setCalendar(calendar()->calendarType()); 
-            tmpLocale.setDateFormat("%e"); // day number of the month
-            QString day = tmpLocale.formatDate(m_date);
-            tmpLocale.setDateFormat("%m"); // short form of the month
-            QString month = tmpLocale.formatDate(m_date);
+            QString day = KGlobal::locale()->calendar()->formatDate(m_date, KLocale::Day, KLocale::ShortNumber);
+            QString month = KGlobal::locale()->calendar()->formatDate(m_date, KLocale::Month, KLocale::LongNumber);
 
             if (m_dateStyle == 1) {         //compact date
                 dateString = i18nc("@label Compact date: "
