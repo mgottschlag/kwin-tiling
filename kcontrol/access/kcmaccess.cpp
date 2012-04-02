@@ -108,14 +108,6 @@ void ExtendedIntNumInput::slotSliderValueChanged(int val)
 	spinBox()->setValue ((int)floor(0.5 + linearVal));
 }
 
-static bool needToRunKAccessDaemon( KConfig * )
-{
-	// We always start the KAccess Daemon, if it is not needed,
-	// it will terminate itself after configuring the AccessX
-	// features.
-	return true;
-}
-
 QString mouseKeysShortcut (Display *display) {
   // Calculate the keycode
   KeySym sym = XK_MouseKeys_Enable;
@@ -735,21 +727,9 @@ void KAccessConfig::save()
   }
 
   // make kaccess reread the configuration
-  // When turning things off, it needs to be done by kaccess,
-  // so don't actually kill it *shrug*.
-  if ( true /*needToRunKAccessDaemon( config )*/ )
-      KToolInvocation::startServiceByDesktopName("kaccess");
-
-  else // don't need it -> kill it
-  {
-#ifdef __GNUC__
-#warning "kde4: dbus port: need to test it"
-#endif
-      QDBusInterface kaccess("org.kde.kaccess", "/KAccess", "org.kde.kaccess.KAccess");
-	  kaccess.call("quit");
-      //DCOPRef kaccess( "kaccess", "qt/kaccess" );
-      //kaccess.send( "quit" );
-  }
+  // turning a11y features off needs to be done by kaccess
+  // so run it to clear any enabled features and it will exit if it should
+  KToolInvocation::startServiceByDesktopName("kaccess");
 
   emit changed(false);
 }
@@ -851,9 +831,7 @@ extern "C"
   KDE_EXPORT void kcminit_access()
   {
     KConfig config("kaccessrc", KConfig::NoGlobals);
-    const bool run = needToRunKAccessDaemon(&config);
-    if (run)
-      KToolInvocation::startServiceByDesktopName("kaccess");
+    KToolInvocation::startServiceByDesktopName("kaccess");
   }
 }
 
