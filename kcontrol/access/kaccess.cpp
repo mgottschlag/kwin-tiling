@@ -239,7 +239,7 @@ void KAccessApp::readSettings()
   else
      xkb->ctrls->ax_options &= ~(XkbAX_FeatureFBMask | XkbAX_SlowWarnFBMask);
 
-  _gestureConfirmation = keyboardGroup.readEntry("GestureConfirmation", true);
+  _gestureConfirmation = keyboardGroup.readEntry("GestureConfirmation", false);
 
   _kNotifyModifiers = keyboardGroup.readEntry("kNotifyModifiers", false);
   _kNotifyAccessX = keyboardGroup.readEntry("kNotifyAccessX", false);
