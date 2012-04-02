@@ -282,7 +282,8 @@ void KAccessApp::readSettings()
   // select AccessX events
   XkbSelectEvents(QX11Info::display(), XkbUseCoreKbd, XkbAllEventsMask, XkbAllEventsMask);
 
-  if (!_artsBell && !_visibleBell && !_gestureConfirmation
+  // do we need to stay running to perform notifications?
+  if (!_artsBell && !_visibleBell && !(_gestures && _gestureConfirmation)
       && !_kNotifyModifiers && !_kNotifyAccessX) {
 
      // We will exit, but the features need to stay configured
