@@ -114,8 +114,8 @@ Flow {
 
     Repeater {
         id: items
-        property int itemWidth: parent.flow==Flow.LeftToRight ? parent.width/myCount : parent.width
-        property int itemHeight: parent.flow==Flow.TopToBottom ? parent.height/myCount : parent.height
+        property int itemWidth: parent.flow==Flow.LeftToRight ? (parent.width/myCount)-1 : parent.width
+        property int itemHeight: parent.flow==Flow.TopToBottom ? (parent.height/myCount)-1 : parent.height
         property int iconSize: Math.min(itemWidth, itemHeight)
 
         model: Data.data
