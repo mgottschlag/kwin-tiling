@@ -17,41 +17,66 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import Qt 4.7
+import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.qtextracomponents 0.1
 
-Item {
+Flow {
     id: lockout
+    property int minimumWidth
+    property int minimumHeight
+
     property bool show_lock: true
     property bool show_switchUser: false
     property bool show_leave: true
     property bool show_suspend: false
     property bool show_hibernate: false
     property int myCount: 2
-    property alias count: iconList.count
-    property int orientation: plasmoid.formFactor!=3 ? Qt.Horizontal : Qt.Vertical
+    property int orientation: plasmoid.formFactor<2 ? (width<height ? Qt.Vertical : Qt.Horizontal) : (plasmoid.formFactor==2 ? Qt.Horizontal : Qt.Vertical)
+
+    flow: orientation==Qt.Vertical ? Flow.TopToBottom : Flow.LeftToRight
     clip: true
+
+    // when panel is resized
+    onHeightChanged: {
+        if (plasmoid.formFactor==2) {
+            minimumWidth = width = height*myCount;
+        }
+    }
+    onWidthChanged: {
+        if (plasmoid.formFactor==3) {
+            minimumHeight = height = width*myCount;
+        }
+    }
 
     PlasmaCore.DataSource {
         id: dataEngine
         engine: "powermanagement"
         connectedSources: ["PowerDevil"]
-        interval: 0
     }
 
     Component.onCompleted: {
+        plasmoid.aspectRatioMode = 0;
         plasmoid.addEventListener('ConfigChanged', configChanged);
     }
 
-    function setSize() {
-        if (width==0 || height==0 || myCount==0)
+    // resizes the applet whenever the list of icons to be shown changes
+    // NOTE: this function should be called BEFORE updating the value of
+    // myCount. Icons auto-resize according to value of myCount. We need
+    // to first resize the applet before icons auto-resize.
+    // The new value of the count should be passed to the function, and
+    // then assign it to myCount AFTER the function returns.
+    function setSize(count) {
+        // resize the applet only if it is on a panel
+        // otherwise, the icons resize themselves
+        if (plasmoid.formFactor<2) {
             return;
+        }
 
-        if (orientation == Qt.Vertical) {
-            plasmoid.resize (width, width*myCount);
-        } else {
-            plasmoid.resize (height*myCount, height);
+        if (orientation == Qt.Vertical) { // vertical panel
+            height = minimumHeight = items.iconSize*count;
+        } else { // horizontal panel
+            width = minimumWidth = items.iconSize*count;
         }
     }
 
@@ -61,57 +86,51 @@ Item {
         show_leave = plasmoid.readConfig("show_leave");
         show_suspend = plasmoid.readConfig("show_suspend");
         show_hibernate = plasmoid.readConfig("show_hibernate");
-        myCount = show_lock+show_switchUser+show_leave+show_suspend+show_hibernate;
-        setSize();
-        updateIcons();
+
+        var newCount = show_lock+show_switchUser+show_leave+show_suspend+show_hibernate;
+        setSize(newCount);
+        myCount = newCount;
+
+        iconList.get(0).to_show = show_lock;
+        iconList.get(1).to_show = show_switchUser;
+        iconList.get(2).to_show = show_leave;
+        iconList.get(3).to_show = show_suspend;
+        iconList.get(4).to_show = show_hibernate;
     }
 
-    ListModel {
-        id: iconList
-    }
+    Repeater {
+        id: items
+        property int itemWidth: parent.flow==Flow.LeftToRight ? parent.width/myCount : parent.width
+        property int itemHeight: parent.flow==Flow.TopToBottom ? parent.height/myCount : parent.height
+        property int iconSize: Math.min(itemWidth, itemHeight)
 
-    function updateIcons() {
-        iconList.clear();
-        if (show_lock) {
-            iconList.append ({ "icon": "system-lock-screen", "op": "lock" });
+        model: ListModel {
+            id: iconList
+            ListElement { icon: "system-lock-screen"; op: "lock"; to_show: true }
+            ListElement { icon: "system-switch-user"; op: "switchUser"; to_show: false }
+            ListElement { icon: "system-shutdown"; op: "leave"; to_show: true }
+            ListElement { icon: "system-suspend"; op: "suspend"; to_show: false }
+            ListElement { icon: "system-suspend-hibernate"; op: "hibernate"; to_show: false }
         }
-        if (show_switchUser) {
-            iconList.append ({ "icon": "system-switch-user", "op": "switchUser" });
-        }
-        if (show_leave) {
-            iconList.append ({ "icon": "system-shutdown", op: "leave" });
-        }
-        if (show_suspend) {
-            iconList.append ({ "icon": "system-suspend", "op": "suspend" });
-        }
-        if (show_hibernate) {
-            iconList.append ({ "icon": "system-suspend-hibernate", "op": "hibernate" });
-        }
-    }
 
-    Flow {
-        id: iconView
-        anchors.fill: parent
-        flow: orientation==Qt.Vertical ? Flow.TopToBottom : Flow.LeftToRight
-        Repeater {
-            model: iconList
-            delegate: Item {
-                id: iconDelegate
-                width: iconView.flow==Flow.LeftToRight ? iconView.width/count : iconView.width
-                height: iconView.flow==Flow.TopToBottom ? iconView.height/count : iconView.height
+        delegate: Item {
+            id: iconDelegate
+            visible: model.to_show
+            width: items.itemWidth
+            height: items.itemHeight
 
-                QIconItem {
-                    id: iconButton
+            QIconItem {
+                id: iconButton
+                width: items.iconSize
+                height: items.iconSize
+                anchors.centerIn: parent
+                icon: QIcon(model.icon)
+                scale: mouseArea.pressed ? 0.9 : 1
+
+                MouseArea {
+                    id: mouseArea
                     anchors.fill: parent
-                    icon: QIcon(model.icon)
-                    scale: mouseArea.pressed ? 0.9 : 1
-                    smooth: true
-
-                    MouseArea {
-                        id: mouseArea
-                        anchors.fill: parent
-                        onClicked: clickHandler(op)
-                    }
+                    onClicked: clickHandler(op)
                 }
             }
         }
