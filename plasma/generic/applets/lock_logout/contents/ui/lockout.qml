@@ -36,7 +36,6 @@ Flow {
     property int orientation: plasmoid.formFactor<2 ? (width>height ? Qt.Horizontal : Qt.Vertical) : (plasmoid.formFactor==2 ? Qt.Horizontal : Qt.Vertical)
 
     flow: orientation==Qt.Vertical ? Flow.TopToBottom : Flow.LeftToRight
-    clip: true
 
     // when panel is resized
     onHeightChanged: {
@@ -114,8 +113,8 @@ Flow {
 
     Repeater {
         id: items
-        property int itemWidth: parent.flow==Flow.LeftToRight ? (parent.width/myCount)-1 : parent.width
-        property int itemHeight: parent.flow==Flow.TopToBottom ? (parent.height/myCount)-1 : parent.height
+        property int itemWidth: parent.flow==Flow.LeftToRight ? Math.floor(parent.width/myCount) : parent.width
+        property int itemHeight: parent.flow==Flow.TopToBottom ? Math.floor(parent.height/myCount) : parent.height
         property int iconSize: Math.min(itemWidth, itemHeight)
 
         model: Data.data
