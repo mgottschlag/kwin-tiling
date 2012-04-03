@@ -32,7 +32,7 @@ Flow {
     property bool show_suspend: false
     property bool show_hibernate: false
     property int myCount: 2
-    property int orientation: plasmoid.formFactor<2 ? (width<height ? Qt.Vertical : Qt.Horizontal) : (plasmoid.formFactor==2 ? Qt.Horizontal : Qt.Vertical)
+    property int orientation: plasmoid.formFactor<2 ? (width>height ? Qt.Horizontal : Qt.Vertical) : (plasmoid.formFactor==2 ? Qt.Horizontal : Qt.Vertical)
 
     flow: orientation==Qt.Vertical ? Flow.TopToBottom : Flow.LeftToRight
     clip: true
@@ -106,11 +106,12 @@ Flow {
 
         model: ListModel {
             id: iconList
-            ListElement { icon: "system-lock-screen"; op: "lock"; to_show: true }
-            ListElement { icon: "system-switch-user"; op: "switchUser"; to_show: false }
-            ListElement { icon: "system-shutdown"; op: "leave"; to_show: true }
-            ListElement { icon: "system-suspend"; op: "suspend"; to_show: false }
-            ListElement { icon: "system-suspend-hibernate"; op: "hibernate"; to_show: false }
+
+            ListElement { icon: "system-lock-screen";       op: "lockScreen";       to_show: true }
+            ListElement { icon: "system-switch-user";       op: "switchUser";       to_show: false }
+            ListElement { icon: "system-shutdown";          op: "requestShutDown";  to_show: true }
+            ListElement { icon: "system-suspend";           op: "suspendToRam";     to_show: false }
+            ListElement { icon: "system-suspend-hibernate"; op: "suspendToDisk";    to_show: false }
         }
 
         delegate: Item {
