@@ -20,6 +20,7 @@
 import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.qtextracomponents 0.1
+import "data.js" as Data
 
 Flow {
     id: lockout
@@ -91,11 +92,24 @@ Flow {
         setSize(newCount);
         myCount = newCount;
 
-        iconList.get(0).to_show = show_lock;
-        iconList.get(1).to_show = show_switchUser;
-        iconList.get(2).to_show = show_leave;
-        iconList.get(3).to_show = show_suspend;
-        iconList.get(4).to_show = show_hibernate;
+        showModel.get(0).show = show_lock;
+        showModel.get(1).show = show_switchUser;
+        showModel.get(2).show = show_leave;
+        showModel.get(3).show = show_suspend;
+        showModel.get(4).show = show_hibernate;
+    }
+
+    // model for setting whether an icon is shown
+    // this cannot be put in data.js because the the variables need to be
+    // notifiable for delegates to instantly respond to config changes
+    ListModel {
+        id: showModel
+        // defaults:
+        ListElement { show: true } // lock
+        ListElement { show: false} // switch user
+        ListElement { show: true } // leave
+        ListElement { show: false} // suspend
+        ListElement { show: false} // hibernate
     }
 
     Repeater {
@@ -104,19 +118,11 @@ Flow {
         property int itemHeight: parent.flow==Flow.TopToBottom ? parent.height/myCount : parent.height
         property int iconSize: Math.min(itemWidth, itemHeight)
 
-        model: ListModel {
-            id: iconList
-
-            ListElement { icon: "system-lock-screen";       op: "lockScreen";       to_show: true }
-            ListElement { icon: "system-switch-user";       op: "switchUser";       to_show: false }
-            ListElement { icon: "system-shutdown";          op: "requestShutDown";  to_show: true }
-            ListElement { icon: "system-suspend";           op: "suspendToRam";     to_show: false }
-            ListElement { icon: "system-suspend-hibernate"; op: "suspendToDisk";    to_show: false }
-        }
+        model: Data.data
 
         delegate: Item {
             id: iconDelegate
-            visible: model.to_show
+            visible: showModel.get(index).show
             width: items.itemWidth
             height: items.itemHeight
 
@@ -125,14 +131,21 @@ Flow {
                 width: items.iconSize
                 height: items.iconSize
                 anchors.centerIn: parent
-                icon: QIcon(model.icon)
+                icon: QIcon(modelData.icon)
                 scale: mouseArea.pressed ? 0.9 : 1
 
                 MouseArea {
                     id: mouseArea
                     anchors.fill: parent
-                    onClicked: clickHandler(op)
+                    onClicked: clickHandler(modelData.operation)
                 }
+            }
+
+            PlasmaCore.ToolTip {
+                target: iconButton
+                mainText: modelData.tooltip_mainText
+                subText: modelData.tooltip_subText
+                image: modelData.icon
             }
         }
     }
