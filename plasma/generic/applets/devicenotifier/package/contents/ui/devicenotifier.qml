@@ -245,8 +245,8 @@ Item {
             state: model["State"]
 
             percentUsage: {
-                var freeSpace = Number(model["Free Space"]);
-                var size = Number(model["Size"]);
+                var freeSpace = new Number(model["Free Space"]);
+                var size = new Number(model["Size"]);
                 var used = size-freeSpace;
                 return used*100/size;
             }
