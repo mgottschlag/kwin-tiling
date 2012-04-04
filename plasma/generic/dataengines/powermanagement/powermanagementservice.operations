@@ -8,6 +8,7 @@
     <group name="suspendToDisk"> </group>
     <group name="suspendHybrid"> </group>
     <group name="requestShutDown"> </group>
+    <group name="switchUser"> </group>
 
     <group name="beginSuppressingSleep">
         <entry name="reason" type="String">

@@ -26,6 +26,8 @@
 // kde-workspace/libs
 #include <kworkspace/kworkspace.h>
 
+#include <krunner_interface.h>
+
 #include "powermanagementjob.h"
 
 #include <kdebug.h>
@@ -68,6 +70,12 @@ void PowerManagementJob::start()
         return;
     } else if (operation == "requestShutDown") {
         requestShutDown();
+        setResult(true);
+        return;
+    } else if (operation == "switchUser") {
+        // Taken from kickoff/core/itemhandlers.cpp
+        org::kde::krunner::App krunner("org.kde.krunner", "/App", QDBusConnection::sessionBus());
+        krunner.switchUser();
         setResult(true);
         return;
     } else if (operation == "beginSuppressingSleep") {
