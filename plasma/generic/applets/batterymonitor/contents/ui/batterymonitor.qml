@@ -40,24 +40,45 @@ Item {
 
     property Component compactRepresentation: Component {
         MouseArea {
-            id: mouseArea
-            anchors.fill:parent
+            id: compactItem
+            anchors.fill: parent
             onClicked: plasmoid.togglePopup()
 
             property QtObject pmSource: plasmoid.rootItem.pmSource
+            property bool hasBattery: pmSource.data["Battery"]["Has Battery"]
+            property int percent: pmSource.data["Battery0"]["Percent"]
+            property bool pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
 
             Item {
+                id: batteryContainer
                 anchors.centerIn: parent
                 width: Math.min(parent.width, parent.height)
                 height: width
                 
                 BatteryIcon {
+                    id: batteryIcon
                     monochrome: true
-                    hasBattery: pmSource.data["Battery"]["Has Battery"]
-                    percent: pmSource.data["Battery0"]["Percent"]
-                    pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
+                    hasBattery: compactItem.hasBattery
+                    percent: compactItem.percent
+                    pluggedIn: compactItem.pluggedIn
                     anchors.fill: parent
                 }
+            }
+
+            PlasmaCore.ToolTip {
+                target: batteryContainer
+                subText: {
+                    var text="";
+                    text += i18n("<b>Battery:</b>");
+                    text += " ";
+                    text += hasBattery ? plasmoid.rootItem.stringForState(pluggedIn, percent) : i18nc("Battery is not plugged in", "Not present");
+                    text += "<br/>";
+                    text += i18nc("tooltip", "<b>AC Adapter:</b>");
+                    text += " ";
+                    text += pluggedIn ? i18nc("tooltip", "Plugged in") : i18nc("tooltip", "Not plugged in");
+                    return text;
+                }
+                image: "battery"
             }
         }
     }
@@ -66,7 +87,15 @@ Item {
         id: pmSource
         engine: "powermanagement"
         connectedSources: ["AC Adapter", "Battery", "Battery0", "PowerDevil", "Sleep States"]
-        interval: 0
+    }
+
+    function stringForState(pluggedIn, percent) {
+        if (pluggedIn) {
+            if (percent<100) return i18n("%1% (charging)", percent);
+            else return i18n("%1% (charged)", percent);
+        } else {
+            return i18n("%1% (discharging)", percent);
+        }
     }
 
     PopupDialog {

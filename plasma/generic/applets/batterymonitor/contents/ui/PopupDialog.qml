@@ -85,17 +85,7 @@ Item {
         }
 
         Components.Label {
-            text: {
-                if (percent == 0) {
-                    return i18nc("Battery is not plugged in", "Not present");
-                }
-                if (pluggedIn) {
-                    if (percent<100) return i18n("%1% (charging)", percent);
-                    else return i18n("%1% (charged)", percent);
-                } else {
-                    return i18n("%1% (discharging)", percent);
-                }
-            }
+            text: dialog.hasBattery ? stringForState(pluggedIn, percent) : i18nc("Battery is not plugged in", "Not present")
             font.weight: Font.Bold
         }
 
