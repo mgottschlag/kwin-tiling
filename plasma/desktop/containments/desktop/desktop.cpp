@@ -174,7 +174,9 @@ void DefaultDesktop::dropEvent(QGraphicsSceneDragDropEvent *event)
 
 void DefaultDesktop::keyPressEvent(QKeyEvent *event)
 {
-    if (focusItem() == this && !event->text().isEmpty()) {
+    // Only printable characters may trigger KRunner, otherwise a white-space
+    // character is introduced and the term you've entered is not recognized
+    if (focusItem() == this && !event->text().isEmpty() && event->text()[0].isPrint()) {
         const QString interface("org.kde.krunner");
         org::kde::krunner::App krunner(interface, "/App", QDBusConnection::sessionBus());
         krunner.query(event->text());
