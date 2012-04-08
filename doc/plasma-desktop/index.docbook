@@ -397,6 +397,16 @@ comic strips, a puzzle and other &plasma; widgets, and a <quote>Work</quote> act
 with relevant <acronym>RSS</acronym> feeds, calculator and calendar, for example.
 </para>
 
+<para>
+To delete an activity, press the <guibutton>Stop Activity</guibutton> button on
+<quote>Activities</quote> bar (press <keycombo
+action="simul">&Alt;<keycap>D</keycap></keycombo> then <keycombo
+action="simul">&Alt;<keycap>A</keycap></keycombo>) to open this bar) then click
+the red 'X' (or press <keycombo action="simul">&Alt;<keycap>D</keycap></keycombo>
+then <keycombo action="simul">&Alt;<keycap>R</keycap></keycombo>) and confirm the
+deletion.
+</para>
+
 </sect1>
 
 <!-- print shortcuts settings dialog in branch 4.7)
