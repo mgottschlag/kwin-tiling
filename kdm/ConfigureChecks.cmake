@@ -170,6 +170,11 @@ if (KDE4_KRB5AUTH)
 Due to a problem with X includes you probably have to run \"ln -s . krb5\"
 in the directory where the krb5.h include resides to make things actually work.")
         endif (KRB5_INCLUDE_DIR)
+        find_library(COMERR_LIBRARY com_err)
+        if (NOT COMERR_LIBRARY)
+            message(FATAL_ERROR "Kerberos5 support is enabled, but required libcomerr
+could not be found.")
+        endif (NOT COMERR_LIBRARY)
     endif (KRB5_LIBRARIES)
     mark_as_advanced(KRB5_INCLUDE_DIR KRB5_LIBRARIES)
     macro_bool_to_01(KRB5AUTH_FOUND K5AUTH)
