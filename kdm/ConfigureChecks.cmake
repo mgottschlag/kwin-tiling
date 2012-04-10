@@ -158,7 +158,7 @@ endif (KDE4_RPCAUTH)
 mark_as_advanced(RPC_INCLUDE_DIR)
 macro_bool_to_01(RPCAUTH_FOUND SECURE_RPC)
 
-option(KDE4_KRB5AUTH "Use Sun's secure RPC for Xauth cookies in KDM" OFF)
+option(KDE4_KRB5AUTH "Use Kerberos5 for Xauth cookies in KDM" OFF)
 if (KDE4_KRB5AUTH)
     find_library(KRB5_LIBRARIES krb5)
     if (KRB5_LIBRARIES)
