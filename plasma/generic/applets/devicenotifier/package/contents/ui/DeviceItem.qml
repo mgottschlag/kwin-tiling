@@ -120,6 +120,11 @@ Item {
             PlasmaComponents.Label {
                 id: deviceLabel
                 height: paintedHeight
+                wrapMode: Text.WordWrap
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
             }
 
             PlasmaComponents.Label {
