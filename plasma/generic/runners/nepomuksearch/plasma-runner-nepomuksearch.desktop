@@ -1,5 +1,10 @@
 [Desktop Entry]
 Name=Nepomuk Desktop Search
+Name[nl]=Nepomuk Bureaublad-zoekopdracht
+Name[pt]=Pesquisa no Ambiente de Trabalho Nepomuk
+Name[pt_BR]=Pesquisa no Ambiente de Trabalho Nepomuk
+Name[uk]=Стільничний пошук Nepomuk
+Name[x-test]=xxNepomuk Desktop Searchxx
 Comment=KRunner which performs desktop searches via Nepomuk
 Comment[ar]=مشغل لـKRunner ينفذ البحث لسطح المكتب بواسطة نبومك
 Comment[ast]=Krunner executa guetes nel escritoriu vía Nepomuk
