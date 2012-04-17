@@ -25,7 +25,7 @@
 <legalnotice>&FDLNotice;</legalnotice>
 
 <date>2011-11-21</date>
-<releaseinfo>1.0 (&kde; 4.8)</releaseinfo>
+<releaseinfo>1.0 (&kde; 4.9)</releaseinfo>
 
 <abstract>
 <para>
@@ -151,7 +151,7 @@ appears, explaining the purpose of the module.
 <listitem>
 <para><itemizedlist>
 <listitem><para>
-Account Details (Password &amp; User Account, Paths, KDE Wallet, Social Desktop, Web Shortcuts)
+Account Details (Password &amp; User Account, Paths, KDE Secret Sync, KDE Wallet, Social Desktop, Web Shortcuts)
 </para></listitem>
 <listitem><para>
 Application Appearance (Style, Colors, Icons, Fonts, Emoticons)
@@ -196,7 +196,7 @@ Default Applications
 Desktop Search
 </para></listitem>
 <listitem><para>
-Window Behavior (Task Switcher, Window Behavior, Window Rules)
+Window Behavior (Task Switcher, Window Behavior, KWin Scripts, Window Rules)
 </para></listitem>
 <listitem><para>
 Workspace Behavior (Virtual Desktops, Screen Edges, Workspace)
@@ -238,7 +238,7 @@ Device Actions
 Digital Camera
 </para></listitem>
 <listitem><para>
-Display and Monitor (Size &amp; Orientation, Screen Saver, Gamma, Multiple Monitors)
+Display and Monitor (Size &amp; Orientation, Screen Saver, Gamma)
 </para></listitem>
 <listitem><para>
 Information Sources
