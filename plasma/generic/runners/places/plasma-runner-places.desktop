@@ -82,6 +82,7 @@ Comment=Open devices and folder bookmarks
 Comment[nl]=Apparaten- en mappenbladwijzers openen
 Comment[pt]=Abrir os favoritos dos dispositivos e pastas
 Comment[pt_BR]=Abrir os favoritos dos dispositivos e pastas
+Comment[sv]=Öppna enhets- och katalogbokmärken
 Comment[uk]=Відкриття пристроїв та закладок на теки
 Comment[x-test]=xxOpen devices and folder bookmarksxx
 X-KDE-Library=krunner_placesrunner

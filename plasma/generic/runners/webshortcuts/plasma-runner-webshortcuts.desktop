@@ -73,6 +73,7 @@ Comment=Allows user to use Konqueror's web shortcuts
 Comment[nl]=Maakt het mogelijk om webkoppelingen van Konqueror te gebruiken
 Comment[pt]=Permite ao utilizador usar os atalhos Web do Konqueror
 Comment[pt_BR]=Permite ao usuário usar os atalhos Web do Konqueror
+Comment[sv]=Låter användaren utnyttja webbgenvägar i Konqueror
 Comment[uk]=Надає змогу використовувати вебскорочення Konqueror
 Comment[x-test]=xxAllows user to use Konqueror's web shortcutsxx
 X-KDE-ServiceTypes=Plasma/Runner
