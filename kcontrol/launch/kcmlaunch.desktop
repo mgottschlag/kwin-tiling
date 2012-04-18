@@ -189,7 +189,7 @@ Comment[zh_CN]=选择程序启动反馈风格
 Comment[zh_TW]=選擇程式啟動時的回饋風格
 
 X-KDE-Keywords=application,start,launch,busy,cursor,feedback,mouse,pointer,bouncing,rotating,spinning,disk,startup,program,report,taskbar
-X-KDE-Keywords[ca]=aplicació,inici,llançador,ocupat,cursor,reacció,ratolí,punter,botant,girant,disc,engegar,programa,informe,barra de tasques
+X-KDE-Keywords[ca]=aplicació,inicia,llança,ocupat,cursor,reacció,ratolí,punter,botant,rodant,girant,disc,engega,programa,informe,barra de tasques
 X-KDE-Keywords[ca@valencia]=aplicació,inici,llançador,ocupat,cursor,reacció,ratolí,punter,botant,girant,disc,engegar,programa,informe,barra de tasques
 X-KDE-Keywords[da]=program,start,kør,optaget,markør,feedback,mus,pointer,hoppende,roterende,snurrende,disk,opstart,program,rapport,opgavelinje
 X-KDE-Keywords[de]=Anwendungen,Start,Programmstart,Cursor,Aktivierung,Mauszeiger,Anzeige,Startanzeige,Hüpfend,Drehend
