@@ -87,6 +87,7 @@ Comment[pt_BR]=Abrir os favoritos dos dispositivos e pastas
 Comment[sv]=Öppna enhets- och katalogbokmärken
 Comment[uk]=Відкриття пристроїв та закладок на теки
 Comment[x-test]=xxOpen devices and folder bookmarksxx
+Comment[zh_TW]=開啟裝置與資料夾書籤
 X-KDE-Library=krunner_placesrunner
 X-KDE-PluginInfo-Author=David Edmundson
 X-KDE-PluginInfo-Email=kde@davidedmundson.co.uk

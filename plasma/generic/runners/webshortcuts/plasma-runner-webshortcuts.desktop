@@ -78,6 +78,7 @@ Comment[pt_BR]=Permite ao usuário usar os atalhos Web do Konqueror
 Comment[sv]=Låter användaren utnyttja webbgenvägar i Konqueror
 Comment[uk]=Надає змогу використовувати вебскорочення Konqueror
 Comment[x-test]=xxAllows user to use Konqueror's web shortcutsxx
+Comment[zh_TW]=允許使用者使用 Konqueror 的網頁捷徑
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 Icon=internet-web-browser
