@@ -164,7 +164,7 @@ Comment[zh_CN]=配置会话管理器和注销设置
 Comment[zh_TW]=設定工作階段管理程式與登出設定值
 
 X-KDE-Keywords=ksmserver,session,logout,confirmation,save,restore
-X-KDE-Keywords[ca]=ksmserver,sessió,sortida,confirmació,desa,restauració
+X-KDE-Keywords[ca]=ksmserver,sessió,sortida,confirmació,desa,restaura
 X-KDE-Keywords[ca@valencia]=ksmserver,sessió,eixida,confirmació,alça,restauració
 X-KDE-Keywords[da]=ksmserver,session,log ud,bekræftelse,gem,genskab
 X-KDE-Keywords[de]=Ksmserver,Sitzung,Abmelden,Logout,Bestätigung,Speichern,Wiederherstellen

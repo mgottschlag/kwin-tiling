@@ -307,13 +307,13 @@ void KRunnerDialog::themeUpdated()
         m_leftBorderWidth = qMax(0, int(m_background->marginSize(Plasma::LeftMargin)));
         m_rightBorderWidth = qMax(0, int(m_background->marginSize(Plasma::RightMargin)));
         m_bottomBorderHeight = qMax(0, int(m_background->marginSize(Plasma::BottomMargin)));
-        // the -2 in the non-floating case is not optimal, but it gives it a bit of a "more snug to the
+        // the -1 in the non-floating case is not optimal, but it gives it a bit of a "more snug to the
         // top" feel; best would be if we could tell exactly where the edge/shadow of the frame svg was
         // but this works nicely
         m_topBorderHeight = m_floating ? qMax(0, int(m_background->marginSize(Plasma::TopMargin)))
                                        : Plasma::Theme::defaultTheme()->windowTranslucencyEnabled()
                                             ? qMax(1, m_bottomBorderHeight / 2)
-                                            : qMax(1, m_bottomBorderHeight - 2);
+                                            : qMax(1, m_bottomBorderHeight - 1);
     }
 
     kDebug() << m_leftBorderWidth << m_topBorderHeight << m_rightBorderWidth << m_bottomBorderHeight;

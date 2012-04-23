@@ -27,6 +27,7 @@
 #include <QRadioButton>
 #include <QTabWidget>
 #include <QVBoxLayout>
+#include <QTimer>
 
 #include <KConfigGroup>
 #include <KDebug>
@@ -82,10 +83,7 @@ KRunnerConfigWidget::KRunnerConfigWidget(Plasma::RunnerManager *manager, QWidget
 
     connect(m_sel, SIGNAL(configCommitted(QByteArray)), this, SLOT(updateRunner(QByteArray)));
 
-    m_sel->addPlugins(Plasma::RunnerManager::listRunnerInfo(),
-                      KPluginSelector::ReadConfigFile,
-                      i18n("Available Features"), QString(),
-                      KSharedConfig::openConfig(QLatin1String( "krunnerrc" )));
+    QTimer::singleShot(0, this, SLOT(load()));
 
     m_buttons = new QDialogButtonBox(this);
     m_buttons->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
@@ -143,6 +141,14 @@ void KRunnerConfigWidget::updateRunner(const QByteArray &name)
     if (runner) {
         runner->reloadConfiguration();
     }
+}
+
+void KRunnerConfigWidget::load()
+{
+    m_sel->addPlugins(Plasma::RunnerManager::listRunnerInfo(),
+                    KPluginSelector::ReadConfigFile,
+                    i18n("Available Plugins"), QString(),
+                    KSharedConfig::openConfig(QLatin1String( "krunnerrc" )));
 }
 
 void KRunnerConfigWidget::save(QAbstractButton *pushed)

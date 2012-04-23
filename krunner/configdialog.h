@@ -47,6 +47,7 @@ Q_OBJECT
         void finished();
 
     private slots:
+        void load();
         void save(QAbstractButton *pushed);
         void previewInterface();
         void setInterface(int type);
@@ -54,8 +55,6 @@ Q_OBJECT
         void syncPalette();
 
     private:
-        void init();
-
         int m_interfaceType;
         KRunnerDialog *m_preview;
         KPluginSelector *m_sel;
