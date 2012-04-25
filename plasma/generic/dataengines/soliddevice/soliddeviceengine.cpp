@@ -189,7 +189,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         setData(name, I18N_NOOP("Removable"), ( drive && (drive->isHotpluggable() || drive->isRemovable()) ));
     }
 
-    
+
     if (device.is<Solid::OpticalDrive>()) {
         Solid::OpticalDrive *opticaldrive = device.as<Solid::OpticalDrive>();
         if (!opticaldrive) {
@@ -353,6 +353,10 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 
         setData(name, I18N_NOOP("Supported Protocols"), camera->supportedProtocols());
         setData(name, I18N_NOOP("Supported Drivers"), camera->supportedDrivers());
+        // Cameras are necessarily Removable and Hotpluggable
+        setData(name, I18N_NOOP("Removable"), true);
+        setData(name, I18N_NOOP("Hotpluggable"), true);
+
     }
     if (device.is<Solid::PortableMediaPlayer>()) {
         Solid::PortableMediaPlayer *mediaplayer = device.as<Solid::PortableMediaPlayer>();
@@ -364,6 +368,10 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 
         setData(name, I18N_NOOP("Supported Protocols"), mediaplayer->supportedProtocols());
         setData(name, I18N_NOOP("Supported Drivers"), mediaplayer->supportedDrivers());
+        // Portable Media Players are necessarily Removable and Hotpluggable
+        setData(name, I18N_NOOP("Removable"), true);
+        setData(name, I18N_NOOP("Hotpluggable"), true);
+
     }
     if (device.is<Solid::NetworkInterface>()) {
         Solid::NetworkInterface *networkinterface = device.as<Solid::NetworkInterface>();
