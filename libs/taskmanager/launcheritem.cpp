@@ -219,8 +219,7 @@ void LauncherItem::launch()
 {
     //NOTE: preferred is NOT a protocol, it's just a magic string
     if (d->url.protocol() == "preferred") {
-        const QString storageId = defaultApplication(d->url.host(), true);
-        KService::Ptr service = KService::serviceByStorageId(storageId);
+        KService::Ptr service = KService::serviceByStorageId(defaultApplication());
 
         QString desktopFile = KStandardDirs::locate("xdgdata-apps", service->entryPath());
         if (desktopFile.isNull()) {
@@ -243,10 +242,11 @@ KUrl LauncherItem::launcherUrl() const
 }
 
 //Ugly hack written by Aaron Seigo from plasmagenericshell/scripting/scriptengine.cpp
-QString LauncherItem::defaultApplication(QString application, bool storageId)
+QString LauncherItem::defaultApplication() const
 {
+    const QString application = d->url.host();
     if (application.isEmpty()) {
-        return "";
+        return QString();
     }
 
     // FIXME: there are some pretty horrible hacks below, in the sense that they assume a very
@@ -259,9 +259,9 @@ QString LauncherItem::defaultApplication(QString application, bool storageId)
         QString command = settings.getSetting(KEMailSettings::ClientProgram);
         if (command.isEmpty()) {
             if (KService::Ptr kontact = KService::serviceByStorageId("kontact")) {
-                return storageId ? kontact->storageId() : kontact->exec();
+                return kontact->storageId();
             } else if (KService::Ptr kmail = KService::serviceByStorageId("kmail")) {
-                return storageId ? kmail->storageId() : kmail->exec();
+                return kmail->storageId();
             }
         }
 
@@ -281,7 +281,7 @@ QString LauncherItem::defaultApplication(QString application, bool storageId)
         if (browserApp.isEmpty()) {
             const KService::Ptr htmlApp = KMimeTypeTrader::self()->preferredService(QLatin1String("text/html"));
             if (htmlApp) {
-                browserApp = storageId ? htmlApp->storageId() : htmlApp->exec();
+                browserApp = htmlApp->storageId();
             }
         } else if (browserApp.startsWith('!')) {
             browserApp = browserApp.mid(1);
@@ -294,14 +294,14 @@ QString LauncherItem::defaultApplication(QString application, bool storageId)
     } else if (application.compare("filemanager", Qt::CaseInsensitive) == 0) {
         KService::Ptr service = KMimeTypeTrader::self()->preferredService("inode/directory");
         if (service) {
-            return storageId ? service->storageId() : service->exec();
+            return service->storageId();
         }
     } else if (application.compare("windowmanager", Qt::CaseInsensitive) == 0) {
         KConfig cfg("ksmserverrc", KConfig::NoGlobals);
         KConfigGroup confGroup(&cfg, "General");
         return confGroup.readEntry("windowManager", QString::fromLatin1("konsole"));
     } else if (KService::Ptr service = KMimeTypeTrader::self()->preferredService(application)) {
-        return storageId ? service->storageId() : service->exec();
+        return service->storageId();
     } else {
         // try the files in share/apps/kcm_componentchooser/
         const QStringList services = KGlobal::dirs()->findAllResources("data", "kcm_componentchooser/*.desktop", KStandardDirs::NoDuplicates);
@@ -353,8 +353,7 @@ void LauncherItem::setLauncherUrl(const KUrl &url)
         }
     } else if (d->url.protocol() == "preferred") {
         //NOTE: preferred is NOT a protocol, it's just a magic string
-        const QString storageId = defaultApplication(d->url.host(), true);
-        const KService::Ptr service = KService::serviceByStorageId(storageId);
+        const KService::Ptr service = KService::serviceByStorageId(defaultApplication());
 
         if (service) {
             QString desktopFile = KStandardDirs::locate("xdgdata-apps", service->entryPath());

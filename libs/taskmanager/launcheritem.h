@@ -93,6 +93,9 @@ public:
     KUrl launcherUrl() const;
     void setLauncherUrl(const KUrl &url);
 
+    //preferred applications hack
+    QString defaultApplication() const;
+
 public Q_SLOTS:
     void toDesktop(int);
 
@@ -124,9 +127,6 @@ Q_SIGNALS:
 private:
     friend class LauncherItemPrivate;
     LauncherItemPrivate * const d;
-
-    //preferred applications hack
-    QString defaultApplication(QString application, bool storageId = false);
 
     Q_PRIVATE_SLOT(d, void associateDestroyed(QObject *obj))
 };
