@@ -752,7 +752,11 @@ void GroupManager::removeLauncher(const KUrl &url)
     }
 
     int index = launcherIndex(url);
-    LauncherItem *launcher = -1 != index ? d->launchers.at(index) : 0L;
+    if (index == -1 || index >= d->launchers.count()) {
+        return;
+    }
+
+    LauncherItem *launcher = d->launchers.at(index);
     if (!launcher) {
         return;
     }
@@ -1124,6 +1128,8 @@ int GroupManagerPrivate::launcherIndex(const KUrl &url)
         if (item->launcherUrl() == url) {
             return index;
         } 
+
+        ++index;
     }
 
     // .. and if that fails for preferred launcher matches

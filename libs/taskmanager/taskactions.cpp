@@ -430,8 +430,15 @@ void ToggleLauncherActionImpl::toggleLauncher()
         return;
     } else if (m_groupingStrategy->launcherExists(m_url)) {
         m_groupingStrategy->removeLauncher(m_url);
-    } else if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
-        m_groupingStrategy->addLauncher(m_url, QIcon(), QString(), QString(),
+    } else if (m_url.isLocalFile()) {
+        QIcon icon;
+        // if we don't have a desktop file, it's because it is a bare executable
+        if (static_cast<TaskItem *>(m_abstractItem)->task() &&
+            !KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
+            icon = static_cast<TaskItem *>(m_abstractItem)->task()->icon();
+        }
+
+        m_groupingStrategy->addLauncher(m_url, icon, QString(), QString(),
                                         static_cast<TaskItem *>(m_abstractItem)->task()
                                         ? static_cast<TaskItem *>(m_abstractItem)->task()->classClass()
                                         : QString());

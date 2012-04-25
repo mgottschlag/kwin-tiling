@@ -461,6 +461,11 @@ static KService::List getServicesViaPid(int pid)
         }
     }
 
+    if (services.empty() && !KStandardDirs::findExe(cmdline).isEmpty()) {
+        // cmdline now exists without arguments if there were any
+        services << KSharedPtr<KService>(new KService(proc->name, cmdline, QString()));
+        kDebug() << "adding for" << proc->name << cmdline;
+    }
     return services;
 }
 
@@ -650,7 +655,14 @@ KUrl TaskItem::launcherUrl() const
     }
 
     if (!services.empty()) {
-        d->launcherUrl = KUrl::fromPath(services[0]->entryPath());
+        QString path = services[0]->entryPath();
+        if (path.isEmpty()) {
+            path = services[0]->exec();
+        }
+
+        if (!path.isEmpty()) {
+            d->launcherUrl = KUrl::fromPath(path);
+        }
     }
 
     return d->launcherUrl;
