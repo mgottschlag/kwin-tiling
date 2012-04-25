@@ -101,6 +101,7 @@ Item {
     Component.onCompleted: {
         plasmoid.addEventListener ('ConfigChanged', configChanged);
         plasmoid.popupEvent.connect(popupEventSlot);
+        plasmoid.aspectRatioMode = IgnoreAspectRatio;
     }
 
     function configChanged() {
