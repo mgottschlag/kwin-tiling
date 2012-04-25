@@ -788,8 +788,9 @@ void GroupManagerPrivate::sycocaChanged(const QStringList &types)
 {
     if (types.contains("apps")) {
         KUrl::List removals;
-        foreach (LauncherItem * launcher, launchers) {
-            if (!QFile::exists(launcher->launcherUrl().toLocalFile())) {
+        foreach (LauncherItem *launcher, launchers) {
+            if (launcher->launcherUrl().protocol() != "preferred" &&
+                !QFile::exists(launcher->launcherUrl().toLocalFile())) {
                 removals << launcher->launcherUrl();
             }
         }
