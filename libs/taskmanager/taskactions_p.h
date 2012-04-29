@@ -148,6 +148,18 @@ private Q_SLOTS:
     void slotToCurrentDesktop();
 };
 
+/** Move window to a new desktop*/
+class ToNewDesktopActionImpl : public AbstractGroupableItemAction
+{
+    Q_OBJECT
+public:
+    ToNewDesktopActionImpl(QObject *parent, AbstractGroupableItem *task);
+private Q_SLOTS:
+    void slotToNewDesktop();
+private:
+    int m_newDesktop;
+};
+
 /** Send a Task to a specific Desktop*/
 class ToDesktopActionImpl : public AbstractGroupableItemAction
 {

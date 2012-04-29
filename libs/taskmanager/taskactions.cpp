@@ -41,10 +41,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KStandardDirs>
 #include <KDesktopFile>
 #include <KRun>
+#include <NETRootInfo>
 
 #include <QtCore/QMap>
 #include <QtGui/QHelpEvent>
 #include <QtGui/QToolTip>
+#include <QX11Info>
 
 ///////////////////////////////////////////////////////////////////////////////
 // NOTE: if you change the menu, keep kde-workspace/kwin/useractions.cpp in sync
@@ -290,6 +292,29 @@ void ToDesktopActionImpl::slotToDesktop()
     }
 }
 
+ToNewDesktopActionImpl::ToNewDesktopActionImpl(QObject *parent, AbstractGroupableItem *item)
+    : AbstractGroupableItemAction(parent, item)
+{
+    connect(this, SIGNAL(triggered()), this, SLOT(slotToNewDesktop()));
+    setText("&New Desktop");
+
+    m_newDesktop = TaskManager::self()->numberOfDesktops() + 1;
+    if (m_newDesktop > 20) {
+        setEnabled(false);
+    }
+}
+
+void ToNewDesktopActionImpl::slotToNewDesktop()
+{
+    NETRootInfo info(QX11Info::display(), NET::NumberOfDesktops);
+    info.setNumberOfDesktops(m_newDesktop);
+
+    foreach (QWeakPointer<Task> task, m_tasks) {
+        if (task) {
+            task.data()->toDesktop(m_newDesktop);
+        }
+    }
+}
 
 DesktopsMenu::DesktopsMenu(QWidget *parent, AbstractGroupableItem *item)
     : ToolTipMenu(parent)
@@ -306,6 +331,8 @@ DesktopsMenu::DesktopsMenu(QWidget *parent, AbstractGroupableItem *item)
         addAction(action);
         group->addAction(action);
     }
+    addSeparator();
+    addAction(new ToNewDesktopActionImpl(this, item));
     setEnabled(item->isActionSupported(NET::ActionChangeDesktop));
 }
 
