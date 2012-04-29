@@ -41,6 +41,7 @@ from the copyright holder.
 #include <unistd.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <sys/stat.h>
 
 static int
 getNull(char ***opts ATTR_UNUSED, int *def ATTR_UNUSED, int *cur ATTR_UNUSED)
@@ -224,6 +225,12 @@ getGrub2OrBurg(char ***opts, int *def, int *cur, const char *grubRebootExec)
 static int
 getGrub2(char ***opts, int *def, int *cur)
 {
+    struct stat buff;
+
+    grubConfig = "/boot/grub2/grub.cfg";
+    if (!stat(grubConfig, &buff))
+        return getGrub2OrBurg(opts, def, cur, "grub2-reboot");
+
     grubConfig = "/boot/grub/grub.cfg";
     return getGrub2OrBurg(opts, def, cur, "grub-reboot");
 }
