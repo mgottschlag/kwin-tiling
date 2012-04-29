@@ -23,8 +23,11 @@ find_package(ZLIB REQUIRED)
 find_package(KActivities 6.0.0 REQUIRED)
 find_package(DBusMenuQt 0.6.0 REQUIRED)
 find_package(QImageBlitz REQUIRED)
+find_package(KDeclarative REQUIRED)
 macro_optional_find_package(OpenGL)
 macro_optional_find_package(OpenGLES)
+
+macro_log_feature(KDeclarative_FOUND "libkdeclarative" "KDE Declarative (QML) support from kdelibs" "http://www.kde.org" TRUE "" "Required by ksmserver.")
 
 if(Q_WS_X11)
   if(NOT X11_XTest_FOUND)

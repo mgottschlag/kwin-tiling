@@ -3,10 +3,6 @@ if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
 add_subdirectory( kcm )
 endif(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
 
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/ksmserver ${CMAKE_MODULE_PATH})
-find_package(KDeclarative REQUIRED)
-macro_log_feature(KDECLARATIVE_FOUND "libkdeclarative" "KDE Declarative (QML) support from kdelibs" "http://www.kde.org" TRUE "" "Required by ksmserver.")
-
 include_directories(
    ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs
    ${QIMAGEBLITZ_INCLUDES}
