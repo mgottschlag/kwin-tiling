@@ -23,6 +23,7 @@
 //Qt
 #include <QtCore/QDate>
 #include <QtCore/QTimer>
+#include <QtGui/QApplication>
 #include <QtGui/QGraphicsSceneWheelEvent>
 #include <QtGui/QGraphicsGridLayout>
 #include <QtGui/QGraphicsLinearLayout>
@@ -32,6 +33,7 @@
 #include <QtGui/QMenu>
 #include <QtGui/QSpinBox>
 #include <QtGui/QToolButton>
+#include <QtGui/QDesktopWidget>
 
 //KDECore
 #include <KCalendarSystem>
@@ -53,8 +55,6 @@
 #include <Plasma/TextBrowser>
 #include <Plasma/ToolButton>
 #include <Plasma/DataEngine>
-
-#include <kephal/screens.h>
 
 #include "wheelytoolbutton.h"
 
@@ -509,7 +509,7 @@ void CalendarPrivate::popupMonthsMenu()
         const int x = month->sceneBoundingRect().center().x() - monthMenu->width() / 2;
         QPoint pos(x, month->sceneBoundingRect().bottom());
         pos = view->mapToGlobal(view->mapFromScene(pos));
-        QRect r = Kephal::ScreenUtils::screenGeometry(Kephal::ScreenUtils::screenId(view->geometry().center()));
+        QRect r = qApp->desktop()->screenGeometry(view->geometry().center());
         if (pos.y() + monthMenu->height() > r.bottom()) {
             pos = QPoint(x, month->sceneBoundingRect().top() - monthMenu->height());
             pos = view->mapToGlobal(view->mapFromScene(pos));
