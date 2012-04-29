@@ -30,6 +30,8 @@
 #include <QDBusInterface>
 #include <QTextDocument>
 #include <QPropertyAnimation>
+#include <QApplication>
+#include <QDesktopWidget>
 
 #include <KCModuleInfo>
 #include <KCModuleProxy>
@@ -49,8 +51,6 @@
 #include <Plasma/Animator>
 
 #include <KActivities/Consumer>
-
-#include <kephal/screens.h>
 
 #include <taskmanager/task.h>
 
@@ -109,7 +109,8 @@ Pager::Pager(QObject *parent, const QVariantList &args)
       m_dragHighlightedDesktop(-1),
       m_dragSwitchDesktop(-1),
       m_ignoreNextSizeConstraint(false),
-      m_configureDesktopsWidget(0)
+      m_configureDesktopsWidget(0),
+      m_desktopWidget(qApp->desktop())
 {
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
@@ -156,10 +157,8 @@ void Pager::init()
     connect(KWindowSystem::self(), SIGNAL(stackingOrderChanged()), this, SLOT(stackingOrderChanged()));
     connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,const ulong*)), this, SLOT(windowChanged(WId,const ulong*)));
     connect(KWindowSystem::self(), SIGNAL(showingDesktopChanged(bool)), this, SLOT(showingDesktopChanged(bool)));
-    connect(Kephal::Screens::self(), SIGNAL(screenAdded(Kephal::Screen*)), SLOT(desktopsSizeChanged()));
-    connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)), SLOT(desktopsSizeChanged()));
-    connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)), SLOT(desktopsSizeChanged()));
-    connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)), SLOT(desktopsSizeChanged()));
+    connect(m_desktopWidget, SIGNAL(screenCountChanged(int)), SLOT(desktopsSizeChanged()));
+    connect(m_desktopWidget, SIGNAL(resized(int)), SLOT(desktopsSizeChanged()));
 
     // connect to KWin's reloadConfig signal to get updates on the desktop layout
     QDBusConnection dbus = QDBusConnection::sessionBus();
@@ -399,8 +398,13 @@ void Pager::updateSizes(bool allowResize)
     qreal rightMargin = 0;
     qreal bottomMargin = 0;
 
-    qreal ratio = (qreal) Kephal::ScreenUtils::desktopGeometry().width() /
-                  (qreal) Kephal::ScreenUtils::desktopGeometry().height();
+    QRect totalRect;
+    for (int x = 0; x < m_desktopWidget->screenCount(); x++) {
+        totalRect |= m_desktopWidget->screenGeometry(x);
+    }
+
+    qreal ratio = (qreal) totalRect.width() /
+                  (qreal) totalRect.height();
 
     // calculate the margins
     if (formFactor() == Plasma::Vertical || formFactor() == Plasma::Horizontal) {
@@ -449,8 +453,8 @@ void Pager::updateSizes(bool allowResize)
         }
         itemWidth = itemHeight * ratio;
 
-        m_widthScaleFactor = itemWidth / Kephal::ScreenUtils::desktopGeometry().width();
-        m_heightScaleFactor = itemHeight / Kephal::ScreenUtils::desktopGeometry().height();
+        m_widthScaleFactor = itemWidth / m_desktopWidget->geometry().width();
+        m_heightScaleFactor = itemHeight / m_desktopWidget->geometry().height();
     } else {
         // work out the preferred size based on the height of the contentsRect
         if (formFactor() == Plasma::Horizontal) {
@@ -488,8 +492,8 @@ void Pager::updateSizes(bool allowResize)
             itemHeight = itemWidth / ratio;
         }
 
-        m_widthScaleFactor = itemWidth / Kephal::ScreenUtils::desktopGeometry().width();
-        m_heightScaleFactor = itemHeight / Kephal::ScreenUtils::desktopGeometry().height();
+        m_widthScaleFactor = itemWidth / m_desktopWidget->geometry().width();
+        m_heightScaleFactor = itemHeight / m_desktopWidget->geometry().height();
     }
 
     m_hoverRect = QRectF();
@@ -1294,7 +1298,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 // so the offscreen coordinates need to be fixed
 QRect Pager::fixViewportPosition( const QRect& r )
 {
-    QRect desktopGeom = Kephal::ScreenUtils::desktopGeometry();
+    QRect desktopGeom = m_desktopWidget->geometry();
     int x = r.center().x() % desktopGeom.width();
     int y = r.center().y() % desktopGeom.height();
     if( x < 0 ) {

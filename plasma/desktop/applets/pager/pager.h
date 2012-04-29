@@ -28,6 +28,7 @@
 #include <Plasma/DataEngine>
 #include "ui_pagerConfig.h"
 
+class QDesktopWidget;
 class QPropertyAnimation;
 
 class KColorScheme;
@@ -182,6 +183,8 @@ class Pager : public Plasma::Applet
 
         //embedded KCM module in the configuratoin dialog
         KCModuleProxy *m_configureDesktopsWidget;
+
+        QDesktopWidget *m_desktopWidget;
     };
 
 K_EXPORT_PLASMA_APPLET(pager, Pager)
