@@ -555,7 +555,7 @@ the profiles, and has no effect on how they are applied.</para>
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Right-click on the menu bar and select <guilabel>Configure Window Behavior...</guilabel>:
+<listitem><para>Right-click on the titlebar and select <guilabel>Configure Window Behavior...</guilabel>:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
