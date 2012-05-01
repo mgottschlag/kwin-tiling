@@ -19,6 +19,7 @@
 
 import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
+import org.kde.plasma.components 0.1
 import org.kde.qtextracomponents 0.1
 import "data.js" as Data
 
@@ -149,7 +150,38 @@ Flow {
         }
     }
 
+    Component {
+        id: hibernateDialogComponent
+        QueryDialog {
+            titleIcon: "system-suspend-hibernate"
+            titleText: "Hibernate"
+            message: i18n("Do you want to suspend to disk (hibernate)?")
+
+            acceptButtonText: i18n("Yes")
+            rejectButtonText: i18n("No")
+
+            onAccepted: performOperation("suspendToDisk")
+        }
+    }
+    property QueryDialog hibernateDialog
+
     function clickHandler(what) {
+        if (what == "suspendToDisk") {
+            if (!hibernateDialog) {
+                hibernateDialog = hibernateDialogComponent.createObject(lockout)
+            }
+
+            hibernateDialog.open()
+            
+            if (false) {
+                return;
+            }
+        } else {
+            performOperation(what)
+        }
+    }
+
+    function performOperation(what) {
         var service = dataEngine.serviceForSource("PowerDevil");
         var operation = service.operationDescription(what);
         service.startOperationCall(operation);
