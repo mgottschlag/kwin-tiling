@@ -155,22 +155,25 @@ Comment[wa]=Eclawer l' waitroûle oudonbén s' dislodjî
 Comment[x-test]=xxLock the screen or log outxx
 Comment[zh_CN]=锁定屏幕或注销
 Comment[zh_TW]=鎖定螢幕或登出
-Icon=system-shutdown
+Encoding=UTF-8
+Keywords=Lock, Logout, Sleep, Hibernate, Switch User 
+Keywords[x-test]=xxLock, Logout, Sleep, Hibernate, Switch Userxx
+
 Type=Service
+Icon=system-shutdown
 X-KDE-ServiceTypes=Plasma/Applet
 
-X-KDE-Library=plasma_applet_lockout
-X-KDE-PluginInfo-Author=The Plasma Team
-X-KDE-PluginInfo-Email=plasma-devel@kde.org
-X-KDE-PluginInfo-Name=lockout
+X-Plasma-API=declarativeappletscript
+X-Plasma-MainScript=ui/lockout.qml
+X-Plasma-DefaultSize=80,120
+
+X-KDE-PluginInfo-Author=Viranch Mehta
+X-KDE-PluginInfo-Email=viranch.mehta@gmail.com
+X-KDE-PluginInfo-Name=org.kde.lockout
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Category=System Information
 X-KDE-PluginInfo-Depends=
-X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-License=LGPL
 X-KDE-PluginInfo-EnabledByDefault=true
 
-X-Plasma-Requires-FileDialog=Unused
-X-Plasma-Requires-LaunchApp=Unused
-
-X-Plasma-DefaultSize=80,120

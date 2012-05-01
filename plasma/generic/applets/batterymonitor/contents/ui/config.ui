@@ -15,22 +15,19 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QCheckBox" name="showBatteryStringCheckBox">
-     <property name="toolTip">
-      <string/>
-     </property>
-     <property name="text">
-      <string>Show charge &amp;information</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="showMultipleBatteriesCheckBox">
+    <widget class="QCheckBox" name="kcfg_showMultipleBatteries">
      <property name="toolTip">
       <string/>
      </property>
      <property name="text">
       <string>Show the state for &amp;each battery present</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_showRemainingTime">
+     <property name="text">
+      <string>Show remaining time for the battery</string>
      </property>
     </widget>
    </item>

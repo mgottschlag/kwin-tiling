@@ -66,9 +66,13 @@ void PowermanagementEngine::init()
         if (!QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement",
                                                    "/org/kde/Solid/PowerManagement",
                                                    "org.kde.Solid.PowerManagement",
-                                                   "profileChanged", this,
-                                                   SLOT(profileChanged(QString)))) {
-            kDebug() << "error connecting to Profile changes via dbus";
+                                                   "brightnessChanged", this,
+                                                   SLOT(screenBrightnessChanged(int)))) {
+            kDebug() << "error connecting to Brightness changes via dbus";
+        }
+        else {
+            sourceRequestEvent("PowerDevil");
+            screenBrightnessChanged(0);
         }
         if (!QDBusConnection::sessionBus().connect("org.kde.Solid.PowerManagement",
                                                    "/org/kde/Solid/PowerManagement",
@@ -83,7 +87,7 @@ void PowermanagementEngine::init()
 QStringList PowermanagementEngine::basicSourceNames() const
 {
     QStringList sources;
-    sources << "Battery" << "AC Adapter" << "Sleep States";
+    sources << "Battery" << "AC Adapter" << "Sleep States" << "PowerDevil";
     return sources;
 }
 
@@ -174,6 +178,15 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
             }
             //kDebug() << "Sleepstate \"" << sleepstate << "\" supported.";
         }
+    } else if (name == "PowerDevil") {
+        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
+                                                          "/org/kde/Solid/PowerManagement",
+                                                          "org.kde.Solid.PowerManagement",
+                                                          "brightness");
+        QDBusPendingReply<int> reply = QDBusConnection::sessionBus().asyncCall(msg);
+        QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+        QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                            this, SLOT(screenBrightnessReply(QDBusPendingCallWatcher*)));
     } else {
         kDebug() << "Data for '" << name << "' not found";
         return false;
@@ -275,11 +288,6 @@ void PowermanagementEngine::deviceAdded(const QString& udi)
     }
 }
 
-void PowermanagementEngine::profileChanged(const QString &current)
-{
-    setData("PowerDevil", "Current profile", current);
-}
-
 void PowermanagementEngine::batteryRemainingTimeChanged(qulonglong time)
 {
     //kDebug() << "Remaining time 2:" << time;
@@ -293,6 +301,24 @@ void PowermanagementEngine::batteryRemainingTimeReply(QDBusPendingCallWatcher *w
         kDebug() << "Error getting battery remaining time: " << reply.error().message();
     } else {
         batteryRemainingTimeChanged(reply.value());
+    }
+
+    watcher->deleteLater();
+}
+
+void PowermanagementEngine::screenBrightnessChanged(int brightness)
+{
+    //kDebug() << "Screen brightness:" << time;
+    setData("PowerDevil", "Screen Brightness", brightness);
+}
+
+void PowermanagementEngine::screenBrightnessReply(QDBusPendingCallWatcher *watcher)
+{
+    QDBusPendingReply<int> reply = *watcher;
+    if (reply.isError()) {
+        kDebug() << "Error getting screen brightness: " << reply.error().message();
+    } else {
+        screenBrightnessChanged(reply.value());
     }
 
     watcher->deleteLater();

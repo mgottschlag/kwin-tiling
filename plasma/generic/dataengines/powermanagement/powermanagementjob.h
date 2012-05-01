@@ -40,6 +40,7 @@ class PowerManagementJob : public Plasma::ServiceJob
         bool suspend(const SuspendType &type);
         void requestShutDown();
         QString callForType(const SuspendType &type);
+        void setScreenBrightness(const int value);
 };
 
 #endif // POWERMANAGEMENTJOB_H

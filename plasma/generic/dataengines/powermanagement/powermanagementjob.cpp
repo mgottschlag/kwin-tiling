@@ -26,6 +26,8 @@
 // kde-workspace/libs
 #include <kworkspace/kworkspace.h>
 
+#include <krunner_interface.h>
+
 #include "powermanagementjob.h"
 
 #include <kdebug.h>
@@ -70,14 +72,28 @@ void PowerManagementJob::start()
         requestShutDown();
         setResult(true);
         return;
+    } else if (operation == "switchUser") {
+        // Taken from kickoff/core/itemhandlers.cpp
+        org::kde::krunner::App krunner("org.kde.krunner", "/App", QDBusConnection::sessionBus());
+        krunner.switchUser();
+        setResult(true);
+        return;
     } else if (operation == "beginSuppressingSleep") {
         setResult(Solid::PowerManagement::beginSuppressingSleep(parameters().value("reason").toString()));
+        return;
     } else if (operation == "stopSuppressingSleep") {
         setResult(Solid::PowerManagement::stopSuppressingSleep(parameters().value("cookie").toInt()));
+        return;
     } else if (operation == "beginSuppressingScreenPowerManagement") {
         setResult(Solid::PowerManagement::beginSuppressingScreenPowerManagement(parameters().value("reason").toString()));
+        return;
     } else if (operation == "stopSuppressingScreenPowerManagement") {
         setResult(Solid::PowerManagement::stopSuppressingScreenPowerManagement(parameters().value("cookie").toInt()));
+        return;
+    } else if (operation == "setBrightness") {
+        setScreenBrightness(parameters().value("brightness").toInt());
+        setResult(true);
+        return;
     }
 
     kDebug() << "don't know what to do with " << operation;
@@ -109,6 +125,16 @@ QString PowerManagementJob::callForType(const SuspendType &type)
             return "suspendToRam";
         break;
     }
+}
+
+void PowerManagementJob::setScreenBrightness(const int value)
+{
+    QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.Solid.PowerManagement",
+                                                      "/org/kde/Solid/PowerManagement",
+                                                      "org.kde.Solid.PowerManagement",
+                                                      "setBrightness");
+    msg.setArguments(QList<QVariant>() << QVariant::fromValue(value));
+    QDBusConnection::sessionBus().asyncCall(msg);
 }
 
 void PowerManagementJob::requestShutDown()

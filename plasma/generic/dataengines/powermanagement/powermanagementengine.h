@@ -56,9 +56,10 @@ private slots:
     void updateAcPlugState(bool newState);
     void deviceRemoved(const QString& udi);
     void deviceAdded(const QString& udi);
-    void profileChanged(const QString &current);
     void batteryRemainingTimeChanged(qulonglong time);
     void batteryRemainingTimeReply(QDBusPendingCallWatcher*);
+    void screenBrightnessChanged(int brightness);
+    void screenBrightnessReply(QDBusPendingCallWatcher *watcher);
 
 private:
     QStringList basicSourceNames() const;
