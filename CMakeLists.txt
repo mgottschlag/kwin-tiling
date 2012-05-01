@@ -74,27 +74,9 @@ macro_optional_find_package(Fontconfig)
 macro_optional_find_package(Googlegadgets)
 macro_log_feature(GOOGLEGADGETS_FOUND "GoogleGadgets" "Google Gadgets library" "http://code.google.com/p/google-gadgets-for-linux/" FALSE "0.11.0" "Needed to build plasma scriptengine for google gadgets")
 
-#### Python support ####
+#### Python support ( plasma scriptengines ) ####
 macro_optional_find_package(PythonLibrary)
-
-macro_optional_find_package(SIP)
-if(SIP_FOUND AND SIP_VERSION STRLESS "040701")
-  message(STATUS "The version of SIP found is too old. 4.7.1 or later is needed.")
-  set(SIP_FOUND)
-endif(SIP_FOUND AND SIP_VERSION STRLESS "040701")
-
-include(SIPMacros)
-
-macro_optional_find_package(PyQt4)
-if(PYQT4_FOUND AND PYQT4_VERSION STRLESS "040400")
-  message(STATUS "The version of PyQt found is too old. 4.4.0 or later is required.")
-  set(PYQT4_FOUND)
-endif(PYQT4_FOUND AND PYQT4_VERSION STRLESS "040400")
-
-macro_optional_find_package(PyKDE4)
-set(PythonSupport_FOUND TRUE)
-
-#### End Python support ####
+macro_log_feature(PYTHONLIBRARY_FOUND "Python" "Python scripting language" "http://python.org" FALSE "" "Needed to build plasma scriptengine for python.")
 
 include(MacroLibrary)
 include(KDE4Defaults)
