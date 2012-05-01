@@ -162,8 +162,7 @@ Flow {
                         image: modelData.icon
                     }
                 }
-            }
-                        
+            } 
         }
     }
 
@@ -171,7 +170,7 @@ Flow {
         id: hibernateDialogComponent
         QueryDialog {
             titleIcon: "system-suspend-hibernate"
-            titleText: "Hibernate"
+            titleText: i18n("Hibernate")
             message: i18n("Do you want to suspend to disk (hibernate)?")
 
             acceptButtonText: i18n("Yes")
@@ -182,19 +181,38 @@ Flow {
     }
     property QueryDialog hibernateDialog
 
+    Component {
+        id: sleepDialogComponent
+        QueryDialog {
+            titleIcon: "system-suspend"
+            titleText: i18n("Suspend")
+            message: i18n("Do you want to suspend to RAM (sleep)?")
+
+            acceptButtonText: i18n("Yes")
+            rejectButtonText: i18n("No")
+
+            onAccepted: performOperation("suspendToRam")
+        }
+    }
+    property QueryDialog sleepDialog
+
     function clickHandler(what) {
         if (what == "suspendToDisk") {
             if (!hibernateDialog) {
-                hibernateDialog = hibernateDialogComponent.createObject(lockout)
+                hibernateDialog = hibernateDialogComponent.createObject(lockout);
             }
 
-            hibernateDialog.open()
-            
-            if (false) {
-                return;
+            hibernateDialog.open();
+
+        } else if (what == "suspendToRam") {
+            if (!sleepDialog) {
+                sleepDialog = sleepDialogComponent.createObject(lockout);
             }
+
+            sleepDialog.open();
+
         } else {
-            performOperation(what)
+            performOperation(what);
         }
     }
 
