@@ -111,6 +111,7 @@ Comment[pl]=Narzędzie konfiguracyjne do zrządzania programami automatycznie ur
 Comment[pt]=Uma ferramenta de configuração para gerir os programas que são arrancados automaticamente com o KDE.
 Comment[pt_BR]=Uma ferramenta de configuração para gerenciar os programas que são carregados automaticamente com o KDE.
 Comment[sv]=Ett inställningsverktyg för att hantera vilka program som startas automatiskt när KDE startas.
+Comment[tr]=Hangi programların KDE açılırken otomatik olarak başlatılacağını yöneten bir yapılandırma aracı.
 Comment[uk]=Керування програмами, які будуть запускатися разом з графічним середовищем автоматично.
 Comment[x-test]=xxA configuration tool for managing which programs start up automatically with KDE.xx
 Comment[zh_TW]=管理 KDE 要自動啟動哪些程式的設定工具。
