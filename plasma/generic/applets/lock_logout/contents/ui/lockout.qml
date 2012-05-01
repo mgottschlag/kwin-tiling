@@ -126,6 +126,7 @@ Flow {
             width: items.itemWidth
             height: items.itemHeight
 
+            
             QIconItem {
                 id: iconButton
                 width: items.iconSize
@@ -133,20 +134,36 @@ Flow {
                 anchors.centerIn: parent
                 icon: QIcon(modelData.icon)
                 scale: mouseArea.pressed ? 0.9 : 1
+                
+                QIconItem {
+                    id: activeIcon
+                    opacity: mouseArea.containsMouse ? 1 : 0
+                    anchors.fill: iconButton
+                    icon: QIcon(modelData.icon)
+                    state: QIconItem.ActiveState
+                    Behavior on opacity {
+                        NumberAnimation {
+                            duration: 250
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+                }
 
                 MouseArea {
                     id: mouseArea
                     anchors.fill: parent
-                    onClicked: clickHandler(modelData.operation)
+                    hoverEnabled: true
+                    onReleased: clickHandler(modelData.operation)
+
+                    PlasmaCore.ToolTip {
+                        target: mouseArea
+                        mainText: modelData.tooltip_mainText
+                        subText: modelData.tooltip_subText
+                        image: modelData.icon
+                    }
                 }
             }
-
-            PlasmaCore.ToolTip {
-                target: iconButton
-                mainText: modelData.tooltip_mainText
-                subText: modelData.tooltip_subText
-                image: modelData.icon
-            }
+                        
         }
     }
 
