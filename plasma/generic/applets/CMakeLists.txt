@@ -6,7 +6,6 @@ if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
 endif(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
 
 add_subdirectory(analog-clock)
-add_subdirectory(activitybar)
 add_subdirectory(batterymonitor)
 add_subdirectory(calendar)
 add_subdirectory(devicenotifier)
