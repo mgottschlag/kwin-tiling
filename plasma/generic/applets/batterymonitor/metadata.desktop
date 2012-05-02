@@ -158,13 +158,6 @@ Comment[zh_CN]=查看电池电源的状态
 Comment[zh_TW]=查看您的電池的電力狀態
 Encoding=UTF-8
 Keywords=Power Management, Battery, System, Energy
-Keywords[et]=Toitehaldus, aku, süsteem, energia
-Keywords[nl]=Energiebeheer, accu, systeem, energie
-Keywords[pt]=Gestão de Energia, Bateria, Sistema, Energia
-Keywords[pt_BR]=Gerenciamento de energia, bateria, sistema, energia
-Keywords[sv]=Krafthantering, batteri, system, energi
-Keywords[uk]=Керування живленням, акумулятор, система, енергія
-Keywords[x-test]=xxPower Management, Battery, System, Energyxx
 
 Icon=battery
 Type=Service
