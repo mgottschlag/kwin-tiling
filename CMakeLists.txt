@@ -14,6 +14,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_P
 set(QT_MIN_VERSION "4.7.0")
 set(KDE_MIN_VERSION "4.8.1")
 set(SOPRANO_MIN_VERSION "2.5.63")
+
+OPTION(WITH_XINERAMA "Xinerama support for multi-headed X displays" ON)
+
 find_package(KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package(Strigi REQUIRED)
 find_package(ZLIB REQUIRED)
