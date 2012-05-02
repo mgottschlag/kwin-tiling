@@ -127,6 +127,7 @@ private:
     CalendarTablePrivate* const d;
 
     Q_PRIVATE_SLOT(d, void populateCalendar())
+    Q_PRIVATE_SLOT(d, void settingsChanged(int category))
 };
 
 }

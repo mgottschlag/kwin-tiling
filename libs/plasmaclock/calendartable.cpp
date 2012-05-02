@@ -101,6 +101,7 @@ class CalendarTablePrivate
             delayedPopulationTimer->setInterval(0);
             delayedPopulationTimer->setSingleShot(true);
             QObject::connect(delayedPopulationTimer, SIGNAL(timeout()), q, SLOT(populateCalendar()));
+            QObject::connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), q, SLOT(settingsChanged(int)));
 
             setDate(initialDate);
         }
@@ -362,6 +363,7 @@ class CalendarTablePrivate
         void populateHolidays();
         void populateEvents();
         void populateCalendar();
+        void settingsChanged(int category);
 
         CalendarTable *q;
         QString calendarType;
@@ -817,6 +819,17 @@ void CalendarTablePrivate::populateEvents()
 {
     pendingPopulations |= PopulateEvents;
     delayedPopulationTimer->start();
+}
+
+void CalendarTablePrivate::settingsChanged(int category)
+{
+    if (category != KGlobalSettings::SETTINGS_LOCALE) {
+        return;
+    }
+
+    calendar = KGlobal::locale()->calendar();
+
+    q->update();
 }
 
 void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
