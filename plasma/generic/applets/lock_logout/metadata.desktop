@@ -157,6 +157,11 @@ Comment[zh_CN]=锁定屏幕或注销
 Comment[zh_TW]=鎖定螢幕或登出
 Encoding=UTF-8
 Keywords=Lock, Logout, Sleep, Hibernate, Switch User
+Keywords[nl]=Vergrendelen, afmelden, slapen, onderbreken, gebruiker wisselen
+Keywords[pa]=ਲਾਕ,ਲਾਗਆਉਟ, ਸਲੀਪ, ਹਾਈਬਰਨੇਟ, ਯੂਜ਼ਰ ਬਦਲੋ
+Keywords[pt]=Bloquear, Encerrar, Suspender, Hibernar, Mudar de Utilizador
+Keywords[uk]=Lock,Logout,Sleep,Hibernate,Switch User,блокування,вихід,присипляння,сон,перемикання,користувач
+Keywords[x-test]=xxLock, Logout, Sleep, Hibernate, Switch Userxx
 
 Type=Service
 Icon=system-shutdown
