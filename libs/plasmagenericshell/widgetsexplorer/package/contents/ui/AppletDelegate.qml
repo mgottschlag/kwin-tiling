@@ -73,6 +73,7 @@ PlasmaCore.FrameSvgItem {
     DragArea {
         anchors.fill: parent
         supportedActions: Qt.MoveAction | Qt.LinkAction
+        onDragStarted: tooltipDialog.visible = false
         mimeData {
             source: parent
         }
@@ -137,9 +138,7 @@ PlasmaCore.FrameSvgItem {
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
-            onDoubleClicked: {
-                widgetExplorer.addApplet(pluginName)
-            }
+            onDoubleClicked: widgetExplorer.addApplet(pluginName)
             onEntered: tooltipDialog.appletDelegate = background
             onExited: tooltipDialog.appletDelegate = null
         }
