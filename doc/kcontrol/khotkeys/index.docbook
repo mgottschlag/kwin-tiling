@@ -248,9 +248,9 @@ members will trigger the shortcuts in the group.</para>
 
 <para>To add a window definition to the list, press the <guibutton>New</guibutton>
 button.  You may select <guimenuitem>Active Window...</guimenuitem> if you want
-the shortcut to be triggered only if you are currently inside the specified
-window, <!-- means has the focus?-->or you may select <guimenuitem>Existing Window...</guimenuitem> if you
-want the shortcut to be triggered as long as that window is open <!-- means not minimized to panel/tray and not on other virtual desktop, not in other activity-->, regardless of
+the shortcut to be triggered only if the specified window currently has focus,
+or you may select <guimenuitem>Existing Window...</guimenuitem> if you want the
+shortcut to be triggered as long as that window is open <!-- means not minimized to panel/tray and not on other virtual desktop, not in other activity-->, regardless of
 whether or not you are using it.  Selecting either of these options opens a
 window where you can edit the window definitions.</para>
 
@@ -296,7 +296,7 @@ which depends on the type of trigger specified:</para>
 
 <para>To modify a keyboard shortcut, click on the button that contains a wrench,
 and then enter the desired keyboard shortcut. To erase the shortcut, click on
-the button whith the <inlinemediaobject><imageobject><imagedata fileref="oxygen-22x22-edit-clear-locationbar-rtl.png" format="PNG"/></imageobject></inlinemediaobject> icon to the right of the
+the button with the <inlinemediaobject><imageobject><imagedata fileref="oxygen-22x22-edit-clear-locationbar-rtl.png" format="PNG"/></imageobject></inlinemediaobject> icon to the right of the
 change shortcut button.</para>
 
 <screenshot id="screenshot-shortcuts-trigger-keyboard">
