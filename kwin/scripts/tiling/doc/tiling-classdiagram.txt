@@ -1,0 +1,131 @@
+
+@startuml tiling-classdiagram.svg
+skinparam classAttributeIconSize 0
+
+class Tiling {
+	-defaultLayout : LayoutType
+	-availableLayouts : LayoutType
+	-layouts : Layout[][]
+	-desktopCount : int
+	-screenCount : int
+	-onNumberDesktopsChanged()
+	-onNumberScreensChanged()
+	-onCurrentDesktopChanged()
+	-onNextLayout()
+	-onPreviousLayout()
+	-onFloatWindow()
+	-onUnfloatWindow()
+	-switchFocus(direction)
+	-moveTile(direction)
+}
+
+class TileList {
+	+addClient(client : Client) : Tile
+	+getTile(client : Client) : Tile
+	+updateTabGroups(client : Client)
+	+tileAdded : Signal<Tile>
+	+tileRemoved : Signal<Tile>
+	+tileChanged : Signal<Tile>
+	-onClientAdded(client)
+	-onClientRemoved(client)
+	-onClientMinimized(client)
+	-onClientUnminimized(client)
+	-onClientRestored(client)
+	-onClientMaximizedSet(client, w, h)
+	-onClientDesktopChanged(client)
+}
+
+class Tile {
+	-savedGeometry : Rect
+	+clients : Client[]
+	+floating : bool
+	+forcedFloating : bool
+	+setGeometry(geometry : Rect)
+	+saveGeometry()
+	+restoreGeometry()
+	+getClient()
+	+movingStarted : Signal<Tile>
+	+movingEnded : Signal<Tile>
+	+movingStep : Signal<Tile>
+	+resizingStarted : Signal<Tile>
+	+resizingEnded : Signal<Tile>
+	+resizingStep : Signal<Tile>
+	+geometryChanged : Signal<Tile>
+	+forcedFloatingChanged : Signal<Tile>
+	+screenChanged : Signal<Tile>
+	+desktopChanged : Signal<Tile>
+	-onClientShadeChanged(client)
+	-onClientTabGroupChanged(client)
+	-onClientGeometryChanged(client)
+	-onClientKeepAboveChanged(client)
+	-onClientKeepBelowChanged(client)
+	-onClientFullScreenChanged(client)
+}
+
+class Client {
+	tiling_tileIndex : int
+	tiling_floating : bool
+}
+
+class LayoutType {
+	+name
+	+image
+}
+
+abstract class Layout {
+	+screenRectangle
+	+desktop
+	+{abstract}addTile(tile : Tile)
+	+{abstract}removeTile(tile : Tile)
+	+{abstract}restoreTile(tile : Tile)
+	+{abstract}swapTiles(tile1 : Tile, tile2 : Tile)
+	+{abstract}getAdjacentTile(from : Tile, direction) : Tile
+	+{abstract}onClientChanges(tile : Tile, client : Client)
+	+{abstract}getTile(client : Client)
+	+getTile(x, y) : Tile
+	+getTiles() : Tile[]
+	+updateScreenSize()
+	+updateAllTiles()
+	+setLayoutArea(area : QRect)
+}
+
+class SpiralLayout {
+}
+
+class ZigZagLayout {
+}
+
+class ColumnLayout {
+}
+
+class RowLayout {
+}
+
+class GridLayout {
+}
+
+class MaximizedLayout {
+}
+
+class FloatingLayout {
+}
+
+Tiling "1" --> "1" TileList
+Tiling "1" --> "*" Layout
+Tiling "1" --> "*" LayoutType
+
+TileList "1" --> "*" Tile
+
+LayoutType "1" <-- "*" Layout
+Tile "*" <-right-> "*" Layout
+Tile "1" -left-> "*" Client
+
+Layout <|-- SpiralLayout
+Layout <|-- ZigZagLayout
+Layout <|-- ColumnLayout
+Layout <|-- RowLayout
+Layout <|-- GridLayout
+Layout <|-- MaximizedLayout
+Layout <|-right- FloatingLayout
+
+@enduml
