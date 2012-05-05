@@ -240,7 +240,7 @@ of shortcuts works with.</para>
 be satisfied for shortcuts in the group to be triggered.</para>
 
 <para>You may add additional groups of conditions by clicking the
-<guibutton>New</guibutton> button to the left of the tree of conditions.  Types
+<guibutton>New</guibutton> drop down box to the right of the tree of conditions.  Types
 of groups include the aforementioned <guimenuitem>And</guimenuitem>,
 <guimenuitem>Or</guimenuitem>, in which only one member of the group must be
 satisfied, or <guimenuitem>Not</guimenuitem>, in which the inverse of all
@@ -249,8 +249,8 @@ members will trigger the shortcuts in the group.</para>
 <para>To add a window definition to the list, press the <guibutton>New</guibutton>
 button.  You may select <guimenuitem>Active Window...</guimenuitem> if you want
 the shortcut to be triggered only if you are currently inside the specified
-window, or you may select <guimenuitem>Existing Window...</guimenuitem> if you
-want the shortcut to be triggered as long as that window is open, regardless of
+window, <!-- means has the focus?-->or you may select <guimenuitem>Existing Window...</guimenuitem> if you
+want the shortcut to be triggered as long as that window is open <!-- means not minimized to panel/tray and not on other virtual desktop, not in other activity-->, regardless of
 whether or not you are using it.  Selecting either of these options opens a
 window where you can edit the window definitions.</para>
 
@@ -295,8 +295,8 @@ which depends on the type of trigger specified:</para>
 <listitem>
 
 <para>To modify a keyboard shortcut, click on the button that contains a wrench,
-and then enter the desired keyboard shortcut.  To erase the shortcut, click on
-the <guibutton>Delete</guibutton> button to the right of the
+and then enter the desired keyboard shortcut. To erase the shortcut, click on
+the button whith the <inlinemediaobject><imageobject><imagedata fileref="oxygen-22x22-edit-clear-locationbar-rtl.png" format="PNG"/></imageobject></inlinemediaobject> icon to the right of the
 change shortcut button.</para>
 
 <screenshot id="screenshot-shortcuts-trigger-keyboard">
