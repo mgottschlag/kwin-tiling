@@ -100,7 +100,7 @@ KCMHotkeys::KCMHotkeys( QWidget *parent, const QVariantList & /* args */ )
      ,d( new KCMHotkeysPrivate(this) )
     {
     // Inform KCModule of the buttons we support
-    KCModule::setButtons(KCModule::Buttons(KCModule::Default | KCModule::Apply));
+    KCModule::setButtons(KCModule::Buttons(KCModule::Default | KCModule::Apply | KCModule::Help));
 
     // Add the about data
     KAboutData *about = new KAboutData(

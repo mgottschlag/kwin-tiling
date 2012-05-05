@@ -7,6 +7,7 @@ X-KDE-Library=kcm_hotkeys
 X-KDE-PluginKeyword=khotkeys
 X-KDE-System-Settings-Parent-Category=shortcuts-and-gestures
 X-KDE-ParentApp=kcontrol
+X-DocPath=kcontrol/khotkeys/index.html
 
 Name=Custom Shortcuts
 Name[ar]=اختصارات مخصصة
