@@ -63,8 +63,7 @@ you wish to configure.</para>
 <para>You can also at any time <guibutton>Modify...</guibutton> or
 <guibutton>Delete</guibutton> any stored settings profile, and
 reorder the list.  Reordering the list using the <guibutton>Move Up</guibutton>
-and <guibutton>Move Down</guibutton> buttons is a convenience to help you sort
-the profiles, and has no effect on how they are applied.</para>
+and <guibutton>Move Down</guibutton> buttons effects on how they are applied.</para>
 
 </chapter>
 <!--userbase <timestamp>2012-03-09T20:50:14Z</timestamp>-->
