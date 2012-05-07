@@ -28,11 +28,7 @@ class TileList {
 	+tileChanged : Signal<Tile>
 	-onClientAdded(client)
 	-onClientRemoved(client)
-	-onClientMinimized(client)
-	-onClientUnminimized(client)
-	-onClientRestored(client)
-	-onClientMaximizedSet(client, w, h)
-	-onClientDesktopChanged(client)
+	-onClientTabGroupChanged(client)
 }
 
 class Tile {
@@ -44,6 +40,7 @@ class Tile {
 	+saveGeometry()
 	+restoreGeometry()
 	+getClient()
+	+syncCustomProperties()
 	+movingStarted : Signal<Tile>
 	+movingEnded : Signal<Tile>
 	+movingStep : Signal<Tile>
@@ -55,11 +52,15 @@ class Tile {
 	+screenChanged : Signal<Tile>
 	+desktopChanged : Signal<Tile>
 	-onClientShadeChanged(client)
-	-onClientTabGroupChanged(client)
 	-onClientGeometryChanged(client)
 	-onClientKeepAboveChanged(client)
 	-onClientKeepBelowChanged(client)
 	-onClientFullScreenChanged(client)
+	-onClientMinimized(client)
+	-onClientUnminimized(client)
+	-onClientRestored(client)
+	-onClientMaximizedSet(client, w, h)
+	-onClientDesktopChanged(client)
 }
 
 class Client {
@@ -67,14 +68,11 @@ class Client {
 	tiling_floating : bool
 }
 
-class LayoutType {
-	+name
-	+image
-}
-
 abstract class Layout {
 	+screenRectangle
 	+desktop
+	+{static}name
+	+{static}image
 	+{abstract}addTile(tile : Tile)
 	+{abstract}removeTile(tile : Tile)
 	+{abstract}restoreTile(tile : Tile)
@@ -112,11 +110,9 @@ class FloatingLayout {
 
 Tiling "1" --> "1" TileList
 Tiling "1" --> "*" Layout
-Tiling "1" --> "*" LayoutType
 
 TileList "1" --> "*" Tile
 
-LayoutType "1" <-- "*" Layout
 Tile "*" <-right-> "*" Layout
 Tile "1" -left-> "*" Client
 

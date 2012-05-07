@@ -107,3 +107,11 @@ Tile.prototype.restoreGeometry = function() {
 Tile.prototype.getClient = function() {
     // TODO
 };
+
+/**
+ * Synchronizes all custom properties (tileIndex, floating between all clients
+ * in the tile).
+ */
+Tile.prototype.syncCustomProperties = function() {
+    // TODO: We are not be able to do this here as we don't know the tile index
+};

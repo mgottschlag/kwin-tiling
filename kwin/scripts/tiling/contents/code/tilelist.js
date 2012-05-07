@@ -41,6 +41,17 @@ function TileList() {
      * Signal which is triggered every time the windows in a tile change.
      */
     this.tileChanged = new Signal();
+
+    // We connect to the global workspace callbacks which are triggered when
+    // clients are added/removed in order to be able to keep track of the
+    // new/deleted tiles
+    var self = this;
+    workspace.clientAdded.connect(function(client) {
+        self._onClientAdded(client);
+    });
+    workspace.clientRemoved.connect(function(client) {
+        self._onClientRemoved(client);
+    });
 }
 
 /**
@@ -51,19 +62,15 @@ function TileList() {
  * @param client Client which is added to the tile list.
  */
 TileList.prototype.addClient = function(client) {
-    // TODO
+    // Check whether the client is part of an existing tile
+    var tileIndex = client.tiling_tileIndex;
+    if (tileIndex) {
+        // TODO
+    } else {
+        // If not, create a new tile
+        // TODO
+    }
 };
-if (0) {
-/**
- * Removes a client from the list. This might cause a tileRemoved event if this
- * has been the last client in its tile.
- *
- * @param client Client which shall be removed from the tile list.
- */
-TileList.prototype.removeClient = function(client) {
-    // TODO
-};
-}
 
 /**
  * Returns the tile in which a certain client is located.
@@ -75,3 +82,57 @@ TileList.prototype.getTile = function(client) {
     // TODO
 };
 
+/**
+ * TODO: What was this supposed to do?
+ */
+TileList.prototype.updateTabGroups = function(client) {
+    // TODO
+}
+
+TileList.prototype._onClientAdded = function(client) {
+    if (TileList.isIgnored(client)) {
+        return;
+    }
+    this._identifyNewTiles();
+    this.addClient(client);
+}
+
+TileList.prototype._onClientRemoved = function(client) {
+    var tileIndex = client.tiling_tileIndex;
+    if (!tileIndex) {
+        return;
+    }
+    // TODO
+}
+
+TileList.prototype._onClientTabGroupChanged = function(client) {
+    // TODO
+}
+
+/**
+ * Updates the tile index on all clients in all existing tiles by synchronizing
+ * the tiling_tileIndex property of the group. Clients which do not belong to
+ * any existing tile will have this property set to null afterwards, while
+ * clients which belong to a tile have the correct tile index.
+ *
+ * This can only detect clients which are not in any tile, it does not detect
+ * client tab group changes! These shall be handled by removing the client from
+ * any tile in _onClientTabGroupChanged() first.
+ */
+TileList.prototype._identifyNewTiles = function() {
+    for (var i = 0; i < this.tiles.length; i++) {
+        var firstClient = this.tiles[i].clients[0];
+        firstClient.tiling_tileIndex = i;
+        firstClient.syncTabGroupFor("tiling_tileIndex", true);
+        firstClient.syncTabGroupFor("tiling_floating", true);
+    });
+}
+
+/**
+ * Returns false for clients which shall not be handled by the tiling script at
+ * all, e.g. the panel.
+ */
+TileList._isIgnored = function(client) {
+    // TODO
+    return false;
+}

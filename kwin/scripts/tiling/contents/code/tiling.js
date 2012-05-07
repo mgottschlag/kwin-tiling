@@ -85,19 +85,18 @@ function Tiling() {
     this.tiles.tileChanged.connect(function(tile) {
         self._onTileChanged(tile);
     });
-    // Create the initial list of tiles
+    // We need to reset custom client properties first because this might not be
+    // the first execution of the script
     var existingClients = workspace.clientList();
-    var addClient = function(client) {
-        self.tiles.addClient(client);
-        // Register client callbacks which are not handled by TileList
-        // TODO
-    }
-    existingClients.forEach(addClient);
-    // Register global callbacks
-    workspace.clientAdded.connect(addClient);
-    workspace.clientRemoved.connect(function(client) {
-        self.tiles.removeClient(client);
+    existingClients.forEach(function(client) {
+        client.tiling_tileIndex = null;
+        client.tiling_floating = null;
     });
+    // Create the initial list of tiles
+    existingClients.forEach(function(client) {
+        self.tiles.addClient(client);
+    });
+    // Register global callbacks
     // TODO
     // Register keyboard shortcuts
     // TODO
