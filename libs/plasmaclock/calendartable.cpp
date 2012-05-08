@@ -101,7 +101,6 @@ class CalendarTablePrivate
             delayedPopulationTimer->setInterval(0);
             delayedPopulationTimer->setSingleShot(true);
             QObject::connect(delayedPopulationTimer, SIGNAL(timeout()), q, SLOT(populateCalendar()));
-            QObject::connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), q, SLOT(settingsChanged(int)));
 
             setDate(initialDate);
         }
@@ -132,8 +131,10 @@ class CalendarTablePrivate
 
             if (calendar == KGlobal::locale()->calendar()) {
                 calendarType = "locale";
+                QObject::connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), q, SLOT(settingsChanged(int)));
             } else {
                 calendarType = calendar->calendarType();
+                QObject::disconnect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), q, SLOT(settingsChanged(int)));
             }
 
             // Force date update to refresh cached date componants then update display
@@ -828,7 +829,6 @@ void CalendarTablePrivate::settingsChanged(int category)
     }
 
     calendar = KGlobal::locale()->calendar();
-
     q->update();
 }
 
