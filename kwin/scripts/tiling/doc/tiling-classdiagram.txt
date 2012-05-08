@@ -22,10 +22,8 @@ class Tiling {
 class TileList {
 	+addClient(client : Client) : Tile
 	+getTile(client : Client) : Tile
-	+updateTabGroups(client : Client)
 	+tileAdded : Signal<Tile>
 	+tileRemoved : Signal<Tile>
-	+tileChanged : Signal<Tile>
 	-onClientAdded(client)
 	-onClientRemoved(client)
 	-onClientTabGroupChanged(client)
@@ -36,6 +34,9 @@ class Tile {
 	+clients : Client[]
 	+floating : bool
 	+forcedFloating : bool
+	+tileIndex
+	+Tile(firstClient, tileIndex)
+	+setTileIndex(tileIndex)
 	+setGeometry(geometry : Rect)
 	+saveGeometry()
 	+restoreGeometry()

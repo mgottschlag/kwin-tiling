@@ -37,10 +37,6 @@ function TileList() {
      * Signal which is triggered whenever a tile is removed from the list.
      */
     this.tileRemoved = new Signal();
-    /**
-     * Signal which is triggered every time the windows in a tile change.
-     */
-    this.tileChanged = new Signal();
 
     // We connect to the global workspace callbacks which are triggered when
     // clients are added/removed in order to be able to keep track of the
@@ -62,13 +58,20 @@ function TileList() {
  * @param client Client which is added to the tile list.
  */
 TileList.prototype.addClient = function(client) {
+    if (TileList._isIgnored(client)) {
+        return;
+    }
+    var self = this;
+    client.tabGroupChanged.connect(function() {
+        self._onClientTabGroupChanged(client);
+    });
     // Check whether the client is part of an existing tile
     var tileIndex = client.tiling_tileIndex;
-    if (tileIndex) {
-        // TODO
+    if (tileIndex >= 0 && tileIndex < tiles.length) {
+        this.tiles[tileIndex].clients.push(client);
     } else {
         // If not, create a new tile
-        // TODO
+        this._addTile(client);
     }
 };
 
@@ -79,35 +82,77 @@ TileList.prototype.addClient = function(client) {
  * @return Tile in which the client is located.
  */
 TileList.prototype.getTile = function(client) {
-    // TODO
+    var tileIndex = client.tiling_tileIndex;
+    if (tileIndex >= 0 && tileIndex < tiles.length) {
+        return this.tiles[tileIndex];
+    } else {
+        return null;
+    }
 };
 
-/**
- * TODO: What was this supposed to do?
- */
-TileList.prototype.updateTabGroups = function(client) {
-    // TODO
-}
-
 TileList.prototype._onClientAdded = function(client) {
-    if (TileList.isIgnored(client)) {
-        return;
-    }
     this._identifyNewTiles();
     this.addClient(client);
-}
+};
 
 TileList.prototype._onClientRemoved = function(client) {
     var tileIndex = client.tiling_tileIndex;
-    if (!tileIndex) {
+    if (!(tileIndex >= 0 && tileIndex < this.tiles.length)) {
         return;
     }
-    // TODO
-}
+    // Remove the client from its tile
+    var tile = this.tiles[tileIndex];
+    if (tile.clients.length == 1) {
+        // Remove the tile if this was the last client in it
+        this._removeTile(tileIndex);
+    } else {
+        // Remove the client from its tile
+        tile.clients.splice(tile.clients.indexOf(client), 1);
+    }
+};
 
 TileList.prototype._onClientTabGroupChanged = function(client) {
-    // TODO
-}
+    var tileIndex = client.tiling_tileIndex;
+    var tile = this.tiles[tileIndex];
+    if (tile.clients.length == 1) {
+        // If this is the only client in the tile, the tile either does not
+        // change or is destroyed
+        this.tiles.forEach(function(otherTile) {
+            if (otherTile != tile) {
+                otherTile.syncCustomProperties();
+            }
+        });
+        if (client.tiling_tileIndex != tileIndex) {
+            this._removeTile(tileIndex);
+            this.tiles[client.tiling_tileIndex].clients.push(client);
+        }
+    } else {
+        tile.clients.splice(tile.clients.indexOf(client), 1);
+        client.tiling_tileIndex = this.tiles.length;
+        // Check whether the client has been added to an existing tile
+        this._identifyNewTiles();
+        if (client.tiling_tileIndex != this.tiles.length) {
+            this.tiles[client.tiling_tileIndex].clients.push(client);
+        } else {
+            this._addTile(client);
+        }
+    }
+};
+
+TileList.prototype._addTile = function(client) {
+    var newTile = new Tile(client, this.tiles.length)
+    this.tiles.push(newTile);
+    this.tileAdded.emit(newTile);
+};
+
+TileList.prototype._removeTile = function(tileIndex) {
+    // Remove the tile if this was the last client in it
+    this.tileRemoved.emit(this.tiles[tileIndex]);
+    this.tiles[tileIndex] = this.tiles[this.tiles.length - 1];
+    this.tiles.length--;
+    this.tiles[tileIndex].tileIndex = tileIndex;
+    this.tiles[tileIndex].syncCustomProperties();
+};
 
 /**
  * Updates the tile index on all clients in all existing tiles by synchronizing
@@ -120,19 +165,16 @@ TileList.prototype._onClientTabGroupChanged = function(client) {
  * any tile in _onClientTabGroupChanged() first.
  */
 TileList.prototype._identifyNewTiles = function() {
-    for (var i = 0; i < this.tiles.length; i++) {
-        var firstClient = this.tiles[i].clients[0];
-        firstClient.tiling_tileIndex = i;
-        firstClient.syncTabGroupFor("tiling_tileIndex", true);
-        firstClient.syncTabGroupFor("tiling_floating", true);
+    this.tiles.forEach(function(tile) {
+        tile.syncCustomProperties();
     });
-}
+};
 
 /**
  * Returns false for clients which shall not be handled by the tiling script at
  * all, e.g. the panel.
  */
 TileList._isIgnored = function(client) {
-    // TODO
-    return false;
-}
+    // NOTE: Application workarounds should be put here
+    return client.specialWindow;
+};

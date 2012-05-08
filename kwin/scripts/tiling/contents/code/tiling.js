@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 
 Qt.include("signal.js");
+Qt.include("tile.js");
 Qt.include("tilelist.js");
 Qt.include("tests.js");
 
@@ -82,9 +83,6 @@ function Tiling() {
     this.tiles.tileRemoved.connect(function(tile) {
         self._onTileRemoved(tile);
     });
-    this.tiles.tileChanged.connect(function(tile) {
-        self._onTileChanged(tile);
-    });
     // We need to reset custom client properties first because this might not be
     // the first execution of the script
     var existingClients = workspace.clientList();
@@ -129,9 +127,5 @@ Tiling.prototype._onTileAdded = function(tile) {
 };
 
 Tiling.prototype._onTileRemoved = function(tile) {
-    // TODO
-};
-
-Tiling.prototype._onTileChanged = function(tile) {
     // TODO
 };

@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * property change events.
  * @class
  */
-function Tile() {
+function Tile(firstClient, tileIndex) {
     /**
      * Signal which is triggered whenever the user starts to move the tile.
      */
@@ -73,7 +73,27 @@ function Tile() {
      * desktop.
      */
     this.desktopChanged = new Signal();
+    /**
+     * List of the clients in this tile.
+     */
+    this.clients = [firstClient];
+    /**
+     * Index of this tile in the TileList to which the tile belongs.
+     */
+    this.tileIndex = tileIndex;
+    /**
+     * True if this tile has been marked as floating by the user.
+     */
+    this.floating = false;
+    /**
+     * True if this tile has to be floating because of client properties.
+     */
+    this.forcedFloating = false;
+
+    // Check whether this tile has to be floating
     // TODO
+
+    this.syncCustomProperties();
 }
 
 /**
@@ -113,5 +133,8 @@ Tile.prototype.getClient = function() {
  * in the tile).
  */
 Tile.prototype.syncCustomProperties = function() {
-    // TODO: We are not be able to do this here as we don't know the tile index
+    this.clients[0].tiling_tileIndex = this.tileIndex;
+    this.clients[0].tiling_floating = this.floating;
+    this.clients[0].syncTabGroupFor("tiling_tileIndex", true);
+    this.clients[0].syncTabGroupFor("tiling_floating", true);
 };
