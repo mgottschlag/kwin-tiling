@@ -21,6 +21,8 @@
 #include "SplashApp.h"
 
 #include <QDesktopWidget>
+#include <QPixmap>
+#include <QCursor>
 
 #define TEST_STEP_INTERVAL 2000
 
@@ -44,7 +46,11 @@ SplashApp::SplashApp(Display * display, int &argc, char ** argv)
 
     setStage(1);
 
-    
+
+    QPixmap cursor(32, 32);
+    cursor.fill(QColor(0, 0, 0, 0));
+    setOverrideCursor(QCursor(cursor));
+
 
     XSelectInput(display, DefaultRootWindow(display), SubstructureNotifyMask);
 
