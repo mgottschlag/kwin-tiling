@@ -122,7 +122,7 @@ void PanelShadows::Private::initPixmap(const QString &element)
 {
 #ifdef Q_WS_X11
     QPixmap pix = q->pixmap(element);
-    if (pix.handle() == 0) {
+    if (!pix.isNull() && pix.handle() == 0) {
         Pixmap xPix = XCreatePixmap(QX11Info::display(), QX11Info::appRootWindow(), pix.width(), pix.height(), 32);
         QPixmap tempPix = QPixmap::fromX11Pixmap(xPix, QPixmap::ExplicitlyShared);
         tempPix.fill(Qt::transparent);
