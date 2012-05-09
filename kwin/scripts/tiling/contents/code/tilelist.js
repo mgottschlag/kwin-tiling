@@ -65,7 +65,37 @@ TileList.prototype.addClient = function(client) {
     client.tabGroupChanged.connect(function() {
         self._onClientTabGroupChanged(client);
     });
-    // Check whether the client is part of an existing tile
+    // We also have to connect other client signals here instead of in Tile
+    // because the tile of a client might change over time
+    var getTile = function(client) {
+        return self.tiles[client.tiling_tileIndex];
+    };
+    client.shadeChanged.connect(function() {
+        getTile(client).onClientShadeChanged(client);
+    });
+    client.geometryChanged.connect(function() {
+        getTile(client).onClientGeometryChanged(client);
+    });
+    client.keepAboveChanged.connect(function() {
+        getTile(client).onClientKeepAboveChanged(client);
+    });
+    client.keepBelowChanged.connect(function() {
+        getTile(client).onClientKeepBelowChanged(client);
+    });
+    client.fullScreenChanged.connect(function() {
+        getTile(client).onClientFullScreenChanged(client);
+    });
+    client.minimizedChanged.connect(function() {
+        getTile(client).onClientMinimizedChanged(client);
+    });
+    client['clientMaximizedStateChanged(KWin::Client*,bool,bool)'].connect(
+            function(client, h, v) {
+        getTile(client).onClientMaximizedStateChanged(client, h, v);
+    });
+    client.desktopChanged.connect(function() {
+        getTile(client).onDesktopChanged(client);
+    });
+   // Check whether the client is part of an existing tile
     var tileIndex = client.tiling_tileIndex;
     if (tileIndex >= 0 && tileIndex < tiles.length) {
         this.tiles[tileIndex].clients.push(client);

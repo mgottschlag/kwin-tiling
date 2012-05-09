@@ -138,3 +138,35 @@ Tile.prototype.syncCustomProperties = function() {
     this.clients[0].syncTabGroupFor("tiling_tileIndex", true);
     this.clients[0].syncTabGroupFor("tiling_floating", true);
 };
+
+Tile.prototype.onClientShadeChanged = function(client) {
+    // TODO
+};
+
+Tile.prototype.onClientGeometryChanged = function(client) {
+    // TODO
+};
+
+Tile.prototype.onClientKeepAboveChanged = function(client) {
+    // TODO
+};
+
+Tile.prototype.onClientKeepBelowChanged = function(client) {
+    // TODO
+};
+
+Tile.prototype.onClientFullScreenChanged = function(client) {
+    // TODO
+};
+
+Tile.prototype.onClientMinimizedChanged = function(client) {
+    // TODO
+};
+
+Tile.prototype.onClientMaximizedStateChanged = function(client) {
+    // TODO
+};
+
+Tile.prototype.onClientDesktopChanged = function(client) {
+    // TODO
+};

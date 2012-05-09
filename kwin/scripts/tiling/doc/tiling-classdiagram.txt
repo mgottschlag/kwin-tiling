@@ -52,16 +52,14 @@ class Tile {
 	+forcedFloatingChanged : Signal<Tile>
 	+screenChanged : Signal<Tile>
 	+desktopChanged : Signal<Tile>
-	-onClientShadeChanged(client)
-	-onClientGeometryChanged(client)
-	-onClientKeepAboveChanged(client)
-	-onClientKeepBelowChanged(client)
-	-onClientFullScreenChanged(client)
-	-onClientMinimized(client)
-	-onClientUnminimized(client)
-	-onClientRestored(client)
-	-onClientMaximizedSet(client, w, h)
-	-onClientDesktopChanged(client)
+	+onClientShadeChanged(client)
+	+onClientGeometryChanged(client)
+	+onClientKeepAboveChanged(client)
+	+onClientKeepBelowChanged(client)
+	+onClientFullScreenChanged(client)
+	+onClientMinimizedChanged(client)
+	+onClientMaximizedStateChanged(client, h, v)
+	+onClientDesktopChanged(client)
 }
 
 class Client {
