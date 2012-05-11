@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Qt.include("signal.js");
 Qt.include("tile.js");
 Qt.include("tilelist.js");
+Qt.include("layout.js");
 Qt.include("tests.js");
 
 function SpiralLayout() {
@@ -72,6 +73,8 @@ function Tiling() {
     this.tiles = new TileList();
 
     var self = this;
+    // Read the script settings
+    // TODO (this is currently not supported by kwin)
     // Create the various layouts, one for every desktop
     for (var i = 0; i < this.desktopCount; i++) {
         this._createDefaultLayouts(i);
@@ -97,7 +100,90 @@ function Tiling() {
     // Register global callbacks
     // TODO
     // Register keyboard shortcuts
-    // TODO
+    registerShortcut("Next Tiling Layout",
+                     "Next Tiling Layout",
+                     "Meta+PgDown",
+                     function() {
+        var currentLayout = getCurrentLayout();
+        var nextIndex = (currentLayout.index + 1) & availableLayouts.length;
+        self._switchLayout(workspace.currentDesktop,
+                     workspace.activeScreen,
+                     nextIndex);
+    });
+    registerShortcut("Previous Tiling Layout",
+                     "Previous Tiling Layout",
+                     "Meta+PgUp",
+                     function() {
+        var currentLayout = getCurrentLayout();
+        var nextIndex = currentLayout.index - 1;
+        if (nextIndex < 0) {
+            nextIndex += availableLayouts.length;
+        }
+        self._switchLayout(workspace.currentDesktop,
+                           workspace.activeScreen,
+                           nextIndex);
+    });
+    registerShortcut("Toggle Floating",
+                     "Toggle Floating",
+                     "Meta+F",
+                     function() {
+        if (!workspace.activeClient) {
+            return;
+        }
+        var tile = tiles.getTile(workspace.activeClient);
+        if (tile == null) {
+            return;
+        }
+        self.toggleFloating(tile);
+    });
+    registerShortcut("Switch Focus Left",
+                     "Switch Focus Left",
+                     "Meta+H",
+                     function() {
+        this._switchFocus(Direction.Left);
+    });
+    registerShortcut("Switch Focus Right",
+                     "Switch Focus Right",
+                     "Meta+L",
+                     function() {
+        this._switchFocus(Direction.Right);
+    });
+    registerShortcut("Switch Focus Up",
+                     "Switch Focus Up",
+                     "Meta+K",
+                     function() {
+        this._switchFocus(Direction.Up);
+    });
+    registerShortcut("Switch Focus Down",
+                     "Switch Focus Down",
+                     "Meta+J",
+                     function() {
+        this._switchFocus(Direction.Down);
+    });
+    registerShortcut("Move Window Left",
+                     "Move Window Left",
+                     "Meta+Shift+H",
+                     function() {
+        this._moveTile(Direction.Left);
+    });
+    registerShortcut("Move Window Right",
+                     "Move Window Right",
+                     "Meta+Shift+L",
+                     function() {
+        this._moveTile(Direction.Right);
+    });
+    registerShortcut("Move Window Up",
+                     "Move Window Up",
+                     "Meta+Shift+K",
+                     function() {
+        this._moveTile(Direction.Up);
+    });
+    registerShortcut("Move Window Down",
+                     "Move Window Down",
+                     "Meta+Shift+J",
+                     function() {
+        this._moveTile(Direction.Down);
+    });
 }
 
 /**
@@ -127,5 +213,21 @@ Tiling.prototype._onTileAdded = function(tile) {
 };
 
 Tiling.prototype._onTileRemoved = function(tile) {
+    // TODO
+};
+
+Tiling.prototype._switchLayout = function(desktop, screen, layoutIndex) {
+    // TODO
+};
+
+Tiling.prototype._toggleFloating = function(tile) {
+    // TODO
+};
+
+Tiling.prototype._switchFocus = function(direction) {
+    // TODO
+};
+
+Tiling.prototype._moveTile = function(direction) {
     // TODO
 };
