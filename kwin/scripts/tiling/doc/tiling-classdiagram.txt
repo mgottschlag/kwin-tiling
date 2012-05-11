@@ -36,12 +36,12 @@ class Tile {
 	+forcedFloating : bool
 	+tileIndex
 	+Tile(firstClient, tileIndex)
-	+setTileIndex(tileIndex)
 	+setGeometry(geometry : Rect)
 	+saveGeometry()
 	+restoreGeometry()
-	+getClient()
+	+getActiveClient()
 	+syncCustomProperties()
+	-updateForcedFloating()
 	+movingStarted : Signal<Tile>
 	+movingEnded : Signal<Tile>
 	+movingStep : Signal<Tile>
@@ -60,6 +60,9 @@ class Tile {
 	+onClientMinimizedChanged(client)
 	+onClientMaximizedStateChanged(client, h, v)
 	+onClientDesktopChanged(client)
+	+onClientStartUserMovedResized(client)
+	+onClientStepUserMovedResized(client)
+	+onClientFinishUserMovedResized(client)
 }
 
 class Client {

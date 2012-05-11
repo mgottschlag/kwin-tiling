@@ -88,6 +88,15 @@ TileList.prototype.addClient = function(client) {
     client.minimizedChanged.connect(function() {
         getTile(client).onClientMinimizedChanged(client);
     });
+    client.clientStartUserMovedResized.connect(function() {
+        getTile(client).onClientStartUserMovedResized(client);
+    });
+    client.clientStepUserMovedResized.connect(function() {
+        getTile(client).onClientStepUserMovedResized(client);
+    });
+    client.clientFinishUserMovedResized.connect(function() {
+        getTile(client).onClientFinishUserMovedResized(client);
+    });
     client['clientMaximizedStateChanged(KWin::Client*,bool,bool)'].connect(
             function(client, h, v) {
         getTile(client).onClientMaximizedStateChanged(client, h, v);
