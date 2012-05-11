@@ -297,7 +297,7 @@ selection</guilabel></term>
 When an area of the screen is selected with mouse or keyboard, this is 
 called the <quote>selection</quote>. If this option is selected, the selection and the 
 clipboard is kept the same, so that anything in the selection is immediately 
-"available for pasting elsewhere using any method, including the traditional 
+available for pasting elsewhere using any method, including the traditional 
 middle mouse button. Otherwise, the selection is recorded in the clipboard 
 history, but the selection can only be pasted using the middle mouse button. 
 Also see the <guilabel>Ignore selection</guilabel> option. 
