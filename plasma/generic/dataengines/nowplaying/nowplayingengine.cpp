@@ -49,6 +49,8 @@ NowPlayingEngine::NowPlayingEngine(QObject* parent,
 
     setData("players", QStringList());
 
+    kWarning() << "The \"nowplaying\" engine is deprecated; use the \"mpris2\" engine instead";
+
     connect(dbusWatcher, SIGNAL(newPlayer(Player::Ptr)),
             this,        SLOT(addPlayer(Player::Ptr)));
     connect(dbusWatcher, SIGNAL(playerDisappeared(Player::Ptr)),
