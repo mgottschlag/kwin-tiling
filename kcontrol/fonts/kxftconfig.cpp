@@ -489,15 +489,15 @@ QString KXftConfig::description(Hint::Style s)
     {
         default:
         case Hint::Medium:
-            return i18n("Medium");
+            return i18nc("medium hinting", "Medium");
         case Hint::NotSet:
             return "";
         case Hint::None:
             return i18nc("no hinting", "None");
         case Hint::Slight:
-            return i18n("Slight");
+            return i18nc("slight hinting", "Slight");
         case Hint::Full:
-            return i18n("Full");
+            return i18nc("full hinting", "Full");
     }
 }
 
