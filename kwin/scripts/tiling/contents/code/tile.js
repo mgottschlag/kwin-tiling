@@ -122,11 +122,13 @@ Tile.prototype.restoreGeometry = function() {
  * Returns the currently active client in the tile.
  */
 Tile.prototype.getActiveClient = function() {
+    var active;
     this.clients.forEach(function(client) {
         if (client.isCurrentTab) {
-            return client;
+            active = client;
         }
     });
+    return active;
 };
 
 /**
