@@ -596,7 +596,7 @@ void DesktopCorona::checkActivities()
              cont->containmentType() == Plasma::Containment::CustomContainment) &&
             !offscreenWidgets().contains(cont)) {
             Plasma::Context *context = cont->context();
-            QString oldId = context->currentActivityId();
+            const QString oldId = context->currentActivityId();
             if (!oldId.isEmpty()) {
                 if (existingActivities.contains(oldId)) {
                     continue; //it's already claimed
@@ -606,17 +606,18 @@ void DesktopCorona::checkActivities()
                 cont->destroy(false);
                 continue;
             }
-            if (cont->screen() > -1) {
-                //it belongs on the current activity
-                if (!newCurrentActivity.isEmpty()) {
-                    context->setCurrentActivityId(newCurrentActivity);
-                    continue;
-                }
+
+            if (cont->screen() > -1 && !newCurrentActivity.isEmpty()) {
+                //it belongs on the new current activity
+                context->setCurrentActivityId(newCurrentActivity);
+                continue;
             }
+
             //discourage blank names
             if (context->currentActivity().isEmpty()) {
                 context->setCurrentActivity(i18nc("Default name for a new activity", "New Activity"));
             }
+
             //create a new activity for the containment
             QString id = m_activityController->addActivity(context->currentActivity());
             context->setCurrentActivityId(id);
@@ -624,7 +625,7 @@ void DesktopCorona::checkActivities()
             if (cont->screen() > -1) {
                 newCurrentActivity = id;
             }
-            kDebug() << "migrated" << context->currentActivityId() << context->currentActivity();
+            kDebug() << "migrated" << cont->id() << context->currentActivityId() << context->currentActivity();
         }
     }
 
