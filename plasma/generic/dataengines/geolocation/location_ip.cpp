@@ -24,53 +24,47 @@
 #include <KIO/Job>
 #include <KIO/TransferJob>
 
-#include <QtXml/QXmlStreamReader>
-
 class Ip::Private : public QObject {
 
 public:
-    QXmlStreamReader m_xmlReader;
+    QByteArray payload;
 
     void populateDataEngineData(Plasma::DataEngine::Data & outd)
     {
-        QString country, countryCode, city, latitude, longitude;
-        while (!m_xmlReader.atEnd()) {
-            m_xmlReader.readNext();
-            if (m_xmlReader.isEndElement() && m_xmlReader.name() == "Response") {
-                break;
-            }
-
-            if (m_xmlReader.isStartElement()) {
-                if (m_xmlReader.name() == "Status") {
-                    QString tmp = m_xmlReader.readElementText();
-                    if (tmp != "OK") return;
-                } else if (m_xmlReader.name() == "CountryCode") {
-                    countryCode = m_xmlReader.readElementText();
-                } else if (m_xmlReader.name() == "CountryName") {
-                    country = m_xmlReader.readElementText();
-                } else if (m_xmlReader.name() == "City") {
-                    city = m_xmlReader.readElementText();
-                } else if (m_xmlReader.name() == "Latitude") {
-                    latitude = m_xmlReader.readElementText();
-                } else if (m_xmlReader.name() == "Longitude") {
-                    longitude = m_xmlReader.readElementText();
-                } else { // for fields such as 'IP'...
-                    m_xmlReader.readElementText();
+        QString country, countryCode, city, latitude, longitude, ip;
+        const QList<QByteArray> &bl = payload.split('\n');
+        payload.clear();
+        foreach (const QByteArray &b, bl) {
+            const QList<QByteArray> &t = b.split(':');
+            if (t.count() > 1) {
+                const QByteArray k = t[0];
+                const QByteArray v = t[1];
+                if (k == "Latitude") {
+                    latitude = v;
+                } else if (k == "Longitude") {
+                    longitude = v;
+                } else if (k == "Country") {
+                    QStringList cc = QString(v).split('(');
+                    if (cc.count() > 1) {
+                        country = cc[0].trimmed();
+                        countryCode = cc[1].replace(')', "");
+                    }
+                } else if (k == "City") {
+                    city = v;
+                } else if (k == "IP") {
+                    ip = v;
                 }
             }
         }
-
         // ordering of first three to preserve backwards compatibility
-
         outd["accuracy"] = 40000;
         outd["country"] = country;
         outd["country code"] = countryCode;
         outd["city"] = city;
         outd["latitude"] = latitude;
         outd["longitude"] = longitude;
-
+        outd["ip"] = ip;
     }
-
 };
 
 Ip::Ip(QObject* parent, const QVariantList& args)
@@ -86,13 +80,12 @@ Ip::~Ip()
 
 void Ip::update()
 {
-    d->m_xmlReader.clear();
-
-    KIO::TransferJob *datajob = KIO::get(KUrl("http://ipinfodb.com/ip_query.php"),
+    d->payload.clear();
+    KIO::TransferJob *datajob = KIO::get(KUrl("http://api.hostip.info/get_html.php?position=true"),
                                          KIO::NoReload, KIO::HideProgressInfo);
 
     if (datajob) {
-        kDebug() << "Fetching http://iplocationtools.com/ip_query.php";
+        kDebug() << "Fetching http://api.hostip.info/get_html.php?position=true";
         connect(datajob, SIGNAL(data(KIO::Job*,QByteArray)), this,
                 SLOT(readData(KIO::Job*,QByteArray)));
         connect(datajob, SIGNAL(result(KJob*)), this, SLOT(result(KJob*)));
@@ -108,8 +101,7 @@ void Ip::readData(KIO::Job* job, const QByteArray& data)
     if (data.isEmpty()) {
         return;
     }
-
-    d->m_xmlReader.addData(data);
+    d->payload.append(data);
 }
 
 void Ip::result(KJob* job)
@@ -117,20 +109,9 @@ void Ip::result(KJob* job)
     Plasma::DataEngine::Data outd;
 
     if(job && !job->error()) {
-
-        while (!d->m_xmlReader.atEnd()) {
-            d->m_xmlReader.readNext();
-
-            if (d->m_xmlReader.isStartElement()) {
-                if (d->m_xmlReader.name() == "Response") {
-                    d->populateDataEngineData(outd);
-                    break;
-                }
-            }
-        }
-//        kDebug() << "Done reading XML";
+        d->populateDataEngineData(outd);
     } else {
-        kDebug() << "error";
+        kDebug() << "error" << job->errorString();
     }
 
     setData(outd);
