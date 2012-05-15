@@ -394,20 +394,23 @@ void Activity::opened()
         return;
     }
 
-    QString fileName = "activities/";
-    fileName += m_id;
-    KConfig external(fileName, KConfig::SimpleConfig, "appdata");
+    const QString fileName = KGlobal::dirs()->locateLocal("appdata", "activities/" + m_id);
+    kDebug() << "&&&&&&&&&&&&&&&" << fileName;
+    if (QFile::exists(fileName)) {
+        {
+            KConfig external(fileName, KConfig::SimpleConfig);
 
-    foreach (Plasma::Containment *newContainment, PlasmaApp::self()->corona()->importLayout(external.group(QByteArray()))) {
-        insertContainment(newContainment);
-        //ensure it's hooked up (if something odd happened we don't want orphan containments)
-        Plasma::Context *context = newContainment->context();
-        context->setCurrentActivityId(m_id);
-        connect(context, SIGNAL(activityChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)), Qt::UniqueConnection);
+            foreach (Plasma::Containment *newContainment, PlasmaApp::self()->corona()->importLayout(external.group(QByteArray()))) {
+                insertContainment(newContainment);
+                //ensure it's hooked up (if something odd happened we don't want orphan containments)
+                Plasma::Context *context = newContainment->context();
+                context->setCurrentActivityId(m_id);
+                connect(context, SIGNAL(activityChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)), Qt::UniqueConnection);
+            }
+        }
+
+        QFile::remove(fileName);
     }
-
-    KConfigGroup configs(&external, "Containments");
-    configs.deleteGroup();
 
     if (m_containments.isEmpty()) {
         //TODO check if we need more for screens/desktops
@@ -416,7 +419,6 @@ void Activity::opened()
     }
 
     PlasmaApp::self()->corona()->requireConfigSync();
-    external.sync();
 }
 
 void Activity::setDefaultPlugin(const QString &plugin)
