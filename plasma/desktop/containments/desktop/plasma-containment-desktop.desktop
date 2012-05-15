@@ -3,6 +3,7 @@
 Name=Default Desktop
 Name[cs]=Výchozí plocha
 Name[de]=Standard-Arbeitsfläche
+Name[et]=Vaikimisi töölaud
 Name[hu]=Alapértelmezett asztal
 Name[ia]=Scriptorio predefinite
 Name[nb]=Standard skrivebord
@@ -17,6 +18,7 @@ Name[uk]=Типова стільниця
 Name[x-test]=xxDefault Desktopxx
 Name[zh_TW]=預設桌面
 Comment=A clean and simple layout
+Comment[et]=Puhas ja lihtne paigutus
 Comment[hu]=Egy tiszta és egyszerű elrendezés
 Comment[ia]=Un disposition simple e munde
 Comment[nb]=En ren og enkel utforming

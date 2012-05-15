@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Contour
+Name[et]=Kontuur
 Name[ia]=Bordo
 Name[nb]=Kontur
 Name[nds]=Ümreet
@@ -15,6 +16,7 @@ Name[x-test]=xxContourxx
 Name[zh_TW]=輪廓
 Comment=Plasma Active theme
 Comment[cs]=Motiv Plasma Active
+Comment[et]=Plasma Active'i teema
 Comment[ia]=Thema de Plasma Active
 Comment[nb]=Aktivt Plasma-tema
 Comment[nl]=Thema Plasma Active

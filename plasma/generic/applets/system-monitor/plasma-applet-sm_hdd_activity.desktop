@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Hard Disk I/O Monitor
 Name[cs]=Monitor I/O pevného disku
+Name[et]=Kõvaketta sisendi/väljundi jälgija
 Name[ia]=Monitor de I/E del disco dur
 Name[nb]=En overvåker for disk-I/U
 Name[nl]=Volgt de activiteit van de harde schijf
@@ -16,6 +17,7 @@ Name[x-test]=xxHard Disk I/O Monitorxx
 Name[zh_TW]=硬碟使用量 I/O 監視器
 
 Comment=An applet that monitors hard disk throughput and input/output
+Comment[et]=Kõvaketta läbilaset ja sisendit/väljundit jälgiv aplett
 Comment[ia]=Un applet que que monitora le prestation (throughput) e ingresso/egresso de disco dur
 Comment[nb]=Et miniprogram som overvåker dataflyt til og fra harddisk
 Comment[nl]=Een applet die de activiteit van de harde schijf volgt
