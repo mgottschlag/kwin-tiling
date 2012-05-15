@@ -159,6 +159,7 @@ PlasmaCore.FrameSvgItem {
                         onClicked: delegateStack.push(configurationComponent)
                     }
                     PlasmaComponents.ToolButton {
+                        visible: !model["Current"]
                         iconSource: "media-playback-stop"
                         onClicked: {
                             var activityId = model["DataEngineSource"]
