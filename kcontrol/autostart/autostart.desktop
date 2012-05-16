@@ -118,6 +118,7 @@ Comment[x-test]=xxA configuration tool for managing which programs start up auto
 Comment[zh_TW]=管理 KDE 要自動啟動哪些程式的設定工具。
 
 X-KDE-Keywords=Autostart Manager,autostart,startup,system startup,kde start,cron
+X-KDE-Keywords[de]=Autostartverwaltung,Autostart,Startvorgang,Systemstart,KDE-Start,Cron
 X-KDE-Keywords[et]=Autostardi haldur,autostart,käivitamine,süsteemi käivitamine,kde käivitamine,cron
 X-KDE-Keywords[ia]=Gestor de autoinitio,autoinitio,initio,initio de systema.initio de kde,crom
 X-KDE-Keywords[nb]=Autostartbehandler,autostart,oppstart,systemstart,kde-start,cron

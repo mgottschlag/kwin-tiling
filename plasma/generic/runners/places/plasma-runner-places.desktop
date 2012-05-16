@@ -80,6 +80,7 @@ Type=Service
 Icon=user-home
 Comment=Open devices and folder bookmarks
 Comment[cs]=Otevřít záložky zařízení a složek
+Comment[de]=Geräte und Lesezeichen für Ordner öffnen
 Comment[et]=Seadmete ja kataloogide järjehoidjate avamine
 Comment[ia]=Aperi dispositivos e marcatores de libros de dossieres
 Comment[nl]=Apparaten- en mappenbladwijzers openen
