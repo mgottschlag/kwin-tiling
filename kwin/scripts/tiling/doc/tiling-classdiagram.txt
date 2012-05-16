@@ -2,10 +2,10 @@
 @startuml tiling-classdiagram.svg
 skinparam classAttributeIconSize 0
 
-class Tiling {
+class TilingManager {
 	-defaultLayout : LayoutType
 	-availableLayouts : LayoutType
-	-layouts : Layout[][]
+	-layouts : Tiling[][]
 	-desktopCount : int
 	-screenCount : int
 	-onTileAdded()
@@ -70,23 +70,39 @@ class Client {
 	tiling_floating : bool
 }
 
-abstract class Layout {
-	+screenRectangle
-	+desktop
-	+{static}name
-	+{static}image
-	+{abstract}addTile(tile : Tile)
-	+{abstract}removeTile(tile : Tile)
-	+{abstract}restoreTile(tile : Tile)
-	+{abstract}swapTiles(tile1 : Tile, tile2 : Tile)
-	+{abstract}getAdjacentTile(from : Tile, direction) : Tile
-	+{abstract}onClientChanges(tile : Tile, client : Client)
-	+{abstract}getTile(client : Client)
+abstract class Tiling {
+	Tiling(screenRectangle : QRect, layout)
+	+setLayout(layout : layout)
+	+setLayoutArea(area : QRect)
+	+addTile(tile : Tile)
+	+removeTile(tile : Tile)
+	+swapTiles(tile1 : Tile, tile2 : Tile)
+	+activate()
+	+deactivate()
+	+resetTileSizes()
 	+getTile(x, y) : Tile
 	+getTiles() : Tile[]
-	+updateScreenSize()
-	+updateAllTiles()
+}
+
+abstract class Layout {
+	+screenRectangle
+	+tiles : TileGeometry[]
+	+{static}name
+	+{static}image
 	+setLayoutArea(area : QRect)
+	+getAdjacentTile(from : Tile, direction) : Tile
+	+{abstract}onLayoutAreaChange(area : QRect)
+	+{abstract}resetTileSizes()
+	+{abstract}getTile(client : Client)
+	+{abstract}addTile()
+	+{abstract}removeTile(tileIndex : int)
+	+{abstract}resizeTile(tileIndex : int, rectangle : QRect)
+}
+
+class TileGeometry {
+	+rectangle : QRect
+	+neighbours : int[4]
+	+hasDirectNeighbour : bool[4]
 }
 
 class SpiralLayout {
@@ -110,13 +126,15 @@ class MaximizedLayout {
 class FloatingLayout {
 }
 
-Tiling "1" --> "1" TileList
-Tiling "1" --> "*" Layout
+TilingManager "1" -right-> "1" TileList
+TilingManager "1" --> "*" Tiling
 
-TileList "1" --> "*" Tile
+TileList "1" -right-> "*" Tile
 
-Tile "*" <-right-> "*" Layout
-Tile "1" -left-> "*" Client
+Tile "*" <-- "*" Tiling
+Tile "1" --> "*" Client
+
+Tiling "1" --> "1" Layout
 
 Layout <|-- SpiralLayout
 Layout <|-- ZigZagLayout
@@ -124,6 +142,7 @@ Layout <|-- ColumnLayout
 Layout <|-- RowLayout
 Layout <|-- GridLayout
 Layout <|-- MaximizedLayout
-Layout <|-right- FloatingLayout
+Layout <|-left- FloatingLayout
+Layout -right-> "*" TileGeometry
 
 @enduml
