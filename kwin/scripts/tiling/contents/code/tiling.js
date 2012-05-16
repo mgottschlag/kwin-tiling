@@ -98,7 +98,15 @@ function Tiling() {
         self.tiles.addClient(client);
     });
     // Register global callbacks
-    // TODO
+    workspace.numberDesktopsChanged.connect(function() {
+        self._onNumberDesktopsChanged();
+    });
+    workspace.numberScreensChanged.connect(function() {
+        self._onNumberScreensChanged();
+    });
+    workspace.currentDesktopChanged.connect(function() {
+        self._onCurrentDesktopChanged();
+    });
     // Register keyboard shortcuts
     registerShortcut("Next Tiling Layout",
                      "Next Tiling Layout",
@@ -209,10 +217,69 @@ Tiling.prototype._createDefaultLayouts = function(desktop) {
 };
 
 Tiling.prototype._onTileAdded = function(tile) {
-    // TODO
+    var client = tile.clients[0];
+    var tileLayouts = this._getLayouts(client.desktop, client.screen);
+    tileLayouts.forEach(function(layout) {
+        // TODO: layout.addTile(tile);
+    });
 };
 
 Tiling.prototype._onTileRemoved = function(tile) {
+    var client = tile.clients[0];
+    var tileLayouts = this._getLayouts(client.desktop, client.screen);
+    tileLayouts.forEach(function(layout) {
+        // TODO: layout.removeTile(tile);
+    });
+};
+
+Tiling.prototype._onNumberDesktopsChanged = function() {
+    var newDesktopCount =
+            workspace.desktopGridWidth * workspace.desktopGridHeight;
+    var onAllDesktops = tiles.tiles.filter(function(tile) {
+        return tile.desktop == -1;
+    });
+    // Remove tiles from desktops which do not exist any more (we only have to
+    // care about tiles shown on all desktops as all others have been moved away
+    // from the desktops by kwin before)
+    for (var i = newDesktopCount; i < this.desktopCount; i++) {
+        onAllDesktops.forEach(function(tile) {
+           this.layouts[i][tile.screen].removeTile(tile);
+        });
+    }
+    // Add new desktops
+    for (var i = this.desktopCount; i < newDesktopCount; i++) {
+        this._createDefaultLayouts(i);
+        onAllDesktops.forEach(function(tile) {
+           this.layouts[i][tile.screen].addTile(tile);
+        });
+    }
+    // Remove deleted desktops
+    if (this.desktopCount > newDesktopCount) {
+        layouts.length = newDesktopCount;
+    }
+    this.desktopCount = newDesktopCount;
+};
+
+Tiling.prototype._onNumberScreensChanged = function() {
+    // Add new screens
+    if (this.screenCount < workspace.numScreens) {
+        for (var i = 0; i < this.desktopCount; i++) {
+            for (var j = this.screenCount; j < workspace.numScreens; j++) {
+                this.layouts[i][j] =
+                        new this.defaultLayout(Tiling.getTilingArea(i, j));
+            }
+        }
+    }
+    // Remove deleted screens
+    if (this.screenCount > workspace.numScreens) {
+        for (var i = 0; i < this.desktopCount; i++) {
+            this.layouts[i].length = workspace.numScreens;
+        }
+    }
+    this.screenCount = workspace.numScreens;
+};
+
+Tiling.prototype._onCurrentDesktopChanged = function() {
     // TODO
 };
 
@@ -231,3 +298,17 @@ Tiling.prototype._switchFocus = function(direction) {
 Tiling.prototype._moveTile = function(direction) {
     // TODO
 };
+
+Tiling.prototype._getLayouts = function(desktop, screen) {
+    if (desktop > 0) {
+        return [this.layouts[desktop - 1][screen]];
+    } else if (desktop == 0) {
+        return [];
+    } else if (desktop == -1) {
+        var result = [];
+        for (var i = 0; i < this.desktopCount; i++) {
+            result.push(this.layouts[i][screen]);
+        }
+        return result;
+    }
+}
