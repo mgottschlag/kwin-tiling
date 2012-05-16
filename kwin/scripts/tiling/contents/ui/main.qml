@@ -23,12 +23,12 @@ import org.kde.plasma.core 0.1 as PlasmaCore;
 import org.kde.plasma.components 0.1 as Plasma;
 import org.kde.qtextracomponents 0.1 as QtExtra;
 import org.kde.kwin 0.1;
-import "../code/tiling.js" as Tiling
+import "../code/tilingmanager.js" as Tiling
 
 Item {
     Component.onCompleted: {
         // Initialize tiling
-        tiling = new Tiling.Tiling();
+        tiling = new Tiling.TilingManager();
     }
 
 }

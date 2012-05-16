@@ -33,7 +33,7 @@ function SpiralLayout() {
  * and implements all keyboard shortcuts.
  * @class
  */
-function Tiling() {
+function TilingManager() {
     /**
      * Default layout type which is selected for new layouts.
      */
@@ -202,21 +202,24 @@ function Tiling() {
  * @param screen Screen for which the area shall be returned.
  * @return Rectangle which contains the area which shall be used by layouts.
  */
-Tiling.getTilingArea = function(desktop, screen) {
+TilingManager.getTilingArea = function(desktop, screen) {
     // TODO: Should this function be moved to Layout?
     return workspace.clientArea(KWin.MaximizeArea, screen, desktop);
 };
 
-Tiling.prototype._createDefaultLayouts = function(desktop) {
+TilingManager.prototype._createDefaultLayouts = function(desktop) {
     var screenLayouts = [];
     for (var j = 0; j < this.screenCount; j++) {
-        var area = Tiling.getTilingArea(desktop, j);
+        var area = TilingManager.getTilingArea(desktop, j);
         screenLayouts[j] = new this.defaultLayout(area);
     }
     this.layouts[desktop] = screenLayouts;
 };
 
-Tiling.prototype._onTileAdded = function(tile) {
+TilingManager.prototype._onTileAdded = function(tile) {
+    // Add global callbacks
+    // TODO
+    // Add the tile to the layouts
     var client = tile.clients[0];
     var tileLayouts = this._getLayouts(client.desktop, client.screen);
     tileLayouts.forEach(function(layout) {
@@ -224,7 +227,7 @@ Tiling.prototype._onTileAdded = function(tile) {
     });
 };
 
-Tiling.prototype._onTileRemoved = function(tile) {
+TilingManager.prototype._onTileRemoved = function(tile) {
     var client = tile.clients[0];
     var tileLayouts = this._getLayouts(client.desktop, client.screen);
     tileLayouts.forEach(function(layout) {
@@ -232,7 +235,7 @@ Tiling.prototype._onTileRemoved = function(tile) {
     });
 };
 
-Tiling.prototype._onNumberDesktopsChanged = function() {
+TilingManager.prototype._onNumberDesktopsChanged = function() {
     var newDesktopCount =
             workspace.desktopGridWidth * workspace.desktopGridHeight;
     var onAllDesktops = tiles.tiles.filter(function(tile) {
@@ -260,13 +263,13 @@ Tiling.prototype._onNumberDesktopsChanged = function() {
     this.desktopCount = newDesktopCount;
 };
 
-Tiling.prototype._onNumberScreensChanged = function() {
+TilingManager.prototype._onNumberScreensChanged = function() {
     // Add new screens
     if (this.screenCount < workspace.numScreens) {
         for (var i = 0; i < this.desktopCount; i++) {
             for (var j = this.screenCount; j < workspace.numScreens; j++) {
-                this.layouts[i][j] =
-                        new this.defaultLayout(Tiling.getTilingArea(i, j));
+                var area = TilingManager.getTilingArea(i, j);
+                this.layouts[i][j] = new this.defaultLayout(area);
             }
         }
     }
@@ -279,27 +282,32 @@ Tiling.prototype._onNumberScreensChanged = function() {
     this.screenCount = workspace.numScreens;
 };
 
-Tiling.prototype._onCurrentDesktopChanged = function() {
+TilingManager.prototype._onCurrentDesktopChanged = function() {
+    print("TODO: onCurrentDesktopChanged.");
     // TODO
 };
 
-Tiling.prototype._switchLayout = function(desktop, screen, layoutIndex) {
+TilingManager.prototype._switchLayout = function(desktop, screen, layoutIndex) {
+    print("TODO: switchLayout.");
     // TODO
 };
 
-Tiling.prototype._toggleFloating = function(tile) {
+TilingManager.prototype._toggleFloating = function(tile) {
+    print("TODO: toggleFloating.");
     // TODO
 };
 
-Tiling.prototype._switchFocus = function(direction) {
+TilingManager.prototype._switchFocus = function(direction) {
+    print("TODO: switchFocus.");
     // TODO
 };
 
-Tiling.prototype._moveTile = function(direction) {
+TilingManager.prototype._moveTile = function(direction) {
+    print("TODO: moveTile.");
     // TODO
 };
 
-Tiling.prototype._getLayouts = function(desktop, screen) {
+TilingManager.prototype._getLayouts = function(desktop, screen) {
     if (desktop > 0) {
         return [this.layouts[desktop - 1][screen]];
     } else if (desktop == 0) {
