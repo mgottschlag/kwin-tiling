@@ -1093,6 +1093,8 @@ void KColorCm::changeColor(int row, const QColor &newColor)
 
     m_loadedSchemeHasUnsavedChanges = true;
     m_currentColorScheme = i18nc("Current color scheme", "Current");
+    schemeRemoveButton->setEnabled(false);
+    schemeKnsUploadButton->setEnabled(false);
     schemeList->blockSignals(true); // don't emit changed signals
     schemeList->setCurrentRow(0);
     schemeList->blockSignals(false);
