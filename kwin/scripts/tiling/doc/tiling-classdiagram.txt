@@ -19,6 +19,14 @@ class TilingManager {
 	-moveTile(direction)
 }
 
+note top of TilingManager
+	Root class which contains one "Tiling"
+	instance per screen/desktop, implements
+	the keyboard shortcuts and keeps track
+	of windows moving from one screen to the
+	other.
+end note
+
 class TileList {
 	+addClient(client : Client) : Tile
 	+getTile(client : Client) : Tile
@@ -65,14 +73,19 @@ class Tile {
 	+onClientFinishUserMovedResized(client)
 }
 
+note top of Tile
+	Manages the windows in one tab group and
+	tracks and simplifies resize/move events
+end note
+
 class Client {
 	tiling_tileIndex : int
 	tiling_floating : bool
 }
 
 abstract class Tiling {
-	Tiling(screenRectangle : QRect, layout)
-	+setLayout(layout : layout)
+	Tiling(screenRectangle : QRect, layoutType)
+	+setLayoutType(layoutType)
 	+setLayoutArea(area : QRect)
 	+addTile(tile : Tile)
 	+removeTile(tile : Tile)
@@ -83,6 +96,12 @@ abstract class Tiling {
 	+getTile(x, y) : Tile
 	+getTiles() : Tile[]
 }
+
+note left of Tiling
+	Resizes the windows according to the
+	information the class gets from its
+	Layout instance.
+end note
 
 abstract class Layout {
 	+screenRectangle
@@ -98,6 +117,11 @@ abstract class Layout {
 	+{abstract}removeTile(tileIndex : int)
 	+{abstract}resizeTile(tileIndex : int, rectangle : QRect)
 }
+
+note left of Layout
+	Partitions the screens into rectangles, the
+	subclasses implement different layouts.
+end note
 
 class TileGeometry {
 	+rectangle : QRect
@@ -142,7 +166,7 @@ Layout <|-- ColumnLayout
 Layout <|-- RowLayout
 Layout <|-- GridLayout
 Layout <|-- MaximizedLayout
-Layout <|-left- FloatingLayout
+Layout <|-- FloatingLayout
 Layout -right-> "*" TileGeometry
 
 @enduml
