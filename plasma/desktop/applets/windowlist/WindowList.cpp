@@ -223,6 +223,10 @@ void WindowList::showMenu(bool onlyCurrentDesktop)
         QAction *action = new QAction(QIcon(KWindowSystem::icon(windows.at(i))), window.visibleName(), this);
         action->setData((unsigned long long) windows.at(i));
 
+        QString window_title = QString(action->text());
+        window_title.truncate(55);
+        action->setText(window_title);
+
         QFont font = QFont(action->font());
 
         if (window.isMinimized()) {
@@ -289,7 +293,7 @@ void WindowList::showMenu(bool onlyCurrentDesktop)
     }
 
     if (formFactor() == Plasma::Vertical || formFactor() == Plasma::Horizontal) {
-        m_listMenu->popup(popupPosition(m_listMenu->sizeHint())); 
+        m_listMenu->popup(popupPosition(m_listMenu->sizeHint()));
     } else {
         m_listMenu->popup(QCursor::pos());
     }
