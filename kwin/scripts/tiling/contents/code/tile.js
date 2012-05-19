@@ -89,6 +89,19 @@ function Tile(firstClient, tileIndex) {
      * True if this tile has to be floating because of client properties.
      */
     this.forcedFloating = this._computeForcedFloating();
+    /**
+     * True if this tile is currently moved by the user.
+     */
+    this._moving = false;
+    /**
+     * True if this tile is currently moved by the user.
+     */
+    this._resizing = false;
+    /**
+     * Stores the current screen of the tile in order to be able to detect
+     * movement between screens.
+     */
+    this._currentScreen = firstClient.screen;
 
     this.syncCustomProperties();
 }
@@ -100,7 +113,8 @@ function Tile(firstClient, tileIndex) {
  * @param geometry New tile geometry.
  */
 Tile.prototype.setGeometry = function(geometry) {
-    // TODO
+    this.clients[0].geometry = geometry;
+    // TODO: Inhibit geometryChanged events?
 };
 
 /**
@@ -108,14 +122,18 @@ Tile.prototype.setGeometry = function(geometry) {
  * restoreGeometry().
  */
 Tile.prototype.saveGeometry = function() {
-    // TODO
+    if (this._savedGeometry != null) {
+        this._savedGeometry = this.clients[0].geometry;
+    }
+    // TODO: Inhibit geometryChanged events?
 };
 
 /**
  * Restores the previously saved geometry.
  */
 Tile.prototype.restoreGeometry = function() {
-    // TODO
+    this.clients[0].geometry = this._savedGeometry;
+    // TODO: Inhibit geometryChanged events?
 };
 
 /**
@@ -167,7 +185,20 @@ Tile.prototype.onClientShadeChanged = function(client) {
 };
 
 Tile.prototype.onClientGeometryChanged = function(client) {
-    // TODO
+    if (!client.isCurrentTab) {
+        return;
+    }
+    // If the screen has changed, send an event and reset the saved geometry
+    if (client.screen != this._currentScreen) {
+        this._currentScreen = client.screen;
+         this._savedGeometry = null;
+       this.screenChanged.emit();
+    }
+    if (this._moving || this.resizing) {
+        return;
+    }
+    // TODO: Check whether we caused the geometry change
+    this.geometryChanged.emit();
 };
 
 Tile.prototype.onClientKeepAboveChanged = function(client) {
@@ -175,7 +206,7 @@ Tile.prototype.onClientKeepAboveChanged = function(client) {
 };
 
 Tile.prototype.onClientKeepBelowChanged = function(client) {
-    // TODO
+    // TODO: Only floating clients are not below all others
 };
 
 Tile.prototype.onClientFullScreenChanged = function(client) {
@@ -187,7 +218,7 @@ Tile.prototype.onClientMinimizedChanged = function(client) {
 };
 
 Tile.prototype.onClientMaximizedStateChanged = function(client) {
-    // TODO
+    // TODO: Make tiles floating as soon as the user maximizes them
 };
 
 Tile.prototype.onClientDesktopChanged = function(client) {
@@ -195,13 +226,49 @@ Tile.prototype.onClientDesktopChanged = function(client) {
 };
 
 Tile.prototype.onClientStartUserMovedResized = function(client) {
-    // TODO
+    // We want to distinguish between moving and resizing, so we have to wait
+    // for the first geometry change
+    this._lastGeometry = client.geometry;
 };
 
 Tile.prototype.onClientStepUserMovedResized = function(client) {
-    // TODO
+    var newGeometry = client.geometry;
+    if (newGeometry.width != this._lastGeometry.width
+            || newGeometry.height != this._lastGeometry.height) {
+        if (this._moving) {
+            this.movingEnded.emit();
+            this._moving = false;
+        }
+        if (this._resizing) {
+            this.resizingStep.emit();
+        } else {
+            this._resizing = true;
+            this.resizingStarted.emit();
+        }
+    }
+    if (newGeometry.x != this._lastGeometry.x
+            || newGeometry.y != this._lastGeometry.y) {
+        if (this._resizing) {
+            this.resizingEnded.emit();
+            this._resizing = false;
+        }
+        if (this._moving) {
+            this.movingStep.emit();
+        } else {
+            this._moving = true;
+            this.movingStarted.emit();
+        }
+    }
+    this._lastGeometry = newGeometry;
 };
 
 Tile.prototype.onClientFinishUserMovedResized = function(client) {
-    // TODO
+    if (this._moving) {
+        this.movingEnded.emit();
+        this._moving = false;
+    } else if (this._resizing) {
+        this.resizingEnded.emit();
+        this._resizing = false;
+    }
+    this._lastGeometry = null;
 };
