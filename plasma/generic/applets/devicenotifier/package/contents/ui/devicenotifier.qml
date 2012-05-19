@@ -127,7 +127,6 @@ Item {
             expandedDevice = udi
         }
         plasmoid.setPopupIconByName("preferences-desktop-notification")
-        plasmoid.status = "ActiveStatus"
         plasmoid.showPopup(7500)
         popupIconTimer.restart()
     }
@@ -186,6 +185,8 @@ Item {
         onCountChanged: {
             if (count == 0) {
                 plasmoid.status = "PassiveStatus"
+            } else {
+                plasmoid.status = "ActiveStatus"
             }
         }
         delegate: deviceItem
