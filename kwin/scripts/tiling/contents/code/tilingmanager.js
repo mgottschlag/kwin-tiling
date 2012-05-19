@@ -22,6 +22,7 @@ Qt.include("signal.js");
 Qt.include("tile.js");
 Qt.include("tilelist.js");
 Qt.include("layout.js");
+Qt.include("tiling.js");
 Qt.include("tests.js");
 
 function SpiralLayout() {
@@ -211,19 +212,35 @@ TilingManager.prototype._createDefaultLayouts = function(desktop) {
     var screenLayouts = [];
     for (var j = 0; j < this.screenCount; j++) {
         var area = TilingManager.getTilingArea(desktop, j);
-        screenLayouts[j] = new this.defaultLayout(area);
+        screenLayouts[j] = new Tiling(area, this.defaultLayout);
     }
     this.layouts[desktop] = screenLayouts;
 };
 
 TilingManager.prototype._onTileAdded = function(tile) {
-    // Add global callbacks
-    // TODO
+    // Add tile callbacks which are needed to move the tile between different
+    // screens/desktops
+    var self = this;
+    tile.screenChanged.connect(function(oldScreen, newScreen) {
+        self._onTileScreenChanged(tile, oldScreen, newScreen);
+    });
+    tile.desktopChanged.connect(function(oldDesktop, newDesktop) {
+        self._onTileDesktopChanged(tile, oldDesktop, newDesktop);
+    });
+    tile.movingStarted.connect(function() {
+        self._onTileMovingStarted(tile);
+    });
+    tile.movingEnded.connect(function() {
+        self._onTileMovingEnded(tile);
+    });
+    tile.movingStep.connect(function() {
+        self._onTileMovingStep(tile);
+    });
     // Add the tile to the layouts
     var client = tile.clients[0];
     var tileLayouts = this._getLayouts(client.desktop, client.screen);
     tileLayouts.forEach(function(layout) {
-        // TODO: layout.addTile(tile);
+        layout.addTile(tile);
     });
 };
 
@@ -231,7 +248,7 @@ TilingManager.prototype._onTileRemoved = function(tile) {
     var client = tile.clients[0];
     var tileLayouts = this._getLayouts(client.desktop, client.screen);
     tileLayouts.forEach(function(layout) {
-        // TODO: layout.removeTile(tile);
+        layout.removeTile(tile);
     });
 };
 
@@ -269,7 +286,7 @@ TilingManager.prototype._onNumberScreensChanged = function() {
         for (var i = 0; i < this.desktopCount; i++) {
             for (var j = this.screenCount; j < workspace.numScreens; j++) {
                 var area = TilingManager.getTilingArea(i, j);
-                this.layouts[i][j] = new this.defaultLayout(area);
+                this.layouts[i][j] = new Tiling(area, this.defaultLayout);
             }
         }
     }
@@ -281,6 +298,28 @@ TilingManager.prototype._onNumberScreensChanged = function() {
     }
     this.screenCount = workspace.numScreens;
 };
+
+TilingManager.prototype._onTileScreenChanged =
+        function(tile, oldScreen, newScreen) {
+    // TODO
+};
+
+TilingManager.prototype._onTileDesktopChanged =
+        function(tile, oldDesktop, newDesktop) {
+    // TODO
+};
+
+TilingManager.prototype._onTileMovingStarted = function(tile) {
+    // TODO
+}
+
+TilingManager.prototype._onTileMovingEnded = function(tile) {
+    // TODO
+}
+
+TilingManager.prototype._onTileMovingStep = function(tile) {
+    // TODO
+}
 
 TilingManager.prototype._onCurrentDesktopChanged = function() {
     print("TODO: onCurrentDesktopChanged.");

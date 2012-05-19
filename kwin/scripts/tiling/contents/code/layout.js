@@ -19,8 +19,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 
 var Direction = {
-    Up : "Up",
-    Down : "Down",
-    Left : "Left",
-    Right : "Right"
+    Up : 0,
+    Down : 1,
+    Left : 2,
+    Right : 3
 };
+
+/**
+ * Base class for all tiling layouts.
+ * @class
+ */
+function Layout(screenRectangle) {
+    /**
+     * Screen area which is used by the layout.
+     */
+    this.screenRectangle = screenRectangle;
+    // TODO
+}
+
+Layout.prototype.setLayoutArea = function(area) {
+    this.screenRectangle = area;
+    this.onLayoutAreaChange(area);
+}
+
+Layout.prototype.getAdjacentTile = function(from, direction) {
+    // TODO
+}
