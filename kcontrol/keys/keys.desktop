@@ -184,6 +184,7 @@ Comment[zh_CN]=键绑定配置
 Comment[zh_TW]=按鍵關聯設定
 
 X-KDE-Keywords=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,global shortcuts
+X-KDE-Keywords[de]=Tasten,Tastenzuordnung,Tastenkürzel,Kurzbefehle,Tastenschema,Tastaturlayout
 X-KDE-Keywords[et]=klahvid,globaalsed kiirklahvid,klaviatuuriskeem,klahviseosed,kiirklahvid,rakenduse kiirklahvid,globaalsed kiirklahvid
 X-KDE-Keywords[ia]=Claves,ligamines de clave global,schema de clave,ligamines de clave,vias breve,vias breve de application,vias breve global
 X-KDE-Keywords[nb]=Taster,Globale tastebindingeer,Tastaturutforming,Tastebindinger,snarveier,programsnarveier,globale snarveier
