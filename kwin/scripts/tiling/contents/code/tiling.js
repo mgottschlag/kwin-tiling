@@ -28,6 +28,10 @@ function Tiling(screenRectangle, layoutType) {
      */
     this.tiles = [];
     /**
+     * Layout type which provided the current layout.
+     */
+    this.layoutType = layoutType;
+    /**
      * Layout which specifies window sizes/positions.
      */
     this.layout = new layoutType(screenRectangle);

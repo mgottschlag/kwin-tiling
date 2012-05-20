@@ -80,6 +80,10 @@ function TilingManager() {
      * Current desktop, needed to be able to track screen changes.
      */
     this._currentDesktop = workspace.currentDesktop - 1;
+    /**
+     * True if a user moving operation is in progress.
+     */
+    this._moving = false;
 
     var self = this;
     // Read the script settings
@@ -122,8 +126,8 @@ function TilingManager() {
                      "Next Tiling Layout",
                      "Meta+PgDown",
                      function() {
-        var currentLayout = getCurrentLayout();
-        var nextIndex = (currentLayout.index + 1) & availableLayouts.length;
+        var currentLayout = self._getCurrentLayoutType();
+        var nextIndex = (currentLayout.index + 1) % self.availableLayouts.length;
         self._switchLayout(workspace.currentDesktop - 1,
                      workspace.activeScreen,
                      nextIndex);
@@ -132,10 +136,10 @@ function TilingManager() {
                      "Previous Tiling Layout",
                      "Meta+PgUp",
                      function() {
-        var currentLayout = getCurrentLayout();
+        var currentLayout = self._getCurrentLayoutType();
         var nextIndex = currentLayout.index - 1;
         if (nextIndex < 0) {
-            nextIndex += availableLayouts.length;
+            nextIndex += self.availableLayouts.length;
         }
         self._switchLayout(workspace.currentDesktop - 1,
                            workspace.activeScreen,
@@ -226,6 +230,11 @@ TilingManager.prototype._createDefaultLayouts = function(desktop) {
     this.layouts[desktop] = screenLayouts;
 };
 
+TilingManager.prototype._getCurrentLayoutType = function() {
+    var currentLayout = this.layouts[this._currentDesktop][this._currentScreen];
+    return currentLayout.layoutType;
+};
+
 TilingManager.prototype._onTileAdded = function(tile) {
     // Add tile callbacks which are needed to move the tile between different
     // screens/desktops
@@ -310,7 +319,15 @@ TilingManager.prototype._onNumberScreensChanged = function() {
 
 TilingManager.prototype._onTileScreenChanged =
         function(tile, oldScreen, newScreen) {
-    // TODO
+    // If a tile is moved by the user, screen changes are handled in the move
+    // callbacks below
+    if (this._moving) {
+        return;
+    }
+    var client = tile.clients[0];
+    var oldLayouts = this._getLayouts(client.desktop, oldScreen);
+    var newLayouts = this._getLayouts(client.desktop, newScreen);
+    this._changeTileLayouts(tile, oldLayouts, newLayouts);
 };
 
 TilingManager.prototype._onTileDesktopChanged =
@@ -318,16 +335,7 @@ TilingManager.prototype._onTileDesktopChanged =
     var client = tile.clients[0];
     var oldLayouts = this._getLayouts(oldDesktop, client.screen);
     var newLayouts = this._getLayouts(newDesktop, client.screen);
-    oldLayouts.forEach(function(layout) {
-        if (newLayouts.indexOf(layout) == -1) {
-            layout.removeTile(tile);
-        }
-    });
-    newLayouts.forEach(function(layout) {
-        if (oldLayouts.indexOf(layout) == -1) {
-            layout.addTile(tile);
-        }
-    });
+    this._changeTileLayouts(tile, oldLayouts, newLayouts);
 };
 
 TilingManager.prototype._onTileMovingStarted = function(tile) {
@@ -342,6 +350,20 @@ TilingManager.prototype._onTileMovingStep = function(tile) {
     // TODO
 }
 
+TilingManager.prototype._changeTileLayouts =
+        function(tile, oldLayouts, newLayouts) {
+    oldLayouts.forEach(function(layout) {
+        if (newLayouts.indexOf(layout) == -1) {
+            layout.removeTile(tile);
+        }
+    });
+    newLayouts.forEach(function(layout) {
+        if (oldLayouts.indexOf(layout) == -1) {
+            layout.addTile(tile);
+        }
+    });
+};
+
 TilingManager.prototype._onCurrentDesktopChanged = function() {
     print("TODO: onCurrentDesktopChanged.");
     // TODO: We need the same for active screen changes
@@ -351,10 +373,9 @@ TilingManager.prototype._onCurrentDesktopChanged = function() {
 };
 
 TilingManager.prototype._switchLayout = function(desktop, screen, layoutIndex) {
+    // TODO: Show the layout switcher dialog
     var layoutType = this.availableLayouts[layoutIndex];
     this.layouts[desktop][screen].setLayoutType(layoutType);
-    print("TODO: switchLayout.");
-    // TODO
 };
 
 TilingManager.prototype._toggleFloating = function(tile) {
