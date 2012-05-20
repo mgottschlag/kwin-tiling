@@ -72,6 +72,14 @@ function TilingManager() {
      * List of all tiles in the system.
      */
     this.tiles = new TileList();
+    /**
+     * Current screen, needed to be able to track screen changes.
+     */
+    this._currentScreen = workspace.activeScreen;
+    /**
+     * Current desktop, needed to be able to track screen changes.
+     */
+    this._currentDesktop = workspace.currentDesktop - 1;
 
     var self = this;
     // Read the script settings
@@ -80,6 +88,7 @@ function TilingManager() {
     for (var i = 0; i < this.desktopCount; i++) {
         this._createDefaultLayouts(i);
     }
+    this.layouts[this._currentDesktop][this._currentScreen].activate();
     // Connect the tile list signals so that new tiles are added to the layouts
     this.tiles.tileAdded.connect(function(tile) {
         self._onTileAdded(tile);
@@ -115,7 +124,7 @@ function TilingManager() {
                      function() {
         var currentLayout = getCurrentLayout();
         var nextIndex = (currentLayout.index + 1) & availableLayouts.length;
-        self._switchLayout(workspace.currentDesktop,
+        self._switchLayout(workspace.currentDesktop - 1,
                      workspace.activeScreen,
                      nextIndex);
     });
@@ -128,7 +137,7 @@ function TilingManager() {
         if (nextIndex < 0) {
             nextIndex += availableLayouts.length;
         }
-        self._switchLayout(workspace.currentDesktop,
+        self._switchLayout(workspace.currentDesktop - 1,
                            workspace.activeScreen,
                            nextIndex);
     });
@@ -306,7 +315,19 @@ TilingManager.prototype._onTileScreenChanged =
 
 TilingManager.prototype._onTileDesktopChanged =
         function(tile, oldDesktop, newDesktop) {
-    // TODO
+    var client = tile.clients[0];
+    var oldLayouts = this._getLayouts(oldDesktop, client.screen);
+    var newLayouts = this._getLayouts(newDesktop, client.screen);
+    oldLayouts.forEach(function(layout) {
+        if (newLayouts.indexOf(layout) == -1) {
+            layout.removeTile(tile);
+        }
+    });
+    newLayouts.forEach(function(layout) {
+        if (oldLayouts.indexOf(layout) == -1) {
+            layout.addTile(tile);
+        }
+    });
 };
 
 TilingManager.prototype._onTileMovingStarted = function(tile) {
@@ -323,10 +344,15 @@ TilingManager.prototype._onTileMovingStep = function(tile) {
 
 TilingManager.prototype._onCurrentDesktopChanged = function() {
     print("TODO: onCurrentDesktopChanged.");
-    // TODO
+    // TODO: We need the same for active screen changes
+    this.layouts[this._currentDesktop][this._currentScreen].deactivate();
+    this._currentDesktop = workspace.currentDesktop - 1;
+    this.layouts[this._currentDesktop][this._currentScreen].activate();
 };
 
 TilingManager.prototype._switchLayout = function(desktop, screen, layoutIndex) {
+    var layoutType = this.availableLayouts[layoutIndex];
+    this.layouts[desktop][screen].setLayoutType(layoutType);
     print("TODO: switchLayout.");
     // TODO
 };

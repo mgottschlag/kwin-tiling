@@ -103,6 +103,12 @@ function Tile(firstClient, tileIndex) {
      */
     this._currentScreen = firstClient.screen;
 
+    /**
+     * Stores the current desktop as this is needed as a desktopChanged
+     * parameter.
+     */
+    this._currentDesktop = firstClient.desktop;
+
     this.syncCustomProperties();
 }
 
@@ -222,7 +228,12 @@ Tile.prototype.onClientMaximizedStateChanged = function(client) {
 };
 
 Tile.prototype.onClientDesktopChanged = function(client) {
-    // TODO
+    if (!client.isCurrentTab) {
+        return;
+    }
+    var oldDesktop = this._currentDesktop;
+    this._currentDesktop = client.desktop;
+    this.desktopChanged.emit(oldDesktop, this._currentDesktop);
 };
 
 Tile.prototype.onClientStartUserMovedResized = function(client) {

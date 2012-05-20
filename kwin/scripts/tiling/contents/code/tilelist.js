@@ -102,7 +102,7 @@ TileList.prototype.addClient = function(client) {
         getTile(client).onClientMaximizedStateChanged(client, h, v);
     });
     client.desktopChanged.connect(function() {
-        getTile(client).onDesktopChanged(client);
+        getTile(client).onClientDesktopChanged(client);
     });
    // Check whether the client is part of an existing tile
     var tileIndex = client.tiling_tileIndex;
