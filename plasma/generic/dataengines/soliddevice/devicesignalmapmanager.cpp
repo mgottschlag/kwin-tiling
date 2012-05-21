@@ -31,12 +31,14 @@ void DeviceSignalMapManager::mapDevice(Solid::AcAdapter *ac, const QString &udi)
 {
     AcAdapterSignalMapper *map=0;
     if (!signalmap.contains(Solid::DeviceInterface::AcAdapter)) {
-        signalmap[Solid::DeviceInterface::AcAdapter] = new AcAdapterSignalMapper(this);
+        map = new AcAdapterSignalMapper(this);
+        signalmap[Solid::DeviceInterface::AcAdapter] = map;
+        connect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
+    } else {
+        map = (AcAdapterSignalMapper*)signalmap[Solid::DeviceInterface::AcAdapter];
     }
-    map = (AcAdapterSignalMapper*)signalmap[Solid::DeviceInterface::AcAdapter];
 
     connect(ac, SIGNAL(plugStateChanged(bool,QString)), map, SLOT(plugStateChanged(bool)));
-    connect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
     map->setMapping(ac, udi);
 }
 
@@ -44,12 +46,14 @@ void DeviceSignalMapManager::mapDevice(Solid::Button *button, const QString &udi
 {
     ButtonSignalMapper *map=0;
     if (!signalmap.contains(Solid::DeviceInterface::Button)) {
-        signalmap[Solid::DeviceInterface::Button] = new ButtonSignalMapper(this);
+        map = new ButtonSignalMapper(this);
+        signalmap[Solid::DeviceInterface::Button] = map;
+        connect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
+    } else {
+        map = (ButtonSignalMapper*)signalmap[Solid::DeviceInterface::Button];
     }
-    map = (ButtonSignalMapper*)signalmap[Solid::DeviceInterface::Button];
 
     connect(button, SIGNAL(pressed(Solid::Button::ButtonType,QString)), map, SLOT(pressed(Solid::Button::ButtonType)));
-    connect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
     map->setMapping(button, udi);
 }
 
@@ -57,16 +61,16 @@ void DeviceSignalMapManager::mapDevice(Solid::Battery *battery, const QString &u
 {
     BatterySignalMapper *map=0;
     if (!signalmap.contains(Solid::DeviceInterface::Battery)) {
-        signalmap[Solid::DeviceInterface::Battery] = new BatterySignalMapper(this);
+        map = new BatterySignalMapper(this);
+        signalmap[Solid::DeviceInterface::Battery] = map;
+        connect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
+    } else {
+        map = (BatterySignalMapper*)signalmap[Solid::DeviceInterface::Battery];
     }
-    map = (BatterySignalMapper*)signalmap[Solid::DeviceInterface::Battery];
 
     connect(battery, SIGNAL(chargePercentChanged(int,QString)), map, SLOT(chargePercentChanged(int)));
-    connect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
     connect(battery, SIGNAL(chargeStateChanged(int,QString)), map, SLOT(chargeStateChanged(int)));
-    connect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
     connect(battery, SIGNAL(plugStateChanged(bool,QString)), map, SLOT(plugStateChanged(bool)));
-    connect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
     map->setMapping(battery, udi);
 }
 
@@ -74,12 +78,14 @@ void DeviceSignalMapManager::mapDevice(Solid::StorageAccess *storageaccess, cons
 {
     StorageAccessSignalMapper *map=0;
     if (!signalmap.contains(Solid::DeviceInterface::StorageAccess)) {
-        signalmap[Solid::DeviceInterface::StorageAccess] = new StorageAccessSignalMapper(this);
+        map = new StorageAccessSignalMapper(this);
+        signalmap[Solid::DeviceInterface::StorageAccess] = map;
+        connect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
+    } else {
+        map = (StorageAccessSignalMapper*)signalmap[Solid::DeviceInterface::StorageAccess];
     }
-    map = (StorageAccessSignalMapper*)signalmap[Solid::DeviceInterface::StorageAccess];
 
     connect(storageaccess, SIGNAL(accessibilityChanged(bool,QString)), map, SLOT(accessibilityChanged(bool)));
-    connect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
     map->setMapping(storageaccess, udi);
 }
 
@@ -102,7 +108,6 @@ void DeviceSignalMapManager::unmapDevice(Solid::Button *button)
     }
 
     disconnect(button, SIGNAL(pressed(Solid::Button::ButtonType,QString)), map, SLOT(pressed(Solid::Button::ButtonType)));
-    disconnect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
 }
 
 void DeviceSignalMapManager::unmapDevice(Solid::Battery *battery)
@@ -113,11 +118,8 @@ void DeviceSignalMapManager::unmapDevice(Solid::Battery *battery)
     }
 
     disconnect(battery, SIGNAL(chargePercentChanged(int,QString)), map, SLOT(chargePercentChanged(int)));
-    disconnect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
     disconnect(battery, SIGNAL(chargeStateChanged(int,QString)), map, SLOT(chargeStateChanged(int)));
-    disconnect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
     disconnect(battery, SIGNAL(plugStateChanged(bool,QString)), map, SLOT(plugStateChanged(bool)));
-    disconnect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
 }
 
 void DeviceSignalMapManager::unmapDevice(Solid::StorageAccess *storageaccess)
@@ -128,7 +130,6 @@ void DeviceSignalMapManager::unmapDevice(Solid::StorageAccess *storageaccess)
     }
 
     disconnect(storageaccess, SIGNAL(accessibilityChanged(bool,QString)), map, SLOT(accessibilityChanged(bool)));
-    disconnect(map, SIGNAL(deviceChanged(QString,QString,QVariant)), user, SLOT(deviceChanged(QString,QString,QVariant)));
 }
 
 #include "devicesignalmapmanager.moc"
