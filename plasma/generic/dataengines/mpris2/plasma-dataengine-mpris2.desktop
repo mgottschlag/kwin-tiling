@@ -7,6 +7,7 @@ Name[nl]=MPRIS2
 Name[pa]=MPRIS2
 Name[pt]=MPRIS2
 Name[pt_BR]=MPRIS2
+Name[sv]=MPRIS2
 Name[uk]=MPRIS2
 Name[x-test]=xxMPRIS2xx
 Comment=Provides information from and control over media players via MPRIS2
@@ -15,6 +16,7 @@ Comment[ia]=Il provide information ex e control super media players via MPRIS2
 Comment[nl]=Levert informatie uit en besturing aan mediaspelers via MPRIS2
 Comment[pt]=Fornece informações e controla leitores multimédia através de MPRIS2
 Comment[pt_BR]=Fornece informações e controla leitores multimídia através de MPRIS22
+Comment[sv]=Tillhandahåller information från och styrning av mediaspelare via MPRIS2
 Comment[uk]=Надає дані з мультимедійних програвачів та керує ними за допомогою MPRIS2
 Comment[x-test]=xxProvides information from and control over media players via MPRIS2xx
 
