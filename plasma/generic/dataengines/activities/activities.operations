@@ -33,4 +33,6 @@
             <label>True to encrypt the activity, false to decrypt</label>
         </entry>
     </group>
+    <group name="toggleActivityManager">
+    </group>
 </kcfg>

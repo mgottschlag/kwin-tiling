@@ -21,6 +21,9 @@
 #include <KActivities/Controller>
 #include <KDebug>
 
+#include <QDBusConnection>
+#include <QDBusMessage>
+
 ActivityJob::ActivityJob(KActivities::Controller *controller, const QString &id, const QString &operation, QMap<QString, QVariant> &parameters, QObject *parent) :
     ServiceJob(parent->objectName(), operation, parameters, parent),
     m_activityController(controller),
@@ -84,6 +87,15 @@ void ActivityJob::start()
     }
     if (operation == "setEncrypted") {
         m_activityController->setActivityEncrypted(m_id, parameters()["Encrypted"].toBool());
+        setResult(true);
+        return;
+    }
+    if (operation == "toggleActivityManager") {
+        QDBusMessage message = QDBusMessage::createMethodCall("org.kde.plasma-desktop",
+                                                          "/App",
+                                                          QString(),
+                                                          "toggleActivityManager");
+        QDBusConnection::sessionBus().call(message, QDBus::NoBlock);
         setResult(true);
         return;
     }
