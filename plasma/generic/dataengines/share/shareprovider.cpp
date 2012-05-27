@@ -163,10 +163,9 @@ void ShareProvider::addPostFile(const QString &contentKey, const QString &conten
         return;
     }
 
-    // If it's not plain text then we should handle it later
-    if (m_mimetype != "text/plain") {
+    // If it's not text then we should handle it later
+    if (m_mimetype.indexOf("text/") != 0)
         m_isBlob = true;
-    }
 
     // try to open the file
     KIO::FileJob *fjob = KIO::open(KUrl(m_content), QIODevice::ReadOnly);
