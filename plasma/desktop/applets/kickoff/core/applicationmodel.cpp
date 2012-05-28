@@ -48,7 +48,6 @@
 
 #include <assert.h>
 #include <stdlib.h>
-#include <kbuildsycocaprogressdialog.h>
 #include <kconfiggroup.h>
 #include "kickoffadaptor.h"
 // Local
