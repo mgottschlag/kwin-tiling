@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>242</width>
+    <width>319</width>
     <height>68</height>
    </rect>
   </property>
@@ -73,7 +73,7 @@
    <item row="1" column="1">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Display Kontact events:</string>
+      <string>Display events:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
