@@ -37,10 +37,13 @@
 #include <KIO/Job>
 #include <KIO/NetAccess>
 
+QAtomicInt QalculateEngine::s_counter;
+
 QalculateEngine::QalculateEngine(QObject* parent):
     QObject(parent)
 {
     m_lastResult = "";
+    s_counter.ref();
     if (!CALCULATOR) {
         new Calculator();
         CALCULATOR->terminateThreads();
@@ -53,7 +56,10 @@ QalculateEngine::QalculateEngine(QObject* parent):
 
 QalculateEngine::~QalculateEngine()
 {
-    delete CALCULATOR;
+    if (s_counter.deref()) {
+        delete CALCULATOR;
+        CALCULATOR = NULL;
+    }
 }
 
 void QalculateEngine::updateExchangeRates()

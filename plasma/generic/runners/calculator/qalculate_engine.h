@@ -20,6 +20,7 @@
 #ifndef QALCULATEENGINE_H
 #define QALCULATEENGINE_H
 
+#include <QAtomicInt>
 #include <QObject>
 
 class KJob;
@@ -48,6 +49,7 @@ signals:
 
 private:
 	QString m_lastResult;
+	static QAtomicInt s_counter;
 };
 
 #endif // QALCULATEENGINE_H
