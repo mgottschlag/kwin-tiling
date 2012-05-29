@@ -168,6 +168,7 @@ Keywords[pt_BR]=Bloquear, Encerrar, Suspender, Hibernar, Trocar de usuário
 Keywords[sv]=Lås, utloggning, viloläge, dvala, byt användare
 Keywords[uk]=Lock,Logout,Sleep,Hibernate,Switch User,блокування,вихід,присипляння,сон,перемикання,користувач
 Keywords[x-test]=xxLock, Logout, Sleep, Hibernate, Switch Userxx
+Keywords[zh_CN]=Lock, Logout, Sleep, Hibernate, Switch User, 锁定, 注销, 待机, 休眠, 切换用户
 
 Type=Service
 Icon=system-shutdown

@@ -93,6 +93,7 @@ Comment[sv]=Öppna enhets- och katalogbokmärken
 Comment[tr]=Aygıt ve klasör yer imlerini aç
 Comment[uk]=Відкриття пристроїв та закладок на теки
 Comment[x-test]=xxOpen devices and folder bookmarksxx
+Comment[zh_CN]=打开设备和文件夹书签
 Comment[zh_TW]=開啟裝置與資料夾書籤
 X-KDE-Library=krunner_placesrunner
 X-KDE-PluginInfo-Author=David Edmundson

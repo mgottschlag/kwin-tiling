@@ -18,6 +18,7 @@ Name[sv]=Aktivitetshanterare för skrivbordet
 Name[tr]=Masaüstü için etkinlik yöneticisi
 Name[uk]=Керування просторами дій для стільниці
 Name[x-test]=xxActivity manager for the desktopxx
+Name[zh_CN]=桌面的活动管理器
 Name[zh_TW]=桌面使用的活動管理員
 Type=Service
 

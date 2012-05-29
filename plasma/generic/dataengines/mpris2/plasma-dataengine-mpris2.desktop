@@ -11,6 +11,7 @@ Name[pt_BR]=MPRIS2
 Name[sv]=MPRIS2
 Name[uk]=MPRIS2
 Name[x-test]=xxMPRIS2xx
+Name[zh_CN]=MPRIS2
 Comment=Provides information from and control over media players via MPRIS2
 Comment[et]=Teabe hankimine meediamängijatest ja nende juhtimine MPRIS2 kaudu
 Comment[ia]=Il provide information ex e control super media players via MPRIS2
@@ -21,6 +22,7 @@ Comment[pt_BR]=Fornece informações e controla leitores multimídia através de
 Comment[sv]=Tillhandahåller information från och styrning av mediaspelare via MPRIS2
 Comment[uk]=Надає дані з мультимедійних програвачів та керує ними за допомогою MPRIS2
 Comment[x-test]=xxProvides information from and control over media players via MPRIS2xx
+Comment[zh_CN]=通过 MPRIS2 提供信息和控制播放器
 
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service

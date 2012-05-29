@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Contour
+Name[ca]=Contour
 Name[de]=Contour
 Name[et]=Kontuur
 Name[ia]=Bordo
@@ -16,6 +17,7 @@ Name[uk]=Контур
 Name[x-test]=xxContourxx
 Name[zh_TW]=輪廓
 Comment=Plasma Active theme
+Comment[ca]=Tema Plasma Active
 Comment[cs]=Motiv Plasma Active
 Comment[de]=Plasma-Active-Design
 Comment[et]=Plasma Active'i teema

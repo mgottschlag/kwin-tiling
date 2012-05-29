@@ -171,6 +171,7 @@ Keywords[sv]=Strömhantering, batteri, system, energi
 Keywords[tr]=Güç Yönetimi, Pil, Sistem, Enerji
 Keywords[uk]=Power Management,Battery,System,Energy,керування живленням,акумулятор,система,енергія,батарея,батарейка
 Keywords[x-test]=xxPower Management, Battery, System, Energyxx
+Keywords[zh_CN]=Power Management, Battery, System, Energy, 电源管理, 电池, 系统, 能源
 
 Icon=battery
 Type=Service
