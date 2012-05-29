@@ -25,6 +25,10 @@ Item {
     id: iconContainer
     property string activeSource: "Status"
 
+    Component.onCompleted: {
+        plasmoid.aspectRatioMode = "ConstrainedSquare"
+    }
+
     PlasmaCore.DataSource {
         id: dataSource
         engine: "org.kde.activities"
