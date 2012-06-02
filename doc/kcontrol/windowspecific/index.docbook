@@ -17,8 +17,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
       </authorgroup>
 <legalnotice>&FDLNotice;</legalnotice>
-<date>2012-03-07</date>
-      <releaseinfo>&kde; SC 4.8</releaseinfo>
+<date>2012-06-02</date>
+      <releaseinfo>&kde; SC 4.9</releaseinfo>
 <abstract>
 <para>Here you can customize window settings specifically only for
 some windows.</para>
@@ -101,10 +101,8 @@ and <guibutton>Move Down</guibutton> buttons effects on how they are applied.</p
 <para>There are several ways to invoke the &kwin; Rule Editor.  Below are two:
 </para>
 <itemizedlist>
-<listitem><para>Right-click on the title-bar of any window, choose <guilabel>Configure Window Settings...</guilabel> and in the <guilabel>Configure</guilabel> window, select <guilabel>Window Rules</guilabel> or</para></listitem>
+<listitem><para>Right-click on the title-bar of any window, choose <menuchoice><guimenu>More Aktions</guimenu><guimenuitem>Window Manager Settings...</guimenuitem></menuchoice> and in the <guilabel>Configure</guilabel> window, select <guilabel>Window Rules</guilabel> or</para></listitem>
 </itemizedlist>
-<para><note><para>Pre 4.9:  choose <guilabel>Configure Window Behavior...</guilabel></para></note>
-</para>
 <itemizedlist>
 <listitem><para><menuchoice><guimenu>System Settings</guimenu><guisubmenu>Window Behavior</guisubmenu><guimenuitem>Window Rules</guimenuitem></menuchoice></para></listitem>
 </itemizedlist>
@@ -452,6 +450,7 @@ and <guibutton>Move Down</guibutton> buttons effects on how they are applied.</p
   <varlistentry><term><emphasis role="bold">Moving/resizing</emphasis></term>
     <listitem>
     <para><emphasis>Deprecated as of &gt;4.8</emphasis></para>
+    <!-- FIXME remove para in 4.9-->
      </listitem>
   </varlistentry>
   <varlistentry><term><emphasis role="bold">Focus stealing prevention</emphasis></term>
@@ -554,7 +553,7 @@ and <guibutton>Move Down</guibutton> buttons effects on how they are applied.</p
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Right-click on the titlebar and select <guilabel>Configure Window Behavior...</guilabel>:
+<listitem><para>Right-click on the titlebar and select <menuchoice><guimenu>More Aktions</guimenu><guimenuitem>Window Manager Settings...</guimenuitem></menuchoice>:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
