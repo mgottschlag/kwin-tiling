@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=MPRIS2
+Name[ca]=MPRIS2
 Name[de]=MPRIS2
 Name[et]=MPRIS2
 Name[ia]=MPRIS2
@@ -14,6 +15,7 @@ Name[x-test]=xxMPRIS2xx
 Name[zh_CN]=MPRIS2
 Name[zh_TW]=MPRIS2
 Comment=Provides information from and control over media players via MPRIS2
+Comment[ca]=Proporciona informació i controla els reproductors de suports via el MPRIS2
 Comment[et]=Teabe hankimine meediamängijatest ja nende juhtimine MPRIS2 kaudu
 Comment[ia]=Il provide information ex e control super media players via MPRIS2
 Comment[nl]=Levert informatie uit en besturing aan mediaspelers via MPRIS2

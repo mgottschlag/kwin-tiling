@@ -157,6 +157,7 @@ Comment[zh_CN]=锁定屏幕或注销
 Comment[zh_TW]=鎖定螢幕或登出
 Encoding=UTF-8
 Keywords=Lock, Logout, Sleep, Hibernate, Switch User
+Keywords[ca]=Bloqueig, Sortida, Adorm, Hibernació, Canvi d'usuari
 Keywords[de]=Sperren,Abmeldung,Ruhezustand,Hibernate,Benutzer wechseln
 Keywords[et]=Lukustamine, Väljalogimine, Uni, Talveuni, Kasutaja vahetamine
 Keywords[ia]=Bloca,Claude session,Dormi, Hiberna,Cambia Usator

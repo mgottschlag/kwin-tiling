@@ -15,6 +15,7 @@ Name[pt_BR]=Contour
 Name[sv]=Kontur
 Name[uk]=Контур
 Name[x-test]=xxContourxx
+Name[zh_CN]=Contour
 Name[zh_TW]=輪廓
 Comment=Plasma Active theme
 Comment[ca]=Tema Plasma Active
@@ -32,6 +33,7 @@ Comment[sv]=Plasma aktivt tema
 Comment[tr]=Plasma Active teması
 Comment[uk]=Тема портативної Плазми
 Comment[x-test]=xxPlasma Active themexx
+Comment[zh_CN]=Plasma Active 主题
 Comment[zh_TW]=Plasma Active 主題
 Type=Service
 

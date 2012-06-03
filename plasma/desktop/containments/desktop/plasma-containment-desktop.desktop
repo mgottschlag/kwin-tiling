@@ -1,6 +1,7 @@
 [Desktop Entry]
 # ctxt: plasma containment
 Name=Default Desktop
+Name[ca]=Escriptori per defecte
 Name[cs]=Výchozí plocha
 Name[de]=Standard-Arbeitsfläche
 Name[el]=Προκαθορισμένη επιφάνεια εργασίας
@@ -20,6 +21,7 @@ Name[x-test]=xxDefault Desktopxx
 Name[zh_CN]=默认桌面
 Name[zh_TW]=預設桌面
 Comment=A clean and simple layout
+Comment[ca]=Una disposició neta i senzilla
 Comment[de]=Ein einfaches Layout
 Comment[et]=Puhas ja lihtne paigutus
 Comment[hu]=Egy tiszta és egyszerű elrendezés
