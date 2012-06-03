@@ -281,7 +281,7 @@ bool ThemePage::applyTheme(const CursorTheme *theme, const int size)
           << "left_ptr_watch" << "ibeam"         << "size_ver"   << "size_hor"
           << "size_bdiag"     << "size_fdiag"    << "size_all"   << "split_v"
           << "split_h"        << "pointing_hand" << "openhand"
-          << "closedhand"     << "forbidden"     << "whats_this";
+          << "closedhand"     << "forbidden"     << "whats_this" << "copy" << "move" << "link";
 
     // X core cursors
     names << "X_cursor"            << "right_ptr"           << "hand1"
