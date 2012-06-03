@@ -101,7 +101,7 @@ and <guibutton>Move Down</guibutton> buttons effects on how they are applied.</p
 <para>There are several ways to invoke the &kwin; Rule Editor.  Below are two:
 </para>
 <itemizedlist>
-<listitem><para>Right-click on the title-bar of any window, choose <menuchoice><guimenu>More Aktions</guimenu><guimenuitem>Window Manager Settings...</guimenuitem></menuchoice> and in the <guilabel>Configure</guilabel> window, select <guilabel>Window Rules</guilabel> or</para></listitem>
+<listitem><para>Right-click on the title-bar of any window, choose <menuchoice><guimenu>More Actions</guimenu><guimenuitem>Window Manager Settings...</guimenuitem></menuchoice> and in the <guilabel>Configure</guilabel> window, select <guilabel>Window Rules</guilabel> or</para></listitem>
 </itemizedlist>
 <itemizedlist>
 <listitem><para><menuchoice><guimenu>System Settings</guimenu><guisubmenu>Window Behavior</guisubmenu><guimenuitem>Window Rules</guimenuitem></menuchoice></para></listitem>
@@ -553,7 +553,7 @@ and <guibutton>Move Down</guibutton> buttons effects on how they are applied.</p
     </textobject>
   </mediaobject>
 </screenshot></para></listitem>
-<listitem><para>Right-click on the titlebar and select <menuchoice><guimenu>More Aktions</guimenu><guimenuitem>Window Manager Settings...</guimenuitem></menuchoice>:
+<listitem><para>Right-click on the titlebar and select <menuchoice><guimenu>More Actions</guimenu><guimenuitem>Window Manager Settings...</guimenuitem></menuchoice>:
 <screenshot>
 <screeninfo></screeninfo>
   <mediaobject>
