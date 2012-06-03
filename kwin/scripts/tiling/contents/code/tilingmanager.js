@@ -22,12 +22,10 @@ Qt.include("signal.js");
 Qt.include("tile.js");
 Qt.include("tilelist.js");
 Qt.include("layout.js");
+Qt.include("spirallayout.js");
 Qt.include("tiling.js");
 Qt.include("tests.js");
 
-function SpiralLayout() {
-    // TODO: Just to make this thing compile
-}
 
 /**
  * Class which manages all layouts, connects the various signals and handlers
@@ -110,6 +108,10 @@ function TilingManager() {
     // Create the initial list of tiles
     existingClients.forEach(function(client) {
         self.tiles.addClient(client);
+    });
+    // Activate the visible layouts
+    this.layouts[workspace.currentDesktop - 1].forEach(function(layout) {
+        layout.activate();
     });
     // Register global callbacks
     workspace.numberDesktopsChanged.connect(function() {
@@ -305,6 +307,10 @@ TilingManager.prototype._onNumberScreensChanged = function() {
             for (var j = this.screenCount; j < workspace.numScreens; j++) {
                 var area = TilingManager.getTilingArea(i, j);
                 this.layouts[i][j] = new Tiling(area, this.defaultLayout);
+                // Activate the new layout if necessary
+                if (i == workspace.currentDesktop - 1) {
+                    this.layouts[i][j].activate();
+                }
             }
         }
     }

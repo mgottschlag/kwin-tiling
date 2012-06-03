@@ -110,9 +110,8 @@ abstract class Layout {
 	+{static}image
 	+setLayoutArea(area : QRect)
 	+getAdjacentTile(from : Tile, direction) : Tile
-	+{abstract}onLayoutAreaChange(area : QRect)
+	+{abstract}onLayoutAreaChange(oldArea : QRect, newArea : QRect)
 	+{abstract}resetTileSizes()
-	+{abstract}getTile(client : Client)
 	+{abstract}addTile()
 	+{abstract}removeTile(tileIndex : int)
 	+{abstract}resizeTile(tileIndex : int, rectangle : QRect)

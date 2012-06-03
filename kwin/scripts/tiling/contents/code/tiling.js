@@ -35,6 +35,10 @@ function Tiling(screenRectangle, layoutType) {
      * Layout which specifies window sizes/positions.
      */
     this.layout = new layoutType(screenRectangle);
+    /**
+     * True if the layout is active.
+     */
+    this.active = false;
 
     // TODO
 }
@@ -49,11 +53,23 @@ Tiling.prototype.setLayoutArea = function(area) {
 }
 
 Tiling.prototype.addTile = function(tile) {
-    // TODO
+    this.layout.addTile();
+    this.tiles.push(tile);
+    // TODO: Set "below all" state
+    if (this.active) {
+        this._updateAllTiles();
+        // TODO: Register tile callbacks
+    }
 }
 
 Tiling.prototype.removeTile = function(tile) {
-    // TODO
+    var tileIndex = this.tiles.indexOf(tile);
+    this.tiles.splice(tileIndex, 1);
+    this.layout.removeTile(tileIndex);
+    if (this.active) {
+        // TODO: Unregister tile callbacks
+        this._updateAllTiles();
+    }
 }
 
 Tiling.prototype.swapTiles = function(tile1, tile2) {
@@ -61,6 +77,7 @@ Tiling.prototype.swapTiles = function(tile1, tile2) {
 }
 
 Tiling.prototype.activate = function() {
+    this.active = true;
     // Resize the tiles like specified by the layout
     this._updateAllTiles();
     // If no tile geometry was specified, just restore the saved geometry
@@ -70,6 +87,7 @@ Tiling.prototype.activate = function() {
 }
 
 Tiling.prototype.deactivate = function() {
+    this.active = false;
     // Unregister callbacks for all tiles
     // TODO
 }
@@ -92,5 +110,15 @@ Tiling.prototype.getTiles = function() {
 }
 
 Tiling.prototype._updateAllTiles = function() {
-    // TODO: Set the position/size of all tiles
+    // Set the position/size of all tiles
+    for (var i = 0; i < this.layout.tiles.length; i++) {
+        var currentRect = this.tiles[i].clients[0].geometry;
+        var newRect = this.layout.tiles[i].rectangle;
+        if (currentRect.x != newRect.x
+                || currentRect.y != newRect.y
+                || currentRect.width != newRect.width
+                || currentRect.height != newRect.height) {
+            this.tiles[i].setGeometry(newRect);
+        }
+    }
 }

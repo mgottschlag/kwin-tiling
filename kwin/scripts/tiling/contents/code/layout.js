@@ -34,12 +34,18 @@ function Layout(screenRectangle) {
      * Screen area which is used by the layout.
      */
     this.screenRectangle = screenRectangle;
+    /**
+     * Geometry of the different tiles. This array stays empty in the case of
+     * floating layouts.
+     */
+    this.tiles = [];
     // TODO
 }
 
 Layout.prototype.setLayoutArea = function(area) {
+    var oldArea = this.screenRectangle;
     this.screenRectangle = area;
-    this.onLayoutAreaChange(area);
+    this.onLayoutAreaChange(oldArea, area);
 }
 
 Layout.prototype.getAdjacentTile = function(from, direction) {
