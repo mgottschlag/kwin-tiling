@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Keywords=
 Name=Activity manager for the desktop
+Name[ca]=Gestor d'activitats per l'escriptori
 Name[cs]=Správce aktivit pro pracovní plochu
 Name[de]=Aktivitätenverwaltung für die Arbeitsfläche
 Name[el]=Διαχειριστής δραστηριοτήτων για την επιφάνεια εργασίας
@@ -18,6 +19,7 @@ Name[sv]=Aktivitetshanterare för skrivbordet
 Name[tr]=Masaüstü için etkinlik yöneticisi
 Name[uk]=Керування просторами дій для стільниці
 Name[x-test]=xxActivity manager for the desktopxx
+Name[zh_CN]=桌面的活动管理器
 Name[zh_TW]=桌面使用的活動管理員
 Type=Service
 

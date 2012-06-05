@@ -106,6 +106,7 @@ Name[zh_CN]=日期和时间
 Name[zh_TW]=日期和時間
 
 Comment=Configure date and time settings
+Comment[ca]=Configuració de l'arranjament de la data i de l'hora
 Comment[cs]=Nastavení voleb data a času
 Comment[de]=Einstellungen für Datum und Zeit ändern
 Comment[el]=Διαμόρφωση ρυθμίσεων ώρας και ημερομηνίας
@@ -125,6 +126,7 @@ Comment[x-test]=xxConfigure date and time settingsxx
 Comment[zh_TW]=設定日期與時間
 
 X-KDE-Keywords=clock,date,time,time zone,ntp,synchronize,calendar,local time,region time
+X-KDE-Keywords[ca]=rellotge,data,hora,zona horària,ntp,sincronització,calendari,hora local,hora de la regió
 X-KDE-Keywords[de]=Uhr,Datum,Zeit,Zeitzone,ntp,synchronisation,abgleich,Kalender,
 X-KDE-Keywords[et]=kell,kuupäev,kellaaeg,ajavöönd,ntp,sünkroonimine,sünkroniseerimine,kalender,kohalik aeg,vööndiaeg
 X-KDE-Keywords[ia]=horologio,data,tempore,fuso horari,ntp,synchronisa,calendario,tempore local,tempore de region

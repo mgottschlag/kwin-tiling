@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Nepomuk Desktop Search
+Name[ca]=Cerca d'escriptori del Nepomuk
 Name[cs]=Vyhledávání v počítači pomocí Nepomuku
 Name[de]=Nepomuk-Desktopsuche
 Name[el]=Αναζήτηση επιφάνειας εργασίας Nepomuk
@@ -14,6 +15,7 @@ Name[sv]=Nepomuk skrivbordssökning
 Name[tr]=Nepomuk Masaüstü Araması
 Name[uk]=Стільничний пошук Nepomuk
 Name[x-test]=xxNepomuk Desktop Searchxx
+Name[zh_CN]=Nepomuk 桌面搜索
 Name[zh_TW]=Nepomuk 桌面搜尋
 Comment=KRunner which performs desktop searches via Nepomuk
 Comment[ar]=مشغل لـKRunner ينفذ البحث لسطح المكتب بواسطة نبومك

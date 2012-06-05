@@ -105,6 +105,7 @@ Name[zh_CN]=颜色
 Name[zh_TW]=顏色
 
 Comment=Change the colors used in applications
+Comment[ca]=Canvia els colors utilitzats en les aplicacions
 Comment[cs]=Změňte barvy použité v aplikacích
 Comment[de]=Änderung der von Programmen verwendeten Farben
 Comment[el]=Αλλαγή των χρωμάτων που χρησιμοποιούνται στις εφαρμογές
@@ -124,6 +125,7 @@ Comment[x-test]=xxChange the colors used in applicationsxx
 Comment[zh_TW]=變更用於應用程式的顏色
 
 X-KDE-Keywords=colors,colours,scheme,contrast,Widget colors,Color Scheme,color style,color theme
+X-KDE-Keywords[ca]=colors,esquema,contrast,colors d'estris,Esquema de color,estil de color, tema de color
 X-KDE-Keywords[de]=Farben,Schema,Kontrast,Farbschema,Elemente
 X-KDE-Keywords[et]=värv,värvid,skeem,kontrast,vidina värvid,värviskeem,värvistiil,värviteema
 X-KDE-Keywords[ia]=colores,colores,schema,contrasto,colores de Widget,Schema de Color,stilo de color, thema de color

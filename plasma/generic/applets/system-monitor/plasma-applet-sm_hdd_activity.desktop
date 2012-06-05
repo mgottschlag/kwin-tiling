@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Hard Disk I/O Monitor
+Name[ca]=Controlador d'E/S de disc dur
 Name[cs]=Monitor I/O pevného disku
 Name[de]=Überwachungsmonitor für Festplattenein- und ausgabe
 Name[et]=Kõvaketta sisendi/väljundi jälgija
@@ -15,9 +16,11 @@ Name[sv]=Övervakning av in- och utmatning för hårddisk
 Name[tr]=Sabit Disk G/Ç İzleyici
 Name[uk]=Монітор роботи жорсткого диска
 Name[x-test]=xxHard Disk I/O Monitorxx
+Name[zh_CN]=硬盘 I/O 监视器
 Name[zh_TW]=硬碟使用量 I/O 監視器
 
 Comment=An applet that monitors hard disk throughput and input/output
+Comment[ca]=Una miniaplicació que controla la velocitat de transferència de dades del disc dur i l'entrada/sortida
 Comment[et]=Kõvaketta läbilaset ja sisendit/väljundit jälgiv aplett
 Comment[ia]=Un applet que que monitora le prestation (throughput) e ingresso/egresso de disco dur
 Comment[nb]=Et miniprogram som overvåker dataflyt til og fra harddisk
@@ -29,6 +32,7 @@ Comment[pt_BR]=Um miniaplicativo que monitora o fluxo do disco rígido e a entra
 Comment[sv]=Ett miniprogram som övervakar hårddiskprestanda samt in- och utmatning
 Comment[uk]=Аплет, який стежить за даними, які записуються на жорсткий диск та читаються з жорсткого диска
 Comment[x-test]=xxAn applet that monitors hard disk throughput and input/outputxx
+Comment[zh_CN]=监视硬盘输入输出的小程序
 Comment[zh_TW]=監視硬碟效能與 I/O 的小程式
 
 Type=Service
