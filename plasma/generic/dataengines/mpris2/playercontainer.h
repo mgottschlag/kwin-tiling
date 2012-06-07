@@ -49,7 +49,7 @@ public:
         CanGoNext        = 1 << 7,
         CanGoPrevious    = 1 << 8
     };
-    Q_DECLARE_FLAGS(Caps, Cap);
+    Q_DECLARE_FLAGS(Caps, Cap)
     Caps capabilities() const { return m_caps; }
 
     void refresh();
@@ -80,6 +80,6 @@ private:
     double          m_currentRate;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(PlayerContainer::Caps);
+Q_DECLARE_OPERATORS_FOR_FLAGS(PlayerContainer::Caps)
 
 #endif // PLAYERCONTAINER_H
