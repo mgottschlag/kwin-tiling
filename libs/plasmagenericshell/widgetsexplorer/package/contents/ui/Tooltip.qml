@@ -83,7 +83,7 @@ MouseArea {
         columns: 2
         spacing: 4
         PlasmaComponents.Label {
-            text: "License: "
+            text: i18n("License: ")
             wrapMode: Text.Wrap
         }
         PlasmaComponents.Label {
@@ -92,7 +92,7 @@ MouseArea {
             wrapMode: Text.Wrap
         }
         PlasmaComponents.Label {
-            text: "Author: "
+            text: i18n("Author: ")
             wrapMode: Text.Wrap
         }
         PlasmaComponents.Label {
