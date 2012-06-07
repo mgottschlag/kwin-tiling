@@ -42,6 +42,8 @@ Item {
         MouseArea {
             id: compactItem
             anchors.fill: parent
+            property int minimumWidth: 32
+            property int minimumHeight: 32
             onClicked: plasmoid.togglePopup()
 
             property QtObject pmSource: plasmoid.rootItem.pmSource
