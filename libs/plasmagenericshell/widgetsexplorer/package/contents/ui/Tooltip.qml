@@ -82,7 +82,7 @@ MouseArea {
         rows: 2
         columns: 2
         Text {
-            text: "License:"
+            text: "License: "
             color: theme.textColor
             anchors.right: licenseText.left
             wrapMode: Text.Wrap
@@ -94,7 +94,7 @@ MouseArea {
             wrapMode: Text.Wrap
         }
         Text {
-            text: "Author:"
+            text: "Author: "
             color: theme.textColor
             anchors.right: authorText.left
             wrapMode: Text.Wrap
