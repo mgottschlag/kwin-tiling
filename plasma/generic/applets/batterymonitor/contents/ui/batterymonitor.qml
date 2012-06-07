@@ -53,7 +53,7 @@ Item {
                 id: batteryContainer
                 anchors.centerIn: parent
                 width: Math.min(parent.width, parent.height)
-                height: width
+                height: Math.min(parent.width, parent.height)
                 
                 BatteryIcon {
                     id: batteryIcon
