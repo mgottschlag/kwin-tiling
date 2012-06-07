@@ -59,8 +59,7 @@ MouseArea {
             right: parent.right
         }
 
-        Text {
-            color: theme.textColor
+        PlasmaComponents.Label {
             text: title
             font.bold:true
             anchors.left: parent.left
@@ -68,9 +67,8 @@ MouseArea {
             height: paintedHeight
             wrapMode: Text.Wrap
         }
-        Text {
+        PlasmaComponents.Label {
             text: description
-            color: theme.textColor
             anchors.left: parent.left
             anchors.right: parent.right
             wrapMode: Text.Wrap
@@ -84,26 +82,21 @@ MouseArea {
         rows: 2
         columns: 2
         spacing: 4
-        Text {
+        PlasmaComponents.Label {
             text: "License: "
-            color: theme.textColor
             wrapMode: Text.Wrap
         }
-        Text {
+        PlasmaComponents.Label {
             id: licenseText
             text: license
-            color: theme.textColor
             wrapMode: Text.Wrap
         }
-        Text {
+        PlasmaComponents.Label {
             text: "Author: "
-            color: theme.textColor
             wrapMode: Text.Wrap
         }
-        Text {
-            id: authorText
+        PlasmaComponents.Label {
             text: author
-            color: theme.textColor
             wrapMode: Text.Wrap
         }
     }
