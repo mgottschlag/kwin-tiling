@@ -29,7 +29,7 @@ MouseArea {
     onEntered: toolTipHideTimer.running = false
     onExited: toolTipHideTimer.running = true
 
-    width: 250
+    width: childrenRect.width
     height: 200
 
     property variant icon: tooltipDialog.appletDelegate.icon
@@ -79,12 +79,14 @@ MouseArea {
     Grid {
         anchors.top: tooltipIconWidget.bottom
         anchors.topMargin: 16
+        anchors.bottom: uninstallButton.top
+        anchors.bottomMargin: 4
         rows: 2
         columns: 2
+        spacing: 4
         Text {
             text: "License: "
             color: theme.textColor
-            anchors.right: licenseText.left
             wrapMode: Text.Wrap
         }
         Text {
@@ -96,7 +98,6 @@ MouseArea {
         Text {
             text: "Author: "
             color: theme.textColor
-            anchors.right: authorText.left
             wrapMode: Text.Wrap
         }
         Text {
@@ -108,6 +109,7 @@ MouseArea {
     }
 
     PlasmaComponents.Button {
+        id: uninstallButton
         anchors {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
