@@ -42,14 +42,21 @@ Item {
         MouseArea {
             id: compactItem
             anchors.fill: parent
-            property int minimumWidth: 32
-            property int minimumHeight: 32
+            property int minimumWidth
+            property int minimumHeight
             onClicked: plasmoid.togglePopup()
 
             property QtObject pmSource: plasmoid.rootItem.pmSource
             property bool hasBattery: pmSource.data["Battery"]["Has Battery"]
             property int percent: pmSource.data["Battery0"]["Percent"]
             property bool pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
+
+            Component.onCompleted: {
+                if (plasmoid.formFactor==Planer || plasmoid.formFactor==MediaCenter) {
+                    minimumWidth = 32;
+                    minimumHeight = 32;
+                }
+            }
 
             Item {
                 id: batteryContainer

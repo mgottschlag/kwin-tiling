@@ -34,18 +34,31 @@ Flow {
     property bool show_suspend: false
     property bool show_hibernate: false
     property int myCount: 2
-    property int orientation: plasmoid.formFactor<2 ? (width>height ? Qt.Horizontal : Qt.Vertical) : (plasmoid.formFactor==2 ? Qt.Horizontal : Qt.Vertical)
+    property int orientation: onPanel ? (plasmoid.formFactor==Horizontal ? Qt.Horizontal : Qt.Vertical) : (width>height ? Qt.Horizontal : Qt.Vertical)
+    property bool onPanel: (plasmoid.formFactor==Horizontal || plasmoid.formFactor==Vertical)
 
     flow: orientation==Qt.Vertical ? Flow.TopToBottom : Flow.LeftToRight
 
+    // when applet is resized on desktop
+    onOrientationChanged: {
+        if (onPanel) return;
+        if (orientation==Qt.Horizontal) {
+            minimumWidth = 32*myCount;
+            minimumHeight = 32;
+        } else {
+            minimumWidth = 32;
+            minimumHeight = 32*myCount;
+        }
+    }
+
     // when panel is resized
     onHeightChanged: {
-        if (plasmoid.formFactor==2) {
+        if (plasmoid.formFactor==Horizontal) {
             minimumWidth = width = height*myCount;
         }
     }
     onWidthChanged: {
-        if (plasmoid.formFactor==3) {
+        if (plasmoid.formFactor==Vertical) {
             minimumHeight = height = width*myCount;
         }
     }
@@ -70,7 +83,7 @@ Flow {
     function setSize(count) {
         // resize the applet only if it is on a panel
         // otherwise, the icons resize themselves
-        if (plasmoid.formFactor<2) {
+        if (!onPanel) {
             return;
         }
 
