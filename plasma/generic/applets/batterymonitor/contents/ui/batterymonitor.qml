@@ -42,6 +42,8 @@ Item {
         MouseArea {
             id: compactItem
             anchors.fill: parent
+            property int minimumWidth: 32
+            property int minimumHeight: 32
             onClicked: plasmoid.togglePopup()
 
             property QtObject pmSource: plasmoid.rootItem.pmSource
@@ -53,7 +55,7 @@ Item {
                 id: batteryContainer
                 anchors.centerIn: parent
                 width: Math.min(parent.width, parent.height)
-                height: width
+                height: Math.min(parent.width, parent.height)
                 
                 BatteryIcon {
                     id: batteryIcon

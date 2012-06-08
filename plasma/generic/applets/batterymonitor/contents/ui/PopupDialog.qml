@@ -101,9 +101,9 @@ Item {
             visible: text!="" && showRemainingTime
         }
 
-        Components.Switch {
+        Components.CheckBox {
             checked: true
-            onCheckedChanged: powermanagementChanged(checked)
+            onClicked: powermanagementChanged(checked)
         }
 
         Components.Slider {
