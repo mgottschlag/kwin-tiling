@@ -158,7 +158,7 @@ Item {
                 }
                 PlasmaComponents.Button {
                     id: categoryButton
-                    text: "Categories"
+                    text: i18n("Categories")
                     onClicked: categoriesDialog.open()
                 }
             }
@@ -220,7 +220,7 @@ Item {
             }
             PlasmaComponents.Button {
                 id: categoryButton
-                text: "Categories"
+                text: i18n("Categories")
                 onClicked: categoriesDialog.open()
             }
 
