@@ -52,7 +52,7 @@ Item {
             property bool pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
 
             Component.onCompleted: {
-                if (plasmoid.formFactor==Planer || plasmoid.formFactor==MediaCenter) {
+                if (plasmoid.formFactor==Planar || plasmoid.formFactor==MediaCenter) {
                     minimumWidth = 32;
                     minimumHeight = 32;
                 }
