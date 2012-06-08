@@ -35,7 +35,7 @@ Flow {
     property bool show_leave: true
     property bool show_suspend: false
     property bool show_hibernate: false
-    property int myCount: 2
+    property int visibleButtons: 2
     property int orientation: Qt.Vertical
 
     flow: orientation==Qt.Vertical ? Flow.TopToBottom : Flow.LeftToRight
@@ -57,38 +57,38 @@ Flow {
     function checkLayout() {
         switch(plasmoid.formFactor) {
         case Vertical:
-            if (width >= minButtonSize*myCount) {
+            if (width >= minButtonSize*visibleButtons) {
                 orientation = Qt.Horizontal;
-                minimumHeight = width/myCount - 1;
-                plasmoid.setPreferredSize(width, width/myCount);
+                minimumHeight = width/visibleButtons - 1;
+                plasmoid.setPreferredSize(width, width/visibleButtons);
             } else {
                 orientation = Qt.Vertical;
-                minimumHeight = width*myCount;
-                plasmoid.setPreferredSize(width, width*myCount);
+                minimumHeight = width*visibleButtons;
+                plasmoid.setPreferredSize(width, width*visibleButtons);
             }
             break;
 
         case Horizontal:
-            if (height < minButtonSize*myCount) {
+            if (height < minButtonSize*visibleButtons) {
                 orientation = Qt.Horizontal;
-                minimumWidth = height*myCount;
-                plasmoid.setPreferredSize(height*myCount, height);
+                minimumWidth = height*visibleButtons;
+                plasmoid.setPreferredSize(height*visibleButtons, height);
             } else {
                 orientation = Qt.Vertical;
-                minimumWidth = height/myCount - 1;
-                plasmoid.setPreferredSize(height/myCount, height);
+                minimumWidth = height/visibleButtons - 1;
+                plasmoid.setPreferredSize(height/visibleButtons, height);
             }
             break;
 
         default:
             if (width > height) {
                 orientation = Qt.Horizontal;
-                minimumWidth = minButtonSize*myCount;
+                minimumWidth = minButtonSize*visibleButtons;
                 minimumHeight = minButtonSize;
             } else {
                 orientation = Qt.Vertical;
                 minimumWidth = minButtonSize;
-                minimumHeight = minButtonSize*myCount;
+                minimumHeight = minButtonSize*visibleButtons;
             }
             break;
         }
@@ -101,7 +101,7 @@ Flow {
         show_suspend = plasmoid.readConfig("show_suspend");
         show_hibernate = plasmoid.readConfig("show_hibernate");
 
-        myCount = show_lock+show_switchUser+show_leave+show_suspend+show_hibernate;
+        visibleButtons = show_lock+show_switchUser+show_leave+show_suspend+show_hibernate;
 
         showModel.get(0).show = show_lock;
         showModel.get(1).show = show_switchUser;
@@ -127,8 +127,8 @@ Flow {
 
     Repeater {
         id: items
-        property int itemWidth: parent.flow==Flow.LeftToRight ? Math.floor(parent.width/myCount) : parent.width
-        property int itemHeight: parent.flow==Flow.TopToBottom ? Math.floor(parent.height/myCount) : parent.height
+        property int itemWidth: parent.flow==Flow.LeftToRight ? Math.floor(parent.width/visibleButtons) : parent.width
+        property int itemHeight: parent.flow==Flow.TopToBottom ? Math.floor(parent.height/visibleButtons) : parent.height
         property int iconSize: Math.min(itemWidth, itemHeight)
 
         model: Data.data
