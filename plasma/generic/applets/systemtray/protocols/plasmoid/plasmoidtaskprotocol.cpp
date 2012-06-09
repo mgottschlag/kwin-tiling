@@ -60,10 +60,6 @@ void PlasmoidProtocol::loadFromConfig(Plasma::Applet *parent)
 {
     QHash<QString, PlasmoidTask*> existingTasks = m_tasks.value(parent);
 
-    if (m_tasks.contains(parent)) {
-        m_tasks[parent].clear();
-    }
-
     KConfigGroup appletGroup = parent->config();
     appletGroup = KConfigGroup(&appletGroup, "Applets");
     foreach (const QString &groupName, appletGroup.groupList()) {
