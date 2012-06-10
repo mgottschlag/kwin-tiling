@@ -849,7 +849,7 @@ directChooseHost(const char *name)
 #define PING_TRIES 3
 
 int
-doChoose()
+doChoose(time_t *startTime)
 {
     HostName **hp, *h;
     char *host, **hostp;
@@ -860,7 +860,7 @@ doChoose()
 
     openGreeter();
     gSendInt(G_Choose);
-    switch (cmd = ctrlGreeterWait(True)) {
+    switch (cmd = ctrlGreeterWait(True, startTime)) {
     case G_Ready:
         break;
     default: /* error */
@@ -943,7 +943,7 @@ doChoose()
 #endif
         if (select(n + 1, &rfds, 0, 0, to) > 0) {
             if (FD_ISSET(grtproc.pipe.fd.r, &rfds))
-                switch (cmd = ctrlGreeterWait(False)) {
+                switch (cmd = ctrlGreeterWait(False, startTime)) {
                 case -1:
                     break;
                 case G_Ch_Refresh:

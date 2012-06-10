@@ -233,7 +233,7 @@ GTalk grttalk;
 GTalk mstrtalk;
 
 int
-ctrlGreeterWait(int wreply)
+ctrlGreeterWait(int wreply, time_t *startTime)
 {
     int i, cmd, type, rootok;
     char *name, *pass;
@@ -247,6 +247,10 @@ ctrlGreeterWait(int wreply)
         case G_Ready:
             debug("G_Ready\n");
             return 0;
+        case G_Interact:
+            if (startTime)
+                *startTime = 0;
+            break;
         case G_GetCfg:
             /*debug("G_GetCfg\n");*/
             type = gRecvInt();
@@ -437,7 +441,7 @@ openGreeter()
               greeterUID, td->greeterAuthFile, &td->gpipe))
         sessionExit(EX_UNMANAGE_DPY);
     freeStrArr(env);
-    if ((cmd = ctrlGreeterWait(True))) {
+    if ((cmd = ctrlGreeterWait(True, 0))) {
         logError("Received unknown or unexpected command %d from greeter\n", cmd);
         closeGreeter(True);
         sessionExit(EX_UNMANAGE_DPY);
@@ -569,7 +573,7 @@ manageSession(void)
 
 #ifdef XDMCP
     if (td->useChooser)
-        doChoose();
+        doChoose(0);
         /* NOTREACHED */
 #endif
 
@@ -595,15 +599,11 @@ manageSession(void)
                       (tdiff > 0 || td->autoAgain)) ?
                           G_GreetTimed : G_Greet);
           gcont:
-            cmd = ctrlGreeterWait(True);
-            if (cmd == G_Interact) {
-                startt = 0;
-                goto gcont;
-            }
+            cmd = ctrlGreeterWait(True, &startt);
 #ifdef XDMCP
             while (cmd == G_DChoose) {
               choose:
-                cmd = doChoose();
+                cmd = doChoose(&startt);
             }
             if (cmd == G_DGreet)
                 continue;
@@ -672,7 +672,7 @@ manageSession(void)
         resetXProperties();
         openGreeter();
         gSendInt(G_ConfShutdown);
-        if ((cmd = ctrlGreeterWait(True)) != G_Ready) {
+        if ((cmd = ctrlGreeterWait(True, 0)) != G_Ready) {
             logError("Received unknown command %d from greeter\n", cmd);
             closeGreeter(True);
         }

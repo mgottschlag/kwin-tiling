@@ -473,7 +473,7 @@ extern GTalk mstrtalk, grttalk;
 extern GProc grtproc;
 void openGreeter(void);
 int closeGreeter(int force);
-int ctrlGreeterWait(int wreply);
+int ctrlGreeterWait(int wreply, time_t *startTime);
 void prepareErrorGreet(void);
 void finishGreet(void);
 char *conv_interact(int what, const char *prompt);
@@ -670,7 +670,7 @@ ARRAY8Ptr indirectChoice(ARRAY8Ptr clientAddress, ARRAY8Ptr clientPort, CARD16 c
 int checkIndirectChoice(ARRAY8Ptr clientAddress, ARRAY8Ptr clientPort, CARD16 connectionType);
 void registerIndirectChoice(ARRAY8Ptr clientAddress, ARRAY8Ptr clientPort, CARD16 connectionType,
                             ARRAY8Ptr choice);
-int doChoose(void);
+int doChoose(time_t *startTime);
 
 /* socket.c or streams.c */
 void updateListenSockets(void);
