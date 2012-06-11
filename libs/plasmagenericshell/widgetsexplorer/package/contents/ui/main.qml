@@ -104,7 +104,7 @@ Item {
         interval: 500
         repeat: false
         onTriggered: {
-            var point = tooltipDialog.popupPosition(tooltipDialog.appletDelegate)
+            var point = tooltipDialog.popupPosition(tooltipDialog.appletDelegate, Qt.AlignCenter)
             tooltipDialog.x = point.x
             tooltipDialog.y = point.y
             tooltipDialog.visible = true
