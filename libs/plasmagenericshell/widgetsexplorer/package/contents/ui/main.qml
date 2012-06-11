@@ -84,6 +84,10 @@ Item {
             if (!appletDelegate) {
                 toolTipHideTimer.restart()
                 toolTipShowTimer.running = false
+            } else if (tooltipDialog.visible) {
+                var point = tooltipDialog.popupPosition(tooltipDialog.appletDelegate)
+                tooltipDialog.x = point.x
+                tooltipDialog.y = point.y
             } else {
                 toolTipShowTimer.restart()
                 toolTipHideTimer.running = false
