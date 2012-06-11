@@ -120,7 +120,7 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_browser = new Plasma::WebView(this);
     m_browser->setPage(new WebBrowserPage(this));
     m_browser->setPreferredSize(400, 400);
-
+    m_browser->setMinimumSize(130, 130);
     m_browser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     m_layout->addItem(m_browser);
