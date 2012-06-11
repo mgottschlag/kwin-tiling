@@ -32,15 +32,31 @@ MouseArea {
     width: childrenRect.width
     height: 200
 
-    property variant icon: tooltipDialog.appletDelegate.icon
-    property string title: tooltipDialog.appletDelegate.title
-    property string description: tooltipDialog.appletDelegate.description
-    property string author: tooltipDialog.appletDelegate.author
-    property string email: tooltipDialog.appletDelegate.email
-    property string license: tooltipDialog.appletDelegate.license
-    property string pluginName: tooltipDialog.appletDelegate.pluginName
-    property bool local: tooltipDialog.appletDelegate.local
+    property variant icon
+    property string title
+    property string description
+    property string author
+    property string email
+    property string license
+    property string pluginName
+    property bool local
 
+    Connections {
+        target: tooltipDialog
+        onAppletDelegateChanged: {
+            if (!tooltipDialog.appletDelegate) {
+                return
+            }
+            icon = tooltipDialog.appletDelegate.icon
+            title = tooltipDialog.appletDelegate.title
+            description = tooltipDialog.appletDelegate.description
+            author = tooltipDialog.appletDelegate.author
+            email = tooltipDialog.appletDelegate.email
+            license = tooltipDialog.appletDelegate.license
+            pluginName = tooltipDialog.appletDelegate.pluginName
+            local = tooltipDialog.appletDelegate.local
+        }
+    }
     QIconItem {
         id: tooltipIconWidget
         anchors.left: parent.left
