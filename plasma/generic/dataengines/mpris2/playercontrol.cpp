@@ -65,7 +65,7 @@ void PlayerControl::updateEnabledOperations()
     setOperationEnabled("Play", caps & PlayerContainer::CanPlay);
     setOperationEnabled("Pause", caps & PlayerContainer::CanPause);
     setOperationEnabled("PlayPause", caps & PlayerContainer::CanPause);
-    setOperationEnabled("Stop", caps & PlayerContainer::CanControl);
+    setOperationEnabled("Stop", caps & PlayerContainer::CanStop);
     setOperationEnabled("Next", caps & PlayerContainer::CanGoNext);
     setOperationEnabled("Previous", caps & PlayerContainer::CanGoPrevious);
     setOperationEnabled("Seek", caps & PlayerContainer::CanSeek);

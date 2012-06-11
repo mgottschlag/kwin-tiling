@@ -257,6 +257,16 @@ void PlayerContainer::updateFromMap(const QVariantMap& map, UpdateType updType)
                     << "but it should be D-Bus type \"b\"";
             }
         }
+        // fake the CanStop capability
+        if (cap == CanControl || i.key() == QLatin1String("PlaybackStatus")) {
+            if ((m_caps & CanControl) && i.value().toString() != QLatin1String("Stopped")) {
+                kDebug() << "Enabling stop action";
+                m_caps |= CanStop;
+            } else {
+                kDebug() << "Disabling stop action";
+                m_caps &= ~CanStop;
+            }
+        }
         ++i;
     }
 }
