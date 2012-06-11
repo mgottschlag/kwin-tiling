@@ -34,7 +34,7 @@ PlasmaAppletItem::PlasmaAppletItem(PlasmaAppletItemModel *model,
 {
     const QString api(m_info.property("X-Plasma-API").toString());
     if (!api.isEmpty()) {
-        QDir dir(KStandardDirs::locateLocal("data", "plasma/plasmoids/" + info.pluginName() + '/'));
+        QDir dir(KStandardDirs::locateLocal("data", "plasma/plasmoids/" + info.pluginName() + '/', false));
         m_local = dir.exists();
     }
 
