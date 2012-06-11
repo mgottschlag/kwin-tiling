@@ -52,6 +52,11 @@ public:
     Q_DECLARE_FLAGS(Caps, Cap)
     Caps capabilities() const { return m_caps; }
 
+    enum UpdateType {
+        FetchAll,
+        UpdatedSignal
+    };
+
     void refresh();
 
 signals:
@@ -68,8 +73,8 @@ private slots:
     void seeked(qint64 position);
 
 private:
-    void copyProperty(const QString& propName, const QVariant& value, QVariant::Type expType);
-    void updateFromMap(const QVariantMap& map);
+    void copyProperty(const QString& propName, const QVariant& value, QVariant::Type expType, UpdateType updType);
+    void updateFromMap(const QVariantMap& map, UpdateType updType);
     void updatePosition();
     void recalculatePosition();
 

@@ -150,7 +150,7 @@ void PlayerContainer::refresh()
     ++m_fetchesPending;
 }
 
-void PlayerContainer::copyProperty(const QString& propName, const QVariant& _value, QVariant::Type expType)
+void PlayerContainer::copyProperty(const QString& propName, const QVariant& _value, QVariant::Type expType, UpdateType updType)
 {
     QVariant value = _value;
     // we protect our users from bogus values
@@ -181,6 +181,17 @@ void PlayerContainer::copyProperty(const QString& propName, const QVariant& _val
         if (propName == QLatin1String("Position")) {
 
             setData(POS_UPD_STRING, QDateTime::currentDateTimeUtc());
+
+        } else if (propName == QLatin1String("Metadata")) {
+
+            if (updType == UpdatedSignal) {
+                QDBusObjectPath oldTrackId = data().value("Metadata").toMap().value("mpris:trackid").value<QDBusObjectPath>();
+                QDBusObjectPath newTrackId = value.toMap().value("mpris:trackid").value<QDBusObjectPath>();
+                if (oldTrackId != newTrackId) {
+                    setData("Position", static_cast<qlonglong>(0));
+                    setData(POS_UPD_STRING, QDateTime::currentDateTimeUtc());
+                }
+            }
 
         } else if (propName == QLatin1String("Rate") &&
                 data().value("PlaybackStatus").toString() == QLatin1String("Playing")) {
@@ -220,13 +231,13 @@ void PlayerContainer::copyProperty(const QString& propName, const QVariant& _val
     }
 }
 
-void PlayerContainer::updateFromMap(const QVariantMap& map)
+void PlayerContainer::updateFromMap(const QVariantMap& map, UpdateType updType)
 {
     QMap<QString, QVariant>::const_iterator i = map.constBegin();
     while (i != map.constEnd()) {
         QVariant::Type type = expPropType(i.key());
         if (type != QVariant::Invalid) {
-            copyProperty(i.key(), i.value(), type);
+            copyProperty(i.key(), i.value(), type, updType);
         }
 
         Cap cap = capFromName(i.key());
@@ -268,7 +279,7 @@ void PlayerContainer::getPropsFinished(QDBusPendingCallWatcher* watcher)
         return;
     }
 
-    updateFromMap(propsReply.value());
+    updateFromMap(propsReply.value(), FetchAll);
     checkForUpdate();
 
     --m_fetchesPending;
@@ -308,7 +319,7 @@ void PlayerContainer::propertiesChanged(
 {
     Q_UNUSED(interface)
 
-    updateFromMap(changedProperties);
+    updateFromMap(changedProperties, UpdatedSignal);
     if (!invalidatedProperties.isEmpty()) {
         refresh();
     }
