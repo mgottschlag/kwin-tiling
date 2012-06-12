@@ -36,6 +36,7 @@ Item {
     signal leftActionTriggered
 
     height: container.childrenRect.height + padding.margins.top + padding.margins.bottom
+    width: parent.width
 
     PlasmaCore.FrameSvgItem {
         id: padding
