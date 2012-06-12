@@ -86,6 +86,7 @@ Name[th]=ปุ่มพิมพ์ลัดใช้งานส่วนร�
 Name[tr]=Genel Klavye Kısayolları
 Name[ug]=ئومۇمىيەت ھەرپتاختا تېزلەتمىسى
 Name[uk]=Загальні клавіатурні скорочення
+Name[vi]=Phím tắt toàn hệ thống
 Name[wa]=Rascourtis del taprece po ttavå
 Name[x-test]=xxGlobal Keyboard Shortcutsxx
 Name[zh_CN]=全局键盘快捷键
@@ -195,6 +196,7 @@ X-KDE-Keywords[pt]=Teclas,combinações de teclas,global,esquema de teclas,atalh
 X-KDE-Keywords[pt_BR]=Teclas,combinações de teclas global,esquema de teclas,atalhos de teclado,atalhos,atalhos dos aplicativos, atalhos globais
 X-KDE-Keywords[sv]=Tangenter,Globala tangentbindingar,Tangentschema,Tangentbindingar,genvägar,programgenvägar,globala genvägar
 X-KDE-Keywords[uk]=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,global shortcuts,клавіатура,скорочення,клавіатурні скорочення,схема,загальні клавіатурні скорочення,клавіатурні скорочення програми,загальні скорочення
+X-KDE-Keywords[vi]=Phím,tổ hợp phím toàn cục,phối hợp phím,tổ hợp phím,gõ tắt,gõ tắt cho ứng dụng
 X-KDE-Keywords[x-test]=xxKeys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,global shortcutsxx
 X-KDE-Keywords[zh_TW]=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,global shortcuts
 

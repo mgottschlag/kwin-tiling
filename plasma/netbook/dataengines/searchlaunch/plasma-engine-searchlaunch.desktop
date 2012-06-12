@@ -119,6 +119,7 @@ Comment[th]=กลไกที่จะจัดการการสืบค�
 Comment[tr]=SAL içericisine gelen sorgular için bir motor
 Comment[ug]=SAL قاچا سۈرۈشتۈرىدىغان ماتورنى بىر تەرەپ قىلىدۇ
 Comment[uk]=Рушій для обробки запитів до контейнера SAL
+Comment[vi]=Cơ chế xử lý truy vấn tới SAL
 Comment[wa]=Moteur pos apougnî les rcweraedje e contenmint SAL
 Comment[x-test]=xxEngine to handle queries to SAL containmentxx
 Comment[zh_CN]=处理 SAL 容器查询的引擎

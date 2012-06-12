@@ -219,6 +219,7 @@ X-KDE-Keywords[sr@latin]=Smartcard,PKCS,SSL,reader,smart,card,PKCS,SSL,čitač,k
 X-KDE-Keywords[sv]=Smartkort,PKCS,SSL,läsare,smart,kort
 X-KDE-Keywords[uk]=Smartcard,PKCS,SSL,reader,smart,card,картка пам’яті,пам’ятова картка,смарт-картка,читання,смарт
 X-KDE-Keywords[x-test]=xxSmartcard,PKCS,SSL,reader,smart,cardxx
+X-KDE-Keywords[zh_CN]=Smartcard,PKCS,SSL,reader,smart,card,智能卡,读卡器,智能,卡
 X-KDE-Keywords[zh_TW]=Smartcard,PKCS,SSL,reader,smart,card
 
 Categories=Qt;KDE;X-KDE-settings-peripherals;

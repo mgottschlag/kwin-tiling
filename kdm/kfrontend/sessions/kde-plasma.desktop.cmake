@@ -45,6 +45,7 @@ Name[sv]=KDE Plasma arbetsyta
 Name[tr]=KDE Plasma Çalışma Alanı
 Name[ug]=ك د ئې(KDE) پلازما خىزمەت بوشلۇقى
 Name[uk]=Робочий простір Плазми KDE
+Name[vi]=Không gian Plasma KDE
 Name[x-test]=xxKDE Plasma Workspacexx
 Name[zh_CN]=KDE Plasma 工作空间
 Name[zh_TW]=KDE Plasma 工作空間

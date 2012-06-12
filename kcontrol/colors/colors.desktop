@@ -121,7 +121,9 @@ Comment[pt_BR]=Alterar as cores usadas nos aplicativos
 Comment[sv]=Ändra färgerna som används av program
 Comment[tr]=Uygulamalarda kullanılacak renkeri yapılandır
 Comment[uk]=Зміна кольорів, що використовуються у інтерфейсах програм
+Comment[vi]=Thay đổi màu sắc được sử dụng trong các ứng dụng
 Comment[x-test]=xxChange the colors used in applicationsxx
+Comment[zh_CN]=更改应用程序所使用的颜色
 Comment[zh_TW]=變更用於應用程式的顏色
 
 X-KDE-Keywords=colors,colours,scheme,contrast,Widget colors,Color Scheme,color style,color theme
@@ -138,6 +140,7 @@ X-KDE-Keywords[pt_BR]=cor,cores,esquema,contraste,Cores do widget,Esquema de cor
 X-KDE-Keywords[sv]=färger,schema,kontrast,Komponentfärger,Färgschema,färgstil,färgtema
 X-KDE-Keywords[uk]=кольори,кольори,схема,контраст,кольори віджетів,схема кольорів,стиль кольорів,тема кольорів,colors,colours,scheme,contrast,Widget colors,Color Scheme,color style,color theme
 X-KDE-Keywords[x-test]=xxcolors,colours,scheme,contrast,Widget colors,Color Scheme,color style,color themexx
+X-KDE-Keywords[zh_CN]=colors,colours,scheme,contrast,Widget colors,Color Scheme,color style,color theme,颜色,配色方案,对比度,部件颜色,颜色方案,颜色风格,颜色主题
 X-KDE-Keywords[zh_TW]=colors,colours,scheme,contrast,Widget colors,Color Scheme,color style,color theme
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

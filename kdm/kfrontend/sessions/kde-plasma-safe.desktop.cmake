@@ -43,6 +43,7 @@ Name[sv]=KDE Plasma arbetsyta (felsäker session)
 Name[tr]=KDE Plasma Çalışma Alanı (hatalara karşı korumalı oturum)
 Name[ug]=ك د ئې(KDE) پلازما خىزمەت بوشلۇقى(بىخەتەر ئەڭگىمە)
 Name[uk]=Робочий простір Плазми KDE (безпечний сеанс)
+Name[vi]=Không gian Plasma KDE (phiên thử sai)
 Name[x-test]=xxKDE Plasma Workspace (failsafe session)xx
 Name[zh_CN]=KDE Plasma 工作空间(后备会话)
 Name[zh_TW]=KDE Plasma 工作空間（救援模式）
