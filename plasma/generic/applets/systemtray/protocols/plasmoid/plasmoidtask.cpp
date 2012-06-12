@@ -132,6 +132,15 @@ void PlasmoidTask::forwardConstraintsEvent(Plasma::Constraints constraints)
     }
 }
 
+int PlasmoidTask::id() const
+{
+    if (m_applet) {
+        return m_applet.data()->id();
+    }
+
+    return 0;
+}
+
 void PlasmoidTask::setupApplet(const QString &plugin, int id)
 {
     Plasma::Applet *applet = Plasma::Applet::load(plugin, id);

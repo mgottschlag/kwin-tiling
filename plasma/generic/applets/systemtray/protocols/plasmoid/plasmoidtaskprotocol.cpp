@@ -59,25 +59,17 @@ void PlasmoidProtocol::forwardConstraintsEvent(Plasma::Constraints constraints, 
 void PlasmoidProtocol::loadFromConfig(Plasma::Applet *parent)
 {
     QHash<QString, PlasmoidTask*> existingTasks = m_tasks.value(parent);
+    QSet<QString> seenNames;
 
     KConfigGroup appletGroup = parent->config();
     appletGroup = KConfigGroup(&appletGroup, "Applets");
+
     foreach (const QString &groupName, appletGroup.groupList()) {
-        KConfigGroup childGroup(&appletGroup, groupName);
-        QString appletName = childGroup.readEntry("plugin", QString());
+        const KConfigGroup childGroup(&appletGroup, groupName);
+        const QString appletName = childGroup.readEntry("plugin", QString());
 
-        if (m_tasks.contains(parent) && m_tasks.value(parent).contains(appletName)) {
-            continue;
-        }
-
-        if (existingTasks.contains(appletName)) {
-            m_tasks[parent].insert(appletName, existingTasks.value(appletName));
-            existingTasks.remove(appletName);
-            continue;
-        }
-
-        addApplet(appletName, groupName.toInt(), parent);
         existingTasks.remove(appletName);
+        addApplet(appletName, groupName.toInt(), parent);
     }
 
     QHashIterator<QString, PlasmoidTask*> it(existingTasks);
@@ -92,9 +84,22 @@ void PlasmoidProtocol::loadFromConfig(Plasma::Applet *parent)
 
 void PlasmoidProtocol::addApplet(const QString appletName, const int id, Plasma::Applet *parent)
 {
-    kDebug() << "Registering task with the manager" << appletName;
+    PlasmoidTask *task = m_tasks.value(parent).value(appletName);
+    if (task) {
+        // the host already has one of these applets ... but let's make sure that the id is the same
+        // if it isn't, we have a duplicate in the config file and it should be removed
+        if (task->id() != id) {
+            KConfigGroup appletGroup = parent->config();
+            appletGroup = KConfigGroup(&appletGroup, "Applets");
+            appletGroup = KConfigGroup(&appletGroup, QString::number(id));
+            appletGroup.deleteGroup();
+        }
 
-    PlasmoidTask *task = new PlasmoidTask(appletName, id, this, parent);
+        return;
+    }
+
+    kDebug() << "Registering task with the manager" << appletName;
+    task = new PlasmoidTask(appletName, id, this, parent);
 
     if (!task->isValid()) {
         // we failed to load our applet *sob*
