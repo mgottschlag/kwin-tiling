@@ -42,6 +42,8 @@ Item {
             text: display
             separator: model["separator"]
             onClicked: {
+                list.contentX = 0
+                list.contentY = 0
                 var item = widgetExplorer.filterModel.get(index)
 
                 widgetExplorer.widgetsModel.filterType = item.filterType
