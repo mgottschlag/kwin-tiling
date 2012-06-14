@@ -26,7 +26,6 @@ Item {
     property int minimumWidth: dialogItem.width
     property int minimumHeight: dialogItem.height
 
-    property bool show_charge: false
     property bool show_multiple_batteries: false
     property bool show_remaining_time: false
 
@@ -35,7 +34,6 @@ Item {
     }
 
     function configChanged() {
-        show_charge = plasmoid.readConfig("showBatteryString");
         show_multiple_batteries = plasmoid.readConfig("showMultipleBatteries");
         show_remaining_time = plasmoid.readConfig("showRemainingTime");
     }
@@ -44,6 +42,7 @@ Item {
         MouseArea {
             id: compactItem
             anchors.fill: parent
+            hoverEnabled: true
             property int minimumWidth
             property int minimumHeight
             onClicked: plasmoid.togglePopup()
@@ -52,19 +51,30 @@ Item {
             property bool hasBattery: pmSource.data["Battery"]["Has Battery"]
             property int percent: pmSource.data["Battery0"]["Percent"]
             property bool pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
+            property bool showOverlay: false
 
             Component.onCompleted: {
                 if (plasmoid.formFactor==Planar || plasmoid.formFactor==MediaCenter) {
                     minimumWidth = 32;
                     minimumHeight = 32;
                 }
+                plasmoid.addEventListener('ConfigChanged', configChanged);
+            }
+
+            function configChanged() {
+                showOverlay = plasmoid.readConfig("showBatteryString");
+            }
+
+            function isConstrained() {
+                return (plasmoid.formFactor == Vertical || plasmoid.formFactor == Horizontal);
             }
 
             Item {
                 id: batteryContainer
                 anchors.centerIn: parent
-                width: Math.min(parent.width, parent.height)
-                height: Math.min(parent.width, parent.height)
+                property real size: Math.min(parent.width, parent.height)
+                width: size
+                height: size
                 
                 BatteryIcon {
                     id: batteryIcon
@@ -75,25 +85,32 @@ Item {
                     anchors.fill: parent
                 }
 
+                PlasmaCore.Theme { id: theme }
+
                 Rectangle {
-                    id: chargeInfo
-                    width: percent.paintedWidth+4    // 4 = left/right margins
-                    height: percent.paintedHeight+4  // 4 = top/bottom margins
+                    id: labelRect
+                    // should be 40 when size is 90
+                    width: Math.max(parent.size*4/9, 35)
+                    height: width/2
                     anchors.centerIn: parent
-                    color: "white"
+                    color: theme.backgroundColor
                     border.color: "grey"
                     border.width: 2
-                    radius: 3
-                    visible: plasmoid.rootItem.show_charge && pmSource.data["Battery"]["Has Battery"]
-                    opacity: 0.7
+                    radius: 4
+                    opacity: hasBattery ? (showOverlay ? 0.5 : (isConstrained() ? 0 : compactItem.containsMouse*0.7)) : 0
 
-                    Text {
-                        id: percent
-                        text: i18nc("overlay on the battery, needs to be really tiny", "%1%", pmSource.data["Battery0"]["Percent"]);
-                        font.bold: true
-                        anchors.centerIn: parent
-                        visible: parent.visible
-                    }
+                    Behavior on opacity { NumberAnimation { duration: 100 } }
+                }
+
+                Text {
+                    id: overlayText
+                    text: i18nc("overlay on the battery, needs to be really tiny", "%1%", percent);
+                    color: theme.textColor
+                    font.pixelSize: Math.max(batteryContainer.size/8, 11)
+                    anchors.centerIn: labelRect
+                    opacity: labelRect.opacity>0
+
+                    Behavior on opacity { NumberAnimation { duration: 100 } }
                 }
             }
 
