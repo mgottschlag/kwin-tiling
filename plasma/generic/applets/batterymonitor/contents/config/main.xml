@@ -6,6 +6,9 @@
   <kcfgfile name=""/>
 
   <group name="General">
+    <entry name="showBatteryString" type="Bool">
+      <default>false</default>
+    </entry>
     <entry name="showMultipleBatteries" type="Bool">
       <default>false</default>
     </entry>

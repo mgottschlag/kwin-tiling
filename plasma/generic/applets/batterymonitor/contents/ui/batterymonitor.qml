@@ -26,6 +26,7 @@ Item {
     property int minimumWidth: dialogItem.width
     property int minimumHeight: dialogItem.height
 
+    property bool show_charge: false
     property bool show_multiple_batteries: false
     property bool show_remaining_time: false
 
@@ -34,6 +35,7 @@ Item {
     }
 
     function configChanged() {
+        show_charge = plasmoid.readConfig("showBatteryString");
         show_multiple_batteries = plasmoid.readConfig("showMultipleBatteries");
         show_remaining_time = plasmoid.readConfig("showRemainingTime");
     }
@@ -71,6 +73,27 @@ Item {
                     percent: compactItem.percent
                     pluggedIn: compactItem.pluggedIn
                     anchors.fill: parent
+                }
+
+                Rectangle {
+                    id: chargeInfo
+                    width: percent.paintedWidth+4    // 4 = left/right margins
+                    height: percent.paintedHeight+4  // 4 = top/bottom margins
+                    anchors.centerIn: parent
+                    color: "white"
+                    border.color: "grey"
+                    border.width: 2
+                    radius: 3
+                    visible: plasmoid.rootItem.show_charge && pmSource.data["Battery"]["Has Battery"]
+                    opacity: 0.7
+
+                    Text {
+                        id: percent
+                        text: i18nc("overlay on the battery, needs to be really tiny", "%1%", pmSource.data["Battery0"]["Percent"]);
+                        font.bold: true
+                        anchors.centerIn: parent
+                        visible: parent.visible
+                    }
                 }
             }
 
