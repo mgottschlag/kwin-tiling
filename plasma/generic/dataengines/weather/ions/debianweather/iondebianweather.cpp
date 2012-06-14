@@ -92,7 +92,7 @@ bool IonDebianWeather::updateIonSource(const QString& source) {
   if(tokens.count()==3 && toJobType(tokens.at(1)) == validate) {
     //validate, whatever that is.
     QSharedPointer<locationdata> p(new locationdata());
-    if (tokens.at(2).simplified().startsWith(QLatin1String("Debian"))){
+    if (tokens.at(2).simplified().startsWith(QLatin1String("Debian"), Qt::CaseInsensitive)){
       p->source = source;
       p->type = validate;
       p->valid = true;
