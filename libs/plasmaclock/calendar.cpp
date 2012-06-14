@@ -340,16 +340,6 @@ const QDate& Calendar::currentDate() const
     return calendarTable()->currentDate();
 }
 
-void Calendar::applyConfiguration(KConfigGroup cg)
-{
-    calendarTable()->applyConfiguration(cg);
-    if (isDisplayingDateDetails()) {
-        setPreferredSize(440, 250);
-    } else {
-        setPreferredSize(220, 250);
-    }
-}
-
 void Calendar::writeConfiguration(KConfigGroup cg)
 {
     calendarTable()->writeConfiguration(cg);
@@ -362,13 +352,17 @@ void Calendar::createConfigurationInterface(KConfigDialog *parent)
 
 void Calendar::configAccepted(KConfigGroup cg)
 {
-    calendarTable()->configAccepted(cg);
+    applyConfiguration();
+}
+
+void Calendar::applyConfiguration(KConfigGroup cg)
+{
+    calendarTable()->applyConfiguration(cg);
     if (isDisplayingDateDetails()) {
         setPreferredSize(440, 250);
     } else {
         setPreferredSize(220, 250);
     }
-    d->displayEvents();
 }
 
 void Calendar::manualDateChange()
