@@ -90,6 +90,7 @@ class CalendarPrivate
         bool addDateDetailsToDisplay(QString &html, const QDate &date);
         void popupMonthsMenu();
         void displayEvents(const QDate &date = QDate());
+        void updatePreferredSize();
 
         Calendar *q;
         ToolButton *back;
@@ -209,6 +210,7 @@ void CalendarPrivate::init(const QDate &initialDate)
 
     q->setDate(initialDate);
     displayEvents();
+    updatePreferredSize();
 }
 
 void Calendar::focusInEvent(QFocusEvent* event)
@@ -352,16 +354,39 @@ void Calendar::createConfigurationInterface(KConfigDialog *parent)
 
 void Calendar::configAccepted(KConfigGroup cg)
 {
-    applyConfiguration();
+    applyConfiguration(cg);
+}
+
+void Calendar::resizeEvent(QGraphicsSceneResizeEvent * event)
+{
+    Q_UNUSED(event);
+    if (d->calendarTable) {
+        if (isDisplayingDateDetails()) {
+            d->calendarTable->setMaximumWidth(size().width() / 2);
+        } else {
+            d->calendarTable->setMaximumWidth(-1);
+        }
+    }
+}
+
+void CalendarPrivate::updatePreferredSize()
+{
+    QSize size = calendarTable ? calendarTable->size().toSize() : QSize(250, 250);
+    if (q->isDisplayingDateDetails()) {
+        // our seperators widths is the vertical line + space for the vertical scrollbar + spacing
+        const int sepWidth = (separator ? separator->size().width() : 6 ) + 24;
+        size.setWidth(size.width() * 2 + sepWidth * 2);
+    }
+
+    q->setPreferredSize(size);
 }
 
 void Calendar::applyConfiguration(KConfigGroup cg)
 {
+    const bool details = isDisplayingDateDetails();
     calendarTable()->applyConfiguration(cg);
-    if (isDisplayingDateDetails()) {
-        setPreferredSize(440, 250);
-    } else {
-        setPreferredSize(220, 250);
+    if (details != isDisplayingDateDetails()) {
+        d->updatePreferredSize();
     }
 }
 
