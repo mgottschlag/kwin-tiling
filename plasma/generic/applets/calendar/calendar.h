@@ -51,17 +51,17 @@ class CalendarApplet : public Plasma::PopupApplet
 
     protected:
         void createConfigurationInterface(KConfigDialog *parent);
-	void focusInEvent(QFocusEvent * event);
+        void focusInEvent(QFocusEvent * event);
 
     protected slots:
         void configAccepted();
         void updateDate();
-
-    private:
         void paintIcon();
 
+    private:
         Plasma::Calendar *m_calendarWidget;
         Plasma::Svg *m_theme;
+        QTimer *m_dateUpdater;
 };
 
 K_EXPORT_PLASMA_APPLET(calendar, CalendarApplet)
