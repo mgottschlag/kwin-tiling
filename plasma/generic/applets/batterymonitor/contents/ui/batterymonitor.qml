@@ -106,9 +106,8 @@ Item {
                     color: theme.textColor
                     font.pixelSize: Math.max(batteryContainer.size/8, 11)
                     anchors.centerIn: labelRect
-                    opacity: labelRect.opacity>0
-
-                    Behavior on opacity { NumberAnimation { duration: 100 } }
+                    // keep the opacity 1 when labelRect.opacity=0.7
+                    opacity: labelRect.opacity/0.7
                 }
             }
 
