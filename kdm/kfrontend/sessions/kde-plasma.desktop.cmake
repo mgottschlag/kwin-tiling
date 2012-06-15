@@ -24,6 +24,7 @@ Name[ia]=Spatio de labor de Plasma de KDE
 Name[is]=KDE Plasma-vinnurými
 Name[it]=Spazio di lavoro di KDE Plasma
 Name[kk]=KDE Plasma жұмыс орны
+Name[km]=តំបន់​ការងារ​ប្លាស្មា​របស់ KDE
 Name[ko]=KDE Plasma 작업 공간
 Name[lt]=KDE Plasma darbastalio erdvė
 Name[lv]=KDE Plasma darba vide
