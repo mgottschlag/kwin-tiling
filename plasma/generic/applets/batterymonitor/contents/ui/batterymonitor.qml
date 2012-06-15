@@ -27,7 +27,6 @@ Item {
     property int minimumHeight: dialogItem.height
 
     property bool show_multiple_batteries: false
-    property bool show_remaining_time: false
 
     Component.onCompleted: {
         plasmoid.addEventListener('ConfigChanged', configChanged);
@@ -35,7 +34,6 @@ Item {
 
     function configChanged() {
         show_multiple_batteries = plasmoid.readConfig("showMultipleBatteries");
-        show_remaining_time = plasmoid.readConfig("showRemainingTime");
     }
 
     property Component compactRepresentation: Component {
@@ -153,8 +151,6 @@ Item {
         hasBattery: pmSource.data["Battery"]["Has Battery"]
         pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
         screenBrightness: pmSource.data["PowerDevil"]["Screen Brightness"]
-        remainingMsec: Number(pmSource.data["Battery"]["Remaining msec"])
-        showRemainingTime: parent.show_remaining_time
         showSuspendButton: pmSource.data["Sleep States"]["Suspend"]
         showHibernateButton: pmSource.data["Sleep States"]["Hibernate"]
         onSuspendClicked: {
