@@ -137,20 +137,16 @@ Item {
             right: values.right
         }
 
-        IconButton {
+        Components.ToolButton {
             id: suspendButton
-            icon: QIcon("system-suspend")
-            iconWidth: 22
-            iconHeight: 22
+            iconSource: "system-suspend"
             text: i18nc("Suspend the computer to RAM; translation should be short", "Sleep")
             onClicked: suspendClicked(ram)
         }
 
-        IconButton {
+        Components.ToolButton {
             id: hibernateButton
-            icon: QIcon("system-suspend-hibernate")
-            iconWidth: 22
-            iconHeight: 22
+            iconSource: "system-suspend-hibernate"
             text: i18nc("Suspend the computer to disk; translation should be short", "Hibernate")
             onClicked: suspendClicked(disk)
         }
