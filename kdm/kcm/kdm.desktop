@@ -192,6 +192,7 @@ X-KDE-Keywords[sr@latin]=kdm,display manager,xdm,users,login,greeting,Logo,style
 X-KDE-Keywords[sv]=kdm,skärmhanterare,xdm,användare,inloggning,hälsning,Logotyp,stilar,språk,land,teckensnitt,bakgrund,skrivbordsunderlägg,sessioner,avstängning,omstart
 X-KDE-Keywords[uk]=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart,керування дисплеями,користувач,користувачі,вхід,вітання,логотип,стиль,стилі,країна,країни,шрифт,шрифти,гарнітура,гарнітури,шпалери,зображення,сеанс,сеанси,вимикання,перезапуск
 X-KDE-Keywords[x-test]=xxkdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restartxx
+X-KDE-Keywords[zh_CN]=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart,显示管理器,用户,登录,欢迎,徽标,风格,语言,国家,字体,背景,墙纸,会话,关机,重启
 X-KDE-Keywords[zh_TW]=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart
 
 Categories=Qt;KDE;X-KDE-settings-system;
