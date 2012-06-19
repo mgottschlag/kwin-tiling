@@ -22,8 +22,8 @@ import org.kde.plasma.components 0.1 as Components
 
 Item {
     id: dialog
-    width: childrenRect.width
-    height: childrenRect.height
+    width: childrenRect.width+24
+    height: childrenRect.height+24
 
     property int percent
     property bool hasBattery
@@ -38,24 +38,26 @@ Item {
     signal suspendClicked(int type)
     signal brightnessChanged(int screenBrightness)
     signal powermanagementChanged(bool checked)
-    
+
     Column {
         id: labels
+        spacing: 8
         anchors {
             top: parent.top
             left: parent.left
+            margins: 12
         }
 
         Components.Label {
             text: i18n("Battery:")
             anchors.right: parent.right
         }
-        
+
         Components.Label {
             text: i18n("AC Adapter:")
             anchors.right: parent.right
         }
-        
+
         Components.Label {
             text: i18nc("Label for power management inhibition", "Power management enabled:")
             anchors.right: parent.right
@@ -65,15 +67,15 @@ Item {
             text: i18n("Screen Brightness:")
             anchors.right: parent.right
         }
-        
     }
 
     Column {
         id: values
+        spacing: 8
         anchors {
             top: parent.top
             left: labels.right
-            leftMargin: 5
+            margins: 12
         }
 
         Components.Label {
@@ -125,7 +127,7 @@ Item {
             onClicked: suspendClicked(disk)
         }
     }
-        
+
     BatteryIcon {
         monochrome: false
         hasBattery: dialog.hasBattery
@@ -134,6 +136,7 @@ Item {
         anchors {
             top: parent.top
             right: values.right
+            topMargin: 12
         }
         width: 50
         height: 50
