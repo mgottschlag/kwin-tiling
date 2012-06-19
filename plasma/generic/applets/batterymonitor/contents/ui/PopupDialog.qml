@@ -93,6 +93,7 @@ Item {
         Components.CheckBox {
             checked: true
             onClicked: powermanagementChanged(checked)
+            x: 1
         }
 
         Components.Slider {
