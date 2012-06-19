@@ -42,6 +42,7 @@
 #include <KIO/Job>
 #include <KIO/CopyJob>
 #include <KIO/NetAccess>
+#include <kfileitem.h>
 
 #include <Plasma/Theme>
 #include <Plasma/IconWidget>
@@ -160,7 +161,9 @@ void IconApplet::setUrl(const KUrl& url, bool fromConfigDialog)
         connect(m_watcher, SIGNAL(deleted(QString)), this, SLOT(delayedDestroy()));
 
         QFileInfo fi(m_url.toLocalFile());
-        if (KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
+        KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, m_url.toLocalFile());
+
+        if (fileItem.isDesktopFile()) {
             m_hasDesktopFile = true;
         } else if (!fi.isDir() && fi.isExecutable()) {
             const QString suggestedName = fi.baseName();
