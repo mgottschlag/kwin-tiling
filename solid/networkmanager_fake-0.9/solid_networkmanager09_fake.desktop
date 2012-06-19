@@ -59,6 +59,7 @@ Comment[hu]=Hamis modul, amely lehetővé teszi a kdelibsnek a NetworkManager d�
 Comment[ia]=Contraface retro administration pro permitter a kdelibs de leger le stato de daemon NetworkManager 0.9
 Comment[it]=Finto motore per consentire a kdelibs di leggere lo stato del demone NetworkManager 0.9
 Comment[kk]=kdelibs-ке NetworkManager 0.9 қызметінің күй-жайын оқуға мүмкіндік беретін жалған тетік
+Comment[km]=Fake backend to allow kdelibs to read NetworkManager daemon 0.9's status
 Comment[ko]=kdelibs에서 NetworkManager 데몬 0.9의 상태를 읽어오는 데몬
 Comment[lt]=Netikras varikliukas, leidžiantis kdellibs skaityti NetworkManager demono 0.9 būseną
 Comment[nb]=Attrapp-motor som lar kdelibs lese status for NetWorkManager daemon 0.9

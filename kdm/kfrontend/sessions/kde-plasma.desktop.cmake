@@ -70,6 +70,7 @@ Comment[ia]=Le scriptorio facite per KDE
 Comment[is]=KDE Skjáborð
 Comment[it]=Il desktop fatto da KDE
 Comment[kk]=KDE үстелі
+Comment[km]=ផ្ទៃ​តុ​បាន​បង្កើត​ដោយ KDE
 Comment[ko]=KDE에서 만든 데스크톱
 Comment[lt]=Darbastalis sukurtas su KDE
 Comment[lv]=KDE veidota darbvirsma
