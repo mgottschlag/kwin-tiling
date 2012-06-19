@@ -41,7 +41,7 @@ Item {
 
     Column {
         id: labels
-        spacing: 8
+        spacing: 6
         anchors {
             top: parent.top
             left: parent.left
@@ -56,6 +56,7 @@ Item {
         Components.Label {
             text: i18n("AC Adapter:")
             anchors.right: parent.right
+            anchors.bottomMargin: 12
         }
 
         Components.Label {
@@ -71,7 +72,7 @@ Item {
 
     Column {
         id: values
-        spacing: 8
+        spacing: 6
         anchors {
             top: parent.top
             left: labels.right
@@ -86,6 +87,7 @@ Item {
         Components.Label {
             text: dialog.pluggedIn ? i18n("Plugged in") : i18n("Not plugged in")
             font.weight: Font.Bold
+            anchors.bottomMargin: 12
         }
 
         Components.CheckBox {
