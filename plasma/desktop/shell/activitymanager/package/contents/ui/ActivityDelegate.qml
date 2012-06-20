@@ -105,6 +105,7 @@ PlasmaCore.FrameSvgItem {
             QPixmapItem {
                 anchors.fill: iconWidget
                 pixmap: Icon ? undefined : activityManager.pixmapForActivity(model["DataEngineSource"])
+                visible: Icon == ""
             }
             QIconItem {
                 width: theme.mediumIconSize
