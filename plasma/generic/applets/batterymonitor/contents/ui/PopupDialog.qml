@@ -29,6 +29,7 @@ Item {
     property bool hasBattery
     property bool pluggedIn
     property alias screenBrightness: brightnessSlider.value
+    property int remainingMsec
     property alias showSuspendButton: suspendButton.visible
     property alias showHibernateButton: hibernateButton.visible
 
@@ -60,6 +61,12 @@ Item {
         }
 
         Components.Label {
+            text: i18nc("Label for remaining time", "Time Remaining:")
+            visible: remainingTime.visible
+            anchors.right: parent.right
+        }
+ 
+        Components.Label {
             text: i18nc("Label for power management inhibition", "Power management enabled:")
             anchors.right: parent.right
         }
@@ -90,6 +97,13 @@ Item {
             anchors.bottomMargin: 12
         }
 
+        Components.Label {
+            id: remainingTime
+            text: formatDuration(remainingMsec);
+            font.weight: Font.Bold
+            visible: text!=""
+        }
+
         Components.CheckBox {
             checked: true
             onClicked: powermanagementChanged(checked)
@@ -103,6 +117,17 @@ Item {
             stepSize: 10
             onValueChanged: brightnessChanged(value)
         }
+    }
+
+    // TODO: give translated and formatted string with KGlobal::locale()->prettyFormatDuration(msec);
+    function formatDuration(msec) {
+        if (msec==0)
+            return "";
+
+        var time = new Date(msec);
+        var hrs = i18np("1 hour", "%1 hours", time.getUTCHours());
+        var mins = i18np("1 minute", "%1 minutes", time.getUTCMinutes());
+        return hrs+", "+mins;
     }
 
     Row {
