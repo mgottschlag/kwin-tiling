@@ -289,6 +289,8 @@ Item {
             snapMode: ListView.SnapToItem
             model: widgetExplorer.widgetsModel
 
+            clip: widgetExplorer.orientation == Qt.Vertical
+
             delegate: AppletDelegate {}
         }
 

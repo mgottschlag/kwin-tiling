@@ -242,6 +242,7 @@ Item {
                 filterRole: "Name"
                 filterRegExp: ".*"+topBar.query+".*"
             }
+            clip: activityManager.orientation == Qt.Vertical
 
             delegate: ActivityDelegate {}
         }
