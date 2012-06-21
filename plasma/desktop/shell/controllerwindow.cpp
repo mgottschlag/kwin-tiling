@@ -63,6 +63,7 @@ ControllerWindow::ControllerWindow(QWidget* parent)
     setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_TranslucentBackground);
+    KWindowSystem::setState(winId(), NET::KeepAbove);
 //    setFocus(Qt::ActiveWindowFocusReason);
     setLocation(Plasma::BottomEdge);
 
