@@ -90,7 +90,7 @@ Item {
             connectSource(source);
         }
         onDataChanged: {
-            if (last!="") {
+            if (last != "") {
                 statusBar.setData(data[last]["error"], data[last]["errorDetails"], data[last]["udi"]);
                 plasmoid.status = "NeedsAttentionStatus";
                 plasmoid.showPopup(2500)
@@ -102,6 +102,10 @@ Item {
         plasmoid.addEventListener ('ConfigChanged', configChanged);
         plasmoid.popupEvent.connect(popupEventSlot);
         plasmoid.aspectRatioMode = IgnoreAspectRatio;
+
+        if (notifierDialog.count == 0) {
+            plasmoid.status = "PassiveStatus"
+        }
     }
 
     function configChanged() {
