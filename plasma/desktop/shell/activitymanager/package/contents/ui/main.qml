@@ -20,6 +20,7 @@
 import QtQuick 1.1
 import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.plasma.core 0.1 as PlasmaCore
+import org.kde.qtextracomponents 0.1
 
 Item {
     id: main
@@ -204,13 +205,8 @@ Item {
         }
     }
 
-    ListView {
-        id: list
-
-        property int delegateWidth: (activityManager.orientation == Qt.Horizontal) ? (list.width / Math.floor(list.width / cellWidth)) : cellWidth
-        property int delegateHeight: theme.defaultFont.mSize.height * 7 - 4
-
-
+    MouseEventListener {
+        id: listParent
         anchors {
             top: topBar.bottom
             left: parent.left
@@ -220,24 +216,41 @@ Item {
             rightMargin: 4
             bottomMargin: 4
         }
-
-        orientation: activityManager.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.vertical
-        snapMode: ListView.SnapToItem
-        model: PlasmaCore.SortFilterModel {
-            sourceModel: PlasmaCore.DataModel {
-                dataSource: activitySource
+        onWheelMoved: {
+            //use this only if the wheel orientation is vertical and the list orientation is horizontal, otherwise will be the list itself managing the wheel
+            if (wheel.orientation == Qt.Vertical && list.orientation == ListView.Horizontal) {
+                var delta = wheel.delta > 0 ? 20 : -20
+                list.contentX = Math.min(Math.max(0, list.contentWidth - list.width),
+                                         Math.max(0, list.contentX - delta))
             }
-            filterRole: "Name"
-            filterRegExp: ".*"+topBar.query+".*"
         }
+        ListView {
+            id: list
 
-        delegate: ActivityDelegate {}
+            property int delegateWidth: (activityManager.orientation == Qt.Horizontal) ? (list.width / Math.floor(list.width / cellWidth)) : cellWidth
+            property int delegateHeight: theme.defaultFont.mSize.height * 7 - 4
+
+
+            anchors.fill: parent
+
+            orientation: activityManager.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.vertical
+            snapMode: ListView.SnapToItem
+            model: PlasmaCore.SortFilterModel {
+                sourceModel: PlasmaCore.DataModel {
+                    dataSource: activitySource
+                }
+                filterRole: "Name"
+                filterRegExp: ".*"+topBar.query+".*"
+            }
+
+            delegate: ActivityDelegate {}
+        }
     }
     PlasmaComponents.ScrollBar {
         id: scrollBar
         orientation: activityManager.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.Vertical
         anchors {
-            top: activityManager.orientation == Qt.Horizontal ? undefined : list.top
+            top: activityManager.orientation == Qt.Horizontal ? undefined : listParent.top
             bottom: parent.bottom
             left: activityManager.orientation == Qt.Horizontal ? parent.left : undefined
             right: parent.right

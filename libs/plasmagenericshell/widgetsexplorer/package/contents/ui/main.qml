@@ -20,6 +20,7 @@
 import QtQuick 1.1
 import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.plasma.core 0.1 as PlasmaCore
+import org.kde.qtextracomponents 0.1
 
 Item {
     id: main
@@ -257,12 +258,8 @@ Item {
         }
     }
 
-    ListView {
-        id: list
-
-        property int delegateWidth: (widgetExplorer.orientation == Qt.Horizontal) ? (list.width / Math.floor(list.width / cellWidth)) : cellWidth
-        property int delegateHeight: theme.defaultFont.mSize.height * 7 - 4
-
+    MouseEventListener {
+        id: listParent
         anchors {
             top: topBar.bottom
             left: parent.left
@@ -272,22 +269,39 @@ Item {
             rightMargin: 4
             bottomMargin: 4
         }
+        onWheelMoved: {
+            //use this only if the wheel orientation is vertical and the list orientation is horizontal, otherwise will be the list itself managing the wheel
+            if (wheel.orientation == Qt.Vertical && list.orientation == ListView.Horizontal) {
+                var delta = wheel.delta > 0 ? 20 : -20
+                list.contentX = Math.min(Math.max(0, list.contentWidth - list.width),
+                                         Math.max(0, list.contentX - delta))
+            }
+        }
+        ListView {
+            id: list
 
-        orientation: widgetExplorer.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.vertical
-        snapMode: ListView.SnapToItem
-        model: widgetExplorer.widgetsModel
+            property int delegateWidth: (widgetExplorer.orientation == Qt.Horizontal) ? (list.width / Math.floor(list.width / cellWidth)) : cellWidth
+            property int delegateHeight: theme.defaultFont.mSize.height * 7 - 4
 
-        delegate: AppletDelegate {}
+            anchors.fill: parent
+
+            orientation: widgetExplorer.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.vertical
+            snapMode: ListView.SnapToItem
+            model: widgetExplorer.widgetsModel
+
+            delegate: AppletDelegate {}
+        }
+
     }
     PlasmaComponents.ScrollBar {
-        id: scrollBar
-        orientation: widgetExplorer.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.Vertical
-        anchors {
-            top: widgetExplorer.orientation == Qt.Horizontal ? undefined : list.top
-            bottom: parent.bottom
-            left: widgetExplorer.orientation == Qt.Horizontal ? parent.left : undefined
-            right: parent.right
+            id: scrollBar
+            orientation: widgetExplorer.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.Vertical
+            anchors {
+                top: widgetExplorer.orientation == Qt.Horizontal ? undefined : listParent.top
+                bottom: parent.bottom
+                left: widgetExplorer.orientation == Qt.Horizontal ? parent.left : undefined
+                right: parent.right
+            }
+            flickableItem: list
         }
-        flickableItem: list
-    }
 }
