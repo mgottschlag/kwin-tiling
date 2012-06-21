@@ -44,6 +44,7 @@ DBusSystemTrayWidget::DBusSystemTrayWidget(Plasma::Applet *parent, Plasma::Servi
     KAction *action = new KAction(this);
     setAction(action);
     connect(action, SIGNAL(triggered()), this, SLOT(calculateShowPosition()));
+    connect(service, SIGNAL(destrojed(QObject *)), this, SLOT(deleteLater()));
 }
 
 void DBusSystemTrayWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
