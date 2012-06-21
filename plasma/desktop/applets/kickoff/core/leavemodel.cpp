@@ -30,6 +30,7 @@
 #include <KIcon>
 #include <Solid/PowerManagement>
 #include <kworkspace/kworkspace.h>
+#include <kworkspace/kdisplaymanager.h>
 
 // Local
 #include "core/models.h"
@@ -140,7 +141,7 @@ void LeaveModel::updateModel()
     }
 
     // Switch User
-    if (KAuthorized::authorize(QLatin1String("switch_user")))  {
+    if (KDisplayManager().isSwitchable() && KAuthorized::authorize(QLatin1String("switch_user")))  {
         QStandardItem *switchUserOption = createStandardItem("leave:/switch");
         sessionOptions->appendRow(switchUserOption);
     }
