@@ -42,6 +42,7 @@ Item {
         anchors.fill: parent
         svg: svg
         elementId: hasBattery ? fillElement(percent) : "Unavailable"
+        visible: percent>10
     }
 
     function fillElement(p) {
