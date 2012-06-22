@@ -254,6 +254,11 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
     //kDebug() << "adding task" << task->name();
     if (!task->isEmbeddable(d->host)) {
         //kDebug() << "task is not embeddable, so FAIL" << task->name();
+        //was a widget created previously? kill it
+        QGraphicsWidget *widget = task->widget(d->host, false);
+        if (widget) {
+            task->abandon(d->host);
+        }
         return false;
     }
 
