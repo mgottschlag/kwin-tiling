@@ -135,6 +135,17 @@ Item {
         id: pmSource
         engine: "powermanagement"
         connectedSources: ["AC Adapter", "Battery", "Battery0", "PowerDevil", "Sleep States"]
+        onDataChanged: {
+            var status = "PassiveStatus";
+            if (data["Battery"]["Has Battery"]) {
+                if (data["Battery0"]["Percent"] <= 10) {
+                    status = "NeedsAttentionStatus";
+                } else if (data["Battery0"]["State"] != "NoCharge") {
+                    status = "ActiveStatus";
+                }
+            }
+            plasmoid.status = status;
+        }
     }
 
     function stringForState(pluggedIn, percent) {
