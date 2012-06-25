@@ -135,6 +135,18 @@ PlasmaCore.FrameSvgItem {
                 elide: Text.ElideRight
             }
         }
+        QIconItem {
+            icon: running ? "dialog-ok-apply" : undefined
+            visible: running
+            width: theme.smallIconSize
+            height: width
+            anchors {
+                right: parent.right
+                bottom: parent.bottom
+                rightMargin: background.margins.right
+                bottomMargin: background.margins.bottom
+            }
+        }
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
