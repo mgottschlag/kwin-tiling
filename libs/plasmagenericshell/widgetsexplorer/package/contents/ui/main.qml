@@ -246,10 +246,11 @@ Item {
         anchors {
             top: topBar.bottom
             left: parent.left
-            right: widgetExplorer.orientation == Qt.Horizontal ? parent.right : scrollBar.left
+            right: widgetExplorer.orientation == Qt.Horizontal
+                ? parent.right
+                : (scrollBar.visible ? scrollBar.left : parent.right)
             bottom: widgetExplorer.orientation == Qt.Horizontal ? scrollBar.top : bottomBar.top
             leftMargin: 4
-            rightMargin: 4
             bottomMargin: 4
         }
         onWheelMoved: {
@@ -263,7 +264,7 @@ Item {
         ListView {
             id: list
 
-            property int delegateWidth: (widgetExplorer.orientation == Qt.Horizontal) ? (list.width / Math.floor(list.width / cellWidth)) : cellWidth
+            property int delegateWidth: (widgetExplorer.orientation == Qt.Horizontal) ? (list.width / Math.floor(list.width / cellWidth)) : list.width
             property int delegateHeight: theme.defaultFont.mSize.height * 7 - 4
 
             anchors.fill: parent
