@@ -96,7 +96,6 @@ private:
     QWeakPointer<Plasma::Containment> m_containment;
     int m_screen;
     QGraphicsView *m_view;
-    QGraphicsWidget *m_watchedWidget;
     ActivityManager *m_activityManager;
     Plasma::WidgetExplorer *m_widgetExplorer;
     QGraphicsWidget *m_graphicsWidget;

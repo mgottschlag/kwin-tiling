@@ -49,7 +49,6 @@ ControllerWindow::ControllerWindow(QWidget* parent)
      m_background(new Plasma::FrameSvg(this)),
      m_screen(-1),
      m_view(0),
-     m_watchedWidget(0),
      m_activityManager(0),
      m_widgetExplorer(0),
      m_graphicsWidget(0),
@@ -325,14 +324,12 @@ void ControllerWindow::setLocation(const Plasma::Location &loc)
         break;
     }
 
-    if (m_watchedWidget) {
-        //FIXME maybe I should make these two inherit from something
-        //or make orientation a slot.
-        if (m_watchedWidget == (QGraphicsWidget*)m_widgetExplorer) {
-            m_widgetExplorer->setLocation(location());
-        } else {
-            m_activityManager->setLocation(location());
-        }
+    if (m_widgetExplorer) {
+        m_widgetExplorer->setLocation(location());
+    }
+
+    if (m_activityManager) {
+        m_activityManager->setLocation(location());
     }
 }
 
@@ -388,7 +385,6 @@ void ControllerWindow::showWidgetExplorer()
 
     if (!m_widgetExplorer) {
         m_widgetExplorer = new Plasma::WidgetExplorer(location());
-        m_watchedWidget = m_widgetExplorer;
         m_widgetExplorer->setContainment(m_containment.data());
         m_widgetExplorer->populateWidgetList();
         QAction *activityAction = new QAction(KIcon("preferences-activities"), i18n("Activities"), m_widgetExplorer);
@@ -410,7 +406,6 @@ void ControllerWindow::showWidgetExplorer()
     } else {
         m_widgetExplorer->setLocation(location());
         m_widgetExplorer->show();
-        m_watchedWidget = m_widgetExplorer;
         setGraphicsWidget(m_widgetExplorer);
     }
     m_view->setFocus();
@@ -426,7 +421,6 @@ void ControllerWindow::showActivityManager()
 {
     if (!m_activityManager) {
         m_activityManager = new ActivityManager(location());
-        m_watchedWidget = m_activityManager;
 
         PlasmaApp::self()->corona()->addOffscreenWidget(m_activityManager);
         m_activityManager->show();
@@ -443,7 +437,6 @@ void ControllerWindow::showActivityManager()
         connect(m_activityManager, SIGNAL(closeClicked()), this, SLOT(close()));
     } else {
         m_activityManager->setLocation(location());
-        m_watchedWidget = m_activityManager;
         m_activityManager->show();
         setGraphicsWidget(m_activityManager);
     }
