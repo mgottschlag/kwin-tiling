@@ -100,6 +100,10 @@ PlasmaCore.FrameSvgItem {
             PlasmaComponents.Label {
                 id: titleText
                 text: title
+                font {
+                    weight: Font.Bold
+                    pointSize: theme.smallestFont.pointSize
+                }
                 anchors {
                     left: parent.left
                     right: parent.right
@@ -133,6 +137,9 @@ PlasmaCore.FrameSvgItem {
                     right: parent.right
                 }
                 elide: Text.ElideRight
+                wrapMode: Text.WordWrap
+                verticalAlignment: Text.AlignTop
+                maximumLineCount: 3
             }
         }
         QIconItem {
