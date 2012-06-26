@@ -28,9 +28,14 @@ Item {
     //this is used to perfectly align the filter field and delegates
     property int cellWidth: theme.defaultFont.mSize.width * 20
 
-    property int minimumWidth: cellWidth + (widgetExplorer.orientation == Qt.Horizontal ? 0 : scrollBar.width)
+    property int minimumWidth: cellWidth + (
+        widgetExplorer.orientation == Qt.Horizontal
+        ? 0
+        : (scrollBar.width + 4 * 2) // 4 * 2 == left and right margins
+        )
     property int minimumHeight: topBar.height + list.delegateHeight + (widgetExplorer.orientation == Qt.Horizontal ? scrollBar.height : 0) + 4
 
+    property Item getWidgetsButton
 
     PlasmaComponents.ContextMenu {
         id: categoriesDialog
@@ -58,7 +63,7 @@ Item {
 
     PlasmaComponents.ContextMenu {
         id: getWidgetsDialog
-        visualParent: topBar.getWidgetsButton
+        visualParent: main.getWidgetsButton
     }
     Repeater {
         parent: getWidgetsDialog
@@ -127,7 +132,6 @@ Item {
     Loader {
         id: topBar
         property Item categoryButton
-        property Item getWidgetsButton
 
         sourceComponent: (widgetExplorer.orientation == Qt.Horizontal) ? horizontalTopBarComponent : verticalTopBarComponent
         height: item.height + 2
@@ -136,7 +140,8 @@ Item {
             left: parent.left
             right: parent.right
 
-            margins: 4
+            topMargin: widgetExplorer.orientation == Qt.Horizontal ? 4 : 0
+            leftMargin: 4
         }
     }
 
@@ -195,8 +200,7 @@ Item {
                 }
             }
             Component.onCompleted: {
-                topBar.categoryButton = categoryButton
-                topBar.getWidgetsButton = getWidgetsButton
+                main.getWidgetsButton = getWidgetsButton
             }
         }
     }
@@ -226,34 +230,13 @@ Item {
                 Component.onCompleted: forceActiveFocus()
             }
             PlasmaComponents.Button {
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 id: categoryButton
                 text: i18n("Categories")
                 onClicked: categoriesDialog.open()
-            }
-
-
-
-            PlasmaComponents.Button {
-                id: getWidgetsButton
-                iconSource: "get-hot-new-stuff"
-                text: i18n("Get new widgets")
-                onClicked: getWidgetsDialog.open()
-            }
-
-            Repeater {
-                model: widgetExplorer.extraActions.length
-                PlasmaComponents.Button {
-                    iconSource: widgetExplorer.extraActions[modelData].icon
-                    text: widgetExplorer.extraActions[modelData].text
-                    onClicked: {
-                        widgetExplorer.extraActions[modelData].trigger()
-                    }
-                }
-            }
-
-            Component.onCompleted: {
-                topBar.categoryButton = categoryButton
-                topBar.getWidgetsButton = getWidgetsButton
             }
         }
     }
@@ -263,10 +246,11 @@ Item {
         anchors {
             top: topBar.bottom
             left: parent.left
-            right: widgetExplorer.orientation == Qt.Horizontal ? parent.right : scrollBar.left
-            bottom: widgetExplorer.orientation == Qt.Horizontal ? scrollBar.top : parent.bottom
+            right: widgetExplorer.orientation == Qt.Horizontal
+                ? parent.right
+                : (scrollBar.visible ? scrollBar.left : parent.right)
+            bottom: widgetExplorer.orientation == Qt.Horizontal ? scrollBar.top : bottomBar.top
             leftMargin: 4
-            rightMargin: 4
             bottomMargin: 4
         }
         onWheelMoved: {
@@ -280,7 +264,7 @@ Item {
         ListView {
             id: list
 
-            property int delegateWidth: (widgetExplorer.orientation == Qt.Horizontal) ? (list.width / Math.floor(list.width / cellWidth)) : cellWidth
+            property int delegateWidth: (widgetExplorer.orientation == Qt.Horizontal) ? (list.width / Math.floor(list.width / cellWidth)) : list.width
             property int delegateHeight: theme.defaultFont.mSize.height * 7 - 4
 
             anchors.fill: parent
@@ -300,10 +284,66 @@ Item {
             orientation: widgetExplorer.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.Vertical
             anchors {
                 top: widgetExplorer.orientation == Qt.Horizontal ? undefined : listParent.top
-                bottom: parent.bottom
+                bottom: widgetExplorer.orientation == Qt.Horizontal ? parent.bottom : bottomBar.top
                 left: widgetExplorer.orientation == Qt.Horizontal ? parent.left : undefined
                 right: parent.right
             }
             flickableItem: list
         }
+
+    Loader {
+        id: bottomBar
+
+        sourceComponent: (widgetExplorer.orientation == Qt.Horizontal) ? undefined : verticalBottomBarComponent
+        height: item.height
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+            leftMargin: 4
+        }
+    }
+
+    Component {
+        id: verticalBottomBarComponent
+        Column {
+            anchors {
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+            }
+
+            spacing: 4
+
+            PlasmaComponents.Button {
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+                id: getWidgetsButton
+                iconSource: "get-hot-new-stuff"
+                text: i18n("Get new widgets")
+                onClicked: getWidgetsDialog.open()
+            }
+
+            Repeater {
+                model: widgetExplorer.extraActions.length
+                PlasmaComponents.Button {
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+                    iconSource: widgetExplorer.extraActions[modelData].icon
+                    text: widgetExplorer.extraActions[modelData].text
+                    onClicked: {
+                        widgetExplorer.extraActions[modelData].trigger()
+                    }
+                }
+            }
+
+            Component.onCompleted: {
+                main.getWidgetsButton = getWidgetsButton
+            }
+        }
+    }
 }

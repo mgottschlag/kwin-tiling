@@ -28,7 +28,11 @@ Item {
     //this is used to perfectly align the filter field and delegates
     property int cellWidth: theme.defaultFont.mSize.width * 20
 
-    property int minimumWidth: cellWidth + (activityManager.orientation == Qt.Horizontal ? 0 : scrollBar.width)
+    property int minimumWidth: cellWidth + (
+        activityManager.orientation == Qt.Horizontal
+        ? 0
+        : (scrollBar.width + 4 * 2) // 4 * 2 == left and right margins
+        )
     property int minimumHeight: topBar.height + list.delegateHeight + (activityManager.orientation == Qt.Horizontal ? scrollBar.height : 0) + 4
 
 
@@ -110,7 +114,8 @@ Item {
             left: parent.left
             right: parent.right
 
-            margins: 4
+            topMargin: activityManager.orientation == Qt.Horizontal ? 4 : 0
+            leftMargin: 4
         }
     }
     Component {
@@ -190,14 +195,13 @@ Item {
 
             PlasmaComponents.Button {
                 id: newActivityButton
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 iconSource: "list-add"
                 text: i18n("Create activity...")
                 onClicked: newActivityMenu.open()
-            }
-            PlasmaComponents.Button {
-                iconSource: "plasma"
-                text: i18n("Add widgets")
-                onClicked: activityManager.addWidgetsRequested()
             }
             Component.onCompleted: {
                 topBar.newActivityButton = newActivityButton
@@ -210,10 +214,11 @@ Item {
         anchors {
             top: topBar.bottom
             left: parent.left
-            right: activityManager.orientation == Qt.Horizontal ? parent.right : scrollBar.left
-            bottom: activityManager.orientation == Qt.Horizontal ? scrollBar.top : parent.bottom
+            right: activityManager.orientation == Qt.Horizontal
+                ? parent.right
+                : (scrollBar.visible ? scrollBar.left : parent.right)
+            bottom: activityManager.orientation == Qt.Horizontal ? scrollBar.top : bottomBar.top
             leftMargin: 4
-            rightMargin: 4
             bottomMargin: 4
         }
         onWheelMoved: {
@@ -227,7 +232,7 @@ Item {
         ListView {
             id: list
 
-            property int delegateWidth: (activityManager.orientation == Qt.Horizontal) ? (list.width / Math.floor(list.width / cellWidth)) : cellWidth
+            property int delegateWidth: (activityManager.orientation == Qt.Horizontal) ? (list.width / Math.floor(list.width / cellWidth)) : list.width
             property int delegateHeight: theme.defaultFont.mSize.height * 7 - 4
 
 
@@ -252,10 +257,46 @@ Item {
         orientation: activityManager.orientation == Qt.Horizontal ? ListView.Horizontal : ListView.Vertical
         anchors {
             top: activityManager.orientation == Qt.Horizontal ? undefined : listParent.top
-            bottom: parent.bottom
+            bottom: activityManager.orientation == Qt.Horizontal ? parent.bottom : bottomBar.top
             left: activityManager.orientation == Qt.Horizontal ? parent.left : undefined
             right: parent.right
         }
         flickableItem: list
+    }
+
+    Loader {
+        id: bottomBar
+
+        sourceComponent: (activityManager.orientation == Qt.Horizontal) ? undefined : verticalBottomBarComponent
+        height: item.height
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+            leftMargin: 4
+        }
+    }
+
+    Component {
+        id: verticalBottomBarComponent
+        Column {
+            anchors {
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+            }
+
+            spacing: 4
+
+            PlasmaComponents.Button {
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+                iconSource: "plasma"
+                text: i18n("Add widgets")
+                onClicked: activityManager.addWidgetsRequested()
+            }
+        }
     }
 }
