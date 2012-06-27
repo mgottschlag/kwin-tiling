@@ -52,6 +52,7 @@ void ActivityBar::init()
 {
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
     m_tabBar = new Plasma::TabBar(this);
+    m_tabBar->nativeWidget()->setDrawBase(false);
     layout->addItem(m_tabBar);
     layout->setContentsMargins(0,0,0,0);
     //layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
@@ -153,14 +154,19 @@ void ActivityBar::insertActivity(const QString &id)
 
 void ActivityBar::constraintsEvent(Plasma::Constraints constraints)
 {
-    if (constraints & Plasma::FormFactorConstraint ) {
-        if (formFactor() == Plasma::Vertical) {
+    if (constraints & Plasma::FormFactorConstraint ||
+        constraints & Plasma::SizeConstraint) {
+        if ((formFactor() == Plasma::Vertical ||
+            size().height() > size().width()) &&
+            m_tabBar->nativeWidget()->shape() != QTabBar::RoundedWest) {
             m_tabBar->nativeWidget()->setShape(QTabBar::RoundedWest);
-        } else {
+        } else if (m_tabBar->nativeWidget()->shape() != QTabBar::RoundedNorth &&
+            (formFactor() == Plasma::Horizontal ||
+            size().height() <= size().width())) {
             m_tabBar->nativeWidget()->setShape(QTabBar::RoundedNorth);
+        } else {
+            return;
         }
-
-        m_tabBar->nativeWidget()->setDrawBase(formFactor() != Plasma::Vertical && formFactor() != Plasma::Horizontal);
 
         setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
         setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
