@@ -170,6 +170,7 @@ void DesktopToolBox::init()
     setZValue(INT_MAX);
 
     setIsMovable(true);
+    setFlags(flags()|QGraphicsItem::ItemIsFocusable);
     updateTheming();
 
     connect(this, SIGNAL(toggled()), this, SLOT(toggle()));
@@ -507,6 +508,7 @@ void DesktopToolBox::showToolBox()
     fadeAnim->setProperty("targetOpacity", 1);
     fadeAnim->start(QAbstractAnimation::DeleteWhenStopped);
     highlight(true);
+    setFocus();
 }
 
 void DesktopToolBox::addTool(QAction *action)
@@ -842,6 +844,16 @@ void DesktopToolBox::logout()
     }
 
     KWorkSpace::requestShutDown();
+}
+
+void DesktopToolBox::keyPressEvent(QKeyEvent *event)
+{
+    m_containment->setFocus();
+    //don't make the containment lose keystrokes
+    if (scene()) {
+        scene()->sendEvent(m_containment, event);
+    }
+    setShowing(false);
 }
 
 #include "desktoptoolbox.moc"
