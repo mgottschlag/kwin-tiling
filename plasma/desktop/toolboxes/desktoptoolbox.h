@@ -69,6 +69,7 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 
 protected Q_SLOTS:
     void setHighlight(qreal progress);
