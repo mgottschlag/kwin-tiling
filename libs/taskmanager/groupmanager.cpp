@@ -1137,13 +1137,16 @@ int GroupManagerPrivate::launcherIndex(const KUrl &url)
     foreach (const LauncherItem * item, launchers) {
         if (item->launcherUrl().protocol() == "preferred") {
             KService::Ptr service = KService::serviceByStorageId(item->defaultApplication());
-            QUrl prefUrl(service->entryPath());
-            if (prefUrl.scheme().isEmpty()) {
-                prefUrl.setScheme("file");
-            }
 
-            if (service && prefUrl == url) {
-                return index;
+            if (service) {
+                QUrl prefUrl(service->entryPath());
+                if (prefUrl.scheme().isEmpty()) {
+                    prefUrl.setScheme("file");
+                }
+
+                if (prefUrl == url) {
+                    return index;
+                }
             }
         }
 
