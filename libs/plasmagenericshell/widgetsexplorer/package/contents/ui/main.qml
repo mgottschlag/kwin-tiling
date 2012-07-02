@@ -36,10 +36,11 @@ Item {
     property int minimumHeight: topBar.height + list.delegateHeight + (widgetExplorer.orientation == Qt.Horizontal ? scrollBar.height : 0) + 4
 
     property Item getWidgetsButton
+    property Item categoryButton
 
     PlasmaComponents.ContextMenu {
         id: categoriesDialog
-        visualParent: topBar.categoryButton
+        visualParent: main.categoryButton
     }
     Repeater {
         parent: categoriesDialog
@@ -54,6 +55,7 @@ Item {
 
                 widgetExplorer.widgetsModel.filterType = item.filterType
                 widgetExplorer.widgetsModel.filterQuery = item.filterData
+                main.categoryButton.text = item.display
             }
             Component.onCompleted: {
                 parent = categoriesDialog
@@ -201,6 +203,7 @@ Item {
             }
             Component.onCompleted: {
                 main.getWidgetsButton = getWidgetsButton
+                main.categoryButton = categoryButton
             }
         }
     }
@@ -237,6 +240,9 @@ Item {
                 id: categoryButton
                 text: i18n("Categories")
                 onClicked: categoriesDialog.open()
+            }
+            Component.onCompleted: {
+                main.categoryButton = categoryButton
             }
         }
     }
