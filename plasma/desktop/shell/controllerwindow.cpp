@@ -504,6 +504,8 @@ void ControllerWindow::closeIfNotFocussed()
                 // this "don't close" window closes
                 widget->installEventFilter(this);
             }
+        } else if (m_graphicsWidget == m_activityManager) {
+            close();
         }
     }
 }
