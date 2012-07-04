@@ -564,6 +564,78 @@ void WidgetExplorer::uninstall(const QString &pluginName)
     }
 }
 
+QPoint WidgetExplorer::tooltipPosition(QGraphicsObject *item, int tipWidth, int tipHeight)
+{
+    if (!item) {
+        return QPoint();
+    }
+
+    // Find view
+    if (!item->scene()) {
+        return QPoint();
+    }
+
+    QList<QGraphicsView*> views = item->scene()->views();
+    if (views.isEmpty()) {
+        return QPoint();
+    }
+
+    QGraphicsView *view = 0;
+    if (views.size() == 1) {
+        view = views[0];
+    } else {
+        QGraphicsView *found = 0;
+        QGraphicsView *possibleFind = 0;
+
+        foreach (QGraphicsView *v, views) {
+            if (v->sceneRect().intersects(item->sceneBoundingRect()) ||
+                v->sceneRect().contains(item->scenePos())) {
+                if (v->isActiveWindow()) {
+                    found = v;
+                } else {
+                    possibleFind = v;
+                }
+            }
+        }
+        view = found ? found : possibleFind;
+    }
+
+    if (!view) {
+        return QPoint();
+    }
+
+    // Compute tip pos
+    QRect itemRect(
+        view->mapToGlobal(view->mapFromScene(item->scenePos())),
+        item->boundingRect().size().toSize());
+    QPoint pos;
+    switch (d->location) {
+    case Plasma::LeftEdge:
+        pos.setX(itemRect.right());
+        pos.setY(itemRect.top() + (itemRect.height() - tipHeight) / 2);
+        break;
+    case Plasma::TopEdge:
+        pos.setX(itemRect.left() + (itemRect.width() - tipWidth) / 2);
+        pos.setY(itemRect.bottom());
+        break;
+    case Plasma::RightEdge:
+        pos.setX(itemRect.left() - tipWidth);
+        pos.setY(itemRect.top() + (itemRect.height() - tipHeight) / 2);
+        break;
+    case Plasma::BottomEdge:
+    default:
+        pos.setX(itemRect.left() + (itemRect.width() - tipWidth) / 2);
+        pos.setY(itemRect.top() - tipHeight);
+        break;
+    }
+
+    // Ensure tip stays within screen boundaries
+    const QRect avail = QApplication::desktop()->availableGeometry(view);
+    pos.setX(qBound(avail.left(), pos.x(), avail.right() - tipWidth));
+    pos.setY(qBound(avail.top(), pos.y(), avail.bottom() - tipHeight));
+    return pos;
+}
+
 } // namespace Plasma
 
 #include "widgetexplorer.moc"
