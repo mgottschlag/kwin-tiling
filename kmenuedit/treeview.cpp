@@ -1032,7 +1032,7 @@ QTreeWidgetItem *TreeView::selectedItem()
 void TreeView::contextMenuEvent(QContextMenuEvent *event)
 {
     if (m_rmb && itemAt(event->pos())) {
-        m_rmb->exec(event->pos());
+        m_rmb->exec(event->globalPos());
     }
 }
 
