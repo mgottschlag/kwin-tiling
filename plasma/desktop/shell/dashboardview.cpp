@@ -96,6 +96,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *vie
 {
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint);
+    setWindowRole("plasma-dashboard");
     setWallpaperEnabled(!PlasmaApp::hasComposite());
     if (!PlasmaApp::hasComposite()) {
         setAutoFillBackground(false);
