@@ -95,7 +95,7 @@ Item {
                 toolTipHideTimer.restart()
                 toolTipShowTimer.running = false
             } else if (tooltipDialog.visible) {
-                var point = tooltipDialog.popupPosition(tooltipDialog.appletDelegate)
+                var point = main.tooltipPosition()
                 tooltipDialog.x = point.x
                 tooltipDialog.y = point.y
             } else {
@@ -118,7 +118,7 @@ Item {
         interval: 500
         repeat: false
         onTriggered: {
-            var point = tooltipDialog.popupPosition(tooltipDialog.appletDelegate, Qt.AlignCenter)
+            var point = main.tooltipPosition()
             tooltipDialog.x = point.x
             tooltipDialog.y = point.y
             tooltipDialog.visible = true
@@ -129,6 +129,9 @@ Item {
         interval: 1000
         repeat: false
         onTriggered: tooltipDialog.visible = false
+    }
+    function tooltipPosition() {
+        return widgetExplorer.tooltipPosition(tooltipDialog.appletDelegate, tooltipDialog.width, tooltipDialog.height);
     }
 
     Loader {

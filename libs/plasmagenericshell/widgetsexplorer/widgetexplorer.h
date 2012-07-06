@@ -152,6 +152,8 @@ public:
 
     Q_INVOKABLE void uninstall(const QString &pluginName);
 
+    Q_INVOKABLE QPoint tooltipPosition(QGraphicsObject *item, int tipWidth, int tipHeight);
+
 Q_SIGNALS:
     void locationChanged(Plasma::Location loc);
     void orientationChanged();
