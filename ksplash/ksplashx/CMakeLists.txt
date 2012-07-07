@@ -4,10 +4,10 @@ add_subdirectory( scale )
 add_subdirectory( utils )
 add_subdirectory( themes )
 
-include( FindPNG )
-include( FindJPEG )
-
-include_directories(${PNG_PNG_INCLUDE_DIR})
+include_directories(${PNG_INCLUDE_DIR}  # Deprecated in CMake 2.8.7
+                    ${PNG_INCLUDE_DIRS} # Added in CMake 2.8.7
+                    ${JPEG_INCLUDE_DIR}
+                   )
 
 include (CheckCXXSourceCompiles)
 CHECK_CXX_SOURCE_COMPILES("	#ifdef __SUNPRO_CC

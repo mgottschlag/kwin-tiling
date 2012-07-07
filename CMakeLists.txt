@@ -128,7 +128,11 @@ if(NOT WIN32)
    macro_optional_add_subdirectory( kcheckpass )
    macro_optional_add_subdirectory( kwin )
    macro_optional_add_subdirectory( ksmserver )
+
+   find_package(JPEG REQUIRED)
+   find_package(PNG REQUIRED)
    macro_optional_add_subdirectory( ksplash )
+
    macro_optional_add_subdirectory( powerdevil )
    macro_optional_add_subdirectory( qguiplatformplugin_kde )
    if (NOT CMAKE_SYSTEM_NAME MATCHES Darwin)
