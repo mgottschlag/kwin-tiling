@@ -24,6 +24,8 @@ import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 Item {
     id: iconContainer
     property string activeSource: "Status"
+    property int minimumWidth: 16
+    property int minimumHeight: 16
 
     Component.onCompleted: {
         plasmoid.aspectRatioMode = "ConstrainedSquare"
