@@ -50,6 +50,7 @@ Item {
             property QtObject pmSource: plasmoid.rootItem.pmSource
             property bool hasBattery: pmSource.data["Battery"]["Has Battery"]
             property int percent: pmSource.data["Battery0"]["Percent"]
+            property string batteryState: pmSource.data["Battery0"]["State"]
             property bool pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
             property bool showOverlay: false
 
@@ -75,7 +76,7 @@ Item {
                 property real size: Math.min(parent.width, parent.height)
                 width: size
                 height: size
-                
+
                 BatteryIcon {
                     id: batteryIcon
                     monochrome: true
@@ -119,7 +120,7 @@ Item {
                     var text="";
                     text += i18n("<b>Battery:</b>");
                     text += " ";
-                    text += hasBattery ? plasmoid.rootItem.stringForState(pluggedIn, percent) : i18nc("Battery is not plugged in", "Not present");
+                    text += hasBattery ? plasmoid.rootItem.stringForState(batteryState, percent) : i18nc("Battery is not plugged in", "Not present");
                     text += "<br/>";
                     text += i18nc("tooltip", "<b>AC Adapter:</b>");
                     text += " ";
@@ -146,20 +147,32 @@ Item {
             }
             plasmoid.status = status;
         }
+        onSourceAdded: {
+            if (source == "Battery0") {
+                connectSource(source)
+            }
+        }
+        onSourceRemoved: {
+            if (source == "Battery0") {
+                disconnectSource(source)
+            }
+        }
     }
 
-    function stringForState(pluggedIn, percent) {
-        if (pluggedIn) {
-            if (percent<100) return i18n("%1% (charging)", percent);
-            else return i18n("%1% (charged)", percent);
-        } else {
+    function stringForState(state, percent) {
+        if (state == "Charging")
+            return i18n("%1% (charging)", percent);
+        else if (state == "Discharging")
             return i18n("%1% (discharging)", percent);
-        }
+        else
+            return i18n("%1% (charged)", percent);
+
     }
 
     PopupDialog {
         id: dialogItem
         percent: pmSource.data["Battery0"]["Percent"]
+        batteryState: pmSource.data["Battery0"]["State"]
         hasBattery: pmSource.data["Battery"]["Has Battery"]
         pluggedIn: pmSource.data["AC Adapter"]["Plugged in"]
         screenBrightness: pmSource.data["PowerDevil"]["Screen Brightness"]

@@ -26,6 +26,7 @@ Item {
     height: childrenRect.height+24
 
     property int percent
+    property string batteryState
     property bool hasBattery
     property bool pluggedIn
     property alias screenBrightness: brightnessSlider.value
@@ -65,7 +66,7 @@ Item {
             visible: remainingTime.visible
             anchors.right: parent.right
         }
- 
+
         Components.Label {
             text: i18nc("Label for power management inhibition", "Power management enabled:")
             anchors.right: parent.right
@@ -87,7 +88,7 @@ Item {
         }
 
         Components.Label {
-            text: dialog.hasBattery ? stringForState(pluggedIn, percent) : i18nc("Battery is not plugged in", "Not present")
+            text: dialog.hasBattery ? stringForState(batteryState, percent) : i18nc("Battery is not plugged in", "Not present")
             font.weight: Font.Bold
         }
 
