@@ -135,7 +135,7 @@ Item {
     property QtObject pmSource: PlasmaCore.DataSource {
         id: pmSource
         engine: "powermanagement"
-        connectedSources: ["AC Adapter", "Battery", "Battery0", "PowerDevil", "Sleep States"]
+        connectedSources: sources
         onDataChanged: {
             var status = "PassiveStatus";
             if (data["Battery"]["Has Battery"]) {
@@ -146,16 +146,6 @@ Item {
                 }
             }
             plasmoid.status = status;
-        }
-        onSourceAdded: {
-            if (source == "Battery0") {
-                connectSource(source)
-            }
-        }
-        onSourceRemoved: {
-            if (source == "Battery0") {
-                disconnectSource(source)
-            }
         }
     }
 
