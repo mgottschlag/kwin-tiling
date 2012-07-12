@@ -83,6 +83,7 @@ Item {
 
     PlasmaCore.Dialog {
         id: tooltipDialog
+        windowFlags: Qt.Window|Qt.toolTip
         property Item appletDelegate
 
         Component.onCompleted: {
