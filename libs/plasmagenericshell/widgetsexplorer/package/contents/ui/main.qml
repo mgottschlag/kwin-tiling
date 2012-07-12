@@ -83,12 +83,11 @@ Item {
 
     PlasmaCore.Dialog {
         id: tooltipDialog
-        windowFlags: Qt.Window|Qt.toolTip
         property Item appletDelegate
 
         Component.onCompleted: {
-            tooltipDialog.setAttribute(Qt.WA_X11NetWmWindowTypeDock, true)
-            tooltipDialog.windowFlags |= Qt.WindowStaysOnTopHint|Qt.X11BypassWindowManagerHint
+            tooltipDialog.setAttribute(Qt.WA_X11NetWmWindowTypeToolTip, true)
+            tooltipDialog.windowFlags = Qt.Window|Qt.WindowStaysOnTopHint|Qt.X11BypassWindowManagerHint
         }
 
         onAppletDelegateChanged: {
