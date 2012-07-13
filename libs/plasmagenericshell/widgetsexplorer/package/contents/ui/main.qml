@@ -170,7 +170,11 @@ Item {
                     width: list.width / Math.floor(list.width / cellWidth) - 4
                     clearButtonShown: true
                     placeholderText: i18n("Enter search term...")
-                    onTextChanged: widgetExplorer.widgetsModel.searchTerm = text
+                    onTextChanged: {
+                        list.contentX = 0
+                        list.contentY = 0
+                        widgetExplorer.widgetsModel.searchTerm = text
+                    }
                     Component.onCompleted: forceActiveFocus()
                 }
                 PlasmaComponents.Button {
@@ -232,7 +236,11 @@ Item {
                 }
                 clearButtonShown: true
                 placeholderText: i18n("Enter search term...")
-                onTextChanged: widgetExplorer.widgetsModel.searchTerm = text
+                onTextChanged: {
+                    list.contentX = 0
+                    list.contentY = 0
+                    widgetExplorer.widgetsModel.searchTerm = text
+                }
                 Component.onCompleted: forceActiveFocus()
             }
             PlasmaComponents.Button {
