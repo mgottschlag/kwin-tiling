@@ -192,7 +192,7 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 onDoubleClicked: widgetExplorer.addApplet(pluginName)
-                onEntered: tooltipDialog.appletDelegate = background
+                onEntered: tooltipDialog.appletDelegate = root
                 onExited: tooltipDialog.appletDelegate = null
             }
         }
