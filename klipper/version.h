@@ -19,7 +19,7 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-static const char * const klipper_version = "v0.9.7";
+static const char * const klipper_version = "0.9.7";
 
 
 #endif
