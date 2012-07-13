@@ -96,12 +96,11 @@ MouseArea {
         anchors.topMargin: 16
         anchors.bottom: uninstallButton.top
         anchors.bottomMargin: 4
-        rows: 2
+        rows: 3
         columns: 2
         spacing: 4
         PlasmaComponents.Label {
-            text: i18n("License: ")
-            wrapMode: Text.Wrap
+            text: i18n("License:")
         }
         PlasmaComponents.Label {
             id: licenseText
@@ -109,12 +108,17 @@ MouseArea {
             wrapMode: Text.Wrap
         }
         PlasmaComponents.Label {
-            text: i18n("Author: ")
-            wrapMode: Text.Wrap
+            text: i18n("Author:")
         }
         PlasmaComponents.Label {
             text: author
             wrapMode: Text.Wrap
+        }
+        PlasmaComponents.Label {
+            text: i18n("Email:")
+        }
+        PlasmaComponents.Label {
+            text: email
         }
     }
 
