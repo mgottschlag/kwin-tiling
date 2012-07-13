@@ -23,14 +23,10 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.draganddrop 1.0
 import org.kde.qtextracomponents 0.1
 
-PlasmaCore.FrameSvgItem {
-    id: background
-
+Item {
+    id: root
     width: list.delegateWidth
     height: list.delegateHeight
-
-    imagePath: "widgets/tasks"
-    prefix: "normal"
 
     property variant icon: decoration
     property string title: name
@@ -43,123 +39,162 @@ PlasmaCore.FrameSvgItem {
 
     ListView.onRemove: SequentialAnimation {
         PropertyAction {
-            target: background
+            target: root
             property: "ListView.delayRemove"
             value: true
         }
         NumberAnimation {
-            target: background
+            target: root
             property: widgetExplorer.orientation == Qt.Horizontal ? "y" : "x"
-            to: widgetExplorer.orientation == Qt.Horizontal ? background.height : background.width
-            duration: 250
+            to: widgetExplorer.orientation == Qt.Horizontal ? list.delegateHeight : list.delegateWidth
+            duration: 150
+            easing.type: Easing.InOutQuad
+        }
+        NumberAnimation {
+            target: root
+            property: widgetExplorer.orientation == Qt.Horizontal ? "y" : "x"
+            to: widgetExplorer.orientation == Qt.Horizontal ? list.delegateHeight : list.delegateWidth
+            duration: 150
+            easing.type: Easing.InOutQuad
+        }
+        NumberAnimation {
+            target: root
+            property: widgetExplorer.orientation == Qt.Horizontal ? "width" : "height"
+            from: widgetExplorer.orientation == Qt.Horizontal ? list.delegateWidth : list.delegateHeight
+            to: 0
+            duration: 150
             easing.type: Easing.InOutQuad
         }
         PropertyAction {
-            target: background
+            target: root
             property: "ListView.delayRemove"
             value: false
         }
     }
 
-    ListView.onAdd: NumberAnimation {
-            target: background
-            property: widgetExplorer.orientation == Qt.Horizontal ? "y" : "x"
-            from: widgetExplorer.orientation == Qt.Horizontal ? -background.height : -background.width
-            to: 0
-            duration: 250
+    ListView.onAdd: SequentialAnimation {
+        PropertyAction {
+            target: root
+            property: "y"
+            value: widgetExplorer.orientation == Qt.Horizontal ? -list.delegateHeight : -list.delegateWidth
+        }
+        NumberAnimation {
+            target: root
+            property: widgetExplorer.orientation == Qt.Horizontal ? "width" : "height"
+            from: 0
+            to: widgetExplorer.orientation == Qt.Horizontal ? list.delegateWidth : list.delegateHeight
+            duration: 150
             easing.type: Easing.InOutQuad
         }
-
-    DragArea {
-        anchors.fill: parent
-        supportedActions: Qt.MoveAction | Qt.LinkAction
-        onDragStarted: tooltipDialog.visible = false
-        mimeData {
-            source: parent
+        NumberAnimation {
+            target: root
+            property: widgetExplorer.orientation == Qt.Horizontal ? "y" : "x"
+            to: 0
+            duration: 150
+            easing.type: Easing.InOutQuad
         }
-        Component.onCompleted: mimeData.setData("text/x-plasmoidservicename", pluginName)
+    }
 
-        QIconItem {
-                id: iconWidget
-                anchors.verticalCenter: parent.verticalCenter
-                x: y
-                width: theme.hugeIconSize
-                height: width
-                icon: background.icon
+    PlasmaCore.FrameSvgItem {
+        id: background
+
+        width: list.delegateWidth
+        height: list.delegateHeight
+
+        imagePath: "widgets/tasks"
+        prefix: "normal"
+
+        DragArea {
+            anchors.fill: parent
+            supportedActions: Qt.MoveAction | Qt.LinkAction
+            onDragStarted: tooltipDialog.visible = false
+            mimeData {
+                source: parent
             }
-        Column {
-            anchors {
-                left: iconWidget.right
-                right: parent.right
-                verticalCenter: parent.verticalCenter
+            Component.onCompleted: mimeData.setData("text/x-plasmoidservicename", pluginName)
 
-                leftMargin: background.margins.left
-                rightMargin: background.margins.right
-            }
-
-            PlasmaComponents.Label {
-                id: titleText
-                text: title
-                font {
-                    weight: Font.Bold
-                    pointSize: theme.smallestFont.pointSize
+            QIconItem {
+                    id: iconWidget
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: y
+                    width: theme.hugeIconSize
+                    height: width
+                    icon: root.icon
                 }
+            Column {
                 anchors {
-                    left: parent.left
+                    left: iconWidget.right
                     right: parent.right
+                    verticalCenter: parent.verticalCenter
+
+                    leftMargin: background.margins.left
+                    rightMargin: background.margins.right
                 }
-                height: paintedHeight
-                wrapMode: Text.WordWrap
-                //go with nowrap only if there is a single word too long
-                onPaintedWidthChanged: {
-                    wrapTimer.restart()
-                }
-                Timer {
-                    id: wrapTimer
-                    interval: 200
-                    onTriggered: {
-                        //give it some pixels of tolerance
-                        if (titleText.paintedWidth > titleText.width + 3) {
-                            titleText.wrapMode = Text.NoWrap
-                            titleText.elide = Text.ElideRight
-                        } else {
-                            titleText.wrapMode = Text.WordWrap
-                            titleText.elide = Text.ElideNone
+
+                PlasmaComponents.Label {
+                    id: titleText
+                    text: title
+                    font {
+                        weight: Font.Bold
+                        pointSize: theme.smallestFont.pointSize
+                    }
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+                    height: paintedHeight
+                    wrapMode: Text.WordWrap
+                    //go with nowrap only if there is a single word too long
+                    onPaintedWidthChanged: {
+                        wrapTimer.restart()
+                    }
+                    Timer {
+                        id: wrapTimer
+                        interval: 200
+                        onTriggered: {
+                            //give it some pixels of tolerance
+                            if (titleText.paintedWidth > titleText.width + 3) {
+                                titleText.wrapMode = Text.NoWrap
+                                titleText.elide = Text.ElideRight
+                            } else {
+                                titleText.wrapMode = Text.WordWrap
+                                titleText.elide = Text.ElideNone
+                            }
                         }
                     }
                 }
-            }
-            PlasmaComponents.Label {
-                text: description
-                font.pointSize: theme.smallestFont.pointSize
-                anchors {
-                    left: parent.left
-                    right: parent.right
+                PlasmaComponents.Label {
+                    text: description
+                    font.pointSize: theme.smallestFont.pointSize
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+                    elide: Text.ElideRight
+                    wrapMode: Text.WordWrap
+                    verticalAlignment: Text.AlignTop
+                    maximumLineCount: 3
                 }
-                elide: Text.ElideRight
-                wrapMode: Text.WordWrap
-                verticalAlignment: Text.AlignTop
-                maximumLineCount: 3
             }
-        }
-        QIconItem {
-            icon: running ? "dialog-ok-apply" : undefined
-            visible: running
-            width: theme.smallIconSize
-            height: width
-            anchors {
-                right: parent.right
-                bottom: parent.bottom
-                rightMargin: background.margins.right
-                bottomMargin: background.margins.bottom
+            QIconItem {
+                icon: running ? "dialog-ok-apply" : undefined
+                visible: running
+                width: theme.smallIconSize
+                height: width
+                anchors {
+                    right: parent.right
+                    bottom: parent.bottom
+                    rightMargin: background.margins.right
+                    bottomMargin: background.margins.bottom
+                }
             }
-        }
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            onDoubleClicked: widgetExplorer.addApplet(pluginName)
-            onEntered: tooltipDialog.appletDelegate = background
-            onExited: tooltipDialog.appletDelegate = null
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onDoubleClicked: widgetExplorer.addApplet(pluginName)
+                onEntered: tooltipDialog.appletDelegate = background
+                onExited: tooltipDialog.appletDelegate = null
+            }
         }
     }
 }
