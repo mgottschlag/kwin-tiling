@@ -41,6 +41,7 @@ MouseArea {
     property string pluginName
     property bool local
 
+    onClicked: tooltipDialog.visible = false
     Connections {
         target: tooltipDialog
         onAppletDelegateChanged: {
@@ -129,6 +130,9 @@ MouseArea {
         }
         iconSource: "application-exit"
         text: i18n("Uninstall")
-        onClicked: widgetExplorer.uninstall(pluginName)
+        onClicked: {
+            widgetExplorer.uninstall(pluginName)
+            tooltipDialog.visible = false
+        }
     }
 }
