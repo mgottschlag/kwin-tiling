@@ -354,6 +354,7 @@ void Calendar::createConfigurationInterface(KConfigDialog *parent)
 
 void Calendar::configAccepted(KConfigGroup cg)
 {
+    calendarTable()->configAccepted(cg);
     applyConfiguration(cg);
 }
 
