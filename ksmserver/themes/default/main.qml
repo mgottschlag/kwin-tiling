@@ -187,7 +187,7 @@ PlasmaCore.FrameSvgItem {
     Text {
         id: automaticallyDoLabel
         text: " "
-        font.pointSize: theme.desktopFont.pointSize*0.8
+        font.pointSize: theme.desktopFont.pointSize >= 10 ? theme.desktopFont.pointSize*0.9 : theme.desktopFont.pointSize
         color: theme.textColor
         anchors {
             top: parent.top
