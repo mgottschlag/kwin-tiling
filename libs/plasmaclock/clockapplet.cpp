@@ -286,8 +286,10 @@ void ClockApplet::updateTipContent()
             highlightLocal = true;
         }
 
-        data = engine->query(tz);
-        tzs.append(data);
+        if (tz != localTz) {
+            data = engine->query(tz);
+            tzs.append(data);
+        }
     }
 
     qSort(tzs.begin(), tzs.end(), sortTzByData);
