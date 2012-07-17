@@ -41,34 +41,61 @@
 import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.components 0.1 as PlasmaComponents
+import org.kde.qtextracomponents 0.1
 
 Item {
     id: root
 
-    property string text
+    property alias text: textArea.text
     property int index: 0
+    property bool subMenu: false
 
     signal clicked
 
-    property int implicitWidth: textArea.paintedWidth + 6
+    property int implicitWidth: textArea.paintedWidth + 2*11 + subMenuIcon.width + 8
     width: parent.width
-    height: textArea.paintedHeight + 6
-
-    onTextChanged: {
-        textArea.text = root.text.replace('&', '')
-    }
-
+    height: textArea.paintedHeight + 8
     PlasmaComponents.Label {
         id: textArea
-        anchors.centerIn: parent
-        horizontalAlignment: Text.AlignHCenter
+        anchors.left: background.left
+        anchors.leftMargin: 11
         elide: Text.ElideRight
+    }
+
+    PlasmaCore.SvgItem {
+        id: background
+        anchors.fill: parent
+
+        svg: PlasmaCore.Svg {
+            imagePath: "dialogs/shutdowndialog"
+        }
+        elementId: "button-hover"
+        visible: false
+    }
+
+    QIconItem {
+        id: subMenuIcon
+
+        // if textColor is closer to white than to black use "draw-triangle4", which is also close to white.
+        // Otherwise use "arrow-down", which is green. I have not found a black triangle icon.
+        icon: theme.textColor > "#7FFFFF" ? QIcon("draw-triangle4") : QIcon("arrow-down")
+
+        width: 6
+        height: width
+        visible: root.subMenu
+
+        anchors {
+            right: background.right
+            rightMargin: 11
+            verticalCenter: parent.verticalCenter
+        }
     }
 
     MouseArea {
         id: mouseArea
 
         property bool canceled: false
+        hoverEnabled: true
 
         anchors.fill: parent
 
@@ -79,7 +106,13 @@ Item {
             if (!canceled)
                 root.clicked()
         }
-        onExited: canceled = true
+        onEntered: {
+            background.visible = true
+        }
+        onExited: {
+            canceled = true
+            background.visible = false
+        }
     }
 
     Keys.onPressed: {
