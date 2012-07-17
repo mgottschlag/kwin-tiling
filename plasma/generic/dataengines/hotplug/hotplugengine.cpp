@@ -37,6 +37,7 @@
 #include <Solid/DeviceInterface>
 #include <Solid/StorageDrive>
 #include <Solid/StorageVolume>
+#include <Solid/OpticalDisc>
 
 //#define HOTPLUGENGINE_TIMING
 
@@ -191,8 +192,8 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device, bool added)
         Solid::DeviceInterface *dev = device.asDeviceInterface(Solid::DeviceInterface::StorageVolume);
         Solid::StorageVolume *volume = static_cast<Solid::StorageVolume *>(dev);
         Solid::StorageVolume::UsageType type = volume->usage();
-        if (type == Solid::StorageVolume::Unused ||
-            type == Solid::StorageVolume::PartitionTable) {
+        if ((type == Solid::StorageVolume::Unused ||
+             type == Solid::StorageVolume::PartitionTable) && !device.is<Solid::OpticalDisc>()) {
 #ifdef HOTPLUGENGINE_TIMING
             kDebug() << "storage volume, but not of interest" << t.restart();
 #endif
