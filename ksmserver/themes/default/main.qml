@@ -373,19 +373,35 @@ PlasmaCore.FrameSvgItem {
                             return
                         }
                         if (!contextMenu) {
-                            // javascript passes primitive values by value, I need this one passed by reference.
-                            function Index() { this.value = 0 }
-                            var index = new Index()
                             var options = rebootOptions["options"]
-                            var menus = {}
-                            var menuId = ""
+                            //console.log("bootManager == " + bootManager)
 
-                            // starts backwards so that the top of the stack is the first menu entry.
-                            index.value = options.length - 1
-                            menus[menuId] = rebootOptionsComponent.createObject(rebootButton)
-                            menus[menuId].clicked.connect(shutdownUi.rebootRequested2)
-                            findAndCreateMenu(index, options, menus, menuId)
-                            contextMenu = menus[menuId]
+                            if (bootManager === "Grub2" || bootManager === "Burg") {
+                                // javascript passes primitive types by value, I need this one passed by reference.
+                                function Index() { this.value = 0 }
+                                var index = new Index()
+                                var menus = {}
+                                var menuId = ""
+
+                                // starts backwards so that the top of the stack is the first menu entry.
+                                index.value = options.length - 1
+                                menus[menuId] = rebootOptionsComponent.createObject(rebootButton)
+                                menus[menuId].clicked.connect(shutdownUi.rebootRequested2)
+                                findAndCreateMenu(index, options, menus, menuId)
+                                contextMenu = menus[menuId]
+                            } else {
+                                contextMenu = rebootOptionsComponent.createObject(rebootButton)
+
+                                for (var index = 0; index < options.length; ++index) {
+                                    var itemData = new Object
+                                    itemData["itemIndex"] = index
+                                    itemData["itemText"] = options[index]
+                                    if (index == rebootOptions["default"]) {
+                                        itemData["itemText"] += i18nc("default option in boot loader", " (default)")
+                                    }
+                                    contextMenu.append(itemData)
+                                }
+                            }
                         }
                         contextMenu.open()
                     }
