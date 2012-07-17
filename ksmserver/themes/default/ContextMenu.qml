@@ -28,6 +28,7 @@ Item {
     property Item visualParent
     property int status: PlasmaComponents.DialogStatus.Closed
     signal clicked(int index)
+    signal closeMenus()
 
     function append(dict)
     {
@@ -83,14 +84,28 @@ Item {
 
                 model: listModel
                 delegate: MenuItem {
+                    id: menuItem
+
                     text: itemText
                     index: itemIndex
+                    subMenu: itemSubMenu != null
+
                     Component.onCompleted: {
-                        contentItem.width = Math.max(contentItem.width, theme.defaultFont.mSize.width * text.length)
+                        contentItem.width = Math.max(contentItem.width, menuItem.implicitWidth)
+                        if (itemSubMenu) {
+                            itemSubMenu.visualParent = menuItem
+                            itemSubMenu.closeMenus.connect(root.close)
+                        }
                     }
                     onClicked: {
-                        root.clicked(index)
-                        root.close()
+                        if (itemSubMenu) {
+                            //console.log("opening submenu")
+                            itemSubMenu.open()
+                        } else {
+                            //console.log("emiting clicked(" + index + ")")
+                            root.clicked(index)
+                            root.close()
+                        }
                     }
                 }
             }
@@ -108,5 +123,8 @@ Item {
         else if (status == PlasmaComponents.DialogStatus.Open) {
             listView.focus = true
         }
+        else if (status == PlasmaComponents.DialogStatus.Closed) {
+            closeMenus()
+	}
     }
 }

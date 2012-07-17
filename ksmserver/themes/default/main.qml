@@ -316,24 +316,76 @@ PlasmaCore.FrameSvgItem {
                         rebootRequested()
                     }
 
+                    // recursive, let's hope the user does not have too many menu entries.
+                    function findAndCreateMenu(index, options, menus, menuId)
+                    {
+                        if (index.value < 0) {
+                            return;
+                        }
+
+                        var text = options[index.value]
+                        var pos = text.lastIndexOf('>')
+                        if (pos > -1) {
+                            var temp = text.substr(0, pos).trim()
+                            if (temp != menuId) {
+                                menuId = temp
+                            }
+
+                            if (!menus[menuId]) {
+                                console.log("creating menu for " + menuId)
+                                menus[menuId] = rebootOptionsComponent.createObject(rebootButton)
+                                menus[menuId].clicked.connect(shutdownUi.rebootRequested2)
+                            }
+                        } else {
+                            menuId = ""
+                        }
+
+                        console.log("index == " + index.value + " of " + options.length + " '" + text + "' menuId == '" + menuId + "'");
+
+                        var itemData = new Object
+                        itemData["itemIndex"] = index.value
+                        itemData["itemText"] = text
+
+                        if (index.value == rebootOptions["default"]) {
+                            itemData["itemText"] += i18nc("default option in boot loader", " (default)")
+                        }
+
+                        --index.value;
+                        var currentMenuId = menuId
+                        findAndCreateMenu(index, options, menus, menuId)
+
+                        itemData["itemSubMenu"] = menus[itemData["itemText"]]
+
+                        // remove menuId string from itemText
+                        text = itemData["itemText"]
+                        var i = text.lastIndexOf('>')
+                        if (i > -1) {
+                            text = text.substr(i+1).trim()
+                        }
+                        itemData["itemText"] = text
+
+                        console.log("appending " + itemData["itemText"] + " to menu '" + currentMenuId + "'")
+                        menus[currentMenuId].append(itemData)
+                    }
+
                     onPressAndHold: {
                         if (!menu) {
                             return
                         }
                         if (!contextMenu) {
-                            contextMenu = rebootOptionsComponent.createObject(rebootButton)
+                            // javascript passes primitive values by value, I need this one passed by reference.
+                            function Index() { this.value = 0 }
+                            var index = new Index()
                             var options = rebootOptions["options"]
-                            for (var index = 0; index < options.length; ++index) {
-                                var itemData = new Object
-                                itemData["itemIndex"] = index
-                                itemData["itemText"] = options[index]
-                                if (index == rebootOptions["default"]) {
-                                    itemData["itemText"] += i18nc("default option in boot loader", " (default)")
-                                }
-                                contextMenu.append(itemData)
-                            }
+                            var menus = {}
+                            var menuId = ""
 
-                            contextMenu.clicked.connect(shutdownUi.rebootRequested2)
+                            // starts backwards so that the top of the stack is the first menu entry.
+                            index.value = options.length - 1
+                            menus[menuId] = rebootOptionsComponent.createObject(rebootButton)
+                            menus[menuId].clicked.connect(shutdownUi.rebootRequested2)
+                            findAndCreateMenu(index, options, menus, menuId)
+                            contextMenu = menus[menuId]
                         }
                         contextMenu.open()
                     }
