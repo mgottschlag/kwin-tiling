@@ -203,6 +203,9 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     mapSpdMethods->insert("HibernateState", QVariant::fromValue(spdMethods.contains(Solid::PowerManagement::HibernateState)));
     context->setContextProperty("spdMethods", mapSpdMethods);
 
+    QString bootManager = KConfig(KDE_CONFDIR "/kdm/kdmrc", KConfig::SimpleConfig).group("Shutdown").readEntry("BootManager", "None");
+    context->setContextProperty("bootManager", bootManager);
+
     QStringList options;
     int def, cur;
     if ( KDisplayManager().bootOptions( rebootOptions, def, cur ) ) {
