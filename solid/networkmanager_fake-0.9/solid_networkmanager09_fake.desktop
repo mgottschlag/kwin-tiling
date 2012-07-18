@@ -70,6 +70,7 @@ Comment[pt]=Infra-estrutura de testes para permitir ao 'kdelibs' ler o estado do
 Comment[pt_BR]=Infraestrutura falsa que permite ao kdelibs ler o estado do serviço do NetworkManager 0.9
 Comment[ro]=Suport fals ce permite kdelibs să citească starea demonului NetworkManager 0.9
 Comment[sk]=Falošný backend na umožnenie čítania stavu démona NetworkManagera 0.9 pre kdelibs
+Comment[sl]=Lažna hrbtenica, ki KDE-jevim knjižnicam omogoča branje stanja pritajenega programčka NetworkManager 0.9
 Comment[sr]=Лажна позадина преко које КДЕ библиотека може да чита стање демона Менаџера мреже 0.9
 Comment[sr@ijekavian]=Лажна позадина преко које КДЕ библиотека може да чита стање демона Менаџера мреже 0.9
 Comment[sr@ijekavianlatin]=Lažna pozadina preko koje KDE biblioteka može da čita stanje demona Menadžera mreže 0.9
