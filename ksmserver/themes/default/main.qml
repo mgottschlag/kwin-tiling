@@ -363,6 +363,7 @@ PlasmaCore.FrameSvgItem {
                             text = text.substr(i+1).trim()
                         }
                         itemData["itemText"] = text
+                        itemData["itemAllowAmpersand"] = true
 
                         console.log("appending " + itemData["itemText"] + " to menu '" + currentMenuId + "'")
                         menus[currentMenuId].append(itemData)
@@ -396,6 +397,7 @@ PlasmaCore.FrameSvgItem {
                                     var itemData = new Object
                                     itemData["itemIndex"] = index
                                     itemData["itemText"] = options[index]
+                                    itemData["itemAllowAmpersand"] = true
                                     if (index == rebootOptions["default"]) {
                                         itemData["itemText"] += i18nc("default option in boot loader", " (default)")
                                     }

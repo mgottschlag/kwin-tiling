@@ -46,15 +46,25 @@ import org.kde.qtextracomponents 0.1
 Item {
     id: root
 
-    property alias text: textArea.text
+    property string text
     property int index: 0
     property bool subMenu: false
+    property bool allowAmpersand: false
 
     signal clicked
 
     property int implicitWidth: textArea.paintedWidth + 2*11 + subMenuIcon.width + 8
     width: parent.width
     height: textArea.paintedHeight + 8
+
+    onTextChanged: {
+        if (allowAmpersand) {
+            textArea.text = root.text
+        } else {
+            textArea.text = root.text.replace('&', '')
+        }
+    }
+
     PlasmaComponents.Label {
         id: textArea
         anchors.left: background.left

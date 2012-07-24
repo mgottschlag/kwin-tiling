@@ -89,6 +89,7 @@ Item {
                     text: itemText
                     index: itemIndex
                     subMenu: itemSubMenu != null
+                    allowAmpersand: itemAllowAmpersand
 
                     Component.onCompleted: {
                         contentItem.width = Math.max(contentItem.width, menuItem.implicitWidth)
@@ -125,6 +126,6 @@ Item {
         }
         else if (status == PlasmaComponents.DialogStatus.Closed) {
             closeMenus()
-	}
+        }
     }
 }
