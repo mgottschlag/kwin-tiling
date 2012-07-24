@@ -68,7 +68,7 @@ if (WITH_KDM_XCONSOLE)
 	)
 endif (WITH_KDM_XCONSOLE)
 
-macro_add_file_dependencies(kdm_greet.h ${confci})
+macro_add_file_dependencies(kdmconfig.h ${confci})
 kde4_add_executable(kdm_greet ${kdm_greet_SRCS})
 target_link_libraries(kdm_greet ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${X11_X11_LIB} ${POSIX4_LIBRARIES})
 if (X11_XTest_FOUND)
