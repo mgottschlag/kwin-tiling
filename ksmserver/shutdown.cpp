@@ -207,14 +207,16 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
             // before others a chance to change anything.
             // KWin will check if the session manager is ksmserver,
             // and if yes it will save in phase 1 instead of phase 2.
-            if( isWM( c )) {
+            if( isWM( c ) )
                 ++wmPhase1WaitingCount;
-                SmsSaveYourself( c->connection(), saveType,
-                            true, SmInteractStyleAny, false );
-            }
-
         }
-        if( wmPhase1WaitingCount == 0 ) { // no WM, simply start them all
+        if (wmPhase1WaitingCount > 0) {
+            foreach( KSMClient* c, clients ) {
+                if( isWM( c ) )
+                    SmsSaveYourself( c->connection(), saveType,
+                                true, SmInteractStyleAny, false );
+            }
+        } else { // no WM, simply start them all
             foreach( KSMClient* c, clients )
                 SmsSaveYourself( c->connection(), saveType,
                             true, SmInteractStyleAny, false );
@@ -249,12 +251,15 @@ void KSMServer::saveCurrentSession()
 #endif
     foreach( KSMClient* c, clients ) {
         c->resetState();
-        if( isWM( c )) {
+        if( isWM( c ) )
             ++wmPhase1WaitingCount;
-            SmsSaveYourself( c->connection(), saveType, false, SmInteractStyleNone, false );
-        }
     }
-    if( wmPhase1WaitingCount == 0 ) {
+    if (wmPhase1WaitingCount > 0) {
+        foreach( KSMClient* c, clients ) {
+            if( isWM( c ) )
+                SmsSaveYourself( c->connection(), saveType, false, SmInteractStyleNone, false );
+        }
+    } else {
         foreach( KSMClient* c, clients )
             SmsSaveYourself( c->connection(), saveType, false, SmInteractStyleNone, false );
     }
