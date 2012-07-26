@@ -44,6 +44,8 @@
 #include <KMimeTypeTrader>
 #include <KService>
 
+using namespace Nepomuk::Vocabulary;
+
 namespace {
     /**
      * Milliseconds to wait before issuing the next query.
@@ -133,9 +135,9 @@ void Nepomuk::SearchRunner::run( const Plasma::RunnerContext&, const Plasma::Que
 
     Nepomuk::Resource res = match.data().value<Nepomuk::Resource>();
     KUrl url = res.resourceUri();
-    if (res.isFile() && res.toFile().url().isLocalFile()) {
-        url = res.toFile().url();
-    }
+    KUrl nieUrl = res.property( NIE::url() ).toUrl();
+    if( !nieUrl.isEmpty() )
+        url = nieUrl;
 
     KService::Ptr preferredServicePtr;
     if (res.hasProperty(Nepomuk::Vocabulary::NIE::mimeType()) &&
