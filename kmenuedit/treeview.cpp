@@ -195,7 +195,8 @@ static QPixmap appIcon(const QString &iconName)
 TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
     : QTreeWidget(parent), m_ac(ac), m_rmb(0), m_clipboard(0),
       m_clipboardFolderInfo(0), m_clipboardEntryInfo(0),
-      m_layoutDirty(false)
+      m_layoutDirty(false),
+      m_detailedMenuEntries(true), m_detailedEntriesNamesFirst(true)
 {
     m_dropMimeTypes << s_internalMimeType << KUrl::List::mimeDataTypes();
     qRegisterMetaType<TreeItem *>("TreeItem");
