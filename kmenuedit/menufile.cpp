@@ -16,6 +16,8 @@
  *
  */
 
+#include "menufile.h"
+
 #include <QFile>
 #include <QTextStream>
 #include <QRegExp>
@@ -25,8 +27,6 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
-
-#include "menufile.h"
 
 
 #define MF_MENU		"Menu"

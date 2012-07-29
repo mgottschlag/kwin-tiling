@@ -18,6 +18,7 @@
  *
  */
 
+#include "basictab.h"
 
 #include <QCheckBox>
 #include <QLabel>
@@ -51,7 +52,6 @@
 
 #include "menuinfo.h"
 
-#include "basictab.h"
 #include "basictab.moc"
 
 BasicTab::BasicTab( QWidget *parent )

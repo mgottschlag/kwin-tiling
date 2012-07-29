@@ -20,6 +20,8 @@
  *
  */
 
+#include "treeview.h"
+
 #include <unistd.h>
 
 #include <QCursor>
@@ -54,7 +56,6 @@
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
 
-#include "treeview.h"
 #include "treeview.moc"
 #include "menufile.h"
 #include "menuinfo.h"

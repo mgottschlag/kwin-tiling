@@ -21,6 +21,8 @@
 #define __basictab_h__
 
 #include <KTabWidget>
+#include <KShortcut>
+#include <KService>
 
 class KKeySequenceWidget;
 class KLineEdit;
