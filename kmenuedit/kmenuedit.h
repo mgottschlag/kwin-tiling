@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef __kmenuedit_h__
-#define __kmenuedit_h__
+#ifndef kmenuedit_h
+#define kmenuedit_h
 
 #include <kxmlguiwindow.h>
 #include <treeview.h>

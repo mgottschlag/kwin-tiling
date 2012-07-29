@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef __khotkeys_public_h__
-#define __khotkeys_public_h__
+#ifndef khotkeys_public_h
+#define khotkeys_public_h
 
 
 #include <kservice.h>

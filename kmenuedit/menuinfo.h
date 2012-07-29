@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef __menuinfo_h__
-#define __menuinfo_h__
+#ifndef menuinfo_h
+#define menuinfo_h
 
 
 #include <QList>

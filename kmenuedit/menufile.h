@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef __menufile_h__
-#define __menufile_h__
+#ifndef menufile_h
+#define menufile_h
 
 #include <QtXml/qdom.h>
 

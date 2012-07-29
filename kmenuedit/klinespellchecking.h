@@ -16,8 +16,8 @@
  *   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-#ifndef __klinespellchecking_h__
-#define __klinespellchecking_h__
+#ifndef klinespellchecking_h
+#define klinespellchecking_h
 
 #include <klineedit.h>
 class KAction;

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __treeview_h__
-#define __treeview_h__
+#ifndef treeview_h
+#define treeview_h
 
 #include <QMenu>
 #include <QDropEvent>
