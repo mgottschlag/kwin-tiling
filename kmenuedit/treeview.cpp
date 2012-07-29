@@ -850,7 +850,7 @@ bool TreeView::dropMimeData(QTreeWidgetItem *item, int index, const QMimeData *d
 
         //FIXME: this should really support multiple DnD
         QString path = urls[0].path();
-        if (!path.endsWith(".desktop")) {
+        if (!path.endsWith(QLatin1String(".desktop"))) {
             return false;
         }
 

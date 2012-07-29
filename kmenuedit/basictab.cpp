@@ -386,7 +386,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     }
 #endif
     QString temp = df->desktopGroup().readEntry("Exec");
-    if (temp.startsWith("ksystraycmd "))
+    if (temp.startsWith(QLatin1String("ksystraycmd ")))
     {
       _execEdit->lineEdit()->setText(temp.right(temp.length()-12));
       _systrayCB->setChecked(true);
