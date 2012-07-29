@@ -76,6 +76,7 @@ void KMenuEdit::setupActions()
     action = actionCollection()->addAction("newsubmenu");
     action->setIcon(KIcon("menu_new"));
     action->setText(i18n("&New Submenu..."));
+    action->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_N));
     action = actionCollection()->addAction("newitem");
     action->setIcon(KIcon("document-new")) ;
     action->setText(i18n("New &Item..."));
@@ -83,6 +84,7 @@ void KMenuEdit::setupActions()
     action = actionCollection()->addAction("newsep");
     action->setIcon(KIcon("menu_new_sep"));
     action->setText(i18n("New S&eparator"));
+    action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_I));
 
     actionCollection()->addAction(KStandardAction::Save, this, SLOT(slotSave()));
     actionCollection()->addAction(KStandardAction::Quit, this, SLOT(close()));
