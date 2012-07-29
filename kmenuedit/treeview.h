@@ -92,7 +92,7 @@ class TreeView : public QTreeWidget
     friend class TreeItem;
     Q_OBJECT
 public:
-    TreeView(KActionCollection *ac, QWidget *parent=0, const char *name=0);
+    explicit TreeView(KActionCollection *ac, QWidget *parent=0, const char *name=0);
     ~TreeView();
 
     void readMenuFolderInfo(MenuFolderInfo *folderInfo=0, KServiceGroup::Ptr folder=KServiceGroup::Ptr(), const QString &prefix=QString());

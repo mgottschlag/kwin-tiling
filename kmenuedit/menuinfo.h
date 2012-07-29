@@ -143,7 +143,7 @@ public:
 class MenuEntryInfo : public MenuInfo
 {
 public:
-    MenuEntryInfo(const KService::Ptr &_service, KDesktopFile *_df = 0)
+    explicit MenuEntryInfo(const KService::Ptr &_service, KDesktopFile *_df = 0)
      : service(_service), m_desktopFile(_df),
        shortcutLoaded(false), shortcutDirty(false), dirty(_df != 0), hidden(false)
     {
