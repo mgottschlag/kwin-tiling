@@ -42,18 +42,15 @@ bool KHotKeys::init()
         bus,
         NULL);
 
-    QDBusError err;
-    if(!khotkeysInterface->isValid())
-        {
-        err = khotkeysInterface->lastError();
-        if (err.isValid())
-            {
+    if(!khotkeysInterface->isValid()) {
+        QDBusError err = khotkeysInterface->lastError();
+        if (err.isValid()) {
             kError() << err.name() << ":" << err.message();
-            }
+        }
         KMessageBox::error(
             NULL,
             "<qt>" + i18n("Unable to contact khotkeys. Your changes are saved, but they could not be activated.") + "</qt>" );
-        }
+    }
 
     khotkeys_present = khotkeysInterface->isValid();
     return true;
@@ -64,6 +61,7 @@ void KHotKeys::cleanup()
     if( khotkeys_inited && khotkeys_present ) {
         // CleanUp ???
     }
+
     khotkeys_inited = false;
 }
 
@@ -71,6 +69,7 @@ bool KHotKeys::present()
 {
     if( !khotkeys_inited )
         init();
+
     return khotkeys_present;
 }
 
@@ -109,7 +108,6 @@ QString KHotKeys::changeMenuEntryShortcut(
     if (!reply.isValid()) {
         kError() << reply.error();
         return "";
-
     } else {
         return reply;
     }
