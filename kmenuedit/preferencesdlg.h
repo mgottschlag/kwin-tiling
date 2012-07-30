@@ -20,7 +20,7 @@
 #ifndef PREFERENCESDLG_h
 #define PREFERENCESDLG_h
 
-#include <kpagedialog.h>
+#include <KPageDialog>
 
 class SpellCheckingPage;
 class MiscPage;

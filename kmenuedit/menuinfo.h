@@ -23,8 +23,8 @@
 
 #include <QList>
 
-#include <kshortcut.h>
-#include <kservice.h>
+#include <KShortcut>
+#include <KService>
 
 class MenuFile;
 class MenuEntryInfo;

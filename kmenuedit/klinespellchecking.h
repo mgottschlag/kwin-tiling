@@ -19,7 +19,8 @@
 #ifndef klinespellchecking_h
 #define klinespellchecking_h
 
-#include <klineedit.h>
+#include <KLineEdit>
+
 class KAction;
 
 class KLineSpellChecking : public KLineEdit

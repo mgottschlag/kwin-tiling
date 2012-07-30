@@ -18,16 +18,17 @@
  */
 
 #include "menuinfo.h"
-#include "menufile.h"
 
 #include <QRegExp>
 
-#include <kdesktopfile.h>
+#include <KDesktopFile>
+#include <KStandardDirs>
+#include <KConfigGroup>
+
+#include "menufile.h"
 #ifndef Q_WS_WIN
-#include <khotkeys.h>
+#include "khotkeys.h"
 #endif
-#include <kstandarddirs.h>
-#include <kconfiggroup.h>
 
 //
 // MenuFolderInfo

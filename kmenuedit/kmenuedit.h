@@ -20,8 +20,9 @@
 #ifndef kmenuedit_h
 #define kmenuedit_h
 
-#include <kxmlguiwindow.h>
-#include <treeview.h>
+#include <KXmlGuiWindow>
+
+#include "treeview.h"
 
 class BasicTab;
 class QSplitter;

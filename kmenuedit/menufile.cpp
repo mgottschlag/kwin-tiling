@@ -23,10 +23,10 @@
 #include <QRegExp>
 #include <QFileInfo>
 
-#include <kdebug.h>
-#include <kglobal.h>
-#include <klocale.h>
-#include <kstandarddirs.h>
+#include <KDebug>
+#include <KGlobal>
+#include <KLocale>
+#include <KStandardDirs>
 
 
 #define MF_MENU		"Menu"

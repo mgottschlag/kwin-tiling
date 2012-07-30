@@ -22,8 +22,8 @@
 #include "khotkeys_interface.h"
 
 
-#include "kdebug.h"
-#include "kmessagebox.h"
+#include <KDebug>
+#include <KMessageBox>
 
 static bool khotkeys_present = false;
 static bool khotkeys_inited = false;

@@ -18,12 +18,14 @@
  */
 
 #include "preferencesdlg.h"
+
 #include <QHBoxLayout>
-#include <klocale.h>
-#include <sonnet/configwidget.h>
 #include <QCheckBox>
-#include <KConfigGroup>
 #include <QGroupBox>
+
+#include <KLocale>
+#include <KConfigGroup>
+#include <sonnet/configwidget.h>
 
 PreferencesDialog::PreferencesDialog( QWidget *parent )
     : KPageDialog( parent )

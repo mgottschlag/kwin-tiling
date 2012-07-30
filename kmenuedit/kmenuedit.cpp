@@ -21,21 +21,22 @@
 
 #include <QSplitter>
 
-#include <kaction.h>
-#include <kactioncollection.h>
-#include <kapplication.h>
-#include <kconfig.h>
-#include <kdebug.h>
-#include <kedittoolbar.h>
-#include <kglobal.h>
-#include <kicon.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <kservice.h>
-#include <kstandardaction.h>
-#include <kstandardshortcut.h>
-#include <kxmlguifactory.h>
+#include <KAction>
+#include <KActionCollection>
+#include <KApplication>
+#include <KConfig>
+#include <KDebug>
+#include <KEditToolBar>
+#include <KGlobal>
+#include <KIcon>
+#include <KLocale>
+#include <KMessageBox>
+#include <KService>
+#include <KStandardAction>
+#include <KStandardShortcut>
+#include <KXMLGUIFactory>
 #include <sonnet/configdialog.h>
+
 #include "treeview.h"
 #include "basictab.h"
 #include "preferencesdlg.h"

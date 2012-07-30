@@ -30,26 +30,26 @@
 #include <QVBoxLayout>
 #include <QGridLayout>
 
-#include <klocale.h>
-#include <kstandarddirs.h>
-#include <kglobal.h>
-#include <kdialog.h>
-#include <kkeysequencewidget.h>
-#include <klineedit.h>
-#include <klinespellchecking.h>
-#include <kmessagebox.h>
-#include <kicondialog.h>
-#include <kdesktopfile.h>
-#include <kurlrequester.h>
-#include <kfiledialog.h>
-#include <kcombobox.h>
-#include <kshell.h>
-#include <khbox.h>
+#include <KLocale>
+#include <KStandardDirs>
+#include <KGlobal>
+#include <KDialog>
+#include <KKeySequenceWidget>
+#include <KLineEdit>
+#include <KMessageBox>
+#include <KIconDialog>
+#include <KDesktopFile>
+#include <KUrlRequester>
+#include <KFileDialog>
+#include <KComboBox>
+#include <KShell>
+#include <KHBox>
 
 #ifndef Q_WS_WIN
 #include "khotkeys.h"
 #endif
 
+#include "klinespellchecking.h"
 #include "menuinfo.h"
 
 #include "basictab.moc"

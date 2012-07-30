@@ -17,11 +17,13 @@
  *
  */
 #include "klinespellchecking.h"
+
 #include <QMenu>
+#include <QContextMenuEvent>
+
 #include <KStandardAction>
 #include <KActionCollection>
 #include <KAction>
-#include <QContextMenuEvent>
 #include <sonnet/dialog.h>
 #include <sonnet/backgroundchecker.h>
 

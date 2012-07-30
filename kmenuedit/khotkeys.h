@@ -22,7 +22,7 @@
 #define khotkeys_public_h
 
 
-#include <kservice.h>
+#include <KService>
 
 // see kdebase/khotkeys/kcontrol for info on these
 

@@ -21,10 +21,10 @@
 
 #include <unistd.h>
 
-#include <kuniqueapplication.h>
-#include <klocale.h>
-#include <kcmdlineargs.h>
-#include <kaboutdata.h>
+#include <KUniqueApplication>
+#include <KLocale>
+#include <KCmdLineArgs>
+#include <KAboutData>
 
 #include "kmenuedit.h"
 #ifndef Q_WS_WIN
