@@ -76,8 +76,6 @@ bool KHotKeys::present()
 
 QString KHotKeys::getMenuEntryShortcut( const QString& entry_P )
 {
-    kDebug();
-
     if( !khotkeys_inited )
         init();
 
@@ -98,8 +96,6 @@ QString KHotKeys::changeMenuEntryShortcut(
         const QString& entry_P,
         const QString shortcut_P )
 {
-    kDebug();
-
     if( !khotkeys_inited )
         init();
 
