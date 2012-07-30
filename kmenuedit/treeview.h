@@ -178,9 +178,9 @@ private:
     MenuSeparatorInfo *m_separator;
     QStringList        m_newMenuIds;
     QStringList        m_newDirectoryList;
+    bool               m_layoutDirty;
     bool               m_detailedMenuEntries;
     bool               m_detailedEntriesNamesFirst;
-    bool               m_layoutDirty;
     QStringList        m_dropMimeTypes;
 };
 
