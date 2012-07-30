@@ -606,7 +606,7 @@ void TreeView::itemSelected(QTreeWidgetItem *item)
     }
 }
 
-void TreeView::currentChanged(MenuFolderInfo *folderInfo)
+void TreeView::currentDataChanged(MenuFolderInfo *folderInfo)
 {
     TreeItem *item = (TreeItem*)selectedItem();
     if (item == 0 || folderInfo == 0) {
@@ -617,7 +617,7 @@ void TreeView::currentChanged(MenuFolderInfo *folderInfo)
     item->setIcon(0, appIcon(folderInfo->icon));
 }
 
-void TreeView::currentChanged(MenuEntryInfo *entryInfo)
+void TreeView::currentDataChanged(MenuEntryInfo *entryInfo)
 {
     TreeItem *item = (TreeItem*)selectedItem();
     if (item == 0 || entryInfo == 0) {

@@ -125,10 +125,10 @@ void KMenuEdit::setupView()
             m_basicTab, SLOT(slotDisableAction()) );
 
     connect(m_basicTab, SIGNAL(changed(MenuFolderInfo*)),
-            m_tree, SLOT(currentChanged(MenuFolderInfo*)));
+            m_tree, SLOT(currentDataChanged(MenuFolderInfo*)));
 
     connect(m_basicTab, SIGNAL(changed(MenuEntryInfo*)),
-            m_tree, SLOT(currentChanged(MenuEntryInfo*)));
+            m_tree, SLOT(currentDataChanged(MenuEntryInfo*)));
 
     connect(m_basicTab, SIGNAL(findServiceShortcut(KShortcut,KService::Ptr&)),
             m_tree, SLOT(findServiceShortcut(KShortcut,KService::Ptr&)));
