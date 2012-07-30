@@ -21,7 +21,6 @@
 
 #include <QHBoxLayout>
 #include <QCheckBox>
-#include <QGroupBox>
 
 #include <KLocale>
 #include <KConfigGroup>

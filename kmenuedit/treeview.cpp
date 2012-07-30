@@ -24,23 +24,18 @@
 
 #include <unistd.h>
 
-#include <QCursor>
-#include <QDataStream>
 #include <QDir>
-#include <QEvent>
-#include <QFileInfo>
 #include <QHeaderView>
 #include <QPainter>
 #include <QRegExp>
 #include <QPixmap>
-#include <QFrame>
 #include <QDropEvent>
 #include <QMenu>
+#include <QApplication>
 #include <QtDBus/QtDBus>
 
 #include <KAction>
 #include <KActionCollection>
-#include <KApplication>
 #include <KBuildSycocaProgressDialog>
 #include <KDebug>
 #include <KDesktopFile>

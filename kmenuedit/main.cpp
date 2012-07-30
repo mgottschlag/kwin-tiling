@@ -19,8 +19,6 @@
  *
  */
 
-#include <unistd.h>
-
 #include <KUniqueApplication>
 #include <KLocale>
 #include <KCmdLineArgs>

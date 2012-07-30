@@ -23,7 +23,6 @@
 
 #include <KAction>
 #include <KActionCollection>
-#include <KApplication>
 #include <KConfig>
 #include <KDebug>
 #include <KEditToolBar>

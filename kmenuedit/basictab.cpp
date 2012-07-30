@@ -22,28 +22,19 @@
 
 #include <QCheckBox>
 #include <QLabel>
-#include <QLayout>
-#include <QFileInfo>
 #include <QGroupBox>
-
-//Added by qt3to4:
 #include <QVBoxLayout>
 #include <QGridLayout>
 
 #include <KLocale>
-#include <KStandardDirs>
 #include <KGlobal>
 #include <KDialog>
 #include <KKeySequenceWidget>
 #include <KLineEdit>
-#include <KMessageBox>
-#include <KIconDialog>
+#include <KIconButton>
 #include <KDesktopFile>
 #include <KUrlRequester>
-#include <KFileDialog>
-#include <KComboBox>
 #include <KShell>
-#include <KHBox>
 
 #ifndef Q_WS_WIN
 #include "khotkeys.h"

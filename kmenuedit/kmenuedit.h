@@ -25,6 +25,7 @@
 #include "treeview.h"
 
 class BasicTab;
+class TreeView;
 class QSplitter;
 class KAction;
 class KToggleAction;

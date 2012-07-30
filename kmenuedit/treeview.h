@@ -23,14 +23,15 @@
 #ifndef treeview_h
 #define treeview_h
 
-#include <QMenu>
-#include <QDropEvent>
 #include <QTreeWidget>
+#include <QMimeData>
 
 #include <KService>
 #include <KServiceGroup>
 
 class QMenu;
+class QDropEvent;
+
 class KActionCollection;
 class KDesktopFile;
 class MenuFile;
