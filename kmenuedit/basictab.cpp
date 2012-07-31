@@ -50,7 +50,7 @@ BasicTab::BasicTab( QWidget *parent )
 {
     _menuFolderInfo = 0;
     _menuEntryInfo = 0;
-    
+
     // general group
     QWidget *general_group = new QWidget();
     QGridLayout *grid = new QGridLayout(general_group);
@@ -136,7 +136,7 @@ BasicTab::BasicTab( QWidget *parent )
 
     // add the general group to the main layout
     addTab(general_group, i18n("General"));
-    
+
     QWidget *advanced = new QWidget();
     QVBoxLayout *advancedLayout = new QVBoxLayout(advanced);
 
@@ -230,9 +230,9 @@ BasicTab::BasicTab( QWidget *parent )
              this, SLOT(slotCapturedKeySequence(QKeySequence)));
     keybindLayout->addWidget(_keyEdit);
     advancedLayout->addWidget( general_group_keybind );
-    
+
     advancedLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::MinimumExpanding));
-    
+
     addTab(advanced, i18n("Advanced"));
 #ifndef Q_WS_WIN
     if (!KHotKeys::present())
@@ -398,7 +398,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
         _launchCB->setChecked(df->desktopGroup().readEntry("X-KDE-StartupNotify", true));
 
     _onlyShowInKdeCB->setChecked( df->desktopGroup().readXdgListEntry("OnlyShowIn").contains( "KDE" ) ); // or maybe enable only if it contains nothing but KDE?
-    
+
     if ( df->desktopGroup().hasKey( "NoDisplay" ) )
         _hiddenEntryCB->setChecked( df->desktopGroup().readEntry( "NoDisplay", true ) );
     else
