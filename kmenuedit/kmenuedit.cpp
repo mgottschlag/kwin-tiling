@@ -25,7 +25,6 @@
 #include <KActionCollection>
 #include <KConfig>
 #include <KDebug>
-#include <KEditToolBar>
 #include <KGlobal>
 #include <KIcon>
 #include <KLocale>
@@ -212,12 +211,6 @@ bool KMenuEdit::queryClose()
          break;
     }
     return false;
-}
-
-void KMenuEdit::slotConfigureToolbars()
-{
-    KEditToolBar dialog( factory() );
-    dialog.exec();
 }
 
 void KMenuEdit::slotRestoreMenu()

@@ -49,7 +49,6 @@ protected:
 protected Q_SLOTS:
     void slotSave();
     void slotChangeView();
-    void slotConfigureToolbars();
     void slotRestoreMenu();
     void slotConfigure();
 
