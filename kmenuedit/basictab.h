@@ -46,7 +46,7 @@ public:
 
     void apply();
 
-    void updateHiddenEntry( bool _hidden );
+    void updateHiddenEntry( bool show );
 
 Q_SIGNALS:
     void changed( MenuFolderInfo * );

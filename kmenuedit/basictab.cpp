@@ -541,9 +541,9 @@ void BasicTab::slotCapturedKeySequence(const QKeySequence& seq)
 }
 
 
-void BasicTab::updateHiddenEntry( bool _hidden )
+void BasicTab::updateHiddenEntry( bool show )
 {
-    if ( _hidden )
+    if ( show )
         _hiddenEntryCB->show();
     else
         _hiddenEntryCB->hide();
