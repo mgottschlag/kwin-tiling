@@ -145,6 +145,16 @@ void KMenuEdit::setupView()
     setCentralWidget(m_splitter);
 }
 
+void KMenuEdit::selectMenu(const QString &menu)
+{
+    m_tree->selectMenu(menu);
+}
+
+void KMenuEdit::selectMenuEntry(const QString &menuEntry)
+{
+    m_tree->selectMenuEntry(menuEntry);
+}
+
 void KMenuEdit::slotChangeView()
 {
     guiFactory()->removeClient( this );
