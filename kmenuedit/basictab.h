@@ -86,7 +86,6 @@ protected:
 
     MenuFolderInfo *_menuFolderInfo;
     MenuEntryInfo  *_menuEntryInfo;
-    bool _isDeleted;
 };
 
 #endif
