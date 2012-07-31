@@ -76,15 +76,15 @@ MiscPage::MiscPage( QWidget *parent )
     lay->addStretch();
     setLayout( lay );
 
-    KConfigGroup grp( KGlobal::config(), "General" );
-    m_showHiddenEntries->setChecked(  grp.readEntry( "ShowHidden", false ) );
+    KConfigGroup group( KGlobal::config(), "General" );
+    m_showHiddenEntries->setChecked(  group.readEntry( "ShowHidden", false ) );
 }
 
 void MiscPage::saveOptions()
 {
-    KConfigGroup grp( KGlobal::config(), "General" );
-    grp.writeEntry( "ShowHidden", m_showHiddenEntries->isChecked() );
-    grp.sync();
+    KConfigGroup group( KGlobal::config(), "General" );
+    group.writeEntry( "ShowHidden", m_showHiddenEntries->isChecked() );
+    group.sync();
 }
 
 #include "preferencesdlg.moc"

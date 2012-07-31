@@ -44,12 +44,18 @@
 #include "kmenuedit.moc"
 
 KMenuEdit::KMenuEdit ()
-  : KXmlGuiWindow (0), m_tree(0), m_basicTab(0), m_splitter(0)
+    : KXmlGuiWindow (0)
+    , m_tree(0)
+    , m_basicTab(0)
+    , m_splitter(0)
+    , m_actionDelete(0)
 {
+    // dbus
     ( void )new KmenueditAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/KMenuEdit", this);
-    KConfigGroup grp( KGlobal::config(), "General" );
-    m_showHidden = grp.readEntry("ShowHidden", false);
+
+    KConfigGroup group( KGlobal::config(), "General" );
+    m_showHidden = group.readEntry("ShowHidden", false);
 
     // setup GUI
     setupActions();
@@ -58,15 +64,17 @@ KMenuEdit::KMenuEdit ()
 
 KMenuEdit::~KMenuEdit()
 {
-    KConfigGroup config(KGlobal::config(), "General");
-    config.writeEntry("SplitterSizes", m_splitter->sizes());
+    KConfigGroup group(KGlobal::config(), "General");
+    group.writeEntry("SplitterSizes", m_splitter->sizes());
 
-    config.sync();
+    group.sync();
 }
 
 void KMenuEdit::setupActions()
 {
-    KAction *action = actionCollection()->addAction("newsubmenu");
+    KAction *action = 0;
+
+    action = actionCollection()->addAction("newsubmenu");
     action->setIcon(KIcon("menu_new"));
     action->setText(i18n("&New Submenu..."));
     action = actionCollection()->addAction("newitem");
@@ -77,8 +85,6 @@ void KMenuEdit::setupActions()
     action->setIcon(KIcon("menu_new_sep"));
     action->setText(i18n("New S&eparator"));
 
-    m_actionDelete = 0;
-
     actionCollection()->addAction(KStandardAction::Save, this, SLOT(slotSave()));
     actionCollection()->addAction(KStandardAction::Quit, this, SLOT(close()));
     actionCollection()->addAction(KStandardAction::Cut);
@@ -88,16 +94,17 @@ void KMenuEdit::setupActions()
     action = new KAction( i18n("Restore to System Menu"), this );
     actionCollection()->addAction( "restore_system_menu", action );
     connect( action, SIGNAL(triggered(bool)), SLOT(slotRestoreMenu()) );
+
     KStandardAction::preferences( this, SLOT(slotConfigure()), actionCollection() );
 }
 
 void KMenuEdit::slotConfigure()
 {
-    PreferencesDialog dlg( this );
-    if ( dlg.exec() )
+    PreferencesDialog dialog( this );
+    if ( dialog.exec() )
     {
-        KConfigGroup grp( KGlobal::config(), "General" );
-        bool newShowHiddenValue = grp.readEntry("ShowHidden", false);
+        KConfigGroup group( KGlobal::config(), "General" );
+        bool newShowHiddenValue = group.readEntry("ShowHidden", false);
         if ( newShowHiddenValue != m_showHidden )
         {
             m_showHidden = newShowHiddenValue;
@@ -134,11 +141,12 @@ void KMenuEdit::setupView()
 
     // restore splitter sizes
     KSharedConfig::Ptr config = KGlobal::config();
-    KConfigGroup generalGroup(config, "General");
-    QList<int> sizes = generalGroup.readEntry("SplitterSizes",QList<int>());
+    KConfigGroup group(config, "General");
+    QList<int> sizes = group.readEntry("SplitterSizes",QList<int>());
 
-    if (sizes.isEmpty())
+    if (sizes.isEmpty()) {
         sizes << 1 << 3;
+    }
     m_splitter->setSizes(sizes);
     m_tree->setFocus();
 
@@ -166,8 +174,9 @@ void KMenuEdit::slotChangeView()
     m_actionDelete->setText(i18n("&Delete"));
     m_actionDelete->setShortcut(QKeySequence(Qt::Key_Delete));
 
-    if (!m_splitter)
+    if (m_splitter == 0) {
        setupView();
+    }
     setupGUI(KXmlGuiWindow::ToolBar|Keys|Save|Create, "kmenueditui.rc");
 
     m_tree->setViewMode(m_showHidden);
@@ -177,7 +186,6 @@ void KMenuEdit::slotChangeView()
 void KMenuEdit::slotSave()
 {
     m_tree->save();
-
 }
 
 bool KMenuEdit::queryClose()
@@ -208,8 +216,8 @@ bool KMenuEdit::queryClose()
 
 void KMenuEdit::slotConfigureToolbars()
 {
-    KEditToolBar dlg( factory() );
-    dlg.exec();
+    KEditToolBar dialog( factory() );
+    dialog.exec();
 }
 
 void KMenuEdit::slotRestoreMenu()
