@@ -74,7 +74,7 @@ protected:
 protected:
     KLineEdit    *_nameEdit;
     KLineSpellChecking*_commentEdit;
-    KLineSpellChecking	 *_descriptionEdit;
+    KLineSpellChecking   *_descriptionEdit;
     KKeySequenceWidget *_keyEdit;
     KUrlRequester *_execEdit, *_pathEdit;
     KLineEdit    *_termOptEdit, *_uidEdit;
@@ -82,7 +82,7 @@ protected:
     KIconButton  *_iconButton;
     QGroupBox    *_path_group, *_term_group, *_uid_group, *general_group_keybind;
     QLabel *_termOptLabel, *_uidLabel, *_pathLabel, *_nameLabel, *_commentLabel, *_execLabel;
-    QLabel	*_descriptionLabel;
+    QLabel      *_descriptionLabel;
 
     MenuFolderInfo *_menuFolderInfo;
     MenuEntryInfo  *_menuEntryInfo;

@@ -29,10 +29,10 @@
 #include <KStandardDirs>
 
 
-#define MF_MENU		"Menu"
-#define MF_PUBLIC_ID	"-//freedesktop//DTD Menu 1.0//EN"
-#define MF_SYSTEM_ID	"http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd"
-#define MF_NAME		"Name"
+#define MF_MENU         "Menu"
+#define MF_PUBLIC_ID    "-//freedesktop//DTD Menu 1.0//EN"
+#define MF_SYSTEM_ID    "http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd"
+#define MF_NAME         "Name"
 #define MF_INCLUDE      "Include"
 #define MF_EXCLUDE      "Exclude"
 #define MF_FILENAME     "Filename"

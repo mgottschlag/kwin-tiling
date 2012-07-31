@@ -105,7 +105,7 @@ BasicTab::BasicTab( QWidget *parent )
     connect(_nameEdit, SIGNAL(textChanged(QString)),
             SLOT(slotChanged()));
     connect(_descriptionEdit, SIGNAL(textChanged(QString)),
-	    SLOT(slotChanged()));
+            SLOT(slotChanged()));
     connect(_commentEdit, SIGNAL(textChanged(QString)),
             SLOT(slotChanged()));
     connect(_execEdit, SIGNAL(textChanged(QString)),
@@ -209,7 +209,7 @@ BasicTab::BasicTab( QWidget *parent )
     _uidLabel->setBuddy(_uidEdit);
 
     connect(_uidEdit, SIGNAL(textChanged(QString)),
-	    SLOT(slotChanged()));
+            SLOT(slotChanged()));
     vbox->addWidget(hbox);
     advancedLayout->addWidget(_uid_group);
 

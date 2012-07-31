@@ -61,8 +61,8 @@ public:
 extern "C" int KDE_EXPORT kdemain( int argc, char **argv )
 {
     KAboutData aboutData("kmenuedit", 0, ki18n("KDE Menu Editor"),
-			 version, ki18n(description), KAboutData::License_GPL,
-			 ki18n("(C) 2000-2003, Waldo Bastian, Raffaele Sandrini, Matthias Elter"));
+                         version, ki18n(description), KAboutData::License_GPL,
+                         ki18n("(C) 2000-2003, Waldo Bastian, Raffaele Sandrini, Matthias Elter"));
     aboutData.addAuthor(ki18n("Waldo Bastian"), ki18n("Maintainer"), "bastian@kde.org");
     aboutData.addAuthor(ki18n("Raffaele Sandrini"), ki18n("Previous Maintainer"), "sandrini@kde.org");
     aboutData.addAuthor(ki18n("Matthias Elter"), ki18n("Original Author"), "elter@kde.org");
@@ -77,7 +77,7 @@ extern "C" int KDE_EXPORT kdemain( int argc, char **argv )
     KCmdLineArgs::addCmdLineOptions( options );
 
     if (!KUniqueApplication::start())
-	return 1;
+        return 1;
 
     KMenuApplication app;
 
