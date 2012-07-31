@@ -35,7 +35,7 @@ public:
    void create();
    QString error() const { return m_error; } // Returns the last error message
 
-    void restoreMenuSystem(const QString &);
+   void restoreMenuSystem(const QString &);
 
    enum ActionType {
        ADD_ENTRY = 0,
@@ -78,7 +78,7 @@ public:
    /**
     * Returns whether the stack contains any actions
     */
-   bool dirty();
+   bool dirty() const;
 
    void addEntry(const QString &menuName, const QString &menuId);
    void removeEntry(const QString &menuName, const QString &menuId);

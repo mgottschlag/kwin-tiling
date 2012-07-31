@@ -546,7 +546,7 @@ bool MenuFile::performAllActions()
    return save();
 }
 
-bool MenuFile::dirty()
+bool MenuFile::dirty() const
 {
    return (m_actionList.count() != 0) || m_bDirty;
 }
