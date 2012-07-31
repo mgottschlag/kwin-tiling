@@ -24,7 +24,6 @@
 
 class QSplitter;
 class KAction;
-class KToggleAction;
 class BasicTab;
 class TreeView;
 
@@ -60,7 +59,6 @@ protected:
     QSplitter          *m_splitter;
 
     KAction *m_actionDelete;
-    KToggleAction *m_actionShowHidden;
     bool m_showHidden;
 };
 
