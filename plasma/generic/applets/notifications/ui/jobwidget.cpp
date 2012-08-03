@@ -146,6 +146,7 @@ JobWidget::JobWidget(Job *job, Plasma::ExtenderItem *parent)
         connect(stopAction, SIGNAL(triggered()), m_job.data(), SLOT(stop()));
 
         updateJob();
+        updateJobState();  // make sure to set the title
     } else {
         m_extenderItem->showCloseButton();
 
