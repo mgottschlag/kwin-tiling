@@ -328,7 +328,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
     QString processed = message.trimmed();
 
     /*if there is a < that is not closed as a tag, replace it with an entity*/
-    processed = processed.replace(QRegExp("<([^>]*($|<))"), "&lt;\\1");
+    processed = processed.replace(QRegExp("<(?![^<]*>)"), "&lt;");
     processed.replace('\n', "<br>");
 
     QFontMetricsF fm(messageLabel->font());
@@ -353,10 +353,13 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
             word.append(c);
         } else if (c == '>') {
             word.append(c);
+            if (!sentence.isEmpty()) {
+                parsed.append(fm.elidedText(sentence, Qt::ElideRight, maxLine*4.6));
+                sentence.clear();
+            }
             inTag = false;
             parsed.append(word);
             word = QString();
-            sentence = QString();
         } else if (c == ' ') {
             word.append(c);
             if (inTag) {
@@ -375,7 +378,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
     sentence.append(word);
     parsed.append(fm.elidedText(sentence, Qt::ElideRight, maxLine*4.6));
 
-    messageLabel->setText(parsed);
+    messageLabel->setText(QLatin1String("<html>") + parsed + QLatin1String("</html>"));
 
     if (!collapsed) {
         icon->setGeometry(bigIconRect());
