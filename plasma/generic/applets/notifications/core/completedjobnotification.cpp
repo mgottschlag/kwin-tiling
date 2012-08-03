@@ -64,7 +64,14 @@ void CompletedJobNotification::setJob(Job *job)
         actions.insert("open", i18n("Open"));
         setActions(actions);
         setActionOrder(QStringList()<<"open");
-        m_destinationPrettyUrl = job->destination().prettyUrl();
+
+        // create location url as is done in job->completedMessage()
+        KUrl location(job->destination());
+        if (job->totalAmounts().value("files") > 1) {
+            location.setFileName(QString());
+        }
+
+        m_destinationPrettyUrl = location.prettyUrl();
     }
 
     m_job = job;
