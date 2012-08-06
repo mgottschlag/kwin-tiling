@@ -167,11 +167,12 @@ void Notification::setUrgency(int urgency)
     if (urgency != d->urgency) {
         d->urgency = urgency;
         if (urgency >= 2) {
-            d->hideTimer->stop();
+            if (d->hideTimer) {
+                d->hideTimer->stop();
+            }
             d->deleteTimer->stop();
         } else {
             setTimeout(d->timeout);
-            startDeletionCountdown();
         }
     }
 }
@@ -235,8 +236,8 @@ void Notification::startDeletionCountdown()
         return;
     }
 
-    //keep it available for 20 minutes
-    d->deleteTimer->start(20*60*1000);
+    //keep it available for 10 minutes
+    d->deleteTimer->start(10*60*1000);
 }
 
 bool Notification::isExpired() const
