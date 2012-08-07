@@ -243,7 +243,7 @@ PlasmaCore.FrameSvgItem {
                     tabStopBack: cancelButton
 
                     onClicked: {
-                        console.log("main.qml: logoutRequested")
+                        //console.log("main.qml: logoutRequested")
                         logoutRequested()
                     }
 
@@ -263,7 +263,7 @@ PlasmaCore.FrameSvgItem {
                     tabStopBack: logoutButton
 
                     onClicked: {
-                        console.log("main.qml: haltRequested")
+                        //console.log("main.qml: haltRequested")
                         haltRequested()
                     }
 
@@ -312,7 +312,7 @@ PlasmaCore.FrameSvgItem {
                     tabStopBack: shutdownButton
 
                     onClicked: {
-                        console.log("main.qml: rebootRequested")
+                        //console.log("main.qml: rebootRequested")
                         rebootRequested()
                     }
 
@@ -333,7 +333,7 @@ PlasmaCore.FrameSvgItem {
                             }
 
                             if (!menus[menuId]) {
-                                console.log("creating menu for " + menuId)
+                                //console.log("creating menu for " + menuId)
                                 menus[menuId] = rebootOptionsComponent.createObject(rebootButton)
                                 menus[menuId].clicked.connect(shutdownUi.rebootRequested2)
                             }
@@ -341,7 +341,7 @@ PlasmaCore.FrameSvgItem {
                             menuId = ""
                         }
 
-                        console.log("index == " + index.value + " of " + options.length + " '" + text + "' menuId == '" + menuId + "'");
+                        //console.log("index == " + index.value + " of " + options.length + " '" + text + "' menuId == '" + menuId + "'");
 
                         var itemData = new Object
                         itemData["itemIndex"] = index.value
@@ -366,7 +366,7 @@ PlasmaCore.FrameSvgItem {
                         itemData["itemText"] = text
                         itemData["itemAllowAmpersand"] = true
 
-                        console.log("appending " + itemData["itemText"] + " to menu '" + currentMenuId + "'")
+                        //console.log("appending " + itemData["itemText"] + " to menu '" + currentMenuId + "'")
                         menus[currentMenuId].append(itemData)
                     }
 
