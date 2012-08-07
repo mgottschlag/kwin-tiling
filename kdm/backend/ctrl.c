@@ -316,22 +316,6 @@ unQuote(const char *str)
 }
 
 static void
-strCatL(char **bp, const char *str, int max)
-{
-    int dnl = strnlen(str, max);
-    memcpy(*bp, str, dnl);
-    *bp += dnl;
-}
-
-static void
-strCat(char **bp, const char *str)
-{
-    int dnl = strlen(str);
-    memcpy(*bp, str, dnl);
-    *bp += dnl;
-}
-
-static void
 sdCat(char **bp, SdRec *sdr)
 {
     int delta = nowMonotonic ? time(0) - now : 0;
