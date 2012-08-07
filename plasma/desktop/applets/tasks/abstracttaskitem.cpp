@@ -231,7 +231,9 @@ void AbstractTaskItem::setTaskFlags(const TaskFlags flags)
     m_flags = flags;
 
     QString newBackground;
-    if (m_flags & TaskIsMinimized) {
+    if (m_flags & TaskWantsAttention) {
+        newBackground = "attention";
+    } else if (m_flags & TaskIsMinimized) {
         newBackground = "minimized";
     } else if (m_flags & TaskHasFocus) {
         newBackground = "focus";
