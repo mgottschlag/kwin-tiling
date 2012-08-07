@@ -168,7 +168,16 @@ void Task::refreshIcon()
 void Task::setActive(bool a)
 {
     d->active = a;
-    emit changed(StateChanged);
+
+    TaskChanges changes = StateChanged;
+
+    if (demandsAttention() != d->demandedAttention) {
+        d->demandedAttention = !d->demandedAttention;
+        changes |= AttentionChanged;
+    }
+
+    emit changed(changes);
+
     if (a) {
         emit activated();
     } else {
