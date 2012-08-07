@@ -323,8 +323,9 @@ PlasmaCore.FrameSvgItem {
                             return;
                         }
 
+                        var sep = " >> "
                         var text = options[index.value]
-                        var pos = text.lastIndexOf('>')
+                        var pos = text.lastIndexOf(sep)
                         if (pos > -1) {
                             var temp = text.substr(0, pos).trim()
                             if (temp != menuId) {
@@ -358,9 +359,9 @@ PlasmaCore.FrameSvgItem {
 
                         // remove menuId string from itemText
                         text = itemData["itemText"]
-                        var i = text.lastIndexOf('>')
+                        var i = text.lastIndexOf(sep)
                         if (i > -1) {
-                            text = text.substr(i+1).trim()
+                            text = text.substr(i+sep.length).trim()
                         }
                         itemData["itemText"] = text
                         itemData["itemAllowAmpersand"] = true
