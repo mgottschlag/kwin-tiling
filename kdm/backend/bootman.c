@@ -43,6 +43,8 @@ from the copyright holder.
 #include <ctype.h>
 #include <sys/stat.h>
 
+#define SEP " >> "
+
 static int
 getNull(char ***opts ATTR_UNUSED, int *def ATTR_UNUSED, int *cur ATTR_UNUSED)
 {
@@ -123,7 +125,7 @@ setGrub(const char *opt, SdRec *sdr)
                 fclose(f);
                 sdr->osindex = i;
                 sdr->bmstamp = mTime(GRUB_MENU);
-                return BO_OK;
+                return strDup(&sdr->osname, opt) ? BO_OK : BO_IO;
             }
             i++;
         }
@@ -161,16 +163,79 @@ commitGrub(void)
     }
 }
 
+#define GRUB2_MAX_MENU_LEVEL 5
+
 static char *grubReboot;
 static const char *grubConfig;
+
+static int
+parseGrubTitle(char *title)
+{
+    int len;
+    char *ptr = title;
+
+    if (!title)
+        return -1;
+
+    if (*ptr == '\'') {
+        for (len = 0, ptr++; *ptr && *ptr != '\''; ptr++)
+            title[len++] = *ptr;
+    } else if (*ptr == '"') {
+        for (len = 0, ptr++; *ptr && *ptr != '"'; ptr++) {
+            if (*ptr == '\\') {
+                switch (*(++ptr)) {
+                case 0:
+                    return -1; /* Unexpected end */
+                case '$':
+                case '"':
+                case '\\':
+                    break;
+                default:
+                    title[len++] = '\\';
+                    break;
+                }
+            }
+            title[len++] = *ptr;
+        }
+    } else {
+        for (len = 0; *ptr && !isspace(*ptr); ptr++) {
+            if (*ptr == '\\' && !*(++ptr))
+                return -1; /* Unexpected end */
+            title[len++] = *ptr;
+        }
+    }
+
+    return *ptr ? len : -1;
+}
+
+static int
+buildBootList(char ***opts, char *title, int menuLvl, int *menus)
+{
+    int len;
+
+    if ((len = parseGrubTitle(title)) < 0)
+        return -1;
+
+    if (menuLvl > 0) {
+        char **strp;
+        title[len] = '\0';
+        *opts = extStrArr(*opts, &strp);
+        strApp(strp, (*opts)[menus[menuLvl - 1]], SEP, title, (char *)0);
+    } else {
+        *opts = addStrArr(*opts, title, len);
+    }
+
+    return 0;
+}
 
 static int
 getGrub2OrBurg(char ***opts, int *def, int *cur, const char *grubRebootExec)
 {
     FILE *f;
     char *ptr, *linp;
-    int len, ret = BO_NOMAN, i;
+    int len, ret = BO_NOMAN, menuLvl = 0, inEntry = 0;
     char line[1000];
+    int menus[GRUB2_MAX_MENU_LEVEL];
 
     if (!grubReboot && !(grubReboot = locate(grubRebootExec)))
         return BO_NOMAN;
@@ -183,38 +248,33 @@ getGrub2OrBurg(char ***opts, int *def, int *cur, const char *grubRebootExec)
         return errno == ENOENT ? BO_NOMAN : BO_IO;
     while ((len = fGets(line, sizeof(line), f)) != -1) {
         for (linp = line; isspace(*linp); linp++, len--);
+        for (; isspace(*(linp + len - 1)); len--);
         if ((ptr = match(linp, &len, "set", 3)) && !memcmp(ptr, "default=\"${saved_entry}\"", 24)) {
             ret = BO_OK;
         } else if ((ptr = match(linp, &len, "menuentry", 9))) {
-            linp = ptr;
-            if (*linp == '\'') {
-                for (i = 0, linp++; *linp && *linp != '\''; linp++)
-                    ptr[i++] = *linp;
-            } else if (*linp == '"') {
-                for (i = 0, linp++; *linp && *linp != '"'; linp++) {
-                    if (*linp == '\\') {
-                        switch (*(++linp)) {
-                        case 0:
-                            return BO_IO; /* Unexpected end */
-                        case '$':
-                        case '"':
-                        case '\\':
-                            break;
-                        default:
-                            ptr[i++] = '\\';
-                            break;
-                        }
-                    }
-                    ptr[i++] = *linp;
-                }
-            } else {
-                for (i = 0; *linp && !isspace(*linp); linp++) {
-                    if (*linp == '\\' && !*(++linp))
-                        return BO_IO; /* Unexpected end */
-                    ptr[i++] = *linp;
+            if (menuLvl <= GRUB2_MAX_MENU_LEVEL) {
+                if (buildBootList(opts, ptr, menuLvl, menus) < 0) {
+                    ret = BO_IO;
+                    break;
                 }
             }
-            *opts = addStrArr(*opts, ptr, i);
+            inEntry = 1;
+        } else if ((ptr = match(linp, &len, "submenu", 7))) {
+            if (menuLvl < GRUB2_MAX_MENU_LEVEL) {
+                menus[menuLvl] = arrLen(*opts);
+                if (buildBootList(opts, ptr, menuLvl, menus) < 0) {
+                    ret = BO_IO;
+                    break;
+                }
+            } else {
+                logWarn("Only " stringify(GRUB2_MAX_MENU_LEVEL) " nesting levels are supported in Grub2 menus.\n");
+            }
+            menuLvl++;
+        } else if (linp[len - 1] == '}') {
+            if (inEntry)
+                inEntry = 0;
+            else if (menuLvl > 0)
+                menuLvl--;
         }
     }
     fclose(f);
@@ -245,10 +305,9 @@ setGrub2(const char *opt, SdRec *sdr)
         return ret;
     for (i = 0; opts[i]; i++) {
         if (!strcmp(opts[i], opt)) {
-            sdr->osindex = i;
             sdr->bmstamp = mTime(grubConfig);
             freeStrArr(opts);
-            return BO_OK;
+            return (sdr->osname = replaceInString(opt, SEP, ">")) ? BO_OK : BO_IO;
         }
     }
     freeStrArr(opts);
@@ -263,9 +322,7 @@ commitGrub2(void)
         return;
 
     if (grubReboot) {
-        char index[16];
-        const char *args[] = { grubReboot, index, 0 };
-        sprintf(index, "%d", sdRec.osindex);
+        const char *args[] = { grubReboot, sdRec.osname, 0 };
         runAndWait((char **)args, environ);
     }
 }
@@ -333,7 +390,7 @@ getLilo(char ***opts, int *def, int *cur)
 }
 
 static int
-setLilo(const char *opt, SdRec *sdr ATTR_UNUSED)
+setLilo(const char *opt, SdRec *sdr)
 {
     char **opts;
     int def, cur, ret, i;
@@ -351,7 +408,7 @@ setLilo(const char *opt, SdRec *sdr ATTR_UNUSED)
     }
   oke:
     freeStrArr(opts);
-    return BO_OK;
+    return strDup(&sdr->osname, opt) ? BO_OK : BO_IO;
 }
 
 static void
@@ -385,17 +442,9 @@ getBootOptions(char ***opts, int *def, int *cur)
 int
 setBootOption(const char *opt, SdRec *sdr)
 {
-    int ret;
-
     free(sdr->osname);
     sdr->osname = 0;
-    if (opt) {
-        if ((ret = bootOpts[bootManager].set(opt, sdr)) != BO_OK)
-            return ret;
-        if (!strDup(&sdr->osname, opt))
-            return BO_IO; /* BO_NOMEM */
-    }
-    return BO_OK;
+    return opt ? bootOpts[bootManager].set(opt, sdr) : BO_OK;
 }
 
 void
