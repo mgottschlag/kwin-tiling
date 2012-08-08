@@ -154,7 +154,7 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id,
         // Add two seconds for the user to notice the notification, and ensure
         // it last at least five seconds, otherwise all the user see is a
         // flash
-        timeout = 2000 + qMin(timeout, 3000);
+        timeout = 2000 + qMax(timeout, 3000);
     }
 
     const QString source = QString("notification %1").arg(id);
