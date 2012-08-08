@@ -243,7 +243,7 @@ PlasmaCore.FrameSvgItem {
                     tabStopBack: cancelButton
 
                     onClicked: {
-                        console.log("main.qml: logoutRequested")
+                        //console.log("main.qml: logoutRequested")
                         logoutRequested()
                     }
 
@@ -263,7 +263,7 @@ PlasmaCore.FrameSvgItem {
                     tabStopBack: logoutButton
 
                     onClicked: {
-                        console.log("main.qml: haltRequested")
+                        //console.log("main.qml: haltRequested")
                         haltRequested()
                     }
 
@@ -312,7 +312,7 @@ PlasmaCore.FrameSvgItem {
                     tabStopBack: shutdownButton
 
                     onClicked: {
-                        console.log("main.qml: rebootRequested")
+                        //console.log("main.qml: rebootRequested")
                         rebootRequested()
                     }
 
@@ -323,8 +323,9 @@ PlasmaCore.FrameSvgItem {
                             return;
                         }
 
+                        var sep = " >> "
                         var text = options[index.value]
-                        var pos = text.lastIndexOf('>')
+                        var pos = text.lastIndexOf(sep)
                         if (pos > -1) {
                             var temp = text.substr(0, pos).trim()
                             if (temp != menuId) {
@@ -332,7 +333,7 @@ PlasmaCore.FrameSvgItem {
                             }
 
                             if (!menus[menuId]) {
-                                console.log("creating menu for " + menuId)
+                                //console.log("creating menu for " + menuId)
                                 menus[menuId] = rebootOptionsComponent.createObject(rebootButton)
                                 menus[menuId].clicked.connect(shutdownUi.rebootRequested2)
                             }
@@ -340,7 +341,7 @@ PlasmaCore.FrameSvgItem {
                             menuId = ""
                         }
 
-                        console.log("index == " + index.value + " of " + options.length + " '" + text + "' menuId == '" + menuId + "'");
+                        //console.log("index == " + index.value + " of " + options.length + " '" + text + "' menuId == '" + menuId + "'");
 
                         var itemData = new Object
                         itemData["itemIndex"] = index.value
@@ -358,14 +359,14 @@ PlasmaCore.FrameSvgItem {
 
                         // remove menuId string from itemText
                         text = itemData["itemText"]
-                        var i = text.lastIndexOf('>')
+                        var i = text.lastIndexOf(sep)
                         if (i > -1) {
-                            text = text.substr(i+1).trim()
+                            text = text.substr(i+sep.length).trim()
                         }
                         itemData["itemText"] = text
                         itemData["itemAllowAmpersand"] = true
 
-                        console.log("appending " + itemData["itemText"] + " to menu '" + currentMenuId + "'")
+                        //console.log("appending " + itemData["itemText"] + " to menu '" + currentMenuId + "'")
                         menus[currentMenuId].append(itemData)
                     }
 
