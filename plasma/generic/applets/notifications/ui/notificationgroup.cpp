@@ -33,7 +33,7 @@
 #include <Plasma/ExtenderItem>
 
 
-NotificationGroup::NotificationGroup(Extender *parent, uint groupId)
+NotificationGroup::NotificationGroup(Plasma::Extender *parent, uint groupId)
    : Plasma::ExtenderGroup(parent, groupId)
 {
     setTransient(true);
@@ -52,12 +52,12 @@ NotificationGroup::NotificationGroup(Extender *parent, uint groupId)
 
 
     QGraphicsWidget *widget = new QGraphicsWidget(this);
-    m_tabsLayout = new QGraphicsLinearLayout(Qt::Horizontal, widget);
+    QGraphicsLinearLayout *tabsLayout = new QGraphicsLinearLayout(Qt::Horizontal, widget);
     widget->setContentsMargins(0, 4, 0, 0);
-    m_tabsLayout->setContentsMargins(0, 0, 0, 0);
-    m_tabsLayout->addStretch();
-    m_tabsLayout->addItem(m_notificationBar);
-    m_tabsLayout->addStretch();
+    tabsLayout->setContentsMargins(0, 0, 0, 0);
+    tabsLayout->addStretch();
+    tabsLayout->addItem(m_notificationBar);
+    tabsLayout->addStretch();
 
     setWidget(widget);
     setCollapsed(true);

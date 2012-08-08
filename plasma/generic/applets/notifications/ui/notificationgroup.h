@@ -34,22 +34,18 @@ namespace Plasma
 {
     class ExtenderItem;
     class TabBar;
+    class Extender;
 }
 
 class NotificationWidget;
-
-
 class Notification;
-
-//FIXME: for some reasons using Plasma::Extender directly doesn't build
-typedef Plasma::Extender Extender;
 
 class NotificationGroup : public Plasma::ExtenderGroup
 {
     Q_OBJECT
 
 public:
-    NotificationGroup(Extender *parent, uint groupId = 0);
+    NotificationGroup(Plasma::Extender *parent, uint groupId = 0);
     ~NotificationGroup();
 
     void addNotification(Notification *notification);
@@ -83,7 +79,6 @@ private:
     QHash<Plasma::ExtenderItem *, Notification *>m_notificationForExtenderItems;
 
     QString m_currentFilter;
-    QGraphicsLinearLayout *m_tabsLayout;
 };
 
 
