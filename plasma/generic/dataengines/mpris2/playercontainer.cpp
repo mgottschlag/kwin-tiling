@@ -226,6 +226,12 @@ void PlayerContainer::copyProperty(const QString& propName, const QVariant& _val
                 else
                     m_currentRate = 0.0;
             }
+            if (value.toString() == QLatin1String("Stopped")) {
+                // assume the position has reset to 0, since this is really the
+                // only sensible value for a stopped track
+                setData("Position", static_cast<qint64>(0));
+                setData(POS_UPD_STRING, QDateTime::currentDateTimeUtc());
+            }
         }
         setData(propName, value);
     }
