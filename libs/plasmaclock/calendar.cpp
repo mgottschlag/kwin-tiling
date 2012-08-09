@@ -87,7 +87,7 @@ class CalendarPrivate
 
         void init(const QDate &date = QDate());
         void refreshWidgets();
-        bool addDateDetailsToDisplay(QString &html, const QDate &date);
+        bool addDateDetailsToDisplay(QString &html, const QDate &date, bool showNoEventsMsg = false);
         void popupMonthsMenu();
         void displayEvents(const QDate &date = QDate());
         void updatePreferredSize();
@@ -431,7 +431,7 @@ void CalendarPrivate::displayEvents(const QDate &date)
 
     QString html;
 
-    if (addDateDetailsToDisplay(html, date) < 1) {
+    if (!addDateDetailsToDisplay(html, date, date.isValid())) {
         QDate dt = calendarTable->date();
         QDate end = calendarTable->endDate();
 
@@ -443,25 +443,38 @@ void CalendarPrivate::displayEvents(const QDate &date)
         }
     }
 
+    if (html.isEmpty()) {
+        html = "<div align=\"center\">";
+        html += i18nc("No events on the calendar starting from today",
+                      "No upcoming events.");
+        html += "</div>";
+    }
+
     eventsDisplay->setText(html);
 }
 
-bool CalendarPrivate::addDateDetailsToDisplay(QString &html, const QDate &date)
+bool CalendarPrivate::addDateDetailsToDisplay(QString &html, const QDate &date, bool showNoEventsMsg)
 {
-    if (!calendarTable->dateHasDetails(date)) {
+    const bool hasEvents = calendarTable->dateHasDetails(date);
+    if (!hasEvents && !showNoEventsMsg) {
         return false;
     }
 
     html += "<b>" + calendarTable->calendar()->formatDate(date, KLocale::LongDate) + "</b>";
-    html += "<ul style='-qt-list-indent: 0;'>";
-
-    const QStringList details = calendarTable->dateDetails(date);
-    foreach (const QString &detail, details) {
-        html+= "<li style='margin-left: 2em;'>" + detail + "</li>";
+    html += "<ul style=\"-qt-list-indent: 0;\">";
+    if (hasEvents) {
+        const QStringList details = calendarTable->dateDetails(date);
+        foreach (const QString &detail, details) {
+            html += "<li style='margin-left: 0.5em;'>" + detail + "</li>";
+        }
+    } else {
+        html += "<li style='type: none; margin-left: 0.5em;'><i>";
+        html += i18nc("No events on the calendar", "No events for this date.");
+        html += "</i></li>";
     }
 
     html += "</ul>";
-    return true;
+    return hasEvents;
 }
 
 // Update the nav widgets to show the current date in the CalendarTable
