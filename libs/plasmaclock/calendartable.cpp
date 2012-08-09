@@ -285,15 +285,20 @@ class CalendarTablePrivate
 
             // now update what is needed, and only what is needed!
             if (hoverRect != oldHoverRect) {
-                //FIXME: update only of a piece seems to paint over the old stuff
-                /*if (oldHoverRect.isValid()) {
+                if (oldHoverRect.isValid()) {
                     q->update(oldHoverRect);
                 }
+
                 if (hoverRect.isValid()) {
                     q->update(hoverRect);
-                }*/
-                emit q->dateHovered(dateFromRowColumn(hoverWeekRow, hoverWeekdayColumn));
-                q->update();
+                }
+
+                if (hoverWeekRow >= 0 && hoverWeekdayColumn >= 0) {
+                    const QDate date = dateFromRowColumn(hoverWeekRow, hoverWeekdayColumn);
+                    emit q->dateHovered(date);
+                } else {
+                    emit q->dateHovered(QDate());
+                }
             }
         }
 
@@ -813,7 +818,7 @@ void CalendarTablePrivate::populateCalendar()
             // Just fetch the days displayed in the grid
             eventsQuery = "events" + QString(':') + viewStartDate.toString(Qt::ISODate) +
                           QString(':') + viewEndDate.toString(Qt::ISODate);
-            kDebug() << "connecting to .. " << eventsQuery;
+            //kDebug() << "connecting to .. " << eventsQuery;
             calendarEngine()->connectSource(eventsQuery, q);
         } else {
             eventsQuery.clear();
