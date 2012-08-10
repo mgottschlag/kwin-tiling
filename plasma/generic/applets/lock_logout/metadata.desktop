@@ -159,6 +159,12 @@ Comment[zh_CN]=锁定屏幕或注销
 Comment[zh_TW]=鎖定螢幕或登出
 Encoding=UTF-8
 Keywords=Lock;Logout;Sleep;Hibernate;Switch User;
+Keywords[hu]=Zárolás;Kijelentkezés;Alvó állapot;Hibernálás;Felhasználóváltás;
+Keywords[pt]=Bloquear;Encerrar;Suspender;Hibernar;Mudar de Utilizador;
+Keywords[pt_BR]=Bloquear;Encerrar;Suspender;Hibernar;Trocar de usuário
+Keywords[sv]=Lås;Utloggning;Viloläge;Dvala;Byt användare;
+Keywords[uk]=Lock;Logout;Sleep;Hibernate;Switch User;блокування;вихід;присипляння;сон;перемикання;користувач
+Keywords[x-test]=xxLock;Logout;Sleep;Hibernate;Switch User;xx
 
 Type=Service
 Icon=system-shutdown
