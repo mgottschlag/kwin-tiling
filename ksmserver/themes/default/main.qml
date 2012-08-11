@@ -398,12 +398,14 @@ PlasmaCore.FrameSvgItem {
                                     var itemData = new Object
                                     itemData["itemIndex"] = index
                                     itemData["itemText"] = options[index]
+                                    itemData["itemSubMenu"] = null
                                     itemData["itemAllowAmpersand"] = true
                                     if (index == rebootOptions["default"]) {
                                         itemData["itemText"] += i18nc("default option in boot loader", " (default)")
                                     }
                                     contextMenu.append(itemData)
                                 }
+				contextMenu.clicked.connect(shutdownUi.rebootRequested2)
                             }
                         }
                         contextMenu.open()
