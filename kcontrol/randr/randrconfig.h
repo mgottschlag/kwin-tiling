@@ -22,7 +22,6 @@
 
 #include "ui_randrconfigbase.h"
 #include "randr.h"
-#include "outputconfig.h"
 
 #include <QWidget>
 #include <QTimer>
@@ -33,6 +32,9 @@ class CollapsibleWidget;
 class RandRDisplay;
 class OutputGraphicsItem;
 class LayoutManager;
+class OutputConfig;
+
+typedef QList<OutputConfig*> OutputConfigList;
 
 class RandRConfig : public QWidget, public Ui::RandRConfigBase
 {
