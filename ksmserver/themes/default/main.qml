@@ -35,7 +35,7 @@ PlasmaCore.FrameSvgItem {
     property int realMarginRight: margins.right
 
     width: realMarginLeft + 2 * buttonsLayout.width + realMarginRight
-    height: 2*realMarginTop + automaticallyDoLabel.height + buttonsLayout.height + realMarginBottom
+    height: Math.max(realMarginTop + leftPicture.height + realMarginBottom, 2*realMarginTop + automaticallyDoLabel.height + buttonsLayout.height + realMarginBottom)
 
     imagePath: "dialogs/shutdowndialog"
 
@@ -224,10 +224,13 @@ PlasmaCore.FrameSvgItem {
             topMargin: 4
             right: parent.right
             rightMargin: realMarginRight
+            bottom: parent.bottom
+            bottomMargin: realMarginBottom
         }
 
         Column {
             id: buttonsLayout
+            anchors.bottom: parent.bottom
             spacing: 9
 
             Column {
@@ -405,7 +408,7 @@ PlasmaCore.FrameSvgItem {
                                     }
                                     contextMenu.append(itemData)
                                 }
-				contextMenu.clicked.connect(shutdownUi.rebootRequested2)
+                                contextMenu.clicked.connect(shutdownUi.rebootRequested2)
                             }
                         }
                         contextMenu.open()
