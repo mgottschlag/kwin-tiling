@@ -82,7 +82,23 @@ void ActivityManagerPrivate::init(Plasma::Location loc)
 
 
     Plasma::PackageStructure::Ptr structure = Plasma::PackageStructure::load("Plasma/Generic");
-    package = new Plasma::Package(QString(), "org.kde.desktop.activitymanager", structure);
+    QString path;
+    const QString pluginName = "org.kde.desktop.activitymanager";
+
+    QString subPath = structure->defaultPackageRoot() + pluginName + '/';
+    path = KStandardDirs::locate("data", subPath + "metadata.desktop");
+    if (path.isEmpty()) {
+        path = KStandardDirs::locate("data", subPath);
+    } else {
+        path.remove(QString("metadata.desktop"));
+    }
+
+    if (!path.endsWith('/')) {
+        path.append('/');
+    }
+    structure->setPath(path);
+
+    package = new Plasma::Package(path, pluginName, structure);
 
     declarativeWidget = new Plasma::DeclarativeWidget(q);
     declarativeWidget->setInitializationDelayed(true);
