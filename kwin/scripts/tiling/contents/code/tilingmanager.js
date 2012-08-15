@@ -164,49 +164,49 @@ function TilingManager() {
                      "Switch Focus Left",
                      "Meta+H",
                      function() {
-        this._switchFocus(Direction.Left);
+        self._switchFocus(Direction.Left);
     });
     registerShortcut("Switch Focus Right",
                      "Switch Focus Right",
                      "Meta+L",
                      function() {
-        this._switchFocus(Direction.Right);
+        self._switchFocus(Direction.Right);
     });
     registerShortcut("Switch Focus Up",
                      "Switch Focus Up",
                      "Meta+K",
                      function() {
-        this._switchFocus(Direction.Up);
+        self._switchFocus(Direction.Up);
     });
     registerShortcut("Switch Focus Down",
                      "Switch Focus Down",
                      "Meta+J",
                      function() {
-        this._switchFocus(Direction.Down);
+        self._switchFocus(Direction.Down);
     });
     registerShortcut("Move Window Left",
                      "Move Window Left",
                      "Meta+Shift+H",
                      function() {
-        this._moveTile(Direction.Left);
+        self._moveTile(Direction.Left);
     });
     registerShortcut("Move Window Right",
                      "Move Window Right",
                      "Meta+Shift+L",
                      function() {
-        this._moveTile(Direction.Right);
+        self._moveTile(Direction.Right);
     });
     registerShortcut("Move Window Up",
                      "Move Window Up",
                      "Meta+Shift+K",
                      function() {
-        this._moveTile(Direction.Up);
+        self._moveTile(Direction.Up);
     });
     registerShortcut("Move Window Down",
                      "Move Window Down",
                      "Meta+Shift+J",
                      function() {
-        this._moveTile(Direction.Down);
+        self._moveTile(Direction.Down);
     });
 }
 
