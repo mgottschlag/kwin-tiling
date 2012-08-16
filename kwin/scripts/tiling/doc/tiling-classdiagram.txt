@@ -97,7 +97,7 @@ abstract class Tiling {
 	+getTile(x, y) : Tile
 	+getTileGeometry(x, y) : TileGeometry
 	+getTiles() : Tile[]
-	+getAdjacentTile(from : Tile, direction) : Tile
+	+getAdjacentTile(from : Tile, direction, directOnly : bool) : Tile
 }
 
 note left of Tiling

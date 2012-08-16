@@ -439,15 +439,27 @@ TilingManager.prototype._switchFocus = function(direction) {
         return;
     }
     var layout = this.layouts[client.desktop - 1][this._currentScreen];
-    var nextTile = layout.getAdjacentTile(activeTile, direction);
+    var nextTile = layout.getAdjacentTile(activeTile, direction, false);
     if (nextTile != null && nextTile != activeTile) {
         workspace.activeClient = nextTile.getActiveClient();
     }
 };
 
 TilingManager.prototype._moveTile = function(direction) {
-    print("TODO: moveTile.");
-    // TODO
+    var client = workspace.activeClient;
+    if (client == null) {
+        return;
+    }
+    var activeTile = this.tiles.getTile(client);
+    if (activeTile == null || activeTile.floating
+            || activeTile.forcedFloating) {
+        return;
+    }
+    var layout = this.layouts[client.desktop - 1][this._currentScreen];
+    var nextTile = layout.getAdjacentTile(activeTile, direction, true);
+    if (nextTile != null && nextTile != activeTile) {
+        layout.swapTiles(activeTile, nextTile);
+    }
 };
 
 TilingManager.prototype._getLayouts = function(desktop, screen) {

@@ -152,7 +152,7 @@ Tiling.prototype.getTiles = function() {
     // TODO
 }
 
-Tiling.prototype.getAdjacentTile = function(from, direction) {
+Tiling.prototype.getAdjacentTile = function(from, direction, directOnly) {
     if (from.floating || from.forcedFloating) {
         // TODO
         print("TODO: getAdjacentTile() (floating tile)");
@@ -160,7 +160,7 @@ Tiling.prototype.getAdjacentTile = function(from, direction) {
         var index = this.tiles.indexOf(from);
         var geometry = this.layout.tiles[index];
         var nextIndex = geometry.neighbours[direction];
-        if (!geometry.hasDirectNeighbour) {
+        if (!geometry.hasDirectNeighbour && !directOnly) {
             // This is not a direct neighbour (wrap-around situation), so cycle
             // through the floating windows first
             // TODO
