@@ -122,7 +122,7 @@ TileList.prototype.addClient = function(client) {
  */
 TileList.prototype.getTile = function(client) {
     var tileIndex = client.tiling_tileIndex;
-    if (tileIndex >= 0 && tileIndex < tiles.length) {
+    if (tileIndex >= 0 && tileIndex < this.tiles.length) {
         return this.tiles[tileIndex];
     } else {
         return null;

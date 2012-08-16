@@ -430,8 +430,19 @@ TilingManager.prototype._toggleFloating = function(tile) {
 };
 
 TilingManager.prototype._switchFocus = function(direction) {
-    print("TODO: switchFocus.");
-    // TODO
+    var client = workspace.activeClient;
+    if (client == null) {
+        return;
+    }
+    var activeTile = this.tiles.getTile(client);
+    if (activeTile == null) {
+        return;
+    }
+    var layout = this.layouts[client.desktop - 1][this._currentScreen];
+    var nextTile = layout.getAdjacentTile(activeTile, direction);
+    if (nextTile != null && nextTile != activeTile) {
+        workspace.activeClient = nextTile.getActiveClient();
+    }
 };
 
 TilingManager.prototype._moveTile = function(direction) {

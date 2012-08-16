@@ -97,6 +97,7 @@ abstract class Tiling {
 	+getTile(x, y) : Tile
 	+getTileGeometry(x, y) : TileGeometry
 	+getTiles() : Tile[]
+	+getAdjacentTile(from : Tile, direction) : Tile
 }
 
 note left of Tiling
@@ -111,7 +112,6 @@ abstract class Layout {
 	+{static}name
 	+{static}image
 	+setLayoutArea(area : QRect)
-	+getAdjacentTile(from : Tile, direction) : Tile
 	+{abstract}onLayoutAreaChange(oldArea : QRect, newArea : QRect)
 	+{abstract}resetTileSizes()
 	+{abstract}addTile()

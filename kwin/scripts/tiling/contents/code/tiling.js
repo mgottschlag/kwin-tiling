@@ -152,6 +152,25 @@ Tiling.prototype.getTiles = function() {
     // TODO
 }
 
+Tiling.prototype.getAdjacentTile = function(from, direction) {
+    if (from.floating || from.forcedFloating) {
+        // TODO
+        print("TODO: getAdjacentTile() (floating tile)");
+    } else {
+        var index = this.tiles.indexOf(from);
+        var geometry = this.layout.tiles[index];
+        var nextIndex = geometry.neighbours[direction];
+        if (!geometry.hasDirectNeighbour) {
+            // This is not a direct neighbour (wrap-around situation), so cycle
+            // through the floating windows first
+            // TODO
+            print("TODO: getAdjacentTile(): Not a direct neighbour!");
+        } else {
+            return this.tiles[nextIndex];
+        }
+    }
+}
+
 Tiling.prototype._updateAllTiles = function() {
     // Set the position/size of all tiles
     for (var i = 0; i < this.layout.tiles.length; i++) {

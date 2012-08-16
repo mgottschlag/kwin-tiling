@@ -126,6 +126,12 @@ SpiralLayout.prototype.resizeTile = function(tileIndex, rectangle) {
 }
 
 SpiralLayout.prototype._createTile = function(rect) {
+    // Update the last tile in the list
+    if (this.tiles.length != 0) {
+        var lastTile = this.tiles[this.tiles.length - 1];
+        lastTile.neighbours[Direction.Down] = this.tiles.length;
+        lastTile.hasDirectNeighbour[Direction.Down] = true;
+    }
     // Create a new tile and add it to the list
     var tile = {};
     tile.rectangle = rect;

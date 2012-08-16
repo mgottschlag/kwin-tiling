@@ -47,7 +47,3 @@ Layout.prototype.setLayoutArea = function(area) {
     this.screenRectangle = area;
     this.onLayoutAreaChange(oldArea, area);
 }
-
-Layout.prototype.getAdjacentTile = function(from, direction) {
-    // TODO
-}
