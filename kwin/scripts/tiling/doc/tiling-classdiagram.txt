@@ -94,6 +94,7 @@ abstract class Tiling {
 	+deactivate()
 	+resetTileSizes()
 	+getTile(x, y) : Tile
+	+getTileGeometry(x, y) : TileGeometry
 	+getTiles() : Tile[]
 }
 

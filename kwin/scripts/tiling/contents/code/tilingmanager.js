@@ -82,6 +82,10 @@ function TilingManager() {
      * True if a user moving operation is in progress.
      */
     this._moving = false;
+    /**
+     * The screen where the current window move operation started.
+     */
+    this._movingStartScreen = 0;
 
     var self = this;
     // Read the script settings
@@ -345,15 +349,46 @@ TilingManager.prototype._onTileDesktopChanged =
 };
 
 TilingManager.prototype._onTileMovingStarted = function(tile) {
-    // TODO
+    // NOTE: This supports only one moving window, breaks with multitouch input
+    this._moving = true;
+    this._movingStartScreen = tile.clients[0].screen;
 }
 
 TilingManager.prototype._onTileMovingEnded = function(tile) {
-    // TODO
+    var client = tile.clients[0];
+    this._moving = false;
+    var movingEndScreen = client.screen;
+    if (this._movingStartScreen != movingEndScreen) {
+        // TODO: Transfer the tile from one layout to another layout
+    } else {
+        // Transfer the tile to a different location in the same layout
+        var layout = this.layouts[this._currentDesktop][client.screen];
+        var windowRect = client.geometry;
+        var targetTile = layout.getTile(windowRect.x + windowRect.width / 2,
+                windowRect.y + windowRect.height / 2);
+        // swapTiles() works correctly even if tile == targetTile
+        layout.swapTiles(tile, targetTile);
+    }
+    workspace.hideOutline();
 }
 
 TilingManager.prototype._onTileMovingStep = function(tile) {
-    // TODO
+    var client = tile.clients[0];
+    // Calculate the rectangle in which the window is placed if it is dropped
+    var layout = this.layouts[this._currentDesktop][client.screen];
+    var windowRect = client.geometry;
+    var target = layout.getTileGeometry(windowRect.x + windowRect.width / 2,
+            windowRect.y + windowRect.height / 2);
+    var targetArea = null;
+    if (target != null) {
+        targetArea = target.rectangle;
+    } else {
+        targetArea = layout.layout.screenRectangle;
+    }
+    // Show an outline where the window would be placed
+    // TODO: This is not working yet, the window movement code already disables
+    // any active outline
+    workspace.showOutline(targetArea);
 }
 
 TilingManager.prototype._changeTileLayouts =
@@ -371,8 +406,7 @@ TilingManager.prototype._changeTileLayouts =
 };
 
 TilingManager.prototype._onCurrentDesktopChanged = function() {
-    print("TODO: onCurrentDesktopChanged.");
-    // TODO: We need the same for active screen changes
+    // TODO: This is wrong, we need to activate *all* visible layouts
     this.layouts[this._currentDesktop][this._currentScreen].deactivate();
     this._currentDesktop = workspace.currentDesktop - 1;
     this.layouts[this._currentDesktop][this._currentScreen].activate();

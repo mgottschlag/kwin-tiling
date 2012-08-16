@@ -73,7 +73,13 @@ Tiling.prototype.removeTile = function(tile) {
 }
 
 Tiling.prototype.swapTiles = function(tile1, tile2) {
-    // TODO
+    if (tile1 != tile2) {
+        var index1 = this.tiles.indexOf(tile1);
+        var index2 = this.tiles.indexOf(tile2);
+        this.tiles[index1] = tile2;
+        this.tiles[index2] = tile1;
+    }
+    this._updateAllTiles();
 }
 
 Tiling.prototype.activate = function() {
@@ -102,7 +108,27 @@ Tiling.prototype.resetTileSizes = function() {
 }
 
 Tiling.prototype.getTile = function(x, y) {
-    // TODO
+    for (var i = 0; i < this.layout.tiles.length; i++) {
+        var tile = this.layout.tiles[i];
+        if (tile.rectangle.x <= x
+                && tile.rectangle.y <= y
+                && tile.rectangle.x + tile.rectangle.width > x
+                && tile.rectangle.y + tile.rectangle.height > y) {
+            return this.tiles[i];
+        }
+    }
+}
+
+Tiling.prototype.getTileGeometry = function(x, y) {
+    for (var i = 0; i < this.layout.tiles.length; i++) {
+        var tile = this.layout.tiles[i];
+        if (tile.rectangle.x <= x
+                && tile.rectangle.y <= y
+                && tile.rectangle.x + tile.rectangle.width > x
+                && tile.rectangle.y + tile.rectangle.height > y) {
+            return tile;
+        }
+    }
 }
 
 Tiling.prototype.getTiles = function() {
