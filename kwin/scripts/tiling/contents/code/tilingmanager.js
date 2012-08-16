@@ -358,12 +358,18 @@ TilingManager.prototype._onTileMovingEnded = function(tile) {
     var client = tile.clients[0];
     this._moving = false;
     var movingEndScreen = client.screen;
+    var windowRect = client.geometry;
     if (this._movingStartScreen != movingEndScreen) {
-        // TODO: Transfer the tile from one layout to another layout
+        // Transfer the tile from one layout to another layout
+        var startLayout =
+                this.layouts[this._currentDesktop][this._movingStartScreen];
+        var endLayout = this.layouts[this._currentDesktop][client.screen];
+        startLayout.removeTile(tile);
+        endLayout.addTile(tile, windowRect.x + windowRect.width / 2,
+                windowRect.y + windowRect.height / 2);
     } else {
         // Transfer the tile to a different location in the same layout
         var layout = this.layouts[this._currentDesktop][client.screen];
-        var windowRect = client.geometry;
         var targetTile = layout.getTile(windowRect.x + windowRect.width / 2,
                 windowRect.y + windowRect.height / 2);
         // swapTiles() works correctly even if tile == targetTile

@@ -88,6 +88,7 @@ abstract class Tiling {
 	+setLayoutType(layoutType)
 	+setLayoutArea(area : QRect)
 	+addTile(tile : Tile)
+	+addTile(tile : Tile, x, y)
 	+removeTile(tile : Tile)
 	+swapTiles(tile1 : Tile, tile2 : Tile)
 	+activate()

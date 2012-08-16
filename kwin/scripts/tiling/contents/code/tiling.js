@@ -52,9 +52,19 @@ Tiling.prototype.setLayoutArea = function(area) {
     this._updateAllTiles();
 }
 
-Tiling.prototype.addTile = function(tile) {
+Tiling.prototype.addTile = function(tile, x, y) {
     this.layout.addTile();
-    this.tiles.push(tile);
+    // If a position was specified, we insert the tile at the specified position
+    if (x != null && y != null) {
+        var index = this._getTileIndex(x, y);
+        if (index == -1) {
+            this.tiles.push(tile);
+        } else {
+            this.tiles.splice(index, 0, tile);
+        }
+    } else {
+        this.tiles.push(tile);
+    }
     // TODO: Set "below all" state
     if (this.active) {
         this._updateAllTiles();
@@ -108,27 +118,34 @@ Tiling.prototype.resetTileSizes = function() {
 }
 
 Tiling.prototype.getTile = function(x, y) {
-    for (var i = 0; i < this.layout.tiles.length; i++) {
-        var tile = this.layout.tiles[i];
-        if (tile.rectangle.x <= x
-                && tile.rectangle.y <= y
-                && tile.rectangle.x + tile.rectangle.width > x
-                && tile.rectangle.y + tile.rectangle.height > y) {
-            return this.tiles[i];
-        }
+    var index = this._getTileIndex(x, y);
+    if (index != -1) {
+        return this.tiles[index];
+    } else {
+        return null;
     }
 }
 
 Tiling.prototype.getTileGeometry = function(x, y) {
+    var index = this._getTileIndex(x, y);
+    if (index != -1) {
+        return this.layout.tiles[index];
+    } else {
+        return null;
+    }
+}
+
+Tiling.prototype._getTileIndex = function(x, y) {
     for (var i = 0; i < this.layout.tiles.length; i++) {
         var tile = this.layout.tiles[i];
         if (tile.rectangle.x <= x
                 && tile.rectangle.y <= y
                 && tile.rectangle.x + tile.rectangle.width > x
                 && tile.rectangle.y + tile.rectangle.height > y) {
-            return tile;
+            return i;
         }
     }
+    return -1;
 }
 
 Tiling.prototype.getTiles = function() {
